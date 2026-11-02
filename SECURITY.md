@@ -16,4 +16,4 @@ You get an answer in the advisory. When a fix is ready, it is released and the a
 
 ## Supported versions
 
-Only the latest release gets security fixes.
+Only the latest release gets security fixes. [CHANGELOG.md](CHANGELOG.md) lists the changes of each release, breaking changes first.

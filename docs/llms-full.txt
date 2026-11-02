@@ -2828,10 +2828,10 @@ Group `layout`. Needs `core`, `overlays`. CSS and JS. Docs: https://bl4ko.github
 | Part | Write | State |
 | --- | --- | --- |
 | `sidebar` (root) | `data-collapsible` `icon`, `none`, `offcanvas`; `data-side` `bottom`, `left`, `right`, `top`; `data-variant` `floating`, `inset`, `sidebar` | `data-ending-style`, `data-mobile`, `data-starting-style`, `data-state` |
-| `sidebar-container` | `data-side` `left`, `right`; `data-variant` `floating`, `inset` |  |
+| `sidebar-container` | `data-side` `left`, `right` |  |
 | `sidebar-content` |  |  |
 | `sidebar-footer` |  |  |
-| `sidebar-gap` | `data-variant` `floating`, `inset` |  |
+| `sidebar-gap` |  |  |
 | `sidebar-group` |  |  |
 | `sidebar-group-action` |  |  |
 | `sidebar-group-content` |  |  |

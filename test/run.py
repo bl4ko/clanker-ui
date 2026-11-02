@@ -172,6 +172,8 @@ class T:
         )
 
     def paint(self, sample, action, arg=None, ms=800):
+        if os.environ.get("GITHUB_ACTIONS"):
+            ms *= 2
         self.page.evaluate(f"() => {{ window.__clankerSample = {sample} }}")
         self.page.evaluate(PAINT, [ms, arg])
         action()

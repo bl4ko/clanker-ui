@@ -134,7 +134,7 @@
     :is([data-slot="checkbox"], [data-slot="switch"]):is(:checked, :indeterminate, [data-checked]:not([data-checked="false"]), [data-indeterminate]:not([data-indeterminate="false"]), [data-state="checked"]) { border-color: Highlight; background-color: Highlight; color: HighlightText; }
     [data-slot="switch"]::before, [data-slot="switch-thumb"] { background-color: CanvasText; }
     [data-slot="switch"]:checked::before, [data-slot="switch"]:is([data-checked]:not([data-checked="false"]), [data-state="checked"]) > [data-slot="switch-thumb"] { background-color: HighlightText; }
-    :is([data-slot="slider-track"], [data-slot="slider-control"]) { border: 1px solid CanvasText; background-color: Canvas; }
+    [data-slot="slider-track"] { border: 1px solid CanvasText; background-color: Canvas; }
     [data-slot="slider-range"] { background-color: Highlight; }
     [data-slot="slider-thumb"] { border-color: CanvasText; background-color: Canvas; }
     [data-slot="slider-thumb"]::-webkit-slider-thumb { border-color: CanvasText; background-color: Canvas; }

@@ -789,27 +789,6 @@
   @media (prefers-color-scheme: light) {
     :root[data-system-theme="dark"], :root[data-system-theme="dark"] *, :root[data-system-theme="dark"] ::before, :root[data-system-theme="dark"] ::after { transition: none !important; }
   }
-  .shimmer {
-    --_spread: var(--shimmer-spread, calc(3ch + 40px));
-    --_base: currentColor;
-    --_highlight: var(--shimmer-color, oklch(from currentColor l c h / calc(alpha * 0.2)));
-    background-image: var(--shimmer-image, linear-gradient(calc(90deg + var(--shimmer-angle)), var(--_base) calc(50% - var(--_spread)), color-mix(in oklch, var(--_highlight), var(--_base) 50%) calc(50% - var(--_spread) * 0.5), var(--_highlight) 50%, color-mix(in oklch, var(--_highlight), var(--_base) 50%) calc(50% + var(--_spread) * 0.5), var(--_base) calc(50% + var(--_spread))));
-    background-repeat: no-repeat;
-    background-size: calc(200% + var(--_spread) * 2) 100%;
-    background-position: 0 0;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: var(--shimmer-text-fill, transparent);
-    animation: tw-shimmer var(--shimmer-duration, 2s) linear infinite;
-  }
-  .shimmer:is([data-theme="dark"] *) { --_highlight: var(--shimmer-color, oklch(from currentColor max(0.8, calc(l + 0.4)) c h / calc(alpha + 0.4))); }
-  @media (prefers-color-scheme: dark) {
-    .shimmer:not([data-theme="light"] *) { --_highlight: var(--shimmer-color, oklch(from currentColor max(0.8, calc(l + 0.4)) c h / calc(alpha + 0.4))); }
-  }
-  .shimmer:dir(rtl) { animation-direction: reverse; }
-  @media (prefers-reduced-motion: reduce) {
-    .shimmer { animation: none; background-image: none; -webkit-text-fill-color: currentColor; }
-  }
   :is(.scroll-fade, .scroll-fade-x) {
     -webkit-mask-composite: source-in;
     mask-composite: intersect;

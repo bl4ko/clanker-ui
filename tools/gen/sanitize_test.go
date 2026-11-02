@@ -168,7 +168,7 @@ func TestEndToEnd(t *testing.T) {
 	os.WriteFile(kit, []byte(kitText), 0o644)
 	var outs []string
 	for i := range 3 {
-		o := options{src: src, pin: filepath.Join(root, "tools/gen/pin.tsv"), out: filepath.Join(dir, "run"+string(rune('a'+i)), "clanker-ui.css"), notes: filepath.Join(dir, "notes.txt"), kit: kit, tailwind: "tailwindcss", mapFile: filepath.Join(root, "tools/gen/map.tsv"), components: []string{"button", "badge"}}
+		o := options{src: src, pin: filepath.Join(root, "tools/gen/pin.tsv"), out: filepath.Join(dir, "run"+string(rune('a'+i)), "gen.css"), notes: filepath.Join(dir, "notes.txt"), kit: kit, tailwind: "tailwindcss", mapFile: filepath.Join(root, "tools/gen/map.tsv"), components: []string{"button", "badge"}}
 		if i == 2 {
 			o.kit = filepath.Join(dir, "no-kit.css")
 		}
@@ -188,16 +188,16 @@ func TestEndToEnd(t *testing.T) {
 	if !strings.HasPrefix(css, license+"\n") {
 		t.Errorf("first line: %.120q", css)
 	}
-	if css != outs[2]+"\n"+kitText || strings.HasSuffix(outs[2], "\n") {
+	if css != outs[2]+kitText || !strings.HasSuffix(outs[2], "}\n") {
 		t.Errorf("the output is the generated CSS, a new line, and kit.css as it is: %q", css[max(0, len(css)-200):])
 	}
 	if _, rest, _ := strings.Cut(css, "\n"); !strings.HasPrefix(rest, layerOrder) {
 		t.Errorf("the second line is not the layer order with clanker.themes: %.200q", rest)
 	}
-	if !regexp.MustCompile(`@layer clanker\.utilities\{[^@]*\.shimmer\{[^}]*animation:tw-shimmer`).MatchString(css) || !strings.Contains(css, ".shimmer-none{") {
+	if !regexp.MustCompile(`@layer clanker\.utilities \{[^@]*\.shimmer \{[^}]*animation: tw-shimmer`).MatchString(css) || !strings.Contains(css, ".shimmer-none {") {
 		t.Error("the shimmer utilities for markup are missing")
 	}
-	if !strings.Contains(css, "--primary:oklch(20.5% 0 0)") || !strings.Contains(css, "--foreground:oklch(14.5% 0 0)") {
+	if !strings.Contains(css, "--primary: oklch(20.5% 0 0);") || !strings.Contains(css, "--foreground: oklch(14.5% 0 0);") {
 		t.Error("default tokens are not the shadcn themes.ts neutral values")
 	}
 }

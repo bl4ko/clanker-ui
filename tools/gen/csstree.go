@@ -98,6 +98,69 @@ func (r *cssRule) String() string {
 	return b.String()
 }
 
+var lineBreak = regexp.MustCompile(`\s*\n\s*`)
+
+func joinLines(r *cssRule) {
+	for i := range r.items {
+		if it := &r.items[i]; it.rule != nil {
+			it.rule.prelude = lineBreak.ReplaceAllString(it.rule.prelude, " ")
+			joinLines(it.rule)
+		} else {
+			it.decl = lineBreak.ReplaceAllString(it.decl, " ")
+		}
+	}
+}
+
+func strayRule(r *cssRule) string {
+	for _, it := range r.items {
+		s := it.decl
+		if it.rule != nil {
+			s = it.rule.prelude
+		}
+		if !strings.HasPrefix(s, "@layer ") && !strings.HasPrefix(s, "@property ") && !strings.HasPrefix(s, "@keyframes ") {
+			return s
+		}
+	}
+	return ""
+}
+
+func (g *gen) layerStray(r *cssRule) {
+	var util *cssRule
+	var keep, stray []cssItem
+	for _, it := range r.items {
+		switch {
+		case it.rule != nil && it.rule.prelude == "@layer clanker.utilities":
+			util = it.rule
+			keep = append(keep, it)
+		case it.rule != nil && strayRule(&cssRule{items: []cssItem{it}}) != "":
+			stray = append(stray, it)
+		default:
+			keep = append(keep, it)
+		}
+	}
+	if len(stray) == 0 {
+		return
+	}
+	if util == nil {
+		util = &cssRule{prelude: "@layer clanker.utilities"}
+		keep = append(keep, cssItem{rule: util})
+	}
+	have := map[string]bool{}
+	for _, it := range util.items {
+		have[(&cssRule{items: []cssItem{it}}).String()] = true
+	}
+	for _, it := range stray {
+		s := (&cssRule{items: []cssItem{it}}).String()
+		if have[s] {
+			g.note("rule outside a layer dropped (same rule in @layer clanker.utilities)", "%s", it.rule.prelude)
+			continue
+		}
+		g.note("rule outside a layer moved into @layer clanker.utilities", "%s", it.rule.prelude)
+		util.items = append(util.items, it)
+	}
+	r.items = keep
+}
+
 func declProp(d string) string {
 	p, _, _ := strings.Cut(d, ":")
 	return strings.TrimSpace(p)

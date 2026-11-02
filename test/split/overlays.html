@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui split: overlays</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../clanker-ui-core.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-overlays.min.css">
+  <link rel="modulepreload" href="../../clanker-ui-core.min.js">
+  <script type="module" src="../../clanker-ui-core.min.js"></script>
+  <script type="module" src="../../clanker-ui-overlays.min.js"></script>
+</head>
+<body>
+  <main data-split="overlays">
+<section id="alert-dialog" data-demo="section">
+        <h3 data-demo="title">Alert Dialog</h3>
+        <p data-demo="description">A modal dialog that interrupts the user with important content and expects a response.</p>
+        <div data-demo="preview">
+          <div data-slot="alert-dialog">
+            <button type="button" data-slot="button" data-variant="outline" data-alert-dialog-trigger>Show Dialog</button>
+            <dialog id="alert-dialog-basic" data-slot="alert-dialog-content">
+              <div data-slot="alert-dialog-header">
+                <h2 data-slot="alert-dialog-title">Are you absolutely sure?</h2>
+                <p data-slot="alert-dialog-description">This action cannot be undone. This will permanently delete your account from our servers.</p>
+              </div>
+              <div data-slot="alert-dialog-footer">
+                <button type="button" data-slot="alert-dialog-cancel" data-variant="outline">Cancel</button>
+                <button type="button" data-slot="alert-dialog-action">Continue</button>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Small</h4>
+        <div data-demo="preview">
+          <div data-slot="alert-dialog">
+            <button type="button" data-slot="button" data-variant="outline" data-alert-dialog-trigger>Show Dialog</button>
+            <dialog id="alert-dialog-small" data-slot="alert-dialog-content" data-size="sm">
+              <div data-slot="alert-dialog-header">
+                <h2 data-slot="alert-dialog-title">Allow accessory to connect?</h2>
+                <p data-slot="alert-dialog-description">Do you want to allow the USB accessory to connect to this device?</p>
+              </div>
+              <div data-slot="alert-dialog-footer">
+                <button type="button" data-slot="alert-dialog-cancel" data-variant="outline">Don't allow</button>
+                <button type="button" data-slot="alert-dialog-action">Allow</button>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Media</h4>
+        <div data-demo="preview">
+          <div data-slot="alert-dialog">
+            <button type="button" data-slot="button" data-variant="outline" data-alert-dialog-trigger>Share Project</button>
+            <dialog id="alert-dialog-media" data-slot="alert-dialog-content">
+              <div data-slot="alert-dialog-header">
+                <div data-slot="alert-dialog-media"><svg data-lucide="circle-fading-plus"></svg></div>
+                <h2 data-slot="alert-dialog-title">Share this project?</h2>
+                <p data-slot="alert-dialog-description">Anyone with the link will be able to view and edit this project.</p>
+              </div>
+              <div data-slot="alert-dialog-footer">
+                <button type="button" data-slot="alert-dialog-cancel" data-variant="outline">Cancel</button>
+                <button type="button" data-slot="alert-dialog-action">Share</button>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="alert-dialog">
+            <button type="button" data-slot="button" data-variant="outline" data-alert-dialog-trigger>Small with Media</button>
+            <dialog id="alert-dialog-small-media" data-slot="alert-dialog-content" data-size="sm">
+              <div data-slot="alert-dialog-header">
+                <div data-slot="alert-dialog-media"><svg data-lucide="bluetooth"></svg></div>
+                <h2 data-slot="alert-dialog-title">Allow accessory to connect?</h2>
+                <p data-slot="alert-dialog-description">Do you want to allow the USB accessory to connect to this device?</p>
+              </div>
+              <div data-slot="alert-dialog-footer">
+                <button type="button" data-slot="alert-dialog-cancel" data-variant="outline">Don't allow</button>
+                <button type="button" data-slot="alert-dialog-action">Allow</button>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Destructive</h4>
+        <div data-demo="preview">
+          <div data-slot="alert-dialog">
+            <button type="button" data-slot="button" data-variant="destructive" data-alert-dialog-trigger>Delete Chat</button>
+            <dialog id="alert-dialog-destructive" data-slot="alert-dialog-content" data-size="sm">
+              <div data-slot="alert-dialog-header">
+                <div data-slot="alert-dialog-media" data-demo="danger"><svg data-lucide="trash"></svg></div>
+                <h2 data-slot="alert-dialog-title">Delete chat?</h2>
+                <p data-slot="alert-dialog-description">This will permanently delete this chat conversation. View <a href="#alert-dialog">Settings</a> to delete any memories saved during this chat.</p>
+              </div>
+              <div data-slot="alert-dialog-footer">
+                <button type="button" data-slot="alert-dialog-cancel" data-variant="outline">Cancel</button>
+                <button type="button" data-slot="alert-dialog-action" data-variant="destructive">Delete</button>
+              </div>
+            </dialog>
+          </div>
+        </div>
+      </section>
+<section id="dropdown-menu" data-demo="section">
+        <h3 data-demo="title">Dropdown Menu</h3>
+        <p data-demo="description">Displays a menu to the user, such as a set of actions or functions, triggered by a button.</p>
+        <div data-demo="preview">
+          <div data-slot="dropdown-menu" id="dropdown-menu-demo">
+            <button type="button" data-slot="button" data-variant="outline" data-dropdown-menu-trigger>Open</button>
+            <div data-slot="dropdown-menu-content" data-align="start" data-demo="w-40">
+              <div data-slot="dropdown-menu-group">
+                <div data-slot="dropdown-menu-label">My Account</div>
+                <div data-slot="dropdown-menu-item">Profile<span data-slot="dropdown-menu-shortcut">⇧⌘P</span></div>
+                <div data-slot="dropdown-menu-item">Billing<span data-slot="dropdown-menu-shortcut">⌘B</span></div>
+                <div data-slot="dropdown-menu-item">Settings<span data-slot="dropdown-menu-shortcut">⌘S</span></div>
+              </div>
+              <div data-slot="dropdown-menu-separator"></div>
+              <div data-slot="dropdown-menu-group">
+                <div data-slot="dropdown-menu-item">Team</div>
+                <div data-slot="dropdown-menu-sub">
+                  <div data-slot="dropdown-menu-sub-trigger">Invite users</div>
+                  <div data-slot="dropdown-menu-sub-content">
+                    <div data-slot="dropdown-menu-item">Email</div>
+                    <div data-slot="dropdown-menu-item">Message</div>
+                    <div data-slot="dropdown-menu-separator"></div>
+                    <div data-slot="dropdown-menu-item">More...</div>
+                  </div>
+                </div>
+                <div data-slot="dropdown-menu-item">New Team<span data-slot="dropdown-menu-shortcut">⌘+T</span></div>
+              </div>
+              <div data-slot="dropdown-menu-separator"></div>
+              <div data-slot="dropdown-menu-group">
+                <div data-slot="dropdown-menu-item">GitHub</div>
+                <div data-slot="dropdown-menu-item">Support</div>
+                <div data-slot="dropdown-menu-item" data-disabled>API</div>
+              </div>
+              <div data-slot="dropdown-menu-separator"></div>
+              <div data-slot="dropdown-menu-group">
+                <div data-slot="dropdown-menu-item">Log out<span data-slot="dropdown-menu-shortcut">⇧⌘Q</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Checkboxes and radio group</h4>
+        <div data-demo="preview">
+          <div data-slot="dropdown-menu" id="dropdown-menu-checkboxes">
+            <button type="button" data-slot="button" data-variant="outline" data-dropdown-menu-trigger>Appearance</button>
+            <div data-slot="dropdown-menu-content" data-demo="w-40">
+              <div data-slot="dropdown-menu-group">
+                <div data-slot="dropdown-menu-label">Appearance</div>
+                <div data-slot="dropdown-menu-checkbox-item" data-checked>Status Bar</div>
+                <div data-slot="dropdown-menu-checkbox-item" data-disabled>Activity Bar</div>
+                <div data-slot="dropdown-menu-checkbox-item">Panel</div>
+              </div>
+            </div>
+          </div>
+          <div data-slot="dropdown-menu" id="dropdown-menu-radio">
+            <button type="button" data-slot="button" data-variant="outline" data-dropdown-menu-trigger>Panel Position</button>
+            <div data-slot="dropdown-menu-content" data-demo="w-32">
+              <div data-slot="dropdown-menu-group">
+                <div data-slot="dropdown-menu-label">Panel Position</div>
+                <div data-slot="dropdown-menu-radio-group" data-value="bottom">
+                  <div data-slot="dropdown-menu-radio-item" data-value="top">Top</div>
+                  <div data-slot="dropdown-menu-radio-item" data-value="bottom" data-checked>Bottom</div>
+                  <div data-slot="dropdown-menu-radio-item" data-value="right">Right</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Icons and destructive</h4>
+        <div data-demo="preview">
+          <div data-slot="dropdown-menu">
+            <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-dropdown-menu-trigger aria-label="More options"><svg data-lucide="ellipsis"></svg></button>
+            <div data-slot="dropdown-menu-content" data-align="end" data-demo="w-40">
+              <div data-slot="dropdown-menu-group">
+                <div data-slot="dropdown-menu-item"><svg data-lucide="pencil"></svg>Edit</div>
+                <div data-slot="dropdown-menu-item"><svg data-lucide="copy"></svg>Duplicate</div>
+                <div data-slot="dropdown-menu-item"><svg data-lucide="link"></svg>Copy link</div>
+              </div>
+              <div data-slot="dropdown-menu-separator"></div>
+              <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete</div>
+            </div>
+          </div>
+          <div data-slot="dropdown-menu">
+            <button type="button" data-slot="button" data-variant="outline" data-dropdown-menu-trigger><svg data-lucide="user"></svg>shadcn</button>
+            <div data-slot="dropdown-menu-content" data-align="end" data-demo="w-56">
+              <div data-slot="dropdown-menu-label">
+                <div data-demo="account"><strong>shadcn</strong><span>m@example.com</span></div>
+              </div>
+              <div data-slot="dropdown-menu-separator"></div>
+              <div data-slot="dropdown-menu-group">
+                <div data-slot="dropdown-menu-item"><svg data-lucide="badge-check"></svg>Account</div>
+                <div data-slot="dropdown-menu-item"><svg data-lucide="credit-card"></svg>Billing</div>
+                <div data-slot="dropdown-menu-item"><svg data-lucide="bell"></svg>Notifications</div>
+              </div>
+              <div data-slot="dropdown-menu-separator"></div>
+              <a data-slot="dropdown-menu-item" href="#dropdown-menu"><svg data-lucide="log-out"></svg>Log out</a>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="context-menu" data-demo="section">
+        <h3 data-demo="title">Context Menu</h3>
+        <p data-demo="description">Displays a menu to the user, such as a set of actions or functions, triggered by a right click, a long press, or <code>Shift+F10</code>.</p>
+        <div data-demo="preview">
+          <div data-slot="context-menu" id="context-menu-demo">
+            <div data-slot="context-menu-trigger" data-demo="area" tabindex="0" aria-label="Context menu area">
+              <span data-demo="fine">Right click here</span>
+              <span data-demo="coarse">Long press here</span>
+            </div>
+            <div data-slot="context-menu-content" data-demo="w-48">
+              <div data-slot="context-menu-group">
+                <div data-slot="context-menu-item">Back<span data-slot="context-menu-shortcut">⌘[</span></div>
+                <div data-slot="context-menu-item" data-disabled>Forward<span data-slot="context-menu-shortcut">⌘]</span></div>
+                <div data-slot="context-menu-item">Reload<span data-slot="context-menu-shortcut">⌘R</span></div>
+                <div data-slot="context-menu-sub">
+                  <div data-slot="context-menu-sub-trigger">More Tools</div>
+                  <div data-slot="context-menu-sub-content" data-demo="w-44">
+                    <div data-slot="context-menu-group">
+                      <div data-slot="context-menu-item">Save Page...</div>
+                      <div data-slot="context-menu-item">Create Shortcut...</div>
+                      <div data-slot="context-menu-item">Name Window...</div>
+                    </div>
+                    <div data-slot="context-menu-separator"></div>
+                    <div data-slot="context-menu-group">
+                      <div data-slot="context-menu-item">Developer Tools</div>
+                    </div>
+                    <div data-slot="context-menu-separator"></div>
+                    <div data-slot="context-menu-group">
+                      <div data-slot="context-menu-item" data-variant="destructive">Delete</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div data-slot="context-menu-separator"></div>
+              <div data-slot="context-menu-group">
+                <div data-slot="context-menu-checkbox-item" data-state="checked">Show Bookmarks</div>
+                <div data-slot="context-menu-checkbox-item">Show Full URLs</div>
+              </div>
+              <div data-slot="context-menu-separator"></div>
+              <div data-slot="context-menu-group">
+                <div data-slot="context-menu-radio-group" data-value="pedro">
+                  <div data-slot="context-menu-label">People</div>
+                  <div data-slot="context-menu-radio-item" data-value="pedro" data-state="checked">Pedro Duarte</div>
+                  <div data-slot="context-menu-radio-item" data-value="colm">Colm Tuite</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Icons and destructive</h4>
+        <div data-demo="preview">
+          <div data-slot="context-menu">
+            <div data-slot="context-menu-trigger" data-demo="area" tabindex="0" aria-label="File actions area">
+              <span data-demo="fine">Right click a file</span>
+              <span data-demo="coarse">Long press a file</span>
+            </div>
+            <div data-slot="context-menu-content">
+              <div data-slot="context-menu-label" data-inset>report.pdf</div>
+              <div data-slot="context-menu-separator"></div>
+              <div data-slot="context-menu-item"><svg data-lucide="copy"></svg>Copy<span data-slot="context-menu-shortcut">⌘C</span></div>
+              <div data-slot="context-menu-item"><svg data-lucide="pencil"></svg>Rename</div>
+              <div data-slot="context-menu-item"><svg data-lucide="download"></svg>Download</div>
+              <div data-slot="context-menu-item"><svg data-lucide="link"></svg>Copy link</div>
+              <div data-slot="context-menu-separator"></div>
+              <div data-slot="context-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete<span data-slot="context-menu-shortcut">⌫</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="menubar" data-demo="section">
+        <h3 data-demo="title">Menubar</h3>
+        <p data-demo="description">A visually persistent menu common in desktop applications that provides quick access to a consistent set of commands.</p>
+        <div data-demo="preview">
+          <div data-slot="menubar" id="menubar-demo" data-demo="w-72">
+            <div data-slot="menubar-menu">
+              <button type="button" data-slot="menubar-trigger">File</button>
+              <div data-slot="menubar-content">
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-item">New Tab<span data-slot="menubar-shortcut">⌘T</span></div>
+                  <div data-slot="menubar-item">New Window<span data-slot="menubar-shortcut">⌘N</span></div>
+                  <div data-slot="menubar-item" data-disabled>New Incognito Window</div>
+                </div>
+                <div data-slot="menubar-separator"></div>
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-sub">
+                    <div data-slot="menubar-sub-trigger">Share</div>
+                    <div data-slot="menubar-sub-content">
+                      <div data-slot="menubar-group">
+                        <div data-slot="menubar-item">Email link</div>
+                        <div data-slot="menubar-item">Messages</div>
+                        <div data-slot="menubar-item">Notes</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div data-slot="menubar-separator"></div>
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-item">Print...<span data-slot="menubar-shortcut">⌘P</span></div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="menubar-menu">
+              <button type="button" data-slot="menubar-trigger">Edit</button>
+              <div data-slot="menubar-content">
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-item">Undo<span data-slot="menubar-shortcut">⌘Z</span></div>
+                  <div data-slot="menubar-item">Redo<span data-slot="menubar-shortcut">⇧⌘Z</span></div>
+                </div>
+                <div data-slot="menubar-separator"></div>
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-sub">
+                    <div data-slot="menubar-sub-trigger">Find</div>
+                    <div data-slot="menubar-sub-content">
+                      <div data-slot="menubar-group">
+                        <div data-slot="menubar-item">Search the web</div>
+                      </div>
+                      <div data-slot="menubar-separator"></div>
+                      <div data-slot="menubar-group">
+                        <div data-slot="menubar-item">Find...</div>
+                        <div data-slot="menubar-item">Find Next</div>
+                        <div data-slot="menubar-item">Find Previous</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div data-slot="menubar-separator"></div>
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-item">Cut</div>
+                  <div data-slot="menubar-item">Copy</div>
+                  <div data-slot="menubar-item">Paste</div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="menubar-menu">
+              <button type="button" data-slot="menubar-trigger">View</button>
+              <div data-slot="menubar-content" data-demo="w-44">
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-checkbox-item">Bookmarks Bar</div>
+                  <div data-slot="menubar-checkbox-item" data-state="checked">Full URLs</div>
+                </div>
+                <div data-slot="menubar-separator"></div>
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-item" data-inset>Reload<span data-slot="menubar-shortcut">⌘R</span></div>
+                  <div data-slot="menubar-item" data-inset data-disabled>Force Reload<span data-slot="menubar-shortcut">⇧⌘R</span></div>
+                </div>
+                <div data-slot="menubar-separator"></div>
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-item" data-inset>Toggle Fullscreen</div>
+                </div>
+                <div data-slot="menubar-separator"></div>
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-item" data-inset>Hide Sidebar</div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="menubar-menu">
+              <button type="button" data-slot="menubar-trigger">Profiles</button>
+              <div data-slot="menubar-content">
+                <div data-slot="menubar-radio-group" data-value="benoit">
+                  <div data-slot="menubar-radio-item" data-value="andy">Andy</div>
+                  <div data-slot="menubar-radio-item" data-value="benoit" data-state="checked">Benoit</div>
+                  <div data-slot="menubar-radio-item" data-value="luis">Luis</div>
+                </div>
+                <div data-slot="menubar-separator"></div>
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-item" data-inset>Edit...</div>
+                </div>
+                <div data-slot="menubar-separator"></div>
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-item" data-inset>Add Profile...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">With icons</h4>
+        <div data-demo="preview">
+          <div id="menubar-icons" data-slot="menubar">
+            <div data-slot="menubar-menu">
+              <button type="button" data-slot="menubar-trigger">File</button>
+              <div data-slot="menubar-content">
+                <div data-slot="menubar-item"><svg data-lucide="file"></svg>New File<span data-slot="menubar-shortcut">⌘N</span></div>
+                <div data-slot="menubar-item"><svg data-lucide="folder"></svg>Open Folder</div>
+                <div data-slot="menubar-separator"></div>
+                <div data-slot="menubar-item"><svg data-lucide="save"></svg>Save<span data-slot="menubar-shortcut">⌘S</span></div>
+              </div>
+            </div>
+            <div data-slot="menubar-menu">
+              <button type="button" data-slot="menubar-trigger">More</button>
+              <div data-slot="menubar-content">
+                <div data-slot="menubar-group">
+                  <div data-slot="menubar-item"><svg data-lucide="settings"></svg>Settings</div>
+                  <div data-slot="menubar-item"><svg data-lucide="keyboard"></svg>Keyboard Shortcuts</div>
+                  <div data-slot="menubar-item"><svg data-lucide="circle-help"></svg>Help</div>
+                  <div data-slot="menubar-separator"></div>
+                  <div data-slot="menubar-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="navigation-menu" data-demo="section">
+        <h3 data-demo="title">Navigation Menu</h3>
+        <p data-demo="description">A collection of links for navigating websites, with disclosure panels that share an animated viewport.</p>
+        <div data-demo="preview start tall">
+          <nav data-slot="navigation-menu" id="navigation-menu-demo" aria-label="Demo site">
+            <ul data-slot="navigation-menu-list">
+              <li data-slot="navigation-menu-item" data-value="getting-started">
+                <button type="button" data-slot="navigation-menu-trigger">Getting started</button>
+                <div data-slot="navigation-menu-content">
+                  <ul data-demo="nav-list w-96">
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu"><span data-demo="nav-title">Introduction</span><span data-demo="nav-text">Re-usable components built with plain HTML and CSS.</span></a></li>
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu"><span data-demo="nav-title">Installation</span><span data-demo="nav-text">How to copy the three files and structure your app.</span></a></li>
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu"><span data-demo="nav-title">Typography</span><span data-demo="nav-text">Styles for headings, paragraphs, lists...etc</span></a></li>
+                  </ul>
+                </div>
+              </li>
+              <li data-slot="navigation-menu-item" data-value="components" data-demo="md-only">
+                <button type="button" data-slot="navigation-menu-trigger">Components</button>
+                <div data-slot="navigation-menu-content">
+                  <ul data-demo="nav-grid">
+                    <li><a data-slot="navigation-menu-link" href="#alert-dialog"><span data-demo="nav-title">Alert Dialog</span><span data-demo="nav-text">A modal dialog that interrupts the user with important content and expects a response.</span></a></li>
+                    <li><a data-slot="navigation-menu-link" href="#hover-card"><span data-demo="nav-title">Hover Card</span><span data-demo="nav-text">For sighted users to preview content available behind a link.</span></a></li>
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu"><span data-demo="nav-title">Progress</span><span data-demo="nav-text">Displays an indicator showing the completion progress of a task.</span></a></li>
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu"><span data-demo="nav-title">Scroll-area</span><span data-demo="nav-text">Visually or semantically separates content.</span></a></li>
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu"><span data-demo="nav-title">Tabs</span><span data-demo="nav-text">A set of layered sections of content that are displayed one at a time.</span></a></li>
+                    <li><a data-slot="navigation-menu-link" href="#tooltip"><span data-demo="nav-title">Tooltip</span><span data-demo="nav-text">A popup that displays information related to an element on focus or hover.</span></a></li>
+                  </ul>
+                </div>
+              </li>
+              <li data-slot="navigation-menu-item" data-value="status">
+                <button type="button" data-slot="navigation-menu-trigger">With Icon</button>
+                <div data-slot="navigation-menu-content">
+                  <ul data-demo="nav-list w-52">
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu" data-demo="nav-row"><svg data-lucide="circle-question-mark"></svg>Backlog</a></li>
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu" data-demo="nav-row"><svg data-lucide="circle"></svg>To Do</a></li>
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu" data-demo="nav-row"><svg data-lucide="circle-check"></svg>Done</a></li>
+                  </ul>
+                </div>
+              </li>
+              <li data-slot="navigation-menu-item">
+                <a data-slot="navigation-menu-link" data-variant="trigger" href="#navigation-menu" data-active>Docs</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <h4 data-demo="subtitle">Without viewport</h4>
+        <div data-demo="preview start tall">
+          <nav data-slot="navigation-menu" data-viewport="false" id="navigation-menu-plain" aria-label="Demo products">
+            <ul data-slot="navigation-menu-list">
+              <li data-slot="navigation-menu-item">
+                <button type="button" data-slot="navigation-menu-trigger">Products</button>
+                <div data-slot="navigation-menu-content">
+                  <ul data-demo="nav-list w-52">
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu" data-demo="nav-row"><svg data-lucide="package"></svg>Kit</a></li>
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu" data-demo="nav-row"><svg data-lucide="layout-dashboard"></svg>Charts</a></li>
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu" data-demo="nav-row"><svg data-lucide="terminal"></svg>Server</a></li>
+                  </ul>
+                </div>
+              </li>
+              <li data-slot="navigation-menu-item">
+                <button type="button" data-slot="navigation-menu-trigger">Resources</button>
+                <div data-slot="navigation-menu-content">
+                  <ul data-demo="nav-list w-52">
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu" data-demo="nav-row"><svg data-lucide="file-text"></svg>Guides</a></li>
+                    <li><a data-slot="navigation-menu-link" href="#navigation-menu" data-demo="nav-row"><svg data-lucide="code"></svg>Examples</a></li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </section>
+<section id="hover-card" data-demo="section">
+        <h3 data-demo="title">Hover Card</h3>
+        <p data-demo="description">For sighted users to preview content available behind a link.</p>
+        <div data-demo="preview">
+          <div data-slot="hover-card" id="hover-card-demo">
+            <button type="button" data-slot="button" data-variant="link" data-hover-card-trigger data-delay="10" data-close-delay="100">Hover Here</button>
+            <div data-slot="hover-card-content" data-demo="nextjs">
+              <div data-demo="profile-name">@nextjs</div>
+              <div>The React Framework – created and maintained by @vercel.</div>
+              <div data-demo="profile-meta">Joined December 2021</div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Sides</h4>
+        <div data-demo="preview">
+          <div data-slot="hover-card">
+            <button type="button" data-slot="button" data-variant="outline" data-hover-card-trigger data-delay="100" data-close-delay="100">Left</button>
+            <div data-slot="hover-card-content" data-side="left">
+              <div data-demo="stack-sm"><h4 data-demo="card-title">Hover Card</h4><p>This hover card appears on the left side of the trigger.</p></div>
+            </div>
+          </div>
+          <div data-slot="hover-card">
+            <button type="button" data-slot="button" data-variant="outline" data-hover-card-trigger data-delay="100" data-close-delay="100">Top</button>
+            <div data-slot="hover-card-content" data-side="top">
+              <div data-demo="stack-sm"><h4 data-demo="card-title">Hover Card</h4><p>This hover card appears on the top side of the trigger.</p></div>
+            </div>
+          </div>
+          <div data-slot="hover-card">
+            <button type="button" data-slot="button" data-variant="outline" data-hover-card-trigger data-delay="100" data-close-delay="100">Bottom</button>
+            <div data-slot="hover-card-content" data-side="bottom">
+              <div data-demo="stack-sm"><h4 data-demo="card-title">Hover Card</h4><p>This hover card appears on the bottom side of the trigger.</p></div>
+            </div>
+          </div>
+          <div data-slot="hover-card">
+            <button type="button" data-slot="button" data-variant="outline" data-hover-card-trigger data-delay="100" data-close-delay="100">Right</button>
+            <div data-slot="hover-card-content" data-side="right">
+              <div data-demo="stack-sm"><h4 data-demo="card-title">Hover Card</h4><p>This hover card appears on the right side of the trigger.</p></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Default delays</h4>
+        <div data-demo="preview">
+          <div data-slot="hover-card" id="hover-card-delays">
+            <a data-slot="button" data-variant="link" href="#hover-card" data-hover-card-trigger>Hover for 600 ms</a>
+            <div data-slot="hover-card-content">
+              <div data-demo="stack-sm"><h4 data-demo="card-title">Default delays</h4><p>Opens after 600 ms and closes 300 ms after the pointer leaves.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="tooltip" data-demo="section">
+        <h3 data-demo="title">Tooltip</h3>
+        <p data-demo="description">A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.</p>
+        <div data-demo="preview">
+          <div data-slot="tooltip" id="tooltip-demo">
+            <button type="button" data-slot="button" data-variant="outline" data-tooltip-trigger>Hover</button>
+            <div data-slot="tooltip-content"><p>Add to library</p></div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Side</h4>
+        <div data-demo="preview">
+          <div data-slot="tooltip-provider" data-delay="0">
+            <div data-demo="row">
+              <div data-slot="tooltip">
+                <button type="button" data-slot="button" data-variant="outline" data-tooltip-trigger>Left</button>
+                <div data-slot="tooltip-content" data-side="left"><p>Add to library</p></div>
+              </div>
+              <div data-slot="tooltip">
+                <button type="button" data-slot="button" data-variant="outline" data-tooltip-trigger>Top</button>
+                <div data-slot="tooltip-content" data-side="top"><p>Add to library</p></div>
+              </div>
+              <div data-slot="tooltip">
+                <button type="button" data-slot="button" data-variant="outline" data-tooltip-trigger>Bottom</button>
+                <div data-slot="tooltip-content" data-side="bottom"><p>Add to library</p></div>
+              </div>
+              <div data-slot="tooltip">
+                <button type="button" data-slot="button" data-variant="outline" data-tooltip-trigger>Right</button>
+                <div data-slot="tooltip-content" data-side="right"><p>Add to library</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">With keyboard shortcut, delay, and disabled button</h4>
+        <div data-demo="preview">
+          <div data-slot="tooltip">
+            <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" data-tooltip-trigger aria-label="Save"><svg data-lucide="save"></svg></button>
+            <div data-slot="tooltip-content" data-demo="kbd-tip">Save Changes <kbd data-slot="kbd">S</kbd></div>
+          </div>
+          <div data-slot="tooltip" id="tooltip-delay">
+            <button type="button" data-slot="button" data-variant="outline" data-tooltip-trigger data-delay="700">700 ms delay</button>
+            <div data-slot="tooltip-content"><p>Shown after a delay</p></div>
+          </div>
+          <div data-slot="tooltip" id="tooltip-disabled">
+            <span data-demo="inline" tabindex="0" data-tooltip-trigger>
+              <button type="button" data-slot="button" data-variant="outline" disabled>Disabled</button>
+            </span>
+            <div data-slot="tooltip-content"><p>This feature is currently unavailable</p></div>
+          </div>
+        </div>
+      </section>
+<section id="sheet" data-demo="section">
+        <h3 data-demo="title">Sheet</h3>
+        <p data-demo="description">Extends the Dialog component to display content that complements the main content of the screen.</p>
+        <div data-demo="preview">
+          <div data-slot="sheet" id="sheet-demo">
+            <button type="button" data-slot="button" data-variant="outline" data-sheet-trigger>Open</button>
+            <dialog data-slot="sheet-content">
+              <div data-slot="sheet-header">
+                <h2 data-slot="sheet-title">Edit profile</h2>
+                <p data-slot="sheet-description">Make changes to your profile here. Click save when you're done.</p>
+              </div>
+              <div data-demo="sheet-fields">
+                <div data-demo="field">
+                  <label data-slot="label" for="sheet-name">Name</label>
+                  <input data-slot="input" id="sheet-name" value="Pedro Duarte">
+                </div>
+                <div data-demo="field">
+                  <label data-slot="label" for="sheet-username">Username</label>
+                  <input data-slot="input" id="sheet-username" value="@peduarte">
+                </div>
+              </div>
+              <div data-slot="sheet-footer">
+                <button type="button" data-slot="button" data-sheet-close>Save changes</button>
+                <button type="button" data-slot="button" data-variant="outline" data-sheet-close>Close</button>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Side</h4>
+        <div data-demo="preview">
+          <div data-slot="sheet">
+            <button type="button" data-slot="button" data-variant="outline" data-sheet-trigger>Top</button>
+            <dialog data-slot="sheet-content" data-side="top" data-demo="half">
+              <div data-slot="sheet-header">
+                <h2 data-slot="sheet-title">Edit profile</h2>
+                <p data-slot="sheet-description">Make changes to your profile here. Click save when you're done.</p>
+              </div>
+              <div data-demo="lorem">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              </div>
+              <div data-slot="sheet-footer">
+                <button type="button" data-slot="button" data-sheet-close>Save changes</button>
+                <button type="button" data-slot="button" data-variant="outline" data-sheet-close>Cancel</button>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="sheet">
+            <button type="button" data-slot="button" data-variant="outline" data-sheet-trigger>Right</button>
+            <dialog data-slot="sheet-content" data-side="right">
+              <div data-slot="sheet-header">
+                <h2 data-slot="sheet-title">Edit profile</h2>
+                <p data-slot="sheet-description">Make changes to your profile here. Click save when you're done.</p>
+              </div>
+              <div data-demo="lorem">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              </div>
+              <div data-slot="sheet-footer">
+                <button type="button" data-slot="button" data-sheet-close>Save changes</button>
+                <button type="button" data-slot="button" data-variant="outline" data-sheet-close>Cancel</button>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="sheet">
+            <button type="button" data-slot="button" data-variant="outline" data-sheet-trigger>Bottom</button>
+            <dialog data-slot="sheet-content" data-side="bottom" data-demo="half">
+              <div data-slot="sheet-header">
+                <h2 data-slot="sheet-title">Edit profile</h2>
+                <p data-slot="sheet-description">Make changes to your profile here. Click save when you're done.</p>
+              </div>
+              <div data-demo="lorem">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              </div>
+              <div data-slot="sheet-footer">
+                <button type="button" data-slot="button" data-sheet-close>Save changes</button>
+                <button type="button" data-slot="button" data-variant="outline" data-sheet-close>Cancel</button>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="sheet">
+            <button type="button" data-slot="button" data-variant="outline" data-sheet-trigger>Left</button>
+            <dialog data-slot="sheet-content" data-side="left">
+              <div data-slot="sheet-header">
+                <h2 data-slot="sheet-title">Edit profile</h2>
+                <p data-slot="sheet-description">Make changes to your profile here. Click save when you're done.</p>
+              </div>
+              <div data-demo="lorem">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              </div>
+              <div data-slot="sheet-footer">
+                <button type="button" data-slot="button" data-sheet-close>Save changes</button>
+                <button type="button" data-slot="button" data-variant="outline" data-sheet-close>Cancel</button>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">No close button</h4>
+        <div data-demo="preview">
+          <div data-slot="sheet">
+            <button type="button" data-slot="button" data-variant="outline" data-sheet-trigger>Open Sheet</button>
+            <dialog data-slot="sheet-content" data-show-close-button="false">
+              <div data-slot="sheet-header">
+                <h2 data-slot="sheet-title">No Close Button</h2>
+                <p data-slot="sheet-description">This sheet doesn't have a close button in the top-right corner. Click outside to close.</p>
+              </div>
+            </dialog>
+          </div>
+        </div>
+      </section>
+<section id="drawer" data-demo="section">
+        <h3 data-demo="title">Drawer</h3>
+        <p data-demo="description">A panel that slides in from the edge of the screen. Swipe it toward its edge to dismiss it: on touch screens anywhere on the drawer, with a mouse on the swipe handle.</p>
+        <div data-demo="preview">
+          <div data-slot="drawer" id="drawer-demo">
+            <button type="button" data-slot="button" data-variant="secondary" data-drawer-trigger>Open Drawer</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-slot="drawer-header">
+                    <h2 data-slot="drawer-title">Move Goal</h2>
+                    <p data-slot="drawer-description">Set your daily activity goal.</p>
+                  </div>
+                  <div data-demo="goal">
+                    <div data-demo="goal-row">
+                      <button type="button" data-slot="button" data-variant="outline" data-size="icon" data-demo="round" data-drawer-goal="-10" aria-label="Decrease"><svg data-lucide="minus"></svg></button>
+                      <div data-demo="goal-value">
+                        <div id="drawer-goal" data-demo="goal-number">350</div>
+                        <div data-demo="goal-unit">Calories/day</div>
+                      </div>
+                      <button type="button" data-slot="button" data-variant="outline" data-size="icon" data-demo="round" data-drawer-goal="10" aria-label="Increase"><svg data-lucide="plus"></svg></button>
+                    </div>
+                    <div id="drawer-bars" data-demo="bars" aria-hidden="true"></div>
+                  </div>
+                  <div data-slot="drawer-footer">
+                    <button type="button" data-slot="button" data-drawer-close>Submit</button>
+                    <button type="button" data-slot="button" data-variant="outline" data-drawer-close>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Position</h4>
+        <div data-demo="preview">
+          <div data-slot="drawer" id="drawer-up" data-swipe-direction="up">
+            <button type="button" data-slot="button" data-variant="secondary" data-drawer-trigger>Top</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-slot="drawer-header">
+                    <h2 data-slot="drawer-title">Move Goal</h2>
+                    <p data-slot="drawer-description">Set your daily activity goal.</p>
+                  </div>
+                  <div data-demo="drawer-fill"><div data-demo="drawer-muted"></div></div>
+                  <div data-slot="drawer-footer">
+                    <button type="button" data-slot="button" data-drawer-close>Close</button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="drawer" id="drawer-right" data-swipe-direction="right">
+            <button type="button" data-slot="button" data-variant="secondary" data-drawer-trigger>Right</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-slot="drawer-header">
+                    <h2 data-slot="drawer-title">Move Goal</h2>
+                    <p data-slot="drawer-description">Set your daily activity goal.</p>
+                  </div>
+                  <div data-demo="drawer-fill"><div data-demo="drawer-muted"></div></div>
+                  <div data-slot="drawer-footer">
+                    <button type="button" data-slot="button" data-drawer-close>Close</button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="drawer" id="drawer-down" data-swipe-direction="down">
+            <button type="button" data-slot="button" data-variant="secondary" data-drawer-trigger>Bottom</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-slot="drawer-header">
+                    <h2 data-slot="drawer-title">Move Goal</h2>
+                    <p data-slot="drawer-description">Set your daily activity goal.</p>
+                  </div>
+                  <div data-demo="drawer-fill"><div data-demo="drawer-muted"></div></div>
+                  <div data-slot="drawer-footer">
+                    <button type="button" data-slot="button" data-drawer-close>Close</button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="drawer" id="drawer-left" data-swipe-direction="left">
+            <button type="button" data-slot="button" data-variant="secondary" data-drawer-trigger>Left</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-slot="drawer-header">
+                    <h2 data-slot="drawer-title">Move Goal</h2>
+                    <p data-slot="drawer-description">Set your daily activity goal.</p>
+                  </div>
+                  <div data-demo="drawer-fill"><div data-demo="drawer-muted"></div></div>
+                  <div data-slot="drawer-footer">
+                    <button type="button" data-slot="button" data-drawer-close>Close</button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Swipe Handle</h4>
+        <div data-demo="preview">
+          <div data-slot="drawer" id="drawer-handle" data-show-swipe-handle>
+            <button type="button" data-slot="button" data-variant="secondary" data-drawer-trigger>Open Drawer</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-slot="drawer-header">
+                    <h2 data-slot="drawer-title">Drawer</h2>
+                    <p data-slot="drawer-description">Drawer with a swipe handle.</p>
+                  </div>
+                  <div data-demo="drawer-fill"><div data-demo="drawer-muted"></div></div>
+                  <div data-slot="drawer-footer">
+                    <button type="button" data-slot="button" data-drawer-close>Close</button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Snap Points</h4>
+        <div data-demo="preview">
+          <div data-slot="drawer" id="drawer-snap" data-snap-points="31rem 1" data-show-swipe-handle>
+            <button type="button" data-slot="button" data-variant="outline" data-drawer-trigger>Open Snap Drawer</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-slot="drawer-header">
+                    <h2 data-slot="drawer-title">Snap points</h2>
+                    <p data-slot="drawer-description">Drag the drawer to snap between a compact peek and a near full-height view.</p>
+                  </div>
+                  <div data-demo="drawer-fill"><div data-demo="drawer-muted"></div></div>
+                  <div data-slot="drawer-footer">
+                    <button type="button" data-slot="button" data-drawer-close>Close</button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Nested</h4>
+        <div data-demo="preview">
+          <div data-slot="drawer" id="drawer-nested-1" data-demo-responsive-drawer>
+            <button type="button" data-slot="button" data-variant="secondary" data-drawer-trigger>Open Drawer</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-slot="drawer-header">
+                    <h2 data-slot="drawer-title">Drawer</h2>
+                    <p data-slot="drawer-description">Open another drawer from the same direction.</p>
+                  </div>
+                  <div data-demo="drawer-fill"><div data-demo="drawer-muted" data-demo-video></div></div>
+                  <div data-slot="drawer-footer">
+                    <div data-slot="drawer" id="drawer-nested-2" data-demo-responsive-drawer>
+                      <button type="button" data-slot="button" data-variant="outline" data-drawer-trigger>Open Nested Drawer</button>
+                      <dialog data-slot="drawer-viewport">
+                        <div data-slot="drawer-popup">
+                          <div data-slot="drawer-content">
+                            <div data-slot="drawer-header">
+                              <h2 data-slot="drawer-title">Nested Drawer</h2>
+                              <p data-slot="drawer-description">The parent drawer stays mounted behind this one.</p>
+                            </div>
+                            <div data-demo="drawer-fill"><div data-demo="drawer-muted" data-demo-video></div></div>
+                            <div data-slot="drawer-footer">
+                              <div data-slot="drawer" id="drawer-nested-3" data-demo-responsive-drawer>
+                                <button type="button" data-slot="button" data-variant="outline" data-drawer-trigger>Open Third Drawer</button>
+                                <dialog data-slot="drawer-viewport">
+                                  <div data-slot="drawer-popup">
+                                    <div data-slot="drawer-content">
+                                      <div data-slot="drawer-header">
+                                        <h2 data-slot="drawer-title">Third Drawer</h2>
+                                        <p data-slot="drawer-description">Two drawers are stacked behind this one.</p>
+                                      </div>
+                                      <div data-demo="drawer-fill"><div data-demo="drawer-muted" data-demo-video></div></div>
+                                      <div data-slot="drawer-footer">
+                                        <div data-slot="drawer" id="drawer-nested-4" data-demo-responsive-drawer>
+                                          <button type="button" data-slot="button" data-variant="outline" data-drawer-trigger>Open Fourth Drawer</button>
+                                          <dialog data-slot="drawer-viewport">
+                                            <div data-slot="drawer-popup">
+                                              <div data-slot="drawer-content">
+                                                <div data-slot="drawer-header">
+                                                  <h2 data-slot="drawer-title">Fourth Drawer</h2>
+                                                  <p data-slot="drawer-description">This is the frontmost drawer in the stack.</p>
+                                                </div>
+                                                <div data-demo="drawer-fill"><div data-demo="drawer-muted" data-demo-video></div></div>
+                                                <div data-slot="drawer-footer">
+                                                  <button type="button" data-slot="button" data-variant="outline" data-drawer-close>Close</button>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </dialog>
+                                        </div>
+                                        <button type="button" data-slot="button" data-variant="outline" data-drawer-close>Close</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </dialog>
+                              </div>
+                              <button type="button" data-slot="button" data-variant="outline" data-drawer-close>Close</button>
+                            </div>
+                          </div>
+                        </div>
+                      </dialog>
+                    </div>
+                    <button type="button" data-slot="button" data-variant="outline" data-drawer-close>Close</button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Non Modal</h4>
+        <div data-demo="preview">
+          <div data-slot="drawer" id="drawer-non-modal" data-modal="false" data-disable-pointer-dismissal data-swipe-direction="right">
+            <button type="button" data-slot="button" data-variant="outline" data-drawer-trigger>Non Modal</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-slot="drawer-header">
+                    <h2 data-slot="drawer-title">Non Modal Drawer</h2>
+                  </div>
+                  <div data-demo="drawer-fill"><div data-demo="drawer-muted"></div></div>
+                  <div data-slot="drawer-footer">
+                    <button type="button" data-slot="button" data-drawer-close>Close</button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Responsive</h4>
+        <div data-demo="preview column">
+          <button type="button" data-slot="button" data-variant="outline" id="drawer-responsive">Edit Profile</button>
+          <p data-demo="caption">Opens a dialog on wide screens and a drawer below 768 px.</p>
+          <div data-slot="dialog" id="drawer-responsive-dialog">
+            <dialog data-slot="dialog-content" data-demo="max-w-sm">
+              <div data-slot="dialog-header">
+                <h2 data-slot="dialog-title">Edit profile</h2>
+                <p data-slot="dialog-description">Make changes to your profile here. Click save when you're done.</p>
+              </div>
+              <div data-slot="dialog-footer">
+                <button type="button" data-slot="button" data-dialog-close>Save changes</button>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="drawer" id="drawer-responsive-drawer">
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-slot="drawer-header" data-demo="text-start">
+                    <h2 data-slot="drawer-title">Edit profile</h2>
+                    <p data-slot="drawer-description">Make changes to your profile here. Click save when you're done.</p>
+                  </div>
+                  <div data-slot="drawer-footer">
+                    <button type="button" data-slot="button" data-drawer-close>Save changes</button>
+                    <button type="button" data-slot="button" data-variant="outline" data-drawer-close>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+        </div>
+      </section>
+  </main>
+</body>
+</html>

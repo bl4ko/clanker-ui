@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Context Menu behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="context-menu">
+          <div data-slot="context-menu-trigger" data-behavior="area">
+            <span>Right click here</span>
+          </div>
+          <div data-slot="context-menu-content" data-behavior="w-48">
+            <div data-slot="context-menu-group">
+              <div data-slot="context-menu-item">Back<span data-slot="context-menu-shortcut">⌘[</span></div>
+              <div data-slot="context-menu-item" data-disabled>Forward<span data-slot="context-menu-shortcut">⌘]</span></div>
+              <div data-slot="context-menu-item">Reload<span data-slot="context-menu-shortcut">⌘R</span></div>
+              <div data-slot="context-menu-sub">
+                <div data-slot="context-menu-sub-trigger">More Tools</div>
+                <div data-slot="context-menu-sub-content" data-behavior="w-44">
+                  <div data-slot="context-menu-group">
+                    <div data-slot="context-menu-item">Save Page...</div>
+                    <div data-slot="context-menu-item">Create Shortcut...</div>
+                    <div data-slot="context-menu-item">Name Window...</div>
+                  </div>
+                  <div data-slot="context-menu-separator"></div>
+                  <div data-slot="context-menu-group">
+                    <div data-slot="context-menu-item">Developer Tools</div>
+                  </div>
+                  <div data-slot="context-menu-separator"></div>
+                  <div data-slot="context-menu-group">
+                    <div data-slot="context-menu-item" data-variant="destructive">Delete</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="context-menu-separator"></div>
+            <div data-slot="context-menu-group">
+              <div data-slot="context-menu-checkbox-item" data-state="checked">Show Bookmarks</div>
+              <div data-slot="context-menu-checkbox-item">Show Full URLs</div>
+            </div>
+            <div data-slot="context-menu-separator"></div>
+            <div data-slot="context-menu-group">
+              <div data-slot="context-menu-radio-group" data-value="pedro">
+                <div data-slot="context-menu-label">People</div>
+                <div data-slot="context-menu-radio-item" data-value="pedro" data-state="checked">Pedro Duarte</div>
+                <div data-slot="context-menu-radio-item" data-value="colm">Colm Tuite</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "parts": {
+    "trigger": {"role": "button", "name": "Open Dialog"},
+    "dialog": {"role": "dialog", "popup": true},
+    "cancel": {"role": "button", "name": "Cancel", "in": "page"},
+    "close": {"role": "button", "name": "Close", "in": "page", "optional": true}
+  },
+  "positions": [],
+  "steps": [
+    {"do": "click", "target": "trigger", "motion": "dialog", "ms": 700},
+    {"do": "tab"},
+    {"do": "tab"},
+    {"do": "tab"},
+    {"do": "tab"},
+    {"do": "tab", "label": "tab past the last control"},
+    {"do": "shift_tab"},
+    {"do": "shift_tab", "label": "shift_tab again"},
+    {"do": "press", "key": "Escape", "motion": "dialog", "ms": 700},
+    {"do": "press", "key": "Enter", "motion": "dialog", "ms": 700},
+    {"do": "click_outside", "motion": "dialog", "ms": 700},
+    {"do": "click", "target": "trigger", "motion": "dialog", "ms": 700, "label": "click trigger (open again)"},
+    {"do": "click", "target": "cancel", "motion": "dialog", "ms": 700},
+    {"do": "press", "key": "Space", "motion": "dialog", "ms": 700},
+    {"do": "click", "target": "close", "motion": "dialog", "ms": 700}
+  ]
+}

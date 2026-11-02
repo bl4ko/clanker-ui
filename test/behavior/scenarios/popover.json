@@ -1,0 +1,30 @@
+{
+  "parts": {
+    "trigger": {"role": "button", "name": "Open popover"},
+    "popover": {"slot": "popover-content", "popup": true},
+    "width": {"role": "textbox", "name": "Width", "in": "page"}
+  },
+  "positions": [
+    ["popover", "trigger"]
+  ],
+  "steps": [
+    {"do": "click", "target": "trigger", "motion": "popover"},
+    {"do": "tab"},
+    {"do": "tab"},
+    {"do": "press", "key": "Escape", "motion": "popover"},
+    {"do": "press", "key": "Enter", "motion": "popover"},
+    {"do": "tab"},
+    {"do": "tab"},
+    {"do": "tab"},
+    {"do": "tab", "motion": "popover", "label": "tab out of the popover"},
+    {"do": "focus", "target": "trigger"},
+    {"do": "press", "key": "Space", "motion": "popover"},
+    {"do": "shift_tab", "motion": "popover"},
+    {"do": "click", "target": "trigger", "motion": "popover", "label": "click trigger while open"},
+    {"do": "click", "target": "trigger", "motion": "popover", "label": "click trigger"},
+    {"do": "click", "target": "width"},
+    {"do": "click", "target": "trigger", "motion": "popover", "label": "click trigger again while open"},
+    {"do": "click", "target": "trigger", "motion": "popover", "label": "click trigger again"},
+    {"do": "click_outside", "motion": "popover"}
+  ]
+}

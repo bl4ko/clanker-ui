@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui split: overlays-needs</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../clanker-ui-core.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-forms.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-overlays.min.css">
+  <link rel="modulepreload" href="../../clanker-ui-core.min.js">
+  <script type="module" src="../../clanker-ui-core.min.js"></script>
+  <script type="module" src="../../clanker-ui-forms.min.js"></script>
+  <script type="module" src="../../clanker-ui-overlays.min.js"></script>
+  <script type="module" src="toast.js"></script>
+</head>
+<body>
+  <main data-split="overlays-needs">
+<section id="command" data-demo="section">
+        <h3 data-demo="title">Command</h3>
+        <p data-demo="description">Fast, composable command menu with filtering, groups, and keyboard selection.</p>
+        <div data-demo="preview">
+          <div id="command-demo" data-slot="command" data-demo="command-card">
+            <input data-slot="command-input" placeholder="Type a command or search...">
+            <div data-slot="command-list">
+              <div data-slot="command-empty">No results found.</div>
+              <div data-slot="command-group" data-heading="Suggestions">
+                <div data-slot="command-item"><svg data-lucide="calendar"></svg><span>Calendar</span></div>
+                <div data-slot="command-item" data-keywords="emoji, smiley"><svg data-lucide="smile"></svg><span>Search Emoji</span></div>
+                <div data-slot="command-item" data-disabled><svg data-lucide="calculator"></svg><span>Calculator</span></div>
+              </div>
+              <div data-slot="command-separator"></div>
+              <div data-slot="command-group" data-heading="Settings">
+                <div data-slot="command-item"><svg data-lucide="user"></svg><span>Profile</span><span data-slot="command-shortcut">⌘P</span></div>
+                <div data-slot="command-item"><svg data-lucide="credit-card"></svg><span>Billing</span><span data-slot="command-shortcut">⌘B</span></div>
+                <div data-slot="command-item"><svg data-lucide="settings"></svg><span>Settings</span><span data-slot="command-shortcut">⌘S</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Dialog</h4>
+        <div data-demo="preview column">
+          <p data-demo="caption">Press <kbd data-slot="kbd">⌘K</kbd> or <kbd data-slot="kbd">Ctrl K</kbd> anywhere on the page.</p>
+          <div id="command-dialog" data-slot="dialog">
+            <button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>Open Menu</button>
+            <dialog data-slot="dialog-content" data-command-dialog>
+              <div data-slot="dialog-header" class="sr-only">
+                <h2 data-slot="dialog-title">Command Palette</h2>
+                <p data-slot="dialog-description">Search for a command to run...</p>
+              </div>
+              <div id="command-palette" data-slot="command">
+                <input data-slot="command-input" placeholder="Type a command or search...">
+                <div data-slot="command-list">
+                  <div data-slot="command-empty">No results found.</div>
+                  <div data-slot="command-group" data-heading="Suggestions">
+                    <div data-slot="command-item" data-value="calendar"><svg data-lucide="calendar"></svg><span>Calendar</span></div>
+                    <div data-slot="command-item" data-value="emoji"><svg data-lucide="smile"></svg><span>Search Emoji</span></div>
+                    <div data-slot="command-item" data-value="calculator"><svg data-lucide="calculator"></svg><span>Calculator</span></div>
+                  </div>
+                  <div data-slot="command-separator"></div>
+                  <div data-slot="command-group" data-heading="Settings">
+                    <div data-slot="command-item" data-value="profile"><svg data-lucide="user"></svg><span>Profile</span><span data-slot="command-shortcut">⌘P</span></div>
+                    <div data-slot="command-item" data-value="billing"><svg data-lucide="credit-card"></svg><span>Billing</span><span data-slot="command-shortcut">⌘B</span></div>
+                    <div data-slot="command-item" data-value="settings"><svg data-lucide="settings"></svg><span>Settings</span><span data-slot="command-shortcut">⌘S</span></div>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Scrollable</h4>
+        <div data-demo="preview">
+          <div data-slot="command" data-demo="command-card">
+            <input data-slot="command-input" placeholder="Search navigation, actions, files...">
+            <div data-slot="command-list">
+              <div data-slot="command-empty">No results found.</div>
+              <div data-slot="command-group" data-heading="Navigation">
+                <div data-slot="command-item"><svg data-lucide="house"></svg><span>Home</span><span data-slot="command-shortcut">⌘H</span></div>
+                <div data-slot="command-item"><svg data-lucide="inbox"></svg><span>Inbox</span><span data-slot="command-shortcut">⌘I</span></div>
+                <div data-slot="command-item"><svg data-lucide="file-text"></svg><span>Documents</span><span data-slot="command-shortcut">⌘D</span></div>
+                <div data-slot="command-item"><svg data-lucide="folder"></svg><span>Folders</span><span data-slot="command-shortcut">⌘F</span></div>
+              </div>
+              <div data-slot="command-separator"></div>
+              <div data-slot="command-group" data-heading="Actions">
+                <div data-slot="command-item"><svg data-lucide="plus"></svg><span>New File</span><span data-slot="command-shortcut">⌘N</span></div>
+                <div data-slot="command-item"><svg data-lucide="upload"></svg><span>Upload</span><span data-slot="command-shortcut">⌘U</span></div>
+                <div data-slot="command-item"><svg data-lucide="download"></svg><span>Download</span></div>
+                <div data-slot="command-item"><svg data-lucide="copy"></svg><span>Copy</span><span data-slot="command-shortcut">⌘C</span></div>
+                <div data-slot="command-item"><svg data-lucide="trash"></svg><span>Delete</span></div>
+              </div>
+              <div data-slot="command-separator"></div>
+              <div data-slot="command-group" data-heading="Help">
+                <div data-slot="command-item"><svg data-lucide="circle-question-mark"></svg><span>Documentation</span></div>
+                <div data-slot="command-item"><svg data-lucide="mail"></svg><span>Contact Support</span></div>
+                <div data-slot="command-item"><svg data-lucide="bell"></svg><span>Release Notes</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="dialog" data-demo="section">
+        <h3 data-demo="title">Dialog</h3>
+        <p data-demo="description">A window overlaid on either the primary window or another dialog window, rendering the content underneath inert.</p>
+        <div data-demo="preview">
+          <div data-slot="dialog" id="dialog-demo">
+            <button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>Open Dialog</button>
+            <dialog data-slot="dialog-content" data-demo="max-w-sm">
+              <form method="dialog">
+                <div data-slot="dialog-header">
+                  <h2 data-slot="dialog-title">Edit profile</h2>
+                  <p data-slot="dialog-description">Make changes to your profile here. Click save when you're done.</p>
+                </div>
+                <div data-slot="field-group">
+                  <div data-slot="field">
+                    <label data-slot="label" for="dialog-name">Name</label>
+                    <input data-slot="input" id="dialog-name" name="name" value="Pedro Duarte">
+                  </div>
+                  <div data-slot="field">
+                    <label data-slot="label" for="dialog-username">Username</label>
+                    <input data-slot="input" id="dialog-username" name="username" value="@peduarte">
+                  </div>
+                </div>
+                <div data-slot="dialog-footer">
+                  <button type="button" data-slot="button" data-variant="outline" data-dialog-close>Cancel</button>
+                  <button type="submit" data-slot="button" value="save">Save changes</button>
+                </div>
+              </form>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Custom close button</h4>
+        <div data-demo="preview">
+          <div data-slot="dialog">
+            <button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>Share</button>
+            <dialog data-slot="dialog-content" data-demo="max-w-md">
+              <div data-slot="dialog-header">
+                <h2 data-slot="dialog-title">Share link</h2>
+                <p data-slot="dialog-description">Anyone who has this link will be able to view this.</p>
+              </div>
+              <div data-demo="row">
+                <label data-slot="label" for="dialog-link" class="sr-only">Link</label>
+                <input data-slot="input" id="dialog-link" value="https://example.com/#dialog" readonly>
+              </div>
+              <div data-slot="dialog-footer" data-demo="justify-start">
+                <button type="button" data-slot="button" data-dialog-close>Close</button>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="dialog">
+            <button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>No Close Button</button>
+            <dialog data-slot="dialog-content" data-show-close-button="false">
+              <div data-slot="dialog-header">
+                <h2 data-slot="dialog-title">No Close Button</h2>
+                <p data-slot="dialog-description">This dialog doesn't have a close button in the top-right corner. Press Escape or click outside to close it.</p>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Sticky footer and scrollable content</h4>
+        <div data-demo="preview">
+          <div data-slot="dialog">
+            <button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>Sticky Footer</button>
+            <dialog data-slot="dialog-content">
+              <div data-slot="dialog-header">
+                <h2 data-slot="dialog-title">Sticky Footer</h2>
+                <p data-slot="dialog-description">This dialog has a sticky footer that stays visible while the content scrolls.</p>
+              </div>
+              <div data-demo="scroll">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              </div>
+              <div data-slot="dialog-footer" data-show-close-button></div>
+            </dialog>
+          </div>
+          <div data-slot="dialog">
+            <button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>Scrollable Content</button>
+            <dialog data-slot="dialog-content">
+              <div data-slot="dialog-header">
+                <h2 data-slot="dialog-title">Scrollable Content</h2>
+                <p data-slot="dialog-description">This is a dialog with scrollable content.</p>
+              </div>
+              <div data-demo="scroll">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+              </div>
+            </dialog>
+          </div>
+        </div>
+      </section>
+<section id="popover" data-demo="section">
+        <h3 data-demo="title">Popover</h3>
+        <p data-demo="description">Displays rich content in a portal, triggered by a button.</p>
+        <div data-demo="preview">
+          <div data-slot="popover" id="popover-demo">
+            <button type="button" data-slot="button" data-variant="outline" data-popover-trigger>Open Popover</button>
+            <div data-slot="popover-content" data-align="start">
+              <div data-slot="popover-header">
+                <div data-slot="popover-title">Dimensions</div>
+                <p data-slot="popover-description">Set the dimensions for the layer.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Align</h4>
+        <div data-demo="preview">
+          <div data-slot="popover">
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-popover-trigger>Start</button>
+            <div data-slot="popover-content" data-align="start" data-demo="w-40">Aligned to start</div>
+          </div>
+          <div data-slot="popover">
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-popover-trigger>Center</button>
+            <div data-slot="popover-content" data-align="center" data-demo="w-40">Aligned to center</div>
+          </div>
+          <div data-slot="popover">
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-popover-trigger>End</button>
+            <div data-slot="popover-content" data-align="end" data-demo="w-40">Aligned to end</div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">With form</h4>
+        <div data-demo="preview">
+          <div data-slot="popover" id="popover-form">
+            <button type="button" data-slot="button" data-variant="outline" data-popover-trigger>Open Popover</button>
+            <div data-slot="popover-content" data-align="start" data-demo="w-64">
+              <div data-demo="stack-md">
+                <div data-slot="popover-header">
+                  <div data-slot="popover-title">Dimensions</div>
+                  <p data-slot="popover-description">Set the dimensions for the layer.</p>
+                </div>
+                <div data-slot="field-group">
+                  <div data-slot="field" data-orientation="horizontal">
+                    <label data-slot="field-label" for="popover-width">Width</label>
+                    <input data-slot="input" id="popover-width" value="100%">
+                  </div>
+                  <div data-slot="field" data-orientation="horizontal">
+                    <label data-slot="field-label" for="popover-height">Height</label>
+                    <input data-slot="input" id="popover-height" value="25px">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Anchor and modal</h4>
+        <div data-demo="preview">
+          <div data-slot="popover" data-modal>
+            <div data-demo="row">
+              <span data-slot="popover-anchor" data-demo="anchor">Anchor</span>
+              <button type="button" data-slot="button" data-variant="outline" data-popover-trigger>Open modal popover</button>
+            </div>
+            <div data-slot="popover-content" data-side="top">
+              <div data-slot="popover-header">
+                <div data-slot="popover-title">Modal popover</div>
+                <p data-slot="popover-description">Positioned against the anchor. Focus stays inside until you close it.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+  </main>
+</body>
+</html>

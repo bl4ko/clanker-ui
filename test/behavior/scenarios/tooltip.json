@@ -1,0 +1,26 @@
+{
+  "parts": {
+    "trigger": {"role": "button", "name": "Hover"},
+    "popup": {"slot": "tooltip-content", "popup": true}
+  },
+  "steps": [
+    {"do": "hover", "target": "trigger", "motion": "popup", "ms": 1200},
+    {"do": "leave", "motion": "popup", "ms": 700},
+    {"do": "wait", "ms": 700},
+    {"do": "hover", "target": "trigger", "motion": "popup", "ms": 300, "label": "hover trigger, leave before the delay"},
+    {"do": "leave", "motion": "popup", "ms": 900},
+    {"do": "tab_in", "motion": "popup", "ms": 1000},
+    {"do": "press", "key": "Escape", "motion": "popup", "ms": 600},
+    {"do": "shift_tab", "motion": "popup", "ms": 400},
+    {"do": "tab", "motion": "popup", "ms": 1000, "label": "tab back to the trigger"},
+    {"do": "press", "key": "Enter", "motion": "popup", "ms": 600},
+    {"do": "shift_tab", "motion": "popup", "ms": 400},
+    {"do": "hover", "target": "trigger", "motion": "popup", "ms": 1200},
+    {"do": "click", "target": "trigger", "motion": "popup", "ms": 700},
+    {"do": "leave", "motion": "popup", "ms": 700}
+  ],
+  "allowed": [
+    {"key": "tooltip.trigger-description", "match": "^trigger accessible description \\| None \\| Add to library \\|", "reason": "the kit keeps its better ARIA: aria-describedby links the trigger to the tooltip"},
+    {"key": "tooltip.role-tooltip", "aria_role": "tooltip", "reason": "the kit keeps its better ARIA: role=tooltip on the popup"}
+  ]
+}

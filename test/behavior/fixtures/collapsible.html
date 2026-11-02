@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Collapsible behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="collapsible" data-behavior="w-350 col-gap-2">
+          <div data-behavior="between-gap-4">
+            <h4 data-behavior="sm-semibold">Order #4189</h4>
+            <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-behavior="size-8" data-collapsible-trigger><svg data-lucide="chevrons-up-down"></svg><span class="sr-only">Toggle details</span></button>
+          </div>
+          <div data-behavior="box between">
+            <span data-behavior="muted">Status</span>
+            <span data-behavior="medium">Shipped</span>
+          </div>
+          <div data-slot="collapsible-content" data-behavior="col-gap-2" hidden>
+            <div data-behavior="box">
+              <p data-behavior="medium">Shipping address</p>
+              <p data-behavior="muted">100 Market St, San Francisco</p>
+            </div>
+            <div data-behavior="box">
+              <p data-behavior="medium">Items</p>
+              <p data-behavior="muted">2x Studio Headphones</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

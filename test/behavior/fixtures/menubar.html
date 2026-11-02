@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Menubar behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="menubar" data-behavior="w-72">
+          <div data-slot="menubar-menu">
+            <button type="button" data-slot="menubar-trigger">File</button>
+            <div data-slot="menubar-content">
+              <div data-slot="menubar-group">
+                <div data-slot="menubar-item">New Tab <span data-slot="menubar-shortcut">⌘T</span></div>
+                <div data-slot="menubar-item">New Window <span data-slot="menubar-shortcut">⌘N</span></div>
+                <div data-slot="menubar-item" data-disabled>New Incognito Window</div>
+              </div>
+              <div data-slot="menubar-separator"></div>
+              <div data-slot="menubar-group">
+                <div data-slot="menubar-sub">
+                  <div data-slot="menubar-sub-trigger">Share</div>
+                  <div data-slot="menubar-sub-content">
+                    <div data-slot="menubar-group">
+                      <div data-slot="menubar-item">Email link</div>
+                      <div data-slot="menubar-item">Messages</div>
+                      <div data-slot="menubar-item">Notes</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div data-slot="menubar-separator"></div>
+              <div data-slot="menubar-group">
+                <div data-slot="menubar-item">Print... <span data-slot="menubar-shortcut">⌘P</span></div>
+              </div>
+            </div>
+          </div>
+          <div data-slot="menubar-menu">
+            <button type="button" data-slot="menubar-trigger">Edit</button>
+            <div data-slot="menubar-content">
+              <div data-slot="menubar-group">
+                <div data-slot="menubar-item">Undo <span data-slot="menubar-shortcut">⌘Z</span></div>
+                <div data-slot="menubar-item">Redo <span data-slot="menubar-shortcut">⇧⌘Z</span></div>
+              </div>
+              <div data-slot="menubar-separator"></div>
+              <div data-slot="menubar-group">
+                <div data-slot="menubar-sub">
+                  <div data-slot="menubar-sub-trigger">Find</div>
+                  <div data-slot="menubar-sub-content">
+                    <div data-slot="menubar-group">
+                      <div data-slot="menubar-item">Search the web</div>
+                    </div>
+                    <div data-slot="menubar-separator"></div>
+                    <div data-slot="menubar-group">
+                      <div data-slot="menubar-item">Find...</div>
+                      <div data-slot="menubar-item">Find Next</div>
+                      <div data-slot="menubar-item">Find Previous</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div data-slot="menubar-separator"></div>
+              <div data-slot="menubar-group">
+                <div data-slot="menubar-item">Cut</div>
+                <div data-slot="menubar-item">Copy</div>
+                <div data-slot="menubar-item">Paste</div>
+              </div>
+            </div>
+          </div>
+          <div data-slot="menubar-menu">
+            <button type="button" data-slot="menubar-trigger">View</button>
+            <div data-slot="menubar-content" data-behavior="w-44">
+              <div data-slot="menubar-group">
+                <div data-slot="menubar-checkbox-item">Bookmarks Bar</div>
+                <div data-slot="menubar-checkbox-item" data-state="checked">Full URLs</div>
+              </div>
+              <div data-slot="menubar-separator"></div>
+              <div data-slot="menubar-group">
+                <div data-slot="menubar-item" data-inset>Reload <span data-slot="menubar-shortcut">⌘R</span></div>
+                <div data-slot="menubar-item" data-inset data-disabled>Force Reload <span data-slot="menubar-shortcut">⇧⌘R</span></div>
+              </div>
+              <div data-slot="menubar-separator"></div>
+              <div data-slot="menubar-group">
+                <div data-slot="menubar-item" data-inset>Toggle Fullscreen</div>
+              </div>
+              <div data-slot="menubar-separator"></div>
+              <div data-slot="menubar-group">
+                <div data-slot="menubar-item" data-inset>Hide Sidebar</div>
+              </div>
+            </div>
+          </div>
+          <div data-slot="menubar-menu">
+            <button type="button" data-slot="menubar-trigger">Profiles</button>
+            <div data-slot="menubar-content">
+              <div data-slot="menubar-radio-group" data-value="benoit">
+                <div data-slot="menubar-radio-item" data-value="andy">Andy</div>
+                <div data-slot="menubar-radio-item" data-value="benoit" data-state="checked">Benoit</div>
+                <div data-slot="menubar-radio-item" data-value="Luis">Luis</div>
+              </div>
+              <div data-slot="menubar-separator"></div>
+              <div data-slot="menubar-group">
+                <div data-slot="menubar-item" data-inset>Edit...</div>
+              </div>
+              <div data-slot="menubar-separator"></div>
+              <div data-slot="menubar-group">
+                <div data-slot="menubar-item" data-inset>Add Profile...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,980 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui split: chat</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../clanker-ui-core.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-chat.min.css">
+  <link rel="modulepreload" href="../../clanker-ui-core.min.js">
+  <script type="module" src="../../clanker-ui-core.min.js"></script>
+  <script type="module" src="../../clanker-ui-chat.min.js"></script>
+</head>
+<body>
+  <main data-split="chat">
+<section id="calendar" data-demo="section">
+        <h3 data-demo="title">Calendar</h3>
+        <p data-demo="description">A date field component that allows users to enter and edit a date. Month and day names come from <code>Intl</code> in the document language, the week starts on Monday, and the grid follows the WAI-ARIA date grid keyboard model.</p>
+        <div data-demo="preview column">
+          <div id="calendar-demo" data-slot="calendar" data-caption-layout="dropdown" data-name="date" aria-label="Pick a date"></div>
+          <p id="calendar-demo-value" data-demo="caption" aria-live="polite">No date selected.</p>
+        </div>
+        <h4 data-demo="subtitle">Range and two months</h4>
+        <p data-demo="caption">Future dates are disabled with <code>data-max</code>. On narrow screens the months stack.</p>
+        <div data-demo="preview column">
+          <div id="calendar-range" data-slot="calendar" data-mode="range" data-months="2" data-value="2026-01-12/2026-02-11" data-max="2026-12-31"></div>
+          <p id="calendar-range-value" data-demo="caption" aria-live="polite">Range: 2026-01-12 to 2026-02-11</p>
+        </div>
+        <h4 data-demo="subtitle">Multiple, min and max, disabled dates</h4>
+        <div data-demo="preview">
+          <div id="calendar-multiple" data-slot="calendar" data-mode="multiple" data-month="2026-03" data-value="2026-03-03 2026-03-10 2026-03-17" data-min="2026-03-02" data-max="2026-04-30" data-disabled-weekdays="0 6"></div>
+          <div id="calendar-booked" data-slot="calendar" data-month="2026-02" data-value="2026-02-03" data-disabled-dates="2026-02-12/2026-02-26"></div>
+        </div>
+        <h4 data-demo="subtitle">Week numbers, Sunday start, and German</h4>
+        <div data-demo="preview">
+          <div id="calendar-weeks" data-slot="calendar" data-month="2026-02" data-value="2026-02-03" data-show-week-number></div>
+          <div id="calendar-sunday" data-slot="calendar" data-button-variant="outline" data-month="2026-10" data-week-start="0" data-outside-days="false" data-fixed-weeks></div>
+          <div id="calendar-german" data-slot="calendar" lang="de" data-month="2026-12" data-caption-layout="dropdown-months" data-value="2026-12-24"></div>
+        </div>
+        <h4 data-demo="subtitle">Custom cell size and form value</h4>
+        <div data-demo="preview">
+          <form id="calendar-form" action="#calendar" data-demo="column">
+            <div id="calendar-large" data-slot="calendar" data-month="2026-12" data-mode="range" data-value="2026-12-08/2026-12-18" data-name="stay"></div>
+            <div data-demo="row">
+              <button type="submit" data-slot="button" data-size="sm">Submit</button>
+              <button type="reset" data-slot="button" data-variant="outline" data-size="sm">Reset</button>
+            </div>
+            <p id="calendar-form-value" data-demo="caption" aria-live="polite">The form sends <code>stay=2026-12-08/2026-12-18</code>.</p>
+          </form>
+        </div>
+      </section>
+<section id="bubble" data-demo="section">
+        <h3 data-demo="title">Bubble</h3>
+        <p data-demo="description">Displays conversational content in a message bubble. Supports variants, alignment, grouping, reactions, and collapsible content.</p>
+        <div data-demo="preview">
+          <div id="bubble-demo" data-demo="medium">
+            <div data-slot="bubble" data-align="end">
+              <div data-slot="bubble-content">Hey there! what's up?</div>
+            </div>
+            <div data-slot="bubble-group">
+              <div data-slot="bubble" data-variant="muted">
+                <div data-slot="bubble-content">Hey! Want to see chat bubbles?</div>
+              </div>
+              <div data-slot="bubble" data-variant="muted">
+                <div data-slot="bubble-content">I can group messages, switch sides, and keep the whole thread easy to scan.</div>
+                <div data-slot="bubble-reactions" role="img" aria-label="Reaction: thumbs up"><span>👍</span></div>
+              </div>
+            </div>
+            <div data-slot="bubble" data-align="end">
+              <div data-slot="bubble-content">Sure. Hit me with your best demo.</div>
+            </div>
+            <div data-slot="bubble" data-variant="muted">
+              <div data-slot="bubble-content">Yes. You are reading a demo that is demoing itself. Very meta. Very on-brand.</div>
+              <div data-slot="bubble-reactions" role="img" aria-label="Reactions: thumbs up, fire, eyes, and 2 more"><span>👍</span><span>🔥</span><span>👀</span><span>+2</span></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Variants</h4>
+        <div data-demo="preview">
+          <div id="bubble-variants" data-demo="medium">
+            <div data-slot="bubble"><div data-slot="bubble-content">This is the default primary bubble.</div></div>
+            <div data-slot="bubble" data-variant="secondary" data-align="end"><div data-slot="bubble-content">This is the secondary variant.</div></div>
+            <div data-slot="bubble" data-variant="muted">
+              <div data-slot="bubble-content">This one is muted. It uses a lower emphasis color for the chat bubble.</div>
+              <div data-slot="bubble-reactions" role="img" aria-label="Reaction: thumbs up"><span>👍</span></div>
+            </div>
+            <div data-slot="bubble" data-variant="tinted" data-align="end"><div data-slot="bubble-content">This one is tinted. The tint is a softer color derived from the primary color.</div></div>
+            <div data-slot="bubble" data-variant="outline"><div data-slot="bubble-content">We can also use an outlined variant.</div></div>
+            <div data-slot="bubble" data-variant="destructive" data-align="end">
+              <div data-slot="bubble-content">Or a destructive variant with a reaction.</div>
+              <div data-slot="bubble-reactions" role="img" aria-label="Reaction: fire"><span>🔥</span></div>
+            </div>
+            <div data-slot="bubble" data-variant="ghost">
+              <div data-slot="bubble-content" data-typography>
+                <p>Ghost bubbles work for assistant text, <strong>markdown</strong>, and other content that should not be framed.</p>
+                <p>This is perfect for assistant messages that take the full width of the container. You can also render <code>code</code> in it.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Alignment and group</h4>
+        <div data-demo="preview">
+          <div id="bubble-group" data-demo="medium">
+            <div data-slot="bubble" data-variant="muted"><div data-slot="bubble-content">Can you tell me what's the issue?</div></div>
+            <div data-slot="bubble-group">
+              <div data-slot="bubble" data-align="end"><div data-slot="bubble-content">You tell me!</div></div>
+              <div data-slot="bubble" data-align="end"><div data-slot="bubble-content">It worked yesterday. You broke it!</div></div>
+              <div data-slot="bubble" data-align="end">
+                <div data-slot="bubble-content">Find the bug and fix it.</div>
+                <div data-slot="bubble-reactions" data-align="start" role="img" aria-label="Reactions: eyes"><span>👀</span></div>
+              </div>
+            </div>
+            <div data-slot="bubble" data-variant="muted"><div data-slot="bubble-content">Want me to diff yesterday's you against today's you? It's a bit embarrassing.</div></div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Links and buttons</h4>
+        <div data-demo="preview column">
+          <div id="bubble-buttons" data-demo="medium">
+            <div data-slot="bubble" data-variant="muted"><div data-slot="bubble-content">How can I help you today?</div></div>
+            <div data-slot="bubble-group">
+              <div data-slot="bubble" data-variant="tinted" data-align="end"><button type="button" data-slot="bubble-content">I forgot my password</button></div>
+              <div data-slot="bubble" data-variant="tinted" data-align="end"><button type="button" data-slot="bubble-content">I need help with my subscription</button></div>
+              <div data-slot="bubble" data-variant="tinted" data-align="end"><a data-slot="bubble-content" href="#bubble">Something else. Talk to a human.</a></div>
+            </div>
+          </div>
+          <p id="bubble-status" data-demo="caption" aria-live="polite">Pick a reply.</p>
+        </div>
+        <h4 data-demo="subtitle">Reactions</h4>
+        <div data-demo="preview">
+          <div id="bubble-reactions" data-demo="medium">
+            <div data-slot="bubble" data-variant="muted" data-align="end">
+              <div data-slot="bubble-content">I don't need tests, I know my code works.</div>
+              <div data-slot="bubble-reactions" data-align="start" role="img" aria-label="Reactions: thumbs up, surprised"><span>👍</span><span>😮</span></div>
+            </div>
+            <div data-slot="bubble" data-variant="muted">
+              <div data-slot="bubble-content">Bold. Fine I'll add some tests. I'll let you know when they're done.</div>
+              <div data-slot="bubble-reactions" role="img" aria-label="Reactions: eyes, rocket, and 2 more"><span>👀</span><span>🚀</span><span>+2</span></div>
+            </div>
+            <div data-slot="bubble" data-align="end">
+              <div data-slot="bubble-content">Tests passed on the first try. All 142 of them. Looking good!</div>
+              <div data-slot="bubble-reactions" data-side="top" data-align="start" role="img" aria-label="Reactions: party popper, clapping hands"><span>🎉</span><span>👏</span></div>
+            </div>
+            <div data-slot="bubble" data-variant="destructive">
+              <div data-slot="bubble-content">Are you sure I can run this command?</div>
+              <div data-slot="bubble-reactions"><button type="button" data-slot="button" data-variant="ghost" data-size="xs" id="bubble-run">Yes, run it</button></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Show more</h4>
+        <div data-demo="preview">
+          <div id="bubble-more" data-demo="medium">
+            <div data-slot="bubble" data-variant="muted"><div data-slot="bubble-content">How can I help you today?</div></div>
+            <div data-slot="bubble" data-variant="muted" data-align="end">
+              <div data-slot="bubble-content">
+                <div id="bubble-more-text">The accessibility review found two focus states that were visually too subtle in dark mode. I checked the dialog, menu, and drawer paths because each one renders focusable controls inside a layered surface...</div>
+                <button type="button" data-slot="button" data-variant="link" id="bubble-more-toggle" aria-expanded="false" aria-controls="bubble-more-text">Show more<svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="marker" data-demo="section">
+        <h3 data-demo="title">Marker</h3>
+        <p data-demo="description">Displays an inline status, system note, bordered row, or labeled separator in a conversation.</p>
+        <div data-demo="preview">
+          <div id="marker-demo" data-demo="stack medium">
+            <div data-slot="marker">
+              <span data-slot="marker-icon" aria-hidden="true"><svg data-lucide="git-branch"></svg></span>
+              <span data-slot="marker-content">Switched to a new branch</span>
+            </div>
+            <div data-slot="marker" role="status">
+              <span data-slot="marker-icon" aria-hidden="true"><svg data-lucide="loader-circle" data-demo="spin"></svg></span>
+              <span data-slot="marker-content" class="shimmer">Thinking...</span>
+            </div>
+            <div data-slot="marker" data-variant="separator">
+              <span data-slot="marker-content">Conversation compacted</span>
+            </div>
+            <div data-slot="marker">
+              <span data-slot="marker-icon" aria-hidden="true"><svg data-lucide="search"></svg></span>
+              <span data-slot="marker-content">Explored 4 files</span>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Variants</h4>
+        <div data-demo="preview">
+          <div id="marker-variants" data-demo="stack medium">
+            <div data-slot="marker"><span data-slot="marker-content">A default marker for inline notes.</span></div>
+            <div data-slot="marker" data-variant="separator"><span data-slot="marker-content">A separator marker</span></div>
+            <div data-slot="marker" data-variant="border"><span data-slot="marker-content">A border marker for row boundaries.</span></div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Status and shimmer</h4>
+        <div data-demo="preview">
+          <div id="marker-status" data-demo="stack medium">
+            <div data-slot="marker" role="status">
+              <span data-slot="marker-icon" aria-hidden="true"><svg data-lucide="loader-circle" data-demo="spin"></svg></span>
+              <span data-slot="marker-content">Compacting conversation</span>
+            </div>
+            <div data-slot="marker" data-variant="separator" role="status">
+              <span data-slot="marker-icon" aria-hidden="true"><svg data-lucide="loader-circle" data-demo="spin"></svg></span>
+              <span data-slot="marker-content">Running tests</span>
+            </div>
+            <div data-slot="marker" role="status"><span data-slot="marker-content" class="shimmer">Generating response...</span></div>
+            <div data-slot="marker" data-variant="separator" role="status"><span data-slot="marker-content" class="shimmer">Reading 4 files</span></div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Separator, border, and icon</h4>
+        <div data-demo="preview">
+          <div id="marker-separator" data-demo="stack medium">
+            <div data-slot="marker" data-variant="separator"><span data-slot="marker-content">Today</span></div>
+            <div data-slot="marker" data-variant="separator"><span data-slot="marker-content">Worked for 42s</span></div>
+            <div data-slot="marker" data-variant="border">
+              <span data-slot="marker-icon" aria-hidden="true"><svg data-lucide="search"></svg></span>
+              <span data-slot="marker-content">Reviewed 8 related files</span>
+            </div>
+            <div data-slot="marker" data-variant="border">
+              <span data-slot="marker-icon" aria-hidden="true"><svg data-lucide="file-text"></svg></span>
+              <span data-slot="marker-content">Opened implementation notes</span>
+            </div>
+            <div data-slot="marker" data-demo="column" id="marker-stacked">
+              <span data-slot="marker-icon" aria-hidden="true"><svg data-lucide="circle-check"></svg></span>
+              <span data-slot="marker-content">Syncing completed</span>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Links and buttons</h4>
+        <div data-demo="preview column">
+          <div id="marker-links" data-demo="stack medium">
+            <a data-slot="marker" href="#marker">
+              <span data-slot="marker-icon" aria-hidden="true"><svg data-lucide="git-branch"></svg></span>
+              <span data-slot="marker-content">View the pull request</span>
+            </a>
+            <button type="button" data-slot="marker" id="marker-revert">
+              <span data-slot="marker-icon" aria-hidden="true"><svg data-lucide="rotate-ccw"></svg></span>
+              <span data-slot="marker-content">Revert this change</span>
+            </button>
+          </div>
+          <p id="marker-status-text" data-demo="caption" aria-live="polite"></p>
+        </div>
+      </section>
+<section id="code-block" data-demo="section">
+        <h3 data-demo="title">Code Block</h3>
+        <p data-demo="description">Displays code, terminal output and diffs with an optional header, line numbers and a copy button. Plain monospace text, no highlighter.</p>
+        <div data-demo="preview full">
+          <div id="code-block-header" data-slot="code-block">
+            <div data-slot="code-block-header">
+              <div data-slot="code-block-title"><svg data-lucide="file-text"></svg>lib/auth/redirect.ts</div>
+              <div data-slot="code-block-actions">
+                <button type="button" data-slot="code-block-copy-button" data-variant="ghost" data-size="icon-xs" aria-label="Copy"><svg data-lucide="copy"></svg></button>
+              </div>
+            </div>
+            <pre data-slot="code-block-content"><code data-slot="code-block-code">export function safeRedirect(next: string | undefined) {
+  if (!next || !next.startsWith("/") || next.startsWith("//")) {
+    return "/"
+  }
+
+  return next
+}
+</code></pre>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Basic and floating actions</h4>
+        <p data-demo="caption">Without a header, the actions float at the top end and show on hover or focus.</p>
+        <div data-demo="preview full">
+          <div id="code-block-basic" data-demo="stack">
+            <div data-slot="code-block">
+              <pre data-slot="code-block-content"><code data-slot="code-block-code">$ pnpm install --frozen-lockfile
+ ERR_PNPM_OUTDATED_LOCKFILE  Cannot install with "frozen-lockfile" because pnpm-lock.yaml is not up to date with package.json
+</code></pre>
+            </div>
+            <div id="code-block-floating" data-slot="code-block">
+              <div data-slot="code-block-actions">
+                <button type="button" data-slot="code-block-copy-button" data-variant="ghost" data-size="icon-xs" aria-label="Copy"><svg data-lucide="copy"></svg></button>
+              </div>
+              <pre data-slot="code-block-content"><code data-slot="code-block-code">$ node --version
+v24.18.0
+</code></pre>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Actions, line numbers, and wrap</h4>
+        <div data-demo="preview full">
+          <div id="code-block-actions" data-slot="code-block">
+            <div data-slot="code-block-header">
+              <div data-slot="code-block-title"><svg data-lucide="terminal"></svg>build.log</div>
+              <div data-slot="code-block-actions">
+                <button type="button" data-slot="code-block-wrap-button" data-variant="ghost" data-size="icon-xs" aria-label="Wrap lines"><svg data-lucide="text-wrap"></svg></button>
+                <button type="button" data-slot="code-block-copy-button" data-variant="ghost" data-size="icon-xs" aria-label="Copy"><svg data-lucide="copy"></svg></button>
+              </div>
+            </div>
+            <pre data-slot="code-block-content" data-numbered="true"><code data-slot="code-block-code">Running "build" in apps/web
+info  - Linting and checking validity of types, this can take a while on larger projects with many workspaces
+info  - Creating an optimized production build
+
+warn  - Image optimization is running on every deploy because the cache key includes the commit hash: images/hero.png, images/team.png, images/office.png
+done  - Compiled successfully in 41.2s
+</code></pre>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Start line, highlighted lines, and diff</h4>
+        <div data-demo="preview full">
+          <div id="code-block-lines" data-demo="stack">
+            <div data-slot="code-block">
+              <div data-slot="code-block-header">
+                <div data-slot="code-block-title">app/login/page.tsx</div>
+              </div>
+              <pre data-slot="code-block-content" data-numbered="true" data-start-line="14"><code data-slot="code-block-code"><span data-slot="code-block-line">  const { next } = await searchParams</span>
+<span data-slot="code-block-line" data-variant="highlighted">  const redirectTo = safeRedirect(next)</span>
+<span data-slot="code-block-line"></span>
+<span data-slot="code-block-line">  return &lt;LoginForm redirectTo={redirectTo} /&gt;</span></code></pre>
+            </div>
+            <div id="code-block-diff" data-slot="code-block">
+              <div data-slot="code-block-header">
+                <div data-slot="code-block-title">app/login/page.tsx</div>
+                <div data-slot="code-block-actions">
+                  <button type="button" data-slot="code-block-copy-button" data-variant="ghost" data-size="icon-xs" aria-label="Copy"><svg data-lucide="copy"></svg></button>
+                </div>
+              </div>
+              <pre data-slot="code-block-content"><code data-slot="code-block-code"><span data-slot="code-block-line">  const { next } = await searchParams</span>
+<span data-slot="code-block-line" data-variant="removed">  const redirectTo =</span>
+<span data-slot="code-block-line" data-variant="removed">    next &amp;&amp; next.startsWith("/") ? next : "/"</span>
+<span data-slot="code-block-line" data-variant="added">  const redirectTo = safeRedirect(next)</span>
+<span data-slot="code-block-line" data-variant="added"></span>
+<span data-slot="code-block-line">  return &lt;LoginForm redirectTo={redirectTo} /&gt;</span></code></pre>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Height and show more</h4>
+        <div data-demo="preview full">
+          <div id="code-block-more" data-slot="code-block">
+            <div data-slot="code-block-header">
+              <div data-slot="code-block-title">package.json</div>
+            </div>
+            <pre id="code-block-more-content" data-slot="code-block-content" data-numbered="true" data-collapsed><code data-slot="code-block-code">{
+  "name": "web",
+  "private": true,
+  "packageManager": "pnpm@10.18.0",
+  "scripts": {
+    "dev": "next dev --turbo",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "next": "16.1.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "eslint": "9.38.0",
+    "typescript": "5.9.3",
+    "vitest": "4.0.4"
+  }
+}
+</code></pre>
+            <div data-slot="code-block-footer">
+              <button type="button" data-slot="button" data-variant="ghost" data-size="xs" id="code-block-more-toggle" aria-expanded="false" aria-controls="code-block-more-content">Show more<svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Small and destructive</h4>
+        <div data-demo="preview full">
+          <div id="code-block-small" data-demo="stack">
+            <div data-slot="code-block" data-size="sm">
+              <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">$ pnpm --version
+10.18.0</code></pre>
+            </div>
+            <div data-slot="code-block" data-size="sm" data-variant="destructive">
+              <div data-slot="code-block-header">
+                <div data-slot="code-block-title"><svg data-lucide="circle-alert"></svg>Command failed with exit code 1</div>
+              </div>
+              <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">ERR_PNPM_OUTDATED_LOCKFILE  Cannot install with "frozen-lockfile" because pnpm-lock.yaml is not up to date with package.json</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="trace" data-demo="section">
+        <h3 data-demo="title">Trace</h3>
+        <p data-demo="description">The building block for reasoning, tool calls, sources and more. A trace is a list of lines; a line can expand, link to a page, or open a dialog.</p>
+        <div data-demo="preview column">
+          <div id="trace-demo" data-demo="medium">
+            <div data-slot="message" data-align="end">
+              <div data-slot="message-content">
+                <div data-slot="bubble" data-variant="muted" data-align="end"><div data-slot="bubble-content">Why does pnpm install fail in CI?</div></div>
+              </div>
+            </div>
+            <div data-slot="message">
+              <div data-slot="message-content" id="trace-demo-content">
+                <div data-slot="trace" id="trace-demo-trace">
+                  <div data-slot="trace-collapsible" id="trace-thinking">
+                    <button type="button" data-slot="trace-collapsible-trigger">
+                      <span data-slot="trace-line" id="trace-thinking-line">
+                        <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                        <span data-slot="trace-title">Thought for 5s</span>
+                      </span>
+                    </button>
+                    <div data-slot="trace-collapsible-content">CI installs with a frozen lockfile, so the install stops when package.json and pnpm-lock.yaml disagree. I should check what the last commit changed, then reproduce the install.</div>
+                  </div>
+                  <div data-slot="trace-collapsible" id="trace-version">
+                    <button type="button" data-slot="trace-collapsible-trigger">
+                      <span data-slot="trace-line">
+                        <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                        <span data-slot="trace-title">Ran pnpm --version</span>
+                      </span>
+                    </button>
+                    <div data-slot="trace-collapsible-content">
+                      <div data-slot="code-block" data-size="sm">
+                        <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">10.18.0</code></pre>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-slot="trace-collapsible" id="trace-install" data-default-open>
+                    <button type="button" data-slot="trace-collapsible-trigger">
+                      <span data-slot="trace-line" data-status="error">
+                        <span data-slot="trace-icon"><svg data-lucide="circle-alert"></svg></span>
+                        <span data-slot="trace-title">Failed to run pnpm install --frozen-lockfile</span>
+                      </span>
+                    </button>
+                    <div data-slot="trace-collapsible-content">
+                      <div data-slot="code-block" data-size="sm" data-variant="destructive">
+                        <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">ERR_PNPM_OUTDATED_LOCKFILE  Cannot install with "frozen-lockfile" because pnpm-lock.yaml is not up to date with package.json</code></pre>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-slot="trace-collapsible" id="trace-sources">
+                    <button type="button" data-slot="trace-collapsible-trigger">
+                      <span data-slot="trace-line">
+                        <span data-slot="trace-icon"><svg data-lucide="globe"></svg></span>
+                        <span data-slot="trace-title">Used 2 sources</span>
+                      </span>
+                    </button>
+                    <div data-slot="trace-collapsible-content">
+                      <div data-slot="trace">
+                        <a href="https://pnpm.io/cli/install#--frozen-lockfile" target="_blank" rel="noreferrer">
+                          <span data-slot="trace-line">
+                            <span data-slot="trace-icon"><svg data-lucide="globe"></svg></span>
+                            <span data-slot="trace-title">pnpm install | pnpm.io<span class="sr-only"> (opens in a new tab)</span></span>
+                            <span data-slot="trace-icon"><svg data-lucide="arrow-up-right"></svg></span>
+                          </span>
+                        </a>
+                        <a href="https://pnpm.io/continuous-integration" target="_blank" rel="noreferrer">
+                          <span data-slot="trace-line">
+                            <span data-slot="trace-icon"><svg data-lucide="globe"></svg></span>
+                            <span data-slot="trace-title">Continuous Integration | pnpm.io<span class="sr-only"> (opens in a new tab)</span></span>
+                            <span data-slot="trace-icon"><svg data-lucide="arrow-up-right"></svg></span>
+                          </span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p id="trace-demo-answer">The last commit bumped a version in package.json without updating pnpm-lock.yaml, so the frozen install fails. Run pnpm install locally and commit the lockfile.</p>
+              </div>
+            </div>
+          </div>
+          <button type="button" data-slot="button" data-variant="outline" data-size="sm" id="trace-replay">Replay</button>
+        </div>
+        <h4 data-demo="subtitle">Status and description</h4>
+        <div data-demo="preview">
+          <div id="trace-status" data-slot="trace" data-demo="medium">
+            <span data-slot="trace-line">
+              <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+              <span data-slot="trace-title">Ran pnpm install</span>
+              <span data-slot="trace-description">14s</span>
+            </span>
+            <span data-slot="trace-line" data-status="error">
+              <span data-slot="trace-icon"><svg data-lucide="circle-alert"></svg></span>
+              <span data-slot="trace-title">Failed to run pnpm lint</span>
+            </span>
+            <span data-slot="trace-line" data-status="running">
+              <span data-slot="trace-icon"><svg data-lucide="loader-circle" data-demo="spin"></svg></span>
+              <span data-slot="trace-title">Running pnpm build</span>
+            </span>
+            <span data-slot="trace-line" data-status="pending">
+              <span data-slot="trace-icon"><svg data-lucide="circle"></svg></span>
+              <span data-slot="trace-title">Run pnpm test</span>
+            </span>
+            <span data-slot="trace-line">
+              <span data-slot="trace-icon"><svg data-lucide="file-pen"></svg></span>
+              <span data-slot="trace-title">Edited components/settings/notification-preferences-form.tsx</span>
+              <span data-slot="trace-description" id="trace-diffstat">+48 −12</span>
+            </span>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Open state and links</h4>
+        <div data-demo="preview column">
+          <div id="trace-open" data-slot="trace" data-demo="medium">
+            <div data-slot="trace-collapsible" data-default-open id="trace-node">
+              <button type="button" data-slot="trace-collapsible-trigger">
+                <span data-slot="trace-line">
+                  <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+                  <span data-slot="trace-title">Ran node --version</span>
+                </span>
+              </button>
+              <div data-slot="trace-collapsible-content">
+                <div data-slot="code-block" data-size="sm">
+                  <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">$ node --version
+v24.18.0</code></pre>
+                </div>
+              </div>
+            </div>
+            <div data-slot="trace-collapsible" id="trace-pnpm">
+              <button type="button" data-slot="trace-collapsible-trigger">
+                <span data-slot="trace-line">
+                  <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+                  <span data-slot="trace-title">Ran pnpm --version</span>
+                </span>
+              </button>
+              <div data-slot="trace-collapsible-content">
+                <div data-slot="code-block" data-size="sm">
+                  <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">$ pnpm --version
+10.33.4</code></pre>
+                </div>
+              </div>
+            </div>
+            <a href="#trace">
+              <span data-slot="trace-line">
+                <span data-slot="trace-icon"><svg data-lucide="file-text"></svg></span>
+                <span data-slot="trace-title">Read apps/v4/lib/docs.ts</span>
+                <span data-slot="trace-icon"><svg data-lucide="chevron-right"></svg></span>
+              </span>
+            </a>
+          </div>
+          <button type="button" data-slot="button" data-variant="outline" data-size="sm" id="trace-pnpm-toggle">Show the pnpm output</button>
+        </div>
+        <h4 data-demo="subtitle">Chain of thought and commit</h4>
+        <div data-demo="preview">
+          <div id="trace-chain" data-demo="stack medium">
+            <div data-slot="trace-collapsible" data-default-open>
+              <button type="button" data-slot="trace-collapsible-trigger">
+                <span data-slot="trace-line" data-status="running">
+                  <span data-slot="trace-title">Looking into the slow deploy</span>
+                </span>
+              </button>
+              <div data-slot="trace-collapsible-content">
+                <div data-slot="trace">
+                  <span data-slot="trace-line">
+                    <span data-slot="trace-icon"><svg data-lucide="search"></svg></span>
+                    <span data-slot="trace-title">Searched for the checkout build log</span>
+                  </span>
+                  <a href="#trace">
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="file-text"></svg></span>
+                      <span data-slot="trace-title">Read the last twelve deploys</span>
+                      <span data-slot="trace-icon"><svg data-lucide="chevron-right"></svg></span>
+                    </span>
+                  </a>
+                  <span data-slot="trace-line" data-status="running">
+                    <span data-slot="trace-icon"><svg data-lucide="search"></svg></span>
+                    <span data-slot="trace-title">Searching for the cache key</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div data-slot="trace">
+              <div data-slot="trace-collapsible" data-default-open>
+                <button type="button" data-slot="trace-collapsible-trigger">
+                  <span data-slot="trace-line">
+                    <span data-slot="trace-icon"><svg data-lucide="git-commit-horizontal"></svg></span>
+                    <span data-slot="trace-title">Committed a1b2c3: Fix the login redirect</span>
+                  </span>
+                </button>
+                <div data-slot="trace-collapsible-content">
+                  <div data-slot="trace">
+                    <div data-slot="trace-collapsible">
+                      <button type="button" data-slot="trace-collapsible-trigger">
+                        <span data-slot="trace-line">
+                          <span data-slot="trace-icon"><svg data-lucide="file-pen"></svg></span>
+                          <span data-slot="trace-title">Edited app/login/page.tsx</span>
+                          <span data-slot="trace-description">+2 −2</span>
+                        </span>
+                      </button>
+                      <div data-slot="trace-collapsible-content">
+                        <div data-slot="code-block" data-size="sm">
+                          <pre data-slot="code-block-content"><code data-slot="code-block-code"><span data-slot="code-block-line" data-variant="removed">  const redirectTo =</span>
+<span data-slot="code-block-line" data-variant="removed">    next &amp;&amp; next.startsWith("/") ? next : "/"</span>
+<span data-slot="code-block-line" data-variant="added">  const redirectTo = safeRedirect(next)</span>
+<span data-slot="code-block-line" data-variant="added"></span></code></pre>
+                        </div>
+                      </div>
+                    </div>
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="file-plus"></svg></span>
+                      <span data-slot="trace-title">Added lib/auth/redirect.ts</span>
+                      <span data-slot="trace-description">+7 −0</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="attachment" data-demo="section">
+        <h3 data-demo="title">Attachment</h3>
+        <p data-demo="description">Displays a file or image attachment with media, metadata, upload state, and actions. Use it for files and images in chat composers, message threads, and upload lists.</p>
+        <div data-demo="preview">
+          <div id="attachment-demo" data-demo="stack medium">
+            <div data-slot="attachment-group" role="group" aria-label="Reference images" tabindex="0">
+              <div data-slot="attachment" data-orientation="vertical">
+                <div data-slot="attachment-media" data-variant="image"><img src="../../demo/assets/g4-workspace.svg" alt="Workspace" width="96" height="96"></div>
+                <div data-slot="attachment-content">
+                  <span data-slot="attachment-title">workspace.png</span>
+                  <span data-slot="attachment-description">PNG · 820 KB</span>
+                </div>
+              </div>
+              <div data-slot="attachment" data-orientation="vertical">
+                <div data-slot="attachment-media" data-variant="image"><img src="../../demo/assets/g4-desk.svg" alt="Desk" width="96" height="96"></div>
+                <div data-slot="attachment-content">
+                  <span data-slot="attachment-title">desk-reference.jpg</span>
+                  <span data-slot="attachment-description">JPG · 1.1 MB</span>
+                </div>
+              </div>
+              <div data-slot="attachment" data-orientation="vertical">
+                <div data-slot="attachment-media" data-variant="image"><img src="../../demo/assets/g4-office.svg" alt="Office" width="96" height="96"></div>
+                <div data-slot="attachment-content">
+                  <span data-slot="attachment-title">office-reference.jpg</span>
+                  <span data-slot="attachment-description">JPG · 940 KB</span>
+                </div>
+              </div>
+            </div>
+            <div data-slot="attachment" data-state="uploading">
+              <div data-slot="attachment-media"><svg data-lucide="loader-circle" data-demo="spin" role="status" aria-label="Uploading"></svg></div>
+              <div data-slot="attachment-content">
+                <span data-slot="attachment-title">sales-dashboard.pdf</span>
+                <span data-slot="attachment-description">Uploading · 64%</span>
+              </div>
+              <div data-slot="attachment-actions">
+                <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Cancel upload"><svg data-lucide="x"></svg></button>
+              </div>
+            </div>
+            <div data-slot="attachment">
+              <div data-slot="attachment-media"><svg data-lucide="file-code"></svg></div>
+              <div data-slot="attachment-content">
+                <span data-slot="attachment-title">message-renderer.tsx</span>
+                <span data-slot="attachment-description">TypeScript · 12 KB</span>
+              </div>
+              <div data-slot="attachment-actions">
+                <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Remove message-renderer.tsx" data-attachment-remove><svg data-lucide="x"></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">States</h4>
+        <div data-demo="preview">
+          <div id="attachment-states" data-demo="stack medium">
+            <div data-slot="attachment" data-state="idle">
+              <div data-slot="attachment-media"><svg data-lucide="clock"></svg></div>
+              <div data-slot="attachment-content">
+                <span data-slot="attachment-title">selected-file.pdf</span>
+                <span data-slot="attachment-description">Ready to upload</span>
+              </div>
+              <div data-slot="attachment-actions">
+                <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Remove selected-file.pdf"><svg data-lucide="x"></svg></button>
+              </div>
+            </div>
+            <div data-slot="attachment" data-state="uploading">
+              <div data-slot="attachment-media"><svg data-lucide="loader-circle" data-demo="spin" role="status" aria-label="Uploading"></svg></div>
+              <div data-slot="attachment-content">
+                <span data-slot="attachment-title">design-system.zip</span>
+                <span data-slot="attachment-description">Uploading · 64%</span>
+              </div>
+              <div data-slot="attachment-actions">
+                <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Cancel upload"><svg data-lucide="x"></svg></button>
+              </div>
+            </div>
+            <div data-slot="attachment" data-state="processing">
+              <div data-slot="attachment-media"><svg data-lucide="file-text"></svg></div>
+              <div data-slot="attachment-content">
+                <span data-slot="attachment-title">market-research.pdf</span>
+                <span data-slot="attachment-description">Processing document</span>
+              </div>
+              <div data-slot="attachment-actions">
+                <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Remove market-research.pdf"><svg data-lucide="x"></svg></button>
+              </div>
+            </div>
+            <div data-slot="attachment" data-state="error">
+              <div data-slot="attachment-media"><svg data-lucide="triangle-alert"></svg></div>
+              <div data-slot="attachment-content">
+                <span data-slot="attachment-title">financial-model.xlsx</span>
+                <span data-slot="attachment-description">Upload failed. Try again.</span>
+              </div>
+              <div data-slot="attachment-actions">
+                <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Retry upload"><svg data-lucide="refresh-cw"></svg></button>
+                <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Remove financial-model.xlsx"><svg data-lucide="x"></svg></button>
+              </div>
+            </div>
+            <div data-slot="attachment" data-state="done">
+              <div data-slot="attachment-media"><svg data-lucide="check"></svg></div>
+              <div data-slot="attachment-content">
+                <span data-slot="attachment-title">uploaded-report.pdf</span>
+                <span data-slot="attachment-description">Uploaded · 1.8 MB</span>
+              </div>
+              <div data-slot="attachment-actions">
+                <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Remove uploaded-report.pdf"><svg data-lucide="x"></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Sizes</h4>
+        <div data-demo="preview">
+          <div id="attachment-sizes" data-demo="stack medium">
+            <div data-slot="attachment" data-size="default">
+              <div data-slot="attachment-media"><svg data-lucide="file-text"></svg></div>
+              <div data-slot="attachment-content">
+                <span data-slot="attachment-title">Default attachment</span>
+                <span data-slot="attachment-description">PDF · 2.4 MB</span>
+              </div>
+            </div>
+            <div data-slot="attachment" data-size="sm">
+              <div data-slot="attachment-media"><svg data-lucide="file-text"></svg></div>
+              <div data-slot="attachment-content">
+                <span data-slot="attachment-title">Small attachment</span>
+                <span data-slot="attachment-description">PDF · 2.4 MB</span>
+              </div>
+            </div>
+            <div data-slot="attachment" data-size="xs">
+              <div data-slot="attachment-media"><svg data-lucide="file-text"></svg></div>
+              <div data-slot="attachment-content">
+                <span data-slot="attachment-title">Extra small attachment</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Image and trigger</h4>
+        <p data-demo="caption">An <code>attachment-trigger</code> fills the card behind the actions. Here it is a link to the image; the remove action stays clickable above it.</p>
+        <div data-demo="preview">
+          <div id="attachment-images" data-demo="medium">
+            <div data-slot="attachment-group" role="group" aria-label="Uploaded images">
+              <div data-slot="attachment" data-orientation="vertical">
+                <div data-slot="attachment-media" data-variant="image"><img src="../../demo/assets/g4-workspace.svg" alt="Workspace" width="96" height="96"></div>
+                <div data-slot="attachment-content">
+                  <span data-slot="attachment-title">workspace.png</span>
+                  <span data-slot="attachment-description">PNG · 820 KB</span>
+                </div>
+                <div data-slot="attachment-actions">
+                  <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Remove workspace.png" data-attachment-remove><svg data-lucide="x"></svg></button>
+                </div>
+                <a data-slot="attachment-trigger" href="demo/assets/g4-workspace.svg" target="_blank" rel="noreferrer" aria-label="Open workspace.png"></a>
+              </div>
+              <div data-slot="attachment" data-orientation="vertical">
+                <div data-slot="attachment-media" data-variant="image"><img src="../../demo/assets/g4-desk.svg" alt="Desk" width="96" height="96"></div>
+                <div data-slot="attachment-content">
+                  <span data-slot="attachment-title">desk-reference.jpg</span>
+                  <span data-slot="attachment-description">JPG · 1.1 MB</span>
+                </div>
+                <div data-slot="attachment-actions">
+                  <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Remove desk-reference.jpg" data-attachment-remove><svg data-lucide="x"></svg></button>
+                </div>
+                <a data-slot="attachment-trigger" href="demo/assets/g4-desk.svg" target="_blank" rel="noreferrer" aria-label="Open desk-reference.jpg"></a>
+              </div>
+              <div data-slot="attachment" data-orientation="vertical" data-state="uploading">
+                <div data-slot="attachment-media" data-variant="image"><img src="../../demo/assets/g4-office.svg" alt="Office" width="96" height="96"></div>
+                <div data-slot="attachment-content">
+                  <span data-slot="attachment-title">office-reference.jpg</span>
+                  <span data-slot="attachment-description">Uploading · 30%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Group</h4>
+        <div data-demo="preview">
+          <div id="attachment-group" data-demo="medium">
+            <div data-slot="attachment-group" role="group" aria-label="Files" tabindex="0">
+              <div data-slot="attachment">
+                <div data-slot="attachment-media"><svg data-lucide="file-text"></svg></div>
+                <div data-slot="attachment-content">
+                  <span data-slot="attachment-title">briefing-notes.pdf</span>
+                  <span data-slot="attachment-description">PDF · 1.4 MB</span>
+                </div>
+                <div data-slot="attachment-actions">
+                  <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Remove briefing-notes.pdf" data-attachment-remove><svg data-lucide="x"></svg></button>
+                </div>
+              </div>
+              <div data-slot="attachment">
+                <div data-slot="attachment-media" data-variant="image"><img src="../../demo/assets/g4-workspace.svg" alt="workspace.png" width="40" height="40"></div>
+                <div data-slot="attachment-content">
+                  <span data-slot="attachment-title">workspace.png</span>
+                  <span data-slot="attachment-description">PNG · 820 KB</span>
+                </div>
+                <div data-slot="attachment-actions">
+                  <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Remove workspace.png" data-attachment-remove><svg data-lucide="x"></svg></button>
+                </div>
+              </div>
+              <div data-slot="attachment">
+                <div data-slot="attachment-media"><svg data-lucide="table"></svg></div>
+                <div data-slot="attachment-content">
+                  <span data-slot="attachment-title">customers.csv</span>
+                  <span data-slot="attachment-description">CSV · 18 KB</span>
+                </div>
+                <div data-slot="attachment-actions">
+                  <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Remove customers.csv" data-attachment-remove><svg data-lucide="x"></svg></button>
+                </div>
+              </div>
+              <div data-slot="attachment">
+                <div data-slot="attachment-media"><svg data-lucide="code"></svg></div>
+                <div data-slot="attachment-content">
+                  <span data-slot="attachment-title">renderer.tsx</span>
+                  <span data-slot="attachment-description">TSX · 12 KB</span>
+                </div>
+                <div data-slot="attachment-actions">
+                  <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Remove renderer.tsx" data-attachment-remove><svg data-lucide="x"></svg></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Button trigger</h4>
+        <div data-demo="preview column">
+          <div id="attachment-trigger" data-demo="medium">
+            <div data-slot="attachment">
+              <div data-slot="attachment-media"><svg data-lucide="folder-search"></svg></div>
+              <div data-slot="attachment-content">
+                <span data-slot="attachment-title">research-summary.pdf</span>
+                <span data-slot="attachment-description">Open preview</span>
+              </div>
+              <div data-slot="attachment-actions">
+                <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Copy link" id="attachment-copy-link"><svg data-lucide="link"></svg></button>
+                <button type="button" data-slot="attachment-action" data-variant="ghost" data-size="icon-xs" aria-label="Remove research-summary.pdf" data-attachment-remove><svg data-lucide="x"></svg></button>
+              </div>
+              <button type="button" data-slot="attachment-trigger" id="attachment-preview" aria-label="Preview research-summary.pdf"></button>
+            </div>
+          </div>
+          <p id="attachment-status" data-demo="caption" aria-live="polite">Click the card or an action.</p>
+        </div>
+      </section>
+<section id="message-scroller" data-demo="section">
+        <h3 data-demo="title">Message Scroller</h3>
+        <p data-demo="description">A chat scroll container that anchors new turns near the top, follows streamed replies while you are at the live edge, keeps your place when you scroll away, and shows a jump-to-latest button.</p>
+        <div data-demo="preview">
+          <div id="message-scroller-chat">
+            <div id="message-scroller-chat-header">
+              <div>
+                <p id="message-scroller-chat-title">New Chat</p>
+                <p id="message-scroller-chat-description">How can I help you today?</p>
+              </div>
+              <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Reset conversation" id="message-scroller-reset"><svg data-lucide="rotate-ccw"></svg></button>
+            </div>
+            <div id="message-scroller-main" data-slot="message-scroller" data-auto-scroll>
+              <div data-slot="message-scroller-viewport" aria-label="Conversation">
+                <div data-slot="message-scroller-content" id="message-scroller-transcript">
+                  <div data-slot="message-scroller-item" data-message-id="m0">
+                    <div data-slot="marker" data-variant="separator"><span data-slot="marker-content">Today</span></div>
+                  </div>
+                  <div data-slot="message-scroller-item" data-message-id="m1" data-scroll-anchor="true">
+                    <div data-slot="message" data-align="end">
+                      <div data-slot="message-content">
+                        <div data-slot="attachment" data-size="sm">
+                          <div data-slot="attachment-media"><svg data-lucide="file-text"></svg></div>
+                          <div data-slot="attachment-content">
+                            <span data-slot="attachment-title">ci-run-4812.log</span>
+                            <span data-slot="attachment-description">Log · 38 KB</span>
+                          </div>
+                        </div>
+                        <div data-slot="bubble"><div data-slot="bubble-content">Why does pnpm install fail in CI? It works on my machine.</div></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-slot="message-scroller-item" data-message-id="m2">
+                    <div data-slot="message">
+                      <div data-slot="message-content">
+                        <div data-slot="trace">
+                          <div data-slot="trace-collapsible">
+                            <button type="button" data-slot="trace-collapsible-trigger">
+                              <span data-slot="trace-line">
+                                <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                                <span data-slot="trace-title">Thought for 4s</span>
+                              </span>
+                            </button>
+                            <div data-slot="trace-collapsible-content">CI installs with a frozen lockfile, so the install stops when package.json and pnpm-lock.yaml disagree. I should check what the last commit changed, then reproduce the install.</div>
+                          </div>
+                          <div data-slot="trace-collapsible">
+                            <button type="button" data-slot="trace-collapsible-trigger">
+                              <span data-slot="trace-line">
+                                <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+                                <span data-slot="trace-title">Ran git diff --stat HEAD~1</span>
+                              </span>
+                            </button>
+                            <div data-slot="trace-collapsible-content">
+                              <div data-slot="code-block" data-size="sm">
+                                <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code"> package.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)</code></pre>
+                              </div>
+                            </div>
+                          </div>
+                          <div data-slot="trace-collapsible" data-default-open>
+                            <button type="button" data-slot="trace-collapsible-trigger">
+                              <span data-slot="trace-line" data-status="error">
+                                <span data-slot="trace-icon"><svg data-lucide="circle-alert"></svg></span>
+                                <span data-slot="trace-title">Failed to run pnpm install --frozen-lockfile</span>
+                              </span>
+                            </button>
+                            <div data-slot="trace-collapsible-content">
+                              <div data-slot="code-block" data-size="sm" data-variant="destructive">
+                                <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">ERR_PNPM_OUTDATED_LOCKFILE  Cannot install with "frozen-lockfile" because pnpm-lock.yaml is not up to date with package.json</code></pre>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div data-slot="bubble" data-variant="ghost">
+                          <div data-slot="bubble-content">The last commit bumped a version in <code>package.json</code> without updating <code>pnpm-lock.yaml</code>, so the frozen install fails. Regenerate the lockfile and commit it:</div>
+                        </div>
+                        <div data-slot="code-block">
+                          <div data-slot="code-block-header">
+                            <div data-slot="code-block-title"><svg data-lucide="terminal"></svg>Terminal</div>
+                            <div data-slot="code-block-actions">
+                              <button type="button" data-slot="code-block-copy-button" data-variant="ghost" data-size="icon-xs" aria-label="Copy"><svg data-lucide="copy"></svg></button>
+                            </div>
+                          </div>
+                          <pre data-slot="code-block-content"><code data-slot="code-block-code">pnpm install
+git add pnpm-lock.yaml
+git commit -m "fix: update lockfile"</code></pre>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-slot="message-scroller-item" data-message-id="m3" data-scroll-anchor="true">
+                    <div data-slot="message" data-align="end">
+                      <div data-slot="message-content">
+                        <div data-slot="bubble"><div data-slot="bubble-content">Can you fix it for me?</div></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-slot="message-scroller-item" data-message-id="m4">
+                    <div data-slot="message">
+                      <div data-slot="message-content">
+                        <div data-slot="bubble" data-variant="ghost"><div data-slot="bubble-content">Sure. One question before I change anything.</div></div>
+                        <form data-slot="questionnaire" id="message-scroller-question" data-shortcuts="letters">
+                          <fieldset data-slot="questionnaire-item" name="lockfile" data-required>
+                            <legend data-slot="questionnaire-title">How should I update the lockfile?</legend>
+                            <div data-slot="questionnaire-choices">
+                              <label data-slot="questionnaire-choice" data-value="regenerate"><span>Regenerate it</span><span data-slot="questionnaire-choice-description">Run pnpm install and commit the result.</span></label>
+                              <label data-slot="questionnaire-choice" data-value="patch"><span>Patch the changed entry</span><span data-slot="questionnaire-choice-description">Keep every other resolution as it is.</span></label>
+                            </div>
+                            <p data-slot="questionnaire-error"></p>
+                          </fieldset>
+                          <div data-slot="questionnaire-actions">
+                            <button type="submit" data-slot="questionnaire-submit" data-size="sm">Continue</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" data-slot="message-scroller-button" data-direction="end"></button>
+            </div>
+            <form id="message-scroller-composer">
+              <label for="message-scroller-input" class="sr-only">Message</label>
+              <textarea id="message-scroller-input" rows="2" placeholder="Ask anything...">How do I stop this from happening again?</textarea>
+              <div id="message-scroller-composer-actions">
+                <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Add files"><svg data-lucide="paperclip"></svg></button>
+                <button type="submit" data-slot="button" data-size="icon-sm" aria-label="Send" id="message-scroller-send"><svg data-lucide="arrow-up"></svg></button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <p data-demo="caption">Scroll up while a reply streams: the view stays put and the arrow button appears. Press it to jump back and follow again.</p>
+        <h4 data-demo="subtitle">Load earlier messages and jump to a message</h4>
+        <div data-demo="preview column">
+          <div id="message-scroller-history-tools" data-demo="row">
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm" id="message-scroller-load">Load earlier</button>
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm" id="message-scroller-jump">Jump to the first question</button>
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm" id="message-scroller-latest">Latest</button>
+          </div>
+          <div id="message-scroller-history" data-slot="message-scroller" data-default-scroll-position="last-anchor">
+            <div data-slot="message-scroller-viewport" aria-label="Message history">
+              <div data-slot="message-scroller-content" id="message-scroller-history-content"></div>
+            </div>
+            <button type="button" data-slot="message-scroller-button" data-direction="start"></button>
+            <button type="button" data-slot="message-scroller-button" data-direction="end"></button>
+          </div>
+        </div>
+      </section>
+  </main>
+</body>
+</html>

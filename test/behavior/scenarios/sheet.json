@@ -1,0 +1,22 @@
+{
+  "parts": {
+    "trigger": {"role": "button", "name": "Open"},
+    "sheet": {"role": "dialog", "popup": true, "edges": true},
+    "close": {"role": "button", "name": "Close", "in": "page", "nth": -1}
+  },
+  "positions": [],
+  "steps": [
+    {"do": "click", "target": "trigger", "motion": "sheet", "ms": 900},
+    {"do": "tab"},
+    {"do": "tab"},
+    {"do": "tab"},
+    {"do": "tab"},
+    {"do": "tab", "label": "tab past the last control"},
+    {"do": "shift_tab"},
+    {"do": "press", "key": "Escape", "motion": "sheet", "ms": 900},
+    {"do": "press", "key": "Enter", "motion": "sheet", "ms": 900},
+    {"do": "click_outside", "motion": "sheet", "ms": 900},
+    {"do": "click", "target": "trigger", "motion": "sheet", "ms": 900, "label": "click trigger again"},
+    {"do": "click", "target": "close", "motion": "sheet", "ms": 900}
+  ]
+}

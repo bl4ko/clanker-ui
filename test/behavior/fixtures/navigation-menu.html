@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Navigation Menu behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page docs-top">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <nav data-slot="navigation-menu">
+          <ul data-slot="navigation-menu-list">
+            <li data-slot="navigation-menu-item" data-value="getting-started">
+              <button type="button" data-slot="navigation-menu-trigger">Getting started</button>
+              <div data-slot="navigation-menu-content">
+                <ul data-behavior="w-96">
+                  <li><a data-slot="navigation-menu-link" href="/docs"><span data-behavior="nav-body"><span data-behavior="nav-title">Introduction</span><span data-behavior="nav-text">Re-usable components built with Tailwind CSS.</span></span></a></li>
+                  <li><a data-slot="navigation-menu-link" href="/docs/installation"><span data-behavior="nav-body"><span data-behavior="nav-title">Installation</span><span data-behavior="nav-text">How to install dependencies and structure your app.</span></span></a></li>
+                  <li><a data-slot="navigation-menu-link" href="/docs/primitives/typography"><span data-behavior="nav-body"><span data-behavior="nav-title">Typography</span><span data-behavior="nav-text">Styles for headings, paragraphs, lists...etc</span></span></a></li>
+                </ul>
+              </div>
+            </li>
+            <li data-slot="navigation-menu-item" data-value="components" data-behavior="md-flex">
+              <button type="button" data-slot="navigation-menu-trigger">Components</button>
+              <div data-slot="navigation-menu-content">
+                <ul data-behavior="nav-grid">
+                  <li><a data-slot="navigation-menu-link" href="/docs/primitives/alert-dialog"><span data-behavior="nav-body"><span data-behavior="nav-title">Alert Dialog</span><span data-behavior="nav-text">A modal dialog that interrupts the user with important content and expects a response.</span></span></a></li>
+                  <li><a data-slot="navigation-menu-link" href="/docs/primitives/hover-card"><span data-behavior="nav-body"><span data-behavior="nav-title">Hover Card</span><span data-behavior="nav-text">For sighted users to preview content available behind a link.</span></span></a></li>
+                  <li><a data-slot="navigation-menu-link" href="/docs/primitives/progress"><span data-behavior="nav-body"><span data-behavior="nav-title">Progress</span><span data-behavior="nav-text">Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.</span></span></a></li>
+                  <li><a data-slot="navigation-menu-link" href="/docs/primitives/scroll-area"><span data-behavior="nav-body"><span data-behavior="nav-title">Scroll-area</span><span data-behavior="nav-text">Visually or semantically separates content.</span></span></a></li>
+                  <li><a data-slot="navigation-menu-link" href="/docs/primitives/tabs"><span data-behavior="nav-body"><span data-behavior="nav-title">Tabs</span><span data-behavior="nav-text">A set of layered sections of content—known as tab panels—that are displayed one at a time.</span></span></a></li>
+                  <li><a data-slot="navigation-menu-link" href="/docs/primitives/tooltip"><span data-behavior="nav-body"><span data-behavior="nav-title">Tooltip</span><span data-behavior="nav-text">A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.</span></span></a></li>
+                </ul>
+              </div>
+            </li>
+            <li data-slot="navigation-menu-item" data-value="with-icon">
+              <button type="button" data-slot="navigation-menu-trigger">With Icon</button>
+              <div data-slot="navigation-menu-content">
+                <ul data-behavior="w-200">
+                  <li>
+                    <a data-slot="navigation-menu-link" href="#" data-behavior="nav-row"><svg data-lucide="circle-alert"></svg>Backlog</a>
+                    <a data-slot="navigation-menu-link" href="#" data-behavior="nav-row"><svg data-lucide="circle"></svg>To Do</a>
+                    <a data-slot="navigation-menu-link" href="#" data-behavior="nav-row"><svg data-lucide="circle-check"></svg>Done</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li data-slot="navigation-menu-item">
+              <a data-slot="navigation-menu-link" data-variant="trigger" href="/docs">Docs</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

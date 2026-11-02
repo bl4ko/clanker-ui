@@ -1,0 +1,25 @@
+<div data-slot="menubar">
+  <div data-slot="menubar-menu">
+    <button type="button" data-slot="menubar-trigger">File</button>
+    <div data-slot="menubar-content">
+      <div data-slot="menubar-group">
+        <div data-slot="menubar-item">New Tab<span data-slot="menubar-shortcut">⌘T</span></div>
+        <div data-slot="menubar-item" data-disabled>New Incognito Window</div>
+      </div>
+      <div data-slot="menubar-separator"></div>
+      <div data-slot="menubar-sub">
+        <div data-slot="menubar-sub-trigger">Share</div>
+        <div data-slot="menubar-sub-content">
+          <div data-slot="menubar-item">Email link</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-slot="menubar-menu">
+    <button type="button" data-slot="menubar-trigger">View</button>
+    <div data-slot="menubar-content">
+      <div data-slot="menubar-checkbox-item" data-checked>Full URLs</div>
+      <div data-slot="menubar-item" data-inset>Reload</div>
+    </div>
+  </div>
+</div>

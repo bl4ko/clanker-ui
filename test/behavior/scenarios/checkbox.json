@@ -1,0 +1,27 @@
+{
+  "parts": {
+    "c1": {"role": "checkbox", "name": "Accept terms and conditions"},
+    "c2": {"role": "checkbox", "name": "Accept terms and conditions", "nth": 1},
+    "c3": {"role": "checkbox", "name": "Enable notifications"},
+    "c4": {"role": "checkbox", "name": "Enable notifications", "nth": 1},
+    "label1": {"css": "label", "text": "Accept terms and conditions"},
+    "card": {"css": "label", "text": "You can enable or disable"}
+  },
+  "anchor": "c1",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "Space"},
+    {"do": "tab"},
+    {"do": "press", "key": "Space"},
+    {"do": "press", "key": "Enter"},
+    {"do": "tab", "label": "tab past the disabled checkbox"},
+    {"do": "press", "key": "Space"},
+    {"do": "shift_tab"},
+    {"do": "click", "target": "c1"},
+    {"do": "click", "target": "label1"},
+    {"do": "click", "target": "c3"},
+    {"do": "click", "target": "card"},
+    {"do": "press_hold", "target": "c2", "hold": 200}
+  ]
+}

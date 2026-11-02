@@ -1,0 +1,126 @@
+{
+  "header": [
+    {"title": "Home", "href": "/"},
+    {"title": "Docs", "href": "/docs"},
+    {"title": "Components", "href": "/docs/components"}
+  ],
+  "sections": [
+    {"title": "Introduction", "href": "/docs"},
+    {"title": "Components", "href": "/docs/components"},
+    {"title": "Installation", "href": "/docs/installation"},
+    {"title": "Theming", "href": "/docs/theming"},
+    {"title": "Typography", "href": "/docs/typography"}
+  ],
+  "mobileSections": [
+    {"title": "Introduction", "href": "/docs"},
+    {"title": "Components", "href": "/docs/components"},
+    {"title": "Installation", "href": "/docs/installation"},
+    {"title": "Theming", "href": "/docs/theming"},
+    {"title": "RTL", "href": "/docs/rtl"}
+  ],
+  "groups": [
+    {
+      "title": "Components",
+      "items": [
+        {"title": "Components", "href": "/docs/components", "hidden": true},
+        {"title": "Accordion", "href": "/docs/components/accordion"},
+        {"title": "Alert", "href": "/docs/components/alert"},
+        {"title": "Alert Dialog", "href": "/docs/components/alert-dialog"},
+        {"title": "Aspect Ratio", "href": "/docs/components/aspect-ratio"},
+        {"title": "Attachment", "href": "/docs/components/attachment"},
+        {"title": "Avatar", "href": "/docs/components/avatar"},
+        {"title": "Badge", "href": "/docs/components/badge"},
+        {"title": "Breadcrumb", "href": "/docs/components/breadcrumb"},
+        {"title": "Bubble", "href": "/docs/components/bubble"},
+        {"title": "Button", "href": "/docs/components/button"},
+        {"title": "Button Group", "href": "/docs/components/button-group"},
+        {"title": "Calendar", "href": "/docs/components/calendar"},
+        {"title": "Card", "href": "/docs/components/card"},
+        {"title": "Carousel", "href": "/docs/components/carousel"},
+        {"title": "Chart", "href": "/docs/components/chart"},
+        {"title": "Checkbox", "href": "/docs/components/checkbox"},
+        {"title": "Code Block", "href": "/docs/components/code-block", "new": true},
+        {"title": "Collapsible", "href": "/docs/components/collapsible"},
+        {"title": "Combobox", "href": "/docs/components/combobox"},
+        {"title": "Command", "href": "/docs/components/command"},
+        {"title": "Context Menu", "href": "/docs/components/context-menu"},
+        {"title": "Date Picker", "href": "/docs/components/date-picker"},
+        {"title": "Dialog", "href": "/docs/components/dialog"},
+        {"title": "Direction", "href": "/docs/components/direction"},
+        {"title": "Drawer", "href": "/docs/components/drawer"},
+        {"title": "Dropdown Menu", "href": "/docs/components/dropdown-menu"},
+        {"title": "Empty", "href": "/docs/components/empty"},
+        {"title": "Field", "href": "/docs/components/field"},
+        {"title": "Form", "href": "/docs/components/form"},
+        {"title": "Hover Card", "href": "/docs/components/hover-card"},
+        {"title": "Input", "href": "/docs/components/input"},
+        {"title": "Input Group", "href": "/docs/components/input-group"},
+        {"title": "Input OTP", "href": "/docs/components/input-otp"},
+        {"title": "Item", "href": "/docs/components/item"},
+        {"title": "Kbd", "href": "/docs/components/kbd"},
+        {"title": "Label", "href": "/docs/components/label"},
+        {"title": "Marker", "href": "/docs/components/marker"},
+        {"title": "Menubar", "href": "/docs/components/menubar"},
+        {"title": "Message", "href": "/docs/components/message"},
+        {"title": "Message Scroller", "href": "/docs/components/message-scroller"},
+        {"title": "Native Select", "href": "/docs/components/native-select"},
+        {"title": "Navigation Menu", "href": "/docs/components/navigation-menu"},
+        {"title": "Pagination", "href": "/docs/components/pagination"},
+        {"title": "Popover", "href": "/docs/components/popover"},
+        {"title": "Progress", "href": "/docs/components/progress"},
+        {"title": "Questionnaire", "href": "/docs/components/questionnaire"},
+        {"title": "Radio Group", "href": "/docs/components/radio-group"},
+        {"title": "Resizable", "href": "/docs/components/resizable"},
+        {"title": "Scroll Area", "href": "/docs/components/scroll-area"},
+        {"title": "Select", "href": "/docs/components/select"},
+        {"title": "Separator", "href": "/docs/components/separator"},
+        {"title": "Sheet", "href": "/docs/components/sheet"},
+        {"title": "Sidebar", "href": "/docs/components/sidebar"},
+        {"title": "Skeleton", "href": "/docs/components/skeleton"},
+        {"title": "Slider", "href": "/docs/components/slider"},
+        {"title": "Sonner", "href": "/docs/components/sonner"},
+        {"title": "Spinner", "href": "/docs/components/spinner"},
+        {"title": "Switch", "href": "/docs/components/switch"},
+        {"title": "Table", "href": "/docs/components/table"},
+        {"title": "Tabs", "href": "/docs/components/tabs"},
+        {"title": "Textarea", "href": "/docs/components/textarea"},
+        {"title": "Toast", "href": "/docs/components/toast"},
+        {"title": "Toggle", "href": "/docs/components/toggle"},
+        {"title": "Toggle Group", "href": "/docs/components/toggle-group"},
+        {"title": "Tooltip", "href": "/docs/components/tooltip"},
+        {"title": "Trace", "href": "/docs/components/trace", "new": true},
+        {"title": "Typography", "href": "/docs/components/typography"}
+      ]
+    },
+    {
+      "title": "Get Started",
+      "items": [
+        {"title": "Introduction", "href": "/docs", "mobileOnly": true},
+        {"title": "Installation", "href": "/docs/installation"},
+        {"title": "Theming", "href": "/docs/theming"},
+        {"title": "Typography", "href": "/docs/typography"},
+        {"title": "Dark Mode", "href": "/docs/dark-mode"},
+        {"title": "JavaScript", "href": "/docs/javascript"},
+        {"title": "Markup Conventions", "href": "/docs/markup"},
+        {"title": "Localization", "href": "/docs/localization"},
+        {"title": "Security", "href": "/docs/security"},
+        {"title": "RTL", "href": "/docs/rtl"}
+      ]
+    },
+    {
+      "title": "Utilities",
+      "items": [
+        {"title": "scroll-fade", "href": "/docs/utils/scroll-fade"},
+        {"title": "shimmer", "href": "/docs/utils/shimmer"}
+      ]
+    },
+    {
+      "title": "clanker-ui",
+      "items": [
+        {"title": "Theme Switch", "href": "/docs/components/theme-switch"},
+        {"title": "Icons", "href": "/docs/components/icons"},
+        {"title": "Stat Tile and Sparkline", "href": "/docs/components/stat-tile"}
+      ]
+    }
+  ]
+}

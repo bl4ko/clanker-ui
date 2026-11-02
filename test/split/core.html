@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui split: core</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../clanker-ui-core.min.css">
+  <link rel="modulepreload" href="../../clanker-ui-core.min.js">
+  <script type="module" src="../../clanker-ui-core.min.js"></script>
+</head>
+<body>
+  <main data-split="core">
+<section id="button" data-demo="section">
+        <h3 data-demo="title">Button</h3>
+        <p data-demo="description">Displays a button or a component that looks like a button.</p>
+        <div data-demo="preview">
+          <button type="button" data-slot="button">Button</button>
+          <button type="button" data-slot="button" data-variant="secondary">Secondary</button>
+          <button type="button" data-slot="button" data-variant="destructive">Destructive</button>
+          <button type="button" data-slot="button" data-variant="outline">Outline</button>
+          <button type="button" data-slot="button" data-variant="ghost">Ghost</button>
+          <button type="button" data-slot="button" data-variant="link">Link</button>
+        </div>
+        <h4 data-demo="subtitle">Sizes</h4>
+        <div data-demo="preview">
+          <button type="button" data-slot="button" data-variant="outline" data-size="xs">Extra small</button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="sm">Small</button>
+          <button type="button" data-slot="button" data-variant="outline">Default</button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="lg">Large</button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon-xs" aria-label="Add"><svg data-lucide="plus"></svg></button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Add"><svg data-lucide="plus"></svg></button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Add"><svg data-lucide="plus"></svg></button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon-lg" aria-label="Add"><svg data-lucide="plus"></svg></button>
+        </div>
+        <h4 data-demo="subtitle">With icon, loading, link, and disabled</h4>
+        <div data-demo="preview">
+          <button type="button" data-slot="button" data-variant="outline" data-size="sm"><svg data-lucide="send"></svg>Send</button>
+          <button type="button" data-slot="button" data-size="sm" disabled><svg data-lucide="loader-circle" data-demo="spin"></svg>Please wait</button>
+          <a data-slot="button" data-variant="secondary" href="#button">As a link<svg data-lucide="arrow-right"></svg></a>
+          <button type="button" data-slot="button" disabled>Disabled</button>
+          <button type="button" data-slot="button" data-variant="outline" aria-invalid="true">Invalid</button>
+        </div>
+      </section>
+<section id="alert" data-demo="section">
+        <h3 data-demo="title">Alert</h3>
+        <p data-demo="description">Displays a callout for user attention.</p>
+        <div data-demo="preview">
+          <div data-demo="stack medium">
+            <div data-slot="alert" role="alert">
+              <svg data-lucide="circle-check"></svg>
+              <div data-slot="alert-title">Account updated successfully</div>
+              <div data-slot="alert-description">Your profile information has been saved. Changes will be reflected immediately.</div>
+            </div>
+            <div data-slot="alert" role="alert">
+              <svg data-lucide="info"></svg>
+              <div data-slot="alert-title">This alert has a title and an icon. No description.</div>
+            </div>
+            <div data-slot="alert" data-variant="destructive" role="alert">
+              <svg data-lucide="circle-alert"></svg>
+              <div data-slot="alert-title">Payment failed</div>
+              <div data-slot="alert-description">
+                <p>Your payment could not be processed. Please check your payment method and try again.</p>
+                <ul id="alert-list">
+                  <li>Check your card details</li>
+                  <li>Ensure sufficient funds</li>
+                  <li>Verify billing address</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Action and custom colors</h4>
+        <div data-demo="preview">
+          <div data-demo="stack medium">
+            <div data-slot="alert" role="alert">
+              <svg data-lucide="moon"></svg>
+              <div data-slot="alert-title">Dark mode is now available</div>
+              <div data-slot="alert-description">Enable it under your profile settings to get started.</div>
+              <div data-slot="alert-action"><button type="button" data-slot="button" data-size="xs">Enable</button></div>
+            </div>
+            <div id="alert-amber" data-slot="alert" role="alert">
+              <svg data-lucide="triangle-alert"></svg>
+              <div data-slot="alert-title">Your subscription will expire in 3 days.</div>
+              <div data-slot="alert-description">Renew now to avoid service interruption or upgrade to a paid plan to continue using the service.</div>
+            </div>
+            <div data-slot="alert" role="alert">
+              <div data-slot="alert-title">Heads up!</div>
+              <div data-slot="alert-description">An alert without an icon keeps the text aligned to the start edge.</div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Success, warning, and info (kit extension)</h4>
+        <div data-demo="preview">
+          <div id="alert-status" data-demo="stack medium">
+            <div data-slot="alert" data-variant="success" role="alert">
+              <svg data-lucide="circle-check"></svg>
+              <div data-slot="alert-title">Backup complete</div>
+              <div data-slot="alert-description">All 12 volumes are copied and verified.</div>
+            </div>
+            <div data-slot="alert" data-variant="warning" role="alert">
+              <svg data-lucide="triangle-alert"></svg>
+              <div data-slot="alert-title">Disk almost full</div>
+              <div data-slot="alert-description">Less than 10% of the space is free. Remove old snapshots soon.</div>
+            </div>
+            <div data-slot="alert" data-variant="info" role="alert">
+              <svg data-lucide="info"></svg>
+              <div data-slot="alert-title">Maintenance on Sunday</div>
+              <div data-slot="alert-description">The service is read-only from 02:00 to 03:00.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="badge" data-demo="section">
+        <h3 data-demo="title">Badge</h3>
+        <p data-demo="description">Displays a badge or a component that looks like a badge.</p>
+        <div data-demo="preview">
+          <span data-slot="badge">Badge</span>
+          <span data-slot="badge" data-variant="secondary">Secondary</span>
+          <span data-slot="badge" data-variant="destructive">Destructive</span>
+          <span data-slot="badge" data-variant="outline">Outline</span>
+          <span data-slot="badge" data-variant="ghost">Ghost</span>
+          <span data-slot="badge" data-variant="link">Link</span>
+        </div>
+        <h4 data-demo="subtitle">With icon, spinner, number, and link</h4>
+        <div data-demo="preview">
+          <span data-slot="badge" data-variant="secondary"><svg data-lucide="badge-check" data-icon="inline-start"></svg>Verified</span>
+          <span data-slot="badge" data-variant="outline">Bookmark<svg data-lucide="star" data-icon="inline-end"></svg></span>
+          <span data-slot="badge" data-variant="destructive"><svg data-slot="spinner" data-icon="inline-start" role="none"></svg>Deleting</span>
+          <span data-slot="badge" data-variant="secondary">Generating<svg data-slot="spinner" data-icon="inline-end" role="none"></svg></span>
+          <span id="badge-count" data-slot="badge">8</span>
+          <span id="badge-count-wide" data-slot="badge" data-variant="destructive">99</span>
+          <a data-slot="badge" href="#badge">Open Link<svg data-lucide="arrow-up-right" data-icon="inline-end"></svg></a>
+          <span id="badge-blue" data-slot="badge">Blue</span>
+        </div>
+        <h4 data-demo="subtitle">Success, warning, and info (kit extension)</h4>
+        <div id="badge-status" data-demo="preview">
+          <span data-slot="badge" data-variant="success"><svg data-lucide="check" data-icon="inline-start"></svg>Owned</span>
+          <span data-slot="badge" data-variant="warning">Ordered</span>
+          <span data-slot="badge" data-variant="info"><svg data-lucide="info" data-icon="inline-start"></svg>New</span>
+          <a data-slot="badge" data-variant="success" href="#badge">Passed<svg data-lucide="arrow-up-right" data-icon="inline-end"></svg></a>
+        </div>
+      </section>
+<section id="progress" data-demo="section">
+        <h3 data-demo="title">Progress</h3>
+        <p data-demo="description">Displays an indicator showing the completion progress of a task, typically displayed as a progress bar. Set <code>data-value</code> and optional <code>data-max</code>.</p>
+        <div data-demo="preview column">
+          <div data-demo="stack narrow">
+            <div id="progress-demo" data-slot="progress" data-value="66" aria-label="Upload"></div>
+            <div id="progress-label-row" data-demo="row">
+              <span id="progress-label">Upload progress</span>
+              <span id="progress-text">66%</span>
+            </div>
+            <div data-demo="row">
+              <button type="button" data-slot="button" data-variant="outline" data-size="sm" id="progress-less">-10</button>
+              <button type="button" data-slot="button" data-variant="outline" data-size="sm" id="progress-more">+10</button>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">States</h4>
+        <div data-demo="preview column">
+          <div data-demo="stack narrow">
+            <div data-slot="progress" data-value="0" aria-label="Not started"></div>
+            <div data-slot="progress" data-value="3" data-max="4" aria-label="Step 3 of 4"></div>
+            <div data-slot="progress" data-value="100" aria-label="Complete"></div>
+            <div data-slot="progress" aria-label="Waiting"></div>
+          </div>
+        </div>
+      </section>
+<section id="separator" data-demo="section">
+        <h3 data-demo="title">Separator</h3>
+        <p data-demo="description">Visually or semantically separates content.</p>
+        <div data-demo="preview">
+          <div id="separator-demo">
+            <div>
+              <h4>Radix Primitives</h4>
+              <p data-demo="caption">An open-source UI component library.</p>
+            </div>
+            <div data-slot="separator" id="separator-horizontal"></div>
+            <div id="separator-row">
+              <div>Blog</div>
+              <div data-slot="separator" data-orientation="vertical"></div>
+              <div>Docs</div>
+              <div data-slot="separator" data-orientation="vertical"></div>
+              <div>Source</div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">List</h4>
+        <div data-demo="preview">
+          <dl id="separator-list" data-demo="narrow">
+            <div><dt>Item 1</dt><dd>Value 1</dd></div>
+            <div data-slot="separator" role="separator"></div>
+            <div><dt>Item 2</dt><dd>Value 2</dd></div>
+            <div data-slot="separator" role="separator"></div>
+            <div><dt>Item 3</dt><dd>Value 3</dd></div>
+          </dl>
+        </div>
+      </section>
+<section id="skeleton" data-demo="section">
+        <h3 data-demo="title">Skeleton</h3>
+        <p data-demo="description">Use to show a placeholder while content is loading.</p>
+        <div data-demo="preview">
+          <div id="skeleton-demo">
+            <div data-slot="skeleton" id="skeleton-avatar"></div>
+            <div>
+              <div data-slot="skeleton" id="skeleton-line-1"></div>
+              <div data-slot="skeleton" id="skeleton-line-2"></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Card and text</h4>
+        <div data-demo="preview">
+          <div data-slot="card" id="skeleton-card">
+            <div data-slot="card-header">
+              <div data-slot="skeleton" id="skeleton-title"></div>
+              <div data-slot="skeleton" id="skeleton-subtitle"></div>
+            </div>
+            <div data-slot="card-content">
+              <div data-slot="skeleton" id="skeleton-media"></div>
+            </div>
+          </div>
+          <div id="skeleton-text" data-demo="narrow">
+            <div data-slot="skeleton"></div>
+            <div data-slot="skeleton"></div>
+            <div data-slot="skeleton"></div>
+          </div>
+        </div>
+      </section>
+<section id="table" data-demo="section">
+        <h3 data-demo="title">Table</h3>
+        <p data-demo="description">A responsive table component.</p>
+        <div data-demo="preview full">
+          <div data-slot="table-container">
+            <table data-slot="table" id="table-invoices">
+              <caption data-slot="table-caption">A list of your recent invoices.</caption>
+              <thead data-slot="table-header">
+                <tr data-slot="table-row">
+                  <th data-slot="table-head" id="table-head-invoice">Invoice</th>
+                  <th data-slot="table-head">Status</th>
+                  <th data-slot="table-head">Method</th>
+                  <th data-slot="table-head" data-demo="table-end">Amount</th>
+                </tr>
+              </thead>
+              <tbody data-slot="table-body">
+                <tr data-slot="table-row"><td data-slot="table-cell" data-demo="table-strong">INV001</td><td data-slot="table-cell">Paid</td><td data-slot="table-cell">Credit Card</td><td data-slot="table-cell" data-demo="table-end">$250.00</td></tr>
+                <tr data-slot="table-row"><td data-slot="table-cell" data-demo="table-strong">INV002</td><td data-slot="table-cell">Pending</td><td data-slot="table-cell">PayPal</td><td data-slot="table-cell" data-demo="table-end">$150.00</td></tr>
+                <tr data-slot="table-row"><td data-slot="table-cell" data-demo="table-strong">INV003</td><td data-slot="table-cell">Unpaid</td><td data-slot="table-cell">Bank Transfer</td><td data-slot="table-cell" data-demo="table-end">$350.00</td></tr>
+                <tr data-slot="table-row" data-state="selected"><td data-slot="table-cell" data-demo="table-strong">INV004</td><td data-slot="table-cell">Paid</td><td data-slot="table-cell">Credit Card</td><td data-slot="table-cell" data-demo="table-end">$450.00</td></tr>
+                <tr data-slot="table-row"><td data-slot="table-cell" data-demo="table-strong">INV005</td><td data-slot="table-cell">Paid</td><td data-slot="table-cell">PayPal</td><td data-slot="table-cell" data-demo="table-end">$550.00</td></tr>
+                <tr data-slot="table-row"><td data-slot="table-cell" data-demo="table-strong">INV006</td><td data-slot="table-cell">Pending</td><td data-slot="table-cell">Bank Transfer</td><td data-slot="table-cell" data-demo="table-end">$200.00</td></tr>
+                <tr data-slot="table-row"><td data-slot="table-cell" data-demo="table-strong">INV007</td><td data-slot="table-cell">Unpaid</td><td data-slot="table-cell">Credit Card</td><td data-slot="table-cell" data-demo="table-end">$300.00</td></tr>
+              </tbody>
+              <tfoot data-slot="table-footer">
+                <tr data-slot="table-row"><td data-slot="table-cell" colspan="3">Total</td><td data-slot="table-cell" data-demo="table-end">$2,500.00</td></tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Data table</h4>
+        <p data-demo="caption">Sort by clicking a column header, filter by email, select rows, hide columns, open the row actions, and page through results. Built with <code>h()</code> from table, button, checkbox, input, dropdown menu, and toast markup.</p>
+        <div data-demo="preview full">
+          <div id="table-data"></div>
+        </div>
+      </section>
+<section id="aspect-ratio" data-demo="section">
+        <h3 data-demo="title">Aspect Ratio</h3>
+        <p data-demo="description">Displays content within a desired ratio. Set <code>data-ratio="16/9"</code>.</p>
+        <div data-demo="preview">
+          <div id="aspect-ratio-wide" data-demo="medium">
+            <div data-slot="aspect-ratio" data-ratio="16/9">
+              <img src="../../demo/assets/g3-photo.svg" alt="A sunset over purple mountains" width="1600" height="900">
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Square and portrait</h4>
+        <div data-demo="preview">
+          <div id="aspect-ratio-square">
+            <div data-slot="aspect-ratio" data-ratio="1/1">
+              <img src="../../demo/assets/g3-photo.svg" alt="A square crop of the sunset" width="1600" height="900">
+            </div>
+          </div>
+          <div id="aspect-ratio-portrait">
+            <div data-slot="aspect-ratio" data-ratio="9/16">
+              <img src="../../demo/assets/g3-photo-2.svg" alt="A green valley at dawn" width="900" height="1600">
+            </div>
+          </div>
+          <div id="aspect-ratio-custom">
+            <div data-slot="aspect-ratio" data-ratio="2.4">
+              <div data-demo="caption">2.4 : 1</div>
+            </div>
+          </div>
+        </div>
+      </section>
+  </main>
+</body>
+</html>

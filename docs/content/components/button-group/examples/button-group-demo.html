@@ -1,0 +1,41 @@
+<div data-slot="button-group" role="group" aria-label="Message actions">
+  <div data-slot="button-group" role="group" class="hidden sm:flex">
+    <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Go Back"><svg data-lucide="arrow-left"></svg></button>
+  </div>
+  <div data-slot="button-group" role="group">
+    <button type="button" data-slot="button" data-variant="outline">Archive</button>
+    <button type="button" data-slot="button" data-variant="outline">Report</button>
+  </div>
+  <div data-slot="button-group" role="group">
+    <button type="button" data-slot="button" data-variant="outline">Snooze</button>
+    <div data-slot="dropdown-menu">
+      <button type="button" data-slot="button" data-variant="outline" data-size="icon" data-dropdown-menu-trigger aria-label="More Options"><svg data-lucide="ellipsis"></svg></button>
+      <div data-slot="dropdown-menu-content" data-align="end" class="w-40">
+        <div data-slot="dropdown-menu-group">
+          <div data-slot="dropdown-menu-item"><svg data-lucide="mail-check"></svg>Mark as Read</div>
+          <div data-slot="dropdown-menu-item"><svg data-lucide="archive"></svg>Archive</div>
+        </div>
+        <div data-slot="dropdown-menu-separator"></div>
+        <div data-slot="dropdown-menu-group">
+          <div data-slot="dropdown-menu-item"><svg data-lucide="clock"></svg>Snooze</div>
+          <div data-slot="dropdown-menu-item"><svg data-lucide="calendar-plus"></svg>Add to Calendar</div>
+          <div data-slot="dropdown-menu-item"><svg data-lucide="list-filter"></svg>Add to List</div>
+          <div data-slot="dropdown-menu-sub">
+            <div data-slot="dropdown-menu-sub-trigger"><svg data-lucide="tag"></svg>Label As...</div>
+            <div data-slot="dropdown-menu-sub-content">
+              <div data-slot="dropdown-menu-radio-group" data-value="personal">
+                <div data-slot="dropdown-menu-radio-item" data-value="personal" data-state="checked">Personal</div>
+                <div data-slot="dropdown-menu-radio-item" data-value="work">Work</div>
+                <div data-slot="dropdown-menu-radio-item" data-value="other">Other</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-slot="dropdown-menu-separator"></div>
+        <div data-slot="dropdown-menu-group">
+          <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Trash</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

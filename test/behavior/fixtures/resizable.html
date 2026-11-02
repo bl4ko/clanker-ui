@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Resizable behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="resizable-panel-group" data-behavior="max-w-384 bordered">
+          <div data-slot="resizable-panel" data-default-size="50"><div data-behavior="pane h-200"><span data-behavior="semibold">One</span></div></div>
+          <div data-slot="resizable-handle" data-with-handle></div>
+          <div data-slot="resizable-panel" data-default-size="50">
+            <div data-slot="resizable-panel-group" data-orientation="vertical">
+              <div data-slot="resizable-panel" data-default-size="25"><div data-behavior="pane h-full"><span data-behavior="semibold">Two</span></div></div>
+              <div data-slot="resizable-handle" data-with-handle></div>
+              <div data-slot="resizable-panel" data-default-size="75"><div data-behavior="pane h-full"><span data-behavior="semibold">Three</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

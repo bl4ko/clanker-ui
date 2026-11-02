@@ -1,0 +1,37 @@
+{
+  "url": "https://ui.shadcn.com/preview/base/drawer-example?style=nova",
+  "root": "[data-slot=example-content]",
+  "note": "The first example of the docs page uses the base-rhea style. The reference is the Demo example of the Nova preview page.",
+  "parts": {
+    "trigger": {"role": "button", "name": "Header and Footer"},
+    "simple": {"role": "button", "name": "Open Drawer"},
+    "drawer": {"slot": "drawer-popup", "popup": true, "edges": true, "aria": false},
+    "dialog": {"role": "dialog", "popup": true, "sized": false, "ours": {"slot": "drawer-popup", "role": null}},
+    "cancel": {"role": "button", "name": "Cancel", "in": "page"}
+  },
+  "positions": [],
+  "steps": [
+    {"do": "click", "target": "trigger", "motion": "drawer", "ms": 1000},
+    {"do": "tab"},
+    {"do": "tab"},
+    {"do": "tab", "label": "tab past the last button"},
+    {"do": "shift_tab"},
+    {"do": "press", "key": "Escape", "motion": "drawer", "ms": 1000},
+    {"do": "press", "key": "Enter", "motion": "drawer", "ms": 1000},
+    {"do": "click_outside", "motion": "drawer", "ms": 1000},
+    {"do": "click", "target": "trigger", "motion": "drawer", "ms": 1000, "label": "click trigger again"},
+    {"do": "swipe", "target": "drawer", "at": [0.5, 0.05], "by": [0, 300], "steps": 10, "engines": ["chromium"], "motion": "drawer", "ms": 1000, "label": "swipe down to dismiss"},
+    {"do": "click", "target": "trigger", "motion": "drawer", "ms": 1000, "engines": ["chromium"], "label": "click trigger after the swipe"},
+    {"do": "drag", "target": "drawer", "at": [0.5, 0.05], "by": [0, 60], "steps": 8, "motion": "drawer", "ms": 1000, "label": "drag down a short way"},
+    {"do": "drag", "target": "drawer", "at": [0.5, 0.05], "by": [0, 300], "steps": 10, "motion": "drawer", "ms": 1000, "label": "drag down far with the mouse"},
+    {"do": "click_outside", "motion": "drawer", "ms": 1000, "label": "click outside after the drags"},
+    {"do": "click", "target": "simple", "motion": "drawer", "ms": 1000},
+    {"do": "press", "key": "Escape", "motion": "drawer", "ms": 1000, "label": "press Escape on the simple drawer"}
+  ],
+  "allowed": [
+    {"key": "drawer.popup-focus-role", "match": "^focus \\| dialog( \"[^\"]*\")? \\[drawer-popup\\] in drawer \\| generic \\[drawer-popup\\] in drawer \\|", "reason": "the drawer keeps the native <dialog> as the dialog (role, aria-labelledby, aria-describedby) and puts no role on the popup; the live site puts role=dialog on a div popup"},
+    {"key": "drawer.popup-description", "match": "^(drawer|dialog) accessible description \\| Make changes to your profile here\\. Click save when you're done\\. \\| None \\|", "reason": "the drawer keeps the native <dialog> as the dialog (role, aria-labelledby, aria-describedby) and puts no role on the popup; the live site puts role=dialog on a div popup"},
+    {"key": "drawer.popup-dialog-tree", "match": "^ARIA tree \\(dialog\\) \\| \\d+ nodes \\| \\d+ nodes \\| shadcn only: dialog( \"Edit profile\")?$", "reason": "the drawer keeps the native <dialog> as the dialog (role, aria-labelledby, aria-describedby) and puts no role on the popup; the live site puts role=dialog on a div popup"},
+    {"key": "drawer.firefox-ring-escape", "match": "^focus ring \\| none \\| painted \\|", "steps": [16], "engines": ["firefox"], "reason": "Firefox focus ring: Base UI moves focus after the key event (here after the exit animation), so Firefox paints no focus ring there; the kit keeps the keyboard focus ring"}
+  ]
+}

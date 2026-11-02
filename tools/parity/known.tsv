@@ -1,0 +1,133 @@
+attachment	attachment[orientation=horizontal,size=default]	min-width	108	R2 reference
+attachment	attachment[orientation=horizontal,size=sm]	min-width	12	R2 reference
+attachment	attachment[orientation=horizontal,size=xs]	min-width	4	R2 reference
+breadcrumb	svg in breadcrumb-separator	rotate	16	U3 upstream
+button-group	span in select-item	color	2	T7 tool
+calendar	button in calendar	border-bottom-color	6	T10 tool
+calendar	button in calendar	border-left-color	6	T10 tool
+calendar	button in calendar	border-right-color	6	T10 tool
+calendar	button in calendar	border-top-color	6	T10 tool
+calendar	button in calendar	box-shadow	6	T10 tool
+calendar	card-footer	@h	8	R2 reference
+calendar	card-footer	height	8	R2 reference
+calendar	card[size=sm]	@h	8	R2 reference
+calendar	card[size=sm]	height	8	R2 reference
+calendar	field-group	@h	8	R2 reference
+calendar	field-group	height	8	R2 reference
+calendar	field-label	@h	40	R2 reference
+calendar	field-label	height	40	R2 reference
+calendar	field-label	line-height	40	R2 reference
+calendar	field[orientation=vertical]	@h	40	R2 reference
+calendar	field[orientation=vertical]	height	40	R2 reference
+calendar	select in calendar	@h	44	R2 reference
+calendar	select in calendar	@w	44	R2 reference
+calendar	select in calendar	height	44	R2 reference
+calendar	select in calendar	width	44	R2 reference
+calendar	span in calendar	@h	64	R2 reference
+calendar	span in calendar	@w	64	R2 reference
+calendar	span in calendar	border-bottom-color	16	R2 reference
+calendar	span in calendar	border-bottom-width	32	R2 reference
+calendar	span in calendar	border-left-color	16	R2 reference
+calendar	span in calendar	border-left-width	32	R2 reference
+calendar	span in calendar	border-right-color	16	R2 reference
+calendar	span in calendar	border-right-width	32	R2 reference
+calendar	span in calendar	border-top-color	16	R2 reference
+calendar	span in calendar	border-top-width	32	R2 reference
+calendar	span in calendar	height	64	R2 reference
+calendar	span in calendar	padding-left	32	R2 reference
+calendar	span in calendar	padding-right	32	R2 reference
+calendar	span in calendar	width	64	R2 reference
+code-block	button	line-height	4	R2 reference
+code-block	code-block-content	mask-image	6	U2 upstream
+code-block	code-block[size=default,variant=default]	margin-top	8	R3 reference
+collapsible	button	background-color	2	T7 tool
+collapsible	button	transition-duration	36	T7 tool
+collapsible	field-label	@w	16	T7 tool
+collapsible	field-label	right	16	T7 tool
+collapsible	field-label	width	16	T7 tool
+dialog	span in dialog-portal	outline-style	2	T11 tool
+dialog	span in dialog-portal	outline-width	2	T11 tool
+field	select-trigger[size=default]	background-color	1	P3 positioning
+hover-card	div in hover-card-portal	isolation	6	P2 positioning
+hover-card	div in hover-card-portal	z-index	6	P2 positioning
+input-group	input-group-control	border-bottom-color	4	R4 reference
+input-group	input-group-control	border-left-color	4	R4 reference
+input-group	input-group-control	border-right-color	4	R4 reference
+input-group	input-group-control	border-top-color	4	R4 reference
+input-group	input-group-control	box-shadow	8	R4 reference
+input-group	input-group-control	flex-basis	8	R4 reference
+input-group	input-group-control	flex-grow	8	R4 reference
+input-otp	button	@w	8	U1 upstream
+input-otp	button	width	8	U1 upstream
+input-otp	card-content	@w	2	U1 upstream
+input-otp	card-content	width	2	U1 upstream
+input-otp	card-description	@w	2	U1 upstream
+input-otp	card-description	width	2	U1 upstream
+input-otp	card-footer	@w	2	U1 upstream
+input-otp	card-footer	width	2	U1 upstream
+input-otp	card-header	@w	2	U1 upstream
+input-otp	card-header	grid-template-columns	2	U1 upstream
+input-otp	card-header	width	2	U1 upstream
+input-otp	card-title	@w	2	U1 upstream
+input-otp	card-title	width	2	U1 upstream
+input-otp	card[size=default]	@w	2	U1 upstream
+input-otp	card[size=default]	margin-left	2	U1 upstream
+input-otp	card[size=default]	margin-right	2	U1 upstream
+input-otp	card[size=default]	width	2	U1 upstream
+input-otp	div in field	@w	8	U1 upstream
+input-otp	div in field	width	8	U1 upstream
+input-otp	field-description	@w	2	U1 upstream
+input-otp	field-description	width	2	U1 upstream
+input-otp	field[orientation=vertical]	@w	4	U1 upstream
+input-otp	field[orientation=vertical]	width	4	U1 upstream
+input-otp	input-otp	@w	2	U1 upstream
+input-otp	input-otp	width	2	U1 upstream
+input-otp	input-otp-separator	@h	2	U1 upstream
+input-otp	input-otp-separator	@w	2	U1 upstream
+input-otp	input-otp-separator	align-items	2	U1 upstream
+input-otp	input-otp-separator	display	2	U1 upstream
+input-otp	input-otp-separator	height	2	U1 upstream
+input-otp	input-otp-separator	width	2	U1 upstream
+input-otp	svg in input-otp-separator	@h	2	U1 upstream
+input-otp	svg in input-otp-separator	@w	2	U1 upstream
+input-otp	svg in input-otp-separator	height	2	U1 upstream
+input-otp	svg in input-otp-separator	min-height	2	U1 upstream
+input-otp	svg in input-otp-separator	min-width	2	U1 upstream
+input-otp	svg in input-otp-separator	width	2	U1 upstream
+item	dropdown-menu-content	@h	6	T7 tool
+item	dropdown-menu-content	height	6	T7 tool
+item	dropdown-menu-group	@h	2	T7 tool
+item	dropdown-menu-group	height	2	T7 tool
+item	dropdown-menu-item[variant=default]	@h	10	T7 tool
+item	dropdown-menu-item[variant=default]	height	10	T7 tool
+item	item-content	@w	6	T7 tool
+item	item-content	width	6	T7 tool
+item	item-description	@w	6	T7 tool
+item	item-description	width	6	T7 tool
+item	item[size=xs,variant=default]	@h	6	T7 tool
+item	item[size=xs,variant=default]	height	6	T7 tool
+item	item[size=xs,variant=default]	padding-bottom	6	T7 tool
+item	item[size=xs,variant=default]	padding-left	6	T7 tool
+item	item[size=xs,variant=default]	padding-right	6	T7 tool
+item	item[size=xs,variant=default]	padding-top	6	T7 tool
+label	select-trigger[size=default]	background-color	1	P3 positioning
+marker	accordion-trigger[orientation=vertical]	border-bottom-color	2	R2 reference
+marker	accordion-trigger[orientation=vertical]	border-left-color	2	R2 reference
+marker	accordion-trigger[orientation=vertical]	border-right-color	2	R2 reference
+marker	accordion-trigger[orientation=vertical]	border-top-color	2	R2 reference
+message	attachment[orientation=horizontal,size=default]	min-width	8	R2 reference
+pagination	select-trigger[size=default]	background-color	1	P3 positioning
+progress	input in slider-thumb	outline-style	2	T11 tool
+progress	input in slider-thumb	outline-width	2	T11 tool
+resizable	resizable-handle	box-shadow	4	T18 tool
+resizable	resizable-handle	cursor	8	P6 positioning
+select	select-trigger[size=default]	background-color	4	P3 positioning
+sidebar	sidebar-menu-button[size=default]	color	4	T7 tool
+slider	input in slider-thumb	outline-style	2	T11 tool
+slider	input in slider-thumb	outline-width	2	T11 tool
+spinner	field-label	@h	2	R2 reference
+spinner	field-label	height	2	R2 reference
+spinner	field-label	line-height	2	R2 reference
+spinner	field[orientation=vertical]	@h	2	R2 reference
+spinner	field[orientation=vertical]	height	2	R2 reference
+trace	button	line-height	6	R2 reference

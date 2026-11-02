@@ -1,0 +1,14 @@
+<div data-slot="item-group" role="list">
+  <div data-slot="item" data-variant="outline" role="listitem">
+    <div data-slot="item-media" data-variant="icon"><svg data-lucide="badge-check"></svg></div>
+    <div data-slot="item-content">
+      <div data-slot="item-title">Basic Item</div>
+      <p data-slot="item-description">A simple item with title and description.</p>
+    </div>
+    <div data-slot="item-actions"><button type="button" data-slot="button" data-variant="outline" data-size="sm">Action</button></div>
+  </div>
+  <div data-slot="item-separator"></div>
+  <a data-slot="item" data-size="sm" href="/profile" role="listitem">
+    <div data-slot="item-content"><div data-slot="item-title">Your profile has been verified.</div></div>
+  </a>
+</div>

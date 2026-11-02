@@ -1,0 +1,30 @@
+{
+  "parts": {
+    "group": {"role": "radiogroup"},
+    "r1": {"role": "radio", "name": "Default"},
+    "r2": {"role": "radio", "name": "Comfortable"},
+    "r3": {"role": "radio", "name": "Compact"},
+    "label1": {"css": "label", "text": "Default"}
+  },
+  "anchor": "group",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "ArrowDown", "label": "ArrowDown on the last radio"},
+    {"do": "press", "key": "ArrowUp", "label": "ArrowUp on the first radio"},
+    {"do": "press", "key": "ArrowRight"},
+    {"do": "press", "key": "ArrowLeft"},
+    {"do": "press", "key": "Home"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "Space"},
+    {"do": "tab"},
+    {"do": "shift_tab"},
+    {"do": "click", "target": "label1"},
+    {"do": "click", "target": "r2"},
+    {"do": "press", "key": "ArrowDown", "label": "ArrowDown after a click"}
+  ],
+  "allowed": [
+    {"key": "radio-group.firefox-ring-arrow", "match": "^focus ring \\| none \\| painted \\|", "steps": [14], "engines": ["firefox"], "reason": "Base UI moves focus after the key event, so Firefox paints no focus ring there; the kit keeps the keyboard focus ring"}
+  ]
+}

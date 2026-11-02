@@ -1,0 +1,1425 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui split: forms</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../clanker-ui-core.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-forms.min.css">
+  <link rel="modulepreload" href="../../clanker-ui-core.min.js">
+  <script type="module" src="../../clanker-ui-core.min.js"></script>
+  <script type="module" src="../../clanker-ui-forms.min.js"></script>
+</head>
+<body>
+  <main data-split="forms">
+<section id="checkbox" data-demo="section">
+        <h3 data-demo="title">Checkbox</h3>
+        <p data-demo="description">A control that allows the user to toggle between checked and not checked.</p>
+        <div data-demo="preview">
+          <div data-slot="field-group" data-demo="narrow">
+            <div data-slot="field" role="group" data-orientation="horizontal">
+              <button type="button" data-slot="checkbox" id="checkbox-terms" data-name="checkbox-terms"></button>
+              <label data-slot="field-label" for="checkbox-terms">Accept terms and conditions</label>
+            </div>
+            <div data-slot="field" role="group" data-orientation="horizontal">
+              <button type="button" data-slot="checkbox" id="checkbox-terms-2" data-name="checkbox-terms-2" data-checked></button>
+              <div data-slot="field-content">
+                <label data-slot="field-label" for="checkbox-terms-2">Accept terms and conditions</label>
+                <p data-slot="field-description">By clicking this checkbox, you agree to the terms.</p>
+              </div>
+            </div>
+            <div data-slot="field" role="group" data-orientation="horizontal" data-disabled="true">
+              <button type="button" data-slot="checkbox" id="checkbox-disabled" data-name="checkbox-disabled" disabled></button>
+              <label data-slot="field-label" for="checkbox-disabled">Enable notifications</label>
+            </div>
+            <label data-slot="field-label">
+              <span data-slot="field" role="group" data-orientation="horizontal">
+                <button type="button" data-slot="checkbox" id="checkbox-card" data-name="checkbox-card"></button>
+                <span data-slot="field-content">
+                  <span data-slot="field-label">Enable notifications</span>
+                  <span data-slot="field-description">You can enable or disable notifications at any time.</span>
+                </span>
+              </span>
+            </label>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Indeterminate and invalid</h4>
+        <div data-demo="preview">
+          <div data-slot="field-group" data-demo="narrow">
+            <div data-slot="field" role="group" data-orientation="horizontal">
+              <button type="button" data-slot="checkbox" id="checkbox-mixed" data-indeterminate></button>
+              <label data-slot="field-label" for="checkbox-mixed">Select all</label>
+            </div>
+            <div data-slot="field" role="group" data-orientation="horizontal" data-invalid="true">
+              <button type="button" data-slot="checkbox" id="checkbox-invalid" aria-invalid="true"></button>
+              <label data-slot="field-label" for="checkbox-invalid">Accept terms and conditions</label>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Group</h4>
+        <div data-demo="preview">
+          <fieldset data-slot="field-set" data-demo="narrow">
+            <legend data-slot="field-legend" data-variant="label">Show these items on the desktop:</legend>
+            <p data-slot="field-description">Select the items you want to show on the desktop.</p>
+            <div data-slot="checkbox-group">
+              <div data-slot="field" role="group" data-orientation="horizontal">
+                <button type="button" data-slot="checkbox" id="checkbox-hard-disks" data-name="desktop" value="hard-disks"></button>
+                <label data-slot="field-label" for="checkbox-hard-disks">Hard disks</label>
+              </div>
+              <div data-slot="field" role="group" data-orientation="horizontal">
+                <button type="button" data-slot="checkbox" id="checkbox-external" data-name="desktop" value="external" data-checked></button>
+                <label data-slot="field-label" for="checkbox-external">External disks</label>
+              </div>
+              <div data-slot="field" role="group" data-orientation="horizontal">
+                <button type="button" data-slot="checkbox" id="checkbox-cds" data-name="desktop" value="cds"></button>
+                <label data-slot="field-label" for="checkbox-cds">CDs, DVDs, and iPods</label>
+              </div>
+              <div data-slot="field" role="group" data-orientation="horizontal">
+                <button type="button" data-slot="checkbox" id="checkbox-servers" data-name="desktop" value="servers"></button>
+                <label data-slot="field-label" for="checkbox-servers">Connected servers</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </section>
+<section id="switch" data-demo="section">
+        <h3 data-demo="title">Switch</h3>
+        <p data-demo="description">A control that allows the user to toggle between checked and not checked.</p>
+        <div data-demo="preview">
+          <div data-demo="row">
+            <button type="button" data-slot="switch" id="switch-airplane"></button>
+            <label data-slot="label" for="switch-airplane">Airplane Mode</label>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Description and choice card</h4>
+        <div data-demo="preview column">
+          <div data-slot="field" role="group" data-orientation="horizontal" data-demo="narrow">
+            <div data-slot="field-content">
+              <label data-slot="field-label" for="switch-share">Share across devices</label>
+              <p data-slot="field-description">Focus is shared across devices, and turns off when you leave the app.</p>
+            </div>
+            <button type="button" data-slot="switch" id="switch-share"></button>
+          </div>
+          <label data-slot="field-label" for="switch-card" data-demo="narrow">
+            <span data-slot="field" role="group" data-orientation="horizontal">
+              <span data-slot="field-content">
+                <span data-slot="field-label">Share across devices</span>
+                <span data-slot="field-description">Focus is shared across devices, and turns off when you leave the app.</span>
+              </span>
+              <button type="button" data-slot="switch" id="switch-card"></button>
+            </span>
+          </label>
+        </div>
+        <h4 data-demo="subtitle">Sizes, disabled, and invalid</h4>
+        <div data-demo="preview column">
+          <div data-demo="row">
+            <button type="button" data-slot="switch" id="switch-small" data-size="sm" data-checked></button>
+            <label data-slot="label" for="switch-small">Small</label>
+          </div>
+          <div data-demo="row">
+            <button type="button" data-slot="switch" id="switch-default" data-checked></button>
+            <label data-slot="label" for="switch-default">Default</label>
+          </div>
+          <div data-slot="field" role="group" data-orientation="horizontal" data-disabled="true" data-demo="fit">
+            <button type="button" data-slot="switch" id="switch-disabled" disabled></button>
+            <label data-slot="field-label" for="switch-disabled">Disabled</label>
+          </div>
+          <div data-slot="field" role="group" data-orientation="horizontal" data-invalid="true" data-demo="fit">
+            <button type="button" data-slot="switch" id="switch-invalid" aria-invalid="true"></button>
+            <label data-slot="field-label" for="switch-invalid">Accept terms and conditions</label>
+          </div>
+        </div>
+      </section>
+<section id="radio-group" data-demo="section">
+        <h3 data-demo="title">Radio Group</h3>
+        <p data-demo="description">A set of checkable buttons, known as radio buttons, where no more than one of the buttons can be checked at a time.</p>
+        <div data-demo="preview">
+          <div id="radio-group-demo" data-slot="radio-group" data-name="radio-group-density" aria-label="Density">
+            <div data-slot="field" role="group" data-orientation="horizontal">
+              <button type="button" data-slot="radio-group-item" id="radio-group-default" value="default"></button>
+              <label data-slot="field-label" for="radio-group-default">Default</label>
+            </div>
+            <div data-slot="field" role="group" data-orientation="horizontal">
+              <button type="button" data-slot="radio-group-item" id="radio-group-comfortable" value="comfortable" data-checked></button>
+              <label data-slot="field-label" for="radio-group-comfortable">Comfortable</label>
+            </div>
+            <div data-slot="field" role="group" data-orientation="horizontal">
+              <button type="button" data-slot="radio-group-item" id="radio-group-compact" value="compact"></button>
+              <label data-slot="field-label" for="radio-group-compact">Compact</label>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Description and fieldset</h4>
+        <div data-demo="preview">
+          <fieldset data-slot="field-set" data-demo="narrow">
+            <legend data-slot="field-legend" data-variant="label">Subscription Plan</legend>
+            <p data-slot="field-description">Yearly and lifetime plans offer significant savings.</p>
+            <div data-slot="radio-group" data-name="radio-group-plan">
+              <div data-slot="field" role="group" data-orientation="horizontal">
+                <button type="button" data-slot="radio-group-item" id="radio-group-monthly" value="monthly" data-checked></button>
+                <div data-slot="field-content">
+                  <label data-slot="field-label" for="radio-group-monthly" data-demo="normal">Monthly ($9.99/month)</label>
+                  <p data-slot="field-description">Billed every month. Cancel anytime.</p>
+                </div>
+              </div>
+              <div data-slot="field" role="group" data-orientation="horizontal">
+                <button type="button" data-slot="radio-group-item" id="radio-group-yearly" value="yearly"></button>
+                <div data-slot="field-content">
+                  <label data-slot="field-label" for="radio-group-yearly" data-demo="normal">Yearly ($99.99/year)</label>
+                  <p data-slot="field-description">Two months free.</p>
+                </div>
+              </div>
+              <div data-slot="field" role="group" data-orientation="horizontal">
+                <button type="button" data-slot="radio-group-item" id="radio-group-lifetime" value="lifetime"></button>
+                <div data-slot="field-content">
+                  <label data-slot="field-label" for="radio-group-lifetime" data-demo="normal">Lifetime ($299.99)</label>
+                  <p data-slot="field-description">Pay once, use forever.</p>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+        <h4 data-demo="subtitle">Choice card</h4>
+        <div data-demo="preview">
+          <div data-slot="radio-group" data-name="radio-group-tier" data-demo="narrow" aria-label="Plan">
+            <label data-slot="field-label" for="radio-group-plus">
+              <span data-slot="field" role="group" data-orientation="horizontal">
+                <span data-slot="field-content">
+                  <span data-slot="field-label">Plus</span>
+                  <span data-slot="field-description">For individuals and small teams.</span>
+                </span>
+                <button type="button" data-slot="radio-group-item" id="radio-group-plus" value="plus" data-checked></button>
+              </span>
+            </label>
+            <label data-slot="field-label" for="radio-group-pro">
+              <span data-slot="field" role="group" data-orientation="horizontal">
+                <span data-slot="field-content">
+                  <span data-slot="field-label">Pro</span>
+                  <span data-slot="field-description">For growing businesses.</span>
+                </span>
+                <button type="button" data-slot="radio-group-item" id="radio-group-pro" value="pro"></button>
+              </span>
+            </label>
+            <label data-slot="field-label" for="radio-group-enterprise">
+              <span data-slot="field" role="group" data-orientation="horizontal">
+                <span data-slot="field-content">
+                  <span data-slot="field-label">Enterprise</span>
+                  <span data-slot="field-description">For large teams and enterprises.</span>
+                </span>
+                <button type="button" data-slot="radio-group-item" id="radio-group-enterprise" value="enterprise"></button>
+              </span>
+            </label>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Disabled and invalid</h4>
+        <div data-demo="preview">
+          <div data-slot="radio-group" data-name="radio-group-disabled" aria-label="Disabled options">
+            <div data-slot="field" role="group" data-orientation="horizontal" data-disabled="true">
+              <button type="button" data-slot="radio-group-item" id="radio-group-d1" value="1" disabled></button>
+              <label data-slot="field-label" for="radio-group-d1">Disabled</label>
+            </div>
+            <div data-slot="field" role="group" data-orientation="horizontal">
+              <button type="button" data-slot="radio-group-item" id="radio-group-d2" value="2" data-checked></button>
+              <label data-slot="field-label" for="radio-group-d2">Option 2</label>
+            </div>
+            <div data-slot="field" role="group" data-orientation="horizontal">
+              <button type="button" data-slot="radio-group-item" id="radio-group-d3" value="3"></button>
+              <label data-slot="field-label" for="radio-group-d3">Option 3</label>
+            </div>
+          </div>
+          <fieldset data-slot="field-set">
+            <legend data-slot="field-legend" data-variant="label">Notification Preferences</legend>
+            <div data-slot="radio-group" data-name="radio-group-invalid" aria-invalid="true">
+              <div data-slot="field" role="group" data-orientation="horizontal" data-invalid="true">
+                <button type="button" data-slot="radio-group-item" id="radio-group-i1" value="email" aria-invalid="true"></button>
+                <label data-slot="field-label" for="radio-group-i1" data-demo="normal">Email only</label>
+              </div>
+              <div data-slot="field" role="group" data-orientation="horizontal" data-invalid="true">
+                <button type="button" data-slot="radio-group-item" id="radio-group-i2" value="sms" aria-invalid="true"></button>
+                <label data-slot="field-label" for="radio-group-i2" data-demo="normal">SMS only</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </section>
+<section id="slider" data-demo="section">
+        <h3 data-demo="title">Slider</h3>
+        <p data-demo="description">An input where the user selects a value from within a given range.</p>
+        <div data-demo="preview">
+          <div id="slider-demo" data-slot="slider" data-demo="slider">
+            <input type="range" min="0" max="100" step="1" value="75" name="volume" aria-label="Volume">
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Range and multiple thumbs</h4>
+        <div data-demo="preview column">
+          <div id="slider-range" data-slot="slider" data-demo="slider">
+            <input type="range" min="0" max="100" step="5" value="25" aria-label="Minimum">
+            <input type="range" min="0" max="100" step="5" value="50" aria-label="Maximum">
+          </div>
+          <div id="slider-multiple" data-slot="slider" data-demo="slider">
+            <input type="range" min="0" max="100" step="10" value="10" aria-label="First">
+            <input type="range" min="0" max="100" step="10" value="20" aria-label="Second">
+            <input type="range" min="0" max="100" step="10" value="70" aria-label="Third">
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Vertical</h4>
+        <div data-demo="preview">
+          <div id="slider-vertical" data-slot="slider" data-orientation="vertical" data-demo="slider-tall">
+            <input type="range" min="0" max="100" value="50" aria-label="Vertical volume">
+          </div>
+          <div id="slider-vertical-range" data-slot="slider" data-orientation="vertical" data-demo="slider-tall">
+            <input type="range" min="0" max="100" value="25" aria-label="Vertical minimum">
+            <input type="range" min="0" max="100" value="75" aria-label="Vertical maximum">
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Controlled, disabled, and right to left</h4>
+        <div data-demo="preview column">
+          <div data-slot="field" role="group" data-demo="narrow">
+            <div data-demo="row">
+              <span data-slot="label" id="slider-temperature-label">Temperature</span>
+              <output id="slider-temperature-value" data-demo="push">0.3, 0.7</output>
+            </div>
+            <div id="slider-temperature" data-slot="slider">
+              <input type="range" min="0" max="1" step="0.1" value="0.3" aria-label="Temperature low">
+              <input type="range" min="0" max="1" step="0.1" value="0.7" aria-label="Temperature high">
+            </div>
+          </div>
+          <div id="slider-disabled" data-slot="slider" data-demo="slider">
+            <input type="range" min="0" max="100" value="50" disabled aria-label="Disabled">
+          </div>
+          <div id="slider-rtl" data-slot="slider" data-demo="slider" dir="rtl">
+            <input type="range" min="0" max="100" value="25" aria-label="Right to left">
+          </div>
+        </div>
+      </section>
+<section id="select" data-demo="section">
+        <h3 data-demo="title">Select</h3>
+        <p data-demo="description">Displays a list of options for the user to pick from, triggered by a button.</p>
+        <div data-demo="preview">
+          <div id="select-demo" data-slot="select" data-name="fruit">
+            <button data-slot="select-trigger" aria-label="Fruit" id="select-demo-trigger"><span data-slot="select-value">Select a fruit</span></button>
+            <div data-slot="select-content">
+              <div data-slot="select-group">
+                <div data-slot="select-label">Fruits</div>
+                <div data-slot="select-item" data-value="apple">Apple</div>
+                <div data-slot="select-item" data-value="banana">Banana</div>
+                <div data-slot="select-item" data-value="blueberry">Blueberry</div>
+                <div data-slot="select-item" data-value="grapes">Grapes</div>
+                <div data-slot="select-item" data-value="pineapple">Pineapple</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Align item with trigger</h4>
+        <div data-demo="preview">
+          <div data-slot="field-group" data-demo="narrow">
+            <div data-slot="field" role="group" data-orientation="horizontal">
+              <div data-slot="field-content">
+                <label data-slot="field-label" for="select-align">Align Item</label>
+                <p data-slot="field-description">Toggle to align the item with the trigger.</p>
+              </div>
+              <button type="button" data-slot="switch" id="select-align" data-checked></button>
+            </div>
+            <div data-slot="field" role="group">
+              <div id="select-aligned" data-slot="select" data-value="banana">
+                <button data-slot="select-trigger" aria-label="Aligned fruit"><span data-slot="select-value"></span></button>
+                <div data-slot="select-content">
+                  <div data-slot="select-group">
+                    <div data-slot="select-item" data-value="apple">Apple</div>
+                    <div data-slot="select-item" data-value="banana">Banana</div>
+                    <div data-slot="select-item" data-value="blueberry">Blueberry</div>
+                    <div data-slot="select-item" data-value="grapes">Grapes</div>
+                    <div data-slot="select-item" data-value="pineapple">Pineapple</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Groups, scrollable, and small</h4>
+        <div data-demo="preview">
+          <div id="select-groups" data-slot="select">
+            <button data-slot="select-trigger" aria-label="Food"><span data-slot="select-value">Select a fruit</span></button>
+            <div data-slot="select-content" data-align-trigger="false">
+              <div data-slot="select-group">
+                <div data-slot="select-label">Fruits</div>
+                <div data-slot="select-item" data-value="apple">Apple</div>
+                <div data-slot="select-item" data-value="banana">Banana</div>
+                <div data-slot="select-item" data-value="blueberry">Blueberry</div>
+              </div>
+              <div data-slot="select-separator"></div>
+              <div data-slot="select-group">
+                <div data-slot="select-label">Vegetables</div>
+                <div data-slot="select-item" data-value="carrot">Carrot</div>
+                <div data-slot="select-item" data-value="broccoli">Broccoli</div>
+                <div data-slot="select-item" data-value="spinach">Spinach</div>
+              </div>
+            </div>
+          </div>
+          <div id="select-scrollable" data-slot="select" data-value="cet">
+            <button data-slot="select-trigger" aria-label="Timezone" id="select-timezone"><span data-slot="select-value">Select a timezone</span></button>
+            <div data-slot="select-content">
+              <div data-slot="select-group">
+                <div data-slot="select-label">North America</div>
+                <div data-slot="select-item" data-value="est">Eastern Standard Time</div>
+                <div data-slot="select-item" data-value="cst">Central Standard Time</div>
+                <div data-slot="select-item" data-value="mst">Mountain Standard Time</div>
+                <div data-slot="select-item" data-value="pst">Pacific Standard Time</div>
+                <div data-slot="select-item" data-value="akst">Alaska Standard Time</div>
+                <div data-slot="select-item" data-value="hst">Hawaii Standard Time</div>
+              </div>
+              <div data-slot="select-group">
+                <div data-slot="select-label">Europe &amp; Africa</div>
+                <div data-slot="select-item" data-value="gmt">Greenwich Mean Time</div>
+                <div data-slot="select-item" data-value="cet">Central European Time</div>
+                <div data-slot="select-item" data-value="eet">Eastern European Time</div>
+                <div data-slot="select-item" data-value="west">Western European Summer Time</div>
+                <div data-slot="select-item" data-value="cat">Central Africa Time</div>
+                <div data-slot="select-item" data-value="eat">East Africa Time</div>
+              </div>
+              <div data-slot="select-group">
+                <div data-slot="select-label">Asia</div>
+                <div data-slot="select-item" data-value="msk">Moscow Time</div>
+                <div data-slot="select-item" data-value="ist">India Standard Time</div>
+                <div data-slot="select-item" data-value="cst-china">China Standard Time</div>
+                <div data-slot="select-item" data-value="jst">Japan Standard Time</div>
+                <div data-slot="select-item" data-value="kst">Korea Standard Time</div>
+                <div data-slot="select-item" data-value="ist-indonesia">Indonesia Central Standard Time</div>
+              </div>
+              <div data-slot="select-group">
+                <div data-slot="select-label">Australia &amp; Pacific</div>
+                <div data-slot="select-item" data-value="awst">Australian Western Standard Time</div>
+                <div data-slot="select-item" data-value="acst">Australian Central Standard Time</div>
+                <div data-slot="select-item" data-value="aest">Australian Eastern Standard Time</div>
+                <div data-slot="select-item" data-value="nzst">New Zealand Standard Time</div>
+                <div data-slot="select-item" data-value="fjt">Fiji Time</div>
+              </div>
+            </div>
+          </div>
+          <div id="select-small" data-slot="select" data-value="light">
+            <button data-slot="select-trigger" data-size="sm" aria-label="Theme"><span data-slot="select-value"></span></button>
+            <div data-slot="select-content" data-align-trigger="false">
+              <div data-slot="select-item" data-value="light"><svg data-lucide="sun"></svg>Light</div>
+              <div data-slot="select-item" data-value="dark"><svg data-lucide="moon"></svg>Dark</div>
+              <div data-slot="select-item" data-value="system"><svg data-lucide="monitor"></svg>System</div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Disabled and invalid</h4>
+        <div data-demo="preview">
+          <div id="select-disabled" data-slot="select">
+            <button data-slot="select-trigger" aria-label="Disabled fruit" disabled><span data-slot="select-value">Select a fruit</span></button>
+            <div data-slot="select-content">
+              <div data-slot="select-item" data-value="apple">Apple</div>
+            </div>
+          </div>
+          <div id="select-item-disabled" data-slot="select">
+            <button data-slot="select-trigger" aria-label="Fruit with a disabled item"><span data-slot="select-value">Select a fruit</span></button>
+            <div data-slot="select-content" data-align-trigger="false">
+              <div data-slot="select-item" data-value="apple">Apple</div>
+              <div data-slot="select-item" data-value="banana" data-disabled>Banana</div>
+              <div data-slot="select-item" data-value="blueberry">Blueberry</div>
+              <div data-slot="select-item" data-value="grapes" data-disabled>Grapes</div>
+              <div data-slot="select-item" data-value="pineapple">Pineapple</div>
+            </div>
+          </div>
+          <div data-slot="field" role="group" data-invalid="true" data-demo="fit">
+            <label data-slot="field-label" for="select-invalid">Fruit</label>
+            <div data-slot="select">
+              <button id="select-invalid" data-slot="select-trigger" aria-invalid="true" aria-describedby="select-invalid-error"><span data-slot="select-value">Select a fruit</span></button>
+              <div data-slot="select-content">
+                <div data-slot="select-item" data-value="apple">Apple</div>
+                <div data-slot="select-item" data-value="banana">Banana</div>
+              </div>
+            </div>
+            <div id="select-invalid-error" data-slot="field-error" role="alert">Please select a fruit.</div>
+          </div>
+        </div>
+      </section>
+<section id="native-select" data-demo="section">
+        <h3 data-demo="title">Native Select</h3>
+        <p data-demo="description">A styled native HTML select element with consistent design system integration.</p>
+        <div data-demo="preview">
+          <div data-slot="native-select-wrapper">
+            <select data-slot="native-select" aria-label="Status">
+              <option data-slot="native-select-option" value="">Select status</option>
+              <option data-slot="native-select-option" value="todo">Todo</option>
+              <option data-slot="native-select-option" value="in-progress">In Progress</option>
+              <option data-slot="native-select-option" value="done">Done</option>
+              <option data-slot="native-select-option" value="cancelled">Cancelled</option>
+            </select>
+            <svg data-lucide="chevron-down" data-slot="native-select-icon"></svg>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Groups and sizes</h4>
+        <div data-demo="preview">
+          <div data-slot="native-select-wrapper">
+            <select data-slot="native-select" aria-label="Department">
+              <option data-slot="native-select-option" value="">Select department</option>
+              <optgroup data-slot="native-select-optgroup" label="Engineering">
+                <option data-slot="native-select-option" value="frontend">Frontend</option>
+                <option data-slot="native-select-option" value="backend">Backend</option>
+                <option data-slot="native-select-option" value="devops">DevOps</option>
+              </optgroup>
+              <optgroup data-slot="native-select-optgroup" label="Sales">
+                <option data-slot="native-select-option" value="sales-rep">Sales Rep</option>
+                <option data-slot="native-select-option" value="account-manager">Account Manager</option>
+              </optgroup>
+            </select>
+            <svg data-lucide="chevron-down" data-slot="native-select-icon"></svg>
+          </div>
+          <div data-slot="native-select-wrapper">
+            <select data-slot="native-select" data-size="sm" aria-label="Size">
+              <option data-slot="native-select-option" value="s">Small</option>
+              <option data-slot="native-select-option" value="m">Medium</option>
+              <option data-slot="native-select-option" value="l">Large</option>
+            </select>
+            <svg data-lucide="chevron-down" data-slot="native-select-icon"></svg>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Disabled and invalid</h4>
+        <div data-demo="preview">
+          <div data-slot="native-select-wrapper">
+            <select data-slot="native-select" disabled aria-label="Disabled priority">
+              <option data-slot="native-select-option" value="">Select priority</option>
+              <option data-slot="native-select-option" value="low">Low</option>
+            </select>
+            <svg data-lucide="chevron-down" data-slot="native-select-icon"></svg>
+          </div>
+          <div data-slot="native-select-wrapper">
+            <select data-slot="native-select" aria-invalid="true" aria-label="Invalid role">
+              <option data-slot="native-select-option" value="">Select role</option>
+              <option data-slot="native-select-option" value="admin">Admin</option>
+              <option data-slot="native-select-option" value="editor">Editor</option>
+            </select>
+            <svg data-lucide="chevron-down" data-slot="native-select-icon"></svg>
+          </div>
+        </div>
+      </section>
+<section id="combobox" data-demo="section">
+        <h3 data-demo="title">Combobox</h3>
+        <p data-demo="description">Autocomplete input with a list of suggestions.</p>
+        <div data-demo="preview">
+          <div id="combobox-basic" data-slot="combobox" data-name="framework">
+            <div data-slot="input-group">
+              <input data-slot="input-group-control" placeholder="Select a framework" aria-label="Framework">
+              <div data-slot="input-group-addon" data-align="inline-end">
+                <button type="button" data-slot="input-group-button" data-combobox-trigger></button>
+              </div>
+            </div>
+            <div data-slot="combobox-content">
+              <div data-slot="combobox-empty">No items found.</div>
+              <div data-slot="combobox-list">
+                <div data-slot="combobox-item" data-value="next">Next.js</div>
+                <div data-slot="combobox-item" data-value="sveltekit">SvelteKit</div>
+                <div data-slot="combobox-item" data-value="nuxt">Nuxt.js</div>
+                <div data-slot="combobox-item" data-value="remix">Remix</div>
+                <div data-slot="combobox-item" data-value="astro">Astro</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Multiple</h4>
+        <div data-demo="preview">
+          <div id="combobox-multiple" data-slot="combobox" data-multiple data-auto-highlight data-name="frameworks" data-value="next">
+            <div data-slot="combobox-chips">
+              <input data-slot="combobox-chip-input" placeholder="Add framework" aria-label="Frameworks">
+            </div>
+            <div data-slot="combobox-content">
+              <div data-slot="combobox-empty">No items found.</div>
+              <div data-slot="combobox-list">
+                <div data-slot="combobox-item" data-value="next">Next.js</div>
+                <div data-slot="combobox-item" data-value="sveltekit">SvelteKit</div>
+                <div data-slot="combobox-item" data-value="nuxt">Nuxt.js</div>
+                <div data-slot="combobox-item" data-value="remix">Remix</div>
+                <div data-slot="combobox-item" data-value="astro">Astro</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Clear button and groups</h4>
+        <div data-demo="preview">
+          <div id="combobox-clearable" data-slot="combobox" data-value="sveltekit">
+            <div data-slot="input-group">
+              <input data-slot="input-group-control" placeholder="Select a framework" aria-label="Framework with clear button">
+              <div data-slot="input-group-addon" data-align="inline-end">
+                <button type="button" data-slot="input-group-button" data-combobox-trigger></button>
+                <button type="button" data-slot="combobox-clear"></button>
+              </div>
+            </div>
+            <div data-slot="combobox-content">
+              <div data-slot="combobox-empty">No items found.</div>
+              <div data-slot="combobox-list">
+                <div data-slot="combobox-item" data-value="next">Next.js</div>
+                <div data-slot="combobox-item" data-value="sveltekit">SvelteKit</div>
+                <div data-slot="combobox-item" data-value="nuxt">Nuxt.js</div>
+                <div data-slot="combobox-item" data-value="remix">Remix</div>
+                <div data-slot="combobox-item" data-value="astro">Astro</div>
+              </div>
+            </div>
+          </div>
+          <div id="combobox-groups" data-slot="combobox" data-auto-highlight>
+            <div data-slot="input-group">
+              <input data-slot="input-group-control" placeholder="Select a timezone" aria-label="Timezone">
+              <div data-slot="input-group-addon" data-align="inline-end">
+                <button type="button" data-slot="input-group-button" data-combobox-trigger></button>
+              </div>
+            </div>
+            <div data-slot="combobox-content">
+              <div data-slot="combobox-empty">No timezones found.</div>
+              <div data-slot="combobox-list">
+                <div data-slot="combobox-group">
+                  <div data-slot="combobox-label">Americas</div>
+                  <div data-slot="combobox-item" data-value="America/New_York">(GMT-5) New York</div>
+                  <div data-slot="combobox-item" data-value="America/Los_Angeles">(GMT-8) Los Angeles</div>
+                  <div data-slot="combobox-item" data-value="America/Sao_Paulo">(GMT-3) São Paulo</div>
+                </div>
+                <div data-slot="combobox-separator"></div>
+                <div data-slot="combobox-group">
+                  <div data-slot="combobox-label">Europe</div>
+                  <div data-slot="combobox-item" data-value="Europe/London">(GMT+0) London</div>
+                  <div data-slot="combobox-item" data-value="Europe/Paris">(GMT+1) Paris</div>
+                  <div data-slot="combobox-item" data-value="Europe/Athens" data-disabled>(GMT+2) Athens</div>
+                </div>
+                <div data-slot="combobox-separator"></div>
+                <div data-slot="combobox-group">
+                  <div data-slot="combobox-label">Asia/Pacific</div>
+                  <div data-slot="combobox-item" data-value="Asia/Tokyo">(GMT+9) Tokyo</div>
+                  <div data-slot="combobox-item" data-value="Australia/Sydney">(GMT+10) Sydney</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Popup</h4>
+        <div data-demo="preview">
+          <div id="combobox-popup" data-slot="combobox" data-name="country">
+            <button type="button" data-slot="button" data-variant="outline" data-combobox-trigger aria-label="Country"><span data-slot="combobox-value">Select country</span></button>
+            <div data-slot="combobox-content">
+              <div data-slot="input-group">
+                <input data-slot="input-group-control" placeholder="Search" aria-label="Search countries">
+              </div>
+              <div data-slot="combobox-empty">No items found.</div>
+              <div data-slot="combobox-list">
+                <div data-slot="combobox-item" data-value="argentina">Argentina</div>
+                <div data-slot="combobox-item" data-value="australia">Australia</div>
+                <div data-slot="combobox-item" data-value="brazil">Brazil</div>
+                <div data-slot="combobox-item" data-value="canada">Canada</div>
+                <div data-slot="combobox-item" data-value="france">France</div>
+                <div data-slot="combobox-item" data-value="germany">Germany</div>
+                <div data-slot="combobox-item" data-value="japan">Japan</div>
+                <div data-slot="combobox-item" data-value="spain">Spain</div>
+                <div data-slot="combobox-item" data-value="united-kingdom">United Kingdom</div>
+                <div data-slot="combobox-item" data-value="united-states">United States</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Invalid and disabled</h4>
+        <div data-demo="preview">
+          <div data-slot="field" role="group" data-invalid="true" data-demo="narrow">
+            <label data-slot="field-label" for="combobox-invalid-input">Framework</label>
+            <div data-slot="combobox">
+              <div data-slot="input-group">
+                <input id="combobox-invalid-input" data-slot="input-group-control" placeholder="Select a framework" aria-invalid="true">
+                <div data-slot="input-group-addon" data-align="inline-end">
+                  <button type="button" data-slot="input-group-button" data-combobox-trigger></button>
+                </div>
+              </div>
+              <div data-slot="combobox-content">
+                <div data-slot="combobox-empty">No items found.</div>
+                <div data-slot="combobox-list">
+                  <div data-slot="combobox-item" data-value="next">Next.js</div>
+                  <div data-slot="combobox-item" data-value="remix">Remix</div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="field-error" role="alert">Please select a framework.</div>
+          </div>
+          <div id="combobox-disabled" data-slot="combobox" data-disabled>
+            <div data-slot="input-group">
+              <input data-slot="input-group-control" placeholder="Select a framework" aria-label="Disabled framework">
+              <div data-slot="input-group-addon" data-align="inline-end">
+                <button type="button" data-slot="input-group-button" data-combobox-trigger></button>
+              </div>
+            </div>
+            <div data-slot="combobox-content">
+              <div data-slot="combobox-list">
+                <div data-slot="combobox-item" data-value="next">Next.js</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="input-group" data-demo="section">
+        <h3 data-demo="title">Input Group</h3>
+        <p data-demo="description">Add addons, buttons, and helper content to inputs.</p>
+        <div data-demo="preview">
+          <div data-slot="field-group" data-demo="medium">
+            <div data-slot="input-group" role="group">
+              <input data-slot="input-group-control" placeholder="Search..." aria-label="Search">
+              <div data-slot="input-group-addon" role="group"><svg data-lucide="search"></svg></div>
+              <div data-slot="input-group-addon" role="group" data-align="inline-end">12 results</div>
+            </div>
+            <div data-slot="input-group" role="group">
+              <input data-slot="input-group-control" placeholder="example.com" aria-label="Website" id="input-group-url">
+              <div data-slot="input-group-addon" role="group"><span data-slot="input-group-text">https://</span></div>
+              <div data-slot="input-group-addon" role="group" data-align="inline-end">
+                <button type="button" data-slot="button" data-input-group-button data-variant="ghost" data-size="icon-xs" data-round aria-label="Info"><svg data-lucide="info"></svg></button>
+              </div>
+            </div>
+            <div data-slot="input-group" role="group">
+              <textarea data-slot="input-group-control" placeholder="Ask, Search or Chat..." aria-label="Prompt"></textarea>
+              <div data-slot="input-group-addon" role="group" data-align="block-end">
+                <button type="button" data-slot="button" data-input-group-button data-variant="outline" data-size="icon-xs" data-round aria-label="Add"><svg data-lucide="plus"></svg></button>
+                <button type="button" data-slot="button" data-input-group-button data-variant="ghost" data-size="xs">Auto</button>
+                <span data-slot="input-group-text" data-demo="push">52% used</span>
+                <span id="input-group-rule" aria-hidden="true"></span>
+                <button type="button" data-slot="button" data-input-group-button data-variant="default" data-size="icon-xs" data-round disabled><svg data-lucide="arrow-up"></svg><span class="sr-only">Send</span></button>
+              </div>
+            </div>
+            <div data-slot="input-group" role="group">
+              <input data-slot="input-group-control" placeholder="@shadcn" aria-label="Handle">
+              <div data-slot="input-group-addon" role="group" data-align="inline-end">
+                <span id="input-group-ok"><svg data-lucide="check"></svg></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Text, buttons, and kbd</h4>
+        <div data-demo="preview">
+          <div data-slot="field-group" data-demo="medium">
+            <div data-slot="input-group" role="group">
+              <div data-slot="input-group-addon" role="group"><span data-slot="input-group-text">$</span></div>
+              <input data-slot="input-group-control" placeholder="0.00" aria-label="Price">
+              <div data-slot="input-group-addon" role="group" data-align="inline-end"><span data-slot="input-group-text">USD</span></div>
+            </div>
+            <div data-slot="input-group" role="group">
+              <input data-slot="input-group-control" value="https://x.com/shadcn" readonly aria-label="Link">
+              <div data-slot="input-group-addon" role="group" data-align="inline-end">
+                <button type="button" data-slot="button" data-input-group-button data-variant="ghost" data-size="icon-xs" aria-label="Copy"><svg data-lucide="copy"></svg></button>
+              </div>
+            </div>
+            <div data-slot="input-group" role="group">
+              <div data-slot="input-group-addon" role="group"><svg data-lucide="lock"></svg></div>
+              <input data-slot="input-group-control" type="password" placeholder="Enter password" aria-label="Password">
+              <div data-slot="input-group-addon" role="group" data-align="inline-end">
+                <button type="button" data-slot="button" data-input-group-button data-variant="secondary" data-size="sm">Show</button>
+              </div>
+            </div>
+            <div data-slot="input-group" role="group">
+              <input data-slot="input-group-control" placeholder="Search..." aria-label="Command search">
+              <div data-slot="input-group-addon" role="group"><svg data-lucide="search"></svg></div>
+              <div data-slot="input-group-addon" role="group" data-align="inline-end"><kbd data-slot="kbd">⌘K</kbd></div>
+            </div>
+            <div data-slot="input-group" role="group" data-disabled="true">
+              <input data-slot="input-group-control" placeholder="Saving changes..." disabled aria-label="Saving">
+              <div data-slot="input-group-addon" role="group" data-align="inline-end"><svg data-lucide="loader-circle" data-demo="spin"></svg></div>
+            </div>
+            <div data-slot="input-group" role="group">
+              <input data-slot="input-group-control" placeholder="Invalid value" aria-invalid="true" aria-label="Invalid">
+              <div data-slot="input-group-addon" role="group"><svg data-lucide="circle-alert"></svg></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Block start and block end</h4>
+        <div data-demo="preview">
+          <div data-slot="field-group" data-demo="medium">
+            <div data-slot="input-group" role="group">
+              <textarea id="input-group-code" data-slot="input-group-control" placeholder="console.log('Hello, world!');" aria-label="Code"></textarea>
+              <div data-slot="input-group-addon" role="group" data-align="block-start">
+                <svg data-lucide="code"></svg>
+                <span data-slot="input-group-text" data-demo="mono">script.js</span>
+                <button type="button" data-slot="button" data-input-group-button data-variant="ghost" data-size="icon-xs" data-demo="push" aria-label="Copy code"><svg data-lucide="copy"></svg></button>
+              </div>
+            </div>
+            <div data-slot="input-group" role="group">
+              <input data-slot="input-group-control" placeholder="Enter amount" aria-label="Amount">
+              <div data-slot="input-group-addon" role="group" data-align="block-end">
+                <span data-slot="input-group-text">USD</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="input-otp" data-demo="section">
+        <h3 data-demo="title">Input OTP</h3>
+        <p data-demo="description">Accessible one-time password component with copy paste functionality.</p>
+        <div data-demo="preview">
+          <div id="input-otp-demo" data-slot="input-otp">
+            <input maxlength="6" aria-label="One-time password">
+            <div data-slot="input-otp-group">
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+            </div>
+            <div data-slot="input-otp-separator" role="separator"><svg data-lucide="minus"></svg></div>
+            <div data-slot="input-otp-group">
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Pattern and separators</h4>
+        <div data-demo="preview column">
+          <div data-slot="field" role="group" data-demo="fit">
+            <label data-slot="field-label" for="input-otp-digits">Digits Only</label>
+            <div data-slot="input-otp" data-pattern="digits">
+              <input id="input-otp-digits" maxlength="6">
+              <div data-slot="input-otp-group">
+                <div data-slot="input-otp-slot"></div>
+                <div data-slot="input-otp-slot"></div>
+                <div data-slot="input-otp-slot"></div>
+                <div data-slot="input-otp-slot"></div>
+                <div data-slot="input-otp-slot"></div>
+                <div data-slot="input-otp-slot"></div>
+              </div>
+            </div>
+          </div>
+          <div id="input-otp-pairs" data-slot="input-otp">
+            <input maxlength="6" aria-label="Code in pairs">
+            <div data-slot="input-otp-group">
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+            </div>
+            <div data-slot="input-otp-separator" role="separator"><svg data-lucide="minus"></svg></div>
+            <div data-slot="input-otp-group">
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+            </div>
+            <div data-slot="input-otp-separator" role="separator"><svg data-lucide="minus"></svg></div>
+            <div data-slot="input-otp-group">
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+            </div>
+          </div>
+          <div data-slot="field" role="group" data-demo="fit">
+            <label data-slot="field-label" for="input-otp-alnum">Alphanumeric</label>
+            <div data-slot="input-otp" data-pattern="alphanumeric">
+              <input id="input-otp-alnum" maxlength="6">
+              <div data-slot="input-otp-group">
+                <div data-slot="input-otp-slot"></div>
+                <div data-slot="input-otp-slot"></div>
+                <div data-slot="input-otp-slot"></div>
+                <div data-slot="input-otp-slot"></div>
+                <div data-slot="input-otp-slot"></div>
+                <div data-slot="input-otp-slot"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Controlled and four digits</h4>
+        <div data-demo="preview column">
+          <div id="input-otp-controlled" data-slot="input-otp" data-pattern="digits">
+            <input maxlength="6" aria-label="Controlled one-time password" aria-describedby="input-otp-value">
+            <div data-slot="input-otp-group">
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+            </div>
+          </div>
+          <p id="input-otp-value" data-demo="caption" aria-live="polite">Enter your one-time password.</p>
+          <div id="input-otp-four" data-slot="input-otp" data-pattern="digits">
+            <input maxlength="4" aria-label="PIN">
+            <div data-slot="input-otp-group">
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Disabled and invalid</h4>
+        <div data-demo="preview column">
+          <div id="input-otp-disabled" data-slot="input-otp">
+            <input maxlength="6" value="123456" disabled aria-label="Disabled code">
+            <div data-slot="input-otp-group">
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+            </div>
+            <div data-slot="input-otp-separator" role="separator"><svg data-lucide="minus"></svg></div>
+            <div data-slot="input-otp-group">
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+            </div>
+          </div>
+          <div id="input-otp-invalid" data-slot="input-otp">
+            <input maxlength="6" value="000000" aria-invalid="true" aria-label="Invalid code">
+            <div data-slot="input-otp-group">
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+              <div data-slot="input-otp-slot"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="toggle" data-demo="section">
+        <h3 data-demo="title">Toggle</h3>
+        <p data-demo="description">A two-state button that can be either on or off.</p>
+        <div data-demo="preview">
+          <button type="button" id="toggle-bookmark" data-slot="toggle" data-variant="outline" data-size="sm" aria-label="Toggle bookmark"><svg data-lucide="star"></svg>Bookmark</button>
+        </div>
+        <h4 data-demo="subtitle">Variants and text</h4>
+        <div data-demo="preview">
+          <button type="button" data-slot="toggle" aria-label="Toggle bold"><svg data-lucide="bold"></svg></button>
+          <button type="button" data-slot="toggle" data-variant="outline" aria-label="Toggle italic"><svg data-lucide="italic"></svg></button>
+          <button type="button" data-slot="toggle" data-variant="outline" aria-label="Toggle underline" data-state="on"><svg data-lucide="underline"></svg></button>
+          <button type="button" data-slot="toggle" aria-label="Toggle italic text"><svg data-lucide="italic"></svg>Italic</button>
+        </div>
+        <h4 data-demo="subtitle">Sizes and disabled</h4>
+        <div data-demo="preview">
+          <button type="button" data-slot="toggle" data-variant="outline" data-size="sm" aria-label="Small">Small</button>
+          <button type="button" data-slot="toggle" data-variant="outline" aria-label="Default">Default</button>
+          <button type="button" data-slot="toggle" data-variant="outline" data-size="lg" aria-label="Large">Large</button>
+          <button type="button" data-slot="toggle" aria-label="Disabled" disabled><svg data-lucide="underline"></svg>Disabled</button>
+        </div>
+      </section>
+<section id="toggle-group" data-demo="section">
+        <h3 data-demo="title">Toggle Group</h3>
+        <p data-demo="description">A set of two-state buttons that can be toggled on or off.</p>
+        <div data-demo="preview">
+          <div id="toggle-group-demo" data-slot="toggle-group" data-type="multiple" data-variant="outline" aria-label="Text formatting">
+            <button type="button" data-slot="toggle-group-item" data-value="bold" aria-label="Toggle bold"><svg data-lucide="bold"></svg></button>
+            <button type="button" data-slot="toggle-group-item" data-value="italic" aria-label="Toggle italic"><svg data-lucide="italic"></svg></button>
+            <button type="button" data-slot="toggle-group-item" data-value="underline" aria-label="Toggle underline"><svg data-lucide="underline"></svg></button>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Single, default variant, and sizes</h4>
+        <div data-demo="preview column">
+          <div id="toggle-group-single" data-slot="toggle-group" data-type="single" data-value="center" aria-label="Text alignment">
+            <button type="button" data-slot="toggle-group-item" data-value="start" aria-label="Align start"><svg data-lucide="text-align-start"></svg></button>
+            <button type="button" data-slot="toggle-group-item" data-value="center" aria-label="Align center"><svg data-lucide="text-align-center"></svg></button>
+            <button type="button" data-slot="toggle-group-item" data-value="end" aria-label="Align end"><svg data-lucide="text-align-end"></svg></button>
+          </div>
+          <div data-slot="toggle-group" data-type="single" data-variant="outline" data-size="sm" aria-label="Small group">
+            <button type="button" data-slot="toggle-group-item" data-value="bold" aria-label="Toggle bold"><svg data-lucide="bold"></svg></button>
+            <button type="button" data-slot="toggle-group-item" data-value="italic" aria-label="Toggle italic"><svg data-lucide="italic"></svg></button>
+            <button type="button" data-slot="toggle-group-item" data-value="underline" aria-label="Toggle underline"><svg data-lucide="underline"></svg></button>
+          </div>
+          <div data-slot="toggle-group" data-type="multiple" data-variant="outline" data-size="lg" aria-label="Large group">
+            <button type="button" data-slot="toggle-group-item" data-value="bold" aria-label="Toggle bold"><svg data-lucide="bold"></svg></button>
+            <button type="button" data-slot="toggle-group-item" data-value="italic" aria-label="Toggle italic"><svg data-lucide="italic"></svg></button>
+            <button type="button" data-slot="toggle-group-item" data-value="underline" aria-label="Toggle underline"><svg data-lucide="underline"></svg></button>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Spacing, vertical, and disabled</h4>
+        <div data-demo="preview">
+          <div id="toggle-group-spacing" data-slot="toggle-group" data-type="single" data-variant="outline" data-size="sm" data-spacing="2" data-value="top" aria-label="Position">
+            <button type="button" data-slot="toggle-group-item" data-value="top">Top</button>
+            <button type="button" data-slot="toggle-group-item" data-value="bottom">Bottom</button>
+            <button type="button" data-slot="toggle-group-item" data-value="left">Left</button>
+            <button type="button" data-slot="toggle-group-item" data-value="right">Right</button>
+          </div>
+          <div id="toggle-group-vertical" data-slot="toggle-group" data-type="multiple" data-orientation="vertical" data-spacing="1" data-value="bold,italic" aria-label="Vertical formatting">
+            <button type="button" data-slot="toggle-group-item" data-value="bold" aria-label="Toggle bold"><svg data-lucide="bold"></svg></button>
+            <button type="button" data-slot="toggle-group-item" data-value="italic" aria-label="Toggle italic"><svg data-lucide="italic"></svg></button>
+            <button type="button" data-slot="toggle-group-item" data-value="underline" aria-label="Toggle underline"><svg data-lucide="underline"></svg></button>
+          </div>
+          <div id="toggle-group-outline-vertical" data-slot="toggle-group" data-type="single" data-variant="outline" data-orientation="vertical" data-spacing="0" aria-label="Vertical outline">
+            <button type="button" data-slot="toggle-group-item" data-value="a">One</button>
+            <button type="button" data-slot="toggle-group-item" data-value="b">Two</button>
+            <button type="button" data-slot="toggle-group-item" data-value="c">Three</button>
+          </div>
+          <div id="toggle-group-disabled" data-slot="toggle-group" data-type="multiple" data-disabled aria-label="Disabled formatting">
+            <button type="button" data-slot="toggle-group-item" data-value="bold" aria-label="Toggle bold"><svg data-lucide="bold"></svg></button>
+            <button type="button" data-slot="toggle-group-item" data-value="italic" aria-label="Toggle italic"><svg data-lucide="italic"></svg></button>
+            <button type="button" data-slot="toggle-group-item" data-value="underline" aria-label="Toggle underline"><svg data-lucide="underline"></svg></button>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Custom</h4>
+        <div data-demo="preview">
+          <div data-slot="field" role="group" data-demo="fit">
+            <span data-slot="field-label" id="toggle-group-weight-label">Font Weight</span>
+            <div id="toggle-group-weight" data-slot="toggle-group" data-type="single" data-variant="outline" data-spacing="2" data-size="lg" data-value="normal" aria-labelledby="toggle-group-weight-label">
+              <button type="button" data-slot="toggle-group-item" data-value="light" aria-label="Light"><span data-weight="light">Aa</span><span>Light</span></button>
+              <button type="button" data-slot="toggle-group-item" data-value="normal" aria-label="Normal"><span data-weight="normal">Aa</span><span>Normal</span></button>
+              <button type="button" data-slot="toggle-group-item" data-value="medium" aria-label="Medium"><span data-weight="medium">Aa</span><span>Medium</span></button>
+              <button type="button" data-slot="toggle-group-item" data-value="bold" aria-label="Bold"><span data-weight="bold">Aa</span><span>Bold</span></button>
+            </div>
+            <p data-slot="field-description" id="toggle-group-weight-text">Use <code data-typography="inline-code">font-normal</code> to set the font weight.</p>
+          </div>
+        </div>
+      </section>
+<section id="field" data-demo="section">
+        <h3 data-demo="title">Field</h3>
+        <p data-demo="description">Combine labels, controls, and help text to compose accessible form fields and grouped inputs.</p>
+        <div data-demo="preview">
+          <form id="field-checkout" data-demo="medium">
+            <div data-slot="field-group">
+              <fieldset data-slot="field-set">
+                <legend data-slot="field-legend">Payment Method</legend>
+                <p data-slot="field-description">All transactions are secure and encrypted</p>
+                <div data-slot="field-group">
+                  <div data-slot="field" role="group">
+                    <label data-slot="field-label" for="field-card-name">Name on Card</label>
+                    <input id="field-card-name" data-slot="input" placeholder="Evil Rabbit" required>
+                  </div>
+                  <div data-slot="field" role="group">
+                    <label data-slot="field-label" for="field-card-number">Card Number</label>
+                    <input id="field-card-number" data-slot="input" placeholder="1234 5678 9012 3456" required>
+                    <p data-slot="field-description">Enter your 16-digit card number</p>
+                  </div>
+                  <div id="field-expiry">
+                    <div data-slot="field" role="group">
+                      <label data-slot="field-label" for="field-exp-month">Month</label>
+                      <div data-slot="select">
+                        <button id="field-exp-month" data-slot="select-trigger"><span data-slot="select-value">MM</span></button>
+                        <div data-slot="select-content">
+                          <div data-slot="select-group">
+                            <div data-slot="select-item" data-value="01">01</div>
+                            <div data-slot="select-item" data-value="02">02</div>
+                            <div data-slot="select-item" data-value="03">03</div>
+                            <div data-slot="select-item" data-value="04">04</div>
+                            <div data-slot="select-item" data-value="05">05</div>
+                            <div data-slot="select-item" data-value="06">06</div>
+                            <div data-slot="select-item" data-value="07">07</div>
+                            <div data-slot="select-item" data-value="08">08</div>
+                            <div data-slot="select-item" data-value="09">09</div>
+                            <div data-slot="select-item" data-value="10">10</div>
+                            <div data-slot="select-item" data-value="11">11</div>
+                            <div data-slot="select-item" data-value="12">12</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div data-slot="field" role="group">
+                      <label data-slot="field-label" for="field-exp-year">Year</label>
+                      <div data-slot="select">
+                        <button id="field-exp-year" data-slot="select-trigger"><span data-slot="select-value">YYYY</span></button>
+                        <div data-slot="select-content">
+                          <div data-slot="select-group">
+                            <div data-slot="select-item" data-value="2026">2026</div>
+                            <div data-slot="select-item" data-value="2027">2027</div>
+                            <div data-slot="select-item" data-value="2028">2028</div>
+                            <div data-slot="select-item" data-value="2029">2029</div>
+                            <div data-slot="select-item" data-value="2030">2030</div>
+                            <div data-slot="select-item" data-value="2031">2031</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div data-slot="field" role="group">
+                      <label data-slot="field-label" for="field-cvv">CVV</label>
+                      <input id="field-cvv" data-slot="input" placeholder="123" required>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+              <div data-slot="field-separator"></div>
+              <fieldset data-slot="field-set">
+                <legend data-slot="field-legend">Billing Address</legend>
+                <p data-slot="field-description">The billing address associated with your payment method</p>
+                <div data-slot="field-group">
+                  <div data-slot="field" role="group" data-orientation="horizontal">
+                    <button type="button" data-slot="checkbox" id="field-same-address" data-checked></button>
+                    <label data-slot="field-label" for="field-same-address" data-demo="normal">Same as shipping address</label>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset data-slot="field-set">
+                <div data-slot="field-group">
+                  <div data-slot="field" role="group">
+                    <label data-slot="field-label" for="field-comments">Comments</label>
+                    <textarea id="field-comments" data-slot="textarea" placeholder="Add any additional comments" data-demo="no-resize"></textarea>
+                  </div>
+                </div>
+              </fieldset>
+              <div data-slot="field" role="group" data-orientation="horizontal">
+                <button type="submit" data-slot="button">Submit</button>
+                <button type="button" data-slot="button" data-variant="outline">Cancel</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <h4 data-demo="subtitle">Choice card</h4>
+        <div data-demo="preview">
+          <div data-slot="field-group" data-demo="narrow">
+            <fieldset data-slot="field-set">
+              <legend data-slot="field-legend" data-variant="label">Compute Environment</legend>
+              <p data-slot="field-description">Select the compute environment for your cluster.</p>
+              <div data-slot="radio-group" data-name="field-compute">
+                <label data-slot="field-label" for="field-kubernetes">
+                  <span data-slot="field" role="group" data-orientation="horizontal">
+                    <span data-slot="field-content">
+                      <span data-slot="field-label">Kubernetes</span>
+                      <span data-slot="field-description">Run GPU workloads on a K8s cluster.</span>
+                    </span>
+                    <button type="button" data-slot="radio-group-item" id="field-kubernetes" value="kubernetes" data-checked></button>
+                  </span>
+                </label>
+                <label data-slot="field-label" for="field-vm">
+                  <span data-slot="field" role="group" data-orientation="horizontal">
+                    <span data-slot="field-content">
+                      <span data-slot="field-label">Virtual Machine</span>
+                      <span data-slot="field-description">Access a cluster to run GPU workloads.</span>
+                    </span>
+                    <button type="button" data-slot="radio-group-item" id="field-vm" value="vm"></button>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Field group with switches and slider</h4>
+        <div data-demo="preview">
+          <div data-slot="field-group" data-demo="narrow">
+            <fieldset data-slot="field-set">
+              <legend data-slot="field-legend" data-variant="label">Responses</legend>
+              <p data-slot="field-description">Get notified when ChatGPT responds to requests that take time.</p>
+              <div data-slot="checkbox-group">
+                <div data-slot="field" role="group" data-orientation="horizontal">
+                  <button type="button" data-slot="checkbox" id="field-push" data-checked disabled></button>
+                  <label data-slot="field-label" for="field-push" data-demo="normal">Push notifications</label>
+                </div>
+              </div>
+            </fieldset>
+            <div data-slot="field-separator"></div>
+            <fieldset data-slot="field-set">
+              <legend data-slot="field-legend" data-variant="label">Tasks</legend>
+              <p data-slot="field-description">Get notified when tasks you've created have updates.</p>
+              <div data-slot="checkbox-group">
+                <div data-slot="field" role="group" data-orientation="horizontal">
+                  <button type="button" data-slot="checkbox" id="field-task-push"></button>
+                  <label data-slot="field-label" for="field-task-push" data-demo="normal">Push notifications</label>
+                </div>
+                <div data-slot="field" role="group" data-orientation="horizontal">
+                  <button type="button" data-slot="checkbox" id="field-task-email"></button>
+                  <label data-slot="field-label" for="field-task-email" data-demo="normal">Email notifications</label>
+                </div>
+              </div>
+            </fieldset>
+            <div data-slot="field-separator"><span data-slot="field-separator-content">Or continue with</span></div>
+            <div data-slot="field" role="group" data-orientation="horizontal">
+              <div data-slot="field-content">
+                <label data-slot="field-label" for="field-mfa">Multi-factor authentication</label>
+                <p data-slot="field-description">Enable multi-factor authentication. If you do not have a two-factor device, you can use a one-time code sent to your email.</p>
+              </div>
+              <button type="button" data-slot="switch" id="field-mfa"></button>
+            </div>
+            <div data-slot="field" role="group">
+              <span data-slot="field-label" id="field-price-label">Price Range</span>
+              <p data-slot="field-description">Set your budget range ($<span id="field-price-min">200</span> - <span id="field-price-max">800</span>).</p>
+              <div id="field-price" data-slot="slider">
+                <input type="range" min="0" max="1000" step="10" value="200" name="price-min" aria-label="Minimum price">
+                <input type="range" min="0" max="1000" step="10" value="800" name="price-max" aria-label="Maximum price">
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Responsive layout and errors</h4>
+        <div data-demo="preview">
+          <div data-demo="medium">
+            <fieldset data-slot="field-set">
+              <legend data-slot="field-legend">Profile</legend>
+              <p data-slot="field-description">Fill in your profile information.</p>
+              <div data-slot="field-group">
+                <div data-slot="field" role="group" data-orientation="responsive">
+                  <div data-slot="field-content">
+                    <label data-slot="field-label" for="field-name">Name</label>
+                    <p data-slot="field-description">Provide your full name for identification</p>
+                  </div>
+                  <input id="field-name" data-slot="input" placeholder="Evil Rabbit">
+                </div>
+                <div data-slot="field" role="group" data-invalid="true">
+                  <label data-slot="field-label" for="field-email">Email</label>
+                  <input id="field-email" data-slot="input" type="email" value="rabbit@" aria-invalid="true" aria-describedby="field-email-error">
+                  <div id="field-email-error" data-slot="field-error" role="alert">Enter a valid email address.</div>
+                </div>
+                <div data-slot="field" role="group" data-orientation="responsive">
+                  <button type="button" data-slot="button">Submit</button>
+                  <button type="button" data-slot="button" data-variant="outline">Cancel</button>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </section>
+<section id="form" data-demo="section">
+        <h3 data-demo="title">Form</h3>
+        <p data-demo="description">Native constraint validation wired to field states: invalid controls get <code>aria-invalid</code>, the error text is linked with <code>aria-describedby</code>, errors show on blur and submit, and submit focuses the first invalid field.</p>
+        <div data-demo="preview">
+          <form id="form-profile" data-slot="form" data-demo="medium">
+            <div data-slot="field-group">
+              <div data-slot="field" role="group">
+                <label data-slot="field-label" for="form-username">Username</label>
+                <input id="form-username" data-slot="input" name="username" placeholder="shadcn" required minlength="3" maxlength="20" pattern="[a-z0-9_]+" aria-describedby="form-username-description" data-error-pattern-mismatch="Use lowercase letters, numbers, and underscores." data-error-value-missing="Username is required.">
+                <p id="form-username-description" data-slot="field-description">This is your public display name.</p>
+              </div>
+              <div data-slot="field" role="group">
+                <label data-slot="field-label" for="form-email">Email</label>
+                <input id="form-email" data-slot="input" name="email" type="email" placeholder="m@example.com" required>
+              </div>
+              <div data-slot="field" role="group">
+                <label data-slot="field-label" for="form-plan">Plan</label>
+                <div data-slot="select" data-name="plan" data-required data-error-value-missing="Choose a plan.">
+                  <button id="form-plan" data-slot="select-trigger"><span data-slot="select-value">Select a plan</span></button>
+                  <div data-slot="select-content" data-align-trigger="false">
+                    <div data-slot="select-item" data-value="free">Free</div>
+                    <div data-slot="select-item" data-value="pro">Pro</div>
+                    <div data-slot="select-item" data-value="team">Team</div>
+                  </div>
+                </div>
+              </div>
+              <div data-slot="field" role="group">
+                <label data-slot="field-label" for="form-stack">Frameworks</label>
+                <div data-slot="combobox" data-multiple data-name="stack" data-required data-error="Pick at least one framework.">
+                  <div data-slot="combobox-chips">
+                    <input id="form-stack" data-slot="combobox-chip-input" placeholder="Add framework">
+                  </div>
+                  <div data-slot="combobox-content">
+                    <div data-slot="combobox-empty">No items found.</div>
+                    <div data-slot="combobox-list">
+                      <div data-slot="combobox-item" data-value="next">Next.js</div>
+                      <div data-slot="combobox-item" data-value="sveltekit">SvelteKit</div>
+                      <div data-slot="combobox-item" data-value="astro">Astro</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div data-slot="field" role="group">
+                <label data-slot="field-label" for="form-bio">Bio</label>
+                <textarea id="form-bio" data-slot="textarea" name="bio" maxlength="160" placeholder="Tell us a little bit about yourself"></textarea>
+              </div>
+              <fieldset data-slot="field-set">
+                <legend data-slot="field-legend" data-variant="label">Notify me about</legend>
+                <div data-slot="radio-group" data-name="notify" data-required data-error="Choose what to be notified about.">
+                  <div data-slot="field" role="group" data-orientation="horizontal">
+                    <button type="button" data-slot="radio-group-item" id="form-notify-all" value="all"></button>
+                    <label data-slot="field-label" for="form-notify-all" data-demo="normal">All new messages</label>
+                  </div>
+                  <div data-slot="field" role="group" data-orientation="horizontal">
+                    <button type="button" data-slot="radio-group-item" id="form-notify-mentions" value="mentions"></button>
+                    <label data-slot="field-label" for="form-notify-mentions" data-demo="normal">Direct messages and mentions</label>
+                  </div>
+                  <div data-slot="field" role="group" data-orientation="horizontal">
+                    <button type="button" data-slot="radio-group-item" id="form-notify-none" value="none"></button>
+                    <label data-slot="field-label" for="form-notify-none" data-demo="normal">Nothing</label>
+                  </div>
+                </div>
+              </fieldset>
+              <div data-slot="field" role="group">
+                <label data-slot="field-label" for="form-code">Verification code</label>
+                <div data-slot="input-otp" data-pattern="digits">
+                  <input id="form-code" name="code" maxlength="6" minlength="6" required data-error="Enter the 6-digit code.">
+                  <div data-slot="input-otp-group">
+                    <div data-slot="input-otp-slot"></div>
+                    <div data-slot="input-otp-slot"></div>
+                    <div data-slot="input-otp-slot"></div>
+                    <div data-slot="input-otp-slot"></div>
+                    <div data-slot="input-otp-slot"></div>
+                    <div data-slot="input-otp-slot"></div>
+                  </div>
+                </div>
+              </div>
+              <div data-slot="field" role="group" data-orientation="horizontal">
+                <button type="button" data-slot="checkbox" id="form-terms" data-name="terms" data-required data-error="You must accept the terms."></button>
+                <div data-slot="field-content">
+                  <label data-slot="field-label" for="form-terms">Accept terms and conditions</label>
+                </div>
+              </div>
+              <div data-slot="field" role="group" data-orientation="horizontal">
+                <button type="submit" data-slot="button">Submit</button>
+                <button type="reset" data-slot="button" data-variant="outline">Reset</button>
+              </div>
+              <output id="form-result" data-demo="caption" aria-live="polite"></output>
+            </div>
+          </form>
+        </div>
+        <h4 data-demo="subtitle">Form item</h4>
+        <div data-demo="preview">
+          <form id="form-items" data-slot="form" data-demo="narrow">
+            <div data-slot="field-group">
+              <div data-slot="form-item">
+                <label data-slot="form-label" for="form-display">Display name</label>
+                <input id="form-display" data-slot="input" name="display" required data-error="Display name is required.">
+                <p data-slot="form-description">Shown on your profile.</p>
+              </div>
+              <div data-slot="field" role="group" data-orientation="horizontal">
+                <button type="submit" data-slot="button">Save</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+<section id="input" data-demo="section">
+        <h3 data-demo="title">Input</h3>
+        <p data-demo="description">Displays a form input field or a component that looks like an input field.</p>
+        <div data-demo="preview">
+          <div data-demo="narrow">
+            <input data-slot="input" type="email" placeholder="Email" aria-label="Email">
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Field, file, and grid</h4>
+        <div data-demo="preview">
+          <div data-slot="field-group" data-demo="narrow">
+            <div data-slot="field" role="group">
+              <label data-slot="field-label" for="input-username">Username</label>
+              <input id="input-username" data-slot="input" placeholder="Enter your username" aria-describedby="input-username-help">
+              <p id="input-username-help" data-slot="field-description">Choose a unique username for your account.</p>
+            </div>
+            <div data-slot="field" role="group">
+              <label data-slot="field-label" for="input-picture">Picture</label>
+              <input id="input-picture" data-slot="input" type="file">
+              <p data-slot="field-description">Select a picture to upload.</p>
+            </div>
+            <div id="input-grid">
+              <div data-slot="field" role="group">
+                <label data-slot="field-label" for="input-first">First name</label>
+                <input id="input-first" data-slot="input" placeholder="Jordan">
+              </div>
+              <div data-slot="field" role="group">
+                <label data-slot="field-label" for="input-last">Last name</label>
+                <input id="input-last" data-slot="input" placeholder="Lee">
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Disabled, invalid, and required</h4>
+        <div data-demo="preview">
+          <div data-slot="field-group" data-demo="narrow">
+            <div data-slot="field" role="group" data-disabled="true">
+              <label data-slot="field-label" for="input-disabled">Email</label>
+              <input id="input-disabled" data-slot="input" type="email" placeholder="Email" disabled>
+              <p data-slot="field-description">This field is currently disabled.</p>
+            </div>
+            <div data-slot="field" role="group" data-invalid="true">
+              <label data-slot="field-label" for="input-invalid">Invalid input</label>
+              <input id="input-invalid" data-slot="input" placeholder="Error" aria-invalid="true" aria-describedby="input-invalid-error">
+              <div id="input-invalid-error" data-slot="field-error" role="alert">This field contains validation errors.</div>
+            </div>
+            <div data-slot="field" role="group">
+              <label data-slot="field-label" for="input-required">Required field <span data-demo="required" aria-hidden="true">*</span></label>
+              <input id="input-required" data-slot="input" placeholder="This field is required" required>
+              <p data-slot="field-description">This field must be filled out.</p>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Inline</h4>
+        <div data-demo="preview">
+          <div data-slot="field" role="group" data-orientation="horizontal" data-demo="medium">
+            <input data-slot="input" type="search" placeholder="Search..." aria-label="Search">
+            <button type="button" data-slot="button">Search</button>
+          </div>
+        </div>
+      </section>
+<section id="textarea" data-demo="section">
+        <h3 data-demo="title">Textarea</h3>
+        <p data-demo="description">Displays a form textarea or a component that looks like a textarea.</p>
+        <div data-demo="preview">
+          <textarea data-slot="textarea" placeholder="Type your message here." aria-label="Message" data-demo="medium"></textarea>
+        </div>
+        <h4 data-demo="subtitle">Field, disabled, and invalid</h4>
+        <div data-demo="preview">
+          <div data-slot="field-group" data-demo="medium">
+            <div data-slot="field" role="group">
+              <label data-slot="field-label" for="textarea-message">Message</label>
+              <textarea id="textarea-message" data-slot="textarea" placeholder="Type your message here."></textarea>
+              <p data-slot="field-description">Enter your message below.</p>
+            </div>
+            <div data-slot="field" role="group" data-disabled="true">
+              <label data-slot="field-label" for="textarea-disabled">Message</label>
+              <textarea id="textarea-disabled" data-slot="textarea" placeholder="Type your message here." disabled></textarea>
+            </div>
+            <div data-slot="field" role="group" data-invalid="true">
+              <label data-slot="field-label" for="textarea-invalid">Message</label>
+              <textarea id="textarea-invalid" data-slot="textarea" placeholder="Type your message here." aria-invalid="true"></textarea>
+              <div data-slot="field-error" role="alert">Please enter a valid message.</div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">With button</h4>
+        <div data-demo="preview">
+          <div data-demo="stack medium">
+            <textarea data-slot="textarea" placeholder="Type your message here." aria-label="Message to send"></textarea>
+            <button type="button" data-slot="button">Send message</button>
+          </div>
+        </div>
+      </section>
+<section id="label" data-demo="section">
+        <h3 data-demo="title">Label</h3>
+        <p data-demo="description">Renders an accessible label associated with controls.</p>
+        <div data-demo="preview">
+          <div data-demo="row">
+            <button type="button" data-slot="checkbox" id="label-terms"></button>
+            <label data-slot="label" for="label-terms">Accept terms and conditions</label>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Label in field and disabled peer</h4>
+        <div data-demo="preview">
+          <div data-slot="field-group" data-demo="narrow">
+            <div data-slot="field" role="group">
+              <label data-slot="label" for="label-email">Your email address</label>
+              <input id="label-email" data-slot="input" type="email" placeholder="you@example.com">
+            </div>
+            <div data-demo="row">
+              <button type="button" data-slot="checkbox" id="label-disabled" disabled></button>
+              <label data-slot="label" for="label-disabled">Disabled control</label>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="kbd" data-demo="section">
+        <h3 data-demo="title">Kbd</h3>
+        <p data-demo="description">Used to display textual user input from keyboard.</p>
+        <div data-demo="preview column">
+          <kbd data-slot="kbd-group">
+            <kbd data-slot="kbd">⌘</kbd>
+            <kbd data-slot="kbd">⇧</kbd>
+            <kbd data-slot="kbd">⌥</kbd>
+            <kbd data-slot="kbd">⌃</kbd>
+          </kbd>
+          <kbd data-slot="kbd-group">
+            <kbd data-slot="kbd">Ctrl</kbd>
+            <span>+</span>
+            <kbd data-slot="kbd">B</kbd>
+          </kbd>
+        </div>
+        <h4 data-demo="subtitle">Group, button, and input group</h4>
+        <div data-demo="preview column">
+          <p data-typography="muted">Use <kbd data-slot="kbd-group"><kbd data-slot="kbd">Ctrl + B</kbd><kbd data-slot="kbd">Ctrl + K</kbd></kbd> to open the command palette</p>
+          <div data-demo="row">
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm">Accept <kbd data-slot="kbd">⏎</kbd></button>
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm">Cancel <kbd data-slot="kbd">Esc</kbd></button>
+          </div>
+          <div data-slot="input-group" role="group" data-demo="narrow">
+            <input data-slot="input-group-control" placeholder="Search..." aria-label="Search with shortcut">
+            <div data-slot="input-group-addon" role="group"><svg data-lucide="search"></svg></div>
+            <div data-slot="input-group-addon" role="group" data-align="inline-end">
+              <kbd data-slot="kbd">⌘</kbd>
+              <kbd data-slot="kbd">K</kbd>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="split-payment">
+          <div data-slot="button-group" role="group" aria-label="Payment">
+            <div data-slot="button-group" role="group">
+              <div data-slot="select" data-value="$" data-name="currency">
+                <button data-slot="select-trigger" aria-label="Currency" data-demo="mono"><span data-slot="select-value"></span></button>
+                <div data-slot="select-content" data-align-trigger="false">
+                  <div data-slot="select-item" data-value="$" data-label="$">$ <span data-demo="muted">US Dollar</span></div>
+                  <div data-slot="select-item" data-value="€" data-label="€">€ <span data-demo="muted">Euro</span></div>
+                  <div data-slot="select-item" data-value="£" data-label="£">£ <span data-demo="muted">British Pound</span></div>
+                </div>
+              </div>
+              <input data-slot="input" placeholder="10.00" pattern="[0-9]*" aria-label="Amount">
+            </div>
+            <div data-slot="button-group" role="group">
+              <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Send"><svg data-lucide="arrow-right"></svg></button>
+            </div>
+          </div>
+        </section>
+  </main>
+</body>
+</html>

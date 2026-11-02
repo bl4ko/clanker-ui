@@ -1,0 +1,15 @@
+{
+  "parts": {
+    "toggle": {"role": "button", "name": "Toggle bookmark"}
+  },
+  "anchor": "toggle",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "Space"},
+    {"do": "press", "key": "Enter"},
+    {"do": "click", "target": "toggle"},
+    {"do": "press_hold", "target": "toggle", "hold": 200},
+    {"do": "tab"}
+  ]
+}

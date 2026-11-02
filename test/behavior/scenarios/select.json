@@ -1,0 +1,38 @@
+{
+  "parts": {
+    "trigger": {"role": "combobox"},
+    "popup": {"slot": "select-content", "popup": true},
+    "listbox": {"role": "listbox", "popup": true},
+    "apple": {"role": "option", "name": "Apple", "in": "page"}
+  },
+  "steps": [
+    {"do": "click", "target": "trigger", "motion": "popup"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "ArrowDown", "label": "ArrowDown on the last item"},
+    {"do": "press", "key": "Home"},
+    {"do": "type", "text": "g"},
+    {"do": "press", "key": "Enter", "motion": "popup"},
+    {"do": "press", "key": "ArrowDown", "motion": "popup"},
+    {"do": "press", "key": "ArrowUp"},
+    {"do": "press", "key": "Escape", "motion": "popup"},
+    {"do": "press", "key": "Space", "motion": "popup"},
+    {"do": "type", "text": "b ", "label": "type 'b' and Space at once"},
+    {"do": "press", "key": "Enter", "motion": "popup", "label": "Enter on the trigger"},
+    {"do": "press", "key": "Tab", "motion": "popup"},
+    {"do": "shift_tab"},
+    {"do": "click", "target": "trigger", "motion": "popup", "label": "click trigger"},
+    {"do": "click", "target": "apple", "motion": "popup"},
+    {"do": "click", "target": "trigger", "motion": "popup", "label": "click trigger again"},
+    {"do": "click_outside", "motion": "popup"},
+    {"do": "type", "text": "p", "label": "type 'p' on the closed trigger"},
+    {"do": "press", "key": "Escape"}
+  ],
+  "positions": [
+    ["popup", "trigger"]
+  ],
+  "allowed": [
+    {"key": "select.firefox-ring-close", "match": "^focus ring \\| none \\| painted \\|", "steps": [8, 11, 14], "engines": ["firefox"], "reason": "Base UI moves focus after the key event, so Firefox paints no focus ring there; the kit keeps the keyboard focus ring"}
+  ]
+}

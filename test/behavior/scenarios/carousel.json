@@ -1,0 +1,33 @@
+{
+  "parts": {
+    "region": {"role": "region"},
+    "prev": {"role": "button", "name": "Previous slide"},
+    "next": {"role": "button", "name": "Next slide"},
+    "slide1": {"role": "group", "within": "region", "visible": false},
+    "slide2": {"role": "group", "within": "region", "visible": false, "nth": 1}
+  },
+  "anchor": "region",
+  "positions": [
+    ["slide1", "region"],
+    ["slide2", "region"],
+    ["prev", "region"],
+    ["next", "region"]
+  ],
+  "steps": [
+    {"do": "click", "target": "next", "motion": "slide1", "ms": 900},
+    {"do": "click", "target": "next", "motion": "slide1", "ms": 900, "label": "click next again"},
+    {"do": "click", "target": "prev", "motion": "slide1", "ms": 900},
+    {"do": "press", "key": "ArrowRight", "motion": "slide1", "ms": 900},
+    {"do": "press", "key": "ArrowLeft", "motion": "slide1", "ms": 900},
+    {"do": "press", "key": "ArrowLeft", "motion": "slide1", "ms": 900, "label": "ArrowLeft again"},
+    {"do": "tab"},
+    {"do": "shift_tab"},
+    {"do": "drag", "target": "slide2", "by": [-150, 0], "steps": 12},
+    {"do": "drag", "target": "slide2", "by": [150, 0], "steps": 12, "label": "drag back"},
+    {"do": "swipe", "target": "slide1", "by": [-120, 0], "engines": ["chromium"]},
+    {"do": "wheel", "target": "region", "by": [200, 0]}
+  ],
+  "allowed": [
+    {"key": "carousel.slide-name", "aria_name": "group", "reason": "the kit keeps its better ARIA: the slides have a label"}
+  ]
+}

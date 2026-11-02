@@ -1,0 +1,25 @@
+{
+  "parts": {
+    "root": {"slot": "scroll-area"},
+    "viewport": {"slot": "scroll-area-viewport", "scroll": true},
+    "scrollbar": {"slot": "scroll-area-scrollbar", "optional": true},
+    "thumb": {"slot": "scroll-area-thumb", "optional": true, "size": true}
+  },
+  "anchor": "root",
+  "positions": [
+    ["thumb", "root"]
+  ],
+  "steps": [
+    {"do": "hover", "target": "viewport", "motion": "scrollbar", "ms": 600},
+    {"do": "wheel", "target": "viewport", "by": [0, 200], "motion": "thumb", "ms": 900},
+    {"do": "wheel", "target": "viewport", "by": [0, -100], "motion": "thumb", "ms": 900, "label": "wheel up"},
+    {"do": "drag", "target": "thumb", "by": [0, 60], "steps": 8},
+    {"do": "tab_in"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "PageDown"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "Home"},
+    {"do": "leave", "motion": "scrollbar", "ms": 1500},
+    {"do": "click", "target": "scrollbar", "at": [0.5, 0.9]}
+  ]
+}

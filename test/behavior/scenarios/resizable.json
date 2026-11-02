@@ -1,0 +1,33 @@
+{
+  "parts": {
+    "group": {"slot": "resizable-panel-group"},
+    "h1": {"role": "separator"},
+    "h2": {"role": "separator", "nth": 1},
+    "one": {"slot": "resizable-panel", "size": "width"},
+    "two": {"slot": "resizable-panel", "nth": 2, "size": "height"}
+  },
+  "anchor": "group",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "ArrowRight"},
+    {"do": "press", "key": "ArrowLeft", "times": 2},
+    {"do": "press", "key": "Shift+ArrowRight"},
+    {"do": "press", "key": "Home"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "Enter"},
+    {"do": "press", "key": "Enter", "label": "press Enter again"},
+    {"do": "tab"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "ArrowUp", "times": 2},
+    {"do": "drag", "target": "h1", "by": [-60, 0]},
+    {"do": "drag", "target": "h2", "by": [0, 40]},
+    {"do": "drag", "target": "h1", "by": [-400, 0], "label": "drag past the minimum"},
+    {"do": "dblclick", "target": "h1"},
+    {"do": "swipe", "target": "h1", "by": [80, 0], "engines": ["chromium"]}
+  ],
+  "allowed": [
+    {"key": "resizable.handle-name", "aria_name": "separator", "reason": "the kit keeps its better ARIA: the resize handles have a name"},
+    {"key": "resizable.touch-cancel-jump", "match": "^(h1 aria-valuenow \\| 100 \\| (?!50 \\|)[0-9.]+|one width \\| [0-9.]+ \\| [0-9.]+|(h2|two) shown \\| no \\| yes) \\|", "steps": [16], "engines": ["chromium"], "reason": "live react-resizable-panels pointercancel defect (a touch swipe sets the panel to 100 %), not copied"}
+  ]
+}

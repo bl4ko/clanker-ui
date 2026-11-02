@@ -1,0 +1,26 @@
+{
+  "parts": {
+    "group": {"role": "group"},
+    "bold": {"role": "button", "name": "Toggle bold"},
+    "italic": {"role": "button", "name": "Toggle italic"},
+    "strike": {"role": "button", "name": "Toggle strikethrough"}
+  },
+  "anchor": "group",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "Space"},
+    {"do": "press", "key": "ArrowRight"},
+    {"do": "press", "key": "Enter"},
+    {"do": "press", "key": "ArrowRight", "label": "ArrowRight again"},
+    {"do": "press", "key": "ArrowRight", "label": "ArrowRight on the last item"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "Home"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "tab"},
+    {"do": "shift_tab"},
+    {"do": "click", "target": "strike"},
+    {"do": "click", "target": "strike", "label": "click it again"},
+    {"do": "click", "target": "italic"}
+  ]
+}

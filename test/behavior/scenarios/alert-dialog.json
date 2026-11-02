@@ -1,0 +1,21 @@
+{
+  "parts": {
+    "trigger": {"role": "button", "name": "Show Dialog"},
+    "dialog": {"role": "alertdialog", "popup": true, "edges": true},
+    "cancel": {"role": "button", "name": "Cancel", "in": "page"},
+    "continue": {"role": "button", "name": "Continue", "in": "page"}
+  },
+  "positions": [],
+  "steps": [
+    {"do": "click", "target": "trigger", "motion": "dialog", "ms": 700},
+    {"do": "tab"},
+    {"do": "tab", "label": "tab past the last button"},
+    {"do": "shift_tab"},
+    {"do": "click_outside", "motion": "dialog", "ms": 500},
+    {"do": "press", "key": "Escape", "motion": "dialog", "ms": 700},
+    {"do": "press", "key": "Enter", "motion": "dialog", "ms": 700},
+    {"do": "click", "target": "cancel", "motion": "dialog", "ms": 700},
+    {"do": "press", "key": "Space", "motion": "dialog", "ms": 700},
+    {"do": "click", "target": "continue", "motion": "dialog", "ms": 700}
+  ]
+}

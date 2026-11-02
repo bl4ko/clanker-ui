@@ -1,0 +1,28 @@
+{
+  "parts": {
+    "button": {"role": "button", "name": "Show Toast"},
+    "toast": {"slot": "toast", "popup": true, "edges": true, "order": "oldest"},
+    "second": {"slot": "toast", "popup": true, "order": "newest", "min": 2},
+    "undo": {"role": "button", "name": "Undo", "in": "page", "order": "newest"}
+  },
+  "anchor": "button",
+  "positions": [],
+  "steps": [
+    {"do": "click", "target": "button", "motion": "toast", "ms": 700},
+    {"do": "click", "target": "button", "motion": ["toast", "second"], "ms": 700, "label": "click to show a second toast"},
+    {"do": "press", "key": "F6"},
+    {"do": "press", "key": "Tab"},
+    {"do": "press", "key": "Escape"},
+    {"do": "wait", "ms": 7000, "motion": ["toast", "second"], "label": "wait for the timeout"},
+    {"do": "blur"},
+    {"do": "wait", "ms": 6000, "label": "wait until every toast is gone"},
+    {"do": "click", "target": "button", "motion": "toast", "ms": 700, "label": "click to show a toast again"},
+    {"do": "hover", "target": "toast", "steps": 6, "motion": "toast", "ms": 700},
+    {"do": "leave", "motion": "toast", "ms": 700},
+    {"do": "click", "target": "undo", "motion": "toast", "ms": 900},
+    {"do": "wait", "ms": 800, "label": "wait after the undo"},
+    {"do": "click", "target": "button", "motion": "toast", "ms": 700, "label": "click before a drag"},
+    {"do": "drag", "target": "toast", "by": [10, 0], "steps": 5, "motion": "toast", "ms": 1500, "label": "drag the toast 10 px (no dismiss)"},
+    {"do": "swipe", "target": "toast", "by": [200, 0], "steps": 10, "engines": ["chromium"], "motion": "toast", "ms": 2500, "label": "swipe the toast 200 px to the right"}
+  ]
+}

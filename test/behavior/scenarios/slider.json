@@ -1,0 +1,29 @@
+{
+  "parts": {
+    "slider": {"slot": "slider"},
+    "thumb": {"role": "slider"}
+  },
+  "anchor": "slider",
+  "positions": [
+    ["thumb", "slider", "center"]
+  ],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "ArrowRight"},
+    {"do": "press", "key": "ArrowUp"},
+    {"do": "press", "key": "ArrowLeft"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "PageUp"},
+    {"do": "press", "key": "PageDown"},
+    {"do": "press", "key": "Shift+ArrowRight"},
+    {"do": "press", "key": "Shift+ArrowLeft"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "ArrowRight", "label": "ArrowRight at the maximum"},
+    {"do": "press", "key": "Home"},
+    {"do": "click", "target": "slider", "at": [0.25, 0.5]},
+    {"do": "drag", "target": "thumb", "by": [60, 0]},
+    {"do": "drag", "target": "thumb", "by": [-400, 0], "label": "drag the thumb past the start"},
+    {"do": "swipe", "target": "thumb", "by": [80, 0], "engines": ["chromium"]},
+    {"do": "tab"}
+  ]
+}

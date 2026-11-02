@@ -1,0 +1,107 @@
+accordion/AccordionContent	:where([data-slot="accordion-content"]) > div
+accordion/AccordionTrigger/AccordionPrimitive.Header	:where([data-slot="accordion-item"]) > :has(> [data-slot="accordion-trigger"])
+accordion/AccordionTrigger/IconPlaceholder#1	& > [data-slot="accordion-trigger-icon"]:nth-last-child(2)	e456a03e
+accordion/AccordionTrigger/IconPlaceholder#2	& > [data-slot="accordion-trigger-icon"]:last-child	604b6b36
+breadcrumb/BreadcrumbSeparator/IconPlaceholder	& > svg
+calendar/Calendar	[data-slot="calendar"]
+calendar/Calendar/classNames.button_next	[data-slot="calendar-button-next"]
+calendar/Calendar/classNames.button_previous	[data-slot="calendar-button-previous"]
+calendar/Calendar/classNames.caption_label	[data-slot="calendar-caption-label"]
+calendar/Calendar/classNames.day	[data-slot="calendar-day"]
+calendar/Calendar/classNames.disabled	[data-slot="calendar-day"][data-disabled="true"]
+calendar/Calendar/classNames.dropdown	[data-slot="calendar-dropdown"]
+calendar/Calendar/classNames.dropdown_root	[data-slot="calendar-dropdown-root"]
+calendar/Calendar/classNames.dropdowns	[data-slot="calendar-dropdowns"]
+calendar/Calendar/classNames.hidden	[data-slot="calendar-day"][data-hidden="true"]
+calendar/Calendar/classNames.month	[data-slot="calendar-month"]
+calendar/Calendar/classNames.month_caption	[data-slot="calendar-month-caption"]
+calendar/Calendar/classNames.month_grid	[data-slot="calendar-month-grid"]
+calendar/Calendar/classNames.months	[data-slot="calendar-months"]
+calendar/Calendar/classNames.nav	[data-slot="calendar-nav"]
+calendar/Calendar/classNames.outside	[data-slot="calendar-day"][data-outside="true"]
+calendar/Calendar/classNames.range_end	[data-slot="calendar-day"][data-range-end="true"]
+calendar/Calendar/classNames.range_middle	[data-slot="calendar-day"][data-range-middle="true"]
+calendar/Calendar/classNames.range_start	[data-slot="calendar-day"][data-range-start="true"]
+calendar/Calendar/classNames.root	[data-slot="calendar"]
+calendar/Calendar/classNames.today	[data-slot="calendar-day"][data-today="true"]
+calendar/Calendar/classNames.week	[data-slot="calendar-week"]
+calendar/Calendar/classNames.week_number	[data-slot="calendar-week-number"]
+calendar/Calendar/classNames.week_number_header	[data-slot="calendar-week-number-header"]
+calendar/Calendar/classNames.weekday	[data-slot="calendar-weekday"]
+calendar/Calendar/classNames.weekdays	[data-slot="calendar-weekdays"]
+calendar/Calendar/components.Chevron/IconPlaceholder#1	:where([data-slot="calendar-button-previous"]) > svg	17ca4edf
+calendar/Calendar/components.Chevron/IconPlaceholder#2	:where([data-slot="calendar-button-next"]) > svg	3e3dcb1c
+calendar/Calendar/components.Chevron/IconPlaceholder#3	:where([data-slot="calendar-caption-label"]) > svg	0d5853f2
+calendar/Calendar/components.WeekNumber/div	:where([data-slot="calendar-week-number"]) > div
+carousel/CarouselContent	:where([data-slot="carousel-content"]) > div
+carousel/CarouselNext/IconPlaceholder	& > svg
+carousel/CarouselPrevious/IconPlaceholder	& > svg
+chart/ChartLegendContent	-
+chart/ChartLegendContent/div#1	-	e4108c0a
+chart/ChartLegendContent/div#2	-	07bf4706
+chart/ChartTooltipContent	-
+chart/ChartTooltipContent/div#1	-	9f5c4077
+chart/ChartTooltipContent/div#2	-	9f5c4077
+chart/ChartTooltipContent/div#3	-	901f55ce
+chart/ChartTooltipContent/div#4	-	f99dd546
+chart/ChartTooltipContent/div#5	-	925716ab
+chart/ChartTooltipContent/div#6	-	8b61024c
+chart/ChartTooltipContent/div#7	-	901f55ce
+chart/ChartTooltipContent/span#1	-	456bd343
+chart/ChartTooltipContent/span#2	-	125a1c3c
+combobox/ComboboxChip/IconPlaceholder	:where([data-slot="combobox-chip-remove"]) > svg
+combobox/ComboboxClear/IconPlaceholder	& > svg
+combobox/ComboboxContent/ComboboxPrimitive.Positioner	-
+combobox/ComboboxItem/ComboboxPrimitive.ItemIndicator	[data-slot="combobox-item-indicator"]
+combobox/ComboboxItem/IconPlaceholder	:where([data-slot="combobox-item-indicator"]) > svg
+combobox/ComboboxTrigger/IconPlaceholder	[data-slot="combobox-trigger-icon"]
+command/CommandInput/IconPlaceholder	:where([data-slot="command-input-wrapper"]) [data-slot="input-group-addon"] > svg
+command/CommandItem/IconPlaceholder	& > svg:last-child
+context-menu/ContextMenuCheckboxItem/span	& > span:first-child
+context-menu/ContextMenuContent/ContextMenuPrimitive.Positioner	-
+context-menu/ContextMenuRadioItem/span	& > span:first-child
+context-menu/ContextMenuSubTrigger/IconPlaceholder	& > svg:last-child
+dialog/DialogContent/DialogPrimitive.Close	:where([data-slot="dialog-content"]) > [data-slot="dialog-close"]
+dropdown-menu/DropdownMenuContent/MenuPrimitive.Positioner	-
+dropdown-menu/DropdownMenuSubTrigger/IconPlaceholder	& > svg:last-child
+field/FieldError/ul	& > ul
+hover-card/HoverCardContent/PreviewCardPrimitive.Positioner	-
+input-group/InputGroupText	[data-slot="input-group-text"]
+input-otp/InputOTP	:where([data-slot="input-otp"]) input
+input-otp/InputOTP/containerClassName	[data-slot="input-otp"]
+input-otp/InputOTPSlot/div#1	[data-slot="input-otp-caret"]	e1ee61f5
+input-otp/InputOTPSlot/div#2	:where([data-slot="input-otp-caret"]) > div	4cd80c43
+menubar/MenubarCheckboxItem/span	& > span:first-child
+menubar/MenubarRadioItem/span	& > span:first-child
+navigation-menu/cva.navigationMenuTriggerStyle	[data-slot="navigation-menu-link"][data-variant="trigger"]
+navigation-menu/NavigationMenu/NavigationMenuPositioner	-
+navigation-menu/NavigationMenuIndicator/div	[data-slot="navigation-menu-indicator-arrow"]
+navigation-menu/NavigationMenuPositioner	[data-slot="navigation-menu-positioner"]
+navigation-menu/NavigationMenuPositioner/NavigationMenuPrimitive.Popup	[data-slot="navigation-menu-popup"]
+navigation-menu/NavigationMenuPositioner/NavigationMenuPrimitive.Viewport	[data-slot="navigation-menu-viewport"]
+navigation-menu/NavigationMenuTrigger/IconPlaceholder	& > svg
+pagination/PaginationNext/IconPlaceholder	& > svg
+pagination/PaginationNext/span	& > span
+pagination/PaginationPrevious/IconPlaceholder	& > svg
+pagination/PaginationPrevious/span	& > span
+popover/PopoverContent/PopoverPrimitive.Positioner	-
+radio-group/RadioGroupItem/span	:where([data-slot="radio-group-indicator"]) > span
+resizable/ResizableHandle/div	& > div
+select/SelectContent/SelectPrimitive.Positioner	-
+select/SelectItem/IconPlaceholder	:where([data-slot="select-item-indicator"]) > svg
+select/SelectItem/SelectPrimitive.ItemIndicator	[data-slot="select-item-indicator"]
+select/SelectItem/SelectPrimitive.ItemText	[data-slot="select-item-text"]
+select/SelectTrigger/SelectPrimitive.Icon	[data-slot="select-icon"]
+sheet/SheetContent/SheetPrimitive.Close	:where([data-slot="sheet-content"]) > [data-slot="sheet-close"]
+sidebar/Sidebar	[data-slot="sidebar"]:not([data-state], [data-mobile])
+sidebar/Sidebar/div#1	:where([data-slot="sidebar"][data-mobile]) > div:not([data-slot])	9d2022f6
+sidebar/Sidebar/div#2	[data-slot="sidebar"][data-state]	64fa0e16
+sidebar/Sidebar/SheetContent	[data-slot="sidebar"][data-mobile]
+sidebar/Sidebar/SheetHeader	:where([data-slot="sidebar"][data-mobile]) [data-slot="sheet-header"]
+sidebar/SidebarTrigger/IconPlaceholder	& > svg
+slider/Slider/SliderPrimitive.Control	& > :has(> [data-slot="slider-track"])
+toast/ToastIcon/IconPlaceholder#1	:where([data-slot="toast"][data-type="error"]) [data-slot="toast-icon"] > svg	6fb2747a
+toast/ToastIcon/IconPlaceholder#2	:where([data-slot="toast"][data-type="loading"]) [data-slot="toast-icon"] > svg	ff94275d
+toast/ToastList/div	:where([data-slot="toast-content"]) > div:not([data-slot])
+tooltip/TooltipContent/TooltipPrimitive.Arrow	[data-slot="tooltip-arrow"]
+tooltip/TooltipContent/TooltipPrimitive.Positioner	-

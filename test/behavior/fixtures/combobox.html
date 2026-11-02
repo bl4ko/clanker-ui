@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Combobox behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="combobox">
+          <div data-slot="input-group" data-behavior="w-auto">
+            <input data-slot="input-group-control" placeholder="Select a framework">
+            <div data-slot="input-group-addon" data-align="inline-end">
+              <button type="button" data-slot="input-group-button" data-combobox-trigger></button>
+            </div>
+          </div>
+          <div data-slot="combobox-content">
+            <div data-slot="combobox-empty">No items found.</div>
+            <div data-slot="combobox-list">
+              <div data-slot="combobox-item" data-value="Next.js">Next.js</div>
+              <div data-slot="combobox-item" data-value="SvelteKit">SvelteKit</div>
+              <div data-slot="combobox-item" data-value="Nuxt.js">Nuxt.js</div>
+              <div data-slot="combobox-item" data-value="Remix">Remix</div>
+              <div data-slot="combobox-item" data-value="Astro">Astro</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

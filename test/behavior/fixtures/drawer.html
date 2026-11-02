@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Drawer behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-behavior="row-wrap-2 drawer-row">
+          <div data-slot="drawer">
+            <button type="button" data-slot="button" data-variant="outline" data-drawer-trigger>Open Drawer</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-behavior="p-4"><div data-behavior="h-80 muted-box"></div></div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="drawer">
+            <button type="button" data-slot="button" data-variant="outline" data-drawer-trigger>Header</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-slot="drawer-header">
+                    <h2 data-slot="drawer-title">Edit profile</h2>
+                    <p data-slot="drawer-description">Make changes to your profile here. Click save when you're done.</p>
+                  </div>
+                  <div data-behavior="p-4"><div data-behavior="h-80 muted-box"></div></div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="drawer">
+            <button type="button" data-slot="button" data-variant="outline" data-drawer-trigger>Footer</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-behavior="p-4"><div data-behavior="h-80 muted-box"></div></div>
+                  <div data-slot="drawer-footer">
+                    <button type="button" data-slot="button">Submit</button>
+                    <button type="button" data-slot="button" data-variant="outline" data-drawer-close>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="drawer">
+            <button type="button" data-slot="button" data-variant="outline" data-drawer-trigger>Header and Footer</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-slot="drawer-header">
+                    <h2 data-slot="drawer-title">Edit profile</h2>
+                    <p data-slot="drawer-description">Make changes to your profile here. Click save when you're done.</p>
+                  </div>
+                  <div data-behavior="p-4"><div data-behavior="h-80 muted-box"></div></div>
+                  <div data-slot="drawer-footer">
+                    <button type="button" data-slot="button">Submit</button>
+                    <button type="button" data-slot="button" data-variant="outline" data-drawer-close>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+          <div data-slot="drawer">
+            <button type="button" data-slot="button" data-variant="outline" data-drawer-trigger>Edge to Edge</button>
+            <dialog data-slot="drawer-viewport">
+              <div data-slot="drawer-popup">
+                <div data-slot="drawer-content">
+                  <div data-behavior="h-80 blue-box"></div>
+                </div>
+              </div>
+            </dialog>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

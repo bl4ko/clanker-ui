@@ -1,0 +1,40 @@
+{
+  "parts": {
+    "area": {"slot": "context-menu-trigger"},
+    "menu": {"role": "menu", "popup": true},
+    "sub": {"role": "menu", "popup": true, "nth": 1},
+    "subtrigger": {"role": "menuitem", "name": "More Tools", "in": "page"},
+    "reload": {"role": "menuitem", "name": "Reload", "in": "page"},
+    "bookmarks": {"role": "menuitemcheckbox", "name": "Show Bookmarks", "in": "page"},
+    "colm": {"role": "menuitemradio", "name": "Colm Tuite", "in": "page"}
+  },
+  "anchor": "area",
+  "positions": [
+    ["menu", "area"],
+    ["sub", "subtrigger"]
+  ],
+  "steps": [
+    {"do": "right_click", "target": "area", "at": [0.3, 0.4], "motion": "menu"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "Home"},
+    {"do": "type", "text": "r"},
+    {"do": "press", "key": "Escape", "motion": "menu"},
+    {"do": "right_click", "target": "area", "at": [0.3, 0.4], "motion": "menu", "label": "right click again"},
+    {"do": "hover", "target": "subtrigger", "motion": "sub", "ms": 900},
+    {"do": "press", "key": "ArrowRight", "motion": "sub"},
+    {"do": "press", "key": "ArrowLeft", "motion": "sub"},
+    {"do": "click", "target": "bookmarks", "motion": "menu"},
+    {"do": "right_click", "target": "area", "at": [0.6, 0.6], "motion": "menu", "label": "right click at another point"},
+    {"do": "click", "target": "colm", "motion": "menu"},
+    {"do": "right_click", "target": "area", "at": [0.3, 0.4], "motion": "menu", "label": "right click a third time"},
+    {"do": "click_outside", "motion": "menu"},
+    {"do": "right_click", "target": "area", "at": [0.3, 0.4], "motion": "menu", "label": "right click before an item click"},
+    {"do": "click", "target": "reload", "motion": "menu"}
+  ],
+  "allowed": [
+    {"key": "context-menu.demo-checked-state", "match": "^(bookmarks checked state \\| checked \\| none|bookmarks aria-checked \\| true \\| false|colm aria-checked \\| false \\| true) \\|", "steps": [12, 13, 14, 15, 16, 17, 18], "reason": "the live demo item is fixed demo state (checked without onCheckedChange), so a click does not change it; the kit item changes its state as in an app"},
+    {"key": "context-menu.demo-checked-tree", "match": "^ARIA tree \\(menu\\) \\| (\\d+) nodes \\| \\1 nodes \\| shadcn only: menuitemcheckbox \"Show Bookmarks\" \\[checked\\]; ours only: menuitemcheckbox \"Show Bookmarks\"(; shadcn only: menuitemradio \"Pedro Duarte\" \\[checked\\]; ours only: menuitemradio \"Pedro Duarte\"; shadcn only: menuitemradio \"Colm Tuite\"; ours only: menuitemradio \"Colm Tuite\" \\[checked\\])?$", "steps": [12, 13, 14, 15, 16, 17, 18], "reason": "the live demo item is fixed demo state (checked without onCheckedChange), so a click does not change it; the kit item changes its state as in an app"}
+  ]
+}

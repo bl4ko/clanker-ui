@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Accordion behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page accordion-top">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="accordion" data-type="single" data-collapsible data-behavior="max-w-384">
+          <div data-slot="accordion-item" data-value="shipping" data-state="open">
+            <h3><button type="button" data-slot="accordion-trigger">What are your shipping options?</button></h3>
+            <div data-slot="accordion-content"><div>We offer standard (5-7 days), express (2-3 days), and overnight shipping. Free shipping on international orders.</div></div>
+          </div>
+          <div data-slot="accordion-item" data-value="returns">
+            <h3><button type="button" data-slot="accordion-trigger">What is your return policy?</button></h3>
+            <div data-slot="accordion-content"><div>Returns accepted within 30 days. Items must be unused and in original packaging. Refunds processed within 5-7 business days.</div></div>
+          </div>
+          <div data-slot="accordion-item" data-value="support">
+            <h3><button type="button" data-slot="accordion-trigger">How can I contact customer support?</button></h3>
+            <div data-slot="accordion-content"><div>Reach us via email, live chat, or phone. We respond within 24 hours during business days.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

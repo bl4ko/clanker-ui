@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Select behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="select">
+          <button data-slot="select-trigger" data-behavior="w-full-max-w-48"><span data-slot="select-value">Select a fruit</span></button>
+          <div data-slot="select-content">
+            <div data-slot="select-group">
+              <div data-slot="select-label">Fruits</div>
+              <div data-slot="select-item" data-value="">Select a fruit</div>
+              <div data-slot="select-item" data-value="apple">Apple</div>
+              <div data-slot="select-item" data-value="banana">Banana</div>
+              <div data-slot="select-item" data-value="blueberry">Blueberry</div>
+              <div data-slot="select-item" data-value="grapes">Grapes</div>
+              <div data-slot="select-item" data-value="pineapple">Pineapple</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Alert Dialog behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="alert-dialog">
+          <button type="button" data-slot="button" data-variant="outline" data-alert-dialog-trigger>Show Dialog</button>
+          <dialog data-slot="alert-dialog-content">
+            <div data-slot="alert-dialog-header">
+              <h2 data-slot="alert-dialog-title">Are you absolutely sure?</h2>
+              <p data-slot="alert-dialog-description">This action cannot be undone. This will permanently delete your account from our servers.</p>
+            </div>
+            <div data-slot="alert-dialog-footer">
+              <button type="button" data-slot="button" data-variant="outline" data-alert-dialog-cancel>Cancel</button>
+              <button type="button" data-slot="button" data-alert-dialog-action>Continue</button>
+            </div>
+          </dialog>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

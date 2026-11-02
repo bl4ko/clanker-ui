@@ -1,0 +1,28 @@
+{
+  "parts": {
+    "tablist": {"role": "tablist"},
+    "overview": {"role": "tab", "name": "Overview"},
+    "analytics": {"role": "tab", "name": "Analytics"},
+    "reports": {"role": "tab", "name": "Reports"},
+    "settings": {"role": "tab", "name": "Settings"},
+    "panel": {"role": "tabpanel"}
+  },
+  "anchor": "tablist",
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "ArrowRight"},
+    {"do": "press", "key": "ArrowRight"},
+    {"do": "press", "key": "Enter"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "Home"},
+    {"do": "press", "key": "ArrowLeft", "label": "ArrowLeft on the first tab"},
+    {"do": "press", "key": "Space"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "tab"},
+    {"do": "shift_tab"},
+    {"do": "click", "target": "analytics"},
+    {"do": "press", "key": "ArrowRight"},
+    {"do": "tab", "label": "tab after an arrow key"},
+    {"do": "shift_tab", "label": "shift_tab back to the tab list"}
+  ]
+}

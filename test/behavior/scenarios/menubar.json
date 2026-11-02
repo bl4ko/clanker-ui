@@ -1,0 +1,52 @@
+{
+  "parts": {
+    "bar": {"role": "menubar"},
+    "file": {"role": "menuitem", "name": "File"},
+    "edit": {"role": "menuitem", "name": "Edit"},
+    "view": {"role": "menuitem", "name": "View"},
+    "profiles": {"role": "menuitem", "name": "Profiles"},
+    "menu": {"role": "menu", "popup": true, "stick": true},
+    "sub": {"role": "menu", "popup": true, "nth": 1},
+    "share": {"role": "menuitem", "name": "Share", "in": "page"},
+    "fullurls": {"role": "menuitemcheckbox", "name": "Full URLs", "in": "page"}
+  },
+  "anchor": "bar",
+  "positions": [
+    ["menu", "bar"],
+    ["sub", "share"]
+  ],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "ArrowRight"},
+    {"do": "press", "key": "ArrowRight"},
+    {"do": "press", "key": "ArrowRight"},
+    {"do": "press", "key": "ArrowRight", "label": "ArrowRight on the last menu"},
+    {"do": "press", "key": "ArrowLeft"},
+    {"do": "press", "key": "Home"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "Home", "label": "Home again"},
+    {"do": "press", "key": "Enter", "motion": "menu"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "ArrowRight", "motion": "menu", "label": "ArrowRight in an open menu"},
+    {"do": "press", "key": "ArrowLeft", "motion": "menu", "label": "ArrowLeft in an open menu"},
+    {"do": "press", "key": "ArrowDown", "times": 4, "label": "ArrowDown x4 onto Share"},
+    {"do": "press", "key": "ArrowRight", "motion": "sub", "label": "ArrowRight on a submenu trigger"},
+    {"do": "press", "key": "ArrowLeft", "motion": "sub", "label": "ArrowLeft in a submenu"},
+    {"do": "press", "key": "Escape", "motion": "menu"},
+    {"do": "press", "key": "ArrowDown", "motion": "menu", "label": "ArrowDown on a closed trigger"},
+    {"do": "press", "key": "Escape", "motion": "menu", "label": "press Escape again"},
+    {"do": "click", "target": "view", "motion": "menu"},
+    {"do": "hover", "target": "profiles", "motion": "menu"},
+    {"do": "hover", "target": "view", "motion": "menu", "label": "hover back to View"},
+    {"do": "click", "target": "fullurls", "motion": "menu"},
+    {"do": "click", "target": "file", "motion": "menu"},
+    {"do": "click", "target": "file", "motion": "menu", "label": "click File again"},
+    {"do": "click", "target": "edit", "motion": "menu"},
+    {"do": "click_outside", "motion": "menu"},
+    {"do": "tab"}
+  ],
+  "allowed": [
+    {"key": "menubar.demo-checked-state", "match": "^fullurls (checked state \\| checked \\| none|aria-checked \\| true \\| false) \\|", "steps": [23, 24, 25, 26, 27, 28], "reason": "the live demo item is fixed demo state (checked without onCheckedChange), so a click does not change it; the kit item changes its state as in an app"},
+    {"key": "menubar.demo-checked-tree", "match": "^ARIA tree \\(menu\\) \\| (\\d+) nodes \\| \\1 nodes \\| shadcn only: menuitemcheckbox \"Full URLs\" \\[checked\\]; ours only: menuitemcheckbox \"Full URLs\"$", "steps": [23, 24, 25, 26, 27, 28], "reason": "the live demo item is fixed demo state (checked without onCheckedChange), so a click does not change it; the kit item changes its state as in an app"}
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "parts": {
+    "input": {"role": "textbox"},
+    "s1": {"slot": "input-otp-slot"},
+    "s6": {"slot": "input-otp-slot", "nth": 5}
+  },
+  "anchor": "s1",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "Backspace"},
+    {"do": "type", "text": "7"},
+    {"do": "press", "key": "ArrowLeft"},
+    {"do": "press", "key": "ArrowLeft", "label": "ArrowLeft again"},
+    {"do": "press", "key": "Backspace", "label": "Backspace in the middle"},
+    {"do": "press", "key": "Home"},
+    {"do": "press", "key": "End"},
+    {"do": "type", "text": "a"},
+    {"do": "press", "key": "Backspace", "times": 6},
+    {"do": "type", "text": "4321"},
+    {"do": "click", "target": "s1"},
+    {"do": "click", "target": "s6"},
+    {"do": "tab"}
+  ]
+}

@@ -1,0 +1,36 @@
+{{define "example"}}<div data-docs="component-preview" data-example="{{.Name}}">
+<div data-docs="preview"{{if .Align}} data-align="{{.Align}}"{{end}}{{if .Height}} data-height="{{.Height}}"{{end}}>
+{{.Preview}}
+</div>
+<div data-slot="collapsible" data-state="closed" data-docs="code">
+<div data-docs="code-teaser">
+<pre aria-hidden="true" dir="ltr"><code>{{range .Teaser}}<span data-line>{{.}}</span>
+{{end}}</code></pre>
+<div data-docs="code-overlay"><button type="button" data-slot="button" data-variant="outline" data-size="sm" data-collapsible-trigger>View Code</button></div>
+</div>
+<div data-slot="collapsible-content" hidden>
+{{template "code" .Code}}
+{{- with .Script}}
+{{template "code" .}}
+{{- end}}
+</div>
+</div>
+</div>
+{{end}}
+
+{{define "code"}}<figure data-slot="code-block" data-docs="code-block" dir="ltr"{{if .Title}} data-titled{{end}}>
+{{- if .Title}}
+<figcaption data-slot="code-block-header"><span data-slot="code-block-title"><svg data-lucide="file-code"></svg>{{.Title}}</span></figcaption>
+{{- end}}
+<button type="button" data-slot="code-block-copy-button" data-variant="ghost" data-size="icon"></button>
+<pre data-slot="code-block-content" data-lang="{{.Lang}}"><code data-slot="code-block-code">{{range .Lines}}<span data-line>{{.}}</span>
+{{end}}</code></pre>
+</figure>
+{{end}}
+
+{{define "components-list"}}<div data-docs="components-list">
+{{- range .}}
+<a href="{{.Href}}">{{.Title}}{{if .New}}<span class="sr-only">New</span><span data-docs="new-dot" aria-hidden="true"></span>{{end}}</a>
+{{- end}}
+</div>
+{{end}}

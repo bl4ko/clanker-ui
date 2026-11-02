@@ -1,0 +1,171 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # renovate: datasource=pypi depName=playwright
+  PLAYWRIGHT_VERSION: "1.64.1"
+
+jobs:
+  go:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TAILWIND_VERSION: "4.3.3"
+      TAILWIND_SHA256: dc61b3ac6b8c9ca874c0cc4c57b2409791a64c5540404ca5f5367360babc313a
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+      - name: Install Tailwind CLI
+        run: |
+          bin="$RUNNER_TEMP/bin"
+          mkdir -p "$bin"
+          curl -fsSLo "$bin/tailwindcss" "https://github.com/tailwindlabs/tailwindcss/releases/download/v${TAILWIND_VERSION}/tailwindcss-linux-x64"
+          echo "$TAILWIND_SHA256  $bin/tailwindcss" | sha256sum -c -
+          chmod +x "$bin/tailwindcss"
+          echo "$bin" >> "$GITHUB_PATH"
+      - run: go vet ./... && go test ./...
+
+  gitleaks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Scan full history
+        env:
+          # renovate: datasource=docker depName=ghcr.io/gitleaks/gitleaks
+          GITLEAKS_IMAGE: ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+        run: docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/repo" -w /repo "$GITLEAKS_IMAGE" git --no-banner --redact --exit-code 1 .
+
+  browser:
+    name: ${{ matrix.engine }} ${{ matrix.id }}
+    runs-on: ${{ matrix.engine == 'webkit' && 'macos-latest' || 'ubuntu-latest' }}
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { engine: chromium, id: foundation-docs, only: "foundation,docs" }
+          - { engine: chromium, id: g1-g5-spike-split, only: "g1,g5,spike,split" }
+          - { engine: chromium, id: g2a, only: g2, k: '^g2\.[a-m]' }
+          - { engine: chromium, id: g2b, only: g2, k: '^g2\.[n-z]' }
+          - { engine: chromium, id: g3, only: g3 }
+          - { engine: chromium, id: g4, only: g4 }
+          - { engine: chromium, id: behavior, only: behavior, themes: light }
+          - { engine: firefox, id: foundation-docs, only: "foundation,docs" }
+          - { engine: firefox, id: g1-g5-spike-split, only: "g1,g5,spike,split" }
+          - { engine: firefox, id: g2a, only: g2, k: '^g2\.[a-m]' }
+          - { engine: firefox, id: g2b, only: g2, k: '^g2\.[n-z]' }
+          - { engine: firefox, id: g3, only: g3 }
+          - { engine: firefox, id: g4, only: g4 }
+          - { engine: firefox, id: behavior, only: behavior, themes: light }
+          - { engine: webkit, id: foundation-docs-light, only: "foundation,docs", themes: light }
+          - { engine: webkit, id: foundation-docs-dark, only: "foundation,docs", themes: dark }
+          - { engine: webkit, id: g1, only: g1 }
+          - { engine: webkit, id: g2a-light, only: g2, k: '^g2\.[a-m]', themes: light }
+          - { engine: webkit, id: g2a-dark, only: g2, k: '^g2\.[a-m]', themes: dark }
+          - { engine: webkit, id: g2b-light, only: g2, k: '^g2\.[n-z]', themes: light }
+          - { engine: webkit, id: g2b-dark, only: g2, k: '^g2\.[n-z]', themes: dark }
+          - { engine: webkit, id: g3-light, only: g3, themes: light }
+          - { engine: webkit, id: g3-dark, only: g3, themes: dark }
+          - { engine: webkit, id: g4-light, only: g4, themes: light }
+          - { engine: webkit, id: g4-dark, only: g4, themes: dark }
+          - { engine: webkit, id: g5-spike-split, only: "g5,spike,split" }
+          - { engine: webkit, id: behavior, only: behavior, themes: light }
+          - { engine: chromium, id: rtl-1, only: "g2,g5,docs,spike", themes: light, mode: rtl }
+          - { engine: chromium, id: rtl-2, only: "foundation,g1,g3,g4", themes: light, mode: rtl }
+          - { engine: chromium, id: reduced-motion-1, only: "g2,g5,docs,spike", themes: light, mode: reduced-motion }
+          - { engine: chromium, id: reduced-motion-2, only: "foundation,g1,g3,g4", themes: light, mode: reduced-motion }
+          - { engine: chromium, id: min-foundation-docs-g5-spike, only: "foundation,docs,g5,spike", kit: min }
+          - { engine: chromium, id: min-g1-g4, only: "g1,g4", kit: min }
+          - { engine: chromium, id: min-g2a, only: g2, k: '^g2\.[a-m]', kit: min }
+          - { engine: chromium, id: min-g2b, only: g2, k: '^g2\.[n-z]', kit: min }
+          - { engine: chromium, id: min-g3, only: g3, kit: min }
+    env:
+      ENGINE: ${{ matrix.engine }}
+      ONLY: ${{ matrix.only }}
+      K: ${{ matrix.k }}
+      THEMES: ${{ matrix.themes || 'light,dark' }}
+      MODE: ${{ matrix.mode }}
+      KIT: ${{ matrix.kit }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          # renovate: datasource=github-releases depName=astral-sh/uv
+          version: "0.13.6"
+          python-version: "3.13"
+          enable-cache: false
+      - name: Install browser
+        run: uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" playwright install --with-deps "$ENGINE"
+      - name: Start server
+        run: |
+          OUT="$RUNNER_TEMP/out"
+          mkdir -p "$OUT"
+          go build -o "$RUNNER_TEMP/srv" .
+          "$RUNNER_TEMP/srv" -addr 127.0.0.1:8110 -dir "$GITHUB_WORKSPACE" ${KIT:+-kit "$KIT"} > "$OUT/srv.log" 2>&1 &
+          for _ in $(seq 60); do
+            curl -fsS -o /dev/null http://127.0.0.1:8110/healthz && exit 0
+            sleep 1
+          done
+          exit 1
+      - name: Run checks
+        run: |
+          set +e
+          OUT="$RUNNER_TEMP/out"
+          py=(uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I -u test/run.py --base-url http://127.0.0.1:8110 --engines "$ENGINE" --only "$ONLY" --themes "$THEMES")
+          if [ -n "$MODE" ]; then py+=("--$MODE"); fi
+          "${py[@]}" ${K:+-k "$K"} --out "$OUT/run" 2>&1 | tee "$OUT/run.log"
+          code=${PIPESTATUS[0]}
+          [ "$code" -eq 0 ] && exit 0
+          failed=$(sed -nE 's/^FAIL \[[^]]+\] ([a-z0-9_]+\.[a-z0-9_]+)$/\1/p' "$OUT/run.log" | sort -u | paste -sd'|' -)
+          [ -n "$failed" ] || exit "$code"
+          echo "::warning::rerun of failed checks: $failed"
+          "${py[@]}" -k "^($failed)$" --out "$OUT/rerun" 2>&1 | tee "$OUT/rerun.log"
+          code=${PIPESTATUS[0]}
+          [ "$code" -eq 0 ] && echo "::warning::rerun passed: $failed"
+          exit "$code"
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: out-${{ matrix.engine }}-${{ matrix.id }}
+          path: ${{ runner.temp }}/out
+          retention-days: 14
+
+  ci-result:
+    name: ci-result
+    if: always()
+    needs: [go, gitleaks, browser]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check results
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "$RESULTS"
+          for r in $RESULTS; do
+            [ "$r" = success ] || exit 1
+          done

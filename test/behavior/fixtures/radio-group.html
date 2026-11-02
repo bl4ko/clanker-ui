@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Radio Group behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="radio-group" data-behavior="w-fit">
+          <div data-behavior="row-gap-3">
+            <button type="button" data-slot="radio-group-item" id="r1" value="default"></button>
+            <label data-slot="label" for="r1">Default</label>
+          </div>
+          <div data-behavior="row-gap-3">
+            <button type="button" data-slot="radio-group-item" id="r2" value="comfortable" data-checked></button>
+            <label data-slot="label" for="r2">Comfortable</label>
+          </div>
+          <div data-behavior="row-gap-3">
+            <button type="button" data-slot="radio-group-item" id="r3" value="compact"></button>
+            <label data-slot="label" for="r3">Compact</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

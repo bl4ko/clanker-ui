@@ -1,0 +1,35 @@
+{
+  "parts": {
+    "grid": {"role": "grid"},
+    "prev": {"role": "button", "name": "Go to the Previous Month"},
+    "next": {"role": "button", "name": "Go to the Next Month"},
+    "month": {"role": "combobox", "name": "Choose the Month"},
+    "year": {"role": "combobox", "name": "Choose the Year"},
+    "day15": {"role": "button", "text": "15", "within": "grid"}
+  },
+  "anchor": "grid",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "tab"},
+    {"do": "tab"},
+    {"do": "tab"},
+    {"do": "tab", "label": "tab into the grid"},
+    {"do": "tab", "label": "tab out of the grid"},
+    {"do": "shift_tab"},
+    {"do": "press", "key": "Enter"},
+    {"do": "click", "target": "next"},
+    {"do": "click", "target": "next", "label": "click next again"},
+    {"do": "click", "target": "prev"},
+    {"do": "click", "target": "prev", "label": "click prev again"},
+    {"do": "click", "target": "day15"},
+    {"do": "shift_tab"}
+  ],
+  "note": "The live calendar does not move focus with the arrow or Page keys (Chromium and WebKit, any date), so the scenario has no grid key steps. The live page is prerendered with its build day as today. The record pins the page clock to that day (dates.clock), so hydration and every engine agree, stores the dates the live page shows, and the check copies them to data-today and data-value.",
+  "dates": {"read": {"today": "[data-today][data-day]", "selected": "[data-selected=true][data-day]"}, "target": "[data-slot=calendar]", "write": {"today": "data-today", "selected": "data-value"}, "clock": {"mark": "data-today", "date": "data-day"}},
+  "allowed": [
+    {"key": "calendar.nav-name", "aria_name": "navigation", "reason": "the kit keeps its better ARIA: the month navigation has a name"},
+    {"key": "calendar.focus-kept-on-day", "match": "^focus \\| outside the component \\| button \"[^\"]*\" \\[button\\] in (grid|day15) \\|", "steps": [8, 13], "reason": "the live calendar replaces its day buttons on each render, so focus falls to the body after Enter or a click on a day; the kit keeps focus on the day"},
+    {"key": "calendar.shift-tab-to-year", "match": "^focus \\| outside the component \\| combobox \"Choose the Year\" \\[[^\\]]*\\] in year \\|", "steps": [14], "reason": "the live calendar replaces its day buttons on each render, so focus falls to the body after Enter or a click on a day; the kit keeps focus on the day; Shift+Tab from the kept focus then reaches the year dropdown"}
+  ]
+}

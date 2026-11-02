@@ -1,0 +1,10427 @@
+/*! clanker-ui | MIT | includes shadcn/ui (MIT, shadcn), Base UI (MIT, Material-UI SAS), Embla Carousel (MIT, David Jerleke), and Lucide icons (ISC); see THIRD_PARTY_NOTICES */
+const SVG_NS = "http://www.w3.org/2000/svg"
+const UNSAFE_URL = /^(?:javascript|vbscript):/i
+const URL_ATTRS = new Set(["href", "src", "action", "formaction", "xlink:href", "poster", "ping", "cite", "background"])
+const BLOCKED_TAGS = new Set(["script", "object", "embed", "base", "frame", "frameset", "style", "link", "meta", "set", "animate", "animatemotion", "animatetransform"])
+const BLOCKED_ATTRS = new Set(["srcdoc"])
+const NON_BUBBLING = new Set(["focus", "blur", "mouseenter", "mouseleave", "pointerenter", "pointerleave", "load", "error", "scroll", "scrollend", "toggle", "beforetoggle", "close", "cancel", "invalid", "resize", "play", "pause", "ended", "timeupdate", "loadedmetadata"])
+const TABBABLE = "a[href], area[href], button, input, select, textarea, iframe, audio[controls], video[controls], summary, [contenteditable]:not([contenteditable='false']), [tabindex]"
+const FOCUSABLE = `${TABBABLE}, label`
+const TEXT_ENTRY = "input:not([type=button], [type=submit], [type=reset], [type=checkbox], [type=radio], [type=range], [type=color], [type=file], [type=image]), textarea, select, [contenteditable]:not([contenteditable='false'])"
+const THEME_KEY = "clanker-ui-theme"
+const THEME_MODES = ["light", "dark", "system"]
+const SCHEME_KEY = "clanker-ui-scheme"
+const SCHEME_VALUE = /^[a-z0-9-]+(?: [a-z0-9-]+)*$/
+const SCHEMES = [["neutral", "Neutral"], ["zinc", "Zinc"], ["stone", "Stone"], ["gray", "Gray"], ["slate", "Slate"], ["mauve", "Mauve"], ["olive", "Olive"], ["mist", "Mist"], ["taupe", "Taupe"]]
+const EDITOR_SCHEMES = [["tokyonight-night", "Tokyo Night"], ["tokyonight-storm", "Tokyo Night Storm"], ["tokyonight-moon", "Tokyo Night Moon"], ["catppuccin-mocha", "Catppuccin Mocha"], ["catppuccin-macchiato", "Catppuccin Macchiato"], ["catppuccin-frappe", "Catppuccin Frappé"], ["gruvbox", "Gruvbox"], ["nord", "Nord"], ["dracula", "Dracula"], ["rose-pine", "Rosé Pine"], ["rose-pine-moon", "Rosé Pine Moon"], ["solarized", "Solarized"], ["one", "One"], ["kanagawa-wave", "Kanagawa Wave"], ["kanagawa-dragon", "Kanagawa Dragon"], ["everforest", "Everforest"], ["github", "GitHub"]]
+const ACCENTS = [["amber", "Amber"], ["blue", "Blue"], ["cyan", "Cyan"], ["emerald", "Emerald"], ["fuchsia", "Fuchsia"], ["green", "Green"], ["indigo", "Indigo"], ["lime", "Lime"], ["orange", "Orange"], ["pink", "Pink"], ["purple", "Purple"], ["red", "Red"], ["rose", "Rose"], ["sky", "Sky"], ["teal", "Teal"], ["violet", "Violet"], ["yellow", "Yellow"]]
+const ICON_DEFAULTS = { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" }
+const ICON_ALIASES = { "loader-2": "loader-circle", "more-horizontal": "ellipsis", "more-vertical": "ellipsis-vertical", home: "house", "trash-2": "trash", filter: "funnel", "circle-help": "circle-question-mark", smile: "face-slightly-smiling" }
+const ICONS = {
+  "archive": [["rect", {width: "20", height: "5", x: "2", y: "3", rx: "1"}], "M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8", "M10 12h4"],
+  "arrow-down": ["M12 5v14", "m19 12-7 7-7-7"],
+  "arrow-left": ["m12 19-7-7 7-7", "M19 12H5"],
+  "arrow-right": ["M5 12h14", "m12 5 7 7-7 7"],
+  "arrow-up": ["m5 12 7-7 7 7", "M12 19V5"],
+  "arrow-up-down": ["m21 16-4 4-4-4", "M17 20V4", "m3 8 4-4 4 4", "M7 4v16"],
+  "arrow-up-right": ["M7 7h10v10", "M7 17 17 7"],
+  "badge-check": ["M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z", "m16 9-5.5 5.5L8 12"],
+  "bell": ["M10.268 21a2 2 0 0 0 3.464 0", "M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"],
+  "bluetooth": ["m7 7 10 10-5 5V2l5 5L7 17"],
+  "bold": ["M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"],
+  "book-open": ["M12 5v16", "M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"],
+  "bot": ["M12 8V4H8", ["rect", {width: "16", height: "12", x: "4", y: "8", rx: "2"}], "M2 14h2", "M20 14h2", "M15 13v2", "M9 13v2"],
+  "calculator": [["rect", {width: "16", height: "20", x: "4", y: "2", rx: "2"}], ["line", {x1: "8", x2: "16", y1: "6", y2: "6"}], ["line", {x1: "16", x2: "16", y1: "14", y2: "18"}], "M16 10h.01", "M12 10h.01", "M8 10h.01", "M12 14h.01", "M8 14h.01", "M12 18h.01", "M8 18h.01"],
+  "calendar": ["M8 2v3", "M16 2v3", ["rect", {x: "3", y: "3", width: "18", height: "18", rx: "2"}], "M3 9h18"],
+  "calendar-plus": ["M16 18h6", "M16 2v3", "M19 15v6", "M21 11.5V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h8.3", "M3 9h18", "M8 2v3"],
+  "camera": ["M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z", ["circle", {cx: "12", cy: "13", r: "3"}]],
+  "check": ["M20 6 9 17l-5-5"],
+  "chevron-down": ["m6 9 6 6 6-6"],
+  "chevron-left": ["m15 18-6-6 6-6"],
+  "chevron-right": ["m9 18 6-6-6-6"],
+  "chevron-up": ["m18 15-6-6-6 6"],
+  "chevrons-left": ["m11 17-5-5 5-5", "m18 17-5-5 5-5"],
+  "chevrons-right": ["m6 17 5-5-5-5", "m13 17 5-5-5-5"],
+  "chevrons-up-down": ["m7 15 5 5 5-5", "m7 9 5-5 5 5"],
+  "circle": [["circle", {cx: "12", cy: "12", r: "10"}]],
+  "circle-alert": [["circle", {cx: "12", cy: "12", r: "10"}], ["line", {x1: "12", x2: "12", y1: "8", y2: "12"}], ["line", {x1: "12", x2: "12.01", y1: "16", y2: "16"}]],
+  "circle-check": [["circle", {cx: "12", cy: "12", r: "10"}], "m16 9-5.5 5.5L8 12"],
+  "circle-fading-plus": ["M12 2a10 10 0 0 1 7.38 16.75", "M12 8v8", "M16 12H8", "M2.5 8.875a10 10 0 0 0-.5 3", "M2.83 16a10 10 0 0 0 2.43 3.4", "M4.636 5.235a10 10 0 0 1 .891-.857", "M8.644 21.42a10 10 0 0 0 7.631-.38"],
+  "circle-question-mark": [["circle", {cx: "12", cy: "12", r: "10"}], "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", "M12 17h.01"],
+  "circle-x": [["circle", {cx: "12", cy: "12", r: "10"}], "m15 9-6 6", "m9 9 6 6"],
+  "clock": [["circle", {cx: "12", cy: "12", r: "10"}], "M12 6v6l4 2"],
+  "code": ["m16 18 6-6-6-6", "m8 6-6 6 6 6"],
+  "contrast": [["circle", {cx: "12", cy: "12", r: "10"}], "M12 18a6 6 0 0 0 0-12v12z"],
+  "copy": [["rect", {width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2"}], "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"],
+  "credit-card": [["rect", {width: "20", height: "14", x: "2", y: "5", rx: "2"}], ["line", {x1: "2", x2: "22", y1: "10", y2: "10"}], "M6 14h2"],
+  "dot": [["circle", {cx: "12", cy: "12", r: "1"}]],
+  "download": ["M12 15V3", "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", "m7 10 5 5 5-5"],
+  "ellipsis": [["circle", {cx: "12", cy: "12", r: "1"}], ["circle", {cx: "19", cy: "12", r: "1"}], ["circle", {cx: "5", cy: "12", r: "1"}]],
+  "ellipsis-vertical": [["circle", {cx: "12", cy: "12", r: "1"}], ["circle", {cx: "12", cy: "5", r: "1"}], ["circle", {cx: "12", cy: "19", r: "1"}]],
+  "external-link": ["M15 3h6v6", "M10 14 21 3", "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"],
+  "eye": ["M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0", ["circle", {cx: "12", cy: "12", r: "3"}]],
+  "eye-off": ["M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49", "M14.084 14.158a3 3 0 0 1-4.242-4.242", "M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143", "m2 2 20 20"],
+  "face-slightly-smiling": ["M15 10V9", "M16.472 15a6 6 0 01-8.943 0", "M9 10V9", ["circle", {cx: "12", cy: "12", r: "10"}]],
+  "file": ["M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z", "M14 2v5a1 1 0 0 0 1 1h5"],
+  "file-code": ["M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z", "M14 2v5a1 1 0 0 0 1 1h5", "M10 12.5 8 15l2 2.5", "m14 12.5 2 2.5-2 2.5"],
+  "file-pen": ["M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34", "M14 2v5a1 1 0 0 0 1 1h5", "M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z"],
+  "file-plus": ["M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z", "M14 2v5a1 1 0 0 0 1 1h5", "M9 15h6", "M12 18v-6"],
+  "file-text": ["M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z", "M14 2v5a1 1 0 0 0 1 1h5", "M10 9H8", "M16 13H8", "M16 17H8"],
+  "folder": ["M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"],
+  "folder-search": ["M10.7 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v4.1", "m21 21-1.9-1.9", ["circle", {cx: "17", cy: "17", r: "3"}]],
+  "funnel": ["M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"],
+  "git-branch": ["M15 6a9 9 0 0 0-9 9V3", ["circle", {cx: "18", cy: "6", r: "3"}], ["circle", {cx: "6", cy: "18", r: "3"}]],
+  "git-commit-horizontal": [["circle", {cx: "12", cy: "12", r: "3"}], ["line", {x1: "3", x2: "9", y1: "12", y2: "12"}], ["line", {x1: "15", x2: "21", y1: "12", y2: "12"}]],
+  "globe": [["circle", {cx: "12", cy: "12", r: "10"}], "M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20", "M2 12h20"],
+  "graduation-cap": ["M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z", "M22 10v6", "M6 12.5V16a6 3 0 0 0 12 0v-3.5"],
+  "grip-horizontal": [["circle", {cx: "12", cy: "9", r: "1"}], ["circle", {cx: "19", cy: "9", r: "1"}], ["circle", {cx: "5", cy: "9", r: "1"}], ["circle", {cx: "12", cy: "15", r: "1"}], ["circle", {cx: "19", cy: "15", r: "1"}], ["circle", {cx: "5", cy: "15", r: "1"}]],
+  "grip-vertical": [["circle", {cx: "9", cy: "12", r: "1"}], ["circle", {cx: "9", cy: "5", r: "1"}], ["circle", {cx: "9", cy: "19", r: "1"}], ["circle", {cx: "15", cy: "12", r: "1"}], ["circle", {cx: "15", cy: "5", r: "1"}], ["circle", {cx: "15", cy: "19", r: "1"}]],
+  "hammer": ["m15 12-9.373 9.373a1 1 0 0 1-3.001-3L12 9", "m18 15 4-4", "m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172v-.344a2 2 0 0 0-.586-1.414l-1.657-1.657A6 6 0 0 0 12.516 3H9l1.243 1.243A6 6 0 0 1 12 8.485V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5"],
+  "heart": ["M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"],
+  "house": ["M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8", "M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"],
+  "image": [["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2"}], ["circle", {cx: "9", cy: "9", r: "2"}], "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"],
+  "inbox": [["polyline", {points: "22 12 16 12 14 15 10 15 8 12 2 12"}], "M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"],
+  "info": [["circle", {cx: "12", cy: "12", r: "10"}], "M12 16v-4", "M12 8h.01"],
+  "italic": [["line", {x1: "19", x2: "10", y1: "4", y2: "4"}], ["line", {x1: "14", x2: "5", y1: "20", y2: "20"}], ["line", {x1: "15", x2: "9", y1: "4", y2: "20"}]],
+  "keyboard": ["M10 8h.01", "M12 12h.01", "M14 8h.01", "M16 12h.01", "M18 8h.01", "M6 8h.01", "M7 16h10", "M8 12h.01", ["rect", {width: "20", height: "16", x: "2", y: "4", rx: "2"}]],
+  "layout-dashboard": [["rect", {width: "7", height: "9", x: "3", y: "3", rx: "1"}], ["rect", {width: "7", height: "5", x: "14", y: "3", rx: "1"}], ["rect", {width: "7", height: "9", x: "14", y: "12", rx: "1"}], ["rect", {width: "7", height: "5", x: "3", y: "16", rx: "1"}]],
+  "link": ["M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71", "M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"],
+  "list": ["M3 5h.01", "M3 12h.01", "M3 19h.01", "M8 5h13", "M8 12h13", "M8 19h13"],
+  "list-filter": ["M2 5h20", "M6 12h12", "M9 19h6"],
+  "loader-circle": ["M21 12a9 9 0 1 1-6.219-8.56"],
+  "lock": [["rect", {width: "18", height: "11", x: "3", y: "11", rx: "2", ry: "2"}], "M7 11V7a5 5 0 0 1 10 0v4"],
+  "log-out": ["m16 17 5-5-5-5", "M21 12H9", "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"],
+  "mail": ["m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7", ["rect", {x: "2", y: "4", width: "20", height: "16", rx: "2"}]],
+  "mail-check": ["M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8", "m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7", "m16 19 2 2 4-4"],
+  "menu": ["M4 5h16", "M4 12h16", "M4 19h16"],
+  "message-circle": ["M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"],
+  "message-square": ["M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"],
+  "mic": ["M12 19v3", "M19 10v2a7 7 0 0 1-14 0v-2", ["rect", {x: "9", y: "2", width: "6", height: "13", rx: "3"}]],
+  "minus": ["M5 12h14"],
+  "monitor": [["rect", {width: "20", height: "14", x: "2", y: "3", rx: "2"}], ["line", {x1: "8", x2: "16", y1: "21", y2: "21"}], ["line", {x1: "12", x2: "12", y1: "17", y2: "21"}]],
+  "moon": ["M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"],
+  "octagon-x": ["m15 9-6 6", "M2.586 16.726A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2h6.624a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586z", "m9 9 6 6"],
+  "package": ["M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z", "M12 22V12", ["polyline", {points: "3.29 7 12 12 20.71 7"}], "m7.5 4.27 9 5.15"],
+  "panel-left": [["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2"}], "M9 3v18"],
+  "panel-right": [["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2"}], "M15 3v18"],
+  "paperclip": ["m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"],
+  "pencil": ["M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z", "m15 5 4 4"],
+  "plus": ["M5 12h14", "M12 5v14"],
+  "refresh-cw": ["M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", "M21 3v5h-5", "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", "M8 16H3v5"],
+  "rotate-ccw": ["M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", "M3 3v5h5"],
+  "save": ["M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z", "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", "M7 3v4a1 1 0 0 0 1 1h7"],
+  "search": ["m21 21-4.34-4.34", ["circle", {cx: "11", cy: "11", r: "8"}]],
+  "send": ["M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z", "m21.854 2.147-10.94 10.939"],
+  "settings": ["M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915", ["circle", {cx: "12", cy: "12", r: "3"}]],
+  "share": ["M12 2v13", "m16 6-4-4-4 4", "M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"],
+  "shield": ["M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"],
+  "shopping-cart": ["m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18", "M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25", ["circle", {cx: "18", cy: "20", r: "2"}], ["circle", {cx: "8", cy: "20", r: "2"}]],
+  "skip-forward": ["M21 4v16", "M6.029 4.285A2 2 0 0 0 3 6v12a2 2 0 0 0 3.029 1.715l9.997-5.998a2 2 0 0 0 .003-3.432z"],
+  "smartphone": [["rect", {width: "14", height: "20", x: "5", y: "2", rx: "2", ry: "2"}], "M12 18h.01"],
+  "sparkles": ["M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z", "M20 2v4", "M22 4h-4", ["circle", {cx: "4", cy: "20", r: "2"}]],
+  "square": [["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2"}]],
+  "star": ["M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"],
+  "sun": [["circle", {cx: "12", cy: "12", r: "4"}], "M12 2v2", "M12 20v2", "m4.93 4.93 1.41 1.41", "m17.66 17.66 1.41 1.41", "M2 12h2", "M20 12h2", "m6.34 17.66-1.41 1.41", "m19.07 4.93-1.41 1.41"],
+  "table": ["M12 3v18", ["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2"}], "M3 9h18", "M3 15h18"],
+  "tag": ["M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z", ["circle", {cx: "7.5", cy: "7.5", r: ".5", fill: "currentColor"}]],
+  "terminal": ["M12 19h8", "m4 17 6-6-6-6"],
+  "text-align-center": ["M21 5H3", "M17 12H7", "M19 19H5"],
+  "text-align-end": ["M21 5H3", "M21 12H9", "M21 19H7"],
+  "text-align-start": ["M21 5H3", "M15 12H3", "M17 19H3"],
+  "text-wrap": ["m16 16-3 3 3 3", "M3 12h14.5a1 1 0 0 1 0 7H13", "M3 19h6", "M3 5h18"],
+  "thumbs-down": ["M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z", "M17 14V2"],
+  "thumbs-up": ["M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z", "M7 10v12"],
+  "trash": ["M10 11v6", "M14 11v6", "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6", "M3 6h18", "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"],
+  "trending-down": ["M16 17h6v-6", "m22 17-8.5-8.5-5 5L2 7"],
+  "trending-up": ["M16 7h6v6", "m22 7-8.5 8.5-5-5L2 17"],
+  "triangle-alert": ["m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3", "M12 9v4", "M12 17h.01"],
+  "underline": ["M6 4v6a6 6 0 0 0 12 0V4", ["line", {x1: "4", x2: "20", y1: "20", y2: "20"}]],
+  "upload": ["M12 3v12", "m17 8-5-5-5 5", "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"],
+  "user": ["M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2", ["circle", {cx: "12", cy: "7", r: "4"}]],
+  "user-round-x": ["m16.5 16.5 5 5", "M2 21a8 8 0 0 1 11.531-7.18", "m21.5 16.5-5 5", ["circle", {cx: "10", cy: "8", r: "5"}]],
+  "users": ["M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", "M16 3.128a4 4 0 0 1 0 7.744", "M22 21v-2a4 4 0 0 0-3-3.87", ["circle", {cx: "9", cy: "7", r: "4"}]],
+  "volume-off": ["M16 9a5 5 0 0 1 .95 2.293", "M19.364 5.636a9 9 0 0 1 1.889 9.96", "m2 2 20 20", "m7 7-.587.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298V11", "M9.828 4.172A.686.686 0 0 1 11 4.657v.686"],
+  "wrench": ["M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"],
+  "x": ["M18 6 6 18", "m6 6 12 12"],
+}
+
+export const iconNames = Object.freeze(Object.keys(ICONS))
+
+export const strings = {
+  close: "Close",
+  closeToast: "Close toast",
+  notifications: "Notifications",
+  showOptions: "Show options",
+  dismiss: "Dismiss",
+  clear: "Clear",
+  remove: "Remove {label}",
+  commandMenu: "Command menu",
+  suggestions: "Suggestions",
+  loading: "Loading",
+  breadcrumb: "breadcrumb",
+  more: "More",
+  resize: "Resize",
+  carousel: "carousel",
+  slide: "slide",
+  slideOf: "{index} of {count}",
+  previousSlide: "Previous slide",
+  nextSlide: "Next slide",
+  sidebar: "Sidebar",
+  toggleSidebar: "Toggle Sidebar",
+  editorThemes: "Editor themes",
+  baseColor: "Base color",
+  copy: "Copy",
+  copied: "Copied",
+  wrapLines: "Wrap lines",
+  messages: "Messages",
+  scrollToStart: "Scroll to start",
+  scrollToEnd: "Scroll to end",
+  previous: "Previous",
+  next: "Next",
+  skip: "Skip",
+  submit: "Submit",
+  questionnaireProgress: "Questionnaire progress",
+  questionOf: "Question {current} of {total}",
+  answerRequired: "Choose an answer to continue.",
+  answerOrSkip: "Choose an answer or skip this question.",
+  previousMonth: "Go to the Previous Month",
+  nextMonth: "Go to the Next Month",
+  chooseMonth: "Choose the Month",
+  chooseYear: "Choose the Year",
+  calendarNavigation: "Navigation bar",
+  weekNumber: "Week Number",
+  week: "Week {week}",
+  today: "Today, {date}",
+  selected: "{date}, selected",
+  pickDate: "Pick a date",
+  chooseDate: "Choose date",
+  areaChart: "Area chart",
+  barChart: "Bar chart",
+  lineChart: "Line chart",
+  pieChart: "Pie chart",
+  donutChart: "Donut chart",
+  radarChart: "Radar chart",
+  radialChart: "Radial chart",
+  sparkline: "Sparkline",
+  legend: "Legend",
+  tableView: "Table view",
+  tableOf: "{caption} data",
+  trendOf: "{label} trend",
+  total: "Total",
+  value: "Value",
+  share: "Share",
+  noData: "No data.",
+  allHidden: "All series are hidden.",
+  onePoint: "1 point, {x}",
+  points: "{count} points from {from} to {to}",
+  noValues: "{label} has no values",
+  seriesRange: "{label} from {low} to {high}",
+  sparklineRange: "low {low}, high {high}, latest {latest}",
+}
+
+const registry = new Map()
+const listening = new Set()
+const upgraded = new WeakSet()
+const teardowns = new Map()
+const filled = new WeakMap()
+const layers = []
+const traps = []
+const opened = new Map()
+const closing = new WeakMap()
+const topLayerWatchers = []
+const authored = new WeakMap()
+const darkQuery = matchMedia("(prefers-color-scheme: dark)")
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)")
+let counter = 0
+let scrollLocks = 0
+let scrollSaved = null
+let pressedAt = -Infinity
+let pressPointer = ""
+let outsideTouch = null
+let pointerCancelled = false
+let anchorHolds = 0
+let typed = ""
+let typedAt = 0
+let memoryTheme = "system"
+let memoryScheme = null
+let pointerAt = ""
+let focusKeyboard = false
+let trapBack = false
+let keyboardMode = false
+
+const KIT_KEY = Symbol.for("clanker-ui")
+
+if (globalThis[KIT_KEY]) throw new Error("clanker-ui: the kit is loaded twice; load the readable files or the .min files, not both")
+Object.defineProperty(globalThis, KIT_KEY, { value: true })
+
+for (const type of ["click", "keydown", "focusin"]) {
+  listening.add(type)
+  document.addEventListener(type, handle)
+}
+
+export function h(tag, attrs, ...children) {
+  return build(tag, false, attrs, children)
+}
+
+export function svg(tag, attrs, ...children) {
+  return build(tag, true, attrs, children)
+}
+
+function build(tag, isSvg, attrs, children) {
+  if (BLOCKED_TAGS.has(String(tag).toLowerCase())) throw new TypeError(`clanker-ui: h() refuses <${tag}>`)
+  const el = isSvg ? document.createElementNS(SVG_NS, tag) : document.createElement(tag)
+  if (attrs != null && (typeof attrs !== "object" || attrs instanceof Node || Symbol.iterator in attrs)) {
+    children.unshift(attrs)
+    attrs = null
+  }
+  let value
+  for (const [key, v] of Object.entries(attrs ?? {})) {
+    if (key === "value" && (el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement)) value = v
+    else setAttr(el, key, v)
+  }
+  appendAll(el, children)
+  if (value != null) el.value = String(value)
+  return el
+}
+
+function setAttr(el, key, value) {
+  if (value == null || value === false) return
+  const name = key.toLowerCase()
+  if (name.startsWith("on")) {
+    if (typeof value !== "function") throw new TypeError(`clanker-ui: ${key} must be a function`)
+    el.addEventListener(name.slice(2), value)
+    return
+  }
+  if (name === "style") {
+    if (typeof value !== "object") throw new TypeError("clanker-ui: style must be an object")
+    for (const [prop, v] of Object.entries(value)) {
+      if (v != null) el.style.setProperty(prop.startsWith("--") ? prop : prop.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`), String(v))
+    }
+    return
+  }
+  if (BLOCKED_ATTRS.has(name)) throw new TypeError(`clanker-ui: h() refuses the ${key} attribute`)
+  const text = value === true ? "" : String(value)
+  if (URL_ATTRS.has(name) && UNSAFE_URL.test(text.replace(/[\u0000- ]/g, ""))) return
+  el.setAttribute(key, text)
+}
+
+function appendAll(el, list) {
+  for (const child of list) {
+    if (child == null || typeof child === "boolean") continue
+    if (child instanceof Node) el.append(child)
+    else if (typeof child === "object" && Symbol.iterator in child) appendAll(el, child)
+    else el.append(document.createTextNode(String(child)))
+  }
+}
+
+export function icon(name, attrs) {
+  const key = iconKey(name)
+  const el = svg("svg", { ...ICON_DEFAULTS, "aria-hidden": iconLabelled(n => attrs?.[n]) ? null : "true", class: `lucide lucide-${key}`, "data-lucide": key, ...attrs })
+  el.append(...iconParts(key))
+  filled.set(el, key)
+  return el
+}
+
+function iconKey(name) {
+  const key = ICON_ALIASES[name] ?? name
+  if (!ICONS[key]) throw new Error(`clanker-ui: unknown icon "${name}"`)
+  return key
+}
+
+function iconLabelled(get) {
+  return ["role", "aria-label", "aria-labelledby"].some(n => get(n) != null)
+}
+
+function iconParts(key) {
+  return ICONS[key].map(n => (typeof n === "string" ? svg("path", { d: n }) : svg(n[0], n[1])))
+}
+
+function fillIcon(el) {
+  const name = el.getAttribute("data-lucide")
+  if (filled.get(el) === name) return
+  if (!(el instanceof SVGSVGElement)) {
+    const attrs = {}
+    for (const a of el.attributes) if (a.name !== "data-lucide" && a.name !== "style") attrs[a.name] = a.value
+    el.replaceWith(icon(name, attrs))
+    return
+  }
+  const key = iconKey(name)
+  for (const [k, v] of Object.entries(ICON_DEFAULTS)) if (!el.hasAttribute(k)) el.setAttribute(k, v)
+  if (!el.hasAttribute("aria-hidden") && !iconLabelled(n => el.getAttribute(n))) el.setAttribute("aria-hidden", "true")
+  el.classList.add("lucide", `lucide-${key}`)
+  el.replaceChildren(...iconParts(key))
+  filled.set(el, name)
+}
+
+export function define(slot, spec) {
+  if (registry.has(slot)) throw new Error(`clanker-ui: data-slot "${slot}" is already defined`)
+  for (const [type, fn] of Object.entries(spec)) {
+    if (typeof fn !== "function") throw new TypeError(`clanker-ui: ${slot}.${type} must be a function`)
+    if (type === "init" || listening.has(type)) continue
+    listening.add(type)
+    document.addEventListener(type, handle, NON_BUBBLING.has(type))
+  }
+  registry.set(slot, spec)
+  if (spec.init) for (const el of document.querySelectorAll(`[data-slot="${CSS.escape(slot)}"]`)) upgrade(el, spec)
+}
+
+function handle(event) {
+  const target = event.target instanceof Element ? event.target : event.target?.parentElement
+  if (!target) return
+  if (NON_BUBBLING.has(event.type)) {
+    const fn = registry.get(target.getAttribute("data-slot"))?.[event.type]
+    if (fn) fn(event, target)
+    return
+  }
+  for (let el = target; el; el = el.parentElement) {
+    const slot = el.getAttribute("data-slot")
+    const fn = slot && registry.get(slot)?.[event.type]
+    if (!fn) continue
+    fn(event, el)
+    if (event.cancelBubble) return
+  }
+}
+
+function upgrade(el, spec) {
+  if (upgraded.has(el)) return
+  upgraded.add(el)
+  try {
+    const off = spec.init(el)
+    if (typeof off === "function") teardowns.set(el, off)
+  } catch (err) {
+    reportError(err)
+  }
+}
+
+function scan(root) {
+  const selector = "[data-slot], [data-lucide], [data-theme-set], [data-theme-picker]"
+  const list = root.matches(selector) ? [root, ...root.querySelectorAll(selector)] : root.querySelectorAll(selector)
+  for (const el of list) {
+    if (el.hasAttribute("data-lucide")) {
+      try {
+        fillIcon(el)
+      } catch (err) {
+        reportError(err)
+      }
+    }
+    if (el.hasAttribute("data-theme-set")) syncThemeButton(el)
+    if (el.hasAttribute("data-theme-picker")) syncThemePicker(el)
+    const spec = registry.get(el.getAttribute("data-slot"))
+    if (spec?.init) upgrade(el, spec)
+  }
+}
+
+function sweep() {
+  for (const [el, off] of teardowns) {
+    if (el.isConnected) continue
+    teardowns.delete(el)
+    upgraded.delete(el)
+    try {
+      off()
+    } catch (err) {
+      reportError(err)
+    }
+  }
+}
+
+function buttonType(el, type = "button") {
+  if (!(el instanceof HTMLButtonElement)) return
+  if (type && !el.hasAttribute("type")) el.type = type
+  if (!el.hasAttribute("tabindex")) el.tabIndex = 0
+}
+
+export function emit(target, name, detail, { cancelable = false } = {}) {
+  return target.dispatchEvent(new CustomEvent(name, { bubbles: true, composed: true, cancelable, detail }))
+}
+
+export function uid(prefix = "clanker") {
+  let id
+  do id = `${prefix}-${++counter}`
+  while (document.getElementById(id))
+  return id
+}
+
+export function ensureId(el, prefix) {
+  if (!el.id) el.id = uid(prefix)
+  return el.id
+}
+
+export function stringFor(el, key, params) {
+  if (!Object.hasOwn(strings, key)) throw new Error(`clanker-ui: unknown string "${key}"`)
+  const name = `data-string-${key.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`)}`
+  const value = (el instanceof Element ? el.closest(`[${name}]`)?.getAttribute(name) : null) ?? strings[key]
+  if (typeof value === "function") return String(value(params ?? {}))
+  return String(value).replace(/\{(\w+)\}/g, (match, k) => (params && Object.hasOwn(params, k) ? String(params[k]) : match))
+}
+
+function disabled(el) {
+  return el.matches(":disabled, [aria-disabled='true'], [data-disabled]:not([data-disabled='false'])")
+}
+
+function enabled(el) {
+  return !disabled(el) && el.checkVisibility()
+}
+
+export function tabbables(root) {
+  return [...root.querySelectorAll(TABBABLE)].filter(
+    el => el.tabIndex >= 0 && !el.disabled && el.type !== "hidden" && !el.closest("[inert]") && !el.matches('[data-slot="focus-guard"]') && el.checkVisibility({ visibilityProperty: true }) && !(el.type === "radio" && el.name && !el.checked && root.querySelector(`input[type="radio"][name="${CSS.escape(el.name)}"]:checked`)),
+  )
+}
+
+export function focusFirst(container) {
+  const target = container.querySelector("[autofocus]") ?? tabbables(container).find(el => !el.closest('[data-slot="toast-portal"]')) ?? container
+  if (target === container && !container.hasAttribute("tabindex")) container.tabIndex = -1
+  target.focus({ preventScroll: true })
+  return target
+}
+
+function quietFocus(el) {
+  if (document.activeElement !== el || !el.matches(":focus-visible") || el.matches(TEXT_ENTRY)) return
+  el.blur()
+  el.focus({ preventScroll: true, focusVisible: false })
+}
+
+function focusGuard(edge) {
+  return h("span", { "data-slot": "focus-guard", "data-edge": edge, tabindex: "0", "aria-hidden": "true", style: { position: "fixed", top: "0", left: "0", width: "1px", height: "1px", margin: "-1px", padding: "0", border: "0", overflow: "hidden", clipPath: "inset(50%)", whiteSpace: "nowrap" } })
+}
+
+export function trapFocus(container) {
+  const start = focusGuard("start")
+  const end = focusGuard("end")
+  const place = () => {
+    if (container.firstChild !== start) container.prepend(start)
+    if (container.lastChild !== end) container.append(end)
+  }
+  place()
+  const watch = new MutationObserver(place)
+  watch.observe(container, { childList: true })
+  traps.push(container)
+  return () => {
+    watch.disconnect()
+    start.remove()
+    end.remove()
+    const i = traps.lastIndexOf(container)
+    if (i >= 0) traps.splice(i, 1)
+  }
+}
+
+export function saveFocus(trigger) {
+  if (trigger?.isConnected && document.activeElement !== trigger) trigger.focus({ preventScroll: true, focusVisible: focusKeyboard })
+  const el = document.activeElement
+  const restore = visible => {
+    if (!el || el === document.body || !el.isConnected || typeof el.focus !== "function") return
+    visible ??= focusKeyboard
+    if (document.activeElement === el) {
+      if (el.matches(":focus-visible") === visible) return
+      el.blur()
+    }
+    el.focus({ preventScroll: true, focusVisible: visible })
+  }
+  restore.target = el
+  return restore
+}
+
+export function lockScroll() {
+  const root = document.documentElement
+  if (scrollLocks++ === 0) {
+    const gap = innerWidth - root.clientWidth
+    scrollSaved = [root.style.overflow, root.style.scrollbarGutter, root.style.paddingInlineEnd]
+    root.style.overflow = "hidden"
+    if (gap > 0) {
+      if (CSS.supports("scrollbar-gutter", "stable")) root.style.scrollbarGutter = "stable"
+      else root.style.paddingInlineEnd = `${gap}px`
+    }
+  }
+  let done = false
+  return () => {
+    if (done) return
+    done = true
+    if (--scrollLocks === 0) [root.style.overflow, root.style.scrollbarGutter, root.style.paddingInlineEnd] = scrollSaved
+  }
+}
+
+export function hideOthers(elements) {
+  const keep = [...elements, ...document.querySelectorAll("[aria-live]")]
+  const hidden = []
+  const walk = parent => {
+    for (const child of parent.children) {
+      if (keep.includes(child)) continue
+      if (keep.some(k => child.contains(k))) walk(child)
+      else if (!child.hasAttribute("aria-hidden") && !child.matches("script, style, template")) {
+        child.setAttribute("aria-hidden", "true")
+        hidden.push(child)
+      }
+    }
+  }
+  walk(document.body)
+  return () => {
+    for (const el of hidden) el.removeAttribute("aria-hidden")
+  }
+}
+
+export function dismissable(el, onDismiss, { escape = true, outside = true, focusOutside = false, intentional = false, ignore = [] } = {}) {
+  const layer = { el, onDismiss, escape, outside, focusOutside, intentional, pressedOutside: false, ignore: ignore.filter(Boolean) }
+  layers.push(layer)
+  return () => {
+    const i = layers.indexOf(layer)
+    if (i >= 0) layers.splice(i, 1)
+  }
+}
+
+function insideLayer(layer, event) {
+  const node = event.target
+  if (node === layer.el && layer.el instanceof HTMLDialogElement && "clientX" in event) {
+    const r = layer.el.getBoundingClientRect()
+    return event.clientX >= r.left && event.clientX <= r.right && event.clientY >= r.top && event.clientY <= r.bottom
+  }
+  return layer.el.contains(node) || layer.ignore.some(x => x.contains(node)) || !!node?.closest?.('[data-slot="toast"]')
+}
+
+function own(scope, selector, owner = `[data-slot="${scope.getAttribute("data-slot")}"]`) {
+  return [...scope.querySelectorAll(selector)].filter(el => el.closest(owner) === scope)
+}
+
+function closingState(el) {
+  for (let n = el; n; n = n.parentElement) if (closing.has(n)) return closing.get(n)
+  return null
+}
+
+function topLayerChanged(el, open) {
+  if (el instanceof HTMLDialogElement ? el.matches(":modal") || !open : el.hasAttribute("popover")) for (const fn of topLayerWatchers) fn(el, open)
+}
+
+export function isOpen(el) {
+  return opened.has(el)
+}
+
+export function show(el, options = {}) {
+  if (opened.has(el)) return
+  const o = { modal: false, escape: true, outside: true, focusOutside: false, focus: "first", restoreFocus: true, expanded: true, ...options }
+  const pointer = !keyboardMode
+  const from = o.trigger ? closingState(o.trigger) : null
+  const state = { o, cleanup: [], stop: null, restore: o.restoreFocus ? (from ? (from.restore ?? saveFocus()) : saveFocus(o.trigger)) : null }
+  opened.set(el, state)
+  closing.delete(el)
+  if (el instanceof HTMLDialogElement) {
+    if (!el.open) o.modal ? el.showModal() : el.show()
+  } else if (el.hasAttribute("popover")) {
+    if (!el.matches(":popover-open")) el.showPopover()
+  } else if (el instanceof HTMLDetailsElement) el.open = true
+  else el.hidden = false
+  topLayerChanged(el, true)
+  markOpen(el, o, true)
+  const anchor = o.anchor === undefined ? o.trigger : o.anchor
+  if (anchor) state.stop = position(el, anchor, o)
+  const dismiss = o.onDismiss ?? (reason => hide(el, { restoreFocus: reason !== "outside" }))
+  state.cleanup.push(dismissable(el, dismiss, { escape: o.escape, outside: o.outside, focusOutside: o.focusOutside, intentional: o.intentional, ignore: [o.trigger] }))
+  if (o.modal) state.cleanup.push(trapFocus(el), lockScroll())
+  else if (o.scrollLock) state.cleanup.push(lockScroll())
+  if (o.hideOthers) state.cleanup.push(hideOthers([el, ...o.hideOthers]))
+  if (o.scrollLock || o.hideOthers) {
+    const watch = new ResizeObserver(() => opened.get(el) === state && !el.checkVisibility() && hide(el, { restoreFocus: false }))
+    watch.observe(el)
+    state.cleanup.push(() => watch.disconnect())
+  }
+  if (o.focus === "first") {
+    const target = focusFirst(el)
+    if (pointer && o.modal && el instanceof HTMLDialogElement) quietFocus(target)
+  } else if (o.focus === "content") {
+    if (!el.hasAttribute("tabindex")) el.tabIndex = -1
+    el.focus({ preventScroll: true, focusVisible: focusKeyboard })
+  } else if (o.focus instanceof Element) o.focus.focus({ preventScroll: true })
+}
+
+export function hide(el, { restoreFocus = true, after, focusVisible } = {}) {
+  const state = opened.get(el)
+  if (!state) return Promise.resolve()
+  hideInside(el)
+  const inside = el.contains(document.activeElement)
+  opened.delete(el)
+  closing.set(el, state)
+  for (const fn of state.cleanup) fn()
+  markOpen(el, state.o, false)
+  return (after ?? afterAnimations(el)).catch(() => {}).then(() => {
+    state.stop?.()
+    if (opened.has(el)) return
+    closing.delete(el)
+    if (el instanceof HTMLDialogElement) {
+      if (el.open) el.close()
+    } else if (el.hasAttribute("popover")) {
+      if (el.matches(":popover-open")) el.hidePopover()
+    } else if (el instanceof HTMLDetailsElement) el.open = false
+    else el.hidden = true
+    topLayerChanged(el, false)
+    const back = () => (focusLost(el) || (inside && document.activeElement === state.restore.target)) && state.restore(focusVisible ?? focusKeyboard)
+    if (restoreFocus && state.restore) {
+      if (pressedAt > -Infinity) setTimeout(back)
+      else back()
+    }
+    state.o.onClose?.()
+  })
+}
+
+function focusLost(el) {
+  const active = document.activeElement
+  return !active || active.contains(el) || el.contains(active)
+}
+
+function natively(el) {
+  if (el instanceof HTMLDialogElement || el instanceof HTMLDetailsElement) return el.open
+  return el.hasAttribute("popover") && el.matches(":popover-open")
+}
+
+function hideInside(el) {
+  for (const inner of [...opened.keys()]) if (inner !== el && el.contains(inner)) hide(inner, { restoreFocus: false })
+}
+
+function closedNatively(el) {
+  const state = opened.get(el)
+  if (!state || natively(el)) return
+  hideInside(el)
+  opened.delete(el)
+  for (const fn of state.cleanup) fn()
+  state.stop?.()
+  markOpen(el, state.o, false)
+  topLayerChanged(el, false)
+  if (state.restore && focusLost(el)) state.restore()
+  state.o.onClose?.()
+}
+
+function markOpen(el, { trigger, expanded, triggerState = true }, open) {
+  const value = open ? "open" : "closed"
+  el.dataset.state = value
+  el.toggleAttribute("data-open", open)
+  el.toggleAttribute("data-closed", !open)
+  if (!trigger) return
+  if (triggerState) trigger.dataset.state = value
+  trigger.toggleAttribute("data-popup-open", open)
+  if (!expanded) return
+  trigger.setAttribute("aria-expanded", String(open))
+  if (!trigger.hasAttribute("aria-controls")) trigger.setAttribute("aria-controls", ensureId(el))
+}
+
+export function transition(el, open) {
+  if (!open) {
+    el.removeAttribute("data-starting-style")
+    el.setAttribute("data-ending-style", "")
+    return afterAnimations(el)
+  }
+  el.removeAttribute("data-ending-style")
+  el.setAttribute("data-starting-style", "")
+  getComputedStyle(el).getPropertyValue("opacity")
+  requestAnimationFrame(() => el.removeAttribute("data-starting-style"))
+  return Promise.resolve()
+}
+
+export function afterAnimations(el) {
+  const running = el.getAnimations().filter(a => a.timeline === el.ownerDocument.timeline && a.effect?.getComputedTiming().endTime !== Infinity)
+  return Promise.all(running.map(a => a.finished.catch(() => {}))).then(() => {})
+}
+
+function holdScrollAnchor(el) {
+  const root = document.documentElement
+  if (anchorHolds++ === 0) root.style.overflowAnchor = "none"
+  afterAnimations(el).then(() => {
+    if (--anchorHolds === 0) root.style.overflowAnchor = ""
+  })
+}
+
+const heightRuns = new WeakMap()
+
+function animateHeight(content, open, variable, { animate = true, done } = {}) {
+  const run = {}
+  heightRuns.set(content, run)
+  const from = open ? 0 : content.getBoundingClientRect().height
+  content.style.animationName = animate ? "" : "none"
+  content.style.setProperty(variable, `${open ? content.scrollHeight : from}px`)
+  content.style.overflow = animate ? "hidden" : ""
+  content.dataset.state = open ? "open" : "closed"
+  const finish = () => {
+    if (heightRuns.get(content) !== run) return
+    heightRuns.delete(content)
+    content.style.overflow = ""
+    if (!open) done?.()
+  }
+  if (!animate) return finish()
+  holdScrollAnchor(content)
+  afterAnimations(content).then(finish)
+}
+
+function heightClosing(content) {
+  return heightRuns.has(content) && content.dataset.state === "closed"
+}
+
+function observeChildren(el, callback) {
+  const watched = new Set()
+  const resize = new ResizeObserver(callback)
+  const sync = () => {
+    for (const child of watched) {
+      if (child.parentElement === el) continue
+      resize.unobserve(child)
+      watched.delete(child)
+    }
+    for (const child of el.children) {
+      if (watched.has(child)) continue
+      resize.observe(child)
+      watched.add(child)
+    }
+  }
+  const mutation = new MutationObserver(() => {
+    sync()
+    callback()
+  })
+  resize.observe(el)
+  sync()
+  mutation.observe(el, { childList: true })
+  return () => {
+    resize.disconnect()
+    mutation.disconnect()
+    watched.clear()
+  }
+}
+
+export function position(floating, anchor, options = {}) {
+  if (!authored.has(floating)) {
+    const d = floating.dataset
+    authored.set(floating, { side: d.side, align: d.align, sideOffset: d.sideOffset, alignOffset: d.alignOffset })
+  }
+  const a = authored.get(floating)
+  const o = {
+    side: options.side ?? a.side ?? "bottom",
+    align: options.align ?? a.align ?? "center",
+    sideOffset: Number(options.sideOffset ?? a.sideOffset ?? 4),
+    alignOffset: Number(options.alignOffset ?? a.alignOffset ?? 0),
+    collisionPadding: Number(options.collisionPadding ?? 8),
+    flip: options.flip ?? true,
+    lazyFlip: options.lazyFlip ?? false,
+    settle: options.settle ?? false,
+  }
+  let frame = 0
+  const update = () => {
+    if (!frame) frame = requestAnimationFrame(() => {
+      frame = 0
+      if (floating.isConnected) place(floating, anchor, o)
+    })
+  }
+  const move = () => {
+    const { width, height } = floating.getBoundingClientRect()
+    const style = floating.style.cssText
+    const side = floating.dataset.side
+    place(floating, anchor, o, false)
+    const moved = floating.getBoundingClientRect()
+    if (moved.width === width && moved.height === height) return
+    floating.style.cssText = style
+    floating.dataset.side = side
+  }
+  place(floating, anchor, o)
+  const ro = new ResizeObserver(() => {
+    if (floating.isConnected) move()
+    update()
+  })
+  ro.observe(floating)
+  if (anchor instanceof Element) ro.observe(anchor)
+  addEventListener("scroll", update, { capture: true, passive: true })
+  addEventListener("resize", update, { passive: true })
+  return () => {
+    cancelAnimationFrame(frame)
+    ro.disconnect()
+    removeEventListener("scroll", update, { capture: true })
+    removeEventListener("resize", update)
+  }
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(value, max))
+}
+
+function placeAt(f, x, y, settle) {
+  const s = f.style
+  const left = `${Math.round(x)}px`
+  const top = `${Math.round(y)}px`
+  if (s.position === "fixed" && s.left === left && s.top === top) return
+  s.position = "fixed"
+  s.inset = "auto"
+  s.margin = "0"
+  s.left = left
+  s.top = top
+  if (settle) for (const a of f.getAnimations()) if (a instanceof CSSTransition && ["left", "top"].includes(a.transitionProperty)) a.finish()
+}
+
+function place(f, anchor, o, sized = true) {
+  const arrows = f.querySelectorAll(':scope > [data-slot="tooltip-arrow"]')
+  for (const arrow of arrows) arrow.style.position = "absolute"
+  const r = anchor.getBoundingClientRect()
+  const root = document.documentElement
+  const vw = root.clientWidth
+  const vh = root.clientHeight
+  const w = f.offsetWidth
+  const h = f.offsetHeight
+  const pad = o.collisionPadding
+  const off = o.sideOffset
+  const rtl = getComputedStyle(anchor instanceof Element ? anchor : f).direction === "rtl"
+  const space = { top: r.top, bottom: vh - r.bottom, left: r.left, right: vw - r.right }
+  const opposite = { top: "bottom", bottom: "top", left: "right", right: "left" }
+  let side = o.side
+  const fits = to => space[to] >= (to === "top" || to === "bottom" ? h : w) + off + pad
+  if (o.flip && !fits(side)) {
+    if (fits(opposite[side])) side = opposite[side]
+    else if (side === "left" || side === "right") side = ["bottom", "top"].find(fits) ?? (space[opposite[side]] > space[side] ? opposite[side] : side)
+    else if (space[opposite[side]] > space[side]) side = opposite[side]
+  }
+  if (o.lazyFlip) o.side = side
+  const vertical = side === "top" || side === "bottom"
+  let align = o.align
+  let x
+  let y
+  if (vertical) {
+    y = side === "bottom" ? r.bottom + off : r.top - off - h
+    const at = { start: rtl ? r.right - w - o.alignOffset : r.left + o.alignOffset, end: rtl ? r.left + o.alignOffset : r.right - w - o.alignOffset }
+    if (o.flip && align !== "center" && (at[align] < pad || at[align] + w > vw - pad)) {
+      const other = align === "start" ? "end" : "start"
+      if (at[other] >= pad && at[other] + w <= vw - pad) align = other
+    }
+    x = align === "center" ? r.left + (r.width - w) / 2 + (rtl ? -o.alignOffset : o.alignOffset) : at[align]
+    x = clamp(x, pad, vw - w - pad)
+  } else {
+    x = side === "right" ? r.right + off : r.left - off - w
+    const at = { start: r.top + o.alignOffset, end: r.bottom - h - o.alignOffset }
+    if (o.flip && align !== "center" && (at[align] < pad || at[align] + h > vh - pad)) {
+      const other = align === "start" ? "end" : "start"
+      if (at[other] >= pad && at[other] + h <= vh - pad) align = other
+    }
+    y = align === "center" ? r.top + (r.height - h) / 2 + o.alignOffset : at[align]
+    y = clamp(y, pad, vh - h - pad)
+  }
+  const availableHeight = vertical ? (side === "bottom" ? vh - r.bottom - off - pad : r.top - off - pad) : vh - 2 * pad
+  const availableWidth = vertical ? vw - 2 * pad : side === "right" ? vw - r.right - off - pad : r.left - off - pad
+  const originX = vertical ? clamp(r.left + r.width / 2 - x, 0, w) : side === "right" ? 0 : w
+  const originY = vertical ? (side === "bottom" ? 0 : h) : clamp(r.top + r.height / 2 - y, 0, h)
+  const s = f.style
+  placeAt(f, x, y, o.settle)
+  const gap = side === "bottom" || side === "right" ? `${-off}px` : `calc(100% + ${off}px)`
+  s.setProperty("--transform-origin", vertical ? `${originX}px ${gap}` : `${gap} ${originY}px`)
+  s.setProperty("--arrow-x", `${vertical ? originX : w / 2}px`)
+  s.setProperty("--arrow-y", `${vertical ? h / 2 : originY}px`)
+  f.dataset.side = side
+  f.dataset.align = align
+  for (const arrow of arrows) {
+    arrow.dataset.side = side
+    arrow.dataset.align = align
+    const length = vertical ? arrow.offsetWidth : arrow.offsetHeight
+    const center = (vertical ? originX : originY) - length / 2
+    const at = clamp(center, 5, Math.max(5, (vertical ? w : h) - length - 5))
+    arrow.style.left = vertical ? `${at}px` : ""
+    arrow.style.top = vertical ? "" : `${at}px`
+    arrow.toggleAttribute("data-uncentered", Math.abs(at - center) > 0.5)
+  }
+  if (!sized) return
+  s.setProperty("--anchor-width", `${r.width}px`)
+  s.setProperty("--anchor-height", `${r.height}px`)
+  s.setProperty("--available-width", `${Math.max(0, availableWidth)}px`)
+  s.setProperty("--available-height", `${Math.max(0, availableHeight)}px`)
+}
+
+export function setRoving(items, active) {
+  const target = active ?? items.find(el => el.tabIndex === 0 && enabled(el)) ?? items.find(enabled) ?? null
+  for (const el of items) el.tabIndex = el === target ? 0 : -1
+  return target
+}
+
+export function rove(event, items, { orientation = "vertical", loop = true, typeahead: search = true, focus = true, active, label, ms, skipDisabled = true } = {}) {
+  if (event.ctrlKey || event.metaKey || event.altKey) return null
+  const list = items.filter(el => (skipDisabled ? enabled(el) : el.checkVisibility()))
+  if (!list.length) return null
+  const current = active ?? list.find(el => el === document.activeElement || el.contains(document.activeElement))
+  const i = list.indexOf(current)
+  const rtl = getComputedStyle(list[0]).direction === "rtl"
+  const prev = []
+  const next = []
+  if (orientation !== "horizontal") prev.push("ArrowUp"), next.push("ArrowDown")
+  if (orientation !== "vertical") (rtl ? next : prev).push("ArrowLeft"), (rtl ? prev : next).push("ArrowRight")
+  let target = null
+  if (next.includes(event.key)) target = i < 0 ? list[0] : (list[i + 1] ?? (loop ? list[0] : list[i]))
+  else if (prev.includes(event.key)) target = i < 0 ? list.at(-1) : (list[i - 1] ?? (loop ? list.at(-1) : list[i]))
+  else if (event.key === "Home") target = list[0]
+  else if (event.key === "End") target = list.at(-1)
+  else if (search) target = typeahead(event, list, { active: current, label, ms })
+  if (!target) return null
+  event.preventDefault()
+  if (focus) {
+    setRoving(items, target)
+    target.focus()
+  }
+  return target
+}
+
+function typing(event, ms = 500) {
+  return !!typed && event.timeStamp - typedAt <= ms
+}
+
+export function typeahead(event, items, { active, label = el => el.getAttribute("aria-label") ?? el.textContent, visible = true, ms = 500 } = {}) {
+  const key = event.key
+  if (key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) return null
+  const now = event.timeStamp
+  const fresh = now - typedAt > ms
+  if (key === " " && (fresh || !typed)) return null
+  typed = fresh ? key : typed + key
+  typedAt = now
+  const list = items.filter(visible ? enabled : el => !disabled(el))
+  const query = typed.toLowerCase()
+  const repeated = [...query].every(c => c === query[0])
+  const search = repeated ? query[0] : query
+  const from = list.indexOf(active)
+  const start = from < 0 ? 0 : from + (repeated ? 1 : 0)
+  for (let k = 0; k < list.length; k++) {
+    const el = list[(start + k) % list.length]
+    if (String(label(el) ?? "").trim().toLowerCase().startsWith(search)) return el
+  }
+  if (key !== " ") typed = ""
+  return null
+}
+
+function storedTheme() {
+  try {
+    const v = localStorage.getItem(THEME_KEY)
+    return THEME_MODES.includes(v) ? v : "system"
+  } catch {
+    return memoryTheme
+  }
+}
+
+function storedScheme() {
+  try {
+    return localStorage.getItem(SCHEME_KEY)
+  } catch {
+    return memoryScheme
+  }
+}
+
+function schemeTokens() {
+  return (document.documentElement.dataset.scheme ?? "").split(" ").filter(Boolean)
+}
+
+function applyScheme(value) {
+  if (value) document.documentElement.dataset.scheme = value
+  else delete document.documentElement.dataset.scheme
+}
+
+function switchTheme(apply) {
+  const root = document.documentElement
+  root.setAttribute("data-theme-switching", "")
+  apply()
+  void root.offsetHeight
+  requestAnimationFrame(() => root.removeAttribute("data-theme-switching"))
+}
+
+function nextMode() {
+  const mode = storedTheme()
+  if (mode === "system") return theme.resolved() === "dark" ? "light" : "dark"
+  return mode === "dark" ? "light" : "dark"
+}
+
+export const theme = Object.freeze({
+  get: storedTheme,
+  resolved() {
+    const shown = getComputedStyle(document.documentElement).colorScheme
+    if (shown === "light" || shown === "dark") return shown
+    const mode = storedTheme()
+    return mode === "system" ? (darkQuery.matches ? "dark" : "light") : mode
+  },
+  set(mode) {
+    if (!THEME_MODES.includes(mode)) throw new TypeError(`clanker-ui: unknown theme "${mode}"`)
+    memoryTheme = mode
+    try {
+      if (mode === "system") localStorage.removeItem(THEME_KEY)
+      else localStorage.setItem(THEME_KEY, mode)
+    } catch {}
+    switchTheme(applyTheme)
+  },
+  toggle() {
+    theme.set(nextMode())
+  },
+  scheme() {
+    return schemeTokens().join(" ")
+  },
+  setScheme(value) {
+    const next = String(value).trim().split(/\s+/).filter(Boolean).join(" ")
+    if (next && (next.length > 200 || !SCHEME_VALUE.test(next))) throw new TypeError(`clanker-ui: invalid scheme "${value}"`)
+    memoryScheme = next || null
+    try {
+      if (next) localStorage.setItem(SCHEME_KEY, next)
+      else localStorage.removeItem(SCHEME_KEY)
+    } catch {}
+    switchTheme(() => {
+      applyScheme(next)
+      applyTheme()
+    })
+  },
+  schemes: Object.freeze([
+    ...SCHEMES.map(([value, label]) => Object.freeze({ value, label, group: "shadcn" })),
+    ...EDITOR_SCHEMES.map(([value, label]) => Object.freeze({ value, label, group: "editor" })),
+    ...ACCENTS.map(([value, label]) => Object.freeze({ value, label, group: "accent" })),
+  ]),
+})
+
+function syncThemeButton(el) {
+  const value = el.getAttribute("data-theme-set")
+  if (THEME_MODES.includes(value)) el.setAttribute("aria-pressed", String(value === storedTheme()))
+  else if (value === "toggle") el.setAttribute("aria-pressed", String(theme.resolved() === "dark"))
+}
+
+function fillThemePicker(el) {
+  const options = list => list.map(([value, label]) => h("option", { value }, label))
+  if (el.getAttribute("data-theme-picker") === "accent") el.append(h("option", { value: "" }, stringFor(el, "baseColor")), ...options(ACCENTS))
+  else el.append(h("optgroup", { label: "shadcn" }, options(SCHEMES)), h("optgroup", { label: stringFor(el, "editorThemes") }, options(EDITOR_SCHEMES)))
+}
+
+function syncThemePicker(el) {
+  if (!(el instanceof HTMLSelectElement)) return
+  if (!el.options.length) fillThemePicker(el)
+  const values = [...el.options].map(o => o.value)
+  const index = values.indexOf(schemeTokens().find(t => values.includes(t)))
+  el.selectedIndex = Math.max(0, index)
+}
+
+function applyTheme() {
+  const mode = storedTheme()
+  document.documentElement.dataset.theme = mode
+  document.documentElement.dataset.systemTheme = darkQuery.matches ? "dark" : "light"
+  for (const el of document.querySelectorAll("[data-theme-set]")) syncThemeButton(el)
+  for (const el of document.querySelectorAll("[data-theme-picker]")) syncThemePicker(el)
+  const background = document.body && getComputedStyle(document.body).backgroundColor
+  if (background && background !== "rgba(0, 0, 0, 0)") for (const meta of document.querySelectorAll('meta[name="theme-color"]:not([media])')) meta.content = background
+  emit(document.documentElement, "theme:change", { mode, resolved: theme.resolved(), scheme: theme.scheme() })
+}
+
+function intentionalFor(layer, touch) {
+  return layer.intentional === true || layer.intentional === (touch ? "touch" : "mouse")
+}
+
+function dismissOutside(event, touch) {
+  for (const layer of [...layers].reverse()) {
+    if (insideLayer(layer, event) || !layer.outside || intentionalFor(layer, touch)) break
+    if (touch && event.type === "pointerdown") break
+    layer.onDismiss("outside", event)
+  }
+}
+
+function clearPressedOutside() {
+  for (const layer of layers) layer.pressedOutside = false
+}
+
+document.addEventListener(
+  "pointerdown",
+  event => {
+    pressedAt = event.timeStamp
+    pressPointer = event.pointerType
+    outsideTouch = null
+    for (const layer of layers) layer.pressedOutside = intentionalFor(layer, event.pointerType === "touch") && !insideLayer(layer, event)
+    dismissOutside(event, event.pointerType === "touch")
+  },
+  true,
+)
+
+document.addEventListener(
+  "touchstart",
+  event => {
+    const touch = event.touches[0]
+    outsideTouch = touch ? { x: touch.clientX, y: touch.clientY, end: false } : null
+  },
+  { capture: true, passive: true },
+)
+
+document.addEventListener(
+  "touchmove",
+  event => {
+    const touch = event.touches[0]
+    if (!outsideTouch || !touch) return
+    const distance = Math.hypot(touch.clientX - outsideTouch.x, touch.clientY - outsideTouch.y)
+    if (distance > 5) outsideTouch.end = true
+    if (distance <= 10) return
+    outsideTouch = null
+    dismissOutside(event, true)
+  },
+  { capture: true, passive: true },
+)
+
+document.addEventListener(
+  "touchend",
+  event => {
+    const end = outsideTouch?.end
+    outsideTouch = null
+    if (end) dismissOutside(event, true)
+  },
+  true,
+)
+
+document.addEventListener(
+  "mousedown",
+  event => {
+    if (pressPointer === "touch") dismissOutside(event, true)
+  },
+  true,
+)
+
+document.addEventListener(
+  "pointerup",
+  event => {
+    for (const layer of layers) if (insideLayer(layer, event)) layer.pressedOutside = false
+    if (event.pointerType !== "touch") setTimeout(clearPressedOutside)
+  },
+  true,
+)
+
+document.addEventListener("mouseup", () => setTimeout(clearPressedOutside), true)
+document.addEventListener(
+  "pointercancel",
+  () => {
+    clearPressedOutside()
+    pointerCancelled = true
+    setTimeout(() => (pointerCancelled = false))
+  },
+  true,
+)
+
+document.addEventListener(
+  "click",
+  event => {
+    for (const layer of [...layers].reverse()) {
+      if (insideLayer(layer, event)) break
+      if (!layer.intentional) continue
+      const pressed = layer.pressedOutside
+      layer.pressedOutside = false
+      if (layer.outside && event.button === 0 && pressed) layer.onDismiss("outside", event)
+      break
+    }
+  },
+  true,
+)
+
+document.addEventListener("keydown", event => {
+  if (event.defaultPrevented || event.isComposing) return
+  if (event.key === "Escape") {
+    const layer = layers.at(-1)
+    if (!layer) return
+    event.preventDefault()
+    if (layer.escape) layer.onDismiss("escape", event)
+    return
+  }
+  const trap = traps.at(-1)
+  if (event.key !== "Tab" || !trap) return
+  if (!tabbables(trap).length) {
+    event.preventDefault()
+    return
+  }
+  trapBack = event.shiftKey
+  setTimeout(() => {
+    trapBack = false
+    if (traps.at(-1) !== trap || trap.contains(document.activeElement)) return
+    const stops = tabbables(trap)
+    ;(event.shiftKey ? stops.at(-1) : stops[0])?.focus()
+  })
+})
+
+for (const type of ["pointerup", "pointercancel"]) document.addEventListener(type, () => (pressedAt = -Infinity), true)
+
+document.addEventListener(
+  "mousedown",
+  event => {
+    const layer = layers.at(-1)
+    if (!layer || layer.outside || !(layer.el instanceof HTMLDialogElement) || !layer.el.matches(":modal") || insideLayer(layer, event)) return
+    event.preventDefault()
+    if (layer.el.contains(document.activeElement)) document.activeElement.blur()
+  },
+  true,
+)
+
+function keyboardModality(on) {
+  keyboardMode = on
+  if (document.documentElement.hasAttribute("data-keyboard") !== on) document.documentElement.toggleAttribute("data-keyboard", on)
+}
+
+function pointerMoved(event) {
+  return event.pointerType !== "touch" && !keyboardMode
+}
+
+document.addEventListener(
+  "keydown",
+  event => {
+    if (event.isTrusted && event.key === "Tab") focusKeyboard = true
+    if (!event.isTrusted || event.ctrlKey || event.metaKey || event.altKey || ["Shift", "Control", "Alt", "Meta", "Unidentified"].includes(event.key)) return
+    focusKeyboard = true
+    keyboardModality(true)
+  },
+  true,
+)
+
+document.addEventListener(
+  "pointerdown",
+  event => {
+    const target = event.target instanceof Element ? event.target.closest(FOCUSABLE) : null
+    if (target && !target.contains(document.activeElement)) focusKeyboard = false
+    keyboardModality(false)
+  },
+  true,
+)
+
+document.addEventListener(
+  "pointermove",
+  event => {
+    const at = `${event.clientX} ${event.clientY}`
+    if (at === pointerAt) return
+    pointerAt = at
+    keyboardModality(false)
+  },
+  { capture: true, passive: true },
+)
+
+document.addEventListener("focusin", event => {
+  const trap = traps.at(-1)
+  if (trap && event.target instanceof Element && event.target.parentElement === trap && event.target.matches('[data-slot="focus-guard"]')) {
+    const stops = tabbables(trap)
+    ;(event.target.dataset.edge === "start" ? stops.at(-1) : stops[0])?.focus()
+    return
+  }
+  if (trap && !trap.contains(event.target)) {
+    const last = trapBack && tabbables(trap).at(-1)
+    if (last) last.focus()
+    else focusFirst(trap)
+  }
+  if (event.timeStamp - pressedAt < 2000) return
+  for (const layer of [...layers].reverse()) {
+    if (!layer.focusOutside || insideLayer(layer, event)) continue
+    layer.onDismiss("focus", event)
+  }
+})
+
+document.addEventListener(
+  "cancel",
+  event => {
+    const el = event.target
+    if (closing.has(el)) return event.preventDefault()
+    const state = opened.get(el)
+    if (!state) return
+    event.preventDefault()
+    if (state.o.escape) (state.o.onDismiss ?? (() => hide(el)))("escape", event)
+  },
+  true,
+)
+
+document.addEventListener("close", event => closedNatively(event.target), true)
+
+document.addEventListener(
+  "toggle",
+  event => {
+    if (event.newState === "closed" && !closing.has(event.target)) closedNatively(event.target)
+  },
+  true,
+)
+
+document.addEventListener("click", event => {
+  const button = event.target instanceof Element && event.target.closest("[data-theme-set]")
+  if (!button || button.matches(":disabled, [aria-disabled='true']")) return
+  const value = button.getAttribute("data-theme-set")
+  theme.set(value === "toggle" ? nextMode() : value)
+})
+
+document.addEventListener("change", event => {
+  const el = event.target
+  if (!(el instanceof HTMLSelectElement) || !el.hasAttribute("data-theme-picker")) return
+  const values = new Set([...el.options].map(o => o.value))
+  const tokens = schemeTokens().filter(t => !values.has(t))
+  theme.setScheme((el.getAttribute("data-theme-picker") ? [...tokens, el.value] : [el.value, ...tokens]).join(" "))
+})
+
+document.addEventListener("keydown", event => {
+  if (event.defaultPrevented || event.repeat || event.isComposing || event.ctrlKey || event.metaKey || event.altKey || (event.key !== "d" && event.key !== "D")) return
+  const target = event.target
+  if (target instanceof HTMLElement && (target.isContentEditable || target.closest("input, textarea, select, [role='textbox'], [role='combobox'], [role='listbox'], [role='menu'], [role='menubar'], [role='grid'], [role='tree'], [role='application']"))) return
+  const toggle = [...document.querySelectorAll("[data-theme-set='toggle'][aria-keyshortcuts]")].find(el => el.getAttribute("aria-keyshortcuts").split(" ").some(k => k.toLowerCase() === "d") && !el.matches(":disabled, [aria-disabled='true']"))
+  if (!toggle) return
+  event.preventDefault()
+  theme.toggle()
+})
+
+darkQuery.addEventListener("change", () => {
+  if (storedTheme() === "system") switchTheme(applyTheme)
+  else document.documentElement.dataset.systemTheme = darkQuery.matches ? "dark" : "light"
+})
+
+addEventListener("storage", event => {
+  if (event.key !== THEME_KEY && event.key !== SCHEME_KEY && event.key !== null) return
+  switchTheme(() => {
+    if (event.key === SCHEME_KEY) applyScheme(event.newValue && event.newValue.length <= 200 && SCHEME_VALUE.test(event.newValue) ? event.newValue : "")
+    applyTheme()
+  })
+})
+
+new MutationObserver(records => {
+  let removed = false
+  for (const record of records) {
+    if (record.type === "attributes") {
+      if (record.target.isConnected) scan(record.target)
+      continue
+    }
+    for (const node of record.addedNodes) if (node.nodeType === 1 && node.isConnected) scan(node)
+    if (record.removedNodes.length) removed = true
+  }
+  if (!removed) return
+  for (const el of opened.keys()) if (!el.isConnected) hide(el, { restoreFocus: false })
+  if (teardowns.size) sweep()
+}).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-slot", "data-lucide", "data-theme-set", "data-theme-picker"] })
+
+const bootScheme = storedScheme()
+if (bootScheme && bootScheme.length <= 200 && SCHEME_VALUE.test(bootScheme)) applyScheme(bootScheme)
+switchTheme(applyTheme)
+scan(document.documentElement)
+function visuallyHidden(el, { fixed = true, size = "1px" } = {}) {
+  const s = el.style
+  s.clipPath = "inset(50%)"
+  s.overflow = "hidden"
+  s.whiteSpace = "nowrap"
+  s.border = "0"
+  s.padding = "0"
+  s.width = size
+  s.height = size
+  s.margin = "-1px"
+  s.position = fixed ? "fixed" : "absolute"
+  if (!fixed) return
+  s.top = "0"
+  s.left = "0"
+}
+
+const choiceInputs = new WeakMap()
+const choiceButtons = new WeakMap()
+const choiceNames = new WeakMap()
+const choiceSlots = ["checkbox", "switch", "radio-group-item"]
+const choiceMixed = new WeakSet()
+const choiceSynced = new WeakMap()
+const choiceSelector = choiceSlots.map(slot => `[data-slot="${slot}"]`).join(", ")
+
+function choiceOn(el, name) {
+  return el.hasAttribute(name) && el.getAttribute(name) !== "false"
+}
+
+function choiceDisabled(el) {
+  if (el.hasAttribute("disabled")) {
+    el.removeAttribute("disabled")
+    el.setAttribute("aria-disabled", "true")
+  }
+  return el.getAttribute("aria-disabled") === "true"
+}
+
+function choiceSet(el, name, value) {
+  if (value == null) {
+    if (el.hasAttribute(name)) el.removeAttribute(name)
+  } else if (el.getAttribute(name) !== value) el.setAttribute(name, value)
+}
+
+function radioGroupOf(item) {
+  return item.closest('[data-slot="radio-group"]')
+}
+
+function radioGroupItems(root) {
+  return own(root, '[data-slot="radio-group-item"]')
+}
+
+function radioGroupName(root) {
+  if (root.dataset.name) return root.dataset.name
+  if (!choiceNames.has(root)) choiceNames.set(root, uid("radio-group"))
+  return choiceNames.get(root)
+}
+
+function choiceSetup(el) {
+  if (el instanceof HTMLInputElement) return null
+  if (choiceInputs.has(el)) {
+    choiceAttach(el)
+    return choiceInputs.get(el)
+  }
+  const slot = el.dataset.slot
+  const radio = slot === "radio-group-item"
+  const root = radio ? radioGroupOf(el) : null
+  buttonType(el)
+  el.setAttribute("role", radio ? "radio" : slot)
+  if (root?.hasAttribute("data-disabled")) el.setAttribute("disabled", "")
+  choiceDisabled(el)
+  const next = el.nextElementSibling
+  const reuse = next instanceof HTMLInputElement && next.getAttribute("aria-hidden") === "true" && next.type === (radio ? "radio" : "checkbox") && !choiceButtons.has(next)
+  const input = reuse ? next : h("input", { type: radio ? "radio" : "checkbox", tabindex: "-1", "aria-hidden": "true" })
+  if (!reuse) el.after(input)
+  visuallyHidden(input, { fixed: slot !== "checkbox" })
+  choiceInputs.set(el, input)
+  choiceButtons.set(input, el)
+  const value = el.getAttribute("value")
+  if (value != null) input.value = value
+  const name = radio ? (root ? radioGroupName(root) : null) : el.dataset.name
+  if (name) input.name = name
+  const state = el.dataset.state
+  const aria = el.getAttribute("aria-checked")
+  const checked = choiceOn(el, "data-checked") || aria === "true" || state === "checked" || (radio && root?.dataset.value != null && root.dataset.value === (value ?? ""))
+  const mixed = slot === "checkbox" && (choiceOn(el, "data-indeterminate") || aria === "mixed" || state === "indeterminate")
+  if (!reuse) input.defaultChecked = checked && !mixed
+  input.checked = checked && !mixed
+  input.indeterminate = mixed
+  if (mixed) choiceMixed.add(el)
+  if (slot === "switch") {
+    el.dataset.size ??= "default"
+    if (!el.querySelector(':scope > [data-slot="switch-thumb"]')) el.append(h("span", { "data-slot": "switch-thumb" }))
+  }
+  choiceWatch.observe(el, { attributes: true, attributeFilter: ["disabled", "aria-disabled", "aria-invalid", "data-required", "data-readonly", "data-checked", "data-indeterminate"] })
+  return input
+}
+
+function choiceAttach(el) {
+  const input = choiceInputs.get(el)
+  if (input && el.isConnected && el.nextElementSibling !== input) el.after(input)
+}
+
+function choiceSync(el) {
+  const input = choiceInputs.get(el)
+  if (!input) return
+  choiceAttach(el)
+  const slot = el.dataset.slot
+  const radio = slot === "radio-group-item"
+  const root = radio ? radioGroupOf(el) : null
+  const mixed = slot === "checkbox" && input.indeterminate
+  const checked = !mixed && input.checked
+  const readonly = choiceOn(el, "data-readonly") || (!!root && choiceOn(root, "data-readonly"))
+  const required = choiceOn(el, "data-required") || (!!root && choiceOn(root, "data-required"))
+  const invalid = el.getAttribute("aria-invalid") === "true"
+  const off = choiceDisabled(el)
+  input.disabled = off
+  input.required = required
+  if (!radio) choiceSet(el, "tabindex", off ? "-1" : "0")
+  choiceSynced.set(el, [checked, mixed])
+  el.setAttribute("aria-checked", mixed ? "mixed" : String(checked))
+  el.dataset.state = mixed ? "indeterminate" : checked ? "checked" : "unchecked"
+  if (radio) {
+    el.removeAttribute("aria-readonly")
+    el.removeAttribute("aria-required")
+  } else {
+    if (readonly) el.setAttribute("aria-readonly", "true")
+    else el.removeAttribute("aria-readonly")
+    if (required) el.setAttribute("aria-required", "true")
+    else el.removeAttribute("aria-required")
+  }
+  const kind = slot === "switch" ? null : `${slot === "checkbox" ? "checkbox" : "radio-group"}-indicator`
+  let part = slot === "switch" ? el.querySelector(':scope > [data-slot="switch-thumb"]') : el.querySelector(`:scope > [data-slot="${kind}"]`)
+  if (kind && !checked && !mixed) part?.remove()
+  else if (kind && !part) {
+    part = h("span", { "data-slot": kind }, slot === "checkbox" ? icon("check") : h("span"))
+    el.append(part)
+  }
+  for (const target of [el, kind && !checked && !mixed ? null : part]) {
+    if (!target) continue
+    target.toggleAttribute("data-checked", checked)
+    target.toggleAttribute("data-unchecked", !checked && !mixed)
+    target.toggleAttribute("data-indeterminate", mixed)
+    target.toggleAttribute("data-disabled", off)
+    target.toggleAttribute("data-readonly", readonly)
+    target.toggleAttribute("data-required", required)
+    target.toggleAttribute("data-invalid", invalid)
+  }
+}
+
+const choiceWatch = new MutationObserver(records => {
+  for (const { target } of records) {
+    const input = choiceInputs.get(target)
+    if (!input) continue
+    const mixed = target.dataset.slot === "checkbox" && choiceOn(target, "data-indeterminate")
+    const checked = !mixed && choiceOn(target, "data-checked")
+    const last = choiceSynced.get(target)
+    if (!last || last[0] !== checked || last[1] !== mixed) {
+      if (input.indeterminate !== mixed) input.indeterminate = mixed
+      if (input.checked !== checked) input.checked = checked
+    }
+    choiceRefresh(target)
+  }
+})
+
+function radioGroupSync(root) {
+  const items = radioGroupItems(root)
+  for (const item of items) {
+    choiceSetup(item)
+    choiceSync(item)
+  }
+  const kit = items.filter(item => choiceInputs.has(item))
+  const usable = kit.filter(item => !choiceDisabled(item))
+  const active = usable.find(item => choiceInputs.get(item).checked) ?? usable[0]
+  setRoving(kit, active)
+  for (const item of kit) item.toggleAttribute("data-composite-item-active", item === active)
+  for (const [attr, on] of [["aria-required", choiceOn(root, "data-required")], ["aria-readonly", choiceOn(root, "data-readonly")], ["aria-disabled", choiceOn(root, "data-disabled")]]) {
+    if (on) root.setAttribute(attr, "true")
+    else root.removeAttribute(attr)
+  }
+}
+
+function choiceRefresh(el) {
+  const root = el.dataset.slot === "radio-group-item" ? radioGroupOf(el) : null
+  if (root) radioGroupSync(root)
+  else choiceSync(el)
+}
+
+function choiceReadonly(el) {
+  const root = el.dataset.slot === "radio-group-item" ? radioGroupOf(el) : null
+  return choiceOn(el, "data-readonly") || (!!root && choiceOn(root, "data-readonly"))
+}
+
+function choiceKeydown(event, el) {
+  if (event.key === "Enter" && el.dataset.slot !== "switch" && choiceInputs.has(el)) event.preventDefault()
+}
+
+function choiceClick(event, el) {
+  const input = choiceInputs.get(el)
+  if (!input) return
+  if (choiceDisabled(el)) return event.preventDefault()
+  choiceAttach(el)
+  if (choiceReadonly(el)) return event.preventDefault()
+  if (el.dataset.slot === "radio-group-item" && input.checked) return
+  input.click()
+}
+
+for (const type of ["input", "change"]) {
+  document.addEventListener(type, event => {
+    const el = choiceButtons.get(event.target)
+    if (!el) return
+    choiceRefresh(el)
+    if (type !== "change") return
+    const root = el.dataset.slot === "radio-group-item" ? radioGroupOf(el) : null
+    if (root) emit(root, "radio-group:change", { value: event.target.value })
+    else emit(el, `${el.dataset.slot}:change`, { checked: event.target.checked, value: event.target.checked })
+  })
+}
+
+document.addEventListener(
+  "focusin",
+  event => {
+    const el = choiceButtons.get(event.target)
+    if (el && !choiceDisabled(el)) el.focus()
+  },
+  true,
+)
+
+new MutationObserver(records => {
+  for (const record of records) {
+    for (const node of record.addedNodes) {
+      if (node.nodeType !== 1) continue
+      for (const el of node.matches(choiceSelector) ? [node] : node.querySelectorAll(choiceSelector)) choiceAttach(el)
+    }
+  }
+}).observe(document.documentElement, { childList: true, subtree: true })
+
+for (const slot of choiceSlots) {
+  define(slot, {
+    init(el) {
+      if (!choiceSetup(el)) return
+      choiceRefresh(el)
+      return () => {
+        if (!el.isConnected) choiceInputs.get(el)?.remove()
+      }
+    },
+    click: choiceClick,
+    keydown: choiceKeydown,
+    mousedown(event, el) {
+      if (choiceInputs.has(el) && choiceDisabled(el)) event.preventDefault()
+    },
+  })
+}
+
+define("radio-group", {
+  init(root) {
+    root.setAttribute("role", "radiogroup")
+    radioGroupSync(root)
+  },
+  keydown(event, root) {
+    const item = event.target.closest?.('[data-slot="radio-group-item"]')
+    if (!item || !choiceInputs.has(item) || radioGroupOf(item) !== root || !event.key.startsWith("Arrow") || event.altKey || event.ctrlKey || event.metaKey) return
+    const target = rove(event, radioGroupItems(root).filter(i => choiceInputs.has(i)), { orientation: "both", typeahead: false, focus: false })
+    if (!target) return
+    target.focus()
+    if (!choiceReadonly(target) && !choiceInputs.get(target)?.checked) choiceInputs.get(target)?.click()
+  },
+})
+
+function toggleSync(el) {
+  const pressed = el.getAttribute("aria-pressed") === "true"
+  el.dataset.state = pressed ? "on" : "off"
+  el.toggleAttribute("data-pressed", pressed)
+  el.toggleAttribute("data-disabled", el.disabled)
+}
+
+define("toggle", {
+  init(el) {
+    buttonType(el)
+    if (!el.hasAttribute("aria-pressed")) el.setAttribute("aria-pressed", String(el.dataset.state === "on"))
+    toggleSync(el)
+  },
+  click(event, el) {
+    if (el.disabled || el.getAttribute("aria-disabled") === "true") return
+    const pressed = el.getAttribute("aria-pressed") !== "true"
+    el.setAttribute("aria-pressed", String(pressed))
+    toggleSync(el)
+    emit(el, "toggle:change", { pressed, value: pressed })
+  },
+})
+
+function toggleGroupItems(root) {
+  return own(root, '[data-slot="toggle-group-item"]')
+}
+
+function toggleGroupValue(root) {
+  const on = toggleGroupItems(root).filter(item => item.dataset.state === "on").map(item => item.dataset.value ?? "")
+  return root.dataset.type === "multiple" ? on : (on[0] ?? "")
+}
+
+function toggleGroupSet(root, values) {
+  const single = root.dataset.type !== "multiple"
+  for (const item of toggleGroupItems(root)) {
+    const on = values.includes(item.dataset.value ?? "")
+    item.dataset.state = on ? "on" : "off"
+    item.toggleAttribute("data-pressed", on)
+    if (single) {
+      item.setAttribute("role", "radio")
+      item.setAttribute("aria-checked", String(on))
+      item.removeAttribute("aria-pressed")
+    } else item.setAttribute("aria-pressed", String(on))
+  }
+}
+
+function toggleGroupContext(root, item) {
+  for (const key of ["variant", "size"]) item.dataset[key] = root.dataset[key] || item.dataset[key] || "default"
+  item.dataset.spacing = root.dataset.spacing ?? "2"
+}
+
+define("toggle-group", {
+  init(root) {
+    if (!root.hasAttribute("role")) root.setAttribute("role", "group")
+    root.dataset.spacing ??= "2"
+    root.dataset.orientation ??= "horizontal"
+    root.style.setProperty("--gap", root.dataset.spacing)
+    const items = toggleGroupItems(root)
+    const disabled = root.hasAttribute("data-disabled")
+    for (const item of items) {
+      buttonType(item)
+      toggleGroupContext(root, item)
+      if (disabled) item.disabled = true
+    }
+    const initial = root.dataset.value != null
+      ? root.dataset.value.split(",").map(v => v.trim()).filter(Boolean)
+      : items.filter(item => item.dataset.state === "on" || item.getAttribute("aria-pressed") === "true" || item.getAttribute("aria-checked") === "true").map(item => item.dataset.value ?? "")
+    toggleGroupSet(root, root.dataset.type === "multiple" ? initial : initial.slice(0, 1))
+    setRoving(items, items.find(item => item.dataset.state === "on" && !item.disabled))
+  },
+  click(event, root) {
+    const item = event.target.closest('[data-slot="toggle-group-item"]')
+    if (!item || item.disabled || item.closest('[data-slot="toggle-group"]') !== root) return
+    const items = toggleGroupItems(root)
+    const value = item.dataset.value ?? ""
+    let next
+    if (root.dataset.type === "multiple") {
+      const current = toggleGroupValue(root)
+      next = current.includes(value) ? current.filter(v => v !== value) : items.map(i => i.dataset.value ?? "").filter(v => v === value || current.includes(v))
+    } else next = item.dataset.state === "on" ? [] : [value]
+    toggleGroupSet(root, next)
+    setRoving(items, item)
+    emit(root, "toggle-group:change", { value: toggleGroupValue(root) })
+  },
+  keydown(event, root) {
+    const item = event.target.closest('[data-slot="toggle-group-item"]')
+    if (!item || item.closest('[data-slot="toggle-group"]') !== root) return
+    const o = root.dataset.orientation
+    rove(event, toggleGroupItems(root), { orientation: o === "vertical" || o === "horizontal" ? o : "both", typeahead: false })
+  },
+})
+
+define("toggle-group-item", {
+  init(item) {
+    const root = item.closest('[data-slot="toggle-group"]')
+    if (root) toggleGroupContext(root, item)
+  },
+})
+
+define("field-legend", {
+  init(el) {
+    el.dataset.variant ??= "legend"
+  },
+})
+
+define("field", {
+  init(el) {
+    el.dataset.orientation ??= "vertical"
+    if (!el.hasAttribute("role")) el.setAttribute("role", "group")
+  },
+})
+
+for (const slot of ["native-select", "native-select-wrapper"]) {
+  define(slot, {
+    init(el) {
+      el.dataset.size ??= el.parentElement?.closest('[data-slot="native-select-wrapper"]')?.dataset.size ?? el.querySelector(':scope > [data-slot="native-select"]')?.dataset.size ?? "default"
+    },
+  })
+}
+
+define("button", {
+  init(el) {
+    buttonType(el, null)
+    if (!el.hasAttribute("data-input-group-button")) return
+    buttonType(el)
+    el.dataset.variant ??= "ghost"
+    el.dataset.size ??= "xs"
+  },
+})
+
+define("input-group", {
+  init(el) {
+    if (!el.hasAttribute("role")) el.setAttribute("role", "group")
+  },
+})
+
+define("input-group-addon", {
+  init(el) {
+    if (!el.hasAttribute("role")) el.setAttribute("role", "group")
+    el.dataset.align ??= "inline-start"
+  },
+  click(event, el) {
+    if (event.target.closest("button, a, input, textarea, select, label")) return
+    el.parentElement?.querySelector("input, textarea")?.focus()
+  },
+})
+
+const sliderStates = new WeakMap()
+const sliderDrags = new WeakMap()
+const sliderResize = new ResizeObserver(entries => {
+  for (const { target } of entries) {
+    const root = target.closest('[data-slot="slider"]')
+    if (root) sliderRender(root)
+  }
+})
+
+function sliderInputs(root) {
+  return sliderStates.get(root)?.inputs ?? []
+}
+
+function sliderBounds(input) {
+  const min = Number(input.min || 0)
+  const max = Number(input.max || 100)
+  const step = input.step === "any" ? 0 : Number(input.step || 1)
+  return { min, max: max < min ? min : max, step }
+}
+
+function sliderSnap(input, value) {
+  const { min, max, step } = sliderBounds(input)
+  let v = value
+  if (step > 0) {
+    const decimals = (String(step).split(".")[1] ?? "").length
+    v = Number((min + Math.round((value - min) / step) * step).toFixed(decimals))
+    if (v > max) v = Number((min + Math.floor((max - min) / step) * step).toFixed(decimals))
+  }
+  return Math.min(max, Math.max(min, v))
+}
+
+function sliderSetup(root) {
+  const o = root.dataset.orientation === "vertical" ? "vertical" : "horizontal"
+  root.dataset.orientation = o
+  root.setAttribute("role", "group")
+  const inputs = [...root.querySelectorAll('input[type="range"]')]
+  let track = root.querySelector('[data-slot="slider-track"]')
+  let control = track && track.parentElement !== root ? track.parentElement : null
+  if (!control) {
+    control = h("div")
+    root.prepend(control)
+  }
+  if (!track) track = h("div", { "data-slot": "slider-track" })
+  if (track.parentElement !== control) control.prepend(track)
+  let range = track.querySelector('[data-slot="slider-range"]')
+  if (!range) track.append((range = h("div", { "data-slot": "slider-range" })))
+  track.style.position = "relative"
+  const thumbs = inputs.map((input, index) => {
+    if (input.dataset.slot === "slider-thumb") input.removeAttribute("data-slot")
+    let thumb = input.parentElement
+    if (thumb?.dataset.slot !== "slider-thumb") {
+      thumb = h("div", { "data-slot": "slider-thumb" })
+      input.replaceWith(thumb)
+      thumb.append(input)
+    }
+    if (thumb.parentElement !== control) control.append(thumb)
+    thumb.dataset.index = String(index)
+    visuallyHidden(input, { size: "100%" })
+    input.style.writingMode = o === "vertical" ? "vertical-lr" : ""
+    input.setAttribute("aria-orientation", o)
+    sliderResize.observe(thumb)
+    return thumb
+  })
+  sliderStates.set(root, { control, track, range, thumbs, inputs, size: 0, active: -1 })
+  for (const part of [control, track, range, ...thumbs]) part.dataset.orientation = o
+}
+
+function sliderPosition(f, size) {
+  return `calc(${size / 2}px + ${+f.toFixed(6)} * (100% - ${size}px))`
+}
+
+function sliderRender(root) {
+  const st = sliderStates.get(root)
+  if (!st || !st.inputs.length) return
+  const { control, track, range, thumbs, inputs } = st
+  const vertical = root.dataset.orientation === "vertical"
+  const rtl = !vertical && getComputedStyle(root).direction === "rtl"
+  const measured = vertical ? thumbs[0].offsetHeight : thumbs[0].offsetWidth
+  if (measured) st.size = measured
+  const size = st.size
+  const { min, max } = sliderBounds(inputs[0])
+  const parts = inputs.map(i => (max > min ? (Math.min(max, Math.max(min, i.valueAsNumber)) - min) / (max - min) : 0))
+  const disabled = inputs.every(i => i.disabled)
+  const dragging = sliderDrags.has(root)
+  thumbs.forEach((thumb, k) => {
+    const s = thumb.style
+    s.setProperty("--position", sliderPosition(parts[k], size))
+    s.position = "absolute"
+    if (vertical) {
+      s.bottom = "var(--position)"
+      s.left = "50%"
+      s.translate = "-50% 50%"
+    } else {
+      s.insetInlineStart = "var(--position)"
+      s.top = "50%"
+      s.translate = rtl ? "50% -50%" : "-50% -50%"
+    }
+    const overlap = inputs.some((other, j) => j !== k && other.value === inputs[k].value)
+    s.zIndex = st.active === k ? (dragging || overlap ? "2" : "1") : ""
+    const input = inputs[k]
+    input.setAttribute("aria-valuenow", input.value)
+    if (inputs.length === 2) input.setAttribute("aria-valuetext", `${input.value} ${k ? "end" : "start"} range`)
+    else input.removeAttribute("aria-valuetext")
+    thumb.toggleAttribute("data-disabled", input.disabled)
+  })
+  const r = range.style
+  const lo = Math.min(...parts)
+  const hi = Math.max(...parts)
+  const many = inputs.length > 1
+  r.position = vertical ? "absolute" : "relative"
+  r.setProperty(vertical ? "width" : "height", "inherit")
+  r.setProperty("--start-position", sliderPosition(many ? lo : parts[0], size))
+  if (many) r.setProperty("--relative-size", `calc(${+(hi - lo).toFixed(6)} * (100% - ${size}px))`)
+  else r.removeProperty("--relative-size")
+  r.setProperty(vertical ? "bottom" : "inset-inline-start", many ? "var(--start-position)" : "0")
+  r.setProperty(vertical ? "height" : "width", many ? "var(--relative-size)" : "var(--start-position)")
+  for (const part of [root, control, track, range, ...thumbs]) part.toggleAttribute("data-dragging", dragging)
+  for (const part of [root, control, track, range]) part.toggleAttribute("data-disabled", disabled)
+  for (const thumb of thumbs) if (disabled) thumb.setAttribute("data-disabled", "")
+}
+
+function sliderSet(root, index, value, commit, push) {
+  const inputs = sliderInputs(root)
+  const before = inputs.map(i => i.value)
+  let v = sliderSnap(inputs[index], value)
+  if (!push) {
+    if (index > 0) v = Math.max(v, inputs[index - 1].valueAsNumber)
+    if (index < inputs.length - 1) v = Math.min(v, inputs[index + 1].valueAsNumber)
+  }
+  inputs[index].value = String(v)
+  if (push) {
+    for (let j = index - 1; j >= 0; j--) if (inputs[j].valueAsNumber > v) inputs[j].value = String(v)
+    for (let j = index + 1; j < inputs.length; j++) if (inputs[j].valueAsNumber < v) inputs[j].value = String(v)
+  }
+  const changed = inputs.filter((i, k) => i.value !== before[k])
+  for (const i of changed) i.dispatchEvent(new Event("input", { bubbles: true }))
+  if (commit) for (const i of changed) i.dispatchEvent(new Event("change", { bubbles: true }))
+  sliderRender(root)
+}
+
+function sliderFromPointer(root, event) {
+  const st = sliderStates.get(root)
+  const { min, max } = sliderBounds(st.inputs[0])
+  const r = st.control.getBoundingClientRect()
+  const vertical = root.dataset.orientation === "vertical"
+  const size = st.size
+  let f
+  if (vertical) f = (r.bottom - event.clientY - size / 2) / (r.height - size)
+  else if (getComputedStyle(root).direction === "rtl") f = (r.right - event.clientX - size / 2) / (r.width - size)
+  else f = (event.clientX - r.left - size / 2) / (r.width - size)
+  return min + Math.min(1, Math.max(0, f || 0)) * (max - min)
+}
+
+function sliderEnd(event, root) {
+  const drag = sliderDrags.get(root)
+  if (!drag || drag.id !== event.pointerId) return
+  sliderDrags.delete(root)
+  if (root.hasPointerCapture(event.pointerId)) root.releasePointerCapture(event.pointerId)
+  sliderInputs(root).forEach((i, k) => {
+    if (i.value !== drag.start[k]) i.dispatchEvent(new Event("change", { bubbles: true }))
+  })
+  sliderRender(root)
+}
+
+function sliderActive(root, index) {
+  const st = sliderStates.get(root)
+  if (!st || st.active === index) return
+  st.active = index
+  sliderRender(root)
+}
+
+define("slider", {
+  init(root) {
+    sliderSetup(root)
+    sliderRender(root)
+  },
+  pointerdown(event, root) {
+    const st = sliderStates.get(root)
+    if (!st || event.button !== 0 || root.hasAttribute("data-disabled")) return
+    const usable = st.inputs.map((input, k) => [input, k]).filter(([input]) => !input.disabled)
+    if (!usable.length) return
+    event.preventDefault()
+    const value = sliderFromPointer(root, event)
+    const own = event.target.closest('[data-slot="slider-thumb"]')
+    let index = own ? st.thumbs.indexOf(own) : -1
+    if (index < 0 || st.inputs[index].disabled) {
+      let best = Infinity
+      for (const [input, k] of usable) {
+        const d = Math.abs(input.valueAsNumber - value)
+        if (d <= best) {
+          best = d
+          index = k
+        }
+      }
+    }
+    const start = st.inputs.map(i => i.value)
+    root.setPointerCapture(event.pointerId)
+    sliderDrags.set(root, { id: event.pointerId, index, start })
+    st.active = index
+    sliderSet(root, index, value, false, true)
+    st.inputs[index].focus({ preventScroll: true, focusVisible: false })
+  },
+  pointermove(event, root) {
+    const drag = sliderDrags.get(root)
+    if (!drag || drag.id !== event.pointerId) return
+    sliderSet(root, drag.index, sliderFromPointer(root, event), false, true)
+  },
+  pointerup: sliderEnd,
+  pointercancel: sliderEnd,
+  focusin(event, root) {
+    const index = sliderInputs(root).indexOf(event.target)
+    if (index >= 0) sliderActive(root, index)
+  },
+  focusout(event, root) {
+    if (!sliderDrags.has(root) && !root.contains(event.relatedTarget)) sliderActive(root, -1)
+  },
+  keydown(event, root) {
+    const inputs = sliderInputs(root)
+    const index = inputs.indexOf(event.target)
+    const input = inputs[index]
+    if (!input || input.disabled || event.ctrlKey || event.metaKey || event.altKey) return
+    const { min, max, step } = sliderBounds(input)
+    const s = step || (max - min) / 100
+    const large = Number(root.dataset.largeStep) > 0 ? Number(root.dataset.largeStep) : 10
+    const rtl = root.dataset.orientation !== "vertical" && getComputedStyle(root).direction === "rtl"
+    const by = event.shiftKey ? Math.max(large, s) : s
+    let v = input.valueAsNumber
+    if (event.key === "ArrowUp") v += by
+    else if (event.key === "ArrowDown") v -= by
+    else if (event.key === "ArrowRight") v += rtl ? -by : by
+    else if (event.key === "ArrowLeft") v -= rtl ? -by : by
+    else if (event.key === "PageUp") v += Math.max(large, s)
+    else if (event.key === "PageDown") v -= Math.max(large, s)
+    else if (event.key === "Home") v = min
+    else if (event.key === "End") v = max
+    else return
+    event.preventDefault()
+    sliderStates.get(root).active = index
+    sliderSet(root, index, v, true, false)
+  },
+  input(event, root) {
+    const inputs = sliderInputs(root)
+    const index = inputs.indexOf(event.target)
+    if (index < 0 || !event.isTrusted) return
+    sliderSet(root, index, inputs[index].valueAsNumber, false, false)
+  },
+})
+
+const inputOtpPatterns = { digits: /^\d$/, chars: /^[a-z]$/i, alphanumeric: /^[a-z0-9]$/i }
+const inputOtpLast = new WeakMap()
+const inputOtpPrev = new WeakMap()
+
+const inputOtpResize = new ResizeObserver(entries => {
+  for (const { target } of entries) target.style.setProperty("--root-height", `${target.offsetHeight}px`)
+})
+
+const inputOtpInputStyle = { position: "absolute", inset: "0", width: "100%", height: "100%", display: "flex", textAlign: "left", opacity: "1", color: "transparent", pointerEvents: "all", background: "transparent", caretColor: "transparent", border: "0 solid transparent", outline: "0 solid transparent", boxShadow: "none", lineHeight: "1", letterSpacing: "-.5em", fontSize: "var(--root-height)", fontFamily: "monospace", fontVariantNumeric: "tabular-nums" }
+
+function inputOtpParts(root) {
+  return { input: root.querySelector("input"), slots: [...root.querySelectorAll('[data-slot="input-otp-slot"]')] }
+}
+
+function inputOtpMax(root, input) {
+  return input.maxLength > 0 ? input.maxLength : inputOtpParts(root).slots.length
+}
+
+function inputOtpClean(root, text) {
+  const re = inputOtpPatterns[root.dataset.pattern]
+  return [...text].filter(c => !/\s/.test(c) && (!re || re.test(c))).join("")
+}
+
+const inputOtpMarked = new WeakSet()
+const inputOtpWatch = new MutationObserver(records => {
+  for (const { target } of records) {
+    const root = target.closest('[data-slot="input-otp"]')
+    if (root) inputOtpRender(root)
+  }
+})
+
+function inputOtpRender(root) {
+  const { input, slots } = inputOtpParts(root)
+  if (!input) return
+  const invalid = input.getAttribute("aria-invalid") === "true"
+  const focused = document.activeElement === input
+  const s = input.selectionStart
+  const e = input.selectionEnd
+  slots.forEach((slot, i) => {
+    const char = input.value[i] ?? ""
+    const active = focused && s !== null && (s === e ? i === s : i >= s && i < e)
+    slot.dataset.active = String(active)
+    if (invalid && !slot.hasAttribute("aria-invalid")) {
+      slot.setAttribute("aria-invalid", "true")
+      inputOtpMarked.add(slot)
+    } else if (!invalid && inputOtpMarked.has(slot)) {
+      slot.removeAttribute("aria-invalid")
+      inputOtpMarked.delete(slot)
+    }
+    const caret = active && !char
+    if (slot.textContent !== char || !!slot.querySelector('[data-slot="input-otp-caret"]') !== caret) {
+      slot.replaceChildren(...(char ? [char] : []), ...(caret ? [h("div", { "data-slot": "input-otp-caret" }, h("div"))] : []))
+    }
+  })
+}
+
+function inputOtpSelect(root, input) {
+  const max = inputOtpMax(root, input)
+  const value = input.value
+  const s = input.selectionStart
+  const e = input.selectionEnd
+  const prev = inputOtpPrev.get(input) ?? [null, null]
+  let start = -1
+  let end = -1
+  let direction
+  if (value.length && s !== null && e !== null && s === e && !(s === value.length && value.length < max)) {
+    if (s === 0) {
+      start = 0
+      end = 1
+      direction = "forward"
+    } else if (s === max) {
+      start = s - 1
+      end = s
+      direction = "backward"
+    } else if (max > 1 && value.length > 1) {
+      let offset = 0
+      if (prev[0] !== null && prev[1] !== null) {
+        direction = s < prev[1] ? "backward" : "forward"
+        if (direction === "backward" && !(prev[0] === prev[1] && prev[0] < max)) offset = -1
+      }
+      start = offset + s
+      end = offset + s + 1
+    }
+  }
+  if (start >= 0 && end > start) input.setSelectionRange(start, end, direction)
+  inputOtpPrev.set(input, [start >= 0 ? start : s, end >= 0 ? end : e])
+  inputOtpRender(root)
+}
+
+function inputOtpChanged(root, input) {
+  const value = input.value
+  const max = inputOtpMax(root, input)
+  if (value.length === max && inputOtpLast.get(input) !== value) emit(root, "input-otp:complete", { value })
+  inputOtpLast.set(input, value)
+}
+
+define("input-otp", {
+  init(root) {
+    const { input, slots } = inputOtpParts(root)
+    if (!input) return
+    if (!(input.maxLength > 0)) input.maxLength = slots.length
+    const digits = root.dataset.pattern === "digits"
+    const defaults = { autocomplete: "one-time-code", inputmode: digits ? "numeric" : "text", spellcheck: "false", autocapitalize: "off", autocorrect: "off" }
+    for (const [k, v] of Object.entries(defaults)) if (!input.hasAttribute(k)) input.setAttribute(k, v)
+    input.dataset.inputOtp = "true"
+    Object.assign(root.style, { position: "relative", cursor: "text", userSelect: "none", webkitUserSelect: "none", pointerEvents: "none" })
+    Object.assign(input.style, inputOtpInputStyle)
+    inputOtpResize.observe(root)
+    inputOtpWatch.observe(input, { attributes: true, attributeFilter: ["aria-invalid"] })
+    inputOtpLast.set(input, input.value)
+    inputOtpRender(root)
+  },
+  focusin(event, root) {
+    const { input } = inputOtpParts(root)
+    if (event.target !== input) return
+    const max = inputOtpMax(root, input)
+    input.setSelectionRange(Math.min(input.value.length, max - 1), input.value.length)
+    inputOtpPrev.set(input, [input.selectionStart, input.selectionEnd])
+    inputOtpRender(root)
+  },
+  focusout(event, root) {
+    if (event.target === inputOtpParts(root).input) queueMicrotask(() => inputOtpRender(root))
+  },
+  keydown(event, root) {
+    const { input } = inputOtpParts(root)
+    const back = { ArrowRight: true, ArrowLeft: false }[event.key]
+    if (event.target !== input || back === undefined || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey || getComputedStyle(input).direction !== "rtl") return
+    event.preventDefault()
+    const s = input.selectionStart ?? 0
+    const e = input.selectionEnd ?? s
+    const caret = s !== e ? (back ? s : e) : Math.max(0, Math.min(input.value.length, s + (back ? -1 : 1)))
+    input.setSelectionRange(caret, caret)
+  },
+  keyup(event, root) {
+    const { input } = inputOtpParts(root)
+    if (event.target === input) inputOtpSelect(root, input)
+  },
+  pointerup(event, root) {
+    const { input } = inputOtpParts(root)
+    if (document.activeElement === input) requestAnimationFrame(() => inputOtpSelect(root, input))
+  },
+  beforeinput(event, root) {
+    const { input } = inputOtpParts(root)
+    if (event.target !== input || !event.inputType.startsWith("insert") || event.data == null) return
+    if (inputOtpClean(root, event.data) !== event.data) event.preventDefault()
+  },
+  input(event, root) {
+    const { input } = inputOtpParts(root)
+    if (event.target !== input) return
+    const clean = inputOtpClean(root, input.value).slice(0, inputOtpMax(root, input))
+    if (clean !== input.value) input.value = clean
+    inputOtpSelect(root, input)
+    inputOtpChanged(root, input)
+  },
+  paste(event, root) {
+    const { input } = inputOtpParts(root)
+    if (event.target !== input || input.readOnly) return
+    event.preventDefault()
+    const max = inputOtpMax(root, input)
+    const text = inputOtpClean(root, event.clipboardData?.getData("text/plain") ?? "")
+    if (!text) return
+    const s = input.selectionStart ?? input.value.length
+    const e = input.selectionEnd ?? s
+    const whole = text.length >= max
+    const next = (whole ? text : input.value.slice(0, s) + text + input.value.slice(e)).slice(0, max)
+    input.value = next
+    const caret = whole ? next.length : Math.min(next.length, s + text.length)
+    input.setSelectionRange(caret, caret)
+    input.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertFromPaste" }))
+  },
+})
+
+document.addEventListener(
+  "selectionchange",
+  () => {
+    const input = document.activeElement
+    if (!(input instanceof HTMLInputElement)) return
+    const root = input.closest('[data-slot="input-otp"]')
+    if (root && inputOtpParts(root).input === input) inputOtpSelect(root, input)
+  },
+  true,
+)
+
+const selectStates = new WeakMap()
+const selectReady = new WeakSet()
+
+function proxyInput(root, attrs) {
+  let input = root.querySelector(':scope > input[aria-hidden="true"]')
+  if (!input) root.append((input = h("input", { "aria-hidden": "true", tabindex: "-1", autocomplete: "off" })))
+  visuallyHidden(input)
+  for (const [key, value] of Object.entries(attrs)) {
+    if (value == null || value === false) input.removeAttribute(key)
+    else input.setAttribute(key, value === true ? "" : value)
+  }
+  return input
+}
+
+document.addEventListener(
+  "focusin",
+  event => {
+    const input = event.target
+    if (!(input instanceof HTMLInputElement) || !input.matches(':is([data-slot="select"], [data-slot="combobox"]) > input[aria-hidden="true"]')) return
+    const control = formVisibleControl(input)
+    if (control !== input) control.focus()
+  },
+  true,
+)
+
+function selectItems(root) {
+  return [...root.querySelectorAll('[data-slot="select-item"]')]
+}
+
+function selectEnabled(root) {
+  return selectItems(root).filter(item => !item.hasAttribute("data-disabled") && !item.hidden)
+}
+
+function selectText(item) {
+  return item.querySelector('[data-slot="select-item-text"]') ?? item
+}
+
+function selectLabel(item) {
+  return selectText(item).textContent.trim()
+}
+
+function selectClone(nodes) {
+  return nodes.map(node => {
+    const copy = node.cloneNode(true)
+    if (copy instanceof Element) {
+      copy.removeAttribute("id")
+      for (const el of copy.querySelectorAll("[id]")) el.removeAttribute("id")
+    }
+    return copy
+  })
+}
+
+function selectItemSetup(item) {
+  if (selectReady.has(item)) return
+  selectReady.add(item)
+  item.setAttribute("role", "option")
+  ensureId(item, "select-item")
+  item.tabIndex = -1
+  if (item.hasAttribute("data-disabled")) item.setAttribute("aria-disabled", "true")
+  if (!item.querySelector('[data-slot="select-item-text"]')) {
+    const text = h("div", { "data-slot": "select-item-text" })
+    text.append(...item.childNodes)
+    item.append(text)
+  }
+  if (!item.hasAttribute("aria-selected")) item.setAttribute("aria-selected", "false")
+}
+
+function selectReveal(container, item) {
+  const c = container.getBoundingClientRect()
+  const r = item.getBoundingClientRect()
+  const pad = parseFloat(getComputedStyle(container).paddingTop) || 0
+  if (r.top < c.top + pad) container.scrollTop -= c.top + pad - r.top
+  else if (r.bottom > c.bottom - pad) container.scrollTop += r.bottom - (c.bottom - pad)
+}
+
+function selectSetValue(root, value, user) {
+  const st = selectStates.get(root)
+  if (!st) return
+  const items = selectItems(root)
+  const item = value === "" ? null : (items.find(i => (i.dataset.value ?? "") === value) ?? null)
+  const next = item ? value : ""
+  const changed = st.value !== next
+  const selected = item ?? items.find(i => i.dataset.value === "") ?? null
+  for (const i of items) {
+    const on = i === selected
+    i.setAttribute("aria-selected", String(on))
+    i.dataset.state = on ? "checked" : "unchecked"
+    i.toggleAttribute("data-selected", on)
+    const indicator = i.querySelector('[data-slot="select-item-indicator"]')
+    if (on && !indicator) i.append(h("span", { "data-slot": "select-item-indicator", "data-selected": "", "aria-hidden": "true" }, icon("check")))
+    else if (!on) indicator?.remove()
+  }
+  st.native.value = next
+  st.value = next
+  root.dataset.value = next
+  st.valueEl.replaceChildren(...(item?.dataset.label != null ? [item.dataset.label] : selectClone(item ? [...selectText(item).childNodes] : st.placeholder)))
+  st.trigger.toggleAttribute("data-placeholder", !item)
+  st.valueEl.toggleAttribute("data-placeholder", !item)
+  if (user && changed) {
+    st.native.dispatchEvent(new Event("input", { bubbles: true }))
+    st.native.dispatchEvent(new Event("change", { bubbles: true }))
+    emit(root, "select:change", { value: next })
+  }
+}
+
+function selectScrollButtons(root) {
+  const st = selectStates.get(root)
+  const v = st.viewport
+  st.up.hidden = !(v.scrollTop > 0.5)
+  st.down.hidden = !(v.scrollTop + v.clientHeight < v.scrollHeight - 0.5)
+}
+
+function selectOffset(el, content) {
+  let x = content.clientLeft
+  let y = content.clientTop
+  for (let n = el; n && n !== content; n = n.offsetParent) {
+    x += n.offsetLeft
+    y += n.offsetTop
+  }
+  return { x, y }
+}
+
+function selectHeight(content, height) {
+  content.style.setProperty("--available-height", `${height}px`)
+  content.style.height = `${height}px`
+}
+
+function selectAlign(root, item, reset) {
+  const st = selectStates.get(root)
+  const { content, viewport, trigger, valueEl } = st
+  const pad = 10
+  const vw = document.documentElement.clientWidth
+  const vh = document.documentElement.clientHeight
+  const t = trigger.getBoundingClientRect()
+  const s = content.style
+  content.dataset.side = "none"
+  content.dataset.align = "center"
+  if (s.position !== "fixed") placeAt(content, t.left, t.top, true)
+  s.setProperty("--anchor-width", `${t.width}px`)
+  s.setProperty("--available-height", `${vh - 2 * pad}px`)
+  s.height = ""
+  if (reset) viewport.scrollTop = 0
+  const width = content.offsetWidth
+  let height = content.offsetHeight
+  const text = item ? selectText(item) : null
+  let left = t.left
+  if (text && valueEl) {
+    const vr = valueEl.getBoundingClientRect()
+    const at = selectOffset(text, content)
+    left = getComputedStyle(trigger).direction === "rtl" ? vr.right - (at.x + text.offsetWidth) : vr.left - at.x
+  }
+  left = Math.min(Math.max(left, pad), Math.max(pad, vw - width - pad))
+  let top = t.top
+  let fits = t.top >= 20 && t.bottom <= vh - 2 * pad - 20
+  if (item) {
+    const desired = t.top + t.height / 2 - (selectOffset(item, content).y - viewport.scrollTop + item.offsetHeight / 2)
+    top = Math.max(desired, pad)
+    if (top + height > vh - pad) {
+      height = Math.max(vh - pad - top, 0)
+      if (Math.ceil(height) + 1 < Math.min(viewport.scrollHeight, 100)) fits = false
+    }
+    selectHeight(content, height)
+    if (top !== desired) viewport.scrollTop += top - desired
+  } else {
+    top = Math.min(Math.max(top, pad), Math.max(pad, vh - pad - height))
+    selectHeight(content, height)
+  }
+  placeAt(content, left, top, true)
+  s.setProperty("--transform-origin", `${Math.round(t.left + t.width / 2 - left)}px ${Math.round(t.top + t.height / 2 - top)}px`)
+  if (!item || !fits) return fits
+  const r = item.getBoundingClientRect()
+  return Math.abs(r.top + r.height / 2 - (t.top + t.height / 2)) <= 1
+}
+
+function selectStopScroll(st) {
+  clearInterval(st.timer)
+  st.timer = 0
+}
+
+function selectPopper(content) {
+  return content.dataset.position === "popper" || content.dataset.alignTrigger === "false"
+}
+
+function selectPressed(st, open) {
+  st.trigger.toggleAttribute("data-pressed", open)
+  if (open) st.trigger.dataset.popupSide = st.content.dataset.side === "none" ? "bottom" : (st.content.dataset.side ?? "bottom")
+  else delete st.trigger.dataset.popupSide
+}
+
+function selectOpen(root, focus = "selected", pointer = false) {
+  const st = selectStates.get(root)
+  if (!st || st.trigger.disabled || isOpen(st.content)) return
+  const quiet = pointer && !(document.activeElement === st.trigger && st.trigger.matches(":focus-visible"))
+  const popper = selectPopper(st.content)
+  st.content.dataset.alignTrigger = String(!popper)
+  const release = lockScroll()
+  st.lock = release
+  show(st.content, { trigger: st.trigger, anchor: popper ? st.trigger : null, side: st.side, align: st.align, settle: true, focus: null, onDismiss: reason => selectDismiss(root, reason), onClose: release })
+  const items = selectEnabled(root)
+  const selected = items.find(i => i.getAttribute("aria-selected") === "true")
+  const target = focus === "first" ? items[0] : focus === "last" ? items.at(-1) : focus instanceof Element ? focus : (selected ?? items[0])
+  if (!popper) {
+    selectAlign(root, selected ?? items[0], true)
+    selectScrollButtons(root)
+    if (!selectAlign(root, selected ?? items[0], false)) {
+      st.viewport.scrollTop = 0
+      st.content.style.height = ""
+      st.content.style.removeProperty("--transform-origin")
+      st.fallback = position(st.content, st.trigger, { side: st.side, align: st.align, settle: true })
+      selectHeight(st.content, st.content.offsetHeight)
+    }
+  } else {
+    st.content.style.height = ""
+    selectHeight(st.content, st.content.offsetHeight)
+  }
+  if (target) {
+    setRoving(items, target)
+    target.focus(quiet ? { preventScroll: true, focusVisible: false } : { preventScroll: true })
+    selectReveal(st.viewport, target)
+  } else st.content.focus({ preventScroll: true })
+  selectScrollButtons(root)
+  selectPressed(st, true)
+  emit(root, "select:open")
+}
+
+function selectDismiss(root, reason) {
+  const st = selectStates.get(root)
+  selectClose(root, reason !== "outside")
+  if (reason === "outside" && st) setTimeout(() => {
+    if (st.trigger.isConnected && focusLost(st.content)) st.trigger.focus({ preventScroll: true })
+  })
+}
+
+function selectClose(root, restoreFocus = true) {
+  const st = selectStates.get(root)
+  if (!st || !isOpen(st.content)) return
+  st.lock?.()
+  st.lock = null
+  selectStopScroll(st)
+  st.press = null
+  st.fallback?.()
+  st.fallback = null
+  selectPressed(st, false)
+  hide(st.content, { restoreFocus })
+  emit(root, "select:close")
+}
+
+function selectChoose(root, item) {
+  if (!item || item.hasAttribute("data-disabled")) return
+  selectSetValue(root, item.dataset.value ?? "", true)
+  selectClose(root)
+}
+
+function selectAutoScroll(event, button) {
+  const root = button.closest('[data-slot="select"]')
+  const st = root && selectStates.get(root)
+  if (!st) return
+  selectStopScroll(st)
+  const dir = button.dataset.slot === "select-scroll-up-button" ? -1 : 1
+  st.timer = setInterval(() => {
+    st.viewport.scrollTop += dir * 16
+    if (button.hidden) selectStopScroll(st)
+  }, 50)
+}
+
+function selectEndAutoScroll(event, button) {
+  const root = button.closest('[data-slot="select"]')
+  const st = root && selectStates.get(root)
+  if (st) selectStopScroll(st)
+}
+
+define("select", {
+  init(root) {
+    const trigger = root.querySelector('[data-slot="select-trigger"]')
+    const content = root.querySelector('[data-slot="select-content"]')
+    if (!trigger || !content) return
+    let valueEl = trigger.querySelector('[data-slot="select-value"]')
+    if (!valueEl) {
+      valueEl = h("span", { "data-slot": "select-value" })
+      trigger.prepend(valueEl)
+    }
+    const prev = selectStates.get(root)
+    const placeholder = prev?.placeholder ?? [...valueEl.childNodes].map(n => n.cloneNode(true))
+    buttonType(trigger)
+    trigger.dataset.size ??= "default"
+    trigger.setAttribute("role", "combobox")
+    trigger.setAttribute("aria-haspopup", "listbox")
+    trigger.setAttribute("aria-expanded", "false")
+    trigger.setAttribute("aria-autocomplete", "none")
+    trigger.setAttribute("aria-controls", ensureId(content, "select-content"))
+    if (!trigger.querySelector('[data-slot="select-icon"]')) trigger.append(icon("chevron-down", { "data-slot": "select-icon" }))
+    if (!content.hasAttribute("popover")) content.setAttribute("popover", "manual")
+    content.setAttribute("role", "listbox")
+    content.dataset.alignTrigger = String(!selectPopper(content))
+    content.tabIndex = -1
+    content.dataset.state = "closed"
+    let viewport = content.querySelector('[data-slot="select-viewport"]')
+    if (!viewport) {
+      viewport = h("div", { "data-slot": "select-viewport", role: "presentation" })
+      viewport.append(...content.childNodes)
+      content.append(viewport)
+    }
+    Object.assign(viewport.style, { position: "relative", maxHeight: "100%", overflow: "hidden auto" })
+    let up = content.querySelector('[data-slot="select-scroll-up-button"]')
+    if (!up) {
+      up = h("div", { "data-slot": "select-scroll-up-button", "aria-hidden": "true", hidden: true }, icon("chevron-up"))
+      content.prepend(up)
+    }
+    let down = content.querySelector('[data-slot="select-scroll-down-button"]')
+    if (!down) {
+      down = h("div", { "data-slot": "select-scroll-down-button", "aria-hidden": "true", hidden: true }, icon("chevron-down"))
+      content.append(down)
+    }
+    for (const arrow of [up, down]) arrow.style.position = "absolute"
+    for (const item of selectItems(root)) selectItemSetup(item)
+    for (const group of root.querySelectorAll('[data-slot="select-group"]')) {
+      group.setAttribute("role", "group")
+      const label = group.querySelector('[data-slot="select-label"]')
+      if (label) group.setAttribute("aria-labelledby", ensureId(label, "select-label"))
+    }
+    for (const sep of root.querySelectorAll('[data-slot="select-separator"]')) sep.setAttribute("aria-hidden", "true")
+    const native = proxyInput(root, { name: root.dataset.name, form: root.dataset.form, required: root.hasAttribute("data-required"), disabled: trigger.disabled })
+    const initial = prev?.initial ?? root.dataset.value ?? selectItems(root).find(i => i.dataset.state === "checked" || i.getAttribute("aria-selected") === "true")?.dataset.value ?? ""
+    const st = { trigger, content, viewport, valueEl, placeholder, native, up, down, initial, value: null, lock: null, timer: 0, press: null, side: prev?.side ?? content.dataset.side ?? "bottom", align: prev?.align ?? content.dataset.align ?? "center" }
+    selectStates.set(root, st)
+    selectSetValue(root, prev ? prev.value : initial, false)
+    return () => selectStopScroll(st)
+  },
+})
+
+define("select-trigger", {
+  pointerdown(event, trigger) {
+    const root = trigger.closest('[data-slot="select"]')
+    const st = root && selectStates.get(root)
+    if (!st || event.button !== 0 || event.pointerType === "touch" || st.trigger.disabled) return
+    if (isOpen(st.content)) {
+      selectClose(root)
+      st.press = { closing: true }
+      return
+    }
+    selectOpen(root, "selected", true)
+    st.press = { x: event.clientX, y: event.clientY, moved: false, opened: true }
+    selectPressing = root
+  },
+  mousedown(event, trigger) {
+    const root = trigger.closest('[data-slot="select"]')
+    const st = selectStates.get(root)
+    if (!st) return
+    if (st.press) event.preventDefault()
+    if (st.press ? st.press.opened : !isOpen(st.content)) setTimeout(() => document.addEventListener("mouseup", up => selectMouseUp(root, up), { once: true }))
+  },
+  click(event, trigger) {
+    const root = trigger.closest('[data-slot="select"]')
+    const st = root && selectStates.get(root)
+    if (!st) return
+    const press = event.detail !== 0 ? st.press : null
+    if (event.detail !== 0) st.press = null
+    if (press?.opened || press?.closing) return
+    if (isOpen(st.content)) selectClose(root)
+    else selectOpen(root, "selected", event.detail !== 0)
+  },
+  keydown(event, trigger) {
+    const root = trigger.closest('[data-slot="select"]')
+    const st = root && selectStates.get(root)
+    if (!st || isOpen(st.content) || event.ctrlKey || event.metaKey) return
+    const items = selectEnabled(root)
+    const match = typeahead(event, items, { active: items.find(i => i.getAttribute("aria-selected") === "true"), label: selectLabel, visible: false, ms: 750 })
+    if (match || (event.key === " " && typing(event, 750))) {
+      event.preventDefault()
+      if (match) selectSetValue(root, match.dataset.value ?? "", true)
+      return
+    }
+    if (["Enter", " ", "ArrowDown", "ArrowUp"].includes(event.key)) {
+      event.preventDefault()
+      selectOpen(root)
+    }
+  },
+})
+
+let selectPressing = null
+
+function selectMouseUp(root, event) {
+  const st = selectStates.get(root)
+  if (!st || !(event.target instanceof Node) || st.trigger.contains(event.target) || st.content.contains(event.target)) return
+  const r = st.trigger.getBoundingClientRect()
+  if (event.clientX >= r.left - 2 && event.clientX <= r.right + 2 && event.clientY >= r.top - 2 && event.clientY <= r.bottom + 2) return
+  selectClose(root)
+}
+
+document.addEventListener("pointermove", event => {
+  const press = selectPressing && selectStates.get(selectPressing)?.press
+  if (press?.opened && !press.moved && Math.hypot(event.clientX - press.x, event.clientY - press.y) > 4) press.moved = true
+}, { capture: true, passive: true })
+
+document.addEventListener("pointerup", () => {
+  const st = selectPressing && selectStates.get(selectPressing)
+  if (st?.press?.moved) st.press = null
+  selectPressing = null
+})
+
+define("select-content", {
+  focusin(event, content) {
+    for (const item of content.querySelectorAll('[data-slot="select-item"][data-highlighted]')) if (item !== event.target) item.removeAttribute("data-highlighted")
+    if (event.target.dataset?.slot === "select-item") event.target.setAttribute("data-highlighted", "")
+  },
+  focusout(event, content) {
+    if (event.target.dataset?.slot === "select-item") event.target.removeAttribute("data-highlighted")
+  },
+  keydown(event, content) {
+    const root = content.closest('[data-slot="select"]')
+    const st = root && selectStates.get(root)
+    if (!st) return
+    const items = selectEnabled(root)
+    const active = items.find(i => i === document.activeElement)
+    if (event.key === "Tab") {
+      selectClose(root, false)
+      st.trigger.focus()
+      return
+    }
+    if (rove(event, items, { loop: false, label: selectLabel, ms: 750 })) {
+      selectReveal(st.viewport, document.activeElement)
+      return
+    }
+    if (event.key === " " && typing(event, 750)) return event.preventDefault()
+    if ((event.key === "Enter" || event.key === " ") && active) {
+      event.preventDefault()
+      selectChoose(root, active)
+    }
+  },
+})
+
+define("select-item", {
+  init: selectItemSetup,
+  click(event, item) {
+    const root = item.closest('[data-slot="select"]')
+    if (root) selectChoose(root, item)
+  },
+  pointermove(event, item) {
+    if (!pointerMoved(event) || item.hasAttribute("data-disabled")) return
+    if (document.activeElement !== item) item.focus({ preventScroll: true })
+  },
+  pointerup(event, item) {
+    const root = item.closest('[data-slot="select"]')
+    const st = root && selectStates.get(root)
+    if (!st?.press?.moved) return
+    st.press = null
+    selectChoose(root, item)
+  },
+  pointerleave(event, item) {
+    if (pointerMoved(event) && document.activeElement === item) item.closest('[data-slot="select-content"]')?.focus({ preventScroll: true })
+  },
+})
+
+define("select-viewport", {
+  scroll(event, viewport) {
+    const root = viewport.closest('[data-slot="select"]')
+    if (root && selectStates.has(root)) selectScrollButtons(root)
+  },
+})
+
+define("select-scroll-up-button", { pointerenter: selectAutoScroll, pointerleave: selectEndAutoScroll })
+define("select-scroll-down-button", { pointerenter: selectAutoScroll, pointerleave: selectEndAutoScroll })
+
+addEventListener("resize", () => {
+  for (const content of document.querySelectorAll('[data-slot="select-content"][data-state="open"][data-side="none"]')) {
+    const root = content.closest('[data-slot="select"]')
+    if (!root || !isOpen(content)) continue
+    const items = selectEnabled(root)
+    selectAlign(root, items.find(i => i.getAttribute("aria-selected") === "true") ?? items[0], false)
+  }
+})
+
+const comboboxStates = new WeakMap()
+
+function comboboxItems(st) {
+  return [...st.list.querySelectorAll('[data-slot="combobox-item"]')]
+}
+
+function comboboxVisible(st) {
+  return comboboxItems(st).filter(item => !item.hidden && !item.closest("[hidden]") && !item.hasAttribute("data-disabled"))
+}
+
+function comboboxLabel(item) {
+  return (item.dataset.label ?? item.textContent).trim()
+}
+
+function comboboxValueOf(item) {
+  return item.dataset.value ?? comboboxLabel(item)
+}
+
+function comboboxSelectedLabel(st) {
+  const item = st.multiple ? null : comboboxItems(st).find(i => comboboxValueOf(i) === st.value)
+  return item ? comboboxLabel(item) : ""
+}
+
+function comboboxSyncProxy(st, list) {
+  st.native.value = list.join(",")
+  if (!st.multiple) return
+  for (const input of st.root.querySelectorAll(':scope > input[type="hidden"]')) input.remove()
+  if (st.name) st.native.after(...list.map(value => h("input", { type: "hidden", name: st.name, form: st.form, value, disabled: st.native.disabled })))
+}
+
+function comboboxItemSetup(item) {
+  item.setAttribute("role", "option")
+  ensureId(item, "combobox-item")
+  if (!item.hasAttribute("aria-selected")) item.setAttribute("aria-selected", "false")
+  if (item.hasAttribute("data-disabled")) item.setAttribute("aria-disabled", "true")
+}
+
+function comboboxChip(st, value, label) {
+  return h(
+    "div",
+    { "data-slot": "combobox-chip", "data-value": value, tabindex: "-1" },
+    label,
+    h("button", { type: "button", "data-slot": "combobox-chip-remove", "data-variant": "ghost", "data-size": "icon-xs", tabindex: "-1", "aria-label": stringFor(st.root, "remove", { label }), disabled: st.input?.disabled }, icon("x")),
+  )
+}
+
+function comboboxRenderChips(st) {
+  const existing = new Map([...st.chips.querySelectorAll('[data-slot="combobox-chip"]')].map(c => [c.dataset.value, c]))
+  const labels = new Map(comboboxItems(st).map(i => [comboboxValueOf(i), comboboxLabel(i)]))
+  for (const [value, chip] of existing) if (!st.value.includes(value)) chip.remove()
+  for (const value of st.value) {
+    const chip = existing.get(value) ?? comboboxChip(st, value, labels.get(value) ?? value)
+    if (st.input) st.input.before(chip)
+    else st.chips.append(chip)
+  }
+}
+
+function comboboxSet(st, next, user) {
+  const items = comboboxItems(st)
+  const known = new Set(items.map(comboboxValueOf))
+  let list = (Array.isArray(next) ? next : [next]).filter(v => v !== "" && known.has(v))
+  if (!st.multiple) list = list.slice(0, 1)
+  const before = (st.multiple ? st.value : [st.value].filter(Boolean)).join("\u0000")
+  st.value = st.multiple ? list : (list[0] ?? "")
+  for (const item of items) {
+    const on = list.includes(comboboxValueOf(item))
+    item.setAttribute("aria-selected", String(on))
+    item.toggleAttribute("data-selected", on)
+    const indicator = item.querySelector('[data-slot="combobox-item-indicator"]')
+    if (on && !indicator) item.append(h("span", { "data-slot": "combobox-item-indicator", "data-selected": "", "aria-hidden": "true" }, icon("check")))
+    else if (!on) indicator?.remove()
+  }
+  comboboxSyncProxy(st, list)
+  if (st.valueEl) {
+    const item = items.find(i => list.includes(comboboxValueOf(i)))
+    st.valueEl.replaceChildren(...(item ? [comboboxLabel(item)] : selectClone(st.placeholder)))
+    st.valueEl.toggleAttribute("data-placeholder", !item)
+  }
+  if (st.clear) {
+    const [parent, next] = st.clearSpot
+    if (!list.length) st.clear.remove()
+    else if (!st.clear.isConnected) parent.insertBefore(st.clear, next?.parentNode === parent ? next : null)
+    st.clear.toggleAttribute("data-visible", !!list.length)
+  }
+  st.trigger?.toggleAttribute("data-placeholder", !list.length)
+  if (st.chips) comboboxRenderChips(st)
+  if (user && before !== list.join("\u0000")) {
+    st.native.dispatchEvent(new Event("input", { bubbles: true }))
+    st.native.dispatchEvent(new Event("change", { bubbles: true }))
+    emit(st.root, "combobox:change", { value: st.multiple ? [...list] : st.value })
+  }
+}
+
+function comboboxFilter(st, query) {
+  const q = query.trim().toLocaleLowerCase()
+  let any = false
+  for (const item of comboboxItems(st)) {
+    const match = !q || comboboxLabel(item).toLocaleLowerCase().includes(q)
+    item.hidden = !match
+    any ||= match
+  }
+  for (const group of st.list.querySelectorAll('[data-slot="combobox-group"]')) group.hidden = !group.querySelector('[data-slot="combobox-item"]:not([hidden])')
+  for (const sep of st.list.querySelectorAll('[data-slot="combobox-separator"]')) {
+    const prev = sep.previousElementSibling
+    const next = sep.nextElementSibling
+    sep.hidden = !prev || prev.hidden || !next || next.hidden
+  }
+  st.content.toggleAttribute("data-empty", !any)
+  st.list.toggleAttribute("data-empty", !any)
+  for (const el of [st.input, st.trigger]) el?.toggleAttribute("data-list-empty", !any)
+  if (st.highlighted?.hidden) comboboxHighlight(st, null)
+}
+
+function comboboxHighlight(st, item, reveal = true) {
+  st.highlighted?.removeAttribute("data-highlighted")
+  st.highlighted = item ?? null
+  const owner = st.input
+  if (item) {
+    item.setAttribute("data-highlighted", "")
+    owner?.setAttribute("aria-activedescendant", item.id)
+    if (reveal) selectReveal(st.list, item)
+  } else owner?.removeAttribute("aria-activedescendant")
+}
+
+function comboboxPressed(st, open) {
+  for (const el of [st.input, st.trigger]) {
+    if (!el) continue
+    el.toggleAttribute("data-pressed", open)
+    el.toggleAttribute("data-popup-open", open)
+    if (open) el.dataset.popupSide = st.content.dataset.side ?? "bottom"
+    else delete el.dataset.popupSide
+  }
+  if (st.popup) return
+  if (st.trigger) {
+    st.trigger.setAttribute("aria-expanded", String(open))
+    if (open) st.trigger.setAttribute("aria-controls", st.list.id)
+  }
+  st.dismiss?.remove()
+  st.dismiss = null
+  if (!open || !st.input) return
+  st.dismiss = h("span", { role: "button", "aria-label": stringFor(st.root, "dismiss") })
+  visuallyHidden(st.dismiss, { fixed: false })
+  st.input.before(st.dismiss)
+}
+
+function comboboxOpen(st, highlight) {
+  if (isOpen(st.content) || st.root.hasAttribute("data-disabled")) return
+  const typed = st.input && !st.popup ? st.input.value : ""
+  comboboxFilter(st, !st.multiple && typed === comboboxSelectedLabel(st) ? "" : typed)
+  show(st.content, {
+    trigger: st.popup ? st.trigger : st.input,
+    anchor: st.anchor,
+    lazyFlip: true,
+    settle: true,
+    focus: st.popup && st.input ? st.input : null,
+    focusOutside: true,
+    intentional: "touch",
+    onDismiss(reason, event) {
+      if (reason !== "escape" && event && st.root.contains(event.target)) return
+      comboboxClose(st, reason !== "outside")
+    },
+  })
+  if (st.popup && st.input) st.input.setAttribute("aria-expanded", "true")
+  comboboxPressed(st, true)
+  const items = comboboxVisible(st)
+  const selected = items.find(i => i.getAttribute("aria-selected") === "true")
+  comboboxHighlight(st, highlight === "first" ? items[0] : highlight === "last" ? items.at(-1) : highlight === "selected" ? (selected ?? items[0]) : highlight === "current" ? (selected ?? null) : null)
+  emit(st.root, "combobox:open")
+}
+
+function comboboxClose(st, restoreFocus = true) {
+  if (!isOpen(st.content)) return
+  comboboxHighlight(st, null)
+  comboboxPressed(st, false)
+  hide(st.content, { restoreFocus: st.popup && restoreFocus })
+  if (st.input) {
+    if (st.popup) {
+      st.input.setAttribute("aria-expanded", "false")
+      st.input.value = ""
+    } else if (st.multiple) st.input.value = ""
+    else {
+      if (!st.input.value.trim()) comboboxSet(st, "", true)
+      st.input.value = comboboxSelectedLabel(st)
+    }
+  }
+  emit(st.root, "combobox:close")
+}
+
+function comboboxChoose(st, item) {
+  if (!item || item.hasAttribute("data-disabled")) return
+  const value = comboboxValueOf(item)
+  if (st.multiple) {
+    comboboxSet(st, st.value.includes(value) ? st.value.filter(v => v !== value) : [...st.value, value], true)
+    if (st.input) {
+      st.input.value = ""
+      comboboxFilter(st, "")
+      st.input.focus()
+    }
+    comboboxHighlight(st, item, false)
+    return
+  }
+  comboboxSet(st, value, true)
+  if (st.input && !st.popup) st.input.value = comboboxLabel(item)
+  comboboxClose(st)
+}
+
+function comboboxMove(st, delta) {
+  const items = comboboxVisible(st)
+  if (!items.length) return
+  const i = items.indexOf(st.highlighted)
+  comboboxHighlight(st, i < 0 ? (delta > 0 ? items[0] : items.at(-1)) : (items[i + delta] ?? null))
+}
+
+function comboboxChipKey(st, event, chip) {
+  const chips = [...st.chips.querySelectorAll('[data-slot="combobox-chip"]')]
+  const i = chips.indexOf(chip)
+  const rtl = getComputedStyle(st.chips).direction === "rtl"
+  if (event.key === (rtl ? "ArrowRight" : "ArrowLeft")) {
+    event.preventDefault()
+    ;(chips[i - 1] ?? chip).focus()
+  } else if (event.key === (rtl ? "ArrowLeft" : "ArrowRight")) {
+    event.preventDefault()
+    ;(chips[i + 1] ?? st.input ?? chip).focus()
+  } else if (event.key === "Backspace" || event.key === "Delete") {
+    event.preventDefault()
+    const target = (event.key === "Backspace" ? chips[i - 1] : chips[i + 1]) ?? chips[i + 1] ?? chips[i - 1] ?? st.input
+    comboboxSet(st, st.value.filter(v => v !== chip.dataset.value), true)
+    ;(target?.isConnected ? target : st.input)?.focus()
+  }
+}
+
+define("combobox", {
+  init(root) {
+    const content = root.querySelector('[data-slot="combobox-content"]')
+    const list = content?.querySelector('[data-slot="combobox-list"]')
+    if (!content || !list) return
+    const chips = root.querySelector('[data-slot="combobox-chips"]')
+    const input = chips?.querySelector("input") ?? [...root.querySelectorAll("input")].find(i => i.type !== "hidden") ?? null
+    const trigger = [...root.querySelectorAll('[data-slot="combobox-trigger"], [data-combobox-trigger], [data-slot="input-group"] [data-slot="input-group-button"]')].find(t => !content.contains(t)) ?? null
+    const popup = !chips && (!input || content.contains(input))
+    const valueEl = root.querySelector('[data-slot="combobox-value"]')
+    const st = {
+      root,
+      content,
+      list,
+      chips,
+      input,
+      trigger,
+      popup,
+      valueEl,
+      clear: root.querySelector('[data-slot="combobox-clear"]') ?? comboboxStates.get(root)?.clear ?? null,
+      anchor: chips ?? (popup ? trigger : input),
+      multiple: root.hasAttribute("data-multiple"),
+      placeholder: comboboxStates.get(root)?.placeholder ?? (valueEl ? [...valueEl.childNodes].map(n => n.cloneNode(true)) : []),
+      value: root.hasAttribute("data-multiple") ? [] : "",
+      highlighted: null,
+      pressed: false,
+      dismiss: null,
+      native: null,
+      name: root.dataset.name,
+      form: root.dataset.form,
+      initial: [],
+    }
+    if (!st.anchor) return
+    if (!content.hasAttribute("popover")) content.setAttribute("popover", "manual")
+    content.dataset.state = "closed"
+    content.dataset.chips = String(!!chips)
+    if (!content.hasAttribute("data-align")) content.dataset.align = "start"
+    if (!content.hasAttribute("data-side-offset")) content.dataset.sideOffset = "6"
+    list.setAttribute("role", "listbox")
+    if (!list.hasAttribute("tabindex")) list.tabIndex = -1
+    if (!content.hasAttribute("tabindex")) content.tabIndex = -1
+    for (const empty of content.querySelectorAll('[data-slot="combobox-empty"]')) {
+      empty.setAttribute("role", "status")
+      empty.setAttribute("aria-live", "polite")
+      empty.setAttribute("aria-atomic", "true")
+    }
+    ensureId(list, "combobox-list")
+    if (st.multiple) list.setAttribute("aria-multiselectable", "true")
+    const disabled = root.hasAttribute("data-disabled") || !!input?.disabled || (popup && !!trigger?.disabled)
+    const group = input?.closest('[data-slot="input-group"]')
+    if (group && root.contains(group)) group.setAttribute("data-combobox-input", "")
+    if (input) {
+      input.setAttribute("role", "combobox")
+      input.setAttribute("aria-haspopup", "listbox")
+      input.setAttribute("aria-autocomplete", "list")
+      input.setAttribute("aria-expanded", "false")
+      input.setAttribute("aria-controls", list.id)
+      input.setAttribute("autocomplete", "off")
+      input.spellcheck = false
+      if (disabled) input.disabled = true
+    }
+    if (trigger) {
+      buttonType(trigger)
+      trigger.setAttribute("aria-haspopup", "listbox")
+      if (!popup) {
+        trigger.setAttribute("aria-expanded", "false")
+        if (trigger.dataset.slot === "input-group-button") trigger.dataset.size ??= "icon-xs"
+        if (!trigger.hasAttribute("aria-label") && !trigger.textContent.trim()) trigger.setAttribute("aria-label", stringFor(trigger, "showOptions"))
+      }
+      if (!trigger.querySelector('[data-slot="combobox-trigger-icon"]')) trigger.append(icon("chevron-down", { "data-slot": "combobox-trigger-icon" }))
+      if (disabled) trigger.disabled = true
+    }
+    if (st.clear) {
+      st.clearSpot = st.clear.isConnected ? [st.clear.parentNode, st.clear.nextSibling] : comboboxStates.get(root).clearSpot
+      if (!st.clear.hasAttribute("tabindex")) st.clear.tabIndex = -1
+      buttonType(st.clear)
+      st.clear.dataset.size ??= "icon-xs"
+      if (!st.clear.hasAttribute("aria-label")) st.clear.setAttribute("aria-label", stringFor(st.clear, "clear"))
+      if (!st.clear.querySelector("svg")) st.clear.append(icon("x"))
+      if (disabled) st.clear.disabled = true
+    }
+    if (disabled) root.dataset.disabled = ""
+    for (const item of comboboxItems(st)) comboboxItemSetup(item)
+    for (const group of list.querySelectorAll('[data-slot="combobox-group"]')) {
+      group.setAttribute("role", "group")
+      const label = group.querySelector('[data-slot="combobox-label"]')
+      if (label) group.setAttribute("aria-labelledby", ensureId(label, "combobox-label"))
+    }
+    for (const sep of list.querySelectorAll('[data-slot="combobox-separator"]')) sep.setAttribute("aria-hidden", "true")
+    if (chips) chips.setAttribute("role", "toolbar")
+    st.native = proxyInput(root, { name: st.multiple ? null : st.name, form: st.form, required: root.hasAttribute("data-required"), disabled })
+    const prev = comboboxStates.get(root)
+    comboboxStates.set(root, st)
+    const raw = root.dataset.value ?? ""
+    st.initial = prev?.initial ?? (st.multiple ? raw.split(",").map(v => v.trim()).filter(Boolean) : [raw])
+    comboboxSet(st, prev ? prev.value : st.initial, false)
+    if (input && !popup && !st.multiple) input.value = comboboxSelectedLabel(st)
+    comboboxFilter(st, "")
+  },
+  keydown(event, root) {
+    const st = comboboxStates.get(root)
+    if (!st) return
+    const chip = event.target.closest('[data-slot="combobox-chip"]')
+    if (chip && st.chips?.contains(chip)) return comboboxChipKey(st, event, chip)
+    const open = isOpen(st.content)
+    if (event.target !== st.input) {
+      if (st.popup && event.target === st.trigger && !open && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
+        event.preventDefault()
+        comboboxOpen(st, event.key === "ArrowUp" ? "last" : "selected")
+      }
+      return
+    }
+    if (event.key === "ArrowDown") {
+      event.preventDefault()
+      if (!open) comboboxOpen(st, "selected")
+      else if (!event.altKey) comboboxMove(st, 1)
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault()
+      if (event.altKey) comboboxClose(st)
+      else if (!open) comboboxOpen(st, "last")
+      else comboboxMove(st, -1)
+    } else if (event.key === "Enter") {
+      if (open && st.highlighted) {
+        event.preventDefault()
+        comboboxChoose(st, st.highlighted)
+      } else if (open && !st.popup) {
+        event.preventDefault()
+        comboboxClose(st)
+      }
+    } else if (event.key === "Backspace") {
+      if (st.multiple && !st.input.value && st.value.length && st.input.selectionStart === 0) {
+        event.preventDefault()
+        comboboxSet(st, st.value.slice(0, -1), true)
+      }
+    } else if (event.key === (getComputedStyle(st.input).direction === "rtl" ? "ArrowRight" : "ArrowLeft")) {
+      const chips = st.chips ? [...st.chips.querySelectorAll('[data-slot="combobox-chip"]')] : []
+      if (chips.length && st.input.selectionStart === 0 && st.input.selectionEnd === 0) {
+        event.preventDefault()
+        chips.at(-1).focus()
+      }
+    } else if (event.key === "Tab" && open && !st.popup) comboboxClose(st, false)
+    else if ((event.key === "Home" || event.key === "End") && !event.shiftKey && !event.altKey && !event.ctrlKey && !event.metaKey) {
+      event.preventDefault()
+      const at = event.key === "Home" ? 0 : st.input.value.length
+      st.input.setSelectionRange(at, at)
+    } else if (event.key === "Escape" && !open && !st.popup && ((st.multiple ? st.value.length : st.value) || st.input.value)) {
+      event.preventDefault()
+      comboboxSet(st, "", true)
+      st.input.value = ""
+      comboboxFilter(st, "")
+    }
+  },
+  input(event, root) {
+    const st = comboboxStates.get(root)
+    if (!st || event.target !== st.input) return
+    if (!isOpen(st.content)) comboboxOpen(st, null)
+    comboboxFilter(st, st.input.value)
+    const items = comboboxVisible(st)
+    if (root.hasAttribute("data-auto-highlight")) comboboxHighlight(st, items[0] ?? null)
+    else if (st.highlighted && !items.includes(st.highlighted)) comboboxHighlight(st, null)
+  },
+  pointerdown(event, root) {
+    const st = comboboxStates.get(root)
+    const trigger = event.target.closest?.('[data-slot="combobox-trigger"], [data-combobox-trigger], [data-slot="input-group-button"]')
+    if (!st || !trigger || trigger !== st.trigger || event.button !== 0 || event.pointerType === "touch" || root.hasAttribute("data-disabled")) return
+    st.pressed = true
+    if (isOpen(st.content)) comboboxClose(st)
+    else {
+      comboboxOpen(st, "current")
+      if (!st.popup) st.input?.focus()
+    }
+  },
+  mousedown(event, root) {
+    const st = comboboxStates.get(root)
+    if (!st) return
+    const target = event.target
+    if (st.pressed && st.trigger?.contains(target)) event.preventDefault()
+    else if (st.content.contains(target) ? !target.closest("input, textarea") : !st.popup && target.closest('[data-slot="combobox-trigger"], [data-combobox-trigger], [data-slot="input-group-button"], [data-slot="combobox-clear"], [data-slot="combobox-chip-remove"]')) event.preventDefault()
+  },
+  click(event, root) {
+    const st = comboboxStates.get(root)
+    if (!st || root.hasAttribute("data-disabled")) return
+    const target = event.target
+    const remove = target.closest('[data-slot="combobox-chip-remove"]')
+    if (remove && st.chips?.contains(remove)) {
+      const chip = remove.closest('[data-slot="combobox-chip"]')
+      comboboxSet(st, st.value.filter(v => v !== chip.dataset.value), true)
+      st.input?.focus()
+      return
+    }
+    if (st.dismiss && target === st.dismiss) return comboboxClose(st)
+    const item = target.closest('[data-slot="combobox-item"]')
+    if (item && st.list.contains(item)) return comboboxChoose(st, item)
+    const clear = target.closest('[data-slot="combobox-clear"]')
+    if (clear && clear === st.clear) {
+      comboboxSet(st, st.multiple ? [] : "", true)
+      if (st.input) {
+        st.input.value = ""
+        comboboxFilter(st, "")
+        st.input.focus()
+      }
+      return
+    }
+    const trigger = target.closest('[data-slot="combobox-trigger"], [data-combobox-trigger], [data-slot="input-group-button"]')
+    if (trigger && trigger === st.trigger) {
+      const pressed = st.pressed && event.detail !== 0
+      st.pressed = false
+      if (pressed) return
+      if (isOpen(st.content)) comboboxClose(st)
+      else comboboxOpen(st, "current")
+      return
+    }
+    if (target === st.input && !st.popup && !isOpen(st.content)) comboboxOpen(st, "current")
+    else if (st.chips && target === st.chips) st.input?.focus()
+  },
+})
+
+define("combobox-item", {
+  init: comboboxItemSetup,
+  pointermove(event, item) {
+    if (!pointerMoved(event) || item.hasAttribute("data-disabled")) return
+    const st = comboboxStates.get(item.closest('[data-slot="combobox"]'))
+    if (st && st.highlighted !== item) comboboxHighlight(st, item, false)
+  },
+})
+
+const formTouched = new WeakSet()
+const formSubmitted = new WeakSet()
+const formAuthored = new WeakMap()
+const formErrorKeys = ["valueMissing", "typeMismatch", "patternMismatch", "tooLong", "tooShort", "rangeUnderflow", "rangeOverflow", "stepMismatch", "badInput", "customError"]
+
+function formVisibleControl(control) {
+  if (choiceButtons.has(control)) return choiceButtons.get(control)
+  const root = control.parentElement?.closest('[data-slot="select"], [data-slot="combobox"]')
+  if (!root || control.getAttribute("aria-hidden") !== "true") return control
+  if (root.dataset.slot === "select") return selectStates.get(root)?.trigger ?? control
+  const st = comboboxStates.get(root)
+  return (st?.popup ? st.trigger : st?.input) ?? control
+}
+
+function formNativeFor(el) {
+  if (choiceInputs.has(el)) return choiceInputs.get(el)
+  const root = el.closest('[data-slot="select"], [data-slot="combobox"]')
+  if (root) return root.querySelector(':scope > input[aria-hidden="true"]')
+  return el.willValidate ? el : null
+}
+
+function formMessage(control) {
+  const sources = [control, formVisibleControl(control), control.closest('[data-slot="radio-group"], [data-slot="select"], [data-slot="combobox"], [data-slot="input-otp"], [data-slot="slider"]')].filter(Boolean)
+  for (const key of formErrorKeys) {
+    if (!control.validity[key]) continue
+    const attr = `error${key[0].toUpperCase()}${key.slice(1)}`
+    for (const el of sources) if (el.dataset[attr]) return el.dataset[attr]
+    for (const el of sources) if (el.dataset.error) return el.dataset.error
+    return control.validationMessage
+  }
+  return ""
+}
+
+function formErrorOf(field) {
+  return field.querySelector(':scope > :is([data-slot="field-error"], [data-slot="form-message"]), :scope > [data-slot="field-content"] > [data-slot="field-error"]')
+}
+
+function formDescribe(el, id, on) {
+  const ids = (el.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(x => x && x !== id)
+  if (on) ids.push(id)
+  if (ids.length) el.setAttribute("aria-describedby", ids.join(" "))
+  else el.removeAttribute("aria-describedby")
+}
+
+function formMark(control, message) {
+  const visible = formVisibleControl(control)
+  const group = control.closest('[data-slot="radio-group"]')
+  const targets = group ? [group, ...radioGroupItems(group)] : [visible]
+  const field = (group ?? visible).closest('[data-slot="field"], [data-slot="form-item"], [data-slot="field-set"]')
+  let error = field ? formErrorOf(field) : null
+  if (message && field && !error) {
+    error = h("div", { "data-slot": field.dataset.slot === "form-item" ? "form-message" : "field-error", role: "alert" })
+    ;(field.querySelector(':scope > [data-slot="field-content"]') ?? field).append(error)
+  }
+  if (error) {
+    ensureId(error, "form-error")
+    if (message) {
+      error.textContent = formAuthored.get(error) || message
+      error.hidden = false
+    } else error.hidden = true
+  }
+  for (const t of targets) {
+    if (message) t.setAttribute("aria-invalid", "true")
+    else t.removeAttribute("aria-invalid")
+    if (error) formDescribe(t, error.id, !!message)
+  }
+  if (!field) return
+  if (message) field.dataset.invalid = "true"
+  else if (!field.querySelector('[aria-invalid="true"]')) delete field.dataset.invalid
+  const label = field.querySelector('[data-slot="form-label"]')
+  if (label) label.dataset.error = String(!!message)
+}
+
+function formValidate(control) {
+  const message = control.checkValidity() ? "" : formMessage(control)
+  formMark(control, message)
+  return message
+}
+
+function formLive(event, form) {
+  const native = formNativeFor(event.target)
+  if (!native || native.form !== form) return
+  formTouched.add(native)
+  if (formSubmitted.has(form) || formVisibleControl(native).getAttribute("aria-invalid") === "true") formValidate(native)
+}
+
+function formAfterReset(form) {
+  if (!(form instanceof HTMLFormElement)) return
+  for (const root of form.querySelectorAll('[data-slot="select"]')) {
+    const st = selectStates.get(root)
+    if (st) selectSetValue(root, st.initial, false)
+  }
+  for (const root of form.querySelectorAll('[data-slot="combobox"]')) {
+    const st = comboboxStates.get(root)
+    if (!st) continue
+    comboboxSet(st, st.initial, false)
+    if (st.input && !st.popup) st.input.value = st.multiple ? "" : comboboxSelectedLabel(st)
+  }
+  for (const root of form.querySelectorAll('[data-slot="slider"]')) sliderRender(root)
+  for (const root of form.querySelectorAll('[data-slot="input-otp"]')) inputOtpRender(root)
+  for (const el of form.querySelectorAll('[data-slot="checkbox"], [data-slot="switch"]')) {
+    const input = choiceInputs.get(el)
+    if (input && choiceMixed.has(el) && !input.defaultChecked) {
+      input.checked = false
+      input.indeterminate = true
+    }
+    choiceSync(el)
+  }
+  for (const root of form.querySelectorAll('[data-slot="radio-group"]')) radioGroupSync(root)
+  if (form.dataset.slot !== "form") return
+  formSubmitted.delete(form)
+  for (const control of form.elements) {
+    if (!control.willValidate) continue
+    formTouched.delete(control)
+    formMark(control, "")
+  }
+}
+
+document.addEventListener("reset", event => setTimeout(() => formAfterReset(event.target)))
+
+define("form", {
+  init(form) {
+    form.noValidate = true
+    for (const error of form.querySelectorAll('[data-slot="field-error"], [data-slot="form-message"]')) {
+      formAuthored.set(error, error.textContent.trim())
+      if (!error.closest('[data-invalid="true"]')) error.hidden = true
+    }
+  },
+  submit(event, form) {
+    formSubmitted.add(form)
+    const errors = []
+    const seen = new Set()
+    let first = null
+    for (const control of form.elements) {
+      if (!control.willValidate) continue
+      const message = formValidate(control)
+      if (!message) continue
+      const key = control.type === "radio" && control.name ? `radio:${control.name}` : control
+      if (seen.has(key)) continue
+      seen.add(key)
+      const element = formVisibleControl(control)
+      errors.push({ name: control.name || control.parentElement?.closest('[data-slot="select"], [data-slot="combobox"]')?.dataset.name || "", message, element })
+      first ??= element
+    }
+    if (errors.length) {
+      event.preventDefault()
+      first.focus()
+      emit(form, "form:invalid", { errors })
+      return
+    }
+    const formData = new FormData(form, event.submitter)
+    const values = {}
+    for (const [k, v] of formData) values[k] = Object.hasOwn(values, k) ? [].concat(values[k], v) : v
+    if (!emit(form, "form:submit", { formData, values, submitter: event.submitter ?? null }, { cancelable: true })) event.preventDefault()
+  },
+  focusout(event, form) {
+    const native = formNativeFor(event.target)
+    if (!native || native.form !== form) return
+    const root = event.target.closest('[data-slot="select"], [data-slot="combobox"]')
+    if (root && event.relatedTarget && root.contains(event.relatedTarget)) return
+    if (formTouched.has(native) || formSubmitted.has(form)) formValidate(native)
+  },
+  input: formLive,
+  change: formLive,
+})
+const dialogKinds = ["dialog", "alert-dialog", "sheet", "drawer"]
+const dialogTriggerKinds = ["dialog", "alert-dialog", "sheet", "drawer", "popover", "dropdown-menu"]
+const dialogTriggerSelector = dialogTriggerKinds.map(kind => `[data-slot="${kind}-trigger"], [data-${kind}-trigger]`).join(", ")
+
+function dialogContentSlot(kind) {
+  return kind === "drawer" ? '[data-slot="drawer-viewport"], dialog[data-slot="drawer-content"]' : `[data-slot="${kind}-content"]`
+}
+
+function dialogLocate(target, kinds = dialogKinds) {
+  const el = typeof target === "string" ? document.getElementById(target) : target
+  if (!(el instanceof Element)) return null
+  for (const kind of kinds) {
+    if (el.matches(`[data-slot="${kind}"]`)) {
+      const content = own(el, dialogContentSlot(kind))[0] ?? (kind === "drawer" ? [...drawerPresent].find(viewport => drawerStates.get(viewport)?.root === el) : null)
+      return content ? { kind, root: el, content } : null
+    }
+    if (el.matches(dialogContentSlot(kind))) return { kind, root: (kind === "drawer" ? drawerRootOf(el) : el.closest(`[data-slot="${kind}"]`)) ?? el, content: el }
+  }
+  for (const kind of kinds) {
+    const trigger = el.closest(`[data-slot="${kind}-trigger"], [data-${kind}-trigger]`)
+    if (trigger) return dialogFromTrigger(trigger, kind)
+  }
+  for (const kind of kinds) {
+    const content = el.closest(dialogContentSlot(kind))
+    if (content) return dialogLocate(content, [kind])
+  }
+  return null
+}
+
+function dialogFromTrigger(trigger, kind) {
+  const ref = trigger.getAttribute(`data-${kind}-trigger`)
+  const target = ref ? document.getElementById(ref) : trigger.closest(`[data-slot="${kind}"]`)
+  if (!target || !target.matches(`[data-slot="${kind}"], ${dialogContentSlot(kind)}`)) return null
+  return dialogLocate(target, [kind])
+}
+
+function dialogInitTrigger(trigger, kind) {
+  const found = dialogFromTrigger(trigger, kind)
+  if (!found) return
+  buttonType(trigger)
+  if (!trigger.hasAttribute("aria-haspopup")) trigger.setAttribute("aria-haspopup", kind === "dropdown-menu" ? "menu" : "dialog")
+  if (!trigger.hasAttribute("aria-expanded")) trigger.setAttribute("aria-expanded", "false")
+  if (!trigger.hasAttribute("aria-controls")) trigger.setAttribute("aria-controls", ensureId(found.content, kind))
+  if (!trigger.dataset.state) trigger.dataset.state = "closed"
+}
+
+function dialogInitRoot(root, kind) {
+  for (const trigger of own(root, `[data-${kind}-trigger=""]`)) dialogInitTrigger(trigger, kind)
+}
+
+function dialogClosers(kind) {
+  const alert = kind === "alert-dialog" ? ', [data-slot="alert-dialog-cancel"], [data-alert-dialog-cancel]' : ""
+  return `[data-slot="${kind}-close"], [data-${kind}-close]${alert}`
+}
+
+function dialogInitContent(content, kind) {
+  const owner = `[data-slot="${kind}-content"]`
+  for (const button of content.querySelectorAll(`${dialogClosers(kind)}, [data-slot="alert-dialog-action"], [data-alert-dialog-action]`)) buttonType(button)
+  if (kind === "alert-dialog") content.setAttribute("role", "alertdialog")
+  const title = own(content, `[data-slot="${kind}-title"]`)[0]
+  const description = own(content, `[data-slot="${kind}-description"]`)[0]
+  if (title && !content.hasAttribute("aria-labelledby")) content.setAttribute("aria-labelledby", ensureId(title, `${kind}-title`))
+  if (description && !content.hasAttribute("aria-describedby")) content.setAttribute("aria-describedby", ensureId(description, `${kind}-description`))
+  if (kind === "sheet" && !content.dataset.side) content.dataset.side = "right"
+  const palette = kind === "dialog" && !!content.querySelector('[data-slot="command"]')
+  if (palette) content.setAttribute("data-command-dialog", "")
+  const close = content.dataset.showCloseButton ?? (palette ? "false" : "true")
+  if ((kind === "dialog" || kind === "sheet") && close !== "false" && !content.querySelector(`:scope > [data-slot="${kind}-close"]`)) {
+    content.append(h("button", { type: "button", tabindex: "0", "data-slot": `${kind}-close` }, icon("x"), h("span", { class: "sr-only" }, stringFor(content, "close"))))
+  }
+}
+
+function dialogShow(found, trigger = null) {
+  const { kind, root, content } = found
+  if (isOpen(content) || !content.isConnected) return false
+  if (kind === "drawer") return drawerShow(found, trigger)
+  if (kind === "sheet") transition(content, true)
+  for (const command of content.querySelectorAll('[data-slot="command"]')) commandReset(command)
+  show(content, { trigger, anchor: null, modal: true, outside: kind !== "alert-dialog", intentional: true, onDismiss: reason => dialogHide(content, reason) })
+  emit(root, `${kind}:open`, { trigger })
+  return true
+}
+
+function dialogHide(content, reason = "api", forced = false) {
+  const found = dialogLocate(content)
+  if (!found || !isOpen(found.content)) return false
+  if (!emit(found.root, `${found.kind}:close`, { reason }, { cancelable: !forced })) return false
+  if (found.kind === "drawer") {
+    drawerCloseNested(found.content, reason)
+    drawerHide(found.content)
+    return true
+  }
+  if (found.kind === "sheet") transition(found.content, false)
+  hide(found.content).then(() => {
+    if (!isOpen(found.content)) found.content.removeAttribute("data-ending-style")
+  })
+  return true
+}
+
+export function dialogOpen(target, { trigger = null } = {}) {
+  const found = dialogLocate(target)
+  return found ? dialogShow(found, trigger) : false
+}
+
+export function dialogClose(target, reason = "api") {
+  const found = dialogLocate(target)
+  return found ? dialogHide(found.content, reason) : false
+}
+
+function dialogContentClick(event, content) {
+  if (!(event.target instanceof Element) || event.defaultPrevented) return
+  const kind = content.getAttribute("data-slot").slice(0, -8)
+  const action = '[data-slot="alert-dialog-action"], [data-alert-dialog-action]'
+  const cancel = '[data-slot="alert-dialog-cancel"], [data-alert-dialog-cancel]'
+  const button = event.target.closest(dialogClosers(kind))
+  if (!button || button.closest(`[data-slot="${kind}-content"]`) !== content || disabled(button)) return
+  buttonType(button)
+  dialogHide(content, button.matches(action) ? "action" : button.matches(cancel) ? "cancel" : "close")
+}
+
+function dialogContentSubmit(event, content) {
+  const form = event.target
+  if (!(form instanceof HTMLFormElement) || form.closest("dialog") !== content) return
+  const method = (event.submitter?.getAttribute("formmethod") || form.getAttribute("method") || "").toLowerCase()
+  if (method !== "dialog") return
+  event.preventDefault()
+  content.returnValue = event.submitter?.value ?? ""
+  dialogHide(content, "submit")
+}
+
+const drawerDirections = ["down", "up", "left", "right"]
+const drawerLegacyDirections = { bottom: "down", top: "up", left: "left", right: "right" }
+const drawerSwipes = new WeakMap()
+const drawerTraps = new WeakMap()
+const drawerTouches = new WeakMap()
+const drawerPressed = new WeakMap()
+const drawerPending = new WeakMap()
+const drawerStates = new WeakMap()
+const drawerAdded = new WeakSet()
+const drawerPresent = new Set()
+const drawerIgnore = '[data-base-ui-swipe-ignore], [data-swipe-ignore], [data-drawer-no-drag], [data-slot="toast-portal"]'
+const drawerInteractive = 'button, a, input, select, textarea, label, [role="button"]'
+
+if (CSS.registerProperty) {
+  for (const [name, syntax, initialValue] of [["--drawer-swipe-movement-x", "<length>", "0px"], ["--drawer-swipe-movement-y", "<length>", "0px"], ["--drawer-snap-point-offset", "<length>", "0px"]]) {
+    try {
+      CSS.registerProperty({ name, syntax, inherits: false, initialValue })
+    } catch {}
+  }
+}
+
+function drawerRootOf(viewport) {
+  return drawerStates.get(viewport)?.root ?? viewport.closest('[data-slot="drawer"]')
+}
+
+function drawerOptions(viewport) {
+  const root = drawerRootOf(viewport)
+  const d = root?.dataset ?? {}
+  const raw = d.swipeDirection ?? drawerLegacyDirections[d.direction] ?? "down"
+  const direction = drawerDirections.includes(raw) ? raw : "down"
+  const flag = name => !!root?.hasAttribute(name) && root.getAttribute(name) !== "false"
+  return {
+    direction,
+    axis: direction === "down" || direction === "up" ? "y" : "x",
+    modal: d.modal === "false" ? false : d.modal === "trap-focus" ? "trap-focus" : true,
+    handle: flag("data-show-swipe-handle"),
+    dismissible: !flag("data-disable-pointer-dismissal"),
+    snapPoints: drawerSnapValues(d.snapPoints),
+    snapPoint: drawerSnapValues(d.snapPoint)[0],
+    sequential: flag("data-snap-to-sequential-points"),
+  }
+}
+
+function drawerSnapValues(value) {
+  return (value ?? "")
+    .split(/[\s,]+/)
+    .filter(Boolean)
+    .map(v => (/^\d*\.?\d+$/.test(v) ? Number(v) : v))
+}
+
+function drawerSnapHeight(value, viewportHeight, rem) {
+  if (typeof value === "number") return value <= 1 ? Math.min(1, Math.max(0, value)) * viewportHeight : value
+  const n = Number.parseFloat(value)
+  if (!Number.isFinite(n)) return null
+  return value.endsWith("rem") ? n * rem : value.endsWith("px") ? n : null
+}
+
+function drawerSnapLayout(viewport) {
+  const state = drawerStates.get(viewport)
+  const { snapPoints, axis } = state.o
+  state.snaps = []
+  if (!snapPoints.length || axis !== "y" || state.height <= 0) return
+  const viewportHeight = document.documentElement.clientHeight
+  const rem = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
+  const max = Math.min(state.height, viewportHeight)
+  const resolved = []
+  for (const value of snapPoints) {
+    const height = drawerSnapHeight(value, viewportHeight, rem)
+    if (height == null) continue
+    const clamped = Math.min(max, Math.max(0, height))
+    resolved.push({ value, height: clamped, offset: Math.max(0, state.height - clamped) })
+  }
+  for (let i = resolved.length - 1; i >= 0; i--) if (resolved.slice(i + 1).some(point => Math.abs(point.height - resolved[i].height) <= 1)) resolved.splice(i, 1)
+  state.snaps = resolved
+}
+
+function drawerSnapActive(state) {
+  if (state.active == null || !state.snaps.length) return null
+  const exact = state.snaps.find(point => Object.is(point.value, state.active))
+  if (exact) return exact
+  const height = drawerSnapHeight(state.active, document.documentElement.clientHeight, Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16)
+  if (height == null) return null
+  return state.snaps.reduce((best, point) => (Math.abs(point.height - height) < Math.abs(best.height - height) ? point : best))
+}
+
+function drawerSnapRange(state) {
+  if (state.snaps.length < 2) return null
+  const offsets = state.snaps.map(point => point.offset).sort((a, b) => a - b)
+  return { min: offsets[0], range: offsets[1] - offsets[0] }
+}
+
+function drawerSnapProgress(state, offset) {
+  const range = drawerSnapRange(state)
+  if (!range || offset == null || range.range <= 0) return null
+  return Math.min(1, Math.max(0, (offset - range.min) / range.range))
+}
+
+function drawerSnapApply(viewport) {
+  const state = drawerStates.get(viewport)
+  const { popup } = drawerParts(viewport)
+  const offset = drawerSnapActive(state)?.offset ?? null
+  popup.style.setProperty("--drawer-snap-point-offset", `${state.o.direction === "up" ? -(offset ?? 0) : (offset ?? 0)}px`)
+  popup.toggleAttribute("data-expanded", state.active === 1)
+  const progress = drawerSnapProgress(state, offset)
+  if (progress != null && !state.parent) viewport.style.setProperty("--drawer-swipe-progress", String(progress))
+}
+
+function drawerSnapTo(viewport, point) {
+  if (!point) {
+    drawerSnapApply(viewport)
+    return
+  }
+  drawerSnapSet(viewport, point.value)
+}
+
+function drawerSnapSet(viewport, value) {
+  const state = drawerStates.get(viewport)
+  state.active = value
+  drawerSnapApply(viewport)
+  emit(state.root ?? viewport, "drawer:snap-point-change", { snapPoint: value })
+}
+
+function drawerCloseNested(viewport, reason) {
+  const depth = child => drawerAncestors(child).length
+  const below = [...drawerPresent].filter(child => isOpen(child) && drawerAncestors(child).includes(viewport)).sort((a, b) => depth(b) - depth(a))
+  for (const child of below) if (isOpen(child)) dialogHide(child, reason, true)
+}
+
+const drawerResize = new ResizeObserver(() => drawerMeasureLater())
+let drawerMeasureFrame = 0
+
+function drawerMeasureLater() {
+  cancelAnimationFrame(drawerMeasureFrame)
+  drawerMeasureFrame = requestAnimationFrame(drawerMeasure)
+}
+
+function drawerMeasure() {
+  for (const viewport of drawerPresent) {
+    if (!isOpen(viewport)) continue
+    const state = drawerStates.get(viewport)
+    if (![...drawerPresent].some(child => drawerStates.get(child)?.parent === viewport)) state.height = drawerParts(viewport).popup.offsetHeight
+    drawerSnapLayout(viewport)
+    drawerSnapApply(viewport)
+  }
+  drawerStack()
+}
+
+function drawerAncestors(viewport) {
+  const out = []
+  for (let parent = drawerStates.get(viewport)?.parent; parent; parent = drawerStates.get(parent)?.parent) out.push(parent)
+  return out
+}
+
+function drawerStack() {
+  const present = [...drawerPresent]
+  const open = present.filter(viewport => isOpen(viewport))
+  for (const viewport of present) {
+    const state = drawerStates.get(viewport)
+    const { popup } = drawerParts(viewport)
+    const below = open.filter(child => drawerAncestors(child).includes(viewport)).length
+    const nested = present.some(child => drawerStates.get(child)?.parent === viewport)
+    let front = viewport
+    for (let next; (next = open.filter(child => drawerStates.get(child).parent === front).at(-1)); ) front = next
+    const height = drawerStates.get(front).height || state.height
+    popup.style.setProperty("--nested-drawers", String(below))
+    popup.toggleAttribute("data-nested-drawer-open", below > 0)
+    popup.style.setProperty("--drawer-frontmost-height", height ? `${height}px` : "initial")
+    popup.style.setProperty("--drawer-height", (nested || state.closing) && state.height ? `${state.height}px` : "initial")
+  }
+}
+
+function drawerNestedSwipe(viewport, swiping, progress) {
+  for (const parent of drawerAncestors(viewport)) {
+    const { popup } = drawerParts(parent)
+    popup.toggleAttribute("data-nested-drawer-swiping", swiping)
+    popup.style.setProperty("--drawer-swipe-progress", String(progress))
+  }
+}
+
+function drawerParts(viewport) {
+  const popup = [...viewport.children].find(el => el.matches('[data-slot="drawer-popup"]'))
+  const content = popup && [...popup.children].find(el => el.matches('[data-slot="drawer-content"]'))
+  return { popup, content }
+}
+
+function drawerUpgrade(el) {
+  if (!(el instanceof HTMLDialogElement)) return
+  const root = el.closest('[data-slot="drawer"]')
+  if (el.matches('[data-slot="drawer-content"]')) {
+    const legacy = drawerLegacyDirections[el.dataset.direction]
+    if (legacy && root && !root.dataset.swipeDirection && !root.dataset.direction) root.dataset.swipeDirection = legacy
+    el.removeAttribute("data-direction")
+    for (const handle of el.querySelectorAll(':scope > [data-slot="drawer-handle"]')) handle.remove()
+    const content = h("div", { "data-slot": "drawer-content" })
+    content.append(...el.childNodes)
+    el.setAttribute("data-slot", "drawer-viewport")
+    el.append(h("div", { "data-slot": "drawer-popup" }, content))
+  }
+  const viewport = el
+  const o = drawerOptions(viewport)
+  let { popup, content } = drawerParts(viewport)
+  if (!popup) {
+    popup = h("div", { "data-slot": "drawer-popup" })
+    popup.append(...viewport.childNodes)
+    viewport.append(popup)
+  }
+  if (!content) {
+    content = h("div", { "data-slot": "drawer-content" })
+    content.append(...[...popup.childNodes].filter(n => !(n instanceof Element && n.matches('[data-slot="drawer-swipe-handle"]'))))
+    popup.append(content)
+  }
+  content.setAttribute("data-drawer-content", "")
+  if (!popup.hasAttribute("tabindex")) popup.tabIndex = -1
+  popup.dataset.swipeDirection = o.direction
+  popup.dataset.swipeAxis = o.axis
+  viewport.dataset.modal = String(o.modal)
+  const handle = popup.querySelector(':scope > [data-slot="drawer-swipe-handle"]')
+  if (o.handle && !handle) {
+    const added = h("div", { "data-slot": "drawer-swipe-handle", "aria-hidden": "true" })
+    drawerAdded.add(added)
+    popup.prepend(added)
+  } else if (!o.handle && drawerAdded.has(handle)) handle.remove()
+  for (const button of viewport.querySelectorAll(dialogClosers("drawer"))) if (button.closest('[data-slot="drawer-viewport"]') === viewport) buttonType(button)
+  const title = own(viewport, '[data-slot="drawer-title"]', '[data-slot="drawer-viewport"]')[0]
+  const description = own(viewport, '[data-slot="drawer-description"]', '[data-slot="drawer-viewport"]')[0]
+  if (title && !viewport.hasAttribute("aria-labelledby")) viewport.setAttribute("aria-labelledby", ensureId(title, "drawer-title"))
+  if (description && !viewport.hasAttribute("aria-describedby")) viewport.setAttribute("aria-describedby", ensureId(description, "drawer-description"))
+  drawerVars(viewport, popup)
+}
+
+function drawerVars(viewport, popup) {
+  for (const el of [viewport, popup]) {
+    el.style.setProperty("--drawer-swipe-progress", "0")
+    el.style.setProperty("--drawer-swipe-strength", "1")
+  }
+  popup.style.setProperty("--nested-drawers", "0")
+  for (const name of ["--drawer-height", "--drawer-frontmost-height"]) popup.style.setProperty(name, "initial")
+  popup.style.setProperty("--drawer-swipe-movement-x", "0px")
+  popup.style.setProperty("--drawer-swipe-movement-y", "0px")
+}
+
+function drawerShow(found, trigger) {
+  const { root, content: viewport } = found
+  drawerUpgrade(viewport)
+  const host = viewport.parentElement?.closest('[data-slot="drawer-viewport"]')
+  const parent = host && drawerPresent.has(host) ? host : null
+  const previous = drawerStates.get(viewport)
+  const state = { root, parent, home: previous?.home ?? null, height: 0, snaps: [], active: null, closing: false, o: null }
+  drawerStates.set(viewport, state)
+  state.o = drawerOptions(viewport)
+  const o = state.o
+  state.active = o.snapPoints.some(value => Object.is(value, o.snapPoint)) ? o.snapPoint : (o.snapPoints[0] ?? null)
+  if (parent && !state.home) {
+    state.home = { parent: viewport.parentElement, next: viewport.nextSibling }
+    parent.append(viewport)
+  }
+  drawerTrack(viewport, true)
+  const { popup } = drawerParts(viewport)
+  drawerSwipes.delete(viewport)
+  for (const el of [viewport, popup]) el.removeAttribute("data-swipe-dismiss")
+  drawerVars(viewport, popup)
+  for (const el of [viewport, popup]) el.toggleAttribute("data-nested", !!parent)
+  if (parent) {
+    viewport.style.setProperty("--drawer-swipe-progress", "1")
+    viewport.style.setProperty("--drawer-overlay-min-opacity", "0")
+  }
+  popup.toggleAttribute("data-snap-points", o.snapPoints.length > 0)
+  viewport.toggleAttribute("data-snap-points", o.snapPoints.length > 0 && !parent)
+  transition(viewport, true)
+  transition(popup, true)
+  show(viewport, { trigger, anchor: null, modal: o.modal === true, outside: o.dismissible, focusOutside: o.modal === false && o.dismissible, intentional: o.modal === false ? "mouse" : false, focus: popup, onDismiss: reason => dialogHide(viewport, reason) })
+  popup.dataset.state = "open"
+  state.height = popup.offsetHeight
+  drawerSnapLayout(viewport)
+  drawerSnapApply(viewport)
+  drawerStack()
+  drawerResize.observe(popup)
+  if (o.modal === "trap-focus") drawerTraps.set(viewport, trapFocus(viewport))
+  emit(root, "drawer:open", { trigger })
+  return true
+}
+
+function drawerHide(viewport) {
+  const { popup } = drawerParts(viewport)
+  const state = drawerStates.get(viewport)
+  drawerSwipeStop(viewport)
+  drawerTraps.get(viewport)?.()
+  drawerTraps.delete(viewport)
+  popup.dataset.state = "closed"
+  if (state) state.closing = true
+  if (state?.o.snapPoints.length) drawerSnapSet(viewport, state.o.snapPoints.some(value => Object.is(value, state.o.snapPoint)) ? state.o.snapPoint : state.o.snapPoints[0])
+  drawerResize.unobserve(popup)
+  const nested = [...drawerPresent].filter(child => drawerStates.get(child)?.parent === viewport).map(child => drawerStates.get(child).done)
+  const motion = Promise.all([transition(popup, false), transition(viewport, false), ...nested])
+  const done = hide(viewport, { after: motion }).then(() => {
+    if (isOpen(viewport)) return
+    drawerTrack(viewport, false)
+    if (state?.home) {
+      const { parent, next } = state.home
+      state.home = null
+      if (parent.isConnected) parent.insertBefore(viewport, next?.parentNode === parent ? next : null)
+    }
+    for (const el of [viewport, popup]) el.removeAttribute("data-ending-style")
+    for (const el of [viewport, popup]) el.removeAttribute("data-swipe-dismiss")
+    drawerVars(viewport, popup)
+    drawerStack()
+  })
+  if (state) state.done = done
+  drawerNestedSwipe(viewport, false, 0)
+  drawerStack()
+}
+
+function drawerTrack(viewport, open) {
+  const before = drawerPresent.size
+  if (open) drawerPresent.add(viewport)
+  else drawerPresent.delete(viewport)
+  if (!before && drawerPresent.size) document.addEventListener("touchmove", drawerTouchMove, { capture: true, passive: false })
+  if (before && !drawerPresent.size) document.removeEventListener("touchmove", drawerTouchMove, { capture: true })
+}
+
+function drawerScrollable(target, popup, axis) {
+  for (let el = target; el && el !== popup && popup.contains(el); el = el.parentElement) {
+    const style = getComputedStyle(el)
+    const overflow = axis === "y" ? style.overflowY : style.overflowX
+    const size = axis === "y" ? el.scrollHeight > el.clientHeight + 1 : el.scrollWidth > el.clientWidth + 1
+    if (/auto|scroll/.test(overflow) && size) return el
+  }
+  return null
+}
+
+function drawerAtEdge(scroller, direction) {
+  if (direction === "down") return scroller.scrollTop <= 0
+  if (direction === "up") return scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1
+  if (direction === "right") return Math.abs(scroller.scrollLeft) <= 0
+  return Math.abs(scroller.scrollLeft) + scroller.clientWidth >= scroller.scrollWidth - 1
+}
+
+function drawerCanStart(viewport, target, touch) {
+  if (!isOpen(viewport) || !(target instanceof Element)) return false
+  const { popup } = drawerParts(viewport)
+  if (!popup?.contains(target) || target.closest('[data-slot="drawer-viewport"]') !== viewport) return false
+  if (drawerParts(viewport).popup.hasAttribute("data-nested-drawer-open")) return false
+  if (target.closest(drawerIgnore)) return false
+  if (!touch && (target.closest("[data-drawer-content]") || target.closest(drawerInteractive))) return false
+  const selection = getSelection()
+  if (touch && selection && !selection.isCollapsed && popup.contains(selection.anchorNode)) return false
+  return true
+}
+
+function drawerSwipeBegin(viewport, x, y, timeStamp, id, touch) {
+  const { popup } = drawerParts(viewport)
+  const state = drawerStates.get(viewport)
+  const o = state.o
+  const init = toastTransform(popup)
+  const size = o.axis === "y" ? popup.offsetHeight : popup.offsetWidth
+  const snap = state.snaps.length > 0
+  const directions = snap ? [o.direction, o.direction === "down" ? "up" : "down"] : [o.direction]
+  const swipe = { id, touch, o, state, snap, directions, snapBase: snap ? (drawerSnapActive(state)?.offset ?? 0) : 0, nested: false, start: { x, y }, init, offset: { x: init.x, y: init.y }, first: true, intended: null, size, startTime: timeStamp, sample: { x: init.x, y: init.y, time: timeStamp }, velocity: { x: 0, y: 0 }, snapshot: [popup.style.transition, popup.style.transform] }
+  drawerSwipes.set(viewport, swipe)
+  if (!touch) {
+    const selection = getSelection()
+    if (selection && !selection.isCollapsed && (popup.contains(selection.anchorNode) || popup.contains(selection.focusNode))) selection.removeAllRanges()
+  }
+  for (const el of [viewport, popup]) el.toggleAttribute("data-swiping", true)
+  popup.style.transition = "none"
+  drawerSwipeStyle(viewport, popup, swipe)
+  return swipe
+}
+
+function drawerSwipeStyle(viewport, popup, swipe) {
+  const dx = swipe.offset.x - swipe.init.x
+  const dy = swipe.offset.y - swipe.init.y
+  const snapDown = swipe.snap && swipe.o.direction === "down"
+  if (snapDown) popup.style.removeProperty("transform")
+  else popup.style.transform = `translate3d(${swipe.offset.x}px,${swipe.offset.y}px,0) scale(${swipe.init.scale})`
+  const next = swipe.snapBase + dy
+  popup.style.setProperty("--drawer-swipe-movement-x", `${dx}px`)
+  popup.style.setProperty("--drawer-swipe-movement-y", `${snapDown && next < 0 ? -Math.sqrt(-next) - swipe.snapBase : dy}px`)
+  const direction = swipe.intended ?? swipe.o.direction
+  const along = toastDisplacement(direction, dx, dy)
+  let progress = swipe.size > 0 && along > 0 ? Math.min(1, along / (swipe.size * (swipe.init.scale || 1))) : 0
+  const range = drawerSnapRange(swipe.state)
+  if (range && swipe.state.height > 0) progress = drawerSnapProgress(swipe.state, Math.min(swipe.state.height, Math.max(0, (drawerSnapActive(swipe.state)?.offset ?? range.min) + dy)))
+  if (!swipe.state.parent) viewport.style.setProperty("--drawer-swipe-progress", String(progress))
+  if (swipe.state.parent) {
+    if (!swipe.nested && Math.abs(along) >= 10) swipe.nested = true
+    drawerNestedSwipe(viewport, swipe.nested, progress)
+  }
+}
+
+function drawerSwipeMove(viewport, x, y, timeStamp) {
+  const swipe = drawerSwipes.get(viewport)
+  if (!swipe) return
+  const { popup } = drawerParts(viewport)
+  const { direction, axis } = swipe.o
+  if (swipe.first) {
+    swipe.first = false
+    swipe.start = { x, y }
+    swipe.startTime = timeStamp
+  }
+  const dx = x - swipe.start.x
+  const dy = y - swipe.start.y
+  const allowed = swipe.directions
+  if (!swipe.intended) {
+    const candidate = Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? "right" : "left") : dy > 0 ? "down" : "up"
+    if (allowed.includes(candidate)) swipe.intended = candidate
+  }
+  const exponent = v => Math.sign(v) * Math.abs(v) ** 0.5
+  const damp = (delta, negative, positive) => ((!negative && delta < 0) || (!positive && delta > 0) ? exponent(delta) : delta)
+  const ox = axis === "x" ? damp(dx, allowed.includes("left"), allowed.includes("right")) : 0
+  const oy = axis === "y" ? damp(dy, allowed.includes("up"), allowed.includes("down")) : 0
+  swipe.offset = { x: swipe.init.x + ox, y: swipe.init.y + oy }
+  const last = swipe.sample
+  if (timeStamp > last.time) {
+    const ms = Math.max(timeStamp - last.time, 16)
+    swipe.velocity = { x: (swipe.offset.x - last.x) / ms, y: (swipe.offset.y - last.y) / ms }
+  }
+  swipe.sample = { x: swipe.offset.x, y: swipe.offset.y, time: timeStamp }
+  drawerSwipeStyle(viewport, popup, swipe)
+}
+
+function drawerSwipeStop(viewport, hold) {
+  const swipe = drawerSwipes.get(viewport)
+  drawerSwipes.delete(viewport)
+  const { popup } = drawerParts(viewport)
+  for (const el of [viewport, popup]) el.removeAttribute("data-swiping")
+  if (!swipe) return null
+  popup.style.transition = swipe.snapshot[0]
+  if (!hold) popup.style.transform = swipe.snapshot[1]
+  if (swipe.state.parent) drawerNestedSwipe(viewport, false, 0)
+  return swipe
+}
+
+function drawerSwipeEnd(viewport, timeStamp, cancel) {
+  const swipe = drawerSwipeStop(viewport, true)
+  if (!swipe) return
+  const { popup } = drawerParts(viewport)
+  const root = drawerRootOf(viewport) ?? viewport
+  const { state } = swipe
+  const direction = swipe.snap ? swipe.o.direction : swipe.intended ?? swipe.o.direction
+  const dx = swipe.offset.x - swipe.init.x
+  const dy = swipe.offset.y - swipe.init.y
+  const reset = point => {
+    popup.style.transform = swipe.snapshot[1]
+    popup.style.setProperty("--drawer-swipe-movement-x", "0px")
+    popup.style.setProperty("--drawer-swipe-movement-y", "0px")
+    if (!state.parent) viewport.style.setProperty("--drawer-swipe-progress", "0")
+    if (swipe.snap) drawerSnapTo(viewport, point)
+    if (dx || dy) emit(root, "drawer:release", { delta: toastDisplacement(direction, dx, dy) })
+  }
+  if (cancel || !swipe.intended) {
+    reset(null)
+    return
+  }
+  const duration = timeStamp > swipe.startTime ? Math.max(timeStamp - swipe.startTime, 50) : 0
+  const vx = duration ? dx / duration : 0
+  const vy = duration ? dy / duration : 0
+  let rvx = swipe.velocity.x
+  let rvy = swipe.velocity.y
+  const last = swipe.sample
+  if (last && timeStamp >= last.time) {
+    const age = timeStamp - last.time
+    if (age <= 80) {
+      const ms = Math.max(age, 16)
+      if (swipe.offset.x !== last.x) rvx = (swipe.offset.x - last.x) / ms
+      if (swipe.offset.y !== last.y) rvy = (swipe.offset.y - last.y) / ms
+    } else {
+      rvx = 0
+      rvy = 0
+    }
+  }
+  if (swipe.snap) {
+    const height = state.height
+    const delta = direction === "down" ? dy : -dy
+    const sign = Math.sign(delta)
+    let velocity = direction === "down" ? rvy : -rvy
+    if (sign !== 0 && Math.abs(delta) >= 10 && Math.sign(velocity) !== 0 && Math.sign(velocity) !== sign) velocity = direction === "down" ? vy : -vy
+    const current = drawerSnapActive(state)?.offset ?? 0
+    const dragTarget = Math.min(height, Math.max(0, current + delta))
+    const push = Math.abs(velocity) >= 0.5 ? Math.min(4, Math.max(-4, velocity)) * 300 : 0
+    const target = swipe.o.sequential ? dragTarget : Math.min(height, Math.max(0, dragTarget + push))
+    const closest = list => list.reduce((best, point) => (Math.abs(point.offset - target) < Math.abs(best.offset - target) ? point : best))
+    let close = false
+    let point = closest(state.snaps)
+    if (swipe.o.sequential) {
+      const ordered = [...state.snaps].sort((a, b) => a.offset - b.offset)
+      const index = ordered.indexOf(ordered.reduce((best, p) => (Math.abs(p.offset - current) < Math.abs(best.offset - current) ? p : best)))
+      let effective = target
+      if (sign !== 0 && Math.sign(velocity) === sign && Math.abs(velocity) >= 0.5) {
+        const adjacent = Math.min(ordered.length - 1, Math.max(0, index + sign))
+        if (adjacent !== index) {
+          const next = ordered[adjacent]
+          if (sign > 0 ? target < next.offset : target > next.offset) {
+            point = next
+            effective = next.offset
+          }
+        } else if (sign > 0) close = true
+      }
+      if (!close && Math.abs(effective - height) < Math.abs(effective - point.offset)) close = true
+    } else if ((velocity >= 0.5 && delta > 0) || Math.abs(target - height) < Math.abs(target - point.offset)) close = true
+    if (!close) {
+      reset(point)
+      return
+    }
+    swipe.restore = state.active
+    drawerSnapSet(viewport, null)
+  }
+  const along = toastDisplacement(direction, dx, dy)
+  const fast = toastDisplacement(direction, vx, vy) >= 0.5
+  if (!swipe.snap && (along <= 0 || (!fast && along <= Math.max(swipe.size * 0.5, 10)))) {
+    reset(null)
+    return
+  }
+  for (const el of [viewport, popup]) el.setAttribute("data-swipe-dismiss", "")
+  popup.style.removeProperty("transition")
+  popup.setAttribute("data-ending-style", "")
+  const size = swipe.o.axis === "y" ? popup.offsetHeight : popup.offsetWidth
+  const remaining = Math.max(0, size - (swipe.snapBase + along))
+  const release = toastDisplacement(direction, rvx, rvy)
+  const velocity = Math.abs(release) > 0 ? release : toastDisplacement(direction, vx, vy)
+  let strength = 1
+  if (remaining > 0 && velocity > 0.2) {
+    const ms = Math.min(360, Math.max(80, remaining / Math.min(4, Math.max(0.2, velocity))))
+    strength = 0.1 + ((ms - 80) / 280) * 0.9
+  }
+  popup.style.setProperty("--drawer-swipe-strength", String(strength))
+  popup.style.transform = swipe.snapshot[1]
+  if (!dialogHide(viewport, "swipe")) {
+    popup.removeAttribute("data-ending-style")
+    for (const el of [viewport, popup]) el.removeAttribute("data-swipe-dismiss")
+    drawerVars(viewport, popup)
+    if (swipe.snap) drawerSnapSet(viewport, swipe.restore)
+  }
+}
+
+addEventListener("resize", drawerMeasureLater)
+
+function drawerViewportOf(event, viewport) {
+  return event.target instanceof Element && event.target.closest('[data-slot="drawer-viewport"]') === viewport
+}
+
+define("drawer-content", { init: drawerUpgrade })
+
+function drawerBackdropSwipe(viewport, x, y, touch) {
+  const { popup } = drawerParts(viewport)
+  const el = document.elementFromPoint(x, y)
+  if (!isOpen(viewport) || popup.hasAttribute("data-nested-drawer-open") || !el || !popup.contains(el) || el.closest(drawerIgnore)) return false
+  if (!touch) return !el.closest(drawerInteractive)
+  const selection = getSelection()
+  return !(selection && !selection.isCollapsed && popup.contains(selection.anchorNode))
+}
+
+define("drawer-viewport", {
+  init: drawerUpgrade,
+  click(event, viewport) {
+    if (event.target === viewport) {
+      const pressed = drawerPressed.get(viewport)
+      drawerPressed.delete(viewport)
+      if (pressed && event.button === 0 && !event.defaultPrevented && isOpen(viewport) && drawerStates.get(viewport)?.o.dismissible) dialogHide(viewport, "outside")
+      return
+    }
+    if (!drawerViewportOf(event, viewport) || event.defaultPrevented) return
+    const button = event.target.closest(dialogClosers("drawer"))
+    if (!button || disabled(button)) return
+    buttonType(button)
+    dialogHide(viewport, "close")
+  },
+  submit(event, viewport) {
+    const form = event.target
+    if (!(form instanceof HTMLFormElement) || form.closest("dialog") !== viewport) return
+    const method = (event.submitter?.getAttribute("formmethod") || form.getAttribute("method") || "").toLowerCase()
+    if (method !== "dialog") return
+    event.preventDefault()
+    viewport.returnValue = event.submitter?.value ?? ""
+    dialogHide(viewport, "submit")
+  },
+  pointerdown(event, viewport) {
+    if (!drawerViewportOf(event, viewport)) return
+    drawerPressed.set(viewport, event.target === viewport)
+    drawerPending.delete(viewport)
+    if (event.target === viewport) {
+      if (event.pointerType !== "touch" && event.button === 0 && event.isPrimary && !event.defaultPrevented) drawerPending.set(viewport, event.pointerId)
+      return
+    }
+    if (event.pointerType === "touch" || event.button !== 0 || !event.isPrimary) return
+    if (!drawerCanStart(viewport, event.target, false)) return
+    drawerSwipeBegin(viewport, event.clientX, event.clientY, event.timeStamp, event.pointerId, false)
+    try {
+      drawerParts(viewport).popup.setPointerCapture(event.pointerId)
+    } catch {}
+  },
+  pointermove(event, viewport) {
+    if (drawerPending.get(viewport) === event.pointerId && !drawerSwipes.has(viewport)) {
+      if (event.buttons % 2 !== 1) {
+        drawerPending.delete(viewport)
+        return
+      }
+      if (!drawerBackdropSwipe(viewport, event.clientX, event.clientY)) return
+      drawerPending.delete(viewport)
+      drawerSwipeBegin(viewport, event.clientX, event.clientY, event.timeStamp, event.pointerId, false)
+      try {
+        drawerParts(viewport).popup.setPointerCapture(event.pointerId)
+      } catch {}
+    }
+    const swipe = drawerSwipes.get(viewport)
+    if (!swipe || swipe.touch || swipe.id !== event.pointerId) return
+    if (event.buttons !== 0 && event.buttons % 2 !== 1) {
+      drawerSwipeEnd(viewport, event.timeStamp, true)
+      return
+    }
+    event.preventDefault()
+    drawerSwipeMove(viewport, event.clientX, event.clientY, event.timeStamp)
+    if (event.buttons === 0) drawerSwipeEnd(viewport, event.timeStamp, false)
+  },
+  pointerup(event, viewport) {
+    drawerPending.delete(viewport)
+    const swipe = drawerSwipes.get(viewport)
+    if (swipe && !swipe.touch && swipe.id === event.pointerId) drawerSwipeEnd(viewport, event.timeStamp, false)
+  },
+  pointercancel(event, viewport) {
+    drawerPending.delete(viewport)
+    const swipe = drawerSwipes.get(viewport)
+    if (swipe && !swipe.touch && swipe.id === event.pointerId) drawerSwipeEnd(viewport, event.timeStamp, true)
+  },
+  touchstart(event, viewport) {
+    if (event.touches.length === 1 && event.target === viewport && isOpen(viewport) && !drawerParts(viewport).popup.hasAttribute("data-nested-drawer-open")) {
+      const touch = event.touches[0]
+      drawerTouches.set(viewport, { id: touch.identifier, x: touch.clientX, y: touch.clientY, scroller: null, pending: true, backdrop: true })
+      return
+    }
+    if (event.touches.length !== 1 || !drawerViewportOf(event, viewport) || !drawerCanStart(viewport, event.target, true)) return
+    const touch = event.touches[0]
+    const { popup } = drawerParts(viewport)
+    const o = drawerOptions(viewport)
+    const scroller = drawerScrollable(event.target, popup, o.axis)
+    drawerTouches.set(viewport, { id: touch.identifier, x: touch.clientX, y: touch.clientY, scroller, pending: !scroller || drawerAtEdge(scroller, o.direction) })
+  },
+})
+
+function drawerTouchMove(event) {
+  const viewport = event.target instanceof Element ? event.target.closest('[data-slot="drawer-viewport"]') : null
+  const state = viewport && drawerTouches.get(viewport)
+  const touch = state && [...event.touches].find(t => t.identifier === state.id)
+  if (!touch) return
+  const swipe = drawerSwipes.get(viewport)
+  if (!swipe && state.backdrop) {
+    if (event.cancelable) event.preventDefault()
+    if (!drawerBackdropSwipe(viewport, touch.clientX, touch.clientY, true)) return
+    drawerSwipeBegin(viewport, touch.clientX, touch.clientY, event.timeStamp, state.id, true)
+  } else if (!swipe) {
+    if (!state.pending) return
+    const o = drawerOptions(viewport)
+    const delta = toastDisplacement(o.direction, touch.clientX - state.x, touch.clientY - state.y)
+    const across = o.axis === "y" ? Math.abs(touch.clientX - state.x) : Math.abs(touch.clientY - state.y)
+    if (state.scroller && delta <= 0) {
+      state.pending = false
+      return
+    }
+    if (across > Math.abs(delta) && across > 6) {
+      state.pending = false
+      return
+    }
+    if (state.scroller) {
+      drawerSwipeBegin(viewport, state.x, state.y, event.timeStamp, state.id, true)
+      drawerSwipes.get(viewport).first = false
+    } else drawerSwipeBegin(viewport, touch.clientX, touch.clientY, event.timeStamp, state.id, true)
+  }
+  if (event.cancelable) event.preventDefault()
+  drawerSwipeMove(viewport, touch.clientX, touch.clientY, event.timeStamp)
+}
+
+for (const type of ["touchend", "touchcancel"]) {
+  document.addEventListener(
+    type,
+    event => {
+      const viewport = event.target instanceof Element ? event.target.closest('[data-slot="drawer-viewport"]') : null
+      const state = viewport && drawerTouches.get(viewport)
+      if (!state || [...event.touches].some(t => t.identifier === state.id)) return
+      drawerTouches.delete(viewport)
+      const swipe = drawerSwipes.get(viewport)
+      if (swipe?.touch) drawerSwipeEnd(viewport, event.timeStamp, type === "touchcancel")
+    },
+    true,
+  )
+}
+
+for (const kind of dialogKinds) {
+  define(kind, {
+    init(root) {
+      dialogInitRoot(root, kind)
+    },
+  })
+  define(`${kind}-trigger`, {
+    init(trigger) {
+      dialogInitTrigger(trigger, kind)
+    },
+  })
+  if (kind === "drawer") continue
+  define(`${kind}-content`, {
+    init(content) {
+      dialogInitContent(content, kind)
+    },
+    click: dialogContentClick,
+    submit: dialogContentSubmit,
+  })
+}
+
+define("dialog-footer", {
+  init(footer) {
+    if (!footer.hasAttribute("data-show-close-button") || footer.dataset.showCloseButton === "false" || footer.querySelector("[data-dialog-close]")) return
+    footer.append(h("button", { type: "button", "data-slot": "button", "data-variant": "outline", "data-dialog-close": "" }, stringFor(footer, "close")))
+  },
+})
+
+let popoverGrace = null
+const popoverPressed = new WeakMap()
+
+function popoverPrepare(content, defaults = {}) {
+  if (!content.hasAttribute("popover")) content.setAttribute("popover", "manual")
+  for (const [key, value] of Object.entries(defaults)) if (content.dataset[key] === undefined) content.dataset[key] = value
+}
+
+function popoverHull(points) {
+  const list = [...points].sort((a, b) => a.x - b.x || a.y - b.y)
+  const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
+  const half = source => {
+    const out = []
+    for (const p of source) {
+      while (out.length >= 2 && cross(out.at(-2), out.at(-1), p) <= 0) out.pop()
+      out.push(p)
+    }
+    out.pop()
+    return out
+  }
+  return [...half(list), ...half([...list].reverse())]
+}
+
+function popoverInside(point, polygon) {
+  let inside = false
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const a = polygon[i]
+    const b = polygon[j]
+    if (a.y > point.y !== b.y > point.y && point.x < ((b.x - a.x) * (point.y - a.y)) / (b.y - a.y) + a.x) inside = !inside
+  }
+  return inside
+}
+
+function popoverGraceArea(x, y, rect) {
+  return popoverHull([
+    { x: x - 5, y: y - 5 },
+    { x: x + 5, y: y - 5 },
+    { x: x + 5, y: y + 5 },
+    { x: x - 5, y: y + 5 },
+    { x: rect.left, y: rect.top },
+    { x: rect.right, y: rect.top },
+    { x: rect.right, y: rect.bottom },
+    { x: rect.left, y: rect.bottom },
+  ])
+}
+
+function popoverGraceStart(event, rect, onLeave) {
+  popoverGraceStop()
+  popoverGrace = { area: popoverGraceArea(event.clientX, event.clientY, rect), onLeave }
+  document.addEventListener("pointermove", popoverGraceMove)
+}
+
+function popoverGraceStop() {
+  if (!popoverGrace) return
+  popoverGrace = null
+  document.removeEventListener("pointermove", popoverGraceMove)
+}
+
+function popoverGraceMove(event) {
+  if (!popoverGrace || popoverInside({ x: event.clientX, y: event.clientY }, popoverGrace.area)) return
+  const leave = popoverGrace.onLeave
+  popoverGraceStop()
+  leave()
+}
+
+function popoverParts(found) {
+  if (found.root === found.content) return { trigger: null, anchor: null }
+  return {
+    trigger: own(found.root, '[data-slot="popover-trigger"], [data-popover-trigger]')[0],
+    anchor: own(found.root, '[data-slot="popover-anchor"]')[0],
+  }
+}
+
+function popoverShow(found, trigger, anchor) {
+  const { root, content } = found
+  if (isOpen(content) || !content.isConnected) return false
+  const parts = popoverParts(found)
+  trigger ??= parts.trigger
+  anchor ??= parts.anchor ?? trigger
+  const modal = root.hasAttribute("data-modal") && root.dataset.modal !== "false"
+  show(content, {
+    trigger,
+    anchor,
+    modal,
+    focusOutside: !modal,
+    intentional: "mouse",
+    collisionPadding: 5,
+    onDismiss: reason => popoverHide(found, reason),
+    onClose: () => trigger?.removeAttribute("data-pressed"),
+  })
+  trigger?.setAttribute("data-pressed", "")
+  popoverPressed.set(content, trigger)
+  emit(root, "popover:open", { trigger })
+  return true
+}
+
+function popoverHide(found, reason = "api") {
+  if (!isOpen(found.content)) return false
+  popoverPressed.get(found.content)?.removeAttribute("data-pressed")
+  hide(found.content, { restoreFocus: reason !== "focus" })
+  emit(found.root, "popover:close", { reason })
+  return true
+}
+
+export function popoverOpen(target, { trigger, anchor } = {}) {
+  const found = dialogLocate(target, ["popover"])
+  return found ? popoverShow(found, trigger, anchor) : false
+}
+
+export function popoverClose(target, reason = "api") {
+  const found = dialogLocate(target, ["popover"])
+  return found ? popoverHide(found, reason) : false
+}
+
+define("popover", {
+  init(root) {
+    dialogInitRoot(root, "popover")
+  },
+})
+
+define("popover-trigger", {
+  init(trigger) {
+    dialogInitTrigger(trigger, "popover")
+  },
+})
+
+define("popover-content", {
+  init(content) {
+    if (!content.hasAttribute("role")) content.setAttribute("role", "dialog")
+    const title = own(content, '[data-slot="popover-title"]')[0]
+    if (title && !content.hasAttribute("aria-labelledby") && !content.hasAttribute("aria-label")) content.setAttribute("aria-labelledby", ensureId(title, "popover-title"))
+    popoverPrepare(content)
+  },
+})
+
+document.addEventListener("click", event => {
+  const trigger = event.target instanceof Element ? event.target.closest(dialogTriggerSelector) : null
+  if (!trigger || event.defaultPrevented || disabled(trigger) || dropdownMenuHandled.has(event)) return
+  const kind = dialogTriggerKinds.find(k => trigger.matches(`[data-slot="${k}-trigger"], [data-${k}-trigger]`))
+  const found = dialogFromTrigger(trigger, kind)
+  if (!found) return
+  buttonType(trigger)
+  if (kind === "popover") {
+    if (isOpen(found.content)) popoverHide(found, "trigger")
+    else popoverShow(found, trigger)
+  } else if (kind === "dropdown-menu") {
+    if (isOpen(found.content)) dropdownMenuHide(kind, found.content, { reason: "trigger" })
+    else dropdownMenuShow(kind, found.content, { trigger, focus: event.detail === 0 ? "first" : "content", instant: event.detail === 0 ? "click" : null })
+  } else dialogShow(found, trigger)
+})
+
+const tooltipTimers = new WeakMap()
+let tooltipCurrent = null
+let tooltipClosedAt = -Infinity
+
+function tooltipParts(root) {
+  return {
+    trigger: own(root, '[data-slot="tooltip-trigger"], [data-tooltip-trigger]')[0],
+    content: own(root, '[data-slot="tooltip-content"]')[0],
+  }
+}
+
+function tooltipNumber(el, names, fallback, hosts = '[data-slot="tooltip"], [data-slot="tooltip-provider"]') {
+  for (let n = el; n; n = n.parentElement) {
+    if (n !== el && !n.matches(hosts)) continue
+    for (const name of names) {
+      const value = n.hasAttribute(name) ? Number(n.getAttribute(name)) : NaN
+      if (Number.isFinite(value)) return value
+    }
+  }
+  return fallback
+}
+
+function tooltipSetting(root, key) {
+  const trigger = tooltipParts(root).trigger ?? root
+  if (key === "delay") return tooltipNumber(trigger, ["data-delay", "data-delay-duration"], 0)
+  if (key === "close") return tooltipNumber(trigger, ["data-close-delay"], 0)
+  return tooltipNumber(trigger, ["data-timeout", "data-skip-delay-duration"], 400)
+}
+
+function tooltipClear(root) {
+  clearTimeout(tooltipTimers.get(root))
+  tooltipTimers.delete(root)
+}
+
+function tooltipGrouped(root) {
+  return (!!tooltipCurrent && tooltipCurrent !== root) || performance.now() - tooltipClosedAt < tooltipSetting(root, "timeout")
+}
+
+function tooltipSchedule(root) {
+  tooltipClear(root)
+  const grouped = tooltipGrouped(root)
+  const delay = grouped ? 0 : tooltipSetting(root, "delay")
+  if (delay <= 0) tooltipShow(root, grouped ? "delay" : null)
+  else tooltipTimers.set(root, setTimeout(() => tooltipShow(root, null), delay))
+}
+
+function tooltipInstant(content, value) {
+  for (const el of [content, ...content.querySelectorAll(':scope > [data-slot="tooltip-arrow"]')]) {
+    if (value) el.dataset.instant = value
+    else delete el.dataset.instant
+  }
+}
+
+function tooltipShow(root, instant) {
+  tooltipClear(root)
+  const { trigger, content } = tooltipParts(root)
+  if (!trigger || !content || isOpen(content) || !trigger.isConnected) return
+  if (tooltipCurrent && tooltipCurrent !== root) {
+    instant ??= "delay"
+    tooltipHide(tooltipCurrent)
+  }
+  tooltipCurrent = root
+  tooltipInstant(content, instant)
+  show(content, { trigger, expanded: false, triggerState: false, focus: null, restoreFocus: false, collisionPadding: 5, onDismiss: reason => tooltipHide(root, reason === "escape" ? "dismiss" : null) })
+  for (const arrow of content.querySelectorAll(':scope > [data-slot="tooltip-arrow"]')) {
+    arrow.toggleAttribute("data-open", true)
+    arrow.toggleAttribute("data-closed", false)
+  }
+  emit(root, "tooltip:open")
+}
+
+function tooltipHide(root, instant) {
+  tooltipClear(root)
+  if (tooltipCurrent === root) {
+    tooltipCurrent = null
+    popoverGraceStop()
+  }
+  const { content } = tooltipParts(root)
+  if (!content || !isOpen(content)) return
+  if (instant) tooltipInstant(content, instant)
+  for (const arrow of content.querySelectorAll(':scope > [data-slot="tooltip-arrow"]')) {
+    arrow.toggleAttribute("data-open", false)
+    arrow.toggleAttribute("data-closed", true)
+  }
+  hide(content, { restoreFocus: false })
+  tooltipClosedAt = performance.now()
+  emit(root, "tooltip:close")
+}
+
+function tooltipLeave(root) {
+  tooltipClear(root)
+  const delay = tooltipSetting(root, "close")
+  if (delay <= 0) tooltipHide(root)
+  else tooltipTimers.set(root, setTimeout(() => tooltipHide(root), delay))
+}
+
+function tooltipPointer(event, root, entering) {
+  if (event.pointerType === "touch") return
+  const { trigger, content } = tooltipParts(root)
+  if (!trigger || !content) return
+  const inside = node => node instanceof Node && (trigger.contains(node) || content.contains(node))
+  if (!inside(event.target)) return
+  if (entering) {
+    if (tooltipCurrent === root) {
+      popoverGraceStop()
+      tooltipClear(root)
+    }
+    if (!isOpen(content) && trigger.contains(event.target) && !inside(event.relatedTarget)) tooltipSchedule(root)
+    return
+  }
+  if (inside(event.relatedTarget)) return
+  tooltipClear(root)
+  if (!isOpen(content)) return
+  if (!event.relatedTarget) {
+    tooltipLeave(root)
+    return
+  }
+  const other = trigger.contains(event.target) ? content : trigger
+  popoverGraceStart(event, other.getBoundingClientRect(), () => tooltipLeave(root))
+}
+
+define("tooltip", {
+  init(root) {
+    const { trigger, content } = tooltipParts(root)
+    if (!trigger || !content) return
+    const ids = (trigger.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(Boolean)
+    const id = ensureId(content, "tooltip-content")
+    if (!ids.includes(id)) trigger.setAttribute("aria-describedby", [...ids, id].join(" "))
+    buttonType(trigger, null)
+    return () => {
+      tooltipClear(root)
+      if (tooltipCurrent === root) tooltipHide(root)
+    }
+  },
+  pointerover(event, root) {
+    tooltipPointer(event, root, true)
+  },
+  pointerout(event, root) {
+    tooltipPointer(event, root, false)
+  },
+  focusin(event, root) {
+    const { trigger } = tooltipParts(root)
+    if (trigger?.contains(event.target) && event.target.matches(":focus-visible")) tooltipShow(root, tooltipGrouped(root) ? "delay" : "focus")
+  },
+  focusout(event, root) {
+    const { trigger, content } = tooltipParts(root)
+    if (trigger?.contains(event.target) && !(event.relatedTarget instanceof Node && content?.contains(event.relatedTarget))) tooltipHide(root)
+  },
+  pointerdown(event, root) {
+    if (tooltipParts(root).trigger?.contains(event.target)) tooltipHide(root, "dismiss")
+  },
+  click(event, root) {
+    if (tooltipParts(root).trigger?.contains(event.target)) tooltipHide(root, "dismiss")
+  },
+})
+
+define("tooltip-content", {
+  init(content) {
+    content.setAttribute("role", "tooltip")
+    if (!content.querySelector(':scope > [data-slot="tooltip-arrow"]')) content.append(h("div", { "data-slot": "tooltip-arrow", "aria-hidden": "true", style: { position: "absolute" } }))
+    popoverPrepare(content, { side: "top" })
+  },
+})
+
+const hoverCardTimers = new WeakMap()
+const hoverCardFocusOpen = new WeakSet()
+const hoverCardPressAt = new WeakMap()
+
+function hoverCardParts(root) {
+  return {
+    trigger: own(root, '[data-slot="hover-card-trigger"], [data-hover-card-trigger]')[0],
+    content: own(root, '[data-slot="hover-card-content"]')[0],
+  }
+}
+
+function hoverCardSchedule(root, open) {
+  clearTimeout(hoverCardTimers.get(root))
+  hoverCardTimers.delete(root)
+  const { content } = hoverCardParts(root)
+  if (!content || isOpen(content) === open) return
+  const from = hoverCardParts(root).trigger ?? root
+  const delay = open ? tooltipNumber(from, ["data-delay", "data-open-delay"], 600, '[data-slot="hover-card"]') : tooltipNumber(from, ["data-close-delay"], 300, '[data-slot="hover-card"]')
+  hoverCardTimers.set(root, setTimeout(() => (open ? hoverCardShow(root) : hoverCardHide(root)), delay))
+}
+
+function hoverCardShow(root) {
+  const { trigger, content } = hoverCardParts(root)
+  if (!trigger || !content || isOpen(content) || !trigger.isConnected) return
+  show(content, { trigger, expanded: false, focus: null, restoreFocus: false, collisionPadding: 5, onDismiss: () => hoverCardHide(root) })
+  emit(root, "hover-card:open")
+}
+
+function hoverCardHide(root) {
+  clearTimeout(hoverCardTimers.get(root))
+  hoverCardTimers.delete(root)
+  hoverCardFocusOpen.delete(root)
+  const { content } = hoverCardParts(root)
+  if (!content || !isOpen(content)) return
+  hide(content, { restoreFocus: false })
+  emit(root, "hover-card:close")
+}
+
+function hoverCardInside(root, node) {
+  const { trigger, content } = hoverCardParts(root)
+  return node instanceof Node && !!(trigger?.contains(node) || content?.contains(node))
+}
+
+define("hover-card", {
+  init(root) {
+    const { trigger } = hoverCardParts(root)
+    if (trigger && !trigger.dataset.state) trigger.dataset.state = "closed"
+    if (trigger) buttonType(trigger, null)
+    return () => clearTimeout(hoverCardTimers.get(root))
+  },
+  pointerover(event, root) {
+    if (event.pointerType !== "touch" && hoverCardInside(root, event.target) && !hoverCardInside(root, event.relatedTarget)) hoverCardSchedule(root, true)
+  },
+  pointerout(event, root) {
+    if (event.pointerType === "touch" || !hoverCardInside(root, event.target)) return
+    if (hoverCardParts(root).trigger?.contains(event.target)) hoverCardFocusOpen.delete(root)
+    else if (hoverCardFocusOpen.has(root)) return
+    if (!hoverCardInside(root, event.relatedTarget)) hoverCardSchedule(root, false)
+  },
+  focusin(event, root) {
+    const { trigger, content } = hoverCardParts(root)
+    if (!(content?.contains(event.target) || (trigger?.contains(event.target) && event.target.matches(":focus-visible")))) return
+    if (content && !isOpen(content) && !hoverCardTimers.has(root)) hoverCardFocusOpen.add(root)
+    hoverCardSchedule(root, true)
+  },
+  pointerdown(event, root) {
+    if (hoverCardParts(root).content?.contains(event.target)) hoverCardPressAt.set(root, event.timeStamp)
+  },
+  focusout(event, root) {
+    if (!hoverCardInside(root, event.target) || hoverCardInside(root, event.relatedTarget) || hoverCardPressAt.get(root) === pressedAt) return
+    clearTimeout(hoverCardTimers.get(root))
+    hoverCardTimers.set(root, setTimeout(() => hoverCardInside(root, document.activeElement) || hoverCardHide(root)))
+  },
+})
+
+define("hover-card-content", {
+  init(content) {
+    popoverPrepare(content, { alignOffset: "4" })
+  },
+})
+
+const dropdownMenuKinds = ["dropdown-menu", "context-menu", "menubar"]
+const dropdownMenuOpeners = new WeakMap()
+let dropdownMenuGrace = null
+let dropdownMenuSubTimer = 0
+let dropdownMenuPress = null
+let dropdownMenuPointer = ""
+let dropdownMenuSwallow = null
+const dropdownMenuHandled = new WeakSet()
+
+function dropdownMenuKind(el) {
+  const slot = el.getAttribute("data-slot") ?? ""
+  return dropdownMenuKinds.find(kind => slot === kind || slot.startsWith(`${kind}-`))
+}
+
+function dropdownMenuSel(kind) {
+  return {
+    menu: `[data-slot="${kind}-content"], [data-slot="${kind}-sub-content"]`,
+    item: `[data-slot="${kind}-item"], [data-slot="${kind}-checkbox-item"], [data-slot="${kind}-radio-item"], [data-slot="${kind}-sub-trigger"]`,
+    sub: `[data-slot="${kind}-sub-content"]`,
+    subTrigger: `[data-slot="${kind}-sub-trigger"]`,
+  }
+}
+
+function dropdownMenuItems(menu, kind) {
+  const sel = dropdownMenuSel(kind)
+  return own(menu, sel.item, sel.menu)
+}
+
+function dropdownMenuUsable(menu, kind) {
+  return dropdownMenuItems(menu, kind).filter(enabled)
+}
+
+function dropdownMenuTop(menu, kind) {
+  return menu.closest(`[data-slot="${kind}-content"]`)
+}
+
+function dropdownMenuRoot(content, kind) {
+  return content.closest(kind === "menubar" ? '[data-slot="menubar"]' : `[data-slot="${kind}"]`) ?? content
+}
+
+function dropdownMenuModal(content, kind) {
+  const root = kind === "menubar" ? content.closest('[data-slot="menubar"]') : content.closest(`[data-slot="${kind}"]`)
+  return root?.dataset.modal !== "false"
+}
+
+function dropdownMenuSubOf(trigger, kind) {
+  const sub = trigger.closest(`[data-slot="${kind}-sub"]`)
+  return sub ? own(sub, `[data-slot="${kind}-sub-content"]`)[0] : null
+}
+
+function dropdownMenuSubTrigger(content, kind) {
+  const sub = content.closest(`[data-slot="${kind}-sub"]`)
+  return sub ? own(sub, `[data-slot="${kind}-sub-trigger"]`)[0] : null
+}
+
+function dropdownMenuLabel(item) {
+  if (item.hasAttribute("data-text-value")) return item.getAttribute("data-text-value")
+  let text = ""
+  for (const node of item.childNodes) {
+    if (!(node instanceof Element && node.matches('[data-slot$="-shortcut"], [data-slot$="-indicator"], [data-menu-indicator], svg'))) text += node.textContent
+  }
+  return text.trim()
+}
+
+function dropdownMenuIndicator(item) {
+  return item.querySelector(":scope > [data-menu-indicator]")
+}
+
+function dropdownMenuSetState(item, state) {
+  item.dataset.state = state
+  item.toggleAttribute("data-checked", state === "checked")
+  item.toggleAttribute("data-unchecked", state === "unchecked")
+  item.setAttribute("aria-checked", state === "indeterminate" ? "mixed" : String(state === "checked"))
+  const indicator = dropdownMenuIndicator(item)
+  if (!indicator) return
+  const mark = indicator.querySelector(":scope > span")
+  if (state === "unchecked") {
+    mark?.remove()
+    return
+  }
+  const name = state === "indeterminate" ? "minus" : "check"
+  if (mark?.querySelector(`svg[data-lucide="${name}"]`)) return
+  mark?.remove()
+  indicator.append(h("span", { "data-checked": "", "aria-hidden": "true" }, icon(name)))
+}
+
+function dropdownMenuInstant(content, value) {
+  if (value) content.dataset.instant = value
+  else delete content.dataset.instant
+}
+
+function dropdownMenuShow(kind, content, { trigger = null, anchor, focus = "content", opener = trigger, instant = null } = {}) {
+  if (isOpen(content) || !content.isConnected) return false
+  if (trigger && !content.hasAttribute("aria-labelledby")) content.setAttribute("aria-labelledby", ensureId(trigger, `${kind}-trigger`))
+  dropdownMenuOpeners.set(content, opener)
+  dropdownMenuInstant(content, instant)
+  const modal = dropdownMenuModal(content, kind)
+  show(content, {
+    trigger,
+    anchor: anchor ?? trigger,
+    focus: focus === "content" ? "content" : null,
+    collisionPadding: 5,
+    scrollLock: modal,
+    hideOthers: modal && kind === "context-menu" ? [] : null,
+    onClose: () => opener?.removeAttribute("data-pressed"),
+    onDismiss: (reason, event) => {
+      if (reason === "outside" && kind === "menubar" && event?.target instanceof Node && dropdownMenuRoot(content, kind).contains(event.target)) return
+      if (reason === "outside" && modal && event) dropdownMenuSwallow = { at: event.timeStamp, target: event.target }
+      dropdownMenuHide(kind, content, { restoreFocus: reason !== "outside" || (modal && kind !== "menubar"), reason, instant: reason === "escape" ? "dismiss" : null })
+    },
+  })
+  opener?.setAttribute("data-pressed", "")
+  if (opener && !trigger) opener.setAttribute("data-popup-open", "")
+  if (focus === "first" || focus === "last") {
+    const items = dropdownMenuUsable(content, kind)
+    ;((focus === "first" ? items[0] : items.at(-1)) ?? content).focus()
+  }
+  emit(dropdownMenuRoot(content, kind), `${kind}:open`, { trigger: opener })
+  return true
+}
+
+function dropdownMenuHide(kind, content, { restoreFocus = true, reason = "api", instant = null } = {}) {
+  if (!isOpen(content)) return false
+  for (const sub of content.querySelectorAll(dropdownMenuSel(kind).sub)) if (isOpen(sub)) hide(sub, { restoreFocus: false })
+  clearTimeout(dropdownMenuSubTimer)
+  dropdownMenuSubTimer = 0
+  dropdownMenuGraceStop()
+  if (instant) dropdownMenuInstant(content, instant)
+  hide(content, { restoreFocus })
+  const opener = dropdownMenuOpeners.get(content)
+  opener?.removeAttribute("data-pressed")
+  if (kind === "context-menu" && opener) {
+    opener.dataset.state = "closed"
+    opener.removeAttribute("data-popup-open")
+  }
+  emit(dropdownMenuRoot(content, kind), `${kind}:close`, { reason })
+  return true
+}
+
+function dropdownMenuHideSub(kind, sub) {
+  for (const inner of sub.querySelectorAll(dropdownMenuSel(kind).sub)) if (isOpen(inner)) hide(inner, { restoreFocus: false })
+  hide(sub, { restoreFocus: false })
+  dropdownMenuSubTrigger(sub, kind)?.removeAttribute("data-highlighted")
+}
+
+function dropdownMenuShowSub(kind, trigger, focusFirst) {
+  clearTimeout(dropdownMenuSubTimer)
+  dropdownMenuSubTimer = 0
+  const sub = dropdownMenuSubOf(trigger, kind)
+  if (!sub || disabled(trigger)) return
+  const sel = dropdownMenuSel(kind)
+  if (!isOpen(sub)) {
+    const parent = trigger.closest(sel.menu)
+    for (const other of parent.querySelectorAll(sel.sub)) if (other !== sub && isOpen(other) && other.parentElement.closest(sel.menu) === parent) dropdownMenuHideSub(kind, other)
+    if (!sub.hasAttribute("aria-labelledby")) sub.setAttribute("aria-labelledby", ensureId(trigger, `${kind}-sub-trigger`))
+    const rtl = getComputedStyle(trigger).direction === "rtl"
+    sub.setAttribute("data-nested", "")
+    show(sub, {
+      trigger,
+      anchor: trigger,
+      side: rtl ? "left" : "right",
+      align: "start",
+      sideOffset: Number(sub.dataset.sideOffset ?? 0),
+      alignOffset: Number(sub.dataset.alignOffset ?? (kind === "context-menu" ? 4 : -3)),
+      collisionPadding: 5,
+      focus: null,
+      restoreFocus: false,
+      onDismiss: reason => {
+        dropdownMenuHideSub(kind, sub)
+        if (reason === "escape") trigger.focus()
+      },
+    })
+  }
+  if (focusFirst) (dropdownMenuUsable(sub, kind)[0] ?? sub).focus()
+}
+
+function dropdownMenuFinish(kind, menu) {
+  const content = dropdownMenuTop(menu, kind)
+  if (!content) return
+  const opener = dropdownMenuOpeners.get(content)
+  if (kind !== "context-menu" && opener?.isConnected) {
+    opener.focus({ preventScroll: true, focusVisible: focusKeyboard })
+    dropdownMenuHide(kind, content, { restoreFocus: false, reason: "select" })
+  } else dropdownMenuHide(kind, content, { reason: "select" })
+}
+
+function dropdownMenuCloses(item, slot, kind) {
+  const value = item.dataset.closeOnClick
+  if (value !== undefined) return value !== "false"
+  return slot === `${kind}-item`
+}
+
+function dropdownMenuSelect(kind, item, menu) {
+  const content = dropdownMenuTop(menu, kind) ?? menu
+  const root = dropdownMenuRoot(content, kind)
+  const slot = item.getAttribute("data-slot")
+  const value = item.dataset.value ?? dropdownMenuLabel(item)
+  let checked
+  if (slot === `${kind}-checkbox-item`) {
+    checked = item.dataset.state !== "checked"
+    dropdownMenuSetState(item, checked ? "checked" : "unchecked")
+    emit(root, `${kind}:change`, { value, checked, item })
+  } else if (slot === `${kind}-radio-item`) {
+    checked = true
+    const group = item.closest(`[data-slot="${kind}-radio-group"]`)
+    if (item.dataset.state !== "checked") {
+      for (const other of group ? group.querySelectorAll(`[data-slot="${kind}-radio-item"]`) : [item]) {
+        if (!group || other.closest(`[data-slot="${kind}-radio-group"]`) === group) dropdownMenuSetState(other, other === item ? "checked" : "unchecked")
+      }
+      if (group) group.dataset.value = value
+      emit(root, `${kind}:change`, { value, checked, item, group })
+    }
+  }
+  if (emit(root, `${kind}:select`, { value, item, checked }, { cancelable: true }) && dropdownMenuCloses(item, slot, kind)) dropdownMenuFinish(kind, menu)
+}
+
+function dropdownMenuGraceStop() {
+  if (!dropdownMenuGrace) return
+  clearTimeout(dropdownMenuGrace.timer)
+  dropdownMenuGrace = null
+  document.removeEventListener("pointermove", dropdownMenuGraceMove, true)
+}
+
+function dropdownMenuGraceClose(grace) {
+  dropdownMenuGraceStop()
+  if (grace.sub.contains(document.activeElement) || !isOpen(grace.sub)) return
+  dropdownMenuHideSub(dropdownMenuKind(grace.menu), grace.sub)
+  if (document.activeElement !== grace.menu && document.activeElement?.closest(dropdownMenuSel(dropdownMenuKind(grace.menu)).menu) === grace.menu) grace.menu.focus({ preventScroll: true })
+}
+
+function dropdownMenuGraceStart(menu, sub, trigger, event) {
+  dropdownMenuGraceStop()
+  const grace = { menu, sub, area: popoverGraceArea(event.clientX, event.clientY, sub.getBoundingClientRect()), x: event.clientX, y: event.clientY, at: event.timeStamp, timer: 0 }
+  const r = trigger.getBoundingClientRect()
+  if ((sub.dataset.side === "left" && event.clientX >= r.right - 1) || (sub.dataset.side !== "left" && event.clientX <= r.left + 1)) return dropdownMenuGraceClose(grace)
+  dropdownMenuGrace = grace
+  grace.timer = setTimeout(() => dropdownMenuGrace === grace && dropdownMenuGraceClose(grace), 40)
+  document.addEventListener("pointermove", dropdownMenuGraceMove, true)
+}
+
+function dropdownMenuGraceMove(event) {
+  const grace = dropdownMenuGrace
+  if (!grace || !pointerMoved(event)) return
+  if (event.target instanceof Node && grace.sub.contains(event.target)) return dropdownMenuGraceStop()
+  const distance = Math.hypot(event.clientX - grace.x, event.clientY - grace.y)
+  if (!distance) return
+  if (!popoverInside({ x: event.clientX, y: event.clientY }, grace.area) || distance / Math.max(1, event.timeStamp - grace.at) < 0.1) return dropdownMenuGraceClose(grace)
+  Object.assign(grace, { x: event.clientX, y: event.clientY, at: event.timeStamp })
+  clearTimeout(grace.timer)
+  grace.timer = setTimeout(() => dropdownMenuGrace === grace && dropdownMenuGraceClose(grace), 40)
+}
+
+function dropdownMenuOwnEvent(event, menu) {
+  const kind = dropdownMenuKind(menu)
+  if (!(event.target instanceof Element) || event.target.closest(dropdownMenuSel(kind).menu) !== menu) return null
+  return kind
+}
+
+function dropdownMenuKeydown(event, menu) {
+  const kind = dropdownMenuOwnEvent(event, menu)
+  if (!kind || event.isComposing) return
+  const sel = dropdownMenuSel(kind)
+  const item = event.target.closest(sel.item)
+  const rtl = getComputedStyle(menu).direction === "rtl"
+  const forward = rtl ? "ArrowLeft" : "ArrowRight"
+  const back = rtl ? "ArrowRight" : "ArrowLeft"
+  const subTrigger = item?.matches(sel.subTrigger) ? item : null
+  if (event.key === "Tab") {
+    const content = dropdownMenuTop(menu, kind)
+    if (content) dropdownMenuHide(kind, content, { restoreFocus: false, reason: "tab" })
+    return
+  }
+  if (item && (event.key === "Enter" || (event.key === " " && !typing(event)))) {
+    event.preventDefault()
+    if (subTrigger) dropdownMenuShowSub(kind, subTrigger, true)
+    else item.click()
+    return
+  }
+  if (subTrigger && event.key === forward) {
+    event.preventDefault()
+    dropdownMenuShowSub(kind, subTrigger, true)
+    return
+  }
+  if (menu.matches(sel.sub) && event.key === back) {
+    event.preventDefault()
+    const trigger = dropdownMenuSubTrigger(menu, kind)
+    dropdownMenuHideSub(kind, menu)
+    trigger?.focus()
+    return
+  }
+  if (kind === "menubar" && (event.key === forward || event.key === back)) {
+    event.preventDefault()
+    menubarStep(menu, event.key === forward ? 1 : -1)
+    return
+  }
+  rove(event, dropdownMenuItems(menu, kind), { loop: true, label: dropdownMenuLabel, skipDisabled: false })
+}
+
+function dropdownMenuClick(event, menu) {
+  const kind = dropdownMenuOwnEvent(event, menu)
+  if (!kind) return
+  const sel = dropdownMenuSel(kind)
+  const item = event.target.closest(sel.item)
+  if (!item || item.closest(sel.menu) !== menu) return
+  if (disabled(item)) {
+    event.preventDefault()
+    return
+  }
+  if (item.matches(sel.subTrigger)) dropdownMenuShowSub(kind, item, event.detail === 0)
+  else dropdownMenuSelect(kind, item, menu)
+}
+
+function dropdownMenuPointerMove(event, menu) {
+  if (!pointerMoved(event)) return
+  const kind = dropdownMenuOwnEvent(event, menu)
+  if (!kind || dropdownMenuGrace?.menu === menu) return
+  const sel = dropdownMenuSel(kind)
+  const item = event.target.closest(sel.item)
+  const active = document.activeElement
+  if (item && !disabled(item)) {
+    if (active !== item) item.focus({ preventScroll: true })
+    if (item.matches(sel.subTrigger) && !isOpen(dropdownMenuSubOf(item, kind)) && !dropdownMenuSubTimer) {
+      dropdownMenuSubTimer = setTimeout(() => {
+        dropdownMenuSubTimer = 0
+        if (document.activeElement === item) dropdownMenuShowSub(kind, item, false)
+      }, 100)
+    }
+    return
+  }
+  if (active !== menu && active?.closest(sel.menu) === menu) menu.focus({ preventScroll: true })
+}
+
+function dropdownMenuPointerOut(event, menu) {
+  if (!pointerMoved(event)) return
+  const kind = dropdownMenuOwnEvent(event, menu)
+  if (!kind) return
+  const sel = dropdownMenuSel(kind)
+  const related = event.relatedTarget instanceof Node ? event.relatedTarget : null
+  const trigger = event.target.closest(sel.subTrigger)
+  if (trigger && !trigger.contains(related)) {
+    if (trigger === event.target.closest(sel.item)) {
+      clearTimeout(dropdownMenuSubTimer)
+      dropdownMenuSubTimer = 0
+    }
+    const sub = dropdownMenuSubOf(trigger, kind)
+    if (sub && isOpen(sub) && !sub.contains(related)) dropdownMenuGraceStart(menu, sub, trigger, event)
+  }
+  const active = document.activeElement
+  if (!menu.contains(related) && !(dropdownMenuGrace?.menu === menu) && active !== menu && active?.closest(sel.menu) === menu) menu.focus({ preventScroll: true })
+}
+
+function dropdownMenuFocusIn(event, menu) {
+  const kind = dropdownMenuOwnEvent(event, menu)
+  if (!kind) return
+  const sel = dropdownMenuSel(kind)
+  const item = event.target.closest(sel.item)
+  for (const el of own(menu, "[data-highlighted]", sel.menu)) if (el !== item) el.removeAttribute("data-highlighted")
+  if (item?.closest(sel.menu) === menu) item.setAttribute("data-highlighted", "")
+  for (const sub of menu.querySelectorAll(sel.sub)) {
+    if (isOpen(sub) && sub.parentElement.closest(sel.menu) === menu && dropdownMenuSubTrigger(sub, kind) !== event.target) dropdownMenuHideSub(kind, sub)
+  }
+}
+
+function dropdownMenuFocusOut(event, menu) {
+  const kind = dropdownMenuOwnEvent(event, menu)
+  if (!kind) return
+  const sel = dropdownMenuSel(kind)
+  const item = event.target.closest(sel.item)
+  if (!item || item.closest(sel.menu) !== menu) return
+  item.removeAttribute("data-highlighted")
+}
+
+function dropdownMenuInitContent(menu) {
+  const kind = dropdownMenuKind(menu)
+  const defaults = menu.matches(dropdownMenuSel(kind).sub) ? {} : kind === "context-menu" ? { side: "right", align: "start", sideOffset: "0", alignOffset: "4" } : kind === "menubar" ? { align: "start", alignOffset: "-4", sideOffset: "8" } : { align: "start" }
+  menu.setAttribute("role", "menu")
+  menu.setAttribute("aria-orientation", "vertical")
+  if (!menu.hasAttribute("tabindex")) menu.tabIndex = -1
+  popoverPrepare(menu, defaults)
+}
+
+function dropdownMenuInitItem(item) {
+  const kind = dropdownMenuKind(item)
+  const type = item.getAttribute("data-slot").slice(kind.length + 1)
+  item.setAttribute("role", type === "checkbox-item" ? "menuitemcheckbox" : type === "radio-item" ? "menuitemradio" : "menuitem")
+  if (!item.hasAttribute("tabindex")) item.tabIndex = -1
+  if (type === "item" && !item.dataset.variant) item.dataset.variant = "default"
+  if (disabled(item)) {
+    item.setAttribute("aria-disabled", "true")
+    if (!item.hasAttribute("data-disabled")) item.dataset.disabled = ""
+  }
+  if (type === "checkbox-item" || type === "radio-item") {
+    const aria = item.getAttribute("aria-checked")
+    const state = aria === "mixed" || item.dataset.state === "indeterminate" ? "indeterminate" : aria === "true" || item.dataset.state === "checked" || (item.hasAttribute("data-checked") && item.dataset.checked !== "false") ? "checked" : "unchecked"
+    let indicator = item.querySelector(`:scope > [data-slot="${kind}-${type}-indicator"], :scope > [data-slot="${kind}-item-indicator"]`)
+    if (!indicator) item.prepend((indicator = h("span", kind === "dropdown-menu" ? { "data-slot": `${kind}-${type}-indicator` } : {})))
+    else if (kind === "dropdown-menu") indicator.dataset.slot = `${kind}-${type}-indicator`
+    indicator.setAttribute("data-menu-indicator", "")
+    for (const old of indicator.querySelectorAll(":scope > svg")) old.remove()
+    dropdownMenuSetState(item, state)
+  }
+  if (type === "sub-trigger") {
+    item.setAttribute("aria-haspopup", "menu")
+    item.setAttribute("aria-expanded", "false")
+    if (!item.dataset.state) item.dataset.state = "closed"
+    if (!item.querySelector(':scope > svg[data-lucide="chevron-right"]')) item.append(icon("chevron-right"))
+  }
+}
+
+function dropdownMenuInitLabel(label) {
+  const kind = dropdownMenuKind(label)
+  label.setAttribute("role", "presentation")
+  const group = label.parentElement
+  if (group?.matches(`[data-slot="${kind}-group"], [data-slot="${kind}-radio-group"]`) && !group.hasAttribute("aria-labelledby")) group.setAttribute("aria-labelledby", ensureId(label, `${kind}-label`))
+}
+
+for (const kind of dropdownMenuKinds) {
+  const contentSpec = {
+    init: dropdownMenuInitContent,
+    keydown: dropdownMenuKeydown,
+    click: dropdownMenuClick,
+    pointermove: dropdownMenuPointerMove,
+    pointerout: dropdownMenuPointerOut,
+    focusin: dropdownMenuFocusIn,
+    focusout: dropdownMenuFocusOut,
+  }
+  if (kind === "context-menu") contentSpec.contextmenu = event => event.preventDefault()
+  define(`${kind}-content`, contentSpec)
+  define(`${kind}-sub-content`, { ...contentSpec })
+  for (const part of ["item", "checkbox-item", "radio-item", "sub-trigger"]) define(`${kind}-${part}`, { init: dropdownMenuInitItem })
+  define(`${kind}-group`, { init: el => el.setAttribute("role", "group") })
+  define(`${kind}-radio-group`, { init: el => el.setAttribute("role", "group") })
+  define(`${kind}-label`, { init: dropdownMenuInitLabel })
+  define(`${kind}-separator`, {
+    init(el) {
+      el.setAttribute("role", "separator")
+      el.setAttribute("aria-orientation", "horizontal")
+      el.dataset.orientation = "horizontal"
+    },
+  })
+}
+
+function dropdownMenuTriggerOf(target) {
+  const trigger = target instanceof Element ? target.closest('[data-slot="dropdown-menu-trigger"], [data-dropdown-menu-trigger], [data-slot="menubar-trigger"]') : null
+  return trigger && !disabled(trigger) ? trigger : null
+}
+
+document.addEventListener("pointerdown", event => (dropdownMenuPointer = event.pointerType), true)
+
+document.addEventListener(
+  "mousedown",
+  event => {
+    const swallow = dropdownMenuSwallow
+    if (swallow && event.timeStamp - swallow.at < 100 && event.composedPath().includes(swallow.target) && event.target instanceof Element && event.target.closest(FOCUSABLE)) event.preventDefault()
+    const trigger = dropdownMenuTriggerOf(event.target)
+    if (!trigger || dropdownMenuPointer !== "mouse" || event.button !== 0 || event.ctrlKey) return
+    event.preventDefault()
+    const menubar = trigger.matches('[data-slot="menubar-trigger"]')
+    const content = menubar ? menubarContentOf(trigger) : dialogFromTrigger(trigger, "dropdown-menu")?.content
+    if (!content) return
+    buttonType(trigger)
+    dropdownMenuPress = { trigger, content, x: event.clientX, y: event.clientY }
+    if (dropdownMenuSwallow?.target === event.target && event.timeStamp - dropdownMenuSwallow.at < 100) dropdownMenuPress.closed = true
+    else if (isOpen(content)) {
+      dropdownMenuPress.closed = true
+      dropdownMenuHide(menubar ? "menubar" : "dropdown-menu", content, { reason: "trigger" })
+    } else if (menubar && menubarOpenContent(trigger.closest('[data-slot="menubar"]'))) {
+      dropdownMenuPress.closed = true
+      menubarDismiss(trigger)
+    } else if (menubar) menubarOpen(trigger, "content")
+    else dropdownMenuShow("dropdown-menu", content, { trigger, focus: "content" })
+  },
+  true,
+)
+
+document.addEventListener(
+  "mouseup",
+  event => {
+    const press = dropdownMenuPress
+    if (!press || press.closed || dropdownMenuPointer !== "mouse" || !isOpen(press.content) || !(event.target instanceof Element)) return
+    if (Math.hypot(event.clientX - press.x, event.clientY - press.y) < 4) return
+    const kind = dropdownMenuKind(press.content)
+    const item = event.target.closest(dropdownMenuSel(kind).item)
+    if (item && press.content.contains(item) && !disabled(item) && !item.matches(dropdownMenuSel(kind).subTrigger)) {
+      dropdownMenuPress = null
+      item.click()
+    }
+  },
+  true,
+)
+
+document.addEventListener(
+  "click",
+  event => {
+    const press = dropdownMenuPress
+    if (press && event.detail > 0 && dropdownMenuTriggerOf(event.target) === press.trigger) {
+      dropdownMenuPress = null
+      dropdownMenuSwallow = null
+      dropdownMenuHandled.add(event)
+      return
+    }
+    if (event.detail > 0) dropdownMenuPress = null
+    const swallow = dropdownMenuSwallow
+    dropdownMenuSwallow = null
+    if (swallow && event.timeStamp - swallow.at < 1000 && event.composedPath().includes(swallow.target)) {
+      event.stopImmediatePropagation()
+      event.preventDefault()
+    }
+  },
+  true,
+)
+
+define("dropdown-menu", {
+  init(root) {
+    dialogInitRoot(root, "dropdown-menu")
+  },
+  keydown(event, root) {
+    if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return
+    const trigger = event.target instanceof Element ? event.target.closest('[data-slot="dropdown-menu-trigger"], [data-dropdown-menu-trigger]') : null
+    if (!trigger || trigger.closest('[data-slot="dropdown-menu"]') !== root || disabled(trigger)) return
+    const found = dialogFromTrigger(trigger, "dropdown-menu")
+    if (!found) return
+    event.preventDefault()
+    const focus = event.key === "ArrowDown" ? "first" : "last"
+    if (!isOpen(found.content)) dropdownMenuShow("dropdown-menu", found.content, { trigger, focus, instant: "click" })
+    else {
+      const items = dropdownMenuUsable(found.content, "dropdown-menu")
+      ;(focus === "first" ? items[0] : items.at(-1))?.focus()
+    }
+  },
+})
+
+define("dropdown-menu-trigger", {
+  init(trigger) {
+    dialogInitTrigger(trigger, "dropdown-menu")
+  },
+})
+
+let contextMenuKeyAt = -Infinity
+const contextMenuPresses = new WeakMap()
+
+function contextMenuShowAt(area, x, y, focus) {
+  if (disabled(area)) return
+  const root = area.closest('[data-slot="context-menu"]')
+  const content = root && own(root, '[data-slot="context-menu-content"]')[0]
+  if (!content) return
+  if (isOpen(content)) dropdownMenuHide("context-menu", content, { restoreFocus: false, reason: "reopen" })
+  area.dataset.state = "open"
+  dropdownMenuShow("context-menu", content, { anchor: { getBoundingClientRect: () => new DOMRect(x, y, 0, 0) }, focus, opener: area, instant: "click" })
+}
+
+function contextMenuClearPress(area) {
+  clearTimeout(contextMenuPresses.get(area)?.timer)
+  contextMenuPresses.delete(area)
+}
+
+define("context-menu-trigger", {
+  init(area) {
+    if (!area.dataset.state) area.dataset.state = "closed"
+    area.style.webkitTouchCallout = "none"
+  },
+  contextmenu(event, area) {
+    if (disabled(area)) return
+    event.preventDefault()
+    contextMenuClearPress(area)
+    if (event.button !== 2 && event.timeStamp - contextMenuKeyAt < 500) return
+    contextMenuShowAt(area, event.clientX, event.clientY, "content")
+  },
+  keydown(event, area) {
+    if (event.key !== "ContextMenu" && !(event.shiftKey && event.key === "F10")) return
+    if (disabled(area)) return
+    event.preventDefault()
+    contextMenuKeyAt = event.timeStamp
+    const r = area.getBoundingClientRect()
+    contextMenuShowAt(area, r.left + r.width / 2, r.top + r.height / 2, "first")
+  },
+  pointerdown(event, area) {
+    if (event.pointerType === "mouse" || disabled(area)) return
+    contextMenuClearPress(area)
+    const x = event.clientX
+    const y = event.clientY
+    const timer = setTimeout(() => {
+      contextMenuPresses.delete(area)
+      contextMenuShowAt(area, x, y, "content")
+    }, 700)
+    contextMenuPresses.set(area, { x, y, timer })
+  },
+  pointermove(event, area) {
+    const press = contextMenuPresses.get(area)
+    if (press && Math.hypot(event.clientX - press.x, event.clientY - press.y) > 10) contextMenuClearPress(area)
+  },
+  pointerup(event, area) {
+    contextMenuClearPress(area)
+  },
+  pointercancel(event, area) {
+    contextMenuClearPress(area)
+  },
+})
+
+function menubarTriggers(bar) {
+  return own(bar, '[data-slot="menubar-trigger"]')
+}
+
+function menubarContentOf(trigger) {
+  const menu = trigger.closest('[data-slot="menubar-menu"]')
+  return menu ? own(menu, '[data-slot="menubar-content"]')[0] : null
+}
+
+function menubarOpenContent(bar) {
+  for (const trigger of menubarTriggers(bar)) {
+    const content = menubarContentOf(trigger)
+    if (content && isOpen(content)) return content
+  }
+  return null
+}
+
+function menubarOpen(trigger, focus, instant = null) {
+  const bar = trigger.closest('[data-slot="menubar"]')
+  const content = menubarContentOf(trigger)
+  if (!bar || !content) return
+  const current = menubarOpenContent(bar)
+  if (current && current !== content) {
+    instant ??= "group"
+    dropdownMenuHide("menubar", current, { restoreFocus: false, reason: "switch" })
+  }
+  setRoving(menubarTriggers(bar), trigger)
+  dropdownMenuShow("menubar", content, { trigger, focus, instant })
+}
+
+function menubarStep(menu, direction) {
+  const content = dropdownMenuTop(menu, "menubar")
+  const bar = content?.closest('[data-slot="menubar"]')
+  if (!bar) return
+  const triggers = menubarTriggers(bar).filter(trigger => !disabled(trigger))
+  const current = dropdownMenuOpeners.get(content)
+  const next = triggers[(triggers.indexOf(current) + direction + triggers.length) % triggers.length]
+  if (!next || next === current) return
+  next.focus()
+  menubarOpen(next, "content", "group")
+}
+
+function menubarDismiss(trigger) {
+  const bar = trigger.closest('[data-slot="menubar"]')
+  const current = bar && menubarOpenContent(bar)
+  if (current) dropdownMenuHide("menubar", current, { restoreFocus: false, reason: "trigger" })
+  setRoving(menubarTriggers(bar), trigger)
+  trigger.focus({ preventScroll: true, focusVisible: false })
+}
+
+define("menubar", {
+  init(bar) {
+    bar.setAttribute("role", "menubar")
+    bar.setAttribute("aria-orientation", "horizontal")
+    bar.dataset.orientation = "horizontal"
+    if (bar.dataset.modal !== "false") bar.setAttribute("data-modal", "")
+    setRoving(menubarTriggers(bar))
+  },
+  keydown(event, bar) {
+    const trigger = event.target instanceof Element ? event.target.closest('[data-slot="menubar-trigger"]') : null
+    if (!trigger || trigger.closest('[data-slot="menubar"]') !== bar) return
+    const content = menubarContentOf(trigger)
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault()
+      const focus = event.key === "ArrowDown" ? "first" : "last"
+      if (content && isOpen(content)) {
+        const items = dropdownMenuUsable(content, "menubar")
+        ;(focus === "first" ? items[0] : items.at(-1))?.focus()
+      } else if (!disabled(trigger)) menubarOpen(trigger, focus, "click")
+      return
+    }
+    const wasOpen = !!menubarOpenContent(bar)
+    const next = rove(event, menubarTriggers(bar), { orientation: "horizontal", typeahead: false })
+    if (next && wasOpen) menubarOpen(next, null)
+  },
+})
+
+define("menubar-trigger", {
+  init(trigger) {
+    buttonType(trigger)
+    trigger.setAttribute("role", "menuitem")
+    trigger.setAttribute("aria-haspopup", "menu")
+    trigger.setAttribute("aria-expanded", "false")
+    if (!trigger.dataset.state) trigger.dataset.state = "closed"
+    const content = menubarContentOf(trigger)
+    if (content) trigger.setAttribute("aria-controls", ensureId(content, "menubar-content"))
+  },
+  click(event, trigger) {
+    const content = menubarContentOf(trigger)
+    if (!content || disabled(trigger) || dropdownMenuHandled.has(event)) return
+    if (isOpen(content)) dropdownMenuHide("menubar", content, { reason: "trigger" })
+    else if (event.detail > 0 && menubarOpenContent(trigger.closest('[data-slot="menubar"]'))) menubarDismiss(trigger)
+    else menubarOpen(trigger, event.detail === 0 ? "first" : "content", event.detail === 0 ? "click" : null)
+  },
+  pointerenter(event, trigger) {
+    if (event.pointerType === "touch" || disabled(trigger) || `${event.clientX} ${event.clientY}` === pointerAt) return
+    const bar = trigger.closest('[data-slot="menubar"]')
+    const current = bar && menubarOpenContent(bar)
+    if (!current || current === menubarContentOf(trigger)) return
+    menubarOpen(trigger, "content")
+  },
+})
+
+const navigationMenuStates = new WeakMap()
+const navigationMenuHomes = new WeakMap()
+
+function navigationMenuState(root) {
+  let state = navigationMenuStates.get(root)
+  if (!state) navigationMenuStates.set(root, (state = { item: null, openTimer: 0, closeTimer: 0, hoveredAt: -Infinity, release: null, stop: null, frame: 0, size: 0, observer: null, resize: 0 }))
+  return state
+}
+
+function navigationMenuParts(item) {
+  const trigger = item?.querySelector(':scope > [data-slot="navigation-menu-trigger"]') ?? null
+  let content = item?.querySelector(':scope > [data-slot="navigation-menu-content"]') ?? null
+  if (!content && trigger) content = document.getElementById(trigger.getAttribute("aria-controls") ?? "")
+  return { trigger, content: content && navigationMenuHomes.get(content) === item ? content : null }
+}
+
+function navigationMenuPlain(root) {
+  return root.dataset.viewport === "false"
+}
+
+function navigationMenuPopup(root) {
+  const positioner = own(root, '[data-slot="navigation-menu-positioner"]')[0] ?? null
+  const popup = positioner?.querySelector(':scope > [data-slot="navigation-menu-popup"]') ?? null
+  const viewport = popup?.querySelector(':scope > [data-slot="navigation-menu-viewport"]') ?? null
+  return { positioner, popup, viewport }
+}
+
+function navigationMenuSetOpen(root, trigger, content, open) {
+  trigger.dataset.state = open ? "open" : "closed"
+  trigger.toggleAttribute("data-popup-open", open)
+  trigger.toggleAttribute("data-pressed", open)
+  trigger.setAttribute("aria-expanded", String(open))
+  content.dataset.state = open ? "open" : "closed"
+  content.toggleAttribute("data-open", open)
+  content.toggleAttribute("data-closed", !open)
+}
+
+function navigationMenuIndicator(root, trigger) {
+  const indicator = own(root, '[data-slot="navigation-menu-indicator"]')[0]
+  if (!indicator) return
+  if (!trigger) {
+    if (indicator.dataset.state === "visible") indicator.dataset.state = "hidden"
+    return
+  }
+  const r = trigger.getBoundingClientRect()
+  const base = root.getBoundingClientRect()
+  indicator.style.left = `${r.left - base.left}px`
+  indicator.style.width = `${r.width}px`
+  indicator.dataset.state = "visible"
+}
+
+function navigationMenuValue(root, item) {
+  return item ? (item.dataset.value ?? String(navigationMenuItems(root).indexOf(item))) : ""
+}
+
+function navigationMenuItems(root) {
+  return own(root, '[data-slot="navigation-menu-item"]').filter(item => !item.closest('[data-slot="navigation-menu-content"]'))
+}
+
+function navigationMenuHome(content) {
+  const item = navigationMenuHomes.get(content)
+  if (!item || content.dataset.state === "open") return
+  content.removeAttribute("data-ending-style")
+  content.removeAttribute("data-activation-direction")
+  content.style.position = ""
+  content.style.top = ""
+  content.style.left = ""
+  content.hidden = true
+  if (content.parentElement !== item) item.append(content)
+}
+
+function navigationMenuSize(root, popup, positioner, from) {
+  const state = navigationMenuState(root)
+  const run = ++state.size
+  positioner.style.setProperty("--positioner-width", "max-content")
+  positioner.style.setProperty("--positioner-height", "max-content")
+  popup.style.setProperty("--popup-width", "auto")
+  popup.style.setProperty("--popup-height", "auto")
+  const to = { width: popup.offsetWidth, height: popup.offsetHeight }
+  positioner.style.setProperty("--positioner-width", `${to.width}px`)
+  positioner.style.setProperty("--positioner-height", `${to.height}px`)
+  if (!from || (from.width === to.width && from.height === to.height)) return
+  popup.style.setProperty("--popup-width", `${from.width}px`)
+  popup.style.setProperty("--popup-height", `${from.height}px`)
+  popup.getBoundingClientRect()
+  popup.style.setProperty("--popup-width", `${to.width}px`)
+  popup.style.setProperty("--popup-height", `${to.height}px`)
+  afterAnimations(popup).then(() => {
+    if (state.size !== run) return
+    popup.style.setProperty("--popup-width", "auto")
+    popup.style.setProperty("--popup-height", "auto")
+  })
+}
+
+function navigationMenuFocusGuard(edge) {
+  return h("span", { "data-slot": "navigation-menu-focus-guard", "data-edge": edge, tabindex: "0", "aria-hidden": "true", style: { position: "fixed", top: "0", left: "0", width: "1px", height: "1px", margin: "-1px", padding: "0", border: "0", overflow: "hidden", clipPath: "inset(50%)", whiteSpace: "nowrap" } })
+}
+
+function navigationMenuTriggerGuard(root, trigger) {
+  let guard = own(root, '[data-slot="navigation-menu-focus-guard"][data-edge="trigger"]')[0]
+  if (!trigger || navigationMenuPlain(root)) return guard?.remove()
+  guard ??= navigationMenuFocusGuard("trigger")
+  if (guard.previousElementSibling !== trigger) trigger.after(guard)
+}
+
+function navigationMenuReset(content) {
+  content.style.position = ""
+  content.style.top = ""
+  content.style.left = ""
+  content.removeAttribute("data-ending-style")
+}
+
+function navigationMenuObserve(root, item, content) {
+  const state = navigationMenuState(root)
+  state.observer?.disconnect()
+  state.observer = new ResizeObserver(() => {
+    cancelAnimationFrame(state.resize)
+    state.resize = requestAnimationFrame(() => {
+      const { positioner, popup } = navigationMenuPopup(root)
+      if (state.item === item && popup && popup.style.getPropertyValue("--popup-width") === "auto") navigationMenuSize(root, popup, positioner, null)
+    })
+  })
+  state.observer.observe(content)
+}
+
+function navigationMenuOpen(root, item) {
+  const state = navigationMenuState(root)
+  clearTimeout(state.openTimer)
+  clearTimeout(state.closeTimer)
+  if (state.item === item) return
+  const { trigger, content } = navigationMenuParts(item)
+  if (!trigger || !content) return
+  const prev = state.item
+  const plain = navigationMenuPlain(root)
+  const { positioner, popup, viewport } = navigationMenuPopup(root)
+  if (prev) {
+    const old = navigationMenuParts(prev)
+    const items = navigationMenuItems(root)
+    const direction = items.indexOf(item) > items.indexOf(prev) ? "right" : "left"
+    navigationMenuSetOpen(root, old.trigger, old.content, false)
+    if (plain) {
+      hide(old.content, { restoreFocus: false }).then(() => navigationMenuHome(old.content))
+    } else {
+      const from = { width: popup.offsetWidth, height: popup.offsetHeight }
+      old.content.dataset.activationDirection = direction
+      Object.assign(old.content.style, { position: "absolute", top: "0px", left: "0px" })
+      transition(old.content, false).then(() => navigationMenuHome(old.content))
+      navigationMenuReset(content)
+      content.dataset.activationDirection = direction
+      content.hidden = false
+      viewport.append(content)
+      navigationMenuSetOpen(root, trigger, content, true)
+      transition(content, true)
+      state.stop?.()
+      state.stop = position(positioner, trigger, { side: "bottom", align: root.dataset.align ?? "start", sideOffset: 8, alignOffset: 0, collisionPadding: 5 })
+      navigationMenuSize(root, popup, positioner, from)
+      navigationMenuObserve(root, item, content)
+    }
+  } else {
+    root.toggleAttribute("data-open", true)
+    own(root, '[data-slot="navigation-menu-list"]')[0]?.toggleAttribute("data-open", true)
+    state.release = dismissable(root, reason => navigationMenuClose(root, reason === "escape"), { focusOutside: true, intentional: true })
+    if (!plain) {
+      cancelAnimationFrame(state.frame)
+      navigationMenuReset(content)
+      content.removeAttribute("data-activation-direction")
+      content.hidden = false
+      viewport.append(content)
+      transition(popup, true)
+      transition(content, true)
+      positioner.setAttribute("data-instant", "")
+      if (!positioner.matches(":popover-open")) positioner.showPopover()
+      for (const el of [positioner, popup]) {
+        el.toggleAttribute("data-open", true)
+        el.toggleAttribute("data-closed", false)
+      }
+      navigationMenuSetOpen(root, trigger, content, true)
+      navigationMenuSize(root, popup, positioner, null)
+      state.stop?.()
+      state.stop = position(positioner, trigger, { side: "bottom", align: root.dataset.align ?? "start", sideOffset: 8, alignOffset: 0, collisionPadding: 5 })
+      popup.dataset.side = positioner.dataset.side
+      popup.dataset.align = positioner.dataset.align
+      navigationMenuObserve(root, item, content)
+      state.frame = requestAnimationFrame(() => (state.frame = requestAnimationFrame(() => positioner.removeAttribute("data-instant"))))
+    }
+  }
+  if (plain) {
+    content.hidden = false
+    navigationMenuSetOpen(root, trigger, content, true)
+    show(content, { trigger, expanded: false, focus: null, restoreFocus: false, outside: false, side: "bottom", align: "start", sideOffset: 8, alignOffset: 0, collisionPadding: 5, onDismiss: reason => navigationMenuClose(root, reason === "escape") })
+  }
+  state.item = item
+  navigationMenuTriggerGuard(root, trigger)
+  navigationMenuIndicator(root, trigger)
+  emit(root, "navigation-menu:change", { value: navigationMenuValue(root, item) })
+}
+
+function navigationMenuClose(root, focusTrigger = false) {
+  const state = navigationMenuState(root)
+  clearTimeout(state.openTimer)
+  clearTimeout(state.closeTimer)
+  const item = state.item
+  if (!item) return
+  const { trigger, content } = navigationMenuParts(item)
+  state.item = null
+  state.release?.()
+  state.release = null
+  state.observer?.disconnect()
+  state.observer = null
+  cancelAnimationFrame(state.resize)
+  const focused = document.activeElement
+  const refocus = focusTrigger && (!focused || focused === document.body || root.contains(focused))
+  navigationMenuSetOpen(root, trigger, content, false)
+  root.removeAttribute("data-open")
+  own(root, '[data-slot="navigation-menu-list"]')[0]?.removeAttribute("data-open")
+  if (navigationMenuPlain(root)) hide(content, { restoreFocus: false }).then(() => navigationMenuHome(content))
+  else {
+    const { positioner, popup } = navigationMenuPopup(root)
+    for (const el of [positioner, popup]) {
+      el.toggleAttribute("data-open", false)
+      el.toggleAttribute("data-closed", true)
+    }
+    transition(content, false)
+    transition(popup, false).then(() => {
+      if (state.item) return
+      state.stop?.()
+      state.stop = null
+      popup.removeAttribute("data-ending-style")
+      if (positioner.matches(":popover-open")) positioner.hidePopover()
+      for (const el of positioner.querySelectorAll('[data-slot="navigation-menu-content"]')) navigationMenuHome(el)
+    })
+  }
+  navigationMenuIndicator(root, null)
+  navigationMenuTriggerGuard(root, null)
+  if (refocus) trigger.focus()
+  emit(root, "navigation-menu:change", { value: "" })
+}
+
+function navigationMenuZone(root, node) {
+  const state = navigationMenuState(root)
+  if (!(node instanceof Node) || !state.item) return false
+  const { trigger, content } = navigationMenuParts(state.item)
+  const { positioner } = navigationMenuPopup(root)
+  return trigger.contains(node) || content.contains(node) || !!positioner?.contains(node)
+}
+
+function navigationMenuTrigger(root, target) {
+  const trigger = target instanceof Element ? target.closest('[data-slot="navigation-menu-trigger"]') : null
+  return trigger && trigger.closest('[data-slot="navigation-menu"]') === root && !disabled(trigger) ? trigger : null
+}
+
+function navigationMenuEnter(root, item) {
+  navigationMenuOpen(root, item)
+  tabbables(navigationMenuParts(item).content)[0]?.focus()
+}
+
+define("navigation-menu", {
+  init(root) {
+    const plain = navigationMenuPlain(root)
+    for (const old of own(root, '[data-slot="navigation-menu-viewport-wrapper"]')) old.remove()
+    if (!plain && !navigationMenuPopup(root).viewport) {
+      for (const old of own(root, '[data-slot="navigation-menu-positioner"]')) old.remove()
+      root.append(h("div", { "data-slot": "navigation-menu-positioner", role: "presentation", popover: "manual" }, h("nav", { "data-slot": "navigation-menu-popup", tabindex: "-1" }, navigationMenuFocusGuard("start"), h("div", { "data-slot": "navigation-menu-viewport" }), navigationMenuFocusGuard("end"))))
+    }
+    for (const trigger of own(root, '[data-slot="navigation-menu-trigger"]')) {
+      const item = trigger.closest('[data-slot="navigation-menu-item"]')
+      const content = item?.querySelector(':scope > [data-slot="navigation-menu-content"]')
+      buttonType(trigger)
+      trigger.setAttribute("aria-expanded", "false")
+      trigger.dataset.state = "closed"
+      if (content) {
+        navigationMenuHomes.set(content, item)
+        trigger.setAttribute("aria-controls", ensureId(content, "navigation-menu-content"))
+        content.hidden = true
+        content.dataset.state = "closed"
+        if (plain) {
+          popoverPrepare(content)
+          content.style.height = "auto"
+        }
+      }
+      if (!trigger.querySelector(':scope > svg[data-lucide="chevron-down"]')) trigger.append(icon("chevron-down"))
+    }
+    for (const indicator of own(root, '[data-slot="navigation-menu-indicator"]')) {
+      if (!indicator.firstElementChild) indicator.append(h("div", { "data-slot": "navigation-menu-indicator-arrow" }))
+      indicator.removeAttribute("data-state")
+    }
+    return () => {
+      const state = navigationMenuStates.get(root)
+      clearTimeout(state?.openTimer)
+      clearTimeout(state?.closeTimer)
+      cancelAnimationFrame(state?.frame)
+      state?.release?.()
+      state?.stop?.()
+      state?.observer?.disconnect()
+      cancelAnimationFrame(state?.resize)
+      navigationMenuStates.delete(root)
+      navigationMenuTriggerGuard(root, null)
+      root.removeAttribute("data-open")
+      for (const el of own(root, '[data-slot="navigation-menu-list"], [data-slot="navigation-menu-positioner"], [data-slot="navigation-menu-popup"]')) {
+        el.removeAttribute("data-open")
+        el.removeAttribute("data-ending-style")
+      }
+      for (const el of own(root, '[data-slot="navigation-menu-content"]')) {
+        el.dataset.state = "closed"
+        navigationMenuHome(el)
+      }
+    }
+  },
+  focusin(event, root) {
+    const guard = event.target instanceof Element ? event.target.closest('[data-slot="navigation-menu-focus-guard"]') : null
+    if (!guard || guard.closest('[data-slot="navigation-menu"]') !== root) return
+    const { trigger, content } = navigationMenuParts(navigationMenuState(root).item)
+    if (!trigger || !content) return guard.blur()
+    const from = event.relatedTarget instanceof Node ? event.relatedTarget : null
+    const inside = !!from && content.contains(from)
+    const links = tabbables(content)
+    const { positioner } = navigationMenuPopup(root)
+    const all = tabbables(document.body).filter(el => !el.matches('[data-slot="navigation-menu-focus-guard"]') && !positioner?.contains(el))
+    let target
+    if (guard.dataset.edge === "trigger") target = from === trigger ? links[0] : links.at(-1)
+    else if (guard.dataset.edge === "start") target = inside ? trigger : all.find(el => !root.contains(el) && root.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING)
+    else target = inside ? all[all.indexOf(trigger) + 1] : all.filter(el => root.contains(el)).at(-1)
+    if (target) target.focus()
+    else guard.blur()
+  },
+  pointerover(event, root) {
+    if (event.pointerType === "touch") return
+    const state = navigationMenuState(root)
+    const trigger = navigationMenuTrigger(root, event.target)
+    if (trigger) {
+      const item = trigger.closest('[data-slot="navigation-menu-item"]')
+      clearTimeout(state.closeTimer)
+      if (state.item === item) return
+      clearTimeout(state.openTimer)
+      const open = () => {
+        navigationMenuOpen(root, item)
+        state.hoveredAt = performance.now()
+        state.sticky = false
+      }
+      state.openTimer = setTimeout(open, Number(root.dataset.delay ?? 50))
+      return
+    }
+    if (navigationMenuZone(root, event.target)) clearTimeout(state.closeTimer)
+  },
+  pointerout(event, root) {
+    if (event.pointerType === "touch") return
+    const state = navigationMenuState(root)
+    const trigger = navigationMenuTrigger(root, event.target)
+    if (trigger && !(event.relatedTarget instanceof Node && trigger.contains(event.relatedTarget))) clearTimeout(state.openTimer)
+    if (!state.item || state.sticky || pointerCancelled || navigationMenuZone(root, event.relatedTarget) || !navigationMenuZone(root, event.target)) return
+    clearTimeout(state.closeTimer)
+    state.closeTimer = setTimeout(() => navigationMenuClose(root), Number(root.dataset.closeDelay ?? 50))
+  },
+  click(event, root) {
+    const trigger = navigationMenuTrigger(root, event.target)
+    if (trigger) {
+      const item = trigger.closest('[data-slot="navigation-menu-item"]')
+      const state = navigationMenuState(root)
+      if (state.item !== item) {
+        if (event.detail === 0) navigationMenuEnter(root, item)
+        else navigationMenuOpen(root, item)
+        state.sticky = true
+      } else if (event.detail === 0 || performance.now() - state.hoveredAt > 500) navigationMenuClose(root)
+      state.hoveredAt = -Infinity
+      return
+    }
+    const link = event.target instanceof Element ? event.target.closest('[data-slot="navigation-menu-link"]') : null
+    if (link && link.closest('[data-slot="navigation-menu"]') === root) {
+      emit(root, "navigation-menu:select", { link, href: link.getAttribute("href") })
+      if (link.closest('[data-slot="navigation-menu-content"]') && link.hasAttribute("data-close-on-click") && link.dataset.closeOnClick !== "false") navigationMenuClose(root)
+    }
+  },
+  keydown(event, root) {
+    if (!(event.target instanceof Element)) return
+    const state = navigationMenuState(root)
+    const content = event.target.closest('[data-slot="navigation-menu-content"]')
+    if (content && content.closest('[data-slot="navigation-menu"]') === root) {
+      const list = tabbables(content)
+      if (event.key === "Tab") return
+      if (event.key !== "Home" && event.key !== "End") rove(event, list, { orientation: "both", focus: false, typeahead: false, loop: false })?.focus()
+      return
+    }
+    const top = navigationMenuItems(root)
+      .map(item => item.querySelector(':scope > [data-slot="navigation-menu-trigger"], :scope > [data-slot="navigation-menu-link"]'))
+      .filter(Boolean)
+    if (!top.includes(event.target)) return
+    const item = event.target.closest('[data-slot="navigation-menu-item"]')
+    const trigger = event.target.matches('[data-slot="navigation-menu-trigger"]')
+    if (trigger && state.item !== item && event.key === "ArrowDown" && !disabled(event.target)) {
+      event.preventDefault()
+      navigationMenuEnter(root, item)
+      state.sticky = true
+      return
+    }
+    if (trigger && state.item === item && ((event.key === "Tab" && !event.shiftKey) || event.key === "ArrowDown")) {
+      const first = tabbables(navigationMenuParts(item).content)[0]
+      if (!first) return
+      event.preventDefault()
+      first.focus()
+      return
+    }
+    if (event.key !== "Home" && event.key !== "End") rove(event, top, { orientation: "horizontal", focus: false, typeahead: false, loop: false })?.focus()
+  },
+})
+
+function navigationMenuLinkActive(link) {
+  return link.hasAttribute("data-active") && link.dataset.active !== "false"
+}
+
+const navigationMenuLinkWatch = new MutationObserver(records => {
+  for (const { target } of records) {
+    if (navigationMenuLinkActive(target)) target.setAttribute("aria-current", "page")
+    else target.removeAttribute("aria-current")
+  }
+})
+
+define("navigation-menu-link", {
+  init(link) {
+    if (navigationMenuLinkActive(link)) link.setAttribute("aria-current", "page")
+    navigationMenuLinkWatch.observe(link, { attributes: true, attributeFilter: ["data-active"] })
+  },
+})
+
+const commandOrder = new WeakMap()
+const commandQueue = new Set()
+
+function commandInput(root) {
+  return own(root, '[data-slot="command-input"]')[0] ?? null
+}
+
+function commandValue(item) {
+  return (item.dataset.value ?? item.textContent).trim()
+}
+
+function commandScore(value, search, keywords) {
+  if (!search) return 1
+  let best = 0
+  for (const [text, weight] of [[value, 1], ...keywords.map(k => [k, 0.95])]) {
+    let score = 0
+    if (text === search) score = 1
+    else if (text.startsWith(search)) score = 0.9
+    else if (text.includes(search)) {
+      score = 0.6
+      for (let at = text.indexOf(search); at > 0; at = text.indexOf(search, at + 1)) {
+        if (" -_/.".includes(text[at - 1])) {
+          score = 0.8
+          break
+        }
+      }
+    } else {
+      let i = 0
+      for (const c of text) if (c === search[i]) i++
+      if (i === search.length) score = 0.3 * (search.length / text.length)
+    }
+    best = Math.max(best, score * weight)
+  }
+  return best
+}
+
+function commandIndex(parent, active) {
+  let last = Math.max(0, ...[...parent.children].map(el => commandOrder.get(el) ?? 0))
+  let previous = -1
+  for (const el of parent.children) {
+    if (!commandOrder.has(el)) commandOrder.set(el, active ? ++last : previous + 1e-6)
+    previous = commandOrder.get(el)
+  }
+}
+
+function commandSort(parent, items, scores) {
+  const ordered = [...items].sort((a, b) => (scores ? scores(b) - scores(a) : 0) || commandOrder.get(a) - commandOrder.get(b))
+  if (ordered.every((el, i) => el === items[i])) return
+  for (const el of ordered) parent.append(el)
+}
+
+function commandFilter(root, keep = false) {
+  const input = commandInput(root)
+  const search = (input?.value ?? "").trim().toLowerCase()
+  const filtering = root.dataset.shouldFilter !== "false"
+  const active = filtering && !!search
+  const scores = new Map()
+  const parents = [...own(root, '[data-slot="command-list"]'), ...own(root, '[data-slot="command-group"]')]
+  for (const parent of parents) commandIndex(parent, active)
+  let visible = 0
+  for (const item of own(root, '[data-slot="command-item"]')) {
+    const keywords = (item.dataset.keywords ?? "").toLowerCase().split(",").map(k => k.trim()).filter(Boolean)
+    const score = active ? commandScore(commandValue(item).toLowerCase(), search, keywords) : 1
+    scores.set(item, score)
+    item.hidden = score <= 0
+    if (score > 0) visible++
+  }
+  const groups = own(root, '[data-slot="command-group"]')
+  const best = group => Math.max(0, ...[...group.children].filter(el => scores.has(el)).map(el => scores.get(el)))
+  for (const group of groups) {
+    const items = [...group.children].filter(el => scores.has(el))
+    commandSort(group, items, active ? el => scores.get(el) : null)
+    group.hidden = !items.some(item => !item.hidden)
+  }
+  for (const list of own(root, '[data-slot="command-list"]')) {
+    commandSort(list, [...list.children], active ? el => (scores.has(el) ? scores.get(el) : groups.includes(el) ? best(el) : -1) : null)
+  }
+  for (const separator of own(root, '[data-slot="command-separator"]')) separator.hidden = active && !separator.hasAttribute("data-always-render")
+  for (const empty of own(root, '[data-slot="command-empty"]')) empty.hidden = visible > 0
+  if (!active) for (const parent of parents) [...parent.children].forEach((el, i) => commandOrder.set(el, i))
+  const selectable = commandSelectable(root)
+  const current = keep ? selectable.find(item => item.dataset.selected === "true") : null
+  commandSelect(root, current ?? selectable[0] ?? null, false)
+}
+
+function commandRefresh(root) {
+  if (!commandQueue.size) {
+    queueMicrotask(() => {
+      for (const r of commandQueue) if (r.isConnected) commandFilter(r, true)
+      commandQueue.clear()
+    })
+  }
+  commandQueue.add(root)
+}
+
+function commandSelectable(root) {
+  return own(root, '[data-slot="command-item"]').filter(item => !item.hidden && !disabled(item) && !item.closest('[data-slot="command-group"][hidden]'))
+}
+
+function commandSelect(root, item, scroll) {
+  for (const el of own(root, '[data-slot="command-item"]')) {
+    el.dataset.selected = String(el === item)
+    el.setAttribute("aria-selected", String(el === item))
+  }
+  for (const owner of [commandInput(root), own(root, '[data-slot="command-list"]')[0]]) {
+    if (!owner) continue
+    if (item) owner.setAttribute("aria-activedescendant", ensureId(item, "command-item"))
+    else owner.removeAttribute("aria-activedescendant")
+  }
+  if (!item || !scroll) return
+  const group = item.closest('[data-slot="command-group"]')
+  const heading = group?.querySelector(':scope > [data-slot="command-group-heading"]')
+  if (heading && commandSelectable(root).find(el => el.closest('[data-slot="command-group"]') === group) === item) heading.scrollIntoView({ block: "nearest" })
+  item.scrollIntoView({ block: "nearest" })
+}
+
+function commandRun(root, item) {
+  if (!item || disabled(item)) return
+  emit(root, "command:select", { value: commandValue(item), item })
+}
+
+function commandReset(root) {
+  const input = commandInput(root)
+  if (input && input.value) input.value = ""
+  commandFilter(root)
+}
+
+define("command-item", {
+  init(item) {
+    item.setAttribute("role", "option")
+    if (!item.lastElementChild?.matches('svg[data-lucide="check"]')) item.append(icon("check"))
+    ensureId(item, "command-item")
+    const off = disabled(item)
+    item.dataset.disabled = String(off)
+    if (off) item.setAttribute("aria-disabled", "true")
+    const root = item.closest('[data-slot="command"]')
+    if (!root) return
+    commandRefresh(root)
+    return () => commandRefresh(root)
+  },
+})
+
+define("command", {
+  init(root) {
+    const input = commandInput(root)
+    const list = own(root, '[data-slot="command-list"]')[0]
+    if (input && !input.closest('[data-slot="command-input-wrapper"]')) {
+      const made = h("div", { "data-slot": "command-input-wrapper" })
+      input.before(made)
+      made.append(input)
+    }
+    const wrapper = input?.closest('[data-slot="command-input-wrapper"]')
+    if (wrapper && !input.parentElement.matches('[data-slot="input-group"]')) {
+      for (const old of wrapper.querySelectorAll(':scope > svg')) old.remove()
+      const group = h("div", { "data-slot": "input-group", role: "group" })
+      wrapper.append(group)
+      group.append(input, h("div", { "data-slot": "input-group-addon", role: "group", "data-align": "inline-start" }, icon("search")))
+    }
+    if (input) {
+      input.setAttribute("role", "combobox")
+      input.setAttribute("aria-autocomplete", "list")
+      input.setAttribute("aria-expanded", "true")
+      input.setAttribute("autocomplete", "off")
+      input.setAttribute("autocorrect", "off")
+      input.setAttribute("spellcheck", "false")
+      if (list) input.setAttribute("aria-controls", ensureId(list, "command-list"))
+      if (!input.hasAttribute("aria-label") && !input.hasAttribute("aria-labelledby") && !input.labels?.length) input.setAttribute("aria-label", root.getAttribute("aria-label") ?? stringFor(root, "commandMenu"))
+    }
+    if (list) {
+      list.setAttribute("role", "listbox")
+      if (!list.hasAttribute("tabindex")) list.tabIndex = -1
+      if (!list.hasAttribute("aria-label")) list.setAttribute("aria-label", stringFor(list, "suggestions"))
+    }
+    for (const group of own(root, '[data-slot="command-group"]')) {
+      let heading = group.querySelector(':scope > [data-slot="command-group-heading"]')
+      if (!heading && group.dataset.heading) group.prepend((heading = h("div", { "data-slot": "command-group-heading" }, group.dataset.heading)))
+      group.setAttribute("role", "group")
+      if (heading) {
+        heading.setAttribute("cmdk-group-heading", "")
+        heading.setAttribute("aria-hidden", "true")
+        group.setAttribute("aria-labelledby", ensureId(heading, "command-group-heading"))
+      }
+    }
+    for (const separator of own(root, '[data-slot="command-separator"]')) separator.setAttribute("role", "separator")
+    for (const empty of own(root, '[data-slot="command-empty"]')) empty.setAttribute("role", "presentation")
+    commandFilter(root)
+  },
+  input(event, root) {
+    if (event.target === commandInput(root)) commandFilter(root)
+  },
+  keydown(event, root) {
+    if (event.isComposing || event.keyCode === 229) return
+    const input = commandInput(root)
+    if (event.target !== input && event.target !== root && event.target !== own(root, '[data-slot="command-list"]')[0]) return
+    const list = commandSelectable(root)
+    const current = list.find(item => item.dataset.selected === "true")
+    const i = list.indexOf(current)
+    const loop = root.hasAttribute("data-loop") && root.dataset.loop !== "false"
+    const down = event.key === "ArrowDown" || (event.ctrlKey && (event.key === "n" || event.key === "j"))
+    const up = event.key === "ArrowUp" || (event.ctrlKey && (event.key === "p" || event.key === "k"))
+    let next = null
+    if (down || up) {
+      if (event.metaKey) next = down ? list.at(-1) : list[0]
+      else if (event.altKey) {
+        const group = current?.closest('[data-slot="command-group"]')
+        const others = list.filter(item => item.closest('[data-slot="command-group"]') !== group)
+        next = down ? others.find(item => list.indexOf(item) > i) : others.filter(item => list.indexOf(item) < i).at(-1)
+        next ??= current
+      } else if (down) next = list[i + 1] ?? (loop ? list[0] : (current ?? list[0]))
+      else next = i > 0 ? list[i - 1] : loop ? list.at(-1) : (current ?? list.at(-1))
+    } else if (event.key === "Home") next = list[0]
+    else if (event.key === "End") next = list.at(-1)
+    else if (event.key === "Enter") {
+      if (!current) return
+      event.preventDefault()
+      if (current.matches("a[href]")) current.click()
+      else commandRun(root, current)
+      return
+    } else return
+    event.preventDefault()
+    if (next) commandSelect(root, next, true)
+  },
+  pointermove(event, root) {
+    const item = event.target instanceof Element ? event.target.closest('[data-slot="command-item"]') : null
+    if (!pointerMoved(event) || !item || item.closest('[data-slot="command"]') !== root || disabled(item) || item.dataset.selected === "true") return
+    commandSelect(root, item, false)
+  },
+  click(event, root) {
+    const item = event.target instanceof Element ? event.target.closest('[data-slot="command-item"]') : null
+    if (!item || item.closest('[data-slot="command"]') !== root || disabled(item)) return
+    commandSelect(root, item, false)
+    commandRun(root, item)
+  },
+})
+
+const toastList = []
+const toastRecords = new Map()
+const toastElements = new WeakMap()
+const toastIcons = { success: "circle-check", info: "info", warning: "triangle-alert", error: "octagon-x", loading: "loader-circle" }
+const toastDirections = ["down", "right"]
+const toastSwipeIgnore = 'button, a, input, textarea, [role="button"], [data-base-ui-swipe-ignore], [data-swipe-ignore]'
+const toastModals = []
+const toastState = { hovering: false, focused: false, windowFocused: true, paused: false, touch: false, leave: false, prevFocus: null, above: new Set() }
+let toastSeed = 0
+let toastOrigin = null
+let toastResizeFrame = 0
+
+function toastPortal() {
+  let portal = toastOrigin?.portal ?? document.querySelector('[data-slot="toast-portal"]')
+  if (!portal) {
+    portal = h("div", { "data-slot": "toast-portal" })
+    document.body.append(portal)
+  }
+  toastPortalSetup(portal)
+  return portal
+}
+
+function toastPortalSetup(portal) {
+  let viewport = portal.querySelector(':scope > [data-slot="toast-viewport"]')
+  if (!viewport) {
+    viewport = h("div", { "data-slot": "toast-viewport" })
+    portal.prepend(viewport)
+  }
+  if (!viewport.hasAttribute("role")) {
+    for (const [name, value] of Object.entries({ tabindex: "-1", role: "region", "aria-live": "polite", "aria-atomic": "false", "aria-relevant": "additions text" })) viewport.setAttribute(name, value)
+    if (!viewport.hasAttribute("aria-label")) viewport.setAttribute("aria-label", stringFor(portal, "notifications"))
+  }
+  if (!viewport.hasAttribute("popover")) viewport.setAttribute("popover", "manual")
+  return viewport
+}
+
+function toastViewport() {
+  return toastPortal().querySelector(':scope > [data-slot="toast-viewport"]')
+}
+
+function toastConfig() {
+  const portal = toastPortal()
+  const num = (name, fallback) => {
+    const value = Number(portal.getAttribute(name))
+    return portal.hasAttribute(name) && Number.isFinite(value) && value >= 0 ? value : fallback
+  }
+  return { limit: num("data-limit", 3), timeout: num("data-timeout", 5000) }
+}
+
+define("toast-portal", { init: toastPortalSetup })
+
+function toastRaise() {
+  const viewport = toastViewport()
+  const showing = viewport.matches(":popover-open")
+  if (showing && (!toastState.above.size || viewport.contains(document.activeElement))) return
+  if (showing) viewport.hidePopover()
+  viewport.showPopover()
+  toastState.above.clear()
+}
+
+function toastRehome() {
+  const modal = toastModals.findLast(el => el.isConnected && el.open)
+  const portal = toastOrigin?.portal ?? document.querySelector('[data-slot="toast-portal"]')
+  if (!portal) return
+  if (modal) {
+    if (portal.parentElement === modal) return
+    toastOrigin ??= { portal, parent: portal.parentElement, next: portal.nextSibling }
+    modal.append(portal)
+    portal.style.display = "contents"
+  } else {
+    if (!toastOrigin) return
+    const { parent, next } = toastOrigin
+    toastOrigin = null
+    portal.style.display = ""
+    if (parent?.isConnected) parent.insertBefore(portal, next?.parentNode === parent ? next : null)
+    else document.body.append(portal)
+  }
+  toastState.above.clear()
+  if (toastList.length) toastRaise()
+}
+
+topLayerWatchers.push((el, open) => {
+  if (open) toastState.above.add(el)
+  else toastState.above.delete(el)
+  if (!(el instanceof HTMLDialogElement)) return
+  const i = toastModals.indexOf(el)
+  if (i >= 0) toastModals.splice(i, 1)
+  if (open) toastModals.push(el)
+  toastRehome()
+})
+
+function toastText(value) {
+  return typeof value === "function" ? value() : value
+}
+
+function toastPublic(record) {
+  return { ...record.options, id: record.id, type: record.options.type, title: record.options.title }
+}
+
+function toastNormalize(options) {
+  const o = { ...options }
+  if (Object.hasOwn(o, "duration")) {
+    if (o.timeout === undefined) o.timeout = o.duration == null ? undefined : Number.isFinite(o.duration) ? Math.max(0, o.duration) : 0
+    delete o.duration
+  }
+  if (o.timeout != null && !Number.isFinite(o.timeout)) o.timeout = 0
+  return o
+}
+
+function toastValidate(options) {
+  if (typeof options.icon === "string") iconKey(options.icon)
+}
+
+function toastDelay(record) {
+  return record.options.timeout ?? toastConfig().timeout
+}
+
+function toastFill(record) {
+  const { el, content, options: o } = record
+  const portal = toastPortal()
+  const type = o.type || null
+  if (type) el.dataset.type = type
+  else el.removeAttribute("data-type")
+  el.setAttribute("role", o.priority === "high" ? "alertdialog" : "dialog")
+  if (o.className) el.className = o.className
+  const typed = type ? { "data-type": type } : {}
+  const glyph = o.icon === null ? null : o.icon instanceof Node ? o.icon : typeof o.icon === "string" ? icon(o.icon) : toastIcons[type] ? icon(toastIcons[type]) : null
+  const title = toastText(o.title)
+  const description = toastText(o.description)
+  const titleEl = title != null && title !== "" ? h("h2", { "data-slot": "toast-title", ...typed }, title) : null
+  const descriptionEl = description != null && description !== "" ? h("p", { "data-slot": "toast-description", ...typed }, description) : null
+  const label = o.action instanceof Node ? null : (o.action?.label ?? o.actionProps?.children)
+  const action = o.action instanceof Node ? o.action : label != null && label !== "" ? h("button", { type: "button", tabindex: "0", "data-slot": "toast-action", ...typed }, label) : null
+  const close = h("button", { type: "button", tabindex: "0", "data-slot": "toast-close", "aria-label": stringFor(portal, "closeToast"), ...typed }, icon("x"))
+  content.replaceChildren(...[glyph ? h("span", { "data-slot": "toast-icon" }, glyph) : null, h("div", null, titleEl, descriptionEl), action, close].filter(Boolean))
+  record.close = close
+  for (const [attr, part, prefix] of [["aria-labelledby", titleEl, "toast-title"], ["aria-describedby", descriptionEl, "toast-description"]]) {
+    if (part) el.setAttribute(attr, ensureId(part, prefix))
+    else el.removeAttribute(attr)
+  }
+}
+
+function toastMeasure(record) {
+  if (record.ending) return
+  const el = record.el
+  const previous = el.style.height
+  el.style.height = "auto"
+  record.height = el.offsetHeight
+  el.style.height = previous
+}
+
+function toastExpanded() {
+  return toastState.hovering || toastState.focused
+}
+
+function toastOutOfFocus() {
+  return toastExpanded() || !toastState.windowFocused
+}
+
+function toastLayout() {
+  const viewport = toastViewport()
+  const { limit } = toastConfig()
+  const expanded = toastExpanded()
+  let visible = 0
+  let active = 0
+  let offset = 0
+  toastList.forEach((record, index) => {
+    const { el, content } = record
+    if (!record.ending) record.limited = active++ >= limit
+    const visibleIndex = record.ending ? -1 : visible++
+    el.style.setProperty("--toast-index", String(record.ending ? index : visibleIndex))
+    el.style.setProperty("--toast-offset-y", `${offset}px`)
+    if (record.height) el.style.setProperty("--toast-height", `${record.height}px`)
+    else el.style.removeProperty("--toast-height")
+    offset += record.ending ? 0 : record.height
+    el.toggleAttribute("data-limited", record.limited)
+    el.inert = record.limited
+    el.toggleAttribute("data-expanded", expanded)
+    content.toggleAttribute("data-expanded", expanded)
+    content.toggleAttribute("data-behind", visibleIndex > 0)
+    record.close.setAttribute("aria-hidden", String(!expanded && document.activeElement !== record.close))
+    if (record.options.priority === "high" && !toastState.focused) el.setAttribute("aria-hidden", "true")
+    else el.removeAttribute("aria-hidden")
+  })
+  viewport.toggleAttribute("data-expanded", expanded)
+  const front = toastList[0]?.ending ? 0 : toastList[0]?.height
+  if (front) viewport.style.setProperty("--toast-frontmost-height", `${front}px`)
+  else viewport.style.removeProperty("--toast-frontmost-height")
+  toastAnnounce(viewport)
+}
+
+function toastAnnounce(viewport) {
+  const portal = viewport.parentElement
+  let region = portal.querySelector(":scope > [data-toast-announcer]")
+  const urgent = toastState.focused ? [] : toastList.filter(record => record.options.priority === "high")
+  if (!urgent.length) {
+    region?.remove()
+    return
+  }
+  if (!region) {
+    region = h("div", { class: "sr-only", "data-toast-announcer": "" })
+    viewport.after(region)
+  }
+  const ids = urgent.map(record => record.id)
+  const kept = new Set()
+  for (const node of [...region.children]) {
+    if (ids.includes(node.dataset.toastId) && !kept.has(node.dataset.toastId)) kept.add(node.dataset.toastId)
+    else node.remove()
+  }
+  for (const record of urgent) {
+    if (kept.has(record.id)) continue
+    const text = value => (value instanceof Node ? value.textContent : value) ?? ""
+    region.append(h("div", { role: "alert", "aria-atomic": "true", "data-toast-id": record.id }, h("div", null, text(toastText(record.options.title))), h("div", null, text(toastText(record.options.description)))))
+  }
+}
+
+function toastResize() {
+  cancelAnimationFrame(toastResizeFrame)
+  toastResizeFrame = requestAnimationFrame(() => {
+    if (!toastList.length) return
+    for (const record of toastList) toastMeasure(record)
+    toastLayout()
+  })
+}
+
+addEventListener("resize", toastResize)
+
+function toastSchedule(record, delay) {
+  const timer = { delay, remaining: delay, start: Date.now(), handle: 0 }
+  record.timer = timer
+  if (!toastOutOfFocus()) timer.handle = setTimeout(() => toastFire(record, timer), Math.min(2147483647, delay))
+}
+
+function toastClearTimer(record) {
+  if (!record.timer) return
+  clearTimeout(record.timer.handle)
+  record.timer = null
+  toastTimersSettled()
+}
+
+function toastTimersSettled() {
+  if (![...toastRecords.values()].some(record => record.timer)) toastState.paused = false
+}
+
+function toastFire(record, timer) {
+  if (record.timer !== timer) return
+  record.timer = null
+  toastTimersSettled()
+  record.options.onAutoClose?.(toastPublic(record))
+  toastClose(record, "timeout")
+}
+
+function toastPause() {
+  if (toastState.paused) return
+  toastState.paused = true
+  for (const record of toastRecords.values()) {
+    const timer = record.timer
+    if (!timer?.handle) continue
+    clearTimeout(timer.handle)
+    timer.handle = 0
+    timer.remaining = Math.max(timer.delay - (Date.now() - timer.start), 0)
+  }
+}
+
+function toastResume() {
+  if (!toastState.paused) return
+  toastState.paused = false
+  for (const record of toastRecords.values()) {
+    const timer = record.timer
+    if (!timer) continue
+    timer.remaining = timer.remaining > 0 ? timer.remaining : timer.delay
+    clearTimeout(timer.handle)
+    timer.handle = setTimeout(() => toastFire(record, timer), Math.min(2147483647, timer.remaining))
+    timer.start = Date.now()
+  }
+}
+
+function toastSet(patch) {
+  let changed = false
+  for (const [key, value] of Object.entries(patch)) {
+    if (toastState[key] === value) continue
+    toastState[key] = value
+    changed = true
+  }
+  if (changed && toastList.length) toastLayout()
+}
+
+function toastFlushLeave() {
+  if (toastList.some(record => record.ending) || toastState.touch || !toastState.leave) return
+  toastSet({ hovering: false, leave: false })
+  if (!toastOutOfFocus()) toastResume()
+}
+
+function toastCreate(options) {
+  const config = toastConfig()
+  const id = options.id ?? `toast-${++toastSeed}`
+  const record = { id, options: { ...options, id }, ending: false, limited: false, height: 0, timer: null, swipe: null, updateKey: 0 }
+  const content = h("div", { "data-slot": "toast-content" })
+  const el = h("div", { "data-slot": "toast", tabindex: "0", "aria-modal": "false" }, content)
+  el.addEventListener("touchmove", toastTouchMove, { passive: false })
+  Object.assign(record, { el, content })
+  toastElements.set(el, record)
+  for (const axis of ["x", "y"]) el.style.setProperty(`--toast-swipe-movement-${axis}`, "0px")
+  const viewport = toastViewport()
+  toastRaise()
+  viewport.prepend(el)
+  toastList.unshift(record)
+  toastRecords.set(id, record)
+  toastFill(record)
+  transition(el, true)
+  toastMeasure(record)
+  toastLayout()
+  const delay = record.options.timeout ?? config.timeout
+  if (record.options.type !== "loading" && delay > 0) toastSchedule(record, delay)
+  if (toastOutOfFocus()) toastPause()
+  emit(el, "toast:open", { id })
+  return id
+}
+
+function toastUpdate(record, updates, resetTimer) {
+  if (record.ending) return
+  const config = toastConfig()
+  const prevTimeout = record.options.timeout ?? config.timeout
+  const wasLoading = record.options.type === "loading"
+  Object.assign(record.options, updates, { id: record.id })
+  record.updateKey++
+  toastFill(record)
+  toastMeasure(record)
+  toastLayout()
+  const nextTimeout = record.options.timeout ?? config.timeout
+  const shouldHave = record.options.type !== "loading" && nextTimeout > 0
+  if (!shouldHave) {
+    toastClearTimer(record)
+    return
+  }
+  if (!record.timer || prevTimeout !== nextTimeout || Object.hasOwn(updates, "timeout") || wasLoading || resetTimer) {
+    toastClearTimer(record)
+    toastSchedule(record, nextTimeout)
+    if (toastOutOfFocus()) toastPause()
+  }
+}
+
+function toastAdd(options) {
+  const o = toastNormalize(options)
+  toastValidate(o)
+  if (o.id != null) {
+    const existing = toastRecords.get(o.id)
+    if (existing && !existing.ending) {
+      const { id, ...updates } = o
+      toastUpdate(existing, updates, true)
+      return o.id
+    }
+    if (existing) toastDrop(existing)
+  }
+  return toastCreate(o)
+}
+
+function toastDrop(record) {
+  toastClearTimer(record)
+  record.el.remove()
+  const i = toastList.indexOf(record)
+  if (i >= 0) toastList.splice(i, 1)
+  if (toastRecords.get(record.id) === record) toastRecords.delete(record.id)
+}
+
+function toastClose(record, reason) {
+  if (record.ending) return
+  const all = reason === "dismiss-all"
+  toastFocusAway(record, all)
+  record.ending = true
+  record.height = 0
+  toastClearTimer(record)
+  if (toastList.every(item => item.ending)) Object.assign(toastState, { hovering: false, focused: false })
+  toastLayout()
+  record.options.onClose?.()
+  if (reason !== "timeout") record.options.onDismiss?.(toastPublic(record))
+  emit(record.el, "toast:close", { id: record.id, reason: all ? "dismiss" : reason })
+  transition(record.el, false).then(() => {
+    if (!record.ending || !record.el.isConnected) return
+    toastDrop(record)
+    record.options.onRemove?.()
+    if (toastList.length) toastLayout()
+    else toastIdle()
+    toastFlushLeave()
+  })
+}
+
+function toastIdle() {
+  const viewport = toastViewport()
+  if (viewport.matches(":popover-open")) viewport.hidePopover()
+  viewport.removeAttribute("data-expanded")
+  viewport.style.removeProperty("--toast-frontmost-height")
+  toastAnnounce(viewport)
+  Object.assign(toastState, { hovering: false, focused: false, touch: false })
+}
+
+function toastFocusAway(record, all) {
+  const viewport = toastViewport()
+  const active = document.activeElement
+  if (!viewport.contains(active) || !active.matches(":focus-visible")) return
+  if (all) {
+    toastRestoreFocus()
+    return
+  }
+  const index = toastList.indexOf(record)
+  const next = toastList.slice(index + 1).find(item => !item.ending) ?? toastList.slice(0, index).reverse().find(item => !item.ending)
+  if (next) next.el.focus({ preventScroll: true })
+  else toastRestoreFocus()
+}
+
+function toastRestoreFocus() {
+  const el = toastState.prevFocus
+  if (el?.isConnected) el.focus({ preventScroll: true })
+}
+
+function toastSwipeStyle(record) {
+  const swipe = record.swipe
+  const { el } = record
+  const dx = swipe.offset.x - swipe.init.x
+  const dy = swipe.offset.y - swipe.init.y
+  el.style.setProperty("--toast-swipe-movement-x", `${dx}px`)
+  el.style.setProperty("--toast-swipe-movement-y", `${dy}px`)
+  if (swipe.active) {
+    el.style.transition = "none"
+    el.style.transform = `translateX(${swipe.offset.x}px) translateY(${swipe.offset.y}px) scale(${swipe.init.scale})`
+  } else {
+    el.style.transition = ""
+    el.style.transform = ""
+  }
+}
+
+function toastTransform(el) {
+  const transform = getComputedStyle(el).transform
+  const match = transform && transform !== "none" ? transform.match(/matrix(?:3d)?\(([^)]+)\)/) : null
+  if (!match) return { x: 0, y: 0, scale: 1 }
+  const v = match[1].split(",").map(parseFloat)
+  return v.length === 16 ? { x: v[12], y: v[13], scale: v[0] } : { x: v[4], y: v[5], scale: Math.hypot(v[0], v[1]) }
+}
+
+function toastDisplacement(direction, dx, dy) {
+  return direction === "up" ? -dy : direction === "down" ? dy : direction === "left" ? -dx : dx
+}
+
+function toastTouchMove(event) {
+  const record = toastElements.get(event.currentTarget)
+  if (record?.swipe?.active) event.preventDefault()
+}
+
+function toastSwipeEnd(event, record) {
+  const swipe = record.swipe
+  if (!swipe?.active || swipe.id !== event.pointerId) return
+  swipe.active = false
+  record.el.removeAttribute("data-swiping")
+  if (event.type === "pointercancel" || swipe.cancelled) {
+    swipe.offset = { x: swipe.init.x, y: swipe.init.y }
+    record.el.removeAttribute("data-swipe-direction")
+    toastSwipeStyle(record)
+    return
+  }
+  const dx = swipe.offset.x - swipe.init.x
+  const dy = swipe.offset.y - swipe.init.y
+  const direction = toastDirections.find(d => toastDisplacement(d, dx, dy) > 40)
+  if (direction) {
+    record.el.dataset.swipeDirection = direction
+    toastSwipeStyle(record)
+    toastClose(record, "swipe")
+    return
+  }
+  swipe.offset = { x: swipe.init.x, y: swipe.init.y }
+  record.el.removeAttribute("data-swipe-direction")
+  toastSwipeStyle(record)
+}
+
+define("toast", {
+  click(event, el) {
+    const record = toastElements.get(el)
+    const button = event.target instanceof Element ? event.target.closest('[data-slot="toast-close"], [data-slot="toast-action"]') : null
+    if (!record || !button || button.closest('[data-slot="toast"]') !== el || record.ending || disabled(button)) return
+    if (button.matches('[data-slot="toast-close"]')) {
+      toastClose(record, "close")
+      return
+    }
+    const o = record.options
+    if (o.action && !(o.action instanceof Node)) o.action.onClick?.(event)
+    else o.actionProps?.onClick?.(event)
+    emit(el, "toast:action", { id: record.id })
+    if (o.action && !event.defaultPrevented) toastClose(record, "action")
+  },
+  focusin(event, el) {
+    const record = toastElements.get(el)
+    if (record && event.target === record.close) record.close.setAttribute("aria-hidden", "false")
+  },
+  focusout(event, el) {
+    const record = toastElements.get(el)
+    if (record && event.target === record.close) record.close.setAttribute("aria-hidden", String(!toastExpanded()))
+  },
+  pointerdown(event, el) {
+    const record = toastElements.get(el)
+    if (!record || record.ending || event.button !== 0) return
+    if (event.pointerType === "touch") toastPause()
+    if (event.target instanceof Element && event.target.closest(toastSwipeIgnore)) return
+    const init = toastTransform(el)
+    record.swipe = { id: event.pointerId, start: { x: event.clientX, y: event.clientY }, base: { x: event.clientX, y: event.clientY }, init, offset: { x: init.x, y: init.y }, first: true, real: false, locked: null, intended: null, max: 0, cancelled: false, active: true }
+    el.dataset.swiping = ""
+    toastSet({ hovering: true })
+    toastSwipeStyle(record)
+    try {
+      el.setPointerCapture(event.pointerId)
+    } catch {}
+  },
+  pointermove(event, el) {
+    const record = toastElements.get(el)
+    const swipe = record?.swipe
+    if (!swipe?.active || swipe.id !== event.pointerId) return
+    event.preventDefault()
+    if (swipe.first) {
+      swipe.start = { x: event.clientX, y: event.clientY }
+      swipe.first = false
+    }
+    const { clientX, clientY, movementX, movementY } = event
+    if ((movementY < 0 && clientY > swipe.base.y) || (movementY > 0 && clientY < swipe.base.y)) swipe.base.y = clientY
+    if ((movementX < 0 && clientX > swipe.base.x) || (movementX > 0 && clientX < swipe.base.x)) swipe.base.x = clientX
+    const dx = clientX - swipe.start.x
+    const dy = clientY - swipe.start.y
+    const horizontal = toastDirections.includes("left") || toastDirections.includes("right")
+    const vertical = toastDirections.includes("up") || toastDirections.includes("down")
+    if (!swipe.real && Math.hypot(dx, dy) >= 1) {
+      swipe.real = true
+      if (horizontal && vertical) swipe.locked = Math.abs(dx) > Math.abs(dy) ? "horizontal" : "vertical"
+    }
+    if (!swipe.intended) {
+      let candidate
+      if (swipe.locked === "vertical") candidate = dy > 0 ? "down" : dy < 0 ? "up" : undefined
+      else if (swipe.locked === "horizontal") candidate = dx > 0 ? "right" : dx < 0 ? "left" : undefined
+      else if (Math.abs(dx) >= Math.abs(dy)) candidate = dx > 0 ? "right" : "left"
+      else candidate = dy > 0 ? "down" : "up"
+      if (candidate && toastDirections.includes(candidate)) {
+        swipe.intended = candidate
+        swipe.max = toastDisplacement(candidate, dx, dy)
+        el.dataset.swipeDirection = candidate
+      }
+    } else {
+      const current = toastDisplacement(swipe.intended, clientX - swipe.base.x, clientY - swipe.base.y)
+      if (current > 40) {
+        swipe.cancelled = false
+        el.dataset.swipeDirection = swipe.intended
+      } else if (!(toastDirections.includes("left") && toastDirections.includes("right")) && !(toastDirections.includes("up") && toastDirections.includes("down")) && swipe.max - current >= 10) swipe.cancelled = true
+    }
+    const damp = (delta, allowed) => (allowed ? delta : Math.sign(delta) * Math.abs(delta) ** 0.5)
+    const x = damp(dx, toastDirections.includes(dx > 0 ? "right" : "left"))
+    const y = damp(dy, toastDirections.includes(dy > 0 ? "down" : "up"))
+    swipe.offset = { x: swipe.init.x + (swipe.locked !== "vertical" && horizontal ? x : 0), y: swipe.init.y + (swipe.locked !== "horizontal" && vertical ? y : 0) }
+    toastSwipeStyle(record)
+  },
+  pointerup(event, el) {
+    const record = toastElements.get(el)
+    if (record) toastSwipeEnd(event, record)
+  },
+  pointercancel(event, el) {
+    const record = toastElements.get(el)
+    if (record) toastSwipeEnd(event, record)
+  },
+})
+
+function toastViewportInside(viewport, node) {
+  return node instanceof Node && viewport.contains(node)
+}
+
+define("toast-viewport", {
+  mouseover() {
+    toastPause()
+    toastSet({ hovering: true, leave: false })
+  },
+  mousemove() {
+    toastPause()
+    toastSet({ hovering: true, leave: false })
+  },
+  mouseout(event, viewport) {
+    if (toastViewportInside(viewport, event.relatedTarget)) return
+    toastState.leave = true
+    toastFlushLeave()
+  },
+  pointerdown(event) {
+    if (event.pointerType === "touch") toastState.touch = true
+  },
+  pointerup(event) {
+    if (event.pointerType !== "touch") return
+    toastState.touch = false
+    toastFlushLeave()
+  },
+  pointercancel(event) {
+    if (event.pointerType !== "touch") return
+    toastState.touch = false
+    toastFlushLeave()
+  },
+  focusin() {
+    if (toastState.focused) return
+    if (document.activeElement?.matches(":focus-visible")) {
+      toastPause()
+      toastSet({ focused: true })
+    }
+  },
+  focusout(event, viewport) {
+    if (!toastState.focused || toastViewportInside(viewport, event.relatedTarget)) return
+    toastSet({ focused: false })
+    if (!toastOutOfFocus()) toastResume()
+  },
+  keydown(event, viewport) {
+    if (event.key !== "Tab" || !toastState.prevFocus || !toastList.length) return
+    const list = tabbables(viewport)
+    const active = document.activeElement
+    const first = event.shiftKey && (active === viewport || active === list[0])
+    const last = !event.shiftKey && active === list.at(-1)
+    if (!first && !last) return
+    event.preventDefault()
+    toastRestoreFocus()
+  },
+})
+
+document.addEventListener(
+  "keydown",
+  event => {
+    if (event.key !== "Escape" || event.defaultPrevented || !(event.target instanceof Element)) return
+    const el = event.target.closest('[data-slot="toast"]')
+    const record = el && toastElements.get(el)
+    if (!record || record.ending) return
+    event.preventDefault()
+    toastClose(record, "escape")
+  },
+  true,
+)
+
+addEventListener("keydown", event => {
+  if (event.key !== "F6" || !toastList.length) return
+  const viewport = toastViewport()
+  if (event.target === viewport) return
+  event.preventDefault()
+  toastState.prevFocus = document.activeElement
+  viewport.focus({ preventScroll: true })
+  toastPause()
+  toastSet({ focused: true })
+})
+
+addEventListener(
+  "blur",
+  event => {
+    if (event.target !== window) return
+    toastState.windowFocused = false
+    if (toastList.length) toastPause()
+  },
+  true,
+)
+
+addEventListener(
+  "focus",
+  event => {
+    if (event.relatedTarget) return
+    if (toastList.length && (event.target === window || !toastViewportInside(toastViewport(), event.target) || !document.activeElement?.matches(":focus-visible"))) toastResume()
+    setTimeout(() => (toastState.windowFocused = true))
+  },
+  true,
+)
+
+document.addEventListener(
+  "pointerdown",
+  event => {
+    if (event.pointerType !== "touch" || !toastList.length || toastViewportInside(toastViewport(), event.target)) return
+    toastResume()
+    toastSet({ hovering: false, focused: false })
+  },
+  true,
+)
+
+function toastCall(message, options = {}, type) {
+  const o = toastNormalize(options)
+  return toastAdd({ description: undefined, action: undefined, actionProps: undefined, icon: undefined, timeout: undefined, ...o, title: message, type: type ?? o.type })
+}
+
+function toastPromiseOptions(value, arg) {
+  const v = typeof value === "function" ? value(arg) : value
+  if (v == null) return null
+  return typeof v === "object" && !(v instanceof Node) ? toastNormalize(v) : { description: v }
+}
+
+export function toast(message, options) {
+  return toastCall(message, options)
+}
+
+toast.add = options => toastAdd(options ?? {})
+toast.update = (id, updates) => {
+  const record = toastRecords.get(id)
+  if (!record || record.ending) return
+  const o = toastNormalize(typeof updates === "function" ? updates(toastPublic(record)) : (updates ?? {}))
+  toastValidate(o)
+  delete o.id
+  toastUpdate(record, o, false)
+}
+toast.close = id => {
+  if (id === undefined) {
+    for (const record of [...toastList]) toastClose(record, "dismiss-all")
+    return
+  }
+  const record = toastRecords.get(id)
+  if (record) toastClose(record, "dismiss")
+}
+toast.message = (message, options) => toastCall(message, options)
+toast.success = (message, options) => toastCall(message, options, "success")
+toast.info = (message, options) => toastCall(message, options, "info")
+toast.warning = (message, options) => toastCall(message, options, "warning")
+toast.error = (message, options) => toastCall(message, options, "error")
+toast.loading = (message, options) => toastCall(message, options, "loading")
+toast.promise = (promise, data = {}) => {
+  const id = toastAdd({ ...(data.id != null ? { id: data.id } : {}), ...toastPromiseOptions(data.loading), type: "loading" })
+  const settle = (type, value) => {
+    const o = toastPromiseOptions(data[type], value)
+    if (!o) toast.close(id)
+    else toast.update(id, { timeout: undefined, ...o, type })
+  }
+  Promise.resolve(typeof promise === "function" ? promise() : promise)
+    .then(
+      value => settle("success", value),
+      error => settle("error", error),
+    )
+    .finally(() => data.finally?.())
+  return id
+}
+toast.dismiss = id => {
+  toast.close(id)
+  return id
+}
+toast.getToasts = () => toastList.filter(record => !record.ending).map(toastPublic)
+
+toastPortal()
+function accordionOf(el) {
+  return el.parentElement?.closest('[data-slot="accordion"]') ?? null
+}
+
+function accordionItems(root) {
+  return [...root.querySelectorAll('[data-slot="accordion-item"]')].filter(item => accordionOf(item) === root)
+}
+
+function accordionTrigger(item) {
+  return own(item, '[data-slot="accordion-trigger"]', '[data-slot="accordion-item"]')[0] ?? null
+}
+
+function accordionContent(item) {
+  return item.querySelector(':scope > [data-slot="accordion-content"]')
+}
+
+function accordionDisabled(item) {
+  return item.hasAttribute("data-disabled") && item.dataset.disabled !== "false"
+}
+
+function accordionSingle(root) {
+  return root.dataset.type !== "multiple"
+}
+
+function accordionValue(root) {
+  const open = accordionItems(root).filter(item => item.dataset.state === "open").map(item => item.dataset.value ?? String(accordionItems(root).indexOf(item)))
+  return accordionSingle(root) ? (open[0] ?? "") : open
+}
+
+const accordionRuns = new WeakMap()
+
+function accordionSet(item, open, animate) {
+  const trigger = accordionTrigger(item)
+  const panel = accordionContent(item)
+  const state = open ? "open" : "closed"
+  const header = trigger?.parentElement !== item ? trigger?.parentElement : null
+  for (const el of [item, header]) {
+    if (!el) continue
+    el.dataset.state = state
+    el.toggleAttribute("data-open", open)
+  }
+  if (trigger) {
+    trigger.dataset.state = state
+    trigger.setAttribute("aria-expanded", String(open))
+    trigger.toggleAttribute("data-panel-open", open)
+  }
+  if (!panel) return
+  const run = {}
+  accordionRuns.set(panel, run)
+  const height = open ? null : panel.getBoundingClientRect().height
+  if (open) {
+    panel.removeAttribute("hidden")
+    panel.style.setProperty("--accordion-panel-height", "auto")
+  }
+  panel.style.animationName = animate ? "" : "none"
+  panel.style.setProperty("--accordion-panel-height", `${open ? panel.scrollHeight : height}px`)
+  panel.dataset.state = state
+  panel.toggleAttribute("data-open", open)
+  panel.toggleAttribute("data-closed", !open)
+  const finish = () => {
+    if (accordionRuns.get(panel) !== run) return
+    accordionRuns.delete(panel)
+    if (open) {
+      panel.style.setProperty("--accordion-panel-height", "auto")
+      return
+    }
+    panel.removeAttribute("data-ending-style")
+    panel.setAttribute("hidden", "until-found")
+  }
+  if (!animate) return finish()
+  holdScrollAnchor(panel)
+  transition(panel, open)
+  afterAnimations(panel).then(finish)
+}
+
+function accordionClosing(item) {
+  const panel = accordionContent(item)
+  return !!panel && accordionRuns.has(panel) && panel.dataset.state === "closed"
+}
+
+function accordionToggle(root, item) {
+  const open = item.dataset.state !== "open"
+  const single = accordionSingle(root)
+  if (open && single) for (const other of accordionItems(root)) if (other !== item && other.dataset.state === "open") accordionSet(other, false, true)
+  accordionSet(item, open, true)
+  emit(root, "accordion:change", { value: accordionValue(root) })
+}
+
+define("accordion", {
+  init(root) {
+    root.dataset.orientation ??= "vertical"
+    let seen = false
+    accordionItems(root).forEach((item, index) => {
+      const trigger = accordionTrigger(item)
+      const panel = accordionContent(item)
+      const disabled = accordionDisabled(item)
+      item.dataset.index = String(index)
+      if (trigger) {
+        ensureId(trigger, "accordion-trigger")
+        if (!trigger.matches("button")) trigger.setAttribute("role", "button")
+        buttonType(trigger)
+        if (!trigger.querySelector(':scope > [data-slot="accordion-trigger-icon"]')) trigger.append(icon("chevron-down", { "data-slot": "accordion-trigger-icon" }), icon("chevron-up", { "data-slot": "accordion-trigger-icon" }))
+        if (disabled) {
+          trigger.setAttribute("aria-disabled", "true")
+          trigger.dataset.disabled = ""
+        }
+      }
+      if (panel) {
+        panel.setAttribute("role", "region")
+        panel.dataset.orientation = root.dataset.orientation
+        if (trigger) {
+          panel.setAttribute("aria-labelledby", trigger.id)
+          trigger.setAttribute("aria-controls", ensureId(panel, "accordion-content"))
+        }
+      }
+      const open = item.dataset.state === "open" && !(seen && accordionSingle(root))
+      if (open) seen = true
+      accordionSet(item, open, false)
+    })
+  },
+  click(event, root) {
+    const trigger = event.target.closest('[data-slot="accordion-trigger"]')
+    const item = trigger?.closest('[data-slot="accordion-item"]')
+    if (!item || accordionOf(item) !== root || accordionTrigger(item) !== trigger) return
+    event.preventDefault()
+    if (accordionDisabled(item)) return
+    accordionToggle(root, item)
+  },
+  beforematch(event, root) {
+    const panel = event.target.closest('[data-slot="accordion-content"]')
+    const item = panel?.parentElement
+    if (!item?.matches('[data-slot="accordion-item"]') || accordionOf(item) !== root || item.dataset.state === "open" || accordionClosing(item)) return
+    if (accordionSingle(root)) for (const other of accordionItems(root)) if (other !== item && other.dataset.state === "open") accordionSet(other, false, false)
+    accordionSet(item, true, false)
+    emit(root, "accordion:change", { value: accordionValue(root) })
+  },
+})
+
+function collapsibleParts(root) {
+  if (root instanceof HTMLDetailsElement) {
+    const summary = root.querySelector(":scope > summary")
+    return { triggers: summary ? [summary] : [], content: root.querySelector(':scope > [data-slot="collapsible-content"]') }
+  }
+  return {
+    triggers: own(root, '[data-slot="collapsible-trigger"], [data-collapsible-trigger]'),
+    content: own(root, '[data-slot="collapsible-content"]')[0] ?? null,
+  }
+}
+
+function collapsibleDisabled(root) {
+  return root.hasAttribute("data-disabled") && root.dataset.disabled !== "false"
+}
+
+function collapsibleSet(root, open, animate) {
+  const { triggers, content } = collapsibleParts(root)
+  const details = root instanceof HTMLDetailsElement
+  const state = open ? "open" : "closed"
+  const finish = () => {
+    if (details) root.open = false
+    else if (content) content.hidden = true
+  }
+  if (open) {
+    if (details) root.open = true
+    if (content) content.hidden = false
+  }
+  root.dataset.state = state
+  for (const trigger of triggers) {
+    trigger.dataset.state = state
+    if (details) continue
+    trigger.setAttribute("aria-expanded", String(open))
+    if (!content) continue
+    if (open) trigger.setAttribute("aria-controls", content.id)
+    else trigger.removeAttribute("aria-controls")
+  }
+  if (content) animateHeight(content, open, "--collapsible-content-height", { animate, done: finish })
+  else if (!open) finish()
+}
+
+function collapsibleToggle(root) {
+  const open = root.dataset.state !== "open"
+  collapsibleSet(root, open, true)
+  emit(root, open ? "collapsible:open" : "collapsible:close")
+}
+
+define("collapsible", {
+  init(root) {
+    const { triggers, content } = collapsibleParts(root)
+    const details = root instanceof HTMLDetailsElement
+    if (content) ensureId(content, "collapsible-content")
+    for (const trigger of triggers) {
+      if (details) continue
+      buttonType(trigger)
+      if (collapsibleDisabled(root)) {
+        if (trigger instanceof HTMLButtonElement) trigger.disabled = true
+        else trigger.setAttribute("aria-disabled", "true")
+      }
+    }
+    if (details && collapsibleDisabled(root) && triggers[0]) {
+      triggers[0].setAttribute("aria-disabled", "true")
+      triggers[0].tabIndex = -1
+    }
+    collapsibleSet(root, details ? root.open : root.dataset.state === "open", false)
+  },
+  click(event, root) {
+    const details = root instanceof HTMLDetailsElement
+    const trigger = details ? event.target.closest("summary") : event.target.closest('[data-slot="collapsible-trigger"], [data-collapsible-trigger]')
+    if (!trigger || (details ? trigger.parentElement !== root : trigger.closest('[data-slot="collapsible"]') !== root)) return
+    event.preventDefault()
+    if (collapsibleDisabled(root)) return
+    collapsibleToggle(root)
+  },
+  toggle(event, root) {
+    if (heightClosing(collapsibleParts(root).content) || (root.dataset.state === "open") === root.open) return
+    collapsibleSet(root, root.open, false)
+    emit(root, root.open ? "collapsible:open" : "collapsible:close")
+  },
+})
+
+function tabsParts(root) {
+  return {
+    list: own(root, '[data-slot="tabs-list"]')[0] ?? null,
+    triggers: own(root, '[data-slot="tabs-trigger"]'),
+    panels: own(root, '[data-slot="tabs-content"]'),
+  }
+}
+
+function tabsValue(el) {
+  return el.dataset.value ?? el.textContent.trim()
+}
+
+function tabsSelect(root, value) {
+  const { triggers, panels } = tabsParts(root)
+  const previous = triggers.find(t => t.dataset.state === "active")
+  for (const trigger of triggers) {
+    const active = tabsValue(trigger) === value
+    trigger.dataset.state = active ? "active" : "inactive"
+    trigger.setAttribute("aria-selected", String(active))
+    trigger.tabIndex = active ? 0 : -1
+  }
+  for (const panel of panels) {
+    const active = panel.dataset.value === value
+    panel.dataset.state = active ? "active" : "inactive"
+    panel.hidden = !active
+  }
+  return !previous || tabsValue(previous) !== value
+}
+
+function tabsReveal(trigger) {
+  const list = trigger.closest('[data-slot="tabs-list"]')
+  if (!list || !list.offsetWidth || list.scrollWidth <= list.clientWidth) return
+  const pad = parseFloat(getComputedStyle(list).paddingInlineStart) || 0
+  const view = list.getBoundingClientRect()
+  const box = trigger.getBoundingClientRect()
+  const scale = view.width / list.offsetWidth || 1
+  const start = (box.left - view.left) / scale - list.clientLeft - pad
+  const end = (box.right - view.left) / scale - list.clientLeft - list.clientWidth + pad
+  if (start < 0) list.scrollLeft -= Math.ceil(-start)
+  else if (end > 0) list.scrollLeft += Math.ceil(end)
+}
+
+const tabsListResize = new ResizeObserver(entries => {
+  for (const { target } of entries) {
+    const root = target.closest('[data-slot="tabs"]')
+    const active = root && tabsParts(root).triggers.find(t => t.dataset.state === "active")
+    if (active) tabsReveal(active)
+  }
+})
+
+define("tabs", {
+  init(root) {
+    const vertical = root.dataset.orientation === "vertical"
+    const orientation = vertical ? "vertical" : "horizontal"
+    root.dataset.orientation = orientation
+    const { list, triggers, panels } = tabsParts(root)
+    if (list) {
+      list.setAttribute("role", "tablist")
+      list.setAttribute("aria-orientation", orientation)
+      list.dataset.orientation = orientation
+    }
+    for (const trigger of triggers) {
+      trigger.setAttribute("role", "tab")
+      trigger.dataset.orientation = orientation
+      buttonType(trigger)
+      ensureId(trigger, "tabs-trigger")
+      const panel = panels.find(p => p.dataset.value === tabsValue(trigger))
+      if (panel) {
+        ensureId(panel, "tabs-content")
+        trigger.setAttribute("aria-controls", panel.id)
+        panel.setAttribute("aria-labelledby", trigger.id)
+      }
+    }
+    for (const panel of panels) {
+      panel.setAttribute("role", "tabpanel")
+      panel.dataset.orientation = orientation
+      if (!panel.hasAttribute("tabindex")) panel.tabIndex = 0
+    }
+    const usable = triggers.filter(t => !t.disabled)
+    const initial = triggers.find(t => t.dataset.state === "active" || t.getAttribute("aria-selected") === "true") ?? triggers.find(t => tabsValue(t) === root.dataset.defaultValue) ?? usable[0]
+    if (initial) tabsSelect(root, tabsValue(initial))
+    if (!list || vertical) return
+    if (!list.hasAttribute("tabindex")) list.tabIndex = -1
+    tabsListResize.observe(list)
+    return () => tabsListResize.unobserve(list)
+  },
+})
+
+define("tabs-trigger", {
+  click(event, trigger) {
+    const root = trigger.closest('[data-slot="tabs"]')
+    if (!root || trigger.disabled || trigger.getAttribute("aria-disabled") === "true") return
+    const value = tabsValue(trigger)
+    tabsReveal(trigger)
+    if (tabsSelect(root, value)) emit(root, "tabs:change", { value })
+  },
+  keydown(event, trigger) {
+    const root = trigger.closest('[data-slot="tabs"]')
+    if (!root) return
+    const { triggers } = tabsParts(root)
+    const orientation = root.dataset.orientation === "vertical" ? "vertical" : "horizontal"
+    const next = rove(event, triggers, { orientation, typeahead: false, focus: false })
+    if (!next) return
+    setRoving(triggers, next)
+    queueMicrotask(() => next.focus())
+    if (root.dataset.activation !== "automatic") return
+    const value = tabsValue(next)
+    if (tabsSelect(root, value)) emit(root, "tabs:change", { value })
+  },
+  focusin(event, trigger) {
+    if (trigger.matches(":focus-visible")) tabsReveal(trigger)
+  },
+})
+
+function avatarStatus(img, status) {
+  if (img.dataset.status === status) return
+  img.dataset.status = status
+  const root = img.closest('[data-slot="avatar"]')
+  if (root && status !== "loading") emit(root, "avatar:change", { value: status })
+}
+
+define("avatar-image", {
+  init(img) {
+    if (!img.getAttribute("src")) avatarStatus(img, "error")
+    else if (img.complete) avatarStatus(img, img.naturalWidth > 0 ? "loaded" : "error")
+    else avatarStatus(img, "loading")
+  },
+  load(event, img) {
+    avatarStatus(img, "loaded")
+  },
+  error(event, img) {
+    avatarStatus(img, "error")
+  },
+})
+
+const progressWatch = new MutationObserver(records => {
+  for (const record of records) progressRender(record.target)
+})
+
+function progressRender(el) {
+  const max = Number(el.dataset.max) > 0 ? Number(el.dataset.max) : 100
+  const raw = el.dataset.value
+  const value = raw != null && raw.trim() !== "" && Number.isFinite(Number(raw)) ? Math.min(Math.max(Number(raw), 0), max) : null
+  const state = value == null ? "indeterminate" : value >= max ? "complete" : "loading"
+  const percent = value == null ? 0 : (value / max) * 100
+  el.setAttribute("role", "progressbar")
+  el.setAttribute("aria-valuemin", "0")
+  el.setAttribute("aria-valuemax", String(max))
+  if (value == null) {
+    el.removeAttribute("aria-valuenow")
+    el.removeAttribute("aria-valuetext")
+  } else {
+    el.setAttribute("aria-valuenow", String(value))
+    el.setAttribute("aria-valuetext", `${Math.round(percent)}%`)
+  }
+  let track = el.querySelector(':scope > [data-slot="progress-track"]')
+  if (!track) {
+    track = h("div", { "data-slot": "progress-track" })
+    el.append(track)
+  }
+  let indicator = track.querySelector(':scope > [data-slot="progress-indicator"]') ?? el.querySelector(':scope > [data-slot="progress-indicator"]')
+  if (!indicator) indicator = h("div", { "data-slot": "progress-indicator" })
+  if (indicator.parentElement !== track) track.append(indicator)
+  indicator.style.insetInlineStart = "0"
+  indicator.style.width = value == null ? "" : `${percent}%`
+  const label = el.querySelector(':scope > [data-slot="progress-label"]')
+  if (label && !el.hasAttribute("aria-label") && !el.hasAttribute("aria-labelledby")) el.setAttribute("aria-labelledby", ensureId(label, "progress-label"))
+  const text = el.querySelector(':scope > [data-slot="progress-value"]')
+  if (text) text.textContent = value == null ? "" : `${Math.round(percent)}%`
+  for (const part of [el, track, indicator, label, text]) {
+    if (!part) continue
+    part.dataset.state = state
+    part.toggleAttribute("data-complete", state === "complete")
+    part.toggleAttribute("data-indeterminate", state === "indeterminate")
+    part.toggleAttribute("data-progressing", state === "loading")
+  }
+  indicator.dataset.max = String(max)
+  if (value == null) delete indicator.dataset.value
+  else indicator.dataset.value = String(value)
+}
+
+define("progress", {
+  init(el) {
+    progressRender(el)
+    progressWatch.observe(el, { attributes: true, attributeFilter: ["data-value", "data-max"] })
+  },
+})
+
+function separatorInit(el) {
+  const vertical = el.dataset.orientation === "vertical"
+  el.dataset.orientation = vertical ? "vertical" : "horizontal"
+  const role = el.getAttribute("role")
+  if (!role && !(el instanceof HTMLHRElement)) el.setAttribute("role", "none")
+  if ((role === "separator" || el instanceof HTMLHRElement) && vertical) el.setAttribute("aria-orientation", "vertical")
+}
+
+define("separator", { init: separatorInit })
+define("item-separator", { init: separatorInit })
+
+define("spinner", {
+  init(el) {
+    if (!el.firstElementChild && el instanceof SVGSVGElement) {
+      const source = icon("loader-circle")
+      for (const name of ["viewBox", "fill", "stroke", "stroke-width", "stroke-linecap", "stroke-linejoin", "width", "height"]) if (!el.hasAttribute(name)) el.setAttribute(name, source.getAttribute(name))
+      el.classList.add("lucide", "lucide-loader-circle")
+      el.replaceChildren(...source.childNodes)
+    }
+    const role = el.getAttribute("role")
+    if (role === "none" || role === "presentation") {
+      el.setAttribute("aria-hidden", "true")
+      return
+    }
+    if (!role) el.setAttribute("role", "status")
+    if (!el.hasAttribute("aria-label") && !el.hasAttribute("aria-labelledby")) el.setAttribute("aria-label", stringFor(el, "loading"))
+  },
+})
+
+function aspectRatioParse(text) {
+  const [a, b = "1"] = String(text ?? "").split("/")
+  const ratio = Number(a) / Number(b)
+  return ratio > 0 && Number.isFinite(ratio) ? ratio : null
+}
+
+define("aspect-ratio", {
+  init(el) {
+    const ratio = aspectRatioParse(el.dataset.ratio)
+    if (ratio) el.style.setProperty("--ratio", String(ratio))
+  },
+})
+
+define("breadcrumb", {
+  init(nav) {
+    if (!nav.hasAttribute("aria-label")) nav.setAttribute("aria-label", stringFor(nav, "breadcrumb"))
+    for (const el of nav.querySelectorAll('[data-slot="breadcrumb-separator"]')) {
+      el.setAttribute("role", "presentation")
+      el.setAttribute("aria-hidden", "true")
+      if (!el.firstElementChild && !el.textContent.trim()) el.append(icon("chevron-right"))
+    }
+    for (const el of nav.querySelectorAll('[data-slot="breadcrumb-ellipsis"]')) {
+      el.setAttribute("role", "presentation")
+      el.setAttribute("aria-hidden", "true")
+      if (!el.firstElementChild) el.append(icon("ellipsis"), h("span", { class: "sr-only" }, stringFor(el, "more")))
+    }
+    for (const el of nav.querySelectorAll('[data-slot="breadcrumb-page"]')) {
+      if (!el.hasAttribute("role")) el.setAttribute("role", "link")
+      el.setAttribute("aria-disabled", "true")
+      el.setAttribute("aria-current", "page")
+    }
+  },
+})
+
+const scrollAreaStates = new WeakMap()
+
+function scrollAreaFlags(state) {
+  for (const bar of state.bars) {
+    bar.toggleAttribute("data-hovering", state.hover)
+    const axis = bar.dataset.orientation === "horizontal" ? "x" : "y"
+    bar.toggleAttribute("data-scrolling", state.scrolling[axis] || state.dragging === axis)
+  }
+}
+
+function scrollAreaUpdate(state) {
+  const v = state.viewport
+  const rtl = getComputedStyle(v).direction === "rtl"
+  for (const bar of state.bars) {
+    const horizontal = bar.dataset.orientation === "horizontal"
+    const thumb = bar.querySelector('[data-slot="scroll-area-thumb"]')
+    const view = horizontal ? v.clientWidth : v.clientHeight
+    const content = horizontal ? v.scrollWidth : v.scrollHeight
+    const track = (horizontal ? bar.clientWidth : bar.clientHeight) - 2
+    const size = Math.min(track, Math.max(content > 0 ? (view / content) * track : track, 18))
+    const max = content - view
+    const position = horizontal ? Math.abs(v.scrollLeft) : v.scrollTop
+    const offset = max > 0 ? (Math.min(position, max) / max) * (track - size) : 0
+    bar.dataset.overflow = String(max > 1)
+    if (!thumb) continue
+    thumb.style.setProperty(horizontal ? "width" : "height", `${size}px`)
+    thumb.style.transform = horizontal ? `translateX(${rtl ? -offset : offset}px)` : `translateY(${offset}px)`
+  }
+  scrollAreaFlags(state)
+}
+
+define("scroll-area", {
+  init(root) {
+    const viewport = root.querySelector(':scope > [data-slot="scroll-area-viewport"]')
+    if (!viewport) return
+    if (!viewport.hasAttribute("tabindex")) viewport.tabIndex = 0
+    if (!viewport.hasAttribute("role") && (viewport.hasAttribute("aria-label") || viewport.hasAttribute("aria-labelledby"))) viewport.setAttribute("role", "region")
+    if (![...root.querySelectorAll(':scope > [data-slot="scroll-area-scrollbar"]')].some(b => b.dataset.orientation !== "horizontal")) {
+      root.append(h("div", { "data-slot": "scroll-area-scrollbar", "data-orientation": "vertical" }))
+    }
+    const bars = [...root.querySelectorAll(':scope > [data-slot="scroll-area-scrollbar"]')]
+    for (const bar of bars) {
+      bar.dataset.orientation = bar.dataset.orientation === "horizontal" ? "horizontal" : "vertical"
+      if (!bar.querySelector('[data-slot="scroll-area-thumb"]')) bar.append(h("div", { "data-slot": "scroll-area-thumb" }))
+      bar.querySelector('[data-slot="scroll-area-thumb"]').dataset.orientation = bar.dataset.orientation
+    }
+    const state = { root, viewport, bars, hover: false, scrolling: { x: false, y: false }, timers: {}, at: { x: viewport.scrollLeft, y: viewport.scrollTop }, dragging: null, frame: 0 }
+    scrollAreaStates.set(root, state)
+    const update = () => scrollAreaUpdate(state)
+    const stop = observeChildren(viewport, update)
+    const wheel = event => {
+      const max = event.currentTarget.dataset.orientation === "horizontal" ? viewport.scrollWidth - viewport.clientWidth : viewport.scrollHeight - viewport.clientHeight
+      if (max <= 0) return
+      event.preventDefault()
+      viewport.scrollBy({ left: event.deltaX, top: event.deltaY })
+    }
+    for (const bar of bars) bar.addEventListener("wheel", wheel, { passive: false })
+    update()
+    return () => {
+      stop()
+      clearTimeout(state.timers.x)
+      clearTimeout(state.timers.y)
+      cancelAnimationFrame(state.frame)
+      for (const bar of bars) bar.removeEventListener("wheel", wheel)
+    }
+  },
+  pointerenter(event, root) {
+    const state = scrollAreaStates.get(root)
+    if (!state) return
+    state.hover = true
+    scrollAreaUpdate(state)
+  },
+  pointerleave(event, root) {
+    const state = scrollAreaStates.get(root)
+    if (!state) return
+    state.hover = false
+    scrollAreaFlags(state)
+  },
+  pointerdown(event, root) {
+    const bar = event.target.closest('[data-slot="scroll-area-scrollbar"]')
+    const state = scrollAreaStates.get(root)
+    if (!state || !bar || bar.parentElement !== root || event.button !== 0) return
+    const thumb = bar.querySelector('[data-slot="scroll-area-thumb"]')
+    if (!thumb) return
+    const v = state.viewport
+    const horizontal = bar.dataset.orientation === "horizontal"
+    const rtl = getComputedStyle(v).direction === "rtl"
+    const br = bar.getBoundingClientRect()
+    const tr = thumb.getBoundingClientRect()
+    const along = e => (horizontal ? (rtl ? br.right - e.clientX : e.clientX - br.left) : e.clientY - br.top)
+    const size = horizontal ? tr.width : tr.height
+    const max = horizontal ? v.scrollWidth - v.clientWidth : v.scrollHeight - v.clientHeight
+    const set = pos => {
+      pos = Math.min(Math.max(pos, 0), max)
+      if (horizontal) v.scrollLeft = rtl ? -pos : pos
+      else v.scrollTop = pos
+    }
+    if (!thumb.contains(event.target)) {
+      const bs = getComputedStyle(bar)
+      const ts = getComputedStyle(thumb)
+      const pad = horizontal ? parseFloat(bs.paddingInlineStart) + parseFloat(bs.paddingInlineEnd) : parseFloat(bs.paddingBlockStart) + parseFloat(bs.paddingBlockEnd)
+      const margin = horizontal ? parseFloat(ts.marginInlineStart) * 2 : parseFloat(ts.marginBlockStart) + parseFloat(ts.marginBlockEnd)
+      const length = horizontal ? thumb.offsetWidth : thumb.offsetHeight
+      const room = (horizontal ? bar.offsetWidth : bar.offsetHeight) - length - pad - margin
+      const ratio = room > 0 ? ((horizontal ? event.clientX - br.left : event.clientY - br.top) - length / 2 - pad + margin / 2) / room : 0
+      set((horizontal && rtl ? 1 - ratio : ratio) * max)
+    }
+    const origin = along(event)
+    const from = horizontal ? Math.abs(v.scrollLeft) : v.scrollTop
+    const room = (horizontal ? bar.clientWidth : bar.clientHeight) - 2 - size
+    const move = e => set(room > 0 ? from + ((along(e) - origin) / room) * max : 0)
+    state.dragging = horizontal ? "x" : "y"
+    scrollAreaFlags(state)
+    bar.setPointerCapture(event.pointerId)
+    const end = () => {
+      bar.removeEventListener("pointermove", move)
+      bar.removeEventListener("pointerup", end)
+      bar.removeEventListener("lostpointercapture", end)
+      state.dragging = null
+      scrollAreaFlags(state)
+    }
+    bar.addEventListener("pointermove", move)
+    bar.addEventListener("pointerup", end)
+    bar.addEventListener("lostpointercapture", end)
+  },
+})
+
+define("scroll-area-viewport", {
+  scroll(event, viewport) {
+    const state = scrollAreaStates.get(viewport.parentElement)
+    if (!state) return
+    const at = { x: viewport.scrollLeft, y: viewport.scrollTop }
+    for (const axis of ["x", "y"]) {
+      if (at[axis] === state.at[axis]) continue
+      state.scrolling[axis] = true
+      clearTimeout(state.timers[axis])
+      state.timers[axis] = setTimeout(() => {
+        state.scrolling[axis] = false
+        scrollAreaFlags(state)
+      }, 600)
+    }
+    state.at = at
+    if (state.frame) return
+    state.frame = requestAnimationFrame(() => {
+      state.frame = 0
+      scrollAreaUpdate(state)
+    })
+  },
+})
+
+const resizableSizes = new WeakMap()
+const resizableDefaults = new WeakMap()
+
+function resizableParts(group) {
+  const kids = [...group.children]
+  return {
+    panels: kids.filter(el => el.matches('[data-slot="resizable-panel"]')),
+    handles: kids.filter(el => el.matches('[data-slot="resizable-handle"]')),
+  }
+}
+
+function resizableLimit(panel, name, fallback) {
+  const value = Number(panel.dataset[name])
+  return panel.dataset[name] != null && Number.isFinite(value) ? value : fallback
+}
+
+function resizableRange(panels, sizes, i) {
+  const total = sizes[i] + sizes[i + 1]
+  const lo = Math.max(resizableLimit(panels[i], "minSize", 0), total - resizableLimit(panels[i + 1], "maxSize", 100))
+  const hi = Math.min(resizableLimit(panels[i], "maxSize", 100), total - resizableLimit(panels[i + 1], "minSize", 0))
+  return [lo, hi]
+}
+
+function resizableRender(group) {
+  const { panels, handles } = resizableParts(group)
+  const sizes = panels.map(p => resizableSizes.get(p) ?? 0)
+  panels.forEach((panel, i) => {
+    panel.style.flex = `${sizes[i]} 1 0px`
+  })
+  handles.forEach(handle => {
+    const prev = handle.previousElementSibling
+    const i = panels.indexOf(prev)
+    if (i < 0 || i + 1 >= panels.length) return
+    const [lo, hi] = resizableRange(panels, sizes, i)
+    handle.setAttribute("aria-valuenow", String(Math.round(sizes[i] * 1000) / 1000))
+    handle.setAttribute("aria-valuemin", String(Math.round(lo * 1000) / 1000))
+    handle.setAttribute("aria-valuemax", String(Math.round(hi * 1000) / 1000))
+  })
+}
+
+function resizableMove(group, handle, size) {
+  const { panels } = resizableParts(group)
+  const i = panels.indexOf(handle.previousElementSibling)
+  if (i < 0 || i + 1 >= panels.length) return
+  const sizes = panels.map(p => resizableSizes.get(p) ?? 0)
+  const [lo, hi] = resizableRange(panels, sizes, i)
+  const next = Math.min(Math.max(size, lo), hi)
+  if (Math.abs(next - sizes[i]) < 1e-6) return
+  const total = sizes[i] + sizes[i + 1]
+  resizableSizes.set(panels[i], next)
+  resizableSizes.set(panels[i + 1], total - next)
+  resizableRender(group)
+  emit(group, "resizable:change", { value: panels.map(p => Math.round(resizableSizes.get(p) * 100) / 100) })
+}
+
+define("resizable-panel-group", {
+  init(group) {
+    const vertical = group.dataset.orientation === "vertical"
+    group.dataset.orientation = vertical ? "vertical" : "horizontal"
+    const { panels, handles } = resizableParts(group)
+    const given = panels.map(p => (Number(p.dataset.defaultSize) > 0 ? Number(p.dataset.defaultSize) : null))
+    const used = given.reduce((sum, v) => sum + (v ?? 0), 0)
+    const free = given.filter(v => v == null).length
+    const sizes = given.map(v => v ?? Math.max(0, 100 - used) / free)
+    const total = sizes.reduce((sum, v) => sum + v, 0) || 1
+    panels.forEach((panel, i) => {
+      ensureId(panel, "resizable-panel")
+      panel.dataset.orientation = group.dataset.orientation
+      resizableSizes.set(panel, (sizes[i] / total) * 100)
+      resizableDefaults.set(panel, (sizes[i] / total) * 100)
+    })
+    for (const handle of handles) {
+      handle.setAttribute("role", "separator")
+      handle.setAttribute("aria-orientation", vertical ? "horizontal" : "vertical")
+      if (!handle.hasAttribute("tabindex")) handle.tabIndex = 0
+      if (!handle.hasAttribute("aria-label")) handle.setAttribute("aria-label", stringFor(handle, "resize"))
+      const prev = handle.previousElementSibling
+      if (prev?.matches('[data-slot="resizable-panel"]')) handle.setAttribute("aria-controls", prev.id)
+      if (handle.hasAttribute("data-with-handle") && !handle.firstElementChild) handle.append(h("div"))
+    }
+    resizableRender(group)
+  },
+})
+
+define("resizable-handle", {
+  dblclick(event, handle) {
+    const group = handle.parentElement
+    const panel = handle.previousElementSibling
+    if (group?.matches('[data-slot="resizable-panel-group"]') && resizableDefaults.has(panel)) resizableMove(group, handle, resizableDefaults.get(panel))
+  },
+  keydown(event, handle) {
+    const group = handle.parentElement
+    const panel = handle.previousElementSibling
+    if (!group?.matches('[data-slot="resizable-panel-group"]') || !panel || event.altKey || event.ctrlKey || event.metaKey) return
+    const vertical = group.dataset.orientation === "vertical"
+    const rtl = getComputedStyle(group).direction === "rtl"
+    const step = Number(group.dataset.keyboardStep) > 0 ? Number(group.dataset.keyboardStep) : 5
+    const size = resizableSizes.get(panel) ?? 0
+    let target = null
+    if (event.key === (vertical ? "ArrowUp" : rtl ? "ArrowRight" : "ArrowLeft")) target = size - step
+    else if (event.key === (vertical ? "ArrowDown" : rtl ? "ArrowLeft" : "ArrowRight")) target = size + step
+    else if (event.key === "Home") target = -Infinity
+    else if (event.key === "End") target = Infinity
+    if (target == null) return
+    event.preventDefault()
+    resizableMove(group, handle, target)
+  },
+  pointerdown(event, handle) {
+    const group = handle.parentElement
+    const panel = handle.previousElementSibling
+    if (event.button !== 0 || !group?.matches('[data-slot="resizable-panel-group"]') || !panel) return
+    event.preventDefault()
+    handle.focus({ preventScroll: true })
+    const vertical = group.dataset.orientation === "vertical"
+    const rtl = !vertical && getComputedStyle(group).direction === "rtl"
+    const { handles } = resizableParts(group)
+    const room = (vertical ? group.clientHeight : group.clientWidth) - handles.reduce((sum, el) => sum + (vertical ? el.offsetHeight : el.offsetWidth), 0)
+    const origin = vertical ? event.clientY : event.clientX
+    const start = resizableSizes.get(panel) ?? 0
+    const move = e => {
+      const delta = ((vertical ? e.clientY : e.clientX) - origin) / Math.max(room, 1)
+      resizableMove(group, handle, start + (rtl ? -delta : delta) * 100)
+    }
+    const end = () => {
+      handle.removeEventListener("pointermove", move)
+      handle.removeEventListener("pointerup", end)
+      handle.removeEventListener("lostpointercapture", end)
+      delete handle.dataset.state
+    }
+    handle.dataset.state = "drag"
+    handle.setPointerCapture(event.pointerId)
+    handle.addEventListener("pointermove", move)
+    handle.addEventListener("pointerup", end)
+    handle.addEventListener("lostpointercapture", end)
+  },
+})
+
+const carouselRoots = new WeakMap()
+const carouselAnimations = new Set()
+const carouselLive = new Set()
+let carouselTabAt = 0
+
+new MutationObserver(() => {
+  for (const inst of carouselLive) carouselFresh(inst)
+}).observe(document.documentElement, { attributes: true, subtree: true, attributeFilter: ["dir"] })
+
+document.addEventListener("keydown", event => {
+  if (event.code === "Tab") carouselTabAt = Date.now()
+})
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) for (const animation of carouselAnimations) animation.hidden()
+})
+
+function carouselParts(root) {
+  const viewport = own(root, '[data-slot="carousel-content"]')[0] ?? null
+  return {
+    viewport,
+    items: viewport ? own(root, '[data-slot="carousel-item"]').filter(el => viewport.contains(el)) : [],
+    buttons: own(root, '[data-slot="carousel-previous"], [data-slot="carousel-next"]'),
+  }
+}
+
+function carouselVector(value) {
+  const read = n => (typeof n === "number" ? n : n.get())
+  return {
+    get: () => value,
+    set: n => (value = read(n)),
+    add: n => (value += read(n)),
+    subtract: n => (value -= read(n)),
+  }
+}
+
+function carouselLimit(min = 0, max = 0) {
+  const length = Math.abs(min - max)
+  const reachedMin = n => n < min
+  const reachedMax = n => n > max
+  const reachedAny = n => reachedMin(n) || reachedMax(n)
+  return {
+    min,
+    max,
+    length,
+    reachedMin,
+    reachedMax,
+    reachedAny,
+    constrain: n => (reachedAny(n) ? (n < min ? min : max) : n),
+    removeOffset: n => (length ? n - length * Math.ceil((n - max) / length) : n),
+  }
+}
+
+function carouselCounter(max, start, loop) {
+  const fix = n => (loop ? Math.abs((max + 1 + n) % (max + 1)) : Math.min(Math.max(n, 0), max))
+  let value = fix(start)
+  const counter = {
+    get: () => value,
+    set: n => ((value = fix(n)), counter),
+    add: n => carouselCounter(max, value, loop).set(value + n),
+    clone: () => carouselCounter(max, value, loop),
+  }
+  return counter
+}
+
+function carouselTranslate(axis, node) {
+  let last = null
+  return {
+    to(n) {
+      const v = Math.round(100 * axis.direction(n)) / 100
+      if (v === last) return
+      node.style.transform = axis.scroll === "x" ? `translate3d(${v}px,0px,0px)` : `translate3d(0px,${v}px,0px)`
+      last = v
+    },
+    clear() {
+      node.style.transform = ""
+      if (!node.getAttribute("style")) node.removeAttribute("style")
+    },
+  }
+}
+
+function carouselRect(el) {
+  const { offsetTop: top, offsetLeft: left, offsetWidth: width, offsetHeight: height } = el
+  return { top, right: left + width, bottom: top + height, left, width, height }
+}
+
+function carouselAnimation(update, render) {
+  const step = 1000 / 60
+  let last = null
+  let lag = 0
+  let frame = 0
+  const tick = now => {
+    if (!frame) return
+    if (!last) {
+      last = now
+      update()
+      update()
+    }
+    lag += now - last
+    last = now
+    for (; lag >= step; lag -= step) update()
+    render(lag / step)
+    if (frame) frame = requestAnimationFrame(tick)
+  }
+  const stop = () => {
+    cancelAnimationFrame(frame)
+    last = null
+    lag = 0
+    frame = 0
+  }
+  return {
+    start: () => frame || (frame = requestAnimationFrame(tick)),
+    stop,
+    update,
+    render,
+    hidden() {
+      last = null
+      lag = 0
+    },
+  }
+}
+
+function carouselEngine(track, slides, o, select) {
+  const vertical = o.axis === "y"
+  const rtl = o.direction === "rtl"
+  const sign = vertical || !rtl ? 1 : -1
+  const axis = {
+    scroll: vertical ? "y" : "x",
+    cross: vertical ? "x" : "y",
+    start: vertical ? "top" : rtl ? "right" : "left",
+    end: vertical ? "bottom" : rtl ? "left" : "right",
+    size: r => (vertical ? r.height : r.width),
+    direction: n => n * sign,
+  }
+  const last = list => list[Math.max(0, list.length - 1)]
+  const box = carouselRect(track)
+  const rects = slides.map(carouselRect)
+  const view = axis.size(box)
+  const percent = n => (n / 100) * view
+  const align = size => (o.align === "start" ? 0 : o.align === "end" ? view - size : (view - size) / 2)
+  const contain = !o.loop
+  const startGap = Math.abs(box[axis.start] - rects[0][axis.start])
+  const endGap = parseFloat(getComputedStyle(last(slides)).getPropertyValue(`margin-${axis.end}`))
+  const sizes = rects.map(axis.size)
+  const gaps = rects.map((r, i) => Math.abs(i ? (i === rects.length - 1 ? sizes[i] + endGap : rects[i + 1][axis.start] - r[axis.start]) : sizes[i] + startGap))
+  const snaps = rects.map(r => -Math.abs(box[axis.start] - r[axis.start]))
+  const aligned = rects.map((r, i) => snaps[i] + align(Math.abs(r[axis.end] - r[axis.start])))
+  const content = -last(snaps) + last(gaps)
+  const bounds = carouselLimit(-content + view, 0)
+  const near = (a, b) => Math.abs(a - b) <= 1
+  const bounded = aligned
+    .map((snap, i) => {
+      const at = bounds.constrain(snap)
+      if (!i) return bounds.max
+      if (i === aligned.length - 1 || near(bounds.min, at)) return bounds.min
+      return near(bounds.max, at) ? bounds.max : at
+    })
+    .map(n => parseFloat(n.toFixed(3)))
+  const containLimit = carouselLimit(bounded.lastIndexOf(bounded[0]), bounded.indexOf(last(bounded)) + 1)
+  const scrollSnaps = contain ? (content <= view + 2 ? [bounds.max] : bounded.slice(containLimit.min, containLimit.max)) : aligned
+  const limit = carouselLimit(o.loop ? scrollSnaps[0] - content : last(scrollSnaps), scrollSnaps[0])
+  const index = carouselCounter(scrollSnaps.length - 1, o.startIndex, o.loop)
+  const first = scrollSnaps[index.get()]
+  const location = carouselVector(first)
+  const previous = carouselVector(first)
+  const offset = carouselVector(first)
+  const target = carouselVector(first)
+  const range = (n, from = 0) => Array.from(Array(n), (_, i) => from + i)
+  const groups = slides.map((_, i) => [i])
+  const registry =
+    scrollSnaps.length === 1
+      ? [range(slides.length)]
+      : contain
+        ? groups.slice(containLimit.min, containLimit.max).map((group, n, list) => (n ? (n === list.length - 1 ? range(slides.length - last(list)[0], last(list)[0]) : group) : range(last(list[0]) + 1)))
+        : groups
+
+  let velocity = 0
+  let moving = 0
+  let duration = o.duration
+  let friction = 0.68
+  let raw = location.get()
+  let rawPrevious = 0
+  const body = {
+    direction: () => moving,
+    duration: () => duration,
+    seek() {
+      const displacement = target.get() - location.get()
+      let diff
+      if (duration) {
+        previous.set(location)
+        velocity += displacement / duration
+        velocity *= friction
+        raw += velocity
+        location.add(velocity)
+        diff = raw - rawPrevious
+      } else {
+        velocity = 0
+        previous.set(target)
+        location.set(target)
+        diff = displacement
+      }
+      moving = Math.sign(diff)
+      rawPrevious = raw
+    },
+    settled: () => Math.abs(target.get() - offset.get()) < 0.001,
+    useDuration: n => ((duration = n), body),
+    useFriction: n => ((friction = n), body),
+    useBaseFriction: () => body.useFriction(0.68),
+  }
+
+  const smallest = list => list.concat().sort((a, b) => Math.abs(a) - Math.abs(b))[0]
+  const shortcut = (n, dir) => {
+    if (!o.loop) return n
+    const options = [n, n + content, n - content]
+    if (!dir) return smallest(options)
+    const valid = options.filter(x => Math.sign(x) === dir)
+    return valid.length ? smallest(valid) : last(options) - content
+  }
+  const byDistance = (distance, snap) => {
+    const at = target.get() + distance
+    const to = o.loop ? limit.removeOffset(at) : limit.constrain(at)
+    const { index: i } = scrollSnaps.map((s, n) => ({ diff: shortcut(s - to, 0), index: n })).sort((a, b) => Math.abs(a.diff) - Math.abs(b.diff))[0]
+    if (!snap || (!o.loop && limit.reachedAny(at))) return { index: i, distance }
+    return { index: i, distance: distance + shortcut(scrollSnaps[i] - to, 0) }
+  }
+  const byIndex = (i, dir) => ({ index: i, distance: shortcut(scrollSnaps[i] - target.get(), dir) })
+
+  const pullBack = percent(10)
+  const tolerance = percent(50)
+  const pull = carouselLimit(0.1, 0.99)
+  const shouldConstrain = () => limit.reachedAny(target.get()) && limit.reachedAny(offset.get())
+  const constrain = down => {
+    if (!shouldConstrain()) return
+    const edge = limit.reachedMin(offset.get()) ? "min" : "max"
+    const toEdge = Math.abs(limit[edge] - offset.get())
+    const toTarget = target.get() - offset.get()
+    target.subtract(toTarget * pull.constrain(toEdge / tolerance))
+    if (!down && Math.abs(toTarget) < pullBack) {
+      target.set(limit.constrain(target.get()))
+      body.useDuration(reducedMotion.matches ? 0 : 25).useBaseFriction()
+    }
+  }
+
+  const wrap = carouselLimit(limit.min + 0.1, limit.max + 0.1)
+  const scrollLoop = dir => {
+    if (!(dir === 1 ? wrap.reachedMax(offset.get()) : dir === -1 && wrap.reachedMin(offset.get()))) return
+    for (const v of [location, offset, previous, target]) v.add(-dir * content)
+  }
+  const ascending = gaps.map((_, i) => i)
+  const left = (list, from) => list.reduce((a, i) => a - gaps[i], from)
+  const take = (list, from) => list.reduce((a, i) => (left(a, from) > 0 ? a.concat([i]) : a), [])
+  const points = (list, shift, end) => {
+    const edges = snaps.map((s, i) => ({ start: s - sizes[i] + 0.5 + shift, end: s + view - 0.5 + shift }))
+    return list.map(i => {
+      const point = edges[i][end ? "end" : "start"]
+      const before = end ? 0 : -content
+      const after = end ? content : 0
+      return { index: i, at: -1, translate: carouselTranslate(axis, slides[i]), target: () => (offset.get() > point ? before : after) }
+    })
+  }
+  const loopPoints = points(take(ascending.slice().reverse(), scrollSnaps[0]), content, false).concat(points(take(ascending, view - scrollSnaps[0] - 1), -content, true))
+  const slideLoop = () => {
+    for (const p of loopPoints) {
+      const v = p.target()
+      if (v === p.at) continue
+      p.translate.to(v)
+      p.at = v
+    }
+  }
+
+  const engine = { o, axis, percent, index, location, target, body, byDistance, byIndex, scrollSnaps, registry, down: false }
+  const translate = carouselTranslate(axis, track)
+  const animation = carouselAnimation(
+    () => {
+      if (!o.loop) constrain(engine.down)
+      body.seek()
+    },
+    alpha => {
+      const settled = body.settled()
+      if ((o.loop ? settled : settled && !shouldConstrain()) && !engine.down) animation.stop()
+      offset.set(location.get() * alpha + previous.get() * (1 - alpha))
+      if (o.loop) {
+        scrollLoop(body.direction())
+        slideLoop()
+      }
+      translate.to(offset.get())
+    },
+  )
+  const scrollTo = t => {
+    const changed = t.index !== index.get()
+    target.add(t.distance)
+    if (t.distance) {
+      if (body.duration()) animation.start()
+      else {
+        animation.update()
+        animation.render(1)
+        animation.update()
+      }
+    }
+    if (changed) {
+      index.set(t.index)
+      select()
+    }
+  }
+  return Object.assign(engine, {
+    animation,
+    canLoop: () => loopPoints.every(({ index: i }) => left(ascending.filter(n => n !== i), view) <= 0.1),
+    scrollToDistance: (n, snap) => scrollTo(byDistance(n, snap)),
+    scrollToIndex: (n, dir) => scrollTo(byIndex(index.clone().set(n).get(), dir)),
+    start() {
+      translate.to(location.get())
+      if (o.loop) slideLoop()
+    },
+    clear() {
+      animation.stop()
+      translate.clear()
+      for (const p of loopPoints) p.translate.clear()
+    },
+  })
+}
+
+function carouselMount(inst) {
+  const { root, viewport, track } = inst
+  const slides = [...track.children]
+  const offs = (inst.offs = [])
+  const on = (target, type, fn, options = { passive: true }) => {
+    target.addEventListener(type, fn, options)
+    offs.push(() => target.removeEventListener(type, fn, options))
+  }
+  const mo = new MutationObserver(records => records.some(r => r.type === "childList") && carouselReInit(inst))
+  mo.observe(track, { childList: true })
+  const options = new MutationObserver(() => carouselReInit(inst))
+  options.observe(root, { attributes: true, attributeFilter: ["data-orientation", "data-align", "data-loop"] })
+  offs.push(() => {
+    mo.disconnect()
+    options.disconnect()
+  })
+  inst.engine = null
+  if (!slides.length) return
+  const o = {
+    axis: root.dataset.orientation === "vertical" ? "y" : "x",
+    direction: getComputedStyle(viewport).direction === "rtl" ? "rtl" : "ltr",
+    loop: root.hasAttribute("data-loop"),
+    align: root.dataset.align,
+    duration: 25,
+    startIndex: inst.start,
+  }
+  const select = () => carouselSelect(inst)
+  let e = carouselEngine(track, slides, o, select)
+  if (o.loop && !e.canLoop()) e = carouselEngine(track, slides, { ...o, loop: false }, select)
+  inst.engine = e
+  e.start()
+  carouselAnimations.add(e.animation)
+  offs.push(() => carouselAnimations.delete(e.animation))
+
+  slides.forEach((slide, i) =>
+    on(
+      slide,
+      "focus",
+      () => {
+        if (Date.now() - carouselTabAt > 10) return
+        viewport.scrollLeft = 0
+        e.body.useDuration(0)
+        e.scrollToIndex(e.registry.findIndex(group => group.includes(i)), 0)
+      },
+      { passive: true, capture: true },
+    ),
+  )
+
+  const watched = [track, ...slides]
+  const measure = el => e.axis.size(carouselRect(el))
+  const known = watched.map(measure)
+  let stopped = false
+  const ro = new ResizeObserver(entries => {
+    for (const entry of entries) {
+      if (stopped) return
+      if (Math.abs(measure(entry.target) - known[watched.indexOf(entry.target)]) >= 0.5) return carouselReInit(inst)
+    }
+  })
+  const frame = requestAnimationFrame(() => watched.forEach(el => ro.observe(el)))
+  offs.push(() => {
+    stopped = true
+    cancelAnimationFrame(frame)
+    ro.disconnect()
+  })
+
+  if (!track.offsetParent) return
+  const next = Math.min(Math.max(e.percent(20), 50), 225)
+  const moves = []
+  let startScroll = 0
+  let startCross = 0
+  let preventScroll = false
+  let preventClick = false
+  let mouse = false
+  let first = null
+  let latest = null
+  const read = (event, ax = e.axis.scroll) => (event instanceof MouseEvent ? event : event.touches[0])[ax === "x" ? "clientX" : "clientY"]
+  const release = event => {
+    if (!first || !latest) return 0
+    const time = event.timeStamp - first.timeStamp
+    const speed = (read(latest) - read(first)) / time
+    return time && event.timeStamp - latest.timeStamp <= 170 && Math.abs(speed) > 0.1 ? speed : 0
+  }
+  const clearMoves = () => {
+    for (const off of moves.splice(0)) off()
+  }
+  const move = event => {
+    if (!(event instanceof MouseEvent) && event.touches.length >= 2) return up(event)
+    const along = Math.abs(read(event) - startScroll)
+    const across = Math.abs(read(event, e.axis.cross) - startCross)
+    if (!preventScroll && !mouse && (!event.cancelable || !(preventScroll = along > across))) return up(event)
+    const diff = read(event) - read(latest)
+    if (event.timeStamp - first.timeStamp > 170) first = event
+    latest = event
+    if (along > 10) preventClick = true
+    e.body.useFriction(0.3).useDuration(0.75)
+    e.animation.start()
+    e.target.add(e.axis.direction(diff))
+    event.preventDefault()
+  }
+  const up = event => {
+    const raw = release(event) * (mouse ? 300 : 400)
+    const force = e.axis.direction(raw)
+    const distance = Math.abs(force) < next ? e.byDistance(force, true).distance : e.byIndex(e.index.add(-Math.sign(force)).get(), 0).distance
+    const factor = raw && distance && Math.abs(raw) > Math.abs(distance) ? Math.abs((Math.abs(raw) - Math.abs(distance)) / raw) : 0
+    preventScroll = false
+    e.down = false
+    clearMoves()
+    e.body.useDuration(reducedMotion.matches ? 0 : 25 - 10 * factor).useFriction(0.68 + factor / 50)
+    e.scrollToDistance(distance, true)
+    mouse = false
+  }
+  const down = event => {
+    mouse = event instanceof MouseEvent
+    preventClick = false
+    if ((mouse && event.button !== 0) || ["INPUT", "SELECT", "TEXTAREA"].includes(event.target.nodeName || "")) return
+    e.down = true
+    first = latest = event
+    e.body.useFriction(0).useDuration(0)
+    e.target.set(e.location)
+    clearMoves()
+    const node = mouse ? root.ownerDocument : viewport
+    for (const [type, fn, options] of [["touchmove", move, { passive: false }], ["touchend", up], ["mousemove", move, { passive: false }], ["mouseup", up]]) {
+      node.addEventListener(type, fn, options ?? { passive: true })
+      moves.push(() => node.removeEventListener(type, fn, options ?? { passive: true }))
+    }
+    startScroll = read(event)
+    startCross = read(event, e.axis.cross)
+  }
+  on(viewport, "dragstart", event => event.preventDefault(), { passive: false })
+  on(viewport, "touchmove", () => {}, { passive: false })
+  on(viewport, "touchend", () => {})
+  on(viewport, "touchstart", down)
+  on(viewport, "mousedown", down)
+  on(viewport, "touchcancel", up)
+  on(viewport, "contextmenu", up)
+  on(
+    viewport,
+    "click",
+    event => {
+      if (!preventClick) return
+      event.stopPropagation()
+      event.preventDefault()
+      preventClick = false
+    },
+    true,
+  )
+  offs.push(clearMoves)
+}
+
+function carouselUnmount(inst) {
+  for (const off of inst.offs.splice(0)) off()
+  inst.engine?.clear()
+}
+
+function carouselReInit(inst) {
+  const before = inst.engine && [inst.engine.index.get(), inst.engine.scrollSnaps.length]
+  if (before) inst.start = before[0]
+  carouselUnmount(inst)
+  carouselMount(inst)
+  carouselButtons(inst)
+  const e = inst.engine
+  if (e && (!before || before[0] !== e.index.get() || before[1] !== e.scrollSnaps.length)) carouselChange(inst)
+}
+
+function carouselFresh(inst) {
+  const direction = getComputedStyle(inst.viewport).direction === "rtl" ? "rtl" : "ltr"
+  if (inst.engine && inst.engine.o.direction !== direction) carouselReInit(inst)
+}
+
+function carouselChange(inst) {
+  emit(inst.root, "carousel:change", { value: inst.engine.index.get(), count: inst.engine.scrollSnaps.length })
+}
+
+function carouselButtons(inst) {
+  const index = inst.engine?.index
+  for (const button of carouselParts(inst.root).buttons) {
+    button.disabled = !index || index.add(button.dataset.slot === "carousel-previous" ? -1 : 1).get() === index.get()
+    button.toggleAttribute("data-disabled", button.disabled)
+  }
+}
+
+function carouselSelect(inst) {
+  carouselButtons(inst)
+  carouselChange(inst)
+}
+
+function carouselGo(root, delta) {
+  const inst = carouselRoots.get(root)
+  if (!inst) return
+  carouselFresh(inst)
+  const e = inst.engine
+  if (!e) return
+  e.body.useBaseFriction().useDuration(reducedMotion.matches ? 0 : e.o.duration)
+  e.scrollToIndex(e.index.add(delta).get(), -delta)
+}
+
+define("carousel", {
+  init(root) {
+    root.dataset.orientation = root.dataset.orientation === "vertical" ? "vertical" : "horizontal"
+    if (!root.hasAttribute("role")) root.setAttribute("role", "region")
+    root.setAttribute("aria-roledescription", stringFor(root, "carousel"))
+    const { viewport, items, buttons } = carouselParts(root)
+    items.forEach((item, i) => {
+      if (!item.hasAttribute("role")) item.setAttribute("role", "group")
+      item.setAttribute("aria-roledescription", stringFor(item, "slide"))
+      if (!item.hasAttribute("aria-label") && !item.hasAttribute("aria-labelledby")) item.setAttribute("aria-label", stringFor(item, "slideOf", { index: i + 1, count: items.length }))
+    })
+    for (const button of buttons) {
+      const previous = button.dataset.slot === "carousel-previous"
+      buttonType(button)
+      if (!button.firstElementChild && !button.textContent.trim()) button.append(icon(previous ? "arrow-left" : "arrow-right"), h("span", { class: "sr-only" }, stringFor(button, previous ? "previousSlide" : "nextSlide")))
+    }
+    const track = viewport?.firstElementChild
+    if (!track) return
+    const inst = { root, viewport, track, start: 0, engine: null, offs: [] }
+    carouselRoots.set(root, inst)
+    carouselLive.add(inst)
+    carouselMount(inst)
+    carouselButtons(inst)
+    setTimeout(() => carouselLive.has(inst) && inst.engine && carouselChange(inst))
+    return () => {
+      carouselUnmount(inst)
+      carouselLive.delete(inst)
+      carouselRoots.delete(root)
+    }
+  },
+  keydown(event, root) {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest("input, textarea, select, [contenteditable]:not([contenteditable='false'])")) return
+    const vertical = root.dataset.orientation === "vertical"
+    const rtl = getComputedStyle(root).direction === "rtl"
+    let delta = 0
+    if (vertical) delta = event.key === "ArrowUp" ? -1 : event.key === "ArrowDown" ? 1 : 0
+    else if (event.key === "ArrowLeft") delta = rtl ? 1 : -1
+    else if (event.key === "ArrowRight") delta = rtl ? -1 : 1
+    if (!delta) return
+    event.preventDefault()
+    carouselGo(root, delta)
+  },
+})
+
+define("carousel-previous", {
+  click(event, button) {
+    const root = button.closest('[data-slot="carousel"]')
+    if (root) carouselGo(root, -1)
+  },
+})
+
+define("carousel-next", {
+  click(event, button) {
+    const root = button.closest('[data-slot="carousel"]')
+    if (root) carouselGo(root, 1)
+  },
+})
+
+const sidebarModes = new WeakMap()
+const sidebarSheets = new Map()
+const sidebarQuery = matchMedia("(width < 48rem)")
+let sidebarTip = null
+
+function sidebarWrapper(el) {
+  return el.closest('[data-slot="sidebar-wrapper"]')
+}
+
+function sidebarOf(el) {
+  const id = el.getAttribute("aria-controls")
+  const byId = id ? document.getElementById(id) : null
+  if (byId?.matches('[data-slot="sidebar"]')) return byId
+  const inside = el.closest('[data-slot="sidebar"]')
+  if (inside) return inside
+  const wrapper = sidebarWrapper(el)
+  return wrapper ? ([...wrapper.querySelectorAll('[data-slot="sidebar"]')].find(s => sidebarWrapper(s) === wrapper) ?? null) : null
+}
+
+function sidebarTriggers(sidebar) {
+  return [...document.querySelectorAll('[data-slot="sidebar-trigger"]')].filter(t => sidebarOf(t) === sidebar)
+}
+
+function sidebarKey(sidebar) {
+  const wrapper = sidebarWrapper(sidebar)
+  return wrapper?.id ? `sidebar_state:${wrapper.id}` : "sidebar_state"
+}
+
+function sidebarStored(sidebar) {
+  try {
+    const value = localStorage.getItem(sidebarKey(sidebar))
+    return value === "true" ? true : value === "false" ? false : null
+  } catch {
+    return null
+  }
+}
+
+function sidebarStore(sidebar, open) {
+  try {
+    localStorage.setItem(sidebarKey(sidebar), String(open))
+  } catch {}
+}
+
+function sidebarSyncTriggers(sidebar) {
+  const open = sidebarQuery.matches ? sidebarSheets.has(sidebar) : sidebar.dataset.state !== "collapsed"
+  for (const trigger of sidebarTriggers(sidebar)) trigger.setAttribute("aria-expanded", String(open))
+}
+
+function sidebarApply(sidebar, open) {
+  const mode = sidebarModes.get(sidebar) ?? "offcanvas"
+  sidebar.dataset.state = open ? "expanded" : "collapsed"
+  if (mode !== "none") sidebar.dataset.collapsible = open ? "" : mode
+  sidebarSyncTriggers(sidebar)
+  if (open) sidebarTooltipHide()
+}
+
+function sidebarOpenSheet(sidebar, trigger) {
+  const container = sidebar.querySelector(':scope > [data-slot="sidebar-container"]')
+  if (!container || sidebarSheets.has(sidebar)) return
+  const restore = saveFocus(trigger)
+  sidebar.dataset.mobile = "open"
+  const overlay = h("div", { "data-slot": "sheet-overlay", "aria-hidden": "true", popover: "manual" })
+  sidebar.before(overlay)
+  overlay.showPopover()
+  topLayerChanged(overlay, true)
+  transition(overlay, true)
+  sidebar.popover = "manual"
+  if (!sidebar.matches(":popover-open")) sidebar.showPopover()
+  topLayerChanged(sidebar, true)
+  transition(sidebar, true)
+  container.setAttribute("role", "dialog")
+  container.setAttribute("aria-modal", "true")
+  if (!container.hasAttribute("aria-label")) container.setAttribute("aria-label", stringFor(container, "sidebar"))
+  const releases = [trapFocus(container), lockScroll(), dismissable(container, reason => sidebarCloseSheet(sidebar, reason !== "outside"), { intentional: true, ignore: [trigger] })]
+  sidebarSheets.set(sidebar, { container, overlay, releases, restore })
+  focusFirst(container)
+  sidebarSyncTriggers(sidebar)
+  emit(sidebar, "sidebar:open", { mobile: true })
+}
+
+function sidebarCloseSheet(sidebar, restoreFocus = true, instant = false) {
+  const sheet = sidebarSheets.get(sidebar)
+  if (!sheet) return
+  sidebarSheets.delete(sidebar)
+  for (const release of sheet.releases) release()
+  sidebar.dataset.mobile = "closed"
+  sidebarSyncTriggers(sidebar)
+  const motion = instant ? null : Promise.all([transition(sheet.overlay, false), transition(sidebar, false)])
+  const done = () => {
+    sheet.overlay.remove()
+    topLayerChanged(sheet.overlay, false)
+    if (sidebarSheets.has(sidebar)) return
+    delete sidebar.dataset.mobile
+    sidebar.removeAttribute("data-ending-style")
+    if (sidebar.matches(":popover-open")) sidebar.hidePopover()
+    topLayerChanged(sidebar, false)
+    sidebar.removeAttribute("popover")
+    sheet.container.removeAttribute("role")
+    sheet.container.removeAttribute("aria-modal")
+    if (restoreFocus && focusLost(sheet.container)) sheet.restore()
+  }
+  if (instant) done()
+  else motion.then(done)
+  emit(sidebar, "sidebar:close", { mobile: true })
+}
+
+function sidebarToggle(sidebar, trigger) {
+  if (!sidebar || sidebarModes.get(sidebar) === "none") return
+  if (sidebarQuery.matches) {
+    if (sidebarSheets.has(sidebar)) sidebarCloseSheet(sidebar)
+    else sidebarOpenSheet(sidebar, trigger)
+    return
+  }
+  const open = sidebar.dataset.state === "collapsed"
+  sidebarApply(sidebar, open)
+  sidebarStore(sidebar, open)
+  emit(sidebar, open ? "sidebar:open" : "sidebar:close", { mobile: false })
+}
+
+function sidebarTooltipHide() {
+  if (!sidebarTip) return
+  sidebarTip.stop()
+  sidebarTip.tip.remove()
+  sidebarTip.button.removeAttribute("aria-describedby")
+  sidebarTip = null
+}
+
+function sidebarTooltipShow(button) {
+  const sidebar = button.closest('[data-slot="sidebar"]')
+  const text = button.dataset.tooltip
+  if (sidebarTip?.button === button) return
+  sidebarTooltipHide()
+  if (!text || !sidebar || sidebar.dataset.state !== "collapsed" || sidebarModes.get(sidebar) !== "icon" || sidebarQuery.matches || sidebar.dataset.mobile) return
+  const tip = h("div", { "data-slot": "tooltip-content", "data-state": "open", popover: "manual", role: "tooltip", id: uid("sidebar-tooltip") }, text, h("span", { "data-slot": "tooltip-arrow", "aria-hidden": "true" }))
+  document.body.append(tip)
+  tip.showPopover()
+  const end = (sidebar.dataset.side === "right") !== (direction(sidebar) === "rtl")
+  const stop = position(tip, button, { side: end ? "left" : "right", align: "center", sideOffset: 10 })
+  button.setAttribute("aria-describedby", tip.id)
+  sidebarTip = { tip, stop, button }
+}
+
+define("sidebar", {
+  init(sidebar) {
+    const authored = sidebar.dataset.collapsible
+    const mode = authored === "icon" || authored === "none" ? authored : "offcanvas"
+    sidebarModes.set(sidebar, mode)
+    ensureId(sidebar, "sidebar")
+    if (mode === "none") return
+    sidebar.dataset.side = sidebar.dataset.side === "right" ? "right" : "left"
+    sidebar.dataset.variant ||= "sidebar"
+    const container = sidebar.querySelector(':scope > [data-slot="sidebar-container"]')
+    if (container) container.dataset.side = sidebar.dataset.side
+    sidebarApply(sidebar, sidebarStored(sidebar) ?? sidebar.dataset.state !== "collapsed")
+    return () => {
+      sidebarCloseSheet(sidebar, false, true)
+      if (sidebarTip && sidebar.contains(sidebarTip.button)) sidebarTooltipHide()
+    }
+  },
+})
+
+define("sidebar-trigger", {
+  init(trigger) {
+    buttonType(trigger)
+    if (!trigger.firstElementChild && !trigger.textContent.trim()) trigger.append(icon("panel-left"), h("span", { class: "sr-only" }, stringFor(trigger, "toggleSidebar")))
+    const sidebar = sidebarOf(trigger)
+    if (!sidebar) return
+    trigger.setAttribute("aria-controls", ensureId(sidebar, "sidebar"))
+    trigger.setAttribute("aria-expanded", String(sidebarQuery.matches ? sidebarSheets.has(sidebar) : sidebar.dataset.state !== "collapsed"))
+  },
+  click(event, trigger) {
+    sidebarToggle(sidebarOf(trigger), trigger)
+  },
+})
+
+define("sidebar-rail", {
+  init(rail) {
+    rail.tabIndex = -1
+    if (!rail.hasAttribute("aria-label")) rail.setAttribute("aria-label", stringFor(rail, "toggleSidebar"))
+    if (!rail.hasAttribute("title")) rail.setAttribute("title", stringFor(rail, "toggleSidebar"))
+    buttonType(rail)
+  },
+  click(event, rail) {
+    sidebarToggle(rail.closest('[data-slot="sidebar"]'), rail)
+  },
+})
+
+define("sidebar-separator", { init: separatorInit })
+
+define("sidebar-menu-skeleton", {
+  init(el) {
+    if (!el.firstElementChild) {
+      if (el.hasAttribute("data-show-icon")) el.append(h("div", { "data-slot": "skeleton", "data-sidebar": "menu-skeleton-icon" }))
+      el.append(h("div", { "data-slot": "skeleton", "data-sidebar": "menu-skeleton-text" }))
+    }
+    if (!el.style.getPropertyValue("--skeleton-width")) {
+      const i = [...document.querySelectorAll('[data-slot="sidebar-menu-skeleton"]')].indexOf(el)
+      el.style.setProperty("--skeleton-width", `${50 + ((i + 1) * 37) % 40}%`)
+    }
+  },
+})
+
+define("sidebar-menu-button", {
+  pointerover(event, button) {
+    if (event.pointerType !== "touch") sidebarTooltipShow(button)
+  },
+  pointerout(event, button) {
+    if (!button.contains(event.relatedTarget) && sidebarTip?.button === button && document.activeElement !== button) sidebarTooltipHide()
+  },
+  focusin(event, button) {
+    if (button.matches(":focus-visible")) sidebarTooltipShow(button)
+  },
+  focusout(event, button) {
+    if (sidebarTip?.button === button) sidebarTooltipHide()
+  },
+  keydown(event, button) {
+    if (event.key === "Escape" && sidebarTip?.button === button) sidebarTooltipHide()
+  },
+})
+
+sidebarQuery.addEventListener("change", () => {
+  for (const sidebar of [...sidebarSheets.keys()]) sidebarCloseSheet(sidebar, false, true)
+  sidebarTooltipHide()
+  for (const sidebar of document.querySelectorAll('[data-slot="sidebar"]')) sidebarSyncTriggers(sidebar)
+})
+
+document.addEventListener("keydown", event => {
+  if (event.key !== "b" || !(event.metaKey || event.ctrlKey) || event.altKey || event.shiftKey || event.defaultPrevented) return
+  const active = document.activeElement instanceof Element ? document.activeElement : null
+  const wrapper = active?.closest('[data-slot="sidebar-wrapper"]') ?? document.querySelector('[data-slot="sidebar-wrapper"]')
+  const sidebar = wrapper ? [...wrapper.querySelectorAll('[data-slot="sidebar"]')].find(s => sidebarWrapper(s) === wrapper) : null
+  if (!sidebar || sidebarModes.get(sidebar) === "none") return
+  event.preventDefault()
+  sidebarToggle(sidebar, null)
+})
+
+export function direction(el = document.documentElement) {
+  return getComputedStyle(el).direction === "rtl" ? "rtl" : "ltr"
+}
+
+function messageAttr(el, name, value) {
+  if (value === null || value === undefined || value === false) {
+    if (el.hasAttribute(name)) el.removeAttribute(name)
+    return
+  }
+  const text = value === true ? "" : String(value)
+  if (el.getAttribute(name) !== text) el.setAttribute(name, text)
+}
+
+function partDefaults(slot, attrs) {
+  define(slot, {
+    init(el) {
+      for (const [name, value] of Object.entries(attrs)) if (!el.hasAttribute(name)) el.setAttribute(name, value)
+    },
+  })
+}
+
+partDefaults("message", { "data-align": "start" })
+partDefaults("bubble", { "data-variant": "default", "data-align": "start" })
+partDefaults("bubble-reactions", { "data-align": "end", "data-side": "bottom" })
+partDefaults("marker", { "data-variant": "default" })
+partDefaults("marker-icon", { "aria-hidden": "true" })
+partDefaults("attachment", { "data-state": "done", "data-size": "default", "data-orientation": "horizontal" })
+partDefaults("attachment-media", { "data-variant": "icon" })
+partDefaults("code-block", { "data-variant": "default", "data-size": "default" })
+partDefaults("trace-icon", { "aria-hidden": "true" })
+partDefaults("message-scroller-item", { "data-scroll-anchor": "false" })
+partDefaults("questionnaire-previous", { "data-variant": "outline", "data-size": "default" })
+partDefaults("questionnaire-skip", { "data-variant": "outline", "data-size": "default" })
+partDefaults("questionnaire-next", { "data-variant": "default", "data-size": "default" })
+partDefaults("questionnaire-submit", { "data-variant": "default", "data-size": "default" })
+
+function traceParts(collapsible) {
+  let trigger = null
+  let content = null
+  for (const child of collapsible.children) {
+    const slot = child.getAttribute("data-slot")
+    if (slot === "trace-collapsible-trigger" && !trigger) trigger = child
+    else if (slot === "trace-collapsible-content" && !content) content = child
+  }
+  return { trigger, content }
+}
+
+const traceRuns = new WeakMap()
+
+function traceApply(collapsible, open, animate) {
+  const { trigger, content } = traceParts(collapsible)
+  const value = open ? "open" : "closed"
+  const parts = [collapsible, trigger, content].filter(Boolean)
+  for (const el of parts) el.dataset.state = value
+  for (const el of [collapsible, content]) {
+    if (!el) continue
+    el.toggleAttribute("data-open", open)
+    el.toggleAttribute("data-closed", !open)
+  }
+  if (trigger) {
+    trigger.setAttribute("aria-expanded", String(open))
+    trigger.toggleAttribute("data-panel-open", open)
+  }
+  if (!content) return
+  const running = traceRuns.has(content)
+  const run = {}
+  traceRuns.set(content, run)
+  const size = (height, width) => {
+    content.style.setProperty("--collapsible-panel-height", height)
+    content.style.setProperty("--collapsible-panel-width", width)
+  }
+  const finish = () => {
+    if (traceRuns.get(content) !== run) return
+    traceRuns.delete(content)
+    for (const el of parts) el.removeAttribute("data-ending-style")
+    if (open) size("auto", "auto")
+    else content.hidden = true
+  }
+  if (!animate) {
+    for (const el of parts) el.removeAttribute("data-starting-style")
+    content.hidden = !open
+    return finish()
+  }
+  if (open) {
+    for (const el of parts) {
+      if (running) el.removeAttribute("data-ending-style")
+      else transition(el, true)
+    }
+    content.hidden = false
+    size(`${content.scrollHeight}px`, `${content.scrollWidth}px`)
+    getComputedStyle(content).getPropertyValue("height")
+    requestAnimationFrame(() => {
+      holdScrollAnchor(content)
+      afterAnimations(content).then(finish)
+    })
+    return
+  }
+  const rect = content.getBoundingClientRect()
+  size(`${rect.height}px`, `${rect.width}px`)
+  getComputedStyle(content).getPropertyValue("height")
+  for (const el of parts) transition(el, false)
+  holdScrollAnchor(content)
+  afterAnimations(content).then(finish)
+}
+
+function traceSet(target, open, animate) {
+  const collapsible = (typeof target === "string" ? document.getElementById(target) : target)?.closest('[data-slot="trace-collapsible"]')
+  if (!collapsible || (collapsible.dataset.state === "open") === open) return false
+  traceApply(collapsible, open, animate)
+  emit(collapsible, open ? "trace:open" : "trace:close")
+  return true
+}
+
+export function traceOpen(target, { animate = true } = {}) {
+  return traceSet(target, true, animate)
+}
+
+export function traceClose(target, { animate = true } = {}) {
+  return traceSet(target, false, animate)
+}
+
+define("trace-collapsible", {
+  init(el) {
+    const { trigger, content } = traceParts(el)
+    if (content && !content.querySelector(':scope > [data-slot="trace-collapsible-content-inner"]')) {
+      content.append(h("div", { "data-slot": "trace-collapsible-content-inner" }, [...content.childNodes]))
+    }
+    if (trigger) {
+      buttonType(trigger)
+      const last = trigger.lastElementChild
+      if (!(last?.getAttribute("data-slot") === "trace-icon" && last.querySelector(".lucide-chevron-right"))) {
+        trigger.append(h("span", { "data-slot": "trace-icon", "aria-hidden": "true" }, icon("chevron-right")))
+      }
+      if (content) trigger.setAttribute("aria-controls", ensureId(content, "trace-content"))
+    }
+    const authored = el.getAttribute("data-default-open")
+    const open = authored === null ? el.dataset.state === "open" : authored !== "false"
+    traceApply(el, open, false)
+  },
+})
+
+define("trace-collapsible-trigger", {
+  click(event, el) {
+    const collapsible = el.parentElement
+    if (collapsible?.getAttribute("data-slot") !== "trace-collapsible") return
+    if (el.matches(":disabled, [aria-disabled='true']") || collapsible.hasAttribute("data-disabled")) return
+    traceSet(collapsible, collapsible.dataset.state !== "open", true)
+  },
+})
+
+const codeBlockSaved = new WeakMap()
+const codeBlockTimers = new WeakMap()
+const codeBlockLive = new WeakMap()
+
+function codeBlockLineContent(line) {
+  if (!line.hasAttribute("data-variant")) line.setAttribute("data-variant", "default")
+  if (line.querySelector(':scope > [data-slot="code-block-line-content"]')) return
+  const nodes = [...line.childNodes]
+  line.replaceChildren(h("span", { "data-slot": "code-block-line-content" }, line.textContent === "" ? "\n" : nodes))
+}
+
+function codeBlockPrepare(pre) {
+  let code = pre.querySelector(':scope > [data-slot="code-block-code"]')
+  if (!code) {
+    code = h("code", { "data-slot": "code-block-code" }, [...pre.childNodes])
+    pre.append(code)
+  }
+  const head = code.firstChild
+  if (head?.nodeType === Node.TEXT_NODE && head.data.startsWith("\n")) head.data = head.data.slice(1)
+  const lines = code.querySelectorAll(':scope > [data-slot="code-block-line"]')
+  if (lines.length) {
+    for (const node of [...code.childNodes]) if (node.nodeType === Node.TEXT_NODE && !node.data.trim()) node.remove()
+    for (const line of lines) codeBlockLineContent(line)
+  } else if (pre.hasAttribute("data-numbered") && [...code.childNodes].every(node => node.nodeType === Node.TEXT_NODE)) {
+    const text = code.textContent.replace(/\n$/, "")
+    code.replaceChildren(...text.split("\n").map(part => {
+      const line = h("span", { "data-slot": "code-block-line" }, part)
+      codeBlockLineContent(line)
+      return line
+    }))
+  }
+  const start = Number.parseInt(pre.getAttribute("data-start-line") ?? "1", 10)
+  pre.style.counterReset = `line ${Number.isFinite(start) ? start - 1 : 0}`
+}
+
+function codeBlockText(block) {
+  const content = block?.querySelector('[data-slot="code-block-content"]')
+  if (!content) return ""
+  const lines = [...content.querySelectorAll('[data-slot="code-block-line"]')]
+  if (lines.length) return lines.map(line => (line.querySelector('[data-slot="code-block-line-content"]') ?? line).textContent.replace(/\n$/, "")).join("\n")
+  return content.textContent.replace(/\n$/, "")
+}
+
+async function codeBlockCopy(button) {
+  if (button.matches(":disabled, [aria-disabled='true']")) return
+  const block = button.closest('[data-slot="code-block"]')
+  const text = button.hasAttribute("data-value") ? button.getAttribute("data-value") : codeBlockText(block)
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch {
+    return
+  }
+  if (!codeBlockSaved.has(button)) codeBlockSaved.set(button, { label: button.getAttribute("aria-label"), nodes: [...button.childNodes] })
+  button.setAttribute("data-copied", "true")
+  const copied = stringFor(button, "copied")
+  button.setAttribute("aria-label", copied)
+  button.replaceChildren(icon("check"))
+  const live = codeBlockLive.get(button)
+  if (live) live.textContent = copied
+  emit(block ?? button, "code-block:copy", { value: text })
+  clearTimeout(codeBlockTimers.get(button))
+  codeBlockTimers.set(button, setTimeout(() => codeBlockReset(button), Number(button.getAttribute("data-timeout")) || 2000))
+}
+
+function codeBlockReset(button) {
+  const saved = codeBlockSaved.get(button)
+  codeBlockSaved.delete(button)
+  codeBlockTimers.delete(button)
+  button.removeAttribute("data-copied")
+  if (saved) {
+    button.replaceChildren(...saved.nodes)
+    if (saved.label === null) button.removeAttribute("aria-label")
+    else button.setAttribute("aria-label", saved.label)
+  }
+  const live = codeBlockLive.get(button)
+  if (live) live.textContent = ""
+}
+
+function codeBlockSetWrap(button, wrap) {
+  const content = button.closest('[data-slot="code-block"]')?.querySelector('[data-slot="code-block-content"]')
+  if (!content) return
+  messageAttr(content, "data-wrap", wrap ? "true" : null)
+  button.setAttribute("aria-pressed", String(wrap))
+}
+
+define("code-block-content", {
+  init(el) {
+    if (!el.hasAttribute("tabindex")) el.tabIndex = 0
+    el.dir = "ltr"
+    codeBlockPrepare(el)
+  },
+})
+
+define("code-block-copy-button", {
+  init(el) {
+    buttonType(el)
+    if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", stringFor(el, "copy"))
+    if (!el.querySelector("svg")) el.append(icon("copy"))
+    const live = h("span", { "aria-live": "polite", class: "sr-only" })
+    el.after(live)
+    codeBlockLive.set(el, live)
+    return () => {
+      clearTimeout(codeBlockTimers.get(el))
+      codeBlockReset(el)
+      codeBlockLive.delete(el)
+      live.remove()
+    }
+  },
+  click(event, el) {
+    codeBlockCopy(el)
+  },
+})
+
+define("code-block-wrap-button", {
+  init(el) {
+    buttonType(el)
+    if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", stringFor(el, "wrapLines"))
+    const content = el.closest('[data-slot="code-block"]')?.querySelector('[data-slot="code-block-content"]')
+    el.setAttribute("aria-pressed", String(Boolean(content?.hasAttribute("data-wrap") && content.getAttribute("data-wrap") !== "false")))
+  },
+  click(event, el) {
+    if (el.matches(":disabled, [aria-disabled='true']")) return
+    const wrap = el.getAttribute("aria-pressed") !== "true"
+    codeBlockSetWrap(el, wrap)
+    emit(el.closest('[data-slot="code-block"]') ?? el, "code-block:wrap", { value: wrap })
+  },
+})
+
+define("attachment-action", {
+  init(el) {
+    buttonType(el)
+  },
+})
+
+define("attachment-trigger", {
+  init(el) {
+    buttonType(el)
+  },
+})
+
+const messageScrollerStates = new WeakMap()
+const messageScrollerKeys = new Map([["ArrowUp", true], ["PageUp", true], ["Home", true], ["ArrowDown", false], ["PageDown", false], ["End", false], [" ", false]])
+
+function messageScrollerNumber(el, name, fallback) {
+  const value = Number.parseFloat(el.getAttribute(name) ?? "")
+  return Number.isFinite(value) ? value : fallback
+}
+
+function messageScrollerItems(s) {
+  return [...s.content.children].filter(child => child instanceof HTMLElement && !child.hasAttribute("data-message-scroller-spacer"))
+}
+
+function messageScrollerSpacerLast(s) {
+  if (s.spacerEl.parentElement !== s.content || s.content.lastElementChild !== s.spacerEl) s.content.append(s.spacerEl)
+  s.mutation?.takeRecords()
+}
+
+function messageScrollerPadding(el) {
+  const style = getComputedStyle(el)
+  return { start: Number.parseFloat(style.paddingBlockStart) || 0, end: Number.parseFloat(style.paddingBlockEnd) || 0 }
+}
+
+function messageScrollerBottom(s) {
+  const pad = messageScrollerPadding(s.content)
+  const top = s.viewport.getBoundingClientRect().top
+  const scrollTop = s.viewport.scrollTop
+  let bottom = pad.start + pad.end
+  for (const item of messageScrollerItems(s)) bottom = Math.max(bottom, item.getBoundingClientRect().bottom - top + scrollTop + pad.end)
+  return bottom
+}
+
+function messageScrollerTop(el, viewport) {
+  return el.getBoundingClientRect().top - viewport.getBoundingClientRect().top + viewport.scrollTop
+}
+
+function messageScrollerViewportTop(el, viewport) {
+  return el.getBoundingClientRect().top - viewport.getBoundingClientRect().top
+}
+
+function messageScrollerEdges(s) {
+  const bottom = messageScrollerBottom(s)
+  return {
+    start: s.viewport.scrollTop > s.threshold,
+    end: bottom - s.viewport.scrollTop - s.viewport.clientHeight > s.threshold,
+  }
+}
+
+function messageScrollerCommit(s) {
+  if (!s.root.isConnected) return
+  const edges = messageScrollerEdges(s)
+  const top = s.viewport.scrollTop
+  const up = top < s.lastTop - 0.5
+  s.lastTop = top
+  if (s.autoScroll && !edges.end && s.mode !== "settling-jump" && s.mode !== "anchored-to-message") s.mode = "following-bottom"
+  else if (s.mode === "following-bottom" && edges.end && up && !s.autoscrolling) s.mode = "free-scrolling"
+  const published = s.mode === "following-bottom" ? { start: edges.start, end: false } : edges
+  const value = [published.start && "start", published.end && "end"].filter(Boolean).join(" ") || null
+  for (const el of [s.root, s.viewport]) {
+    messageAttr(el, "data-scrollable", value)
+    messageAttr(el, "data-autoscrolling", s.autoscrolling)
+  }
+  for (const button of s.root.querySelectorAll('[data-slot="message-scroller-button"]')) {
+    if (button.closest('[data-slot="message-scroller"]') !== s.root) continue
+    const active = button.getAttribute("data-direction") === "start" ? published.start : published.end
+    messageAttr(button, "data-active", String(active))
+    if (button.inert === active) button.inert = !active
+    button.tabIndex = active ? 0 : -1
+  }
+  const previous = s.published
+  s.published = published
+  if (previous && (previous.start !== published.start || previous.end !== published.end)) emit(s.root, "message-scroller:scrollable", { start: published.start, end: published.end })
+}
+
+function messageScrollerSchedule(s) {
+  if (s.frame) return
+  s.frame = requestAnimationFrame(() => {
+    s.frame = 0
+    messageScrollerCommit(s)
+  })
+}
+
+function messageScrollerAutoscrolling(s, on) {
+  clearTimeout(s.autoTimer)
+  s.autoTimer = 0
+  if (s.autoscrolling !== on) {
+    s.autoscrolling = on
+    messageScrollerCommit(s)
+  }
+  if (!on) return
+  s.autoTimer = setTimeout(() => {
+    s.autoTimer = 0
+    s.autoscrolling = false
+    messageScrollerCommit(s)
+  }, 180)
+}
+
+function messageScrollerSpacer(s, height) {
+  const next = Math.max(0, Math.ceil(height))
+  if (s.spacer === next) return
+  s.spacer = next
+  const style = getComputedStyle(s.content)
+  const gap = Number.parseFloat(style.rowGap === "normal" ? style.gap : style.rowGap) || 0
+  s.spacerEl.hidden = next === 0
+  s.spacerEl.style.height = `${next}px`
+  s.spacerEl.style.marginTop = next > 0 ? `${-gap}px` : ""
+}
+
+function messageScrollerBehavior(behavior) {
+  return behavior === "smooth" && reducedMotion.matches ? "auto" : behavior
+}
+
+function messageScrollerTo(s, top, { behavior = "auto", autoscrolling = false } = {}) {
+  const next = Math.max(0, top)
+  if (Math.abs(s.viewport.scrollTop - next) <= 0.5) {
+    s.viewport.scrollTop = next
+    messageScrollerCommit(s)
+    return
+  }
+  if (autoscrolling) messageScrollerAutoscrolling(s, true)
+  const resolved = messageScrollerBehavior(behavior)
+  s.viewport.scrollTo({ top: next, behavior: resolved })
+  if (resolved === "smooth") messageScrollerSchedule(s)
+  else messageScrollerCommit(s)
+}
+
+function messageScrollerStart(s, { behavior = "auto" } = {}) {
+  messageScrollerSpacer(s, 0)
+  s.anchored = null
+  s.mode = "free-scrolling"
+  messageScrollerTo(s, 0, { behavior })
+  return true
+}
+
+function messageScrollerEnd(s, { behavior = "auto" } = {}) {
+  messageScrollerSpacer(s, 0)
+  s.anchored = null
+  s.mode = s.autoScroll ? "following-bottom" : "free-scrolling"
+  messageScrollerTo(s, s.viewport.scrollHeight - s.viewport.clientHeight, { behavior, autoscrolling: true })
+  return true
+}
+
+function messageScrollerTarget(s, el, align, margin) {
+  const top = messageScrollerTop(el, s.viewport)
+  const height = el.getBoundingClientRect().height
+  const pad = messageScrollerPadding(s.content)
+  const view = s.viewport.clientHeight
+  if (align === "center") return top - pad.start - (Math.max(0, view - pad.start - pad.end) - height) / 2 - margin
+  if (align === "end") return top - view + height + pad.end + margin
+  if (align === "nearest") {
+    const bottom = top + height
+    const viewTop = s.viewport.scrollTop + pad.start
+    const viewBottom = s.viewport.scrollTop + view - pad.end
+    if (top >= viewTop && bottom <= viewBottom) return s.viewport.scrollTop
+    if (top < viewTop) return top - pad.start - margin
+    return bottom - view + pad.end + margin
+  }
+  return top - pad.start - margin
+}
+
+function messageScrollerElement(s, el, { align = "start", behavior = "auto", scrollMargin = s.margin } = {}, peek = false) {
+  if (!s.content.contains(el)) return false
+  const top = messageScrollerTarget(s, el, align, peek ? scrollMargin + s.peek : scrollMargin)
+  messageScrollerSpacer(s, top + s.viewport.clientHeight - messageScrollerBottom(s))
+  s.prepend = { el, top: messageScrollerViewportTop(el, s.viewport) }
+  s.mode = peek ? "anchored-to-message" : "settling-jump"
+  s.anchored = peek ? el : null
+  messageScrollerTo(s, top, { behavior })
+  return true
+}
+
+function messageScrollerCapture(s) {
+  const rect = s.viewport.getBoundingClientRect()
+  for (const item of messageScrollerItems(s)) {
+    if (!item.dataset.messageId) continue
+    const r = item.getBoundingClientRect()
+    if (r.bottom > rect.top && r.top < rect.bottom) {
+      s.prepend = { el: item, top: r.top - rect.top }
+      return
+    }
+  }
+  s.prepend = null
+}
+
+function messageScrollerRestore(s) {
+  const anchor = s.prepend
+  if (!anchor || !anchor.el.isConnected) return false
+  const delta = messageScrollerViewportTop(anchor.el, s.viewport) - anchor.top
+  if (Math.abs(delta) <= 0.5) return false
+  s.viewport.scrollTop += delta
+  anchor.top = messageScrollerViewportTop(anchor.el, s.viewport)
+  messageScrollerSchedule(s)
+  return true
+}
+
+function messageScrollerPending(s, on) {
+  for (const el of [s.root, s.viewport]) messageAttr(el, "data-pending-scroll", on)
+}
+
+function messageScrollerApplied(s) {
+  s.applied = true
+  messageScrollerPending(s, false)
+  for (const item of messageScrollerItems(s)) if (item.dataset.scrollAnchor === "true") s.handled.add(item)
+}
+
+function messageScrollerReveal(items) {
+  if (!items.length) return
+  for (const item of items) item.style.contentVisibility = "visible"
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    for (const item of items) item.style.removeProperty("content-visibility")
+  }))
+}
+
+function messageScrollerDefault(s) {
+  if (s.applied || s.count === 0) return false
+  let done = false
+  const items = messageScrollerItems(s)
+  const last = items.findLastIndex(item => item.dataset.scrollAnchor === "true")
+  messageScrollerReveal(items.slice(Math.max(0, Math.min(items.length - 8, last < 0 ? items.length : last))))
+  if (s.position === "last-anchor") {
+    const anchor = items[last]
+    if (!anchor) done = messageScrollerEnd(s)
+    else {
+      const fits = messageScrollerBottom(s) - messageScrollerTop(anchor, s.viewport) <= s.viewport.clientHeight
+      done = fits ? messageScrollerEnd(s) : messageScrollerElement(s, anchor, { align: "start" }, true)
+    }
+  } else done = s.position === "start" ? messageScrollerStart(s) : messageScrollerEnd(s)
+  if (done) messageScrollerApplied(s)
+  return done
+}
+
+function messageScrollerFind(s, id) {
+  return messageScrollerItems(s).find(item => item.dataset.messageId === id) ?? null
+}
+
+function messageScrollerFlush(s) {
+  const pending = s.pendingMessage
+  if (!pending) return false
+  const el = messageScrollerFind(s, pending.id)
+  if (!el) return false
+  s.pendingMessage = null
+  messageScrollerApplied(s)
+  return messageScrollerElement(s, el, pending.options)
+}
+
+function messageScrollerReconcile(s, items, previousCount, previousFirst) {
+  if (messageScrollerFlush(s)) return
+  if (previousCount === 0) {
+    if (messageScrollerDefault(s)) return
+    if (items.length > 0 && s.autoScroll) {
+      messageScrollerEnd(s)
+      return
+    }
+    messageScrollerCommit(s)
+    return
+  }
+  if (s.preserve && previousFirst && items.indexOf(previousFirst) > 0) {
+    messageScrollerRestore(s)
+    messageScrollerCommit(s)
+    return
+  }
+  if (items.length > previousCount) {
+    messageScrollerReveal(items.slice(previousCount))
+    const added = items.slice(previousCount).filter(item => item.dataset.scrollAnchor === "true")
+    if (added.length) {
+      if (s.autoScroll && s.mode === "following-bottom" && added.length > 1) {
+        messageScrollerEnd(s)
+        return
+      }
+      messageScrollerElement(s, added[0], { align: "start" }, true)
+      s.handled.add(added[0])
+      return
+    }
+  }
+  if (items.length === previousCount) {
+    const anchor = items.find(item => item.dataset.scrollAnchor === "true" && !s.handled.has(item))
+    if (anchor) {
+      messageScrollerElement(s, anchor, { align: "start" }, true)
+      s.handled.add(anchor)
+      return
+    }
+  }
+  if (s.mode === "following-bottom" && s.autoScroll) messageScrollerEnd(s)
+  else messageScrollerCommit(s)
+}
+
+function messageScrollerChange(s) {
+  messageScrollerSpacerLast(s)
+  const items = messageScrollerItems(s)
+  const previousCount = s.count
+  const previousFirst = s.first
+  s.count = items.length
+  s.first = items[0] ?? null
+  messageScrollerReconcile(s, items, previousCount, previousFirst)
+  messageScrollerCapture(s)
+}
+
+function messageScrollerResize(s) {
+  if (!s.root.isConnected) return
+  if (s.mode === "following-bottom" && s.autoScroll) {
+    messageScrollerEnd(s)
+    return
+  }
+  const before = s.spacer
+  const anchored = s.anchored
+  if (anchored?.isConnected && s.mode === "anchored-to-message" && messageScrollerElement(s, anchored, { align: "start" }, true)) {
+    if (s.autoScroll && before > 0 && s.spacer === 0) messageScrollerEnd(s)
+    return
+  }
+  messageScrollerSchedule(s)
+}
+
+function messageScrollerIntent(s, up) {
+  if (!up && s.mode === "following-bottom") return
+  clearTimeout(s.autoTimer)
+  s.autoTimer = 0
+  s.autoscrolling = false
+  if (s.mode === "following-bottom" || s.mode === "anchored-to-message" || s.mode === "settling-jump") {
+    s.anchored = null
+    s.mode = "free-scrolling"
+  }
+}
+
+function messageScrollerSetup(root) {
+  const viewport = root.querySelector('[data-slot="message-scroller-viewport"]')
+  const content = viewport?.querySelector('[data-slot="message-scroller-content"]')
+  if (!viewport || !content) return null
+  if (!viewport.hasAttribute("role")) viewport.setAttribute("role", "region")
+  if (!viewport.hasAttribute("aria-label") && !viewport.hasAttribute("aria-labelledby")) viewport.setAttribute("aria-label", stringFor(viewport, "messages"))
+  if (!viewport.hasAttribute("tabindex")) viewport.tabIndex = 0
+  if (!content.hasAttribute("role")) content.setAttribute("role", "log")
+  if (!content.hasAttribute("aria-relevant")) content.setAttribute("aria-relevant", "additions")
+  const auto = root.getAttribute("data-auto-scroll")
+  const position = root.getAttribute("data-default-scroll-position")
+  const s = {
+    root,
+    viewport,
+    content,
+    autoScroll: auto !== null && auto !== "false",
+    position: ["start", "end", "last-anchor"].includes(position) ? position : "end",
+    threshold: messageScrollerNumber(root, "data-scroll-edge-threshold", 8),
+    margin: messageScrollerNumber(root, "data-scroll-margin", 0),
+    peek: messageScrollerNumber(root, "data-scroll-previous-item-peek", 64),
+    preserve: viewport.getAttribute("data-preserve-scroll-on-prepend") !== "false",
+    mode: "free-scrolling",
+    anchored: null,
+    handled: new WeakSet(),
+    count: 0,
+    first: null,
+    lastTop: 0,
+    spacer: 0,
+    autoscrolling: false,
+    autoTimer: 0,
+    frame: 0,
+    resizeFrame: 0,
+    applied: false,
+    prepend: null,
+    pendingMessage: null,
+    published: null,
+    spacerEl: content.querySelector(":scope > [data-message-scroller-spacer]") ?? h("div", { "aria-hidden": "true", "data-message-scroller-spacer": "", hidden: true }),
+    mutation: null,
+    cleanup: [],
+  }
+  messageScrollerStates.set(root, s)
+  messageScrollerPending(s, s.position !== "start")
+  for (const button of root.querySelectorAll('[data-slot="message-scroller-button"]')) messageScrollerButton(button)
+  const resize = new ResizeObserver(() => {
+    cancelAnimationFrame(s.resizeFrame)
+    s.resizeFrame = requestAnimationFrame(() => messageScrollerResize(s))
+  })
+  resize.observe(viewport)
+  resize.observe(content)
+  const mutation = new MutationObserver(() => messageScrollerChange(s))
+  s.mutation = mutation
+  mutation.observe(content, { childList: true })
+  let touchY = 0
+  const wheel = event => messageScrollerIntent(s, event.deltaY < 0)
+  const touchstart = event => {
+    touchY = event.touches[0]?.clientY ?? 0
+  }
+  const touchmove = event => {
+    const y = event.touches[0]?.clientY ?? touchY
+    messageScrollerIntent(s, y > touchY)
+    touchY = y
+  }
+  viewport.addEventListener("wheel", wheel, { passive: true })
+  viewport.addEventListener("touchstart", touchstart, { passive: true })
+  viewport.addEventListener("touchmove", touchmove, { passive: true })
+  s.cleanup.push(() => {
+    resize.disconnect()
+    mutation.disconnect()
+    viewport.removeEventListener("wheel", wheel)
+    viewport.removeEventListener("touchstart", touchstart)
+    viewport.removeEventListener("touchmove", touchmove)
+    cancelAnimationFrame(s.frame)
+    cancelAnimationFrame(s.resizeFrame)
+    clearTimeout(s.autoTimer)
+  })
+  messageScrollerChange(s)
+  if (s.count === 0) messageScrollerPending(s, false)
+  messageScrollerCommit(s)
+  return s
+}
+
+function messageScrollerButton(button) {
+  buttonType(button)
+  for (const [name, value] of [["data-direction", "end"], ["data-variant", "secondary"], ["data-size", "icon-sm"]]) if (!button.hasAttribute(name)) button.setAttribute(name, value)
+  if (!button.childElementCount && !button.textContent.trim()) {
+    const end = button.getAttribute("data-direction") !== "start"
+    button.append(icon("arrow-down"), h("span", { class: "sr-only" }, stringFor(button, end ? "scrollToEnd" : "scrollToStart")))
+  }
+}
+
+function messageScrollerOf(el) {
+  const root = el?.closest?.('[data-slot="message-scroller"]')
+  if (!root) return null
+  return messageScrollerStates.get(root) ?? (root.isConnected ? messageScrollerSetup(root) : null)
+}
+
+export function messageScrollerScrollToEnd(el, options = {}) {
+  const s = messageScrollerOf(el)
+  return s ? messageScrollerEnd(s, options) : false
+}
+
+export function messageScrollerScrollToStart(el, options = {}) {
+  const s = messageScrollerOf(el)
+  return s ? messageScrollerStart(s, options) : false
+}
+
+export function messageScrollerScrollToMessage(el, id, options = {}) {
+  const s = messageScrollerOf(el)
+  if (!s) return false
+  const item = messageScrollerFind(s, String(id))
+  if (!item) {
+    if (s.count !== 0) return false
+    s.pendingMessage = { id: String(id), options }
+    messageScrollerApplied(s)
+    return true
+  }
+  messageScrollerApplied(s)
+  return messageScrollerElement(s, item, options)
+}
+
+export function messageScrollerScrollable(el) {
+  const s = messageScrollerOf(el)
+  return s?.published ? { ...s.published } : { start: false, end: false }
+}
+
+export function messageScrollerVisibility(el) {
+  const s = messageScrollerOf(el)
+  const result = { currentAnchorId: null, visibleMessageIds: [] }
+  if (!s) return result
+  const rect = s.viewport.getBoundingClientRect()
+  const line = rect.top + s.margin + s.peek
+  for (const item of messageScrollerItems(s)) {
+    const id = item.dataset.messageId
+    if (!id) continue
+    const r = item.getBoundingClientRect()
+    if (r.bottom > line && r.top < rect.bottom) result.visibleMessageIds.push(id)
+    if (item.dataset.scrollAnchor === "true" && r.top <= line + 0.5) result.currentAnchorId = id
+  }
+  return result
+}
+
+define("message-scroller", {
+  init(el) {
+    const s = messageScrollerStates.get(el) ?? messageScrollerSetup(el)
+    if (!s) return
+    return () => {
+      for (const fn of s.cleanup) fn()
+      messageScrollerStates.delete(el)
+    }
+  },
+})
+
+define("message-scroller-viewport", {
+  scroll(event, el) {
+    const s = messageScrollerStates.get(el.closest('[data-slot="message-scroller"]'))
+    if (!s || s.viewport !== el) return
+    messageScrollerCommit(s)
+    messageScrollerCapture(s)
+  },
+  keydown(event, el) {
+    if (event.target !== el || !messageScrollerKeys.has(event.key)) return
+    const s = messageScrollerStates.get(el.closest('[data-slot="message-scroller"]'))
+    if (s) messageScrollerIntent(s, messageScrollerKeys.get(event.key) || (event.key === " " && event.shiftKey))
+  },
+})
+
+define("message-scroller-button", {
+  click(event, el) {
+    const s = messageScrollerOf(el)
+    if (!s || el.getAttribute("data-active") !== "true") return
+    const behavior = el.getAttribute("data-behavior") || "smooth"
+    s.viewport.focus({ preventScroll: true })
+    if (el.getAttribute("data-direction") === "start") messageScrollerStart(s, { behavior })
+    else messageScrollerEnd(s, { behavior })
+  },
+})
+
+const questionnaireStates = new WeakMap()
+const questionnaireSelected = new WeakSet()
+const questionnaireTextTypes = ["email", "password", "search", "tel", "text", "url"]
+
+function questionnaireItems(root) {
+  return own(root, '[data-slot="questionnaire-item"]')
+}
+
+function questionnaireEnabled(root) {
+  return questionnaireItems(root).filter(item => !item.disabled)
+}
+
+function questionnaireControls(item) {
+  return own(item, '[data-slot="questionnaire-choice-input"], [data-slot="questionnaire-input"]')
+}
+
+function questionnaireAnswers(item) {
+  return questionnaireControls(item).filter(el => !el.matches(":disabled"))
+}
+
+function questionnaireIsChoice(el) {
+  return el.getAttribute("data-slot") === "questionnaire-choice-input"
+}
+
+function questionnaireFilled(el) {
+  if (questionnaireIsChoice(el)) return el.checked
+  return questionnaireSelected.has(el) && el.value.trim().length > 0
+}
+
+function questionnaireTextEntry(el) {
+  if (el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement) return true
+  if (el instanceof HTMLInputElement) return !["button", "checkbox", "radio", "reset", "submit"].includes(el.type)
+  return el instanceof HTMLElement && el.isContentEditable
+}
+
+function questionnaireRadio(el) {
+  return el instanceof HTMLInputElement && el.type === "radio"
+}
+
+function questionnaireInfo(s, item) {
+  let info = s.info.get(item)
+  if (!info) {
+    info = { skipped: false, attempted: false }
+    s.info.set(item, info)
+  }
+  return info
+}
+
+function questionnaireRequired(item) {
+  const value = item.getAttribute("data-required")
+  return value !== null && value !== "false"
+}
+
+function questionnaireMultiple(item) {
+  const value = item.getAttribute("data-multiple")
+  return value !== null && value !== "false"
+}
+
+function questionnaireStatus(s, item) {
+  if (questionnaireInfo(s, item).skipped) return "skipped"
+  return questionnaireAnswers(item).some(questionnaireFilled) ? "answered" : "unanswered"
+}
+
+function questionnaireBadInput(item) {
+  return questionnaireAnswers(item).find(el => questionnaireSelected.has(el) && !el.validity.valid) ?? null
+}
+
+function questionnaireValid(s, item) {
+  if (item.disabled) return true
+  const status = questionnaireStatus(s, item)
+  if (status === "skipped" && !questionnaireRequired(item)) return true
+  return status === "answered" && !item.hasAttribute("data-external-invalid") && !questionnaireBadInput(item)
+}
+
+function questionnaireInvalid(s, item) {
+  if (item.disabled) return false
+  if (questionnaireStatus(s, item) === "skipped" && !questionnaireRequired(item)) return false
+  return item.hasAttribute("data-external-invalid") || (questionnaireInfo(s, item).attempted && !questionnaireValid(s, item))
+}
+
+function questionnaireKeys(mode) {
+  if (mode === "letters") return Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))
+  if (mode === "numbers") return Array.from({ length: 9 }, (_, i) => String(i + 1))
+  return []
+}
+
+function questionnaireShortcuts(s, item) {
+  const keys = questionnaireKeys(s.shortcuts)
+  const map = new Map()
+  questionnaireAnswers(item).filter(questionnaireIsChoice).slice(0, keys.length).forEach((input, i) => map.set(input, keys[i]))
+  return map
+}
+
+function questionnaireBuildChoice(choice, item) {
+  let input = choice.querySelector('[data-slot="questionnaire-choice-input"]') ?? choice.querySelector("input")
+  if (!input) {
+    const children = [...choice.childNodes]
+    input = h("input", { "data-slot": "questionnaire-choice-input", value: choice.getAttribute("data-value") ?? "" })
+    if (choice.hasAttribute("data-default-checked")) {
+      input.defaultChecked = true
+      input.checked = true
+    }
+    if (choice.hasAttribute("data-disabled")) input.disabled = true
+    choice.replaceChildren(
+      input,
+      h("span", { "data-slot": "questionnaire-choice-indicator", "aria-hidden": "true" }, h("span", { "data-slot": "questionnaire-choice-indicator-dot" }), icon("check", { "data-slot": "questionnaire-choice-indicator-check" })),
+      h("span", { "data-slot": "questionnaire-choice-label" }, children),
+      h("span", { "data-slot": "questionnaire-choice-shortcut", "aria-hidden": "true", hidden: true }),
+    )
+  }
+  input.setAttribute("data-slot", "questionnaire-choice-input")
+  input.type = questionnaireMultiple(item) ? "checkbox" : "radio"
+  ensureId(input, "questionnaire-choice")
+}
+
+function questionnaireSetup(root) {
+  const s = {
+    root,
+    info: new Map(),
+    active: null,
+    shortcuts: ["letters", "numbers"].includes(root.getAttribute("data-shortcuts")) ? root.getAttribute("data-shortcuts") : null,
+    defaultItem: root.getAttribute("data-default-item"),
+    progressAuto: new WeakSet(),
+    errorAuto: new WeakSet(),
+  }
+  questionnaireStates.set(root, s)
+  if (root instanceof HTMLFormElement && !root.hasAttribute("data-native-validation")) root.noValidate = true
+  for (const progress of own(root, '[data-slot="questionnaire-progress"]')) if (!progress.textContent.trim()) s.progressAuto.add(progress)
+  for (const item of questionnaireItems(root)) {
+    item.tabIndex = -1
+    for (const choice of own(item, '[data-slot="questionnaire-choice"]')) questionnaireBuildChoice(choice, item)
+    for (const input of own(item, '[data-slot="questionnaire-input"]')) {
+      if (!input.parentElement?.matches('[data-slot="questionnaire-input-wrapper"]')) {
+        const wrapper = h("div", { "data-slot": "questionnaire-input-wrapper" })
+        input.replaceWith(wrapper)
+        wrapper.append(input)
+      }
+      ensureId(input, "questionnaire-input")
+      if (input.value.trim()) questionnaireSelected.add(input)
+    }
+    for (const part of own(item, '[data-slot="questionnaire-description"], [data-slot="questionnaire-error"], [data-slot="questionnaire-title"]')) ensureId(part, "questionnaire")
+    for (const error of own(item, '[data-slot="questionnaire-error"]')) if (!error.textContent.trim()) s.errorAuto.add(error)
+  }
+  const labels = { "questionnaire-previous": "previous", "questionnaire-skip": "skip", "questionnaire-next": "next", "questionnaire-submit": "submit" }
+  for (const [slot, key] of Object.entries(labels)) {
+    for (const button of own(root, `[data-slot="${slot}"]`)) {
+      buttonType(button, slot === "questionnaire-submit" ? "submit" : "button")
+      if (!button.childNodes.length) button.textContent = stringFor(button, key)
+    }
+  }
+  for (const item of questionnaireItems(root)) questionnaireInfo(s, item).status = questionnaireStatus(s, item)
+  const enabled = questionnaireEnabled(root)
+  s.active = enabled.find(item => item.name === s.defaultItem)?.name ?? enabled[0]?.name ?? null
+  questionnaireSync(s)
+  return s
+}
+
+function questionnaireOf(el) {
+  const root = el?.closest?.('[data-slot="questionnaire"]')
+  if (!root) return null
+  return questionnaireStates.get(root) ?? questionnaireSetup(root)
+}
+
+function questionnaireSync(s) {
+  const root = s.root
+  const items = questionnaireItems(root)
+  const enabled = items.filter(item => !item.disabled)
+  if (!enabled.some(item => item.name === s.active)) {
+    const at = items.findIndex(item => item.name === s.active)
+    const before = at < 0 ? null : items.slice(0, at).findLast(item => !item.disabled)
+    s.active = (before ?? enabled[0])?.name ?? null
+  }
+  const index = enabled.findIndex(item => item.name === s.active)
+  const total = enabled.length
+  const current = index + 1
+  const first = total > 0 && index === 0
+  const last = total > 0 && index === total - 1
+  const activeItem = enabled[index] ?? null
+  const status = activeItem ? questionnaireStatus(s, activeItem) : null
+  const required = activeItem ? questionnaireRequired(activeItem) : null
+  for (const target of [root, ...own(root, '[data-slot="questionnaire-progress"]')]) {
+    messageAttr(target, "data-current", current)
+    messageAttr(target, "data-total", total)
+    messageAttr(target, "data-first", first)
+    messageAttr(target, "data-last", last)
+  }
+  messageAttr(root, "data-shortcuts", s.shortcuts)
+  for (const progress of own(root, '[data-slot="questionnaire-progress"]')) {
+    const template = progress.getAttribute("data-template")
+    const label = !total ? null : template ? template.replace("{current}", current).replace("{total}", total) : stringFor(progress, "questionOf", { current, total })
+    progress.setAttribute("role", "progressbar")
+    if (!progress.hasAttribute("aria-label")) progress.setAttribute("aria-label", stringFor(progress, "questionnaireProgress"))
+    progress.setAttribute("aria-live", "polite")
+    messageAttr(progress, "aria-valuemin", total ? 1 : null)
+    messageAttr(progress, "aria-valuemax", total || null)
+    messageAttr(progress, "aria-valuenow", total ? current : null)
+    messageAttr(progress, "aria-valuetext", label)
+    if (s.progressAuto.has(progress) || progress.hasAttribute("data-template")) progress.textContent = label ?? ""
+  }
+  for (const item of items) questionnaireSyncItem(s, item, item.name === s.active && !item.disabled, first, last)
+  const actions = [
+    ["questionnaire-previous", total > 1 && !first, null],
+    ["questionnaire-skip", required === false, null],
+    ["questionnaire-next", total > 1 && !last, "Enter"],
+    ["questionnaire-submit", total > 0 && last, "Enter"],
+  ]
+  for (const [slot, visible, key] of actions) {
+    for (const button of own(root, `[data-slot="${slot}"]`)) {
+      const disabled = button.disabled
+      const shortcut = visible && !disabled ? key : null
+      button.hidden = !visible
+      button.inert = !visible
+      messageAttr(button, "aria-hidden", visible ? null : "true")
+      messageAttr(button, "data-visible", visible)
+      messageAttr(button, "data-hidden", !visible)
+      messageAttr(button, "data-disabled", disabled)
+      messageAttr(button, "data-shortcut", shortcut)
+      messageAttr(button, "aria-keyshortcuts", shortcut)
+      messageAttr(button, "data-status", status)
+      if (visible) {
+        if (button.getAttribute("tabindex") === "-1") button.tabIndex = 0
+      } else button.tabIndex = -1
+    }
+  }
+}
+
+function questionnaireSyncItem(s, item, active, first, last) {
+  const status = questionnaireStatus(s, item)
+  const invalid = questionnaireInvalid(s, item)
+  const required = questionnaireRequired(item)
+  const multiple = questionnaireMultiple(item)
+  const shortcuts = questionnaireShortcuts(s, item)
+  const answers = questionnaireAnswers(item)
+  item.hidden = !active
+  item.inert = !active
+  messageAttr(item, "data-active", active)
+  messageAttr(item, "data-status", status)
+  messageAttr(item, "data-required", required ? "" : null)
+  messageAttr(item, "data-multiple", multiple ? "" : null)
+  messageAttr(item, "data-disabled", item.disabled)
+  messageAttr(item, "data-invalid", invalid)
+  messageAttr(item, "aria-invalid", invalid ? "true" : null)
+  for (const choices of own(item, '[data-slot="questionnaire-choices"]')) messageAttr(choices, "data-shortcuts", s.shortcuts)
+  const freeform = own(item, '[data-slot="questionnaire-input"]').some(input => questionnaireFilled(input))
+  for (const input of own(item, '[data-slot="questionnaire-choice-input"]')) {
+    const choice = input.closest('[data-slot="questionnaire-choice"]')
+    const disabled = input.matches(":disabled")
+    const shortcut = shortcuts.get(input) ?? null
+    input.type = multiple ? "checkbox" : "radio"
+    if (status === "skipped") input.removeAttribute("name")
+    else if (item.name) input.name = item.name
+    messageAttr(input, "aria-invalid", invalid ? "true" : null)
+    messageAttr(input, "aria-keyshortcuts", [shortcut, !disabled && input.checked ? "Enter" : null].filter(Boolean).join(" ") || null)
+    input.required = required && !multiple && !freeform
+    for (const target of [input, choice]) {
+      if (!target) continue
+      messageAttr(target, "data-type", input.type)
+      messageAttr(target, "data-checked", input.checked)
+      messageAttr(target, "data-unchecked", !input.checked)
+      messageAttr(target, "data-disabled", disabled)
+      messageAttr(target, "data-invalid", invalid)
+      messageAttr(target, "data-shortcut", shortcut)
+    }
+    if (!choice) continue
+    for (const hint of choice.querySelectorAll('[data-slot="questionnaire-choice-shortcut"]')) {
+      hint.hidden = shortcut === null
+      hint.textContent = shortcut ?? ""
+      messageAttr(hint, "data-shortcut", shortcut)
+    }
+  }
+  for (const input of own(item, '[data-slot="questionnaire-input"]')) {
+    const selected = questionnaireSelected.has(input) && status !== "skipped"
+    const filled = input.value.trim().length > 0
+    if (selected && item.name) input.name = item.name
+    else input.removeAttribute("name")
+    messageAttr(input, "aria-invalid", invalid ? "true" : null)
+    messageAttr(input, "aria-keyshortcuts", !input.disabled && filled && selected && !(input instanceof HTMLTextAreaElement) ? "Enter" : null)
+    messageAttr(input, "data-filled", filled)
+    messageAttr(input, "data-empty", !filled)
+    messageAttr(input, "data-disabled", input.matches(":disabled"))
+    messageAttr(input, "data-invalid", invalid)
+  }
+  const errors = own(item, '[data-slot="questionnaire-error"]')
+  for (const error of errors) {
+    error.hidden = !invalid
+    messageAttr(error, "role", invalid ? "alert" : null)
+    messageAttr(error, "data-invalid", invalid)
+    if (s.errorAuto.has(error)) error.textContent = questionnaireBadInput(item)?.validationMessage || stringFor(error, required ? "answerRequired" : "answerOrSkip")
+  }
+  const described = [...own(item, '[data-slot="questionnaire-description"]'), ...(invalid ? errors : [])].map(el => el.id)
+  const authored = item.getAttribute("data-describedby")
+  messageAttr(item, "aria-describedby", [...described, authored].filter(Boolean).join(" ") || null)
+  const keys = [
+    active ? "Meta+Enter Control+Enter" : null,
+    active && answers.length ? "ArrowUp ArrowDown" : null,
+    active && !first ? "ArrowLeft" : null,
+    active && !last && status !== "unanswered" ? "ArrowRight" : null,
+  ]
+  messageAttr(item, "aria-keyshortcuts", keys.filter(Boolean).join(" ") || null)
+}
+
+function questionnaireActive(s) {
+  return questionnaireEnabled(s.root).find(item => item.name === s.active) ?? null
+}
+
+function questionnaireFocusInvalid(item) {
+  const target = questionnaireBadInput(item) ?? item.querySelector(':is(input, textarea)[data-filled][name]:not(:disabled)') ?? item.querySelector("input:not([type=hidden]):not(:disabled), textarea:not(:disabled)") ?? item
+  target.focus()
+}
+
+function questionnaireGo(s, name, focus = "item") {
+  const changed = name !== s.active
+  s.active = name
+  questionnaireSync(s)
+  const item = questionnaireActive(s)
+  if (item) {
+    if (focus === "invalid") questionnaireFocusInvalid(item)
+    else if (changed) item.focus()
+  }
+  if (changed) {
+    const enabled = questionnaireEnabled(s.root)
+    emit(s.root, "questionnaire:change", { value: name, index: enabled.findIndex(i => i.name === name), total: enabled.length })
+  }
+}
+
+function questionnaireValidate(s, item) {
+  questionnaireInfo(s, item).attempted = true
+  return questionnaireValid(s, item)
+}
+
+function questionnaireNext(s) {
+  const enabled = questionnaireEnabled(s.root)
+  const index = enabled.findIndex(item => item.name === s.active)
+  const item = enabled[index]
+  if (!item || index >= enabled.length - 1) return
+  if (!questionnaireValidate(s, item)) {
+    questionnaireSync(s)
+    questionnaireFocusInvalid(item)
+    return
+  }
+  questionnaireGo(s, enabled[index + 1].name)
+}
+
+function questionnairePrevious(s) {
+  const enabled = questionnaireEnabled(s.root)
+  const index = enabled.findIndex(item => item.name === s.active)
+  if (index <= 0) return
+  questionnaireGo(s, enabled[index - 1].name)
+}
+
+function questionnaireConfirm(s) {
+  const enabled = questionnaireEnabled(s.root)
+  const index = enabled.findIndex(item => item.name === s.active)
+  const item = enabled[index]
+  if (!item) return
+  if (!questionnaireValidate(s, item)) {
+    questionnaireSync(s)
+    questionnaireFocusInvalid(item)
+    return
+  }
+  if (index === enabled.length - 1) {
+    s.root.requestSubmit?.()
+    return
+  }
+  questionnaireGo(s, enabled[index + 1].name)
+}
+
+function questionnaireSkip(s) {
+  const enabled = questionnaireEnabled(s.root)
+  const index = enabled.findIndex(item => item.name === s.active)
+  const item = enabled[index]
+  if (!item || questionnaireRequired(item)) return
+  for (const input of own(item, '[data-slot="questionnaire-choice-input"]')) input.checked = false
+  for (const input of own(item, '[data-slot="questionnaire-input"]')) questionnaireSelected.delete(input)
+  questionnaireInfo(s, item).skipped = true
+  questionnaireStatusChanged(s, item)
+  if (index < enabled.length - 1) {
+    questionnaireGo(s, enabled[index + 1].name)
+    return
+  }
+  questionnaireSync(s)
+  queueMicrotask(() => s.root.requestSubmit?.())
+}
+
+function questionnaireStatusChanged(s, item) {
+  const status = questionnaireStatus(s, item)
+  const info = questionnaireInfo(s, item)
+  if (info.status === status) return
+  info.status = status
+  emit(s.root, "questionnaire:status", { item: item.name, value: status })
+}
+
+function questionnaireMove(item, target, direction) {
+  const answers = questionnaireAnswers(item)
+  const index = answers.indexOf(target)
+  const current = index < 0 ? null : answers[index]
+  const emptyText = current && !questionnaireIsChoice(current) && questionnaireTextTypes.includes(current.type) && !current.value.trim()
+  if (!answers.length || (questionnaireTextEntry(target) && !emptyText) || (index < 0 && target !== item)) return false
+  const next = index < 0 ? answers.find(questionnaireFilled) ?? (direction === "next" ? answers[0] : answers.at(-1)) : answers[(index + (direction === "next" ? 1 : -1) + answers.length) % answers.length]
+  if (!next || next === target) return false
+  if (index >= 0 && questionnaireRadio(target) && questionnaireRadio(next)) return false
+  next.focus()
+  if (questionnaireIsChoice(next) && questionnaireRadio(next)) next.click()
+  return true
+}
+
+function questionnaireValues(root) {
+  const data = new FormData(root)
+  const value = {}
+  const status = {}
+  const s = questionnaireStates.get(root)
+  for (const item of questionnaireEnabled(root)) {
+    if (!item.name) continue
+    const all = data.getAll(item.name).map(String)
+    value[item.name] = questionnaireMultiple(item) ? all : (all[0] ?? null)
+    if (s) status[item.name] = questionnaireStatus(s, item)
+  }
+  return { value, status }
+}
+
+document.addEventListener(
+  "submit",
+  event => {
+    const root = event.target
+    if (!(root instanceof HTMLFormElement) || root.getAttribute("data-slot") !== "questionnaire") return
+    const s = questionnaireOf(root)
+    if (!s) return
+    const invalid = questionnaireEnabled(root).filter(item => !questionnaireValidate(s, item))[0]
+    questionnaireSync(s)
+    if (invalid) {
+      event.preventDefault()
+      event.stopImmediatePropagation()
+      if (invalid.name === s.active) questionnaireFocusInvalid(invalid)
+      else questionnaireGo(s, invalid.name, "invalid")
+      return
+    }
+    emit(root, "questionnaire:submit", questionnaireValues(root))
+  },
+  true,
+)
+
+export function questionnaireGoTo(el, name) {
+  const s = questionnaireOf(el)
+  if (!s || !questionnaireEnabled(s.root).some(item => item.name === name)) return false
+  questionnaireGo(s, name)
+  return true
+}
+
+export function questionnaireRefresh(el) {
+  const s = questionnaireOf(el)
+  if (s) questionnaireSync(s)
+}
+
+define("questionnaire", {
+  init(el) {
+    if (!questionnaireStates.has(el)) questionnaireSetup(el)
+  },
+  click(event, el) {
+    const s = questionnaireOf(el)
+    const button = event.target instanceof Element ? event.target.closest("button") : null
+    if (!s || !button || button.closest('[data-slot="questionnaire"]') !== el || button.disabled) return
+    const slot = button.getAttribute("data-slot")
+    if (slot === "questionnaire-previous") questionnairePrevious(s)
+    else if (slot === "questionnaire-next") questionnaireNext(s)
+    else if (slot === "questionnaire-skip") questionnaireSkip(s)
+  },
+  change(event, el) {
+    const s = questionnaireOf(el)
+    const input = event.target
+    if (!s || !(input instanceof HTMLInputElement) || !questionnaireIsChoice(input)) return
+    const item = input.closest('[data-slot="questionnaire-item"]')
+    if (!item) return
+    questionnaireInfo(s, item).skipped = false
+    if (input.checked && !questionnaireMultiple(item)) for (const text of own(item, '[data-slot="questionnaire-input"]')) questionnaireSelected.delete(text)
+    questionnaireStatusChanged(s, item)
+    questionnaireSync(s)
+  },
+  input(event, el) {
+    const s = questionnaireOf(el)
+    const input = event.target
+    if (!s || !(input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) || input.getAttribute("data-slot") !== "questionnaire-input") return
+    const item = input.closest('[data-slot="questionnaire-item"]')
+    if (!item) return
+    const filled = input.value.trim().length > 0
+    questionnaireInfo(s, item).skipped = false
+    if (filled) {
+      questionnaireSelected.add(input)
+      if (!questionnaireMultiple(item)) for (const choice of own(item, '[data-slot="questionnaire-choice-input"]')) choice.checked = false
+    } else questionnaireSelected.delete(input)
+    questionnaireStatusChanged(s, item)
+    questionnaireSync(s)
+  },
+  reset(event, el) {
+    const s = questionnaireOf(el)
+    if (!s) return
+    setTimeout(() => {
+      if (event.defaultPrevented) return
+      for (const item of questionnaireItems(el)) {
+        const info = questionnaireInfo(s, item)
+        info.skipped = false
+        info.attempted = false
+        for (const input of own(item, '[data-slot="questionnaire-input"]')) {
+          if (input.value.trim()) questionnaireSelected.add(input)
+          else questionnaireSelected.delete(input)
+        }
+        questionnaireStatusChanged(s, item)
+      }
+      const enabled = questionnaireEnabled(el)
+      questionnaireGo(s, enabled.find(item => item.name === s.defaultItem)?.name ?? enabled[0]?.name ?? null)
+    })
+  },
+  keydown(event, el) {
+    const s = questionnaireOf(el)
+    if (!s || event.defaultPrevented || event.isComposing || event.keyCode === 229 || !(event.target instanceof Element)) return
+    const item = questionnaireActive(s)
+    if (!item) return
+    const target = event.target
+    if (event.key === "Enter" && (event.metaKey || event.ctrlKey) && !event.altKey && !event.shiftKey) {
+      event.preventDefault()
+      if (!event.repeat) questionnaireConfirm(s)
+      return
+    }
+    if (event.metaKey || event.ctrlKey || event.altKey) return
+    if ((event.key === "ArrowUp" || event.key === "ArrowDown") && questionnaireMove(item, target, event.key === "ArrowDown" ? "next" : "previous")) {
+      event.preventDefault()
+      return
+    }
+    if ((event.key === "ArrowLeft" || event.key === "ArrowRight") && !questionnaireTextEntry(target) && !questionnaireRadio(target)) {
+      event.preventDefault()
+      if (event.repeat) return
+      if (event.key === "ArrowLeft") questionnairePrevious(s)
+      else if (questionnaireStatus(s, item) !== "unanswered") questionnaireNext(s)
+      return
+    }
+    if (event.key === "Enter") {
+      const answer = questionnaireAnswers(item).find(a => a === target)
+      if (!answer || answer instanceof HTMLTextAreaElement) return
+      event.preventDefault()
+      if (!event.repeat && questionnaireFilled(answer)) questionnaireConfirm(s)
+      return
+    }
+    if (!s.shortcuts || questionnaireTextEntry(target) || event.key.length !== 1) return
+    const key = s.shortcuts === "letters" ? event.key.toUpperCase() : event.key
+    const match = [...questionnaireShortcuts(s, item)].find(([, shortcut]) => shortcut === key)?.[0]
+    if (!match) return
+    event.preventDefault()
+    if (event.repeat) return
+    match.focus()
+    match.click()
+  },
+})
+
+const calendarStates = new WeakMap()
+const calendarFormatters = new Map()
+const calendarObserved = ["data-mode", "data-value", "data-month", "data-months", "data-min", "data-max", "data-disabled", "data-disabled-dates", "data-disabled-weekdays", "data-week-start", "data-caption-layout", "data-button-variant", "data-outside-days", "data-show-week-number", "data-fixed-weeks", "data-required", "data-name", "data-today", "data-lang", "data-start-year", "data-end-year"]
+const calendarFormatOptions = {
+  caption: { month: "long", year: "numeric" },
+  full: { weekday: "long", year: "numeric", month: "long", day: "numeric" },
+  weekday: { weekday: "long" },
+  weekdayShort: { weekday: "short" },
+  weekdayNarrow: { weekday: "narrow" },
+  month: { month: "short" },
+  monthLong: { month: "long" },
+  year: { year: "numeric" },
+  long: { year: "numeric", month: "long", day: "numeric" },
+  medium: { year: "numeric", month: "short", day: "numeric" },
+  short: { year: "numeric", month: "short", day: "2-digit" },
+  numeric: { year: "numeric", month: "2-digit", day: "2-digit" },
+  "numeric-day": { year: "numeric", month: "numeric", day: "numeric" },
+}
+
+function calendarDate(y, m, d) {
+  const date = new Date(y, m, d, 12)
+  if (y >= 0 && y < 100) date.setFullYear(y)
+  return date
+}
+
+function calendarToday() {
+  const now = new Date()
+  return calendarDate(now.getFullYear(), now.getMonth(), now.getDate())
+}
+
+function calendarParse(value) {
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : calendarDate(value.getFullYear(), value.getMonth(), value.getDate())
+  const match = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(String(value ?? "").trim())
+  if (!match) return null
+  const date = calendarDate(Number(match[1]), Number(match[2]) - 1, Number(match[3] ?? 1))
+  return date.getMonth() === Number(match[2]) - 1 ? date : null
+}
+
+function calendarIso(date) {
+  return `${String(date.getFullYear()).padStart(4, "0")}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+}
+
+function calendarMonthKey(date) {
+  return calendarIso(date).slice(0, 7)
+}
+
+function calendarAddDays(date, days) {
+  return calendarDate(date.getFullYear(), date.getMonth(), date.getDate() + days)
+}
+
+function calendarAddMonths(date, months) {
+  const last = new Date(date.getFullYear(), date.getMonth() + months + 1, 0).getDate()
+  return calendarDate(date.getFullYear(), date.getMonth() + months, Math.min(date.getDate(), last))
+}
+
+function calendarFirst(date) {
+  return calendarDate(date.getFullYear(), date.getMonth(), 1)
+}
+
+function calendarMonthsBetween(a, b) {
+  return (b.getFullYear() - a.getFullYear()) * 12 + b.getMonth() - a.getMonth()
+}
+
+function calendarFormatter(lang, kind) {
+  const key = `${lang}|${kind}`
+  let formatter = calendarFormatters.get(key)
+  if (!formatter) {
+    const options = { ...calendarFormatOptions[kind], calendar: "gregory" }
+    try {
+      formatter = new Intl.DateTimeFormat(lang, options)
+    } catch {
+      formatter = new Intl.DateTimeFormat("en", options)
+    }
+    calendarFormatters.set(key, formatter)
+  }
+  return formatter
+}
+
+function calendarFormat(s, kind, date) {
+  return calendarFormatter(s.lang, kind).format(date)
+}
+
+function calendarNumber(s, value) {
+  const key = `${s.lang}|number`
+  let formatter = calendarFormatters.get(key)
+  if (!formatter) {
+    try {
+      formatter = new Intl.NumberFormat(s.lang, { useGrouping: false })
+    } catch {
+      formatter = new Intl.NumberFormat("en", { useGrouping: false })
+    }
+    calendarFormatters.set(key, formatter)
+  }
+  return formatter.format(value)
+}
+
+function calendarWeekdayLabel(s, date) {
+  const name = calendarFormat(s, "weekdayShort", date).replace(/\.$/, "")
+  return /^[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}]+$/u.test(name) ? name.slice(0, 2) : calendarFormat(s, "weekdayNarrow", date)
+}
+
+function calendarWeekNumber(date) {
+  const thursday = calendarAddDays(date, 3 - ((date.getDay() + 6) % 7))
+  const january = calendarDate(thursday.getFullYear(), 0, 4)
+  return 1 + Math.round(((thursday - january) / 864e5 - 3 + ((january.getDay() + 6) % 7)) / 7)
+}
+
+function calendarFlag(el, name) {
+  const value = el.getAttribute(name)
+  return value !== null && value !== "false"
+}
+
+function calendarConfig(el) {
+  const get = name => el.getAttribute(name)
+  const mode = ["multiple", "range"].includes(get("data-mode")) ? get("data-mode") : "single"
+  const lang = get("data-lang") || el.closest("[lang]")?.getAttribute("lang") || navigator.language || "en"
+  const weekStart = Number.parseInt(get("data-week-start") ?? "1", 10)
+  const months = Number.parseInt(get("data-months") ?? "1", 10)
+  const min = calendarParse(get("data-min"))
+  const max = calendarParse(get("data-max"))
+  const today = calendarParse(get("data-today")) ?? calendarToday()
+  const ranges = []
+  for (const token of String(get("data-disabled-dates") ?? "").split(/[\s,]+/).filter(Boolean)) {
+    const [a, b] = token.split(/\/|\.\./)
+    const from = calendarParse(a)
+    const to = b === undefined ? from : calendarParse(b)
+    if (from && to) ranges.push(calendarIso(from) <= calendarIso(to) ? [calendarIso(from), calendarIso(to)] : [calendarIso(to), calendarIso(from)])
+  }
+  const weekdays = new Set(String(get("data-disabled-weekdays") ?? "").split(/[\s,]+/).filter(Boolean).map(Number).filter(n => n >= 0 && n <= 6))
+  const caption = ["dropdown", "dropdown-months", "dropdown-years"].includes(get("data-caption-layout")) ? get("data-caption-layout") : "label"
+  const buttonVariant = get("data-button-variant") || "ghost"
+  const authoredStart = Number.parseInt(get("data-start-year") ?? "", 10)
+  const authoredEnd = Number.parseInt(get("data-end-year") ?? "", 10)
+  const startYear = Number.isFinite(authoredStart) ? authoredStart : min ? min.getFullYear() : Math.min(today.getFullYear() - 100, max ? max.getFullYear() : Infinity)
+  const endYear = Number.isFinite(authoredEnd) ? authoredEnd : max ? max.getFullYear() : Math.max(today.getFullYear(), min ? min.getFullYear() : -Infinity)
+  const years = caption === "dropdown" || caption === "dropdown-years"
+  const minIso = min ? calendarIso(min) : null
+  const maxIso = max ? calendarIso(max) : null
+  const yearStart = years ? calendarIso(calendarDate(startYear, 0, 1)) : null
+  const yearEnd = years ? calendarIso(calendarDate(endYear, 11, 31)) : null
+  const navMin = [minIso, yearStart].filter(Boolean).sort().at(-1) ?? null
+  const navMax = [maxIso, yearEnd].filter(Boolean).sort()[0] ?? null
+  return {
+    mode,
+    lang,
+    weekStart: weekStart >= 0 && weekStart <= 6 ? weekStart : 1,
+    months: Number.isFinite(months) ? Math.min(Math.max(months, 1), 12) : 1,
+    min: minIso,
+    max: maxIso,
+    navMin,
+    navMax,
+    shownFrom: navMin ? `${navMin.slice(0, 7)}-01` : null,
+    shownTo: navMax ? calendarIso(calendarDate(Number(navMax.slice(0, 4)), Number(navMax.slice(5, 7)), 0)) : null,
+    today,
+    todayIso: calendarIso(today),
+    ranges,
+    weekdays,
+    disabledAll: calendarFlag(el, "data-disabled"),
+    caption,
+    buttonVariant,
+    outside: get("data-outside-days") !== "false",
+    weekNumbers: calendarFlag(el, "data-show-week-number"),
+    fixedWeeks: calendarFlag(el, "data-fixed-weeks"),
+    required: calendarFlag(el, "data-required"),
+    name: get("data-name"),
+    startYear,
+    endYear,
+    labelPrevious: get("data-label-previous") || stringFor(el, "previousMonth"),
+    labelNext: get("data-label-next") || stringFor(el, "nextMonth"),
+  }
+}
+
+function calendarNormalize(mode, value) {
+  if (mode === "range") {
+    let from = null
+    let to = null
+    if (typeof value === "string") [from, to] = value.trim().split("/")
+    else if (value && typeof value === "object" && !(value instanceof Date)) ({ from, to } = value)
+    else from = value
+    const a = calendarParse(from)
+    const b = calendarParse(to)
+    if (!a) return null
+    const x = calendarIso(a)
+    const y = b ? calendarIso(b) : x
+    return x <= y ? { from: x, to: y } : { from: y, to: x }
+  }
+  const list = (Array.isArray(value) ? value : typeof value === "string" ? value.split(/[\s,]+/) : value ? [value] : []).map(calendarParse).filter(Boolean).map(calendarIso)
+  if (mode === "multiple") return [...new Set(list)].sort()
+  return list[0] ?? null
+}
+
+function calendarCopy(s) {
+  if (s.mode === "range") return s.value ? { ...s.value } : null
+  if (s.mode === "multiple") return [...s.value]
+  return s.value
+}
+
+function calendarSelected(s) {
+  if (s.mode === "range") return s.value ? [s.value.from, s.value.to] : []
+  if (s.mode === "multiple") return s.value
+  return s.value ? [s.value] : []
+}
+
+function calendarClampMonth(s, month) {
+  let first = calendarFirst(month)
+  if (s.navMax) {
+    const last = calendarAddMonths(calendarFirst(calendarParse(s.navMax)), -(s.months - 1))
+    if (first > last) first = last
+  }
+  if (s.navMin) {
+    const start = calendarFirst(calendarParse(s.navMin))
+    if (first < start) first = start
+  }
+  return first
+}
+
+function calendarCreate(el) {
+  const s = { el, ...calendarConfig(el), focus: null, view: null, rawValue: el.getAttribute("data-value"), authoredMonth: el.getAttribute("data-month") }
+  s.value = calendarNormalize(s.mode, s.rawValue)
+  s.initial = calendarCopy(s)
+  const authored = calendarParse(el.getAttribute("data-month"))
+  const selected = calendarSelected(s)[0]
+  s.month = calendarClampMonth(s, authored ?? (selected ? calendarParse(selected) : s.today))
+  calendarStates.set(el, s)
+  calendarRender(s)
+  return s
+}
+
+function calendarConnect(s) {
+  const observer = new MutationObserver(() => calendarReconfigure(s))
+  observer.observe(s.el, { attributes: true, attributeFilter: calendarObserved })
+  const form = s.el.closest("form")
+  const reset = () => setTimeout(() => {
+    s.value = calendarCopy({ mode: s.mode, value: s.initial })
+    s.focus = null
+    calendarRender(s)
+    calendarChanged(s, "reset")
+  })
+  form?.addEventListener("reset", reset)
+  return () => {
+    observer.disconnect()
+    form?.removeEventListener("reset", reset)
+  }
+}
+
+function calendarReconfigure(s) {
+  const mode = s.mode
+  Object.assign(s, calendarConfig(s.el))
+  const raw = s.el.getAttribute("data-value")
+  if (mode !== s.mode || raw !== s.rawValue) s.value = calendarNormalize(s.mode, raw)
+  s.rawValue = raw
+  const month = s.el.getAttribute("data-month")
+  if (month !== s.authoredMonth && calendarParse(month)) s.month = calendarParse(month)
+  s.authoredMonth = month
+  s.month = calendarClampMonth(s, s.month)
+  calendarRender(s)
+}
+
+function calendarOf(el) {
+  if (!el || el.getAttribute?.("data-slot") !== "calendar") return null
+  return calendarStates.get(el) ?? calendarCreate(el)
+}
+
+function calendarDisabled(s, date, iso) {
+  if (s.disabledAll) return true
+  if (s.min && iso < s.min) return true
+  if (s.max && iso > s.max) return true
+  if (s.weekdays.has(date.getDay())) return true
+  return s.ranges.some(([a, b]) => iso >= a && iso <= b)
+}
+
+function calendarSelection(s, iso) {
+  if (s.mode === "single") return { selected: s.value === iso, single: s.value === iso }
+  if (s.mode === "multiple") {
+    const selected = s.value.includes(iso)
+    return { selected, single: selected }
+  }
+  const range = s.value
+  if (!range || iso < range.from || iso > range.to) return { selected: false }
+  const start = iso === range.from
+  const end = iso === range.to
+  return { selected: true, start, end, middle: !start && !end }
+}
+
+function calendarDisplayed(s, iso) {
+  const date = calendarParse(iso)
+  if (!date) return false
+  const offset = calendarMonthsBetween(s.month, date)
+  return offset >= 0 && offset < s.months
+}
+
+function calendarFocusIso(s) {
+  const usable = iso => iso && calendarDisplayed(s, iso) && !calendarDisabled(s, calendarParse(iso), iso)
+  if (usable(s.focus)) return s.focus
+  const selected = calendarSelected(s).find(usable)
+  if (selected) return selected
+  if (usable(s.todayIso)) return s.todayIso
+  for (let i = 0; i < s.months; i++) {
+    const first = calendarAddMonths(s.month, i)
+    for (let d = first; d.getMonth() === first.getMonth(); d = calendarAddDays(d, 1)) if (usable(calendarIso(d))) return calendarIso(d)
+  }
+  return null
+}
+
+function calendarWeeks(s, first) {
+  const offset = (first.getDay() - s.weekStart + 7) % 7
+  let day = calendarAddDays(first, -offset)
+  const weeks = []
+  const last = calendarDate(first.getFullYear(), first.getMonth() + 1, 0)
+  while (weeks.length < 6 && (day <= last || (s.fixedWeeks && weeks.length < 6))) {
+    const week = []
+    for (let i = 0; i < 7; i++) {
+      week.push(day)
+      day = calendarAddDays(day, 1)
+    }
+    weeks.push(week)
+  }
+  return weeks
+}
+
+function calendarDayCell(s, date, first, focusIso) {
+  const iso = calendarIso(date)
+  const outside = date.getMonth() !== first.getMonth()
+  const disabled = calendarDisabled(s, date, iso)
+  const hidden = (outside && !s.outside) || (s.shownFrom && iso < s.shownFrom) || (s.shownTo && iso > s.shownTo)
+  const today = iso === s.todayIso
+  const sel = calendarSelection(s, iso)
+  const range = s.mode === "range" && !!s.value
+  const flag = value => (value ? "true" : range ? "false" : null)
+  const td = h("td", {
+    "data-slot": "calendar-day",
+    role: "gridcell",
+    "data-day": iso,
+    "data-month": outside ? calendarMonthKey(date) : null,
+    "aria-selected": sel.selected ? "true" : null,
+    "data-selected": sel.selected ? "true" : null,
+    "data-today": today ? "true" : null,
+    "data-outside": outside ? "true" : null,
+    "data-disabled": disabled ? "true" : null,
+    "data-hidden": hidden ? "true" : null,
+    "data-range-start": sel.start ? "true" : null,
+    "data-range-middle": sel.middle ? "true" : null,
+    "data-range-end": sel.end ? "true" : null,
+  })
+  if (hidden) return td
+  let label = calendarDayLabel(s, date)
+  if (today) label = stringFor(s.el, "today", { date: label })
+  if (sel.selected) label = stringFor(s.el, "selected", { date: label })
+  td.append(h("button", {
+    type: "button",
+    "data-slot": "button",
+    "data-calendar-day-button": "",
+    "data-variant": "ghost",
+    "data-size": "icon",
+    "data-day": calendarFormat(s, "numeric-day", date),
+    tabindex: !outside && iso === focusIso ? "0" : "-1",
+    disabled: disabled || null,
+    "aria-label": label,
+    "data-selected-single": sel.single ? "true" : sel.selected ? "false" : null,
+    "data-range-start": flag(sel.start),
+    "data-range-middle": flag(sel.middle),
+    "data-range-end": flag(sel.end),
+  }, calendarNumber(s, date.getDate())))
+  return td
+}
+
+const calendarOrdinalSuffix = { one: "st", two: "nd", few: "rd", other: "th" }
+
+function calendarOrdinal(lang) {
+  const key = `${lang}|ordinal`
+  if (!calendarFormatters.has(key)) calendarFormatters.set(key, ["en", "en-US"].includes(calendarFormatter(lang, "full").resolvedOptions().locale) ? new Intl.PluralRules("en-US", { type: "ordinal" }) : null)
+  return calendarFormatters.get(key)
+}
+
+function calendarDayLabel(s, date) {
+  const formatter = calendarFormatter(s.lang, "full")
+  const rules = calendarOrdinal(s.lang)
+  if (!rules) return formatter.format(date)
+  return formatter.formatToParts(date).map(part => (part.type === "day" ? part.value + calendarOrdinalSuffix[rules.select(Number(part.value))] : part.value)).join("")
+}
+
+function calendarSelect(s, kind, first, index) {
+  const year = first.getFullYear()
+  const options = []
+  if (kind === "month") {
+    for (let m = 0; m < 12; m++) {
+      const date = calendarDate(year, m, 1)
+      const key = calendarMonthKey(date)
+      const out = (s.navMin && key < s.navMin.slice(0, 7)) || (s.navMax && key > s.navMax.slice(0, 7))
+      options.push(h("option", { value: String(m), disabled: out || null }, calendarFormat(s, "month", date)))
+    }
+  } else {
+    const start = Math.min(s.startYear, year)
+    const end = Math.max(s.endYear, year)
+    for (let y = start; y <= end; y++) options.push(h("option", { value: String(y) }, calendarNumber(s, y)))
+  }
+  const select = h("select", {
+    "data-slot": "calendar-dropdown",
+    "data-kind": kind,
+    "data-index": String(index),
+    "aria-label": stringFor(s.el, kind === "month" ? "chooseMonth" : "chooseYear"),
+    disabled: s.disabledAll || null,
+  }, options)
+  select.value = String(kind === "month" ? first.getMonth() : year)
+  const text = kind === "month" ? calendarFormat(s, "month", first) : calendarNumber(s, year)
+  return h("span", { "data-slot": "calendar-dropdown-root", "data-disabled": s.disabledAll ? "true" : null }, select, h("span", { "data-slot": "calendar-caption-label", "aria-hidden": "true" }, text, icon("chevron-down")))
+}
+
+function calendarHead(s, first, index) {
+  const parts = []
+  if (s.caption === "dropdown-years") parts.push(h("span", { "data-slot": "calendar-caption-label" }, calendarFormat(s, "monthLong", first)))
+  else parts.push(calendarSelect(s, "month", first, index))
+  if (s.caption === "dropdown-months") parts.push(h("span", { "data-slot": "calendar-caption-label" }, calendarNumber(s, first.getFullYear())))
+  else parts.push(calendarSelect(s, "year", first, index))
+  return parts
+}
+
+function calendarGrid(s, first, focusIso) {
+  const weekdays = []
+  if (s.weekNumbers) weekdays.push(h("th", { "data-slot": "calendar-week-number-header", scope: "col", "aria-label": stringFor(s.el, "weekNumber") }))
+  for (let i = 0; i < 7; i++) {
+    const date = calendarDate(2024, 0, 7 + ((s.weekStart + i) % 7))
+    weekdays.push(h("th", { "data-slot": "calendar-weekday", scope: "col", "aria-label": calendarFormat(s, "weekday", date) }, calendarWeekdayLabel(s, date)))
+  }
+  const rows = calendarWeeks(s, first).map(week => {
+    const cells = week.map(date => calendarDayCell(s, date, first, focusIso))
+    if (s.weekNumbers) {
+      const thursday = week.find(date => date.getDay() === 4) ?? week[0]
+      const number = calendarWeekNumber(thursday)
+      cells.unshift(h("td", { "data-slot": "calendar-week-number", role: "rowheader", scope: "row", "aria-label": stringFor(s.el, "week", { week: number }) }, h("div", null, calendarNumber(s, number).padStart(2, calendarNumber(s, 0)))))
+    }
+    return h("tr", { "data-slot": "calendar-week" }, cells)
+  })
+  return h("table", { "data-slot": "calendar-month-grid", role: "grid", "aria-label": calendarFormat(s, "caption", first), "aria-multiselectable": String(s.mode !== "single") },
+    h("thead", { "aria-hidden": "true" }, h("tr", { "data-slot": "calendar-weekdays" }, weekdays)),
+    h("tbody", { "data-slot": "calendar-weeks" }, rows),
+  )
+}
+
+function calendarMonthView(s) {
+  const status = h("span", { role: "status", "aria-live": "polite" })
+  const label = s.caption === "label"
+  if (label) status.setAttribute("data-slot", "calendar-caption-label")
+  else status.className = "sr-only"
+  const dropdowns = label ? null : h("div", { "data-slot": "calendar-dropdowns" }, status)
+  const month = h("div", { "data-slot": "calendar-month" }, h("div", { "data-slot": "calendar-month-caption" }, dropdowns ?? status))
+  return { month, status, dropdowns, grid: null }
+}
+
+function calendarUpdateMonth(s, part, first, index, focusIso) {
+  part.month.dataset.month = calendarMonthKey(first)
+  const caption = calendarFormat(s, "caption", first)
+  if (part.status.textContent !== caption) part.status.textContent = caption
+  if (part.dropdowns) {
+    for (const child of [...part.dropdowns.children]) if (child !== part.status) child.remove()
+    part.status.before(...calendarHead(s, first, index))
+  }
+  const grid = calendarGrid(s, first, focusIso)
+  if (part.grid) part.grid.replaceWith(grid)
+  else part.month.append(grid)
+  part.grid = grid
+}
+
+function calendarNav(s) {
+  const firstMonth = s.navMin ? calendarFirst(calendarParse(s.navMin)) : null
+  const lastMonth = s.navMax ? calendarAddMonths(calendarFirst(calendarParse(s.navMax)), -(s.months - 1)) : null
+  const previousDisabled = s.disabledAll || (firstMonth && s.month <= firstMonth)
+  const nextDisabled = s.disabledAll || (lastMonth && s.month >= lastMonth)
+  return h("nav", { "data-slot": "calendar-nav", "aria-label": stringFor(s.el, "calendarNavigation") },
+    h("button", { type: "button", "data-slot": "calendar-button-previous", "data-variant": s.buttonVariant, "aria-label": s.labelPrevious, "aria-disabled": previousDisabled ? "true" : null, tabindex: previousDisabled ? "-1" : null }, icon("chevron-left")),
+    h("button", { type: "button", "data-slot": "calendar-button-next", "data-variant": s.buttonVariant, "aria-label": s.labelNext, "aria-disabled": nextDisabled ? "true" : null, tabindex: nextDisabled ? "-1" : null }, icon("chevron-right")),
+  )
+}
+
+function calendarHidden(s) {
+  if (!s.name) return []
+  if (s.mode === "multiple") return s.value.map(iso => h("input", { type: "hidden", name: s.name, value: iso }))
+  if (s.mode === "range") return [h("input", { type: "hidden", name: s.name, value: s.value ? `${s.value.from}/${s.value.to}` : "" })]
+  return [h("input", { type: "hidden", name: s.name, value: s.value ?? "" })]
+}
+
+function calendarFocusKey(s) {
+  const active = document.activeElement
+  if (!active || !s.el.contains(active)) return null
+  const slot = active.getAttribute("data-slot")
+  if (active.hasAttribute("data-calendar-day-button")) return { day: active.closest("td")?.dataset.day }
+  if (slot === "calendar-dropdown") return { kind: active.dataset.kind, index: active.dataset.index }
+  if (slot === "calendar-button-previous" || slot === "calendar-button-next") return { slot }
+  return null
+}
+
+function calendarRestore(s, key) {
+  if (!key) return
+  let target = null
+  if (key.day) target = s.el.querySelector(`td[data-day="${key.day}"]:not([data-outside]) > button`) ?? s.el.querySelector(`td[data-day="${key.day}"] > button`) ?? s.el.querySelector('[data-calendar-day-button][tabindex="0"]')
+  else if (key.kind) target = s.el.querySelector(`[data-slot="calendar-dropdown"][data-kind="${key.kind}"][data-index="${key.index}"]`)
+  else if (key.slot) target = s.el.querySelector(`[data-slot="${key.slot}"]`)
+  target?.focus({ preventScroll: true })
+}
+
+function calendarRender(s, focusDay = null) {
+  const key = focusDay ? { day: focusDay } : calendarFocusKey(s)
+  const focusIso = calendarFocusIso(s)
+  messageAttr(s.el, "data-multiple-months", s.months > 1 ? "true" : null)
+  const layout = `${s.months}|${s.caption}`
+  if (s.view?.months.parentNode !== s.el || s.view.layout !== layout) {
+    const parts = Array.from({ length: s.months }, () => calendarMonthView(s))
+    s.view = { layout, parts, months: h("div", { "data-slot": "calendar-months" }, h("nav"), parts.map(part => part.month)) }
+  }
+  const { months, parts } = s.view
+  for (const node of [...s.el.childNodes]) if (node !== months) node.remove()
+  if (months.parentNode !== s.el) s.el.append(months)
+  s.el.append(...calendarHidden(s))
+  months.firstElementChild.replaceWith(calendarNav(s))
+  parts.forEach((part, i) => calendarUpdateMonth(s, part, calendarAddMonths(s.month, i), i, focusIso))
+  calendarRestore(s, key)
+}
+
+function calendarChanged(s, source) {
+  emit(s.el, "calendar:change", { value: calendarCopy(s), mode: s.mode, source })
+}
+
+function calendarSetMonthState(s, month) {
+  const next = calendarClampMonth(s, month)
+  if (calendarMonthKey(next) === calendarMonthKey(s.month)) return false
+  s.month = next
+  return true
+}
+
+function calendarNavigate(s, delta) {
+  if (!calendarSetMonthState(s, calendarAddMonths(s.month, delta))) return
+  calendarRender(s)
+  emit(s.el, "calendar:navigate", { value: calendarMonthKey(s.month) })
+}
+
+function calendarRange(range, iso, required) {
+  if (!range) return { from: iso, to: iso }
+  const { from, to } = range
+  if (iso === from && iso === to) return required ? { from, to } : null
+  if (iso === from) return { from, to: iso }
+  if (iso === to) return { from: iso, to: iso }
+  if (iso < from) return { from: iso, to }
+  return { from, to: iso }
+}
+
+function calendarChoose(s, iso) {
+  const before = JSON.stringify(s.value)
+  if (s.mode === "single") s.value = s.value === iso && !s.required ? null : iso
+  else if (s.mode === "multiple") {
+    const set = new Set(s.value)
+    if (set.has(iso)) {
+      if (!s.required || set.size > 1) set.delete(iso)
+    } else set.add(iso)
+    s.value = [...set].sort()
+  } else s.value = calendarRange(s.value, iso, s.required)
+  s.focus = iso
+  calendarRender(s, iso)
+  if (JSON.stringify(s.value) !== before) calendarChanged(s, "day")
+}
+
+function calendarStep(s, date, step) {
+  let current = date
+  let direction = step
+  for (let i = 0; i < 400 && current; i++) {
+    const iso = calendarIso(current)
+    if (s.navMin && iso < s.navMin) {
+      current = calendarParse(s.navMin)
+      direction = Math.abs(direction) || 1
+      continue
+    }
+    if (s.navMax && iso > s.navMax) {
+      current = calendarParse(s.navMax)
+      direction = -(Math.abs(direction) || 1)
+      continue
+    }
+    if (!calendarDisabled(s, current, iso)) return current
+    current = calendarAddDays(current, direction)
+  }
+  return null
+}
+
+function calendarMoveFocus(s, date) {
+  const iso = calendarIso(date)
+  s.focus = iso
+  let navigated = false
+  if (!calendarDisplayed(s, iso)) {
+    const month = calendarFirst(date)
+    navigated = calendarSetMonthState(s, month < s.month ? month : calendarAddMonths(month, -(s.months - 1)))
+  }
+  calendarRender(s, iso)
+  if (navigated) emit(s.el, "calendar:navigate", { value: calendarMonthKey(s.month) })
+}
+
+export function calendarGetValue(el) {
+  const s = calendarOf(el)
+  return s ? calendarCopy(s) : null
+}
+
+export function calendarSetValue(el, value, { emit: notify = false, month = true } = {}) {
+  const s = calendarOf(el)
+  if (!s) return false
+  s.value = calendarNormalize(s.mode, value)
+  const first = calendarSelected(s)[0]
+  if (month && first) calendarSetMonthState(s, calendarParse(first))
+  s.focus = first ?? s.focus
+  calendarRender(s)
+  if (notify) calendarChanged(s, "api")
+  return true
+}
+
+export function calendarSetMonth(el, month) {
+  const s = calendarOf(el)
+  const date = calendarParse(month)
+  if (!s || !date || !calendarSetMonthState(s, date)) return false
+  calendarRender(s)
+  emit(s.el, "calendar:navigate", { value: calendarMonthKey(s.month) })
+  return true
+}
+
+define("calendar", {
+  init(el) {
+    if (!["multiple", "range"].includes(el.getAttribute("data-mode"))) el.setAttribute("data-mode", "single")
+    if (!el.hasAttribute("data-caption-layout")) el.setAttribute("data-caption-layout", "label")
+    if (!el.hasAttribute("data-button-variant")) el.setAttribute("data-button-variant", "ghost")
+    const s = calendarStates.get(el)
+    if (s) calendarReconfigure(s)
+    return calendarConnect(s ?? calendarCreate(el))
+  },
+  focusin(event, el) {
+    const day = event.target instanceof Element ? event.target.closest("[data-calendar-day-button]")?.parentElement : null
+    if (!day || !el.contains(day)) return
+    for (const other of el.querySelectorAll('[data-slot="calendar-day"][data-focused]')) if (other !== day) other.removeAttribute("data-focused")
+    day.setAttribute("data-focused", "true")
+  },
+  focusout(event, el) {
+    const day = event.target instanceof Element ? event.target.closest("[data-calendar-day-button]")?.parentElement : null
+    if (day && el.contains(day)) day.removeAttribute("data-focused")
+  },
+  click(event, el) {
+    const s = calendarOf(el)
+    const target = event.target instanceof Element ? event.target : null
+    if (!s || !target) return
+    const day = target.closest("[data-calendar-day-button]")
+    if (day && el.contains(day)) {
+      if (!day.disabled && !s.disabledAll) calendarChoose(s, day.closest("td").dataset.day)
+      return
+    }
+    const nav = target.closest('[data-slot="calendar-button-previous"], [data-slot="calendar-button-next"]')
+    if (nav && el.contains(nav) && nav.getAttribute("aria-disabled") !== "true") calendarNavigate(s, nav.getAttribute("data-slot") === "calendar-button-previous" ? -1 : 1)
+  },
+  change(event, el) {
+    const s = calendarOf(el)
+    const select = event.target
+    if (!s || !(select instanceof HTMLSelectElement) || select.getAttribute("data-slot") !== "calendar-dropdown") return
+    const index = Number(select.dataset.index) || 0
+    const shown = calendarAddMonths(s.month, index)
+    const picked = select.dataset.kind === "month" ? calendarDate(shown.getFullYear(), Number(select.value), 1) : calendarDate(Number(select.value), shown.getMonth(), 1)
+    if (!calendarSetMonthState(s, calendarAddMonths(picked, -index))) {
+      calendarRender(s)
+      return
+    }
+    calendarRender(s)
+    emit(s.el, "calendar:navigate", { value: calendarMonthKey(s.month) })
+  },
+  keydown(event, el) {
+    const s = calendarOf(el)
+    const button = event.target instanceof Element ? event.target.closest("[data-calendar-day-button]") : null
+    if (!s || !button || !el.contains(button) || event.altKey || event.ctrlKey || event.metaKey) return
+    const current = calendarParse(button.closest("td").dataset.day)
+    const rtl = getComputedStyle(el).direction === "rtl"
+    const offset = (current.getDay() - s.weekStart + 7) % 7
+    let next = null
+    let step = 1
+    switch (event.key) {
+      case "ArrowLeft":
+        step = rtl ? 1 : -1
+        next = calendarAddDays(current, step)
+        break
+      case "ArrowRight":
+        step = rtl ? -1 : 1
+        next = calendarAddDays(current, step)
+        break
+      case "ArrowUp":
+        step = -7
+        next = calendarAddDays(current, step)
+        break
+      case "ArrowDown":
+        step = 7
+        next = calendarAddDays(current, step)
+        break
+      case "Home":
+        step = 1
+        next = calendarAddDays(current, -offset)
+        break
+      case "End":
+        step = -1
+        next = calendarAddDays(current, 6 - offset)
+        break
+      case "PageUp":
+        step = -1
+        next = calendarAddMonths(current, event.shiftKey ? -12 : -1)
+        break
+      case "PageDown":
+        step = 1
+        next = calendarAddMonths(current, event.shiftKey ? 12 : 1)
+        break
+      default:
+        return
+    }
+    event.preventDefault()
+    const target = calendarStep(s, next, step)
+    if (target) calendarMoveFocus(s, target)
+  },
+})
+
+function datePickerParts(root) {
+  const part = selector => own(root, selector)[0] ?? null
+  return {
+    trigger: part("[data-date-picker-trigger]"),
+    content: part("[data-date-picker-content]"),
+    input: part("[data-date-picker-input]"),
+    calendar: part('[data-slot="calendar"]'),
+  }
+}
+
+function datePickerText(root, s) {
+  if (!s) return ""
+  const style = root.getAttribute("data-format") || (s.mode === "single" ? "long" : "short")
+  const kind = calendarFormatOptions[style] ? style : "long"
+  const format = iso => calendarFormat(s, kind, calendarParse(iso))
+  if (s.mode === "range") {
+    if (!s.value) return ""
+    return s.value.from === s.value.to ? format(s.value.from) : `${format(s.value.from)} - ${format(s.value.to)}`
+  }
+  if (s.mode === "multiple") return s.value.map(format).join(", ")
+  return s.value ? format(s.value) : ""
+}
+
+function datePickerOrder(s, kind) {
+  return calendarFormatter(s.lang, kind).formatToParts(calendarDate(2001, 1, 3)).map(part => part.type).filter(type => type === "year" || type === "month" || type === "day")
+}
+
+function datePickerMonth(s, word) {
+  for (let m = 0; m < 12; m++) {
+    const date = calendarDate(2001, m, 3)
+    const names = ["long", "medium"].map(kind => calendarFormatter(s.lang, kind).formatToParts(date).find(part => part.type === "month")?.value ?? "")
+    names.push(calendarFormat(s, "monthLong", date))
+    if (names.some(name => name.toLocaleLowerCase(s.lang).replace(/\.$/, "") === word)) return m
+  }
+  return -1
+}
+
+function datePickerParse(s, text) {
+  const digits = new Map(Array.from({ length: 10 }, (_, i) => [calendarNumber(s, i), String(i)]))
+  const plain = [...text].map(c => digits.get(c) ?? c).join("").toLocaleLowerCase(s.lang)
+  const iso = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(plain)
+  let parts = iso ? { year: iso[1], month: iso[2], day: iso[3] } : null
+  if (!parts) {
+    const tokens = plain.match(/[\p{L}\p{M}]+|\d+/gu) ?? []
+    const numbers = tokens.filter(token => /^\d+$/.test(token))
+    const months = tokens.map(token => datePickerMonth(s, token)).filter(m => m >= 0)
+    if (numbers.length === 3 && !months.length) parts = Object.fromEntries(datePickerOrder(s, "numeric").map((type, i) => [type, numbers[i]]))
+    else if (numbers.length === 2 && months.length === 1) parts = { ...Object.fromEntries(datePickerOrder(s, "long").filter(type => type !== "month").map((type, i) => [type, numbers[i]])), month: String(months[0] + 1) }
+  }
+  if (!parts || parts.year?.length !== 4 || !(parts.month?.length <= 2) || !(parts.day?.length <= 2)) return null
+  const date = calendarDate(Number(parts.year), Number(parts.month) - 1, Number(parts.day))
+  return date.getMonth() === Number(parts.month) - 1 && date.getDate() === Number(parts.day) ? date : null
+}
+
+function datePickerLabel(root) {
+  const { trigger, input, calendar } = datePickerParts(root)
+  if (!trigger) return
+  const text = datePickerText(root, calendarOf(calendar))
+  trigger.dataset.empty = String(!text)
+  if (input) {
+    input.value = text
+    input.removeAttribute("aria-invalid")
+    return
+  }
+  let value = trigger.querySelector('[data-slot="date-picker-value"]')
+  if (!value) {
+    value = h("span", { "data-slot": "date-picker-value" })
+    trigger.append(value)
+  }
+  value.textContent = text || root.getAttribute("data-placeholder") || stringFor(root, "pickDate")
+}
+
+function datePickerOf(target) {
+  return (typeof target === "string" ? document.getElementById(target) : target)?.closest('[data-slot="date-picker"]') ?? null
+}
+
+export function datePickerOpen(target) {
+  const root = datePickerOf(target)
+  const { trigger, content, calendar } = root ? datePickerParts(root) : {}
+  if (!trigger || !content || isOpen(content)) return false
+  const s = calendarOf(calendar)
+  if (s) {
+    const first = calendarSelected(s)[0]
+    if (first && !calendarDisplayed(s, first)) {
+      calendarSetMonthState(s, calendarParse(first))
+      calendarRender(s)
+    }
+  }
+  show(content, {
+    trigger,
+    focus: "first",
+    focusOutside: true,
+    intentional: "mouse",
+    onDismiss: reason => datePickerClose(root, { restoreFocus: reason === "escape" }),
+  })
+  emit(root, "date-picker:open")
+  return true
+}
+
+export function datePickerClose(target, { restoreFocus = true } = {}) {
+  const root = datePickerOf(target)
+  const content = root && datePickerParts(root).content
+  if (!content || !isOpen(content)) return false
+  hide(content, { restoreFocus })
+  emit(root, "date-picker:close")
+  return true
+}
+
+define("date-picker", {
+  init(el) {
+    const { trigger, content } = datePickerParts(el)
+    if (!trigger || !content) return
+    buttonType(trigger)
+    trigger.setAttribute("aria-haspopup", "dialog")
+    trigger.setAttribute("aria-expanded", "false")
+    trigger.setAttribute("aria-controls", ensureId(content, "date-picker-content"))
+    if (!content.hasAttribute("popover")) content.setAttribute("popover", "manual")
+    if (!content.hasAttribute("role")) content.setAttribute("role", "dialog")
+    if (!content.hasAttribute("aria-label") && !content.hasAttribute("aria-labelledby")) content.setAttribute("aria-label", stringFor(content, "chooseDate"))
+    if (!content.hasAttribute("data-align")) content.setAttribute("data-align", "start")
+    content.dataset.state = "closed"
+    datePickerLabel(el)
+  },
+  click(event, root) {
+    const trigger = event.target.closest("[data-date-picker-trigger]")
+    if (!trigger || trigger !== datePickerParts(root).trigger || trigger.matches(":disabled, [aria-disabled='true']")) return
+    if (isOpen(datePickerParts(root).content)) datePickerClose(root)
+    else datePickerOpen(root)
+  },
+  change(event, root) {
+    const { calendar, input } = datePickerParts(root)
+    const s = calendarOf(calendar)
+    const field = event.target
+    if (!s) return
+    if (field === input) {
+      const text = field.value.trim()
+      const date = text ? datePickerParse(s, text) : null
+      if (text && !date) field.setAttribute("aria-invalid", "true")
+      else calendarSetValue(calendar, date && calendarIso(date), { emit: true })
+      return
+    }
+    if (!field.matches("[data-date-picker-preset]") || field.value === "") return
+    const date = calendarParse(field.value) ?? (Number.isFinite(+field.value) ? calendarAddDays(s.today, +field.value) : null)
+    if (date) calendarSetValue(calendar, calendarIso(date), { emit: true })
+  },
+  keydown(event, root) {
+    const { input } = datePickerParts(root)
+    if (event.target !== input || event.key !== "ArrowDown") return
+    event.preventDefault()
+    datePickerOpen(root)
+  },
+  "calendar:change"(event, root) {
+    datePickerLabel(root)
+    const { content } = datePickerParts(root)
+    if (event.detail?.source === "day" && event.detail.mode === "single" && event.detail.value && content && isOpen(content) && !root.hasAttribute("data-keep-open")) datePickerClose(root)
+  },
+})

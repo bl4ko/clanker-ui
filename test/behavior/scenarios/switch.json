@@ -1,0 +1,18 @@
+{
+  "parts": {
+    "switch": {"role": "switch", "name": "Airplane Mode"},
+    "label": {"css": "label", "text": "Airplane Mode"}
+  },
+  "anchor": "switch",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "Space"},
+    {"do": "press", "key": "Enter"},
+    {"do": "press", "key": "Space", "label": "press Space again"},
+    {"do": "click", "target": "switch"},
+    {"do": "click", "target": "label"},
+    {"do": "press_hold", "target": "switch", "hold": 200},
+    {"do": "tab"}
+  ]
+}

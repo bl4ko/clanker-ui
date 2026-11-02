@@ -1,0 +1,18 @@
+{
+  "parts": {
+    "button": {"role": "button", "name": "Button"},
+    "submit": {"role": "button", "name": "Submit"}
+  },
+  "anchor": "button",
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "tab"},
+    {"do": "shift_tab"},
+    {"do": "press", "key": "Enter"},
+    {"do": "press", "key": "Space"},
+    {"do": "press_hold", "target": "submit", "hold": 200},
+    {"do": "click", "target": "button"},
+    {"do": "tab"},
+    {"do": "tab", "label": "tab out of the component"}
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "parts": {
+    "t1": {"role": "button", "name": "What are your shipping options?"},
+    "t2": {"role": "button", "name": "What is your return policy?"},
+    "t3": {"role": "button", "name": "How can I contact customer support?"},
+    "p1": {"role": "region", "name": "What are your shipping options?", "optional": true},
+    "p2": {"role": "region", "name": "What is your return policy?", "optional": true},
+    "p3": {"role": "region", "name": "How can I contact customer support?", "optional": true}
+  },
+  "anchor": "t1",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "Enter", "motion": "p1", "ms": 600},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "Space", "motion": "p2", "ms": 600},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "ArrowDown", "label": "ArrowDown on the last trigger"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "Home"},
+    {"do": "press", "key": "ArrowUp", "label": "ArrowUp on the first trigger"},
+    {"do": "tab"},
+    {"do": "shift_tab"},
+    {"do": "click", "target": "t3", "motion": ["p2", "p3"], "ms": 600},
+    {"do": "click", "target": "t3", "motion": "p3", "ms": 600, "label": "click the open trigger"},
+    {"do": "click", "target": "t1", "motion": "p1", "ms": 600}
+  ],
+  "allowed": [
+    {"key": "accordion.closed-panel-region", "match": "^ARIA tree \\(root\\) \\| \\d+ nodes \\| \\d+ nodes \\| (ours only: region \"[^\"]*\"(; )?)+$", "reason": "closed panels stay in the DOM with hidden=\"until-found\" (Base UI hiddenUntilFound), so find in page opens them"}
+  ]
+}

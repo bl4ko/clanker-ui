@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui split: chart</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../clanker-ui-core.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-chart.min.css">
+  <link rel="modulepreload" href="../../clanker-ui-core.min.js">
+  <script type="module" src="chart.js"></script>
+</head>
+<body>
+  <main data-split="chart">
+    <article data-slot="card" aria-labelledby="split-chart-title">
+      <div data-slot="card-header">
+        <h2 id="split-chart-title" data-slot="card-title">Visitors</h2>
+        <p data-slot="card-description">January - June 2024</p>
+      </div>
+      <div data-slot="card-content"><div id="split-chart"></div></div>
+    </article>
+    <div id="split-stat"></div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<nav data-slot="navigation-menu" aria-label="Main">
+  <ul data-slot="navigation-menu-list">
+    <li data-slot="navigation-menu-item">
+      <button type="button" data-slot="navigation-menu-trigger">Getting started</button>
+      <div data-slot="navigation-menu-content">
+        <ul>
+          <li><a data-slot="navigation-menu-link" href="/docs">Introduction</a></li>
+          <li><a data-slot="navigation-menu-link" href="/docs/installation">Installation</a></li>
+        </ul>
+      </div>
+    </li>
+    <li data-slot="navigation-menu-item">
+      <a data-slot="navigation-menu-link" data-variant="trigger" href="/docs" data-active>Docs</a>
+    </li>
+  </ul>
+</nav>

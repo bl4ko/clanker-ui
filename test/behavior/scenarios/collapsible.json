@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "trigger": {"role": "button", "name": "Toggle details"},
+    "content": {"slot": "collapsible-content", "optional": true, "size": true}
+  },
+  "anchor": "trigger",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "Enter", "motion": "content"},
+    {"do": "press", "key": "Space", "motion": "content"},
+    {"do": "click", "target": "trigger", "motion": "content"},
+    {"do": "click", "target": "trigger", "motion": "content", "label": "click again"},
+    {"do": "tab"}
+  ]
+}

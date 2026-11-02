@@ -1,0 +1,19 @@
+<fieldset data-slot="field-set">
+  <legend data-slot="field-legend">Payment Method</legend>
+  <p data-slot="field-description">All transactions are secure and encrypted.</p>
+  <div data-slot="field-group">
+    <div data-slot="field" role="group">
+      <label data-slot="field-label" for="card-name">Name on Card</label>
+      <input id="card-name" data-slot="input" placeholder="Evil Rabbit" required>
+      <p data-slot="field-description">As printed on the card.</p>
+      <div data-slot="field-error"></div>
+    </div>
+    <div data-slot="field-separator"></div>
+    <div data-slot="field" role="group" data-orientation="horizontal">
+      <button type="button" data-slot="checkbox" id="same-address" data-checked></button>
+      <div data-slot="field-content">
+        <label data-slot="field-label" for="same-address">Same as shipping address</label>
+      </div>
+    </div>
+  </div>
+</fieldset>

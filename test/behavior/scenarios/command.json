@@ -1,0 +1,32 @@
+{
+  "parts": {
+    "input": {"role": "combobox"},
+    "listbox": {"role": "listbox"},
+    "billing": {"role": "option", "name": "Billing"}
+  },
+  "anchor": "input",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "ArrowDown", "label": "ArrowDown onto the disabled item"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "ArrowDown", "label": "ArrowDown on the last item"},
+    {"do": "press", "key": "Home"},
+    {"do": "press", "key": "ArrowUp", "label": "ArrowUp on the first item"},
+    {"do": "type", "text": "set"},
+    {"do": "press", "key": "ArrowDown", "label": "ArrowDown in the filtered list"},
+    {"do": "press", "key": "Enter"},
+    {"do": "press", "key": "Backspace", "times": 3},
+    {"do": "type", "text": "zzz"},
+    {"do": "press", "key": "Backspace", "times": 3, "label": "clear the query"},
+    {"do": "hover", "target": "billing"},
+    {"do": "click", "target": "billing"},
+    {"do": "press", "key": "Escape"},
+    {"do": "tab"}
+  ],
+  "allowed": [
+    {"key": "command.activedescendant-selected", "match": "^aria-activedescendant \\| .* \\| .* \\| ours points at the selected option$", "reason": "the kit keeps its better ARIA: aria-activedescendant points at the selected item (cmdk can keep a stale value)"},
+    {"key": "command.input-name", "aria_name": "combobox", "reason": "the kit keeps its better ARIA: the command input has the name \"Command menu\""}
+  ]
+}

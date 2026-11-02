@@ -1,0 +1,15 @@
+<div data-slot="command">
+  <input data-slot="command-input" placeholder="Type a command or search...">
+  <div data-slot="command-list">
+    <div data-slot="command-empty">No results found.</div>
+    <div data-slot="command-group" data-heading="Suggestions">
+      <div data-slot="command-item"><svg data-lucide="calendar"></svg><span>Calendar</span></div>
+      <div data-slot="command-item" data-keywords="emoji, smiley"><svg data-lucide="smile"></svg><span>Search Emoji</span></div>
+      <div data-slot="command-item" data-disabled><svg data-lucide="calculator"></svg><span>Calculator</span></div>
+    </div>
+    <div data-slot="command-separator"></div>
+    <div data-slot="command-group" data-heading="Settings">
+      <div data-slot="command-item" data-value="profile"><svg data-lucide="user"></svg><span>Profile</span><span data-slot="command-shortcut">⌘P</span></div>
+    </div>
+  </div>
+</div>

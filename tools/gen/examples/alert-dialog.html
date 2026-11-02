@@ -1,0 +1,13 @@
+<div data-slot="alert-dialog">
+  <button type="button" data-slot="button" data-variant="outline" data-alert-dialog-trigger>Delete account</button>
+  <dialog data-slot="alert-dialog-content" data-size="sm">
+    <div data-slot="alert-dialog-header">
+      <h2 data-slot="alert-dialog-title">Are you absolutely sure?</h2>
+      <p data-slot="alert-dialog-description">This action cannot be undone.</p>
+    </div>
+    <div data-slot="alert-dialog-footer">
+      <button type="button" data-slot="alert-dialog-cancel" data-variant="outline">Cancel</button>
+      <button type="button" data-slot="alert-dialog-action" data-variant="destructive">Delete</button>
+    </div>
+  </dialog>
+</div>

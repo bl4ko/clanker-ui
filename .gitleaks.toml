@@ -1,0 +1,7 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "key name in a behavior scenario step"
+targetRules = ["generic-api-key"]
+paths = ['''^test/behavior/scenarios/slider\.json$''']

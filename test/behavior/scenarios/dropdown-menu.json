@@ -1,0 +1,50 @@
+{
+  "parts": {
+    "trigger": {"role": "button", "name": "Open"},
+    "menu": {"role": "menu", "popup": true},
+    "sub": {"role": "menu", "popup": true, "nth": 1},
+    "subtrigger": {"role": "menuitem", "name": "Invite users", "in": "page"},
+    "profile": {"role": "menuitem", "name": "Profile", "in": "page"},
+    "billing": {"role": "menuitem", "name": "Billing", "in": "page"}
+  },
+  "positions": [
+    ["menu", "trigger"],
+    ["sub", "subtrigger"]
+  ],
+  "steps": [
+    {"do": "click", "target": "trigger", "motion": "menu"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "ArrowUp"},
+    {"do": "press", "key": "Home"},
+    {"do": "press", "key": "ArrowUp", "label": "ArrowUp on the first item"},
+    {"do": "type", "text": "s"},
+    {"do": "type", "text": "s", "label": "type 's' again"},
+    {"do": "press", "key": "Escape", "motion": "menu"},
+    {"do": "press", "key": "Enter", "motion": "menu"},
+    {"do": "press", "key": "Tab", "motion": "menu"},
+    {"do": "focus", "target": "trigger"},
+    {"do": "press", "key": "ArrowDown", "motion": "menu"},
+    {"do": "press", "key": "Escape", "motion": "menu"},
+    {"do": "press", "key": "ArrowUp", "motion": "menu"},
+    {"do": "press", "key": "Escape", "motion": "menu"},
+    {"do": "press", "key": "Space", "motion": "menu"},
+    {"do": "hover", "target": "subtrigger", "motion": "sub", "ms": 900},
+    {"do": "press", "key": "ArrowRight", "motion": "sub"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "ArrowLeft", "motion": "sub"},
+    {"do": "press", "key": "ArrowRight", "motion": "sub", "label": "ArrowRight on the submenu trigger"},
+    {"do": "press", "key": "Escape", "motion": ["sub", "menu"]},
+    {"do": "click_outside", "motion": ["sub", "menu"]},
+    {"do": "click", "target": "trigger", "motion": "menu"},
+    {"do": "hover", "target": "billing"},
+    {"do": "leave"},
+    {"do": "click", "target": "profile", "motion": "menu"},
+    {"do": "click", "target": "trigger", "motion": "menu"},
+    {"do": "click", "target": "trigger", "motion": "menu", "label": "click the trigger again"}
+  ],
+  "allowed": [
+    {"key": "dropdown-menu.firefox-ring-escape", "match": "^focus ring \\| none \\| painted \\|", "steps": [10], "engines": ["firefox"], "reason": "Base UI moves focus after the key event, so Firefox paints no focus ring there; the kit keeps the keyboard focus ring"}
+  ]
+}

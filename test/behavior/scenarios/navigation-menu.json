@@ -1,0 +1,35 @@
+{
+  "parts": {
+    "nav": {"role": "navigation"},
+    "gs": {"role": "button", "name": "Getting started"},
+    "comps": {"role": "button", "name": "Components", "optional": true},
+    "icon": {"role": "button", "name": "With Icon"},
+    "docs": {"role": "link", "name": "Docs"},
+    "content": {"slot": "navigation-menu-content", "popup": true}
+  },
+  "anchor": "nav",
+  "positions": [
+    ["content", "nav"]
+  ],
+  "steps": [
+    {"do": "hover", "target": "gs", "motion": "content", "ms": 900},
+    {"do": "hover", "target": "comps", "motion": "content", "ms": 900, "widths": [1280]},
+    {"do": "hover", "target": "icon", "motion": "content", "ms": 900},
+    {"do": "leave", "motion": "content", "ms": 900},
+    {"do": "tab_in"},
+    {"do": "press", "key": "Enter", "motion": "content"},
+    {"do": "press", "key": "ArrowRight", "motion": "content"},
+    {"do": "press", "key": "Escape", "motion": "content"},
+    {"do": "press", "key": "ArrowDown", "motion": "content"},
+    {"do": "tab", "label": "tab into the content"},
+    {"do": "tab"},
+    {"do": "shift_tab", "times": 3, "label": "shift_tab back to the trigger"},
+    {"do": "press", "key": "Space", "motion": "content"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "Home"},
+    {"do": "click", "target": "gs", "motion": "content"},
+    {"do": "click", "target": "gs", "motion": "content", "label": "click the open trigger"},
+    {"do": "click", "target": "icon", "motion": "content"},
+    {"do": "click_outside", "motion": "content"}
+  ]
+}

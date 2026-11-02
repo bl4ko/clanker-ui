@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui generated CSS spike</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/tools/gen/out/spike.css">
+  <link rel="stylesheet" href="/test/spike/page.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-page="main">
+    <section id="button" data-page="section">
+      <h2 data-page="title">Button</h2>
+      <div data-page="preview">
+        <button type="button" data-slot="button" data-variant="outline" data-probe="button-outline-hero">Button</button>
+        <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Submit" data-probe="button-outline-icon"><svg data-lucide="arrow-up"></svg></button>
+      </div>
+      <div data-page="preview">
+        <div data-page="row">
+          <button type="button" data-slot="button" data-variant="outline" data-size="xs" data-probe="button-size-xs">Extra Small</button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon-xs" aria-label="Submit" data-probe="button-size-icon-xs"><svg data-lucide="arrow-up-right"></svg></button>
+        </div>
+        <div data-page="row">
+          <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-probe="button-size-sm">Small</button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Submit" data-probe="button-size-icon-sm"><svg data-lucide="arrow-up-right"></svg></button>
+        </div>
+        <div data-page="row">
+          <button type="button" data-slot="button" data-variant="outline" data-probe="button-size-default">Default</button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Submit" data-probe="button-size-icon"><svg data-lucide="arrow-up-right"></svg></button>
+        </div>
+        <div data-page="row">
+          <button type="button" data-slot="button" data-variant="outline" data-size="lg" data-probe="button-size-lg">Large</button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon-lg" aria-label="Submit" data-probe="button-size-icon-lg"><svg data-lucide="arrow-up-right"></svg></button>
+        </div>
+      </div>
+      <div data-page="preview">
+        <button type="button" data-slot="button" data-probe="button-default">Button</button>
+        <button type="button" data-slot="button" data-variant="outline" data-probe="button-outline">Outline</button>
+        <button type="button" data-slot="button" data-variant="secondary" data-probe="button-secondary">Secondary</button>
+        <button type="button" data-slot="button" data-variant="ghost" data-probe="button-ghost">Ghost</button>
+        <button type="button" data-slot="button" data-variant="destructive" data-probe="button-destructive">Destructive</button>
+        <button type="button" data-slot="button" data-variant="link" data-probe="button-link">Link</button>
+      </div>
+      <div data-page="preview">
+        <button type="button" data-slot="button" data-variant="outline" data-probe="button-icon-start"><svg data-lucide="git-branch" data-icon="inline-start"></svg> New Branch</button>
+        <button type="button" data-slot="button" data-variant="outline" data-probe="button-icon-end">Fork<svg data-lucide="git-branch" data-icon="inline-end"></svg></button>
+      </div>
+      <div data-page="preview">
+        <button type="button" data-slot="button" data-variant="outline" disabled data-probe="button-disabled-outline"><svg data-lucide="loader-circle" data-icon="inline-start"></svg>Generating</button>
+        <button type="button" data-slot="button" data-variant="secondary" disabled data-probe="button-disabled-secondary">Downloading<svg data-lucide="loader-circle" data-icon="inline-start"></svg></button>
+      </div>
+    </section>
+
+    <section id="card" data-page="section">
+      <h2 data-page="title">Card</h2>
+      <div data-page="preview">
+        <div data-slot="card" data-page="card-demo" data-probe="card">
+          <div data-slot="card-header" data-probe="card-header">
+            <div data-slot="card-title" data-probe="card-title">Login to your account</div>
+            <div data-slot="card-description" data-probe="card-description">Enter your email below to login to your account</div>
+            <div data-slot="card-action" data-probe="card-action"><button type="button" data-slot="button" data-variant="link">Sign Up</button></div>
+          </div>
+          <div data-slot="card-content" data-probe="card-content">
+            <form>
+              <div data-page="stack-6">
+                <div data-page="grid-2">
+                  <label data-slot="label" for="card-email" data-probe="card-label">Email</label>
+                  <input data-slot="input" id="card-email" type="email" placeholder="m@example.com" required data-probe="card-input">
+                </div>
+                <div data-page="grid-2">
+                  <div data-page="row-center">
+                    <label data-slot="label" for="card-password">Password</label>
+                    <a href="#card" data-page="forgot">Forgot your password?</a>
+                  </div>
+                  <input data-slot="input" id="card-password" type="password" required>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div data-slot="card-footer" data-page="footer-stack" data-probe="card-footer">
+            <button type="submit" data-slot="button" data-page="w-full">Login</button>
+            <button type="button" data-slot="button" data-variant="outline" data-page="w-full">Login with Google</button>
+          </div>
+        </div>
+      </div>
+      <div data-page="preview">
+        <div data-slot="card" data-size="sm" data-page="card-demo" data-probe="card-sm">
+          <div data-slot="card-header">
+            <div data-slot="card-title" data-probe="card-sm-title">Scheduled reports</div>
+            <div data-slot="card-description">Weekly snapshots. No more manual exports.</div>
+          </div>
+          <div data-slot="card-content"><p>Choose a schedule (daily, or weekly).</p></div>
+          <div data-slot="card-footer" data-probe="card-sm-footer">
+            <button type="button" data-slot="button" data-size="sm">Set up scheduled reports</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="field" data-page="section">
+      <h2 data-page="title">Field</h2>
+      <div data-page="preview">
+        <div data-page="field-demo">
+          <form>
+            <div data-slot="field-group" data-probe="field-group">
+              <fieldset data-slot="field-set" data-probe="field-set">
+                <legend data-slot="field-legend" data-probe="field-legend">Payment Method</legend>
+                <p data-slot="field-description" data-probe="field-description-set">All transactions are secure and encrypted</p>
+                <div data-slot="field-group">
+                  <div data-slot="field" role="group" data-probe="field">
+                    <label data-slot="field-label" for="field-card-name" data-probe="field-label">Name on Card</label>
+                    <input data-slot="input" id="field-card-name" placeholder="Evil Rabbit" required data-probe="field-input">
+                  </div>
+                  <div data-slot="field" role="group">
+                    <label data-slot="field-label" for="field-card-number">Card Number</label>
+                    <input data-slot="input" id="field-card-number" placeholder="1234 5678 9012 3456" required>
+                    <p data-slot="field-description" data-probe="field-description">Enter your 16-digit card number</p>
+                  </div>
+                </div>
+              </fieldset>
+              <div data-slot="field-separator" data-content="false" data-probe="field-separator"><div data-slot="separator" data-orientation="horizontal" role="separator" data-probe="field-separator-line"></div></div>
+              <fieldset data-slot="field-set">
+                <legend data-slot="field-legend">Billing Address</legend>
+                <p data-slot="field-description">The billing address associated with your payment method</p>
+                <div data-slot="field-group">
+                  <div data-slot="field" role="group" data-orientation="horizontal" data-probe="field-horizontal">
+                    <input type="checkbox" id="field-same" data-slot="checkbox" checked>
+                    <label data-slot="field-label" for="field-same" data-page="font-normal">Same as shipping address</label>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset data-slot="field-set">
+                <div data-slot="field-group">
+                  <div data-slot="field" role="group">
+                    <label data-slot="field-label" for="field-comments">Comments</label>
+                    <textarea data-slot="textarea" id="field-comments" placeholder="Add any additional comments" data-page="resize-none" data-probe="field-textarea"></textarea>
+                  </div>
+                </div>
+              </fieldset>
+              <div data-slot="field" role="group" data-orientation="horizontal">
+                <button type="submit" data-slot="button">Submit</button>
+                <button type="button" data-slot="button" data-variant="outline">Cancel</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="dialog" data-page="section">
+      <h2 data-page="title">Dialog</h2>
+      <div data-page="preview">
+        <div data-slot="dialog">
+          <button type="button" data-slot="button" data-variant="outline" data-dialog-trigger data-probe="dialog-trigger">Open Dialog</button>
+          <dialog data-slot="dialog-content" data-probe="dialog-content">
+            <div data-slot="dialog-header" data-probe="dialog-header">
+              <h2 data-slot="dialog-title" data-probe="dialog-title">Edit profile</h2>
+              <p data-slot="dialog-description" data-probe="dialog-description">Make changes to your profile here. Click save when you&apos;re done.</p>
+            </div>
+            <div data-slot="field-group">
+              <div data-slot="field" role="group">
+                <label data-slot="label" for="dialog-name">Name</label>
+                <input data-slot="input" id="dialog-name" name="name" value="Pedro Duarte">
+              </div>
+              <div data-slot="field" role="group">
+                <label data-slot="label" for="dialog-username">Username</label>
+                <input data-slot="input" id="dialog-username" name="username" value="@peduarte">
+              </div>
+            </div>
+            <div data-slot="dialog-footer" data-probe="dialog-footer">
+              <button type="button" data-slot="button" data-variant="outline" data-dialog-close>Cancel</button>
+              <button type="submit" data-slot="button">Save changes</button>
+            </div>
+          </dialog>
+        </div>
+      </div>
+    </section>
+
+    <section id="dropdown-menu" data-page="section">
+      <h2 data-page="title">Dropdown Menu</h2>
+      <div data-page="preview">
+        <div data-slot="dropdown-menu">
+          <button type="button" data-slot="button" data-variant="outline" data-dropdown-menu-trigger data-probe="menu-trigger">Open</button>
+          <div data-slot="dropdown-menu-content" data-align="start" data-page="w-40" data-probe="menu-content">
+            <div data-slot="dropdown-menu-group">
+              <div data-slot="dropdown-menu-label" data-probe="menu-label">My Account</div>
+              <div data-slot="dropdown-menu-item" data-probe="menu-item">Profile<span data-slot="dropdown-menu-shortcut" data-probe="menu-shortcut">⇧⌘P</span></div>
+              <div data-slot="dropdown-menu-item">Billing<span data-slot="dropdown-menu-shortcut">⌘B</span></div>
+              <div data-slot="dropdown-menu-item">Settings<span data-slot="dropdown-menu-shortcut">⌘S</span></div>
+            </div>
+            <div data-slot="dropdown-menu-separator" data-probe="menu-separator"></div>
+            <div data-slot="dropdown-menu-group">
+              <div data-slot="dropdown-menu-item">Team</div>
+              <div data-slot="dropdown-menu-sub">
+                <div data-slot="dropdown-menu-sub-trigger" data-probe="menu-sub-trigger">Invite users</div>
+                <div data-slot="dropdown-menu-sub-content" data-probe="menu-sub-content">
+                  <div data-slot="dropdown-menu-item">Email</div>
+                  <div data-slot="dropdown-menu-item">Message</div>
+                  <div data-slot="dropdown-menu-separator"></div>
+                  <div data-slot="dropdown-menu-item">More...</div>
+                </div>
+              </div>
+              <div data-slot="dropdown-menu-item">New Team<span data-slot="dropdown-menu-shortcut">⌘+T</span></div>
+            </div>
+            <div data-slot="dropdown-menu-separator"></div>
+            <div data-slot="dropdown-menu-group">
+              <div data-slot="dropdown-menu-item">GitHub</div>
+              <div data-slot="dropdown-menu-item">Support</div>
+              <div data-slot="dropdown-menu-item" data-disabled data-probe="menu-item-disabled">API</div>
+            </div>
+            <div data-slot="dropdown-menu-separator"></div>
+            <div data-slot="dropdown-menu-group">
+              <div data-slot="dropdown-menu-item">Log out<span data-slot="dropdown-menu-shortcut">⇧⌘Q</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-page="preview">
+        <div data-slot="dropdown-menu">
+          <button type="button" data-slot="button" data-variant="outline" data-dropdown-menu-trigger data-probe="menu-check-trigger">Open</button>
+          <div data-slot="dropdown-menu-content" data-page="w-40" data-probe="menu-check-content">
+            <div data-slot="dropdown-menu-group">
+              <div data-slot="dropdown-menu-label">Appearance</div>
+              <div data-slot="dropdown-menu-checkbox-item" data-state="checked" data-probe="menu-checkbox-item">Status Bar</div>
+              <div data-slot="dropdown-menu-checkbox-item" data-disabled>Activity Bar</div>
+              <div data-slot="dropdown-menu-checkbox-item">Panel</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

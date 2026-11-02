@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui split: loaded twice</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../clanker-ui.css">
+  <script type="module" src="../../clanker-ui.js"></script>
+  <script type="module" src="../../clanker-ui-forms.min.js"></script>
+</head>
+<body>
+  <main data-split="twice">
+    <label data-slot="label" for="twice-switch">Airplane mode</label>
+    <button type="button" data-slot="switch" id="twice-switch"></button>
+  </main>
+</body>
+</html>

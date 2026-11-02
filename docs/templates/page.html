@@ -1,0 +1,227 @@
+{{define "page"}}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="{{csp}}">
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="{{.Description}}">
+  <title>{{if eq .Kind "home"}}clanker-ui{{else}}{{.Title}} - clanker-ui{{end}}</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="{{asset "clanker-ui.css"}}">
+  <link rel="stylesheet" href="{{asset "docs.css"}}">
+  <script src="{{asset "clanker-ui-theme.js"}}"></script>
+{{- if or (eq .Kind "docs") (eq .Kind "pending") (eq .Kind "not-found")}}
+  <script src="{{asset "docs-sidebar.js"}}"></script>
+{{- end}}
+  <script type="module" src="{{asset "clanker-ui.js"}}"></script>
+  <script type="module" src="{{asset "docs.js"}}"></script>
+{{- range .Modules}}
+  <script type="module" src="{{asset .}}"></script>
+{{- end}}
+</head>
+{{- if eq .Kind "view"}}
+<body data-docs="view">
+  <div data-docs="preview">{{.Page.HTML}}</div>
+</body>
+{{- else}}
+<body data-docs="body">
+  <div data-docs="layout">
+    {{template "header" .}}
+    <main data-docs="main">
+      {{- if or (eq .Kind "docs") (eq .Kind "pending") (eq .Kind "not-found")}}{{template "docs" .}}{{else}}{{template "home" .}}{{end}}
+    </main>
+    {{- if not (or (eq .Kind "docs") (eq .Kind "pending") (eq .Kind "not-found"))}}
+    {{template "footer" .}}
+    {{- end}}
+  </div>
+  {{template "overlays" .}}
+</body>
+{{- end}}
+</html>
+{{end}}
+
+{{define "header"}}<header data-docs="header">
+      <div data-docs="header-row">
+        <button type="button" data-slot="button" data-variant="ghost" data-docs="menu-trigger" data-popover-trigger="docs-menu" aria-haspopup="dialog" aria-expanded="false">
+          <span data-docs="hamburger" aria-hidden="true"><span></span><span></span></span>
+          <span class="sr-only">Toggle Menu</span>
+          <span data-docs="menu-text" aria-hidden="true">Menu</span>
+        </button>
+        <nav data-docs="main-nav" aria-label="Main">
+          {{- range .Header}}
+          <a data-slot="button" data-variant="ghost" data-size="sm" href="{{.Href}}"{{if .Current}} data-active="true" aria-current="page"{{end}}>{{.Title}}</a>
+          {{- end}}
+        </nav>
+        <div data-docs="header-actions">
+          <button type="button" data-slot="button" data-variant="outline" data-docs="search-trigger" data-dialog-trigger="docs-search" aria-haspopup="dialog" aria-expanded="false"><span data-docs="search-long">Search documentation...</span><span data-docs="search-short">Search...</span></button>
+          <div data-slot="separator" data-orientation="vertical" role="none" data-docs="separator-lg"></div>
+          <a data-slot="button" data-variant="ghost" data-size="sm" data-docs="github" href="{{.GitHub}}" target="_blank" rel="noreferrer" aria-label="GitHub"><svg viewBox="0 0 438.549 438.549" aria-hidden="true"><path fill="currentColor" d="M409.132 114.573c-19.608-33.596-46.205-60.194-79.798-79.8-33.598-19.607-70.277-29.408-110.063-29.408-39.781 0-76.472 9.804-110.063 29.408-33.596 19.605-60.192 46.204-79.8 79.8C9.803 148.168 0 184.854 0 224.63c0 47.78 13.94 90.745 41.827 128.906 27.884 38.164 63.906 64.572 108.063 79.227 5.14.954 8.945.283 11.419-1.996 2.475-2.282 3.711-5.14 3.711-8.562 0-.571-.049-5.708-.144-15.417a2549.81 2549.81 0 01-.144-25.406l-6.567 1.136c-4.187.767-9.469 1.092-15.846 1-6.374-.089-12.991-.757-19.842-1.999-6.854-1.231-13.229-4.086-19.13-8.559-5.898-4.473-10.085-10.328-12.56-17.556l-2.855-6.57c-1.903-4.374-4.899-9.233-8.992-14.559-4.093-5.331-8.232-8.945-12.419-10.848l-1.999-1.431c-1.332-.951-2.568-2.098-3.711-3.429-1.142-1.331-1.997-2.663-2.568-3.997-.572-1.335-.098-2.43 1.427-3.289 1.525-.859 4.281-1.276 8.28-1.276l5.708.853c3.807.763 8.516 3.042 14.133 6.851 5.614 3.806 10.229 8.754 13.846 14.842 4.38 7.806 9.657 13.754 15.846 17.847 6.184 4.093 12.419 6.136 18.699 6.136 6.28 0 11.704-.476 16.274-1.423 4.565-.952 8.848-2.383 12.847-4.285 1.713-12.758 6.377-22.559 13.988-29.41-10.848-1.14-20.601-2.857-29.264-5.14-8.658-2.286-17.605-5.996-26.835-11.14-9.235-5.137-16.896-11.516-22.985-19.126-6.09-7.614-11.088-17.61-14.987-29.979-3.901-12.374-5.852-26.648-5.852-42.826 0-23.035 7.52-42.637 22.557-58.817-7.044-17.318-6.379-36.732 1.997-58.24 5.52-1.715 13.706-.428 24.554 3.853 10.85 4.283 18.794 7.952 23.84 10.994 5.046 3.041 9.089 5.618 12.135 7.708 17.705-4.947 35.976-7.421 54.818-7.421s37.117 2.474 54.823 7.421l10.849-6.849c7.419-4.57 16.18-8.758 26.262-12.565 10.088-3.805 17.802-4.853 23.134-3.138 8.562 21.509 9.325 40.922 2.279 58.24 15.036 16.18 22.559 35.787 22.559 58.817 0 16.178-1.958 30.497-5.853 42.966-3.9 12.471-8.941 22.457-15.125 29.979-6.191 7.521-13.901 13.85-23.131 18.986-9.232 5.14-18.182 8.85-26.84 11.136-8.662 2.286-18.415 4.004-29.263 5.146 9.894 8.562 14.842 22.077 14.842 40.539v60.237c0 3.422 1.19 6.279 3.572 8.562 2.379 2.279 6.136 2.95 11.276 1.995 44.163-14.653 80.185-41.062 108.068-79.226 27.88-38.161 41.825-81.126 41.825-128.906-.01-39.771-9.818-76.454-29.414-110.049z"></path></svg></a>
+          <div data-slot="separator" data-orientation="vertical" role="none"></div>
+          <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-docs="theme-toggle" data-theme-set="toggle" aria-label="Dark mode" aria-keyshortcuts="D"><svg class="lucide lucide-contrast" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 18a6 6 0 0 0 0-12v12z"></path></svg></button>
+        </div>
+      </div>
+    </header>{{end}}
+
+{{define "footer"}}<footer data-docs="footer">
+      <div data-docs="footer-row">
+        <p>clanker-ui. A port of <a href="https://ui.shadcn.com">shadcn/ui</a> (MIT). Source on <a href="{{.GitHub}}">GitHub</a>.</p>
+      </div>
+    </footer>{{end}}
+
+{{define "docs"}}<div data-docs="container">
+        <div data-slot="sidebar-wrapper" data-docs="sidebar-wrapper">
+          <nav data-slot="sidebar" data-collapsible="none" data-docs="sidebar" aria-label="Docs">
+            <div data-docs="sidebar-edge" aria-hidden="true"></div>
+            <div data-slot="sidebar-content" data-docs-sidebar-content class="scroll-fade">
+              {{- range .Sidebar}}{{if .Items}}
+              <div data-slot="sidebar-group">
+                <div data-slot="sidebar-group-label">{{.Title}}</div>
+                <div data-slot="sidebar-group-content">
+                  <ul data-slot="sidebar-menu">
+                    {{- range .Items}}
+                    <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="{{.Href}}"{{if .Active}} data-active="true"{{end}}{{if .Current}} aria-current="page"{{end}}><span data-docs="hit"></span>{{.Title}}{{if .New}}<span class="sr-only">New</span><span data-docs="new-dot" aria-hidden="true"></span>{{end}}</a></li>
+                    {{- end}}
+                  </ul>
+                </div>
+              </div>
+              {{- end}}{{end}}
+            </div>
+          </nav>
+          <div data-docs="page">
+            <div data-docs="docs">
+              <div data-docs="column">
+                <div data-docs="top-spacing"></div>
+                <article data-docs="article">
+                  <div data-docs="heading">
+                    <div data-docs="title-row">
+                      <h1 data-docs="title">{{.Title}}</h1>
+                      <div data-docs="docs-nav">
+                        {{- if .Markdown}}
+                        <div data-slot="button-group" role="group" aria-label="Page" data-docs="copy-page">
+                          <button type="button" data-slot="button" data-variant="secondary" data-size="sm" data-docs="copy-page-button" data-markdown="{{.Markdown}}"><svg data-lucide="copy"></svg><svg data-lucide="check"></svg>Copy Page</button>
+                          <div data-docs="copy-page-divider" aria-hidden="true"></div>
+                          <div data-slot="dropdown-menu">
+                            <button type="button" data-slot="button" data-variant="secondary" data-size="icon-sm" data-docs="copy-page-menu" data-dropdown-menu-trigger aria-label="More page actions"><svg data-lucide="chevron-down"></svg></button>
+                            <div data-slot="dropdown-menu-content" data-align="end" data-docs="copy-page-content">
+                              <a data-slot="dropdown-menu-item" href="{{.Markdown}}" target="_blank" rel="noreferrer"><svg viewBox="0 0 22 16" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M19.5 2.25H2.5C1.80964 2.25 1.25 2.80964 1.25 3.5V12.5C1.25 13.1904 1.80964 13.75 2.5 13.75H19.5C20.1904 13.75 20.75 13.1904 20.75 12.5V3.5C20.75 2.80964 20.1904 2.25 19.5 2.25ZM2.5 1C1.11929 1 0 2.11929 0 3.5V12.5C0 13.8807 1.11929 15 2.5 15H19.5C20.8807 15 22 13.8807 22 12.5V3.5C22 2.11929 20.8807 1 19.5 1H2.5ZM3 4.5H4H4.25H4.6899L4.98715 4.82428L7 7.02011L9.01285 4.82428L9.3101 4.5H9.75H10H11V5.5V11.5H9V7.79807L7.73715 9.17572L7 9.97989L6.26285 9.17572L5 7.79807V11.5H3V5.5V4.5ZM15 8V4.5H17V8H19.5L17 10.5L16 11.5L15 10.5L12.5 8H15Z"></path></svg>View as Markdown</a>
+                            </div>
+                          </div>
+                        </div>
+                        {{- end}}
+                        <div data-docs="neighbours">
+                          {{- with .Prev}}
+                          <a data-slot="button" data-variant="secondary" data-size="icon" data-docs="prev" href="{{.Href}}"><svg data-lucide="arrow-left"></svg><span class="sr-only">Previous</span></a>
+                          {{- end}}
+                          {{- with .Next}}
+                          <a data-slot="button" data-variant="secondary" data-size="icon" data-docs="next" href="{{.Href}}"><span class="sr-only">Next</span><svg data-lucide="arrow-right"></svg></a>
+                          {{- end}}
+                        </div>
+                      </div>
+                    </div>
+                    <p data-docs="description">{{.Description}}</p>
+                  </div>
+                  <div data-docs="content">
+                    {{- if .Page}}
+                    {{.Page.HTML}}
+                    {{- else if eq .Kind "pending"}}
+                    <p>See <a href="{{.DemoHref}}">{{.Title}} in the component demo</a>.</p>
+                    {{- else}}
+                    <p>Go to the <a href="{{url "/docs"}}">Introduction</a> or <a href="{{url "/docs/components"}}">Components</a>.</p>
+                    {{- end}}
+                  </div>
+                  <div data-docs="bottom-nav">
+                    {{- with .Prev}}
+                    <a data-slot="button" data-variant="secondary" data-size="sm" data-docs="prev" href="{{.Href}}"><svg data-lucide="arrow-left"></svg>{{.Title}}</a>
+                    {{- end}}
+                    {{- with .Next}}
+                    <a data-slot="button" data-variant="secondary" data-size="sm" data-docs="next" href="{{.Href}}">{{.Title}}<svg data-lucide="arrow-right"></svg></a>
+                    {{- end}}
+                  </div>
+                </article>
+              </div>
+              <div data-docs="toc-rail">
+                <div data-docs="top-spacing"></div>
+                {{- if .Page}}{{if .Page.TOC}}
+                <div data-docs="toc-scroller" class="scroll-fade">
+                  <nav data-docs="toc" aria-label="On This Page">
+                    <p data-docs="toc-title">On This Page</p>
+                    {{- range .Page.TOC}}
+                    <a href="#{{.ID}}" data-depth="{{.Depth}}">{{.Title}}</a>
+                    {{- end}}
+                  </nav>
+                </div>
+                {{- end}}{{end}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>{{end}}
+
+{{define "home"}}<div data-docs="page-header">
+        {{- if eq .Kind "home"}}
+        <a data-slot="badge" data-variant="secondary" data-docs="announcement" href="{{url "/demo"}}">All components on one page<svg data-lucide="arrow-right"></svg></a>
+        <h1 data-docs="hero-title">shadcn/ui for plain HTML</h1>
+        <p data-docs="hero-text">{{.Description}} No build step, no npm, no CDN. It runs under a strict CSP with Trusted Types.</p>
+        <div data-docs="hero-actions">
+          <a data-slot="button" href="{{url "/docs"}}">Get Started</a>
+          <a data-slot="button" data-variant="secondary" href="{{url "/docs/components"}}">View Components</a>
+        </div>
+        {{- else}}
+        <h1 data-docs="hero-title">{{.Title}}</h1>
+        <p data-docs="hero-text">{{.Description}}</p>
+        <div data-docs="hero-actions">
+          <a data-slot="button" href="{{.DemoHref}}">Open the component demo</a>
+          <a data-slot="button" data-variant="secondary" href="{{url "/docs"}}">Read the docs</a>
+        </div>
+        {{- end}}
+      </div>{{end}}
+
+{{define "overlays"}}<div data-slot="popover" id="docs-menu" data-docs="mobile-menu">
+    <div data-slot="popover-content" data-docs="menu" data-side="bottom" data-align="start" data-side-offset="14" data-align-offset="-16" aria-label="Menu">
+      <div data-docs="menu-inner">
+        {{- range $i, $g := .Mobile}}{{if lt $i 2}}
+        <div data-docs="menu-group">
+          <div data-docs="menu-label">{{.Title}}</div>
+          <div data-docs="menu-links">
+            {{- range .Items}}
+            <a href="{{.Href}}"{{if .Current}} aria-current="page"{{end}}>{{.Title}}{{if .New}}<span class="sr-only">New</span><span data-docs="new-dot" aria-hidden="true"></span>{{end}}</a>
+            {{- end}}
+          </div>
+        </div>
+        {{- end}}{{end}}
+        <div data-docs="menu-folders">
+          {{- range $i, $g := .Mobile}}{{if and (ge $i 2) .Items}}
+          <div data-docs="menu-group">
+            <div data-docs="menu-label">{{.Title}}</div>
+            <div data-docs="menu-links">
+              {{- range .Items}}
+              <a href="{{.Href}}"{{if .Current}} aria-current="page"{{end}}>{{.Title}}{{if .New}}<span class="sr-only">New</span><span data-docs="new-dot" aria-hidden="true"></span>{{end}}</a>
+              {{- end}}
+            </div>
+          </div>
+          {{- end}}{{end}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-slot="dialog" id="docs-search">
+    <dialog data-slot="dialog-content" data-docs="search-dialog" data-show-close-button="false" aria-label="Search documentation">
+      <div data-slot="command" data-docs="command" aria-label="Search documentation">
+        <input data-slot="command-input" placeholder="Search documentation...">
+        <div data-slot="command-list">
+          <div data-slot="command-empty">No results found.</div>
+          {{- range .Search}}{{if .Items}}
+          <div data-slot="command-group" data-heading="{{.Title}}">
+            {{- range .Items}}
+            <a data-slot="command-item" href="{{.Href}}" data-value="{{.Value}}"{{if .Keywords}} data-keywords="{{.Keywords}}"{{end}}>{{if .Component}}<span data-docs="component-dot" aria-hidden="true"></span>{{else}}<svg data-lucide="arrow-right"></svg>{{end}}{{.Title}}</a>
+            {{- end}}
+          </div>
+          {{- end}}{{end}}
+        </div>
+      </div>
+      <div data-docs="search-footer" aria-hidden="true"><kbd>&#8629;</kbd>Go to Page</div>
+    </dialog>
+  </div>{{end}}

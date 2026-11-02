@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Command behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="command" data-behavior="max-w-384 bordered">
+          <input data-slot="command-input" placeholder="Type a command or search...">
+          <div data-slot="command-list">
+            <div data-slot="command-empty">No results found.</div>
+            <div data-slot="command-group" data-heading="Suggestions">
+              <div data-slot="command-item"><svg data-lucide="calendar"></svg><span>Calendar</span></div>
+              <div data-slot="command-item"><svg data-lucide="smile"></svg><span>Search Emoji</span></div>
+              <div data-slot="command-item" data-disabled><svg data-lucide="calculator"></svg><span>Calculator</span></div>
+            </div>
+            <div data-slot="command-separator"></div>
+            <div data-slot="command-group" data-heading="Settings">
+              <div data-slot="command-item"><svg data-lucide="user"></svg><span>Profile</span><span data-slot="command-shortcut">⌘P</span></div>
+              <div data-slot="command-item"><svg data-lucide="credit-card"></svg><span>Billing</span><span data-slot="command-shortcut">⌘B</span></div>
+              <div data-slot="command-item"><svg data-lucide="settings"></svg><span>Settings</span><span data-slot="command-shortcut">⌘S</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

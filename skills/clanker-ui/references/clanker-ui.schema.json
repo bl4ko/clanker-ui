@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/bl4ko/clanker-ui/main/clanker-ui.schema.json",
+  "title": "clanker-ui catalog",
+  "description": "Machine-readable catalog of the clanker-ui components. Made by go run ./tools/gen catalog.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "name", "version", "description", "license", "repository", "docs", "shadcn", "baseUi", "csp", "cspMeta", "files", "groups", "globalAttributes", "exports", "components"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "name": { "const": "clanker-ui" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$" },
+    "description": { "type": "string" },
+    "license": { "type": "string" },
+    "repository": { "type": "string", "format": "uri" },
+    "docs": { "type": "string", "format": "uri", "description": "Docs site root." },
+    "shadcn": { "type": "string", "pattern": "^[0-9a-f]{40}$", "description": "shadcn/ui commit that the kit matches." },
+    "baseUi": { "type": "string", "description": "Base UI version that the behavior follows." },
+    "csp": { "type": "string", "description": "Content-Security-Policy header value for the pages that use the kit." },
+    "cspMeta": { "type": "string", "description": "The same policy for a <meta http-equiv> tag on static hosts (no frame-ancestors)." },
+    "files": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["note", "readable", "bundle", "optional"],
+      "properties": {
+        "note": { "type": "string" },
+        "readable": { "$ref": "#/$defs/fileSet" },
+        "bundle": { "$ref": "#/$defs/fileSet" },
+        "optional": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["file", "use"],
+            "properties": { "file": { "type": "string" }, "use": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "groups": {
+      "type": "array",
+      "description": "Component groups in load order. Each group has its own .min CSS and JS file.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "css", "components"],
+        "properties": {
+          "name": { "$ref": "#/$defs/group" },
+          "css": { "type": "string" },
+          "js": { "type": "string" },
+          "components": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "globalAttributes": { "$ref": "#/$defs/attributes", "description": "Attributes that work on any element." },
+    "exports": {
+      "type": "array",
+      "description": "Public JavaScript API.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "module", "signature"],
+        "properties": {
+          "name": { "type": "string" },
+          "module": { "enum": ["clanker-ui.js", "clanker-ui-chart.js"] },
+          "component": { "type": "string" },
+          "signature": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "components": { "type": "array", "items": { "$ref": "#/$defs/component" } }
+  },
+  "$defs": {
+    "group": { "enum": ["core", "forms", "overlays", "layout", "chat", "chart"] },
+    "fileSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["css", "js"],
+      "properties": {
+        "css": { "type": "array", "items": { "type": "string" } },
+        "js": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "attributes": {
+      "type": "object",
+      "description": "Attribute name to value. An array lists the allowed values (\"\" means the attribute without a value). \"boolean\": present or absent. \"string\", \"number\": a value of that type. \"id\": no value, or the id of a component root elsewhere in the page. \"any\": the docs name the attribute but not its values.",
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "array", "items": { "type": "string" } },
+          { "enum": ["boolean", "string", "number", "id", "any"] }
+        ]
+      }
+    },
+    "part": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slot"],
+      "properties": {
+        "slot": { "type": "string", "description": "Value of data-slot." },
+        "root": { "type": "boolean" },
+        "js": { "type": "boolean", "description": "The kit has behavior for this slot." },
+        "attributes": { "$ref": "#/$defs/attributes", "description": "Attributes that you write." },
+        "state": { "type": "array", "items": { "type": "string" }, "description": "Attributes that the kit sets. Style on them; do not write them." }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "target", "detail"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z-]+:[a-z-]+$" },
+        "target": { "type": "string" },
+        "detail": { "type": "array", "items": { "type": "string" }, "description": "Fields of event.detail." },
+        "cancelable": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "title", "group", "needs", "js", "parts", "partAttributes", "options", "kitAdds", "events", "exports", "keyboard", "example", "exampleSource", "docs", "docsMarkdown", "readme"],
+      "properties": {
+        "name": { "type": "string" },
+        "title": { "type": "string" },
+        "group": { "$ref": "#/$defs/group" },
+        "needs": { "type": "array", "items": { "$ref": "#/$defs/group" }, "description": "Other groups to load with this component's group." },
+        "js": { "type": "boolean", "description": "false: CSS only." },
+        "parts": { "type": "array", "items": { "$ref": "#/$defs/part" } },
+        "partAttributes": { "$ref": "#/$defs/attributes", "description": "Attributes that give an element of another component (for example a button) the behavior of a part of this component." },
+        "options": { "$ref": "#/$defs/attributes", "description": "Other data-* attributes that the docs name for this component." },
+        "kitAdds": { "type": "array", "items": { "type": "string" }, "description": "Slots that the kit creates. Do not write them." },
+        "events": { "type": "array", "items": { "$ref": "#/$defs/event" } },
+        "exports": { "type": "array", "items": { "type": "string" } },
+        "keyboard": { "type": "array", "items": { "type": "string" } },
+        "example": { "type": "string", "description": "Minimal markup." },
+        "exampleSource": { "type": "string" },
+        "docs": { "type": "string", "format": "uri" },
+        "docsMarkdown": { "type": "string", "format": "uri" },
+        "readme": { "type": "string", "description": "README section: the full text reference of the component." },
+        "sameAs": { "type": "string", "description": "This name is an alias of the named component." },
+        "script": { "type": "string", "description": "JavaScript usage from the README section, when the component has an API." }
+      }
+    }
+  }
+}

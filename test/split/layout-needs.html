@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui split: layout-needs</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../clanker-ui-core.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-overlays.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-layout.min.css">
+  <link rel="modulepreload" href="../../clanker-ui-core.min.js">
+  <script type="module" src="../../clanker-ui-core.min.js"></script>
+  <script type="module" src="../../clanker-ui-overlays.min.js"></script>
+  <script type="module" src="../../clanker-ui-layout.min.js"></script>
+</head>
+<body>
+  <main data-split="layout-needs">
+<section id="sidebar" data-demo="section">
+        <h3 data-demo="title">Sidebar</h3>
+        <p data-demo="description">A composable, themeable, and collapsible sidebar. Toggle with the trigger, the rail, or <kbd data-slot="kbd-group"><kbd data-slot="kbd">Ctrl</kbd><kbd data-slot="kbd">B</kbd></kbd> (<kbd data-slot="kbd-group"><kbd data-slot="kbd">⌘</kbd><kbd data-slot="kbd">B</kbd></kbd> on macOS). The state is stored in <code>localStorage</code>. On phones it opens as an off-canvas sheet.</p>
+        <div data-demo="preview full">
+          <div id="sidebar-main" data-slot="sidebar-wrapper">
+            <div data-slot="sidebar" data-collapsible="icon">
+              <div data-slot="sidebar-gap"></div>
+              <div data-slot="sidebar-container">
+                <div data-slot="sidebar-inner">
+                  <div data-slot="sidebar-header">
+                    <ul data-slot="sidebar-menu">
+                      <li data-slot="sidebar-menu-item">
+                        <a data-slot="sidebar-menu-button" data-size="lg" href="#sidebar" data-tooltip="Acme Inc">
+                          <span id="sidebar-logo"><svg data-lucide="layout-dashboard"></svg></span>
+                          <span id="sidebar-team"><strong>Acme Inc</strong><span>Enterprise</span></span>
+                        </a>
+                      </li>
+                    </ul>
+                    <input data-slot="sidebar-input" type="search" placeholder="Search the docs..." aria-label="Search the docs">
+                  </div>
+                  <div data-slot="sidebar-content">
+                    <div data-slot="sidebar-group">
+                      <div data-slot="sidebar-group-label">Platform</div>
+                      <button type="button" data-slot="sidebar-group-action" aria-label="Add project"><svg data-lucide="plus"></svg></button>
+                      <div data-slot="sidebar-group-content">
+                        <ul data-slot="sidebar-menu">
+                          <li data-slot="sidebar-menu-item">
+                            <a data-slot="sidebar-menu-button" data-active="true" href="#sidebar" data-tooltip="Home"><svg data-lucide="house"></svg><span>Home</span></a>
+                          </li>
+                          <li data-slot="sidebar-menu-item">
+                            <a data-slot="sidebar-menu-button" href="#sidebar" data-tooltip="Inbox"><svg data-lucide="inbox"></svg><span>Inbox</span></a>
+                            <div data-slot="sidebar-menu-badge">24</div>
+                          </li>
+                          <li data-slot="sidebar-menu-item">
+                            <details data-slot="collapsible" open>
+                              <summary data-slot="sidebar-menu-button" data-tooltip="Documentation"><svg data-lucide="file-text"></svg><span>Documentation</span><svg data-lucide="chevron-right" data-demo="sidebar-chevron"></svg></summary>
+                              <div data-slot="collapsible-content">
+                                <ul data-slot="sidebar-menu-sub">
+                                  <li data-slot="sidebar-menu-sub-item"><a data-slot="sidebar-menu-sub-button" href="#sidebar"><span>Introduction</span></a></li>
+                                  <li data-slot="sidebar-menu-sub-item"><a data-slot="sidebar-menu-sub-button" href="#sidebar" data-active="true"><span>Get Started</span></a></li>
+                                  <li data-slot="sidebar-menu-sub-item"><a data-slot="sidebar-menu-sub-button" href="#sidebar" data-size="sm"><span>Changelog</span></a></li>
+                                </ul>
+                              </div>
+                            </details>
+                          </li>
+                          <li data-slot="sidebar-menu-item">
+                            <a data-slot="sidebar-menu-button" href="#sidebar" data-tooltip="Settings"><svg data-lucide="settings"></svg><span>Settings</span></a>
+                            <button type="button" data-slot="sidebar-menu-action" data-show-on-hover aria-label="More settings"><svg data-lucide="ellipsis"></svg></button>
+                          </li>
+                          <li data-slot="sidebar-menu-item">
+                            <button type="button" data-slot="sidebar-menu-button" disabled data-tooltip="Billing"><svg data-lucide="credit-card"></svg><span>Billing</span></button>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div data-slot="sidebar-separator"></div>
+                    <div data-slot="sidebar-group">
+                      <div data-slot="sidebar-group-label">Projects</div>
+                      <div data-slot="sidebar-group-content">
+                        <ul data-slot="sidebar-menu">
+                          <li data-slot="sidebar-menu-item">
+                            <a data-slot="sidebar-menu-button" data-variant="outline" href="#sidebar" data-tooltip="Design Engineering"><svg data-lucide="sparkles"></svg><span>Design Engineering</span></a>
+                            <button type="button" data-slot="sidebar-menu-action" aria-label="Project actions"><svg data-lucide="ellipsis"></svg></button>
+                          </li>
+                          <li data-slot="sidebar-menu-item">
+                            <a data-slot="sidebar-menu-button" data-size="sm" href="#sidebar" data-tooltip="Travel"><svg data-lucide="globe"></svg><span>Travel</span></a>
+                            <div data-slot="sidebar-menu-badge">3</div>
+                          </li>
+                          <li data-slot="sidebar-menu-item"><div data-slot="sidebar-menu-skeleton" data-show-icon></div></li>
+                          <li data-slot="sidebar-menu-item"><div data-slot="sidebar-menu-skeleton" data-show-icon></div></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-slot="sidebar-footer">
+                    <ul data-slot="sidebar-menu">
+                      <li data-slot="sidebar-menu-item">
+                        <button type="button" data-slot="sidebar-menu-button" data-size="lg" data-tooltip="shadcn">
+                          <span data-slot="avatar" data-size="sm"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-1.svg" alt=""><span data-slot="avatar-fallback">CN</span></span>
+                          <span id="sidebar-user"><strong>shadcn</strong><span>m@example.com</span></span>
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <button data-slot="sidebar-rail"></button>
+              </div>
+            </div>
+            <div data-slot="sidebar-inset" id="sidebar-main-inset">
+              <header id="sidebar-main-header">
+                <button data-slot="sidebar-trigger" id="sidebar-main-trigger"></button>
+                <div data-slot="separator" data-orientation="vertical" id="sidebar-header-separator"></div>
+                <nav data-slot="breadcrumb">
+                  <ol data-slot="breadcrumb-list">
+                    <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="#sidebar">Build Your Application</a></li>
+                    <li data-slot="breadcrumb-separator"></li>
+                    <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">Data Fetching</span></li>
+                  </ol>
+                </nav>
+              </header>
+              <div id="sidebar-body">
+                <div id="sidebar-tiles"><div></div><div></div><div></div></div>
+                <div id="sidebar-panel"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Floating, right side, off-canvas</h4>
+        <div data-demo="preview full">
+          <div id="sidebar-floating" data-slot="sidebar-wrapper">
+            <div data-slot="sidebar-inset">
+              <header data-demo="row" id="sidebar-floating-header">
+                <button data-slot="sidebar-trigger"></button>
+                <strong>Floating sidebar</strong>
+              </header>
+              <div id="sidebar-floating-body"><div data-slot="skeleton"></div><div data-slot="skeleton"></div><div data-slot="skeleton"></div></div>
+            </div>
+            <div data-slot="sidebar" data-variant="floating" data-side="right" data-collapsible="offcanvas">
+              <div data-slot="sidebar-gap"></div>
+              <div data-slot="sidebar-container">
+                <div data-slot="sidebar-inner">
+                  <div data-slot="sidebar-header"><strong>Outline</strong></div>
+                  <div data-slot="sidebar-content">
+                    <div data-slot="sidebar-group">
+                      <ul data-slot="sidebar-menu">
+                        <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#sidebar" data-active="true"><span>Overview</span></a></li>
+                        <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#sidebar"><span>Installation</span></a></li>
+                        <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#sidebar"><span>Examples</span></a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <button data-slot="sidebar-rail"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Inset and not collapsible</h4>
+        <div data-demo="preview full">
+          <div id="sidebar-inset-demo" data-slot="sidebar-wrapper">
+            <div data-slot="sidebar" data-variant="inset" data-collapsible="icon" data-state="collapsed">
+              <div data-slot="sidebar-gap"></div>
+              <div data-slot="sidebar-container">
+                <div data-slot="sidebar-inner">
+                  <div data-slot="sidebar-content">
+                    <div data-slot="sidebar-group">
+                      <ul data-slot="sidebar-menu">
+                        <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#sidebar" data-active="true" data-tooltip="Dashboard"><svg data-lucide="layout-dashboard"></svg><span>Dashboard</span></a></li>
+                        <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#sidebar" data-tooltip="Messages"><svg data-lucide="mail"></svg><span>Messages</span></a></li>
+                        <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#sidebar" data-tooltip="Team"><svg data-lucide="users"></svg><span>Team</span></a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="sidebar-inset">
+              <header data-demo="row" id="sidebar-inset-header">
+                <button data-slot="sidebar-trigger"></button>
+                <strong>Inset</strong>
+              </header>
+              <div id="sidebar-none-row">
+                <div data-slot="sidebar" data-collapsible="none" id="sidebar-none">
+                  <div data-slot="sidebar-content">
+                    <div data-slot="sidebar-group">
+                      <div data-slot="sidebar-group-label">Static</div>
+                      <ul data-slot="sidebar-menu">
+                        <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#sidebar" data-active="true"><svg data-lucide="folder"></svg><span>Files</span></a></li>
+                        <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#sidebar"><svg data-lucide="star"></svg><span>Starred</span></a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <p data-demo="caption">A sidebar with <code>data-collapsible="none"</code> is a plain panel. It never collapses and stays visible on phones.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="avatar" data-demo="section">
+        <h3 data-demo="title">Avatar</h3>
+        <p data-demo="description">An image element with a fallback for representing the user. The fallback shows until the image loads and stays when it fails.</p>
+        <div data-demo="preview">
+          <span data-slot="avatar">
+            <img data-slot="avatar-image" src="../../demo/assets/g3-avatar-1.svg" alt="@shadcn">
+            <span data-slot="avatar-fallback">CN</span>
+          </span>
+          <span id="avatar-broken" data-slot="avatar">
+            <img data-slot="avatar-image" src="data:image/png;base64,AAAA" alt="@evilrabbit">
+            <span data-slot="avatar-fallback">ER</span>
+          </span>
+          <span id="avatar-rounded" data-slot="avatar">
+            <img data-slot="avatar-image" src="../../demo/assets/g3-avatar-2.svg" alt="@maxleiter">
+            <span data-slot="avatar-fallback">ML</span>
+          </span>
+        </div>
+        <h4 data-demo="subtitle">Badge</h4>
+        <div data-demo="preview">
+          <span data-slot="avatar">
+            <img data-slot="avatar-image" src="../../demo/assets/g3-avatar-1.svg" alt="@shadcn">
+            <span data-slot="avatar-fallback">CN</span>
+            <span id="avatar-online" data-slot="avatar-badge"></span>
+          </span>
+          <span id="avatar-gray" data-slot="avatar" data-size="lg">
+            <img data-slot="avatar-image" src="../../demo/assets/g3-avatar-3.svg" alt="@pranathip">
+            <span data-slot="avatar-fallback">PP</span>
+            <span data-slot="avatar-badge"><svg data-lucide="plus"></svg></span>
+          </span>
+          <span data-slot="avatar" data-size="sm">
+            <span data-slot="avatar-fallback">JL</span>
+            <span data-slot="avatar-badge"></span>
+          </span>
+        </div>
+        <h4 data-demo="subtitle">Group</h4>
+        <div data-demo="preview">
+          <div data-slot="avatar-group">
+            <span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-1.svg" alt="@shadcn"><span data-slot="avatar-fallback">CN</span></span>
+            <span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-2.svg" alt="@maxleiter"><span data-slot="avatar-fallback">LR</span></span>
+            <span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-3.svg" alt="@evilrabbit"><span data-slot="avatar-fallback">ER</span></span>
+          </div>
+          <div data-slot="avatar-group">
+            <span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-1.svg" alt="@shadcn"><span data-slot="avatar-fallback">CN</span></span>
+            <span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-4.svg" alt="@jorge"><span data-slot="avatar-fallback">JZ</span></span>
+            <span data-slot="avatar"><span data-slot="avatar-fallback">ER</span></span>
+            <div data-slot="avatar-group-count">+3</div>
+          </div>
+          <div data-slot="avatar-group">
+            <span data-slot="avatar" data-size="lg"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-2.svg" alt="@maxleiter"><span data-slot="avatar-fallback">LR</span></span>
+            <span data-slot="avatar" data-size="lg"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-3.svg" alt="@evilrabbit"><span data-slot="avatar-fallback">ER</span></span>
+            <div data-slot="avatar-group-count"><svg data-lucide="plus"></svg></div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Dropdown</h4>
+        <div data-demo="preview">
+          <div id="avatar-dropdown" data-slot="dropdown-menu">
+            <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-dropdown-menu-trigger aria-label="Account menu">
+              <span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-1.svg" alt="@shadcn"><span data-slot="avatar-fallback">CN</span></span>
+            </button>
+            <div data-slot="dropdown-menu-content">
+              <div data-slot="dropdown-menu-group">
+                <div data-slot="dropdown-menu-item">Profile</div>
+                <div data-slot="dropdown-menu-item">Billing</div>
+                <div data-slot="dropdown-menu-item">Settings</div>
+              </div>
+              <div data-slot="dropdown-menu-separator"></div>
+              <div data-slot="dropdown-menu-group">
+                <div data-slot="dropdown-menu-item" data-variant="destructive">Log out</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Sizes</h4>
+        <div data-demo="preview">
+          <span data-slot="avatar" data-size="sm"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-4.svg" alt="@jorge"><span data-slot="avatar-fallback">JZ</span></span>
+          <span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-4.svg" alt="@jorge"><span data-slot="avatar-fallback">JZ</span></span>
+          <span data-slot="avatar" data-size="lg"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-4.svg" alt="@jorge"><span data-slot="avatar-fallback">JZ</span></span>
+          <span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">SM</span></span>
+          <span data-slot="avatar"><span data-slot="avatar-fallback">MD</span></span>
+          <span data-slot="avatar" data-size="lg"><span data-slot="avatar-fallback">LG</span></span>
+        </div>
+      </section>
+<section id="breadcrumb" data-demo="section">
+        <h3 data-demo="title">Breadcrumb</h3>
+        <p data-demo="description">Displays the path to the current resource using a hierarchy of links.</p>
+        <div data-demo="preview">
+          <nav id="breadcrumb-basic" data-slot="breadcrumb">
+            <ol data-slot="breadcrumb-list">
+              <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="#breadcrumb">Home</a></li>
+              <li data-slot="breadcrumb-separator"></li>
+              <li data-slot="breadcrumb-item">
+                <div data-slot="dropdown-menu">
+                  <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger><span data-slot="breadcrumb-ellipsis"></span><span class="sr-only">Toggle menu</span></button>
+                  <div data-slot="dropdown-menu-content" data-align="start">
+                    <div data-slot="dropdown-menu-group">
+                      <div data-slot="dropdown-menu-item">Documentation</div>
+                      <div data-slot="dropdown-menu-item">Themes</div>
+                      <div data-slot="dropdown-menu-item">GitHub</div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li data-slot="breadcrumb-separator"></li>
+              <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="#breadcrumb">Components</a></li>
+              <li data-slot="breadcrumb-separator"></li>
+              <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">Breadcrumb</span></li>
+            </ol>
+          </nav>
+        </div>
+        <h4 data-demo="subtitle">Dropdown</h4>
+        <div data-demo="preview">
+          <nav id="breadcrumb-dropdown" data-slot="breadcrumb" aria-label="Breadcrumb with dropdown">
+            <ol data-slot="breadcrumb-list">
+              <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="#breadcrumb">Home</a></li>
+              <li data-slot="breadcrumb-separator"><svg data-lucide="dot"></svg></li>
+              <li data-slot="breadcrumb-item">
+                <div data-slot="dropdown-menu">
+                  <button type="button" data-dropdown-menu-trigger>Components<svg data-lucide="chevron-down"></svg></button>
+                  <div data-slot="dropdown-menu-content" data-align="start">
+                    <div data-slot="dropdown-menu-group">
+                      <div data-slot="dropdown-menu-item">Documentation</div>
+                      <div data-slot="dropdown-menu-item">Themes</div>
+                      <div data-slot="dropdown-menu-item">GitHub</div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li data-slot="breadcrumb-separator"><svg data-lucide="dot"></svg></li>
+              <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">Breadcrumb</span></li>
+            </ol>
+          </nav>
+        </div>
+        <h4 data-demo="subtitle">Custom separator and icons</h4>
+        <div data-demo="preview column">
+          <nav data-slot="breadcrumb" aria-label="Breadcrumb with slashes">
+            <ol data-slot="breadcrumb-list">
+              <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="#breadcrumb">Home</a></li>
+              <li data-slot="breadcrumb-separator">/</li>
+              <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="#breadcrumb">Components</a></li>
+              <li data-slot="breadcrumb-separator">/</li>
+              <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">Breadcrumb</span></li>
+            </ol>
+          </nav>
+          <nav data-slot="breadcrumb" aria-label="Breadcrumb with icons">
+            <ol data-slot="breadcrumb-list">
+              <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="#breadcrumb" aria-label="Home"><svg data-lucide="house"></svg></a></li>
+              <li data-slot="breadcrumb-separator"><svg data-lucide="chevron-right"></svg></li>
+              <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="#breadcrumb">Documents</a></li>
+              <li data-slot="breadcrumb-separator"><svg data-lucide="chevron-right"></svg></li>
+              <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">Q3 report.pdf</span></li>
+            </ol>
+          </nav>
+        </div>
+      </section>
+  </main>
+</body>
+</html>

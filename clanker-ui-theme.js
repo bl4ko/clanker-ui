@@ -1,0 +1,3 @@
+/*! clanker-ui | MIT | includes shadcn/ui (MIT, shadcn) and Lucide icons (ISC); see THIRD_PARTY_NOTICES */
+try { const r = document.documentElement, t = localStorage.getItem("clanker-ui-theme"), s = localStorage.getItem("clanker-ui-scheme"); if (t === "light" || t === "dark") r.dataset.theme = t; if (s && s.length <= 200 && /^[a-z0-9-]+(?: [a-z0-9-]+)*$/.test(s)) r.dataset.scheme = s } catch {}
+try { const h = document.head, m = document.querySelector('meta[name="theme-color"]:not([media])'); document.documentElement.dataset.systemTheme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; if (m && h) { h.style.color = "var(--background)"; m.content = getComputedStyle(h).color; h.removeAttribute("style") } } catch {}

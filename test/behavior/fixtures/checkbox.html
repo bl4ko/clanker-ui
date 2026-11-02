@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Checkbox behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="field-group" data-behavior="max-w-384">
+          <div data-slot="field" role="group" data-orientation="horizontal">
+            <button type="button" data-slot="checkbox" id="terms-checkbox" data-name="terms-checkbox"></button>
+            <label data-slot="label" for="terms-checkbox">Accept terms and conditions</label>
+          </div>
+          <div data-slot="field" role="group" data-orientation="horizontal">
+            <button type="button" data-slot="checkbox" id="terms-checkbox-2" data-name="terms-checkbox-2" data-checked></button>
+            <div data-slot="field-content">
+              <label data-slot="field-label" for="terms-checkbox-2">Accept terms and conditions</label>
+              <p data-slot="field-description">By clicking this checkbox, you agree to the terms.</p>
+            </div>
+          </div>
+          <div data-slot="field" role="group" data-orientation="horizontal" data-disabled="true">
+            <button type="button" data-slot="checkbox" id="toggle-checkbox" data-name="toggle-checkbox" disabled></button>
+            <label data-slot="field-label" for="toggle-checkbox">Enable notifications</label>
+          </div>
+          <label data-slot="field-label">
+            <span data-slot="field" role="group" data-orientation="horizontal">
+              <button type="button" data-slot="checkbox" id="toggle-checkbox-2" data-name="toggle-checkbox-2"></button>
+              <span data-slot="field-content">
+                <span data-slot="field-label">Enable notifications</span>
+                <p data-slot="field-description">You can enable or disable notifications at any time.</p>
+              </span>
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

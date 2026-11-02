@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui split: chat-needs</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../clanker-ui-core.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-forms.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-overlays.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-layout.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-chat.min.css">
+  <link rel="modulepreload" href="../../clanker-ui-core.min.js">
+  <script type="module" src="../../clanker-ui-core.min.js"></script>
+  <script type="module" src="../../clanker-ui-forms.min.js"></script>
+  <script type="module" src="../../clanker-ui-overlays.min.js"></script>
+  <script type="module" src="../../clanker-ui-layout.min.js"></script>
+  <script type="module" src="../../clanker-ui-chat.min.js"></script>
+</head>
+<body>
+  <main data-split="chat-needs">
+<section id="message" data-demo="section">
+        <h3 data-demo="title">Message</h3>
+        <p data-demo="description">Displays a message in a conversation, with optional avatar, header, footer, and alignment.</p>
+        <div data-demo="preview">
+          <div id="message-demo" data-demo="stack medium">
+            <div data-slot="message" data-align="end">
+              <div data-slot="message-avatar"><span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g4-avatar-1.svg" alt="@me"><span data-slot="avatar-fallback">ME</span></span></div>
+              <div data-slot="message-content">
+                <div data-slot="bubble"><div data-slot="bubble-content">Deploying to prod real quick.</div></div>
+              </div>
+            </div>
+            <div data-slot="message">
+              <div data-slot="message-avatar"><span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g4-avatar-2.svg" alt="@rabbit"><span data-slot="avatar-fallback">ER</span></span></div>
+              <div data-slot="message-content">
+                <div data-slot="bubble" data-variant="muted"><div data-slot="bubble-content">It's 4:55 PM. On a Friday.</div></div>
+              </div>
+            </div>
+            <div data-slot="message" data-align="end">
+              <div data-slot="message-avatar"><span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g4-avatar-1.svg" alt="@me"><span data-slot="avatar-fallback">ME</span></span></div>
+              <div data-slot="message-content">
+                <div data-slot="bubble"><div data-slot="bubble-content">It's a one-line change.</div></div>
+                <div data-slot="message-footer">Delivered</div>
+              </div>
+            </div>
+            <div data-slot="message">
+              <div data-slot="message-avatar"><span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g4-avatar-2.svg" alt="@rabbit"><span data-slot="avatar-fallback">ER</span></span></div>
+              <div data-slot="message-content">
+                <div data-slot="bubble-group">
+                  <div data-slot="bubble" data-variant="muted"><div data-slot="bubble-content">It's always a one-line change 😭.</div></div>
+                  <div data-slot="bubble" data-variant="muted">
+                    <div data-slot="bubble-content">Alright, let me take a look.</div>
+                    <div data-slot="bubble-reactions" role="img" aria-label="Reactions: thumbs up"><span>👍</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="marker" role="status"><span data-slot="marker-content" class="shimmer"><strong>Oliver</strong> is typing...</span></div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Group, header, and footer</h4>
+        <div data-demo="preview">
+          <div id="message-group" data-demo="stack medium">
+            <div data-slot="message-group">
+              <div data-slot="message">
+                <div data-slot="message-avatar"></div>
+                <div data-slot="message-content">
+                  <div data-slot="message-header">Olivia</div>
+                  <div data-slot="bubble" data-variant="muted"><div data-slot="bubble-content">I checked the registry addresses.</div></div>
+                </div>
+              </div>
+              <div data-slot="message">
+                <div data-slot="message-avatar"><span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g4-avatar-3.svg" alt="@olivia"><span data-slot="avatar-fallback">OM</span></span></div>
+                <div data-slot="message-content">
+                  <div data-slot="bubble" data-variant="muted"><div data-slot="bubble-content">The component and example JSON now live under the UI registry.</div></div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="message" data-align="end">
+              <div data-slot="message-content">
+                <div data-slot="bubble"><div data-slot="bubble-content">Send the report to the team. Ping @shadcn if you need help.</div></div>
+                <div data-slot="message-footer"><div>Read <span id="message-read-time">Yesterday</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Actions</h4>
+        <div data-demo="preview">
+          <div id="message-actions" data-demo="stack medium">
+            <div data-slot="message">
+              <div data-slot="message-content">
+                <div data-slot="bubble" data-variant="muted"><div data-slot="bubble-content">The install failure is coming from the workspace package.</div></div>
+                <div data-slot="message-footer">
+                  <button type="button" data-slot="button" data-variant="ghost" data-size="icon" aria-label="Copy" title="Copy"><svg data-lucide="copy"></svg></button>
+                  <button type="button" data-slot="button" data-variant="ghost" data-size="icon" aria-label="Like" title="Like" aria-pressed="false"><svg data-lucide="thumbs-up"></svg></button>
+                  <button type="button" data-slot="button" data-variant="ghost" data-size="icon" aria-label="Dislike" title="Dislike" aria-pressed="false"><svg data-lucide="thumbs-down"></svg></button>
+                </div>
+              </div>
+            </div>
+            <div data-slot="message" data-align="end">
+              <div data-slot="message-content">
+                <div data-slot="bubble"><div data-slot="bubble-content">Okay drop me a link. Taking a look...</div></div>
+                <div data-slot="message-footer" id="message-failed">
+                  <span id="message-failed-text">Failed to send</span>
+                  <button type="button" data-slot="button" data-variant="ghost" data-size="icon-xs" title="Retry" aria-label="Retry" id="message-retry"><svg data-lucide="refresh-cw"></svg></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Attachment</h4>
+        <div data-demo="preview">
+          <div id="message-attachment" data-demo="stack medium">
+            <div data-slot="message" data-align="end">
+              <div data-slot="message-content">
+                <div data-slot="attachment" data-orientation="vertical">
+                  <div data-slot="attachment-media" data-variant="image"><img src="../../demo/assets/g4-workspace.svg" alt="Workspace" width="96" height="96"></div>
+                </div>
+                <div data-slot="bubble"><div data-slot="bubble-content">Here's the image. Can you add it to the PDF? Use it for the cover page.</div></div>
+              </div>
+            </div>
+            <div data-slot="message">
+              <div data-slot="message-content">
+                <div data-slot="bubble" data-variant="muted"><div data-slot="bubble-content">Done. Here's the PDF with the image added as the cover page.</div></div>
+                <div data-slot="attachment">
+                  <div data-slot="attachment-media"><svg data-lucide="file-text"></svg></div>
+                  <div data-slot="attachment-content">
+                    <span data-slot="attachment-title">sales-dashboard.pdf</span>
+                    <span data-slot="attachment-description">PDF · 2.4 MB</span>
+                  </div>
+                  <div data-slot="attachment-actions">
+                    <button type="button" data-slot="attachment-action" data-variant="secondary" data-size="icon-sm" title="Download" aria-label="Download"><svg data-lucide="download"></svg></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="message" data-align="end">
+              <div data-slot="message-content">
+                <div data-slot="bubble"><div data-slot="bubble-content">Thanks. Looks good.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="questionnaire" data-demo="section">
+        <h3 data-demo="title">Questionnaire</h3>
+        <p data-demo="description">A multi-step questionnaire with single-choice, multiple-choice, freeform, and skippable questions. Press a letter to pick an answer, Enter to continue, and Ctrl or Cmd + Enter from anywhere.</p>
+        <div data-demo="preview column">
+          <form id="questionnaire-demo" data-slot="questionnaire" data-shortcuts="letters" data-default-item="direction" action="#questionnaire">
+            <div data-slot="questionnaire-progress"></div>
+            <fieldset data-slot="questionnaire-item" name="direction" data-required>
+              <legend data-slot="questionnaire-title">What should the agent build next?</legend>
+              <p data-slot="questionnaire-description">Choose a direction or describe another task.</p>
+              <div data-slot="questionnaire-choices">
+                <label data-slot="questionnaire-choice" data-value="tool-calls"><span>Tool call timeline</span><span data-slot="questionnaire-choice-description">Show what the agent ran and what came back.</span></label>
+                <label data-slot="questionnaire-choice" data-value="approvals"><span>Approval checkpoints</span><span data-slot="questionnaire-choice-description">Ask before sensitive or destructive actions.</span></label>
+                <label data-slot="questionnaire-choice" data-value="handoffs"><span>Sub-agent handoffs</span><span data-slot="questionnaire-choice-description">Make delegated work and results easier to follow.</span></label>
+                <input data-slot="questionnaire-input" aria-label="Another agent feature" placeholder="Describe another feature...">
+              </div>
+              <p data-slot="questionnaire-error"></p>
+            </fieldset>
+            <fieldset data-slot="questionnaire-item" name="signals" data-multiple>
+              <legend data-slot="questionnaire-title">What should every progress update include?</legend>
+              <p data-slot="questionnaire-description">Select all that apply, or skip this question.</p>
+              <div data-slot="questionnaire-choices">
+                <label data-slot="questionnaire-choice" data-value="progress">Progress</label>
+                <label data-slot="questionnaire-choice" data-value="decisions">Decisions</label>
+                <label data-slot="questionnaire-choice" data-value="risks">Risks</label>
+                <label data-slot="questionnaire-choice" data-value="next-step">Next step</label>
+              </div>
+              <p data-slot="questionnaire-error"></p>
+            </fieldset>
+            <fieldset data-slot="questionnaire-item" name="timing" data-required>
+              <legend data-slot="questionnaire-title">When should work begin?</legend>
+              <p data-slot="questionnaire-description">Choose when the agent should begin the work.</p>
+              <div data-slot="questionnaire-choices">
+                <label data-slot="questionnaire-choice" data-value="now">Start now</label>
+                <label data-slot="questionnaire-choice" data-value="next-cycle">Next development cycle</label>
+                <label data-slot="questionnaire-choice" data-value="backlog">Add it to the backlog</label>
+              </div>
+              <p data-slot="questionnaire-error"></p>
+            </fieldset>
+            <div data-slot="questionnaire-actions">
+              <button type="button" data-slot="questionnaire-previous"></button>
+              <button type="button" data-slot="questionnaire-skip"></button>
+              <button type="button" data-slot="questionnaire-next">Next</button>
+              <button type="submit" data-slot="questionnaire-submit">Save plan</button>
+            </div>
+          </form>
+          <p id="questionnaire-result" data-demo="caption" aria-live="polite">No plan saved yet.</p>
+        </div>
+        <h4 data-demo="subtitle">Resume, number shortcuts, custom progress, and a conditional item</h4>
+        <p data-demo="caption">Starts on the second item with saved answers. Untick the box to remove the optional item from the flow.</p>
+        <div data-demo="preview column">
+          <label id="questionnaire-toggle-label" data-slot="label" data-demo="row"><button type="button" data-slot="checkbox" id="questionnaire-toggle" data-checked></button> Ask about the audience</label>
+          <form id="questionnaire-resume" data-slot="questionnaire" data-shortcuts="numbers" data-default-item="detail" action="#questionnaire">
+            <div data-slot="questionnaire-progress" data-template="Step {current} of {total}"></div>
+            <fieldset data-slot="questionnaire-item" name="prototype" data-required>
+              <legend data-slot="questionnaire-title">What should we prototype next?</legend>
+              <div data-slot="questionnaire-choices">
+                <label data-slot="questionnaire-choice" data-value="delegation" data-default-checked>Delegation</label>
+                <label data-slot="questionnaire-choice" data-value="questions">Question prompts</label>
+                <label data-slot="questionnaire-choice" data-value="both">Both together</label>
+              </div>
+              <p data-slot="questionnaire-error"></p>
+            </fieldset>
+            <fieldset data-slot="questionnaire-item" name="detail">
+              <legend data-slot="questionnaire-title">How much detail should it include?</legend>
+              <p data-slot="questionnaire-description">Skip this if you are not sure yet.</p>
+              <div data-slot="questionnaire-choices">
+                <label data-slot="questionnaire-choice" data-value="focused">Focused</label>
+                <label data-slot="questionnaire-choice" data-value="complete">Complete flow</label>
+                <label data-slot="questionnaire-choice" data-value="none" data-disabled>Nothing yet (not available)</label>
+              </div>
+              <p data-slot="questionnaire-error">Pick a level of detail, or press Skip.</p>
+            </fieldset>
+            <fieldset data-slot="questionnaire-item" name="audience" id="questionnaire-audience">
+              <legend data-slot="questionnaire-title">Who is it for?</legend>
+              <div data-slot="questionnaire-choices">
+                <input data-slot="questionnaire-input" type="email" aria-label="Reviewer email" placeholder="reviewer@example.com">
+              </div>
+              <p data-slot="questionnaire-error"></p>
+            </fieldset>
+            <div data-slot="questionnaire-actions">
+              <button type="button" data-slot="questionnaire-previous"></button>
+              <button type="button" data-slot="questionnaire-skip"></button>
+              <button type="button" data-slot="questionnaire-next"></button>
+              <button type="submit" data-slot="questionnaire-submit"></button>
+            </div>
+          </form>
+          <p id="questionnaire-resume-result" data-demo="caption" aria-live="polite">Not submitted.</p>
+        </div>
+      </section>
+<section id="date-picker" data-demo="section">
+        <h3 data-demo="title">Date Picker</h3>
+        <p data-demo="description">A date picker with range and presets. It is a composition: a <code>button</code> trigger, a <code>popover-content</code> popup, and a <code>calendar</code>, joined by the <code>date-picker</code> root. Escape closes it and returns focus to the trigger.</p>
+        <div data-demo="preview">
+          <div id="date-picker-demo" data-slot="date-picker" data-placeholder="Pick a date">
+            <button type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><span data-slot="date-picker-value">Pick a date</span><svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
+            <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose date">
+              <div data-slot="calendar"></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Range picker</h4>
+        <div data-demo="preview">
+          <div id="date-picker-range" data-slot="date-picker">
+            <button type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><svg data-lucide="calendar" data-icon="inline-start"></svg><span data-slot="date-picker-value">Pick a date</span></button>
+            <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose dates">
+              <div data-slot="calendar" data-mode="range" data-months="2" data-value="2026-01-20/2026-02-09"></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Date of birth</h4>
+        <div data-demo="preview">
+          <div id="date-picker-birth-field" data-slot="field">
+            <label data-slot="field-label" for="date-picker-birth-trigger">Date of birth</label>
+            <div id="date-picker-birth" data-slot="date-picker" data-placeholder="Select date" data-format="numeric">
+              <button id="date-picker-birth-trigger" type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><span data-slot="date-picker-value">Select date</span><svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
+              <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose date of birth">
+                <div data-slot="calendar" data-caption-layout="dropdown" data-month="2000-01" data-max="2026-10-28" data-start-year="1926"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Input</h4>
+        <div data-demo="preview">
+          <div id="date-picker-input-field" data-slot="field">
+            <label data-slot="field-label" for="date-picker-input-value">Subscription Date</label>
+            <div id="date-picker-input" data-slot="date-picker">
+              <div data-slot="input-group">
+                <input id="date-picker-input-value" data-slot="input-group-control" data-date-picker-input placeholder="June 1, 2025" autocomplete="off">
+                <div data-slot="input-group-addon" data-align="inline-end">
+                  <button type="button" data-slot="button" data-input-group-button data-variant="ghost" data-size="icon-xs" data-date-picker-trigger aria-label="Select date"><svg data-lucide="calendar"></svg></button>
+                </div>
+              </div>
+              <div data-slot="popover-content" data-date-picker-content data-align="end" data-align-offset="-8" data-side-offset="10" aria-label="Choose subscription date">
+                <div data-slot="calendar" data-value="2025-06-01"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Time picker</h4>
+        <div data-demo="preview">
+          <div id="date-picker-time" data-slot="field-group">
+            <div data-slot="field">
+              <label data-slot="field-label" for="date-picker-time-trigger">Date</label>
+              <div data-slot="date-picker" data-placeholder="Select date" data-format="medium">
+                <button id="date-picker-time-trigger" type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><span data-slot="date-picker-value">Select date</span><svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
+                <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose date">
+                  <div data-slot="calendar" data-caption-layout="dropdown"></div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="field">
+              <label data-slot="field-label" for="date-picker-time-value">Time</label>
+              <input id="date-picker-time-value" data-slot="input" type="time" step="1" value="10:30:00">
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">With presets</h4>
+        <div data-demo="preview">
+          <div id="date-picker-presets" data-slot="date-picker" data-keep-open>
+            <button type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><svg data-lucide="calendar" data-icon="inline-start"></svg><span data-slot="date-picker-value">Pick a date</span></button>
+            <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose date">
+              <div id="date-picker-presets-panel">
+                <div data-slot="native-select-wrapper">
+                  <select data-slot="native-select" data-date-picker-preset aria-label="Presets">
+                    <option data-slot="native-select-option" value="">Select</option>
+                    <option data-slot="native-select-option" value="0">Today</option>
+                    <option data-slot="native-select-option" value="1">Tomorrow</option>
+                    <option data-slot="native-select-option" value="3">In 3 days</option>
+                    <option data-slot="native-select-option" value="7">In a week</option>
+                  </select>
+                  <svg data-lucide="chevron-down" data-slot="native-select-icon"></svg>
+                </div>
+                <div id="date-picker-presets-calendar" data-slot="calendar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">In a dialog</h4>
+        <div data-demo="preview">
+          <div data-slot="dialog">
+            <button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>Schedule post</button>
+            <dialog id="date-picker-dialog" data-slot="dialog-content">
+              <form id="date-picker-form" action="#date-picker" method="dialog">
+                <div data-slot="dialog-header">
+                  <h2 data-slot="dialog-title">Schedule post</h2>
+                  <p data-slot="dialog-description">Choose the day the post goes live.</p>
+                </div>
+                <div data-slot="field">
+                  <label data-slot="field-label" for="date-picker-form-trigger">Publish date</label>
+                  <div id="date-picker-form-picker" data-slot="date-picker" data-placeholder="Pick a date">
+                    <button id="date-picker-form-trigger" type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><svg data-lucide="calendar" data-icon="inline-start"></svg><span data-slot="date-picker-value">Pick a date</span></button>
+                    <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose publish date">
+                      <div data-slot="calendar" data-name="due" data-month="2026-11"></div>
+                    </div>
+                  </div>
+                </div>
+                <div data-slot="dialog-footer">
+                  <button type="button" data-slot="button" data-variant="outline" data-dialog-close>Cancel</button>
+                  <button type="submit" data-slot="button">Save</button>
+                </div>
+              </form>
+            </dialog>
+          </div>
+          <p id="date-picker-form-value" data-demo="caption" aria-live="polite">Nothing saved yet.</p>
+        </div>
+        <h4 data-demo="subtitle">RTL</h4>
+        <div data-demo="preview">
+          <div id="date-picker-rtl" dir="rtl" lang="ar">
+            <div data-slot="date-picker" data-placeholder="اختر تاريخًا">
+              <button type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><span data-slot="date-picker-value">اختر تاريخًا</span><svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
+              <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="اختر تاريخًا">
+                <div data-slot="calendar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p data-demo="caption">The natural language picker from the shadcn docs needs the chrono-node parser and is not part of the kit.</p>
+      </section>
+  </main>
+</body>
+</html>

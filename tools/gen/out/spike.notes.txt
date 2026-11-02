@@ -1,0 +1,124 @@
+shadcn b8d7baa15b1dca5716f13153e63795fc3d741f6b, tailwindcss 4.3.3, tw-animate-css 1.4.0
+components: label, separator, input, textarea, button, card, field, dialog, dropdown-menu
+parts: 54, compiled bytes: 64280
+
+attribute the source always sets (5)
+  data-orientation on field defaults to "vertical"; CSS treats a missing attribute as "vertical"
+  data-orientation on separator defaults to "horizontal"; CSS treats a missing attribute as "horizontal"
+  data-size on card defaults to "default"; CSS treats a missing attribute as "default"
+  data-variant on dropdown-menu-item defaults to "default"; CSS treats a missing attribute as "default"
+  data-variant on field-legend defaults to "legend"; CSS treats a missing attribute as "legend"
+
+class adapted to the kit markup (3)
+  [&_svg:not([class*='size-'])]:size-3 -> [&_svg:not([class*='size-'],[data-slot])]:size-3 (kit markup has no size classes; an icon with a data-slot gets its size from its own part)
+  [&_svg:not([class*='size-'])]:size-3.5 -> [&_svg:not([class*='size-'],[data-slot])]:size-3.5 (kit markup has no size classes; an icon with a data-slot gets its size from its own part)
+  [&_svg:not([class*='size-'])]:size-4 -> [&_svg:not([class*='size-'],[data-slot])]:size-4 (kit markup has no size classes; an icon with a data-slot gets its size from its own part)
+
+class removed like tailwind-merge (31)
+  button: [&_svg:not([class*='size-'],[data-slot])]:size-4 only where :not(:where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="icon-xs"]))
+  button: border-transparent only where :not(:where([data-variant="outline"]))
+  button: focus-visible:border-ring only where :not(:where([data-variant="destructive"]))
+  button: focus-visible:ring-ring/50 only where :not(:where([data-variant="destructive"]))
+  button: rounded-lg only where :not(:where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]))
+  button: text-sm only where :not(:where([data-size="xs"]), :where([data-size="sm"]))
+  dialog-content: rounded-lg
+  dropdown-menu-sub-content: bg-popover
+  dropdown-menu-sub-content: data-[side=bottom]:slide-in-from-top-2
+  dropdown-menu-sub-content: data-[side=left]:slide-in-from-right-2
+  dropdown-menu-sub-content: data-[side=right]:slide-in-from-left-2
+  dropdown-menu-sub-content: data-[side=top]:slide-in-from-bottom-2
+  dropdown-menu-sub-content: data-closed:animate-out
+  dropdown-menu-sub-content: data-closed:fade-out-0
+  dropdown-menu-sub-content: data-closed:zoom-out-95
+  dropdown-menu-sub-content: data-open:animate-in
+  dropdown-menu-sub-content: data-open:fade-in-0
+  dropdown-menu-sub-content: data-open:zoom-in-95
+  dropdown-menu-sub-content: duration-100
+  dropdown-menu-sub-content: min-w-32
+  dropdown-menu-sub-content: p-1
+  dropdown-menu-sub-content: ring-1
+  dropdown-menu-sub-content: ring-foreground/10
+  dropdown-menu-sub-content: rounded-lg
+  dropdown-menu-sub-content: shadow-md
+  dropdown-menu-sub-content: text-popover-foreground
+  dropdown-menu-sub-content: w-(--anchor-width)
+  field-label: flex
+  field-label: gap-2
+  field-label: leading-none
+  field-label: leading-snug
+
+direction selector made :dir() only (an ltr area in an rtl page stays ltr) (1)
+  9 selectors
+
+element without a box (Base UI renders no DOM) (1)
+  dialog, dropdown-menu, dropdown-menu-sub
+
+fallback removed (every target browser has color-mix and @property) (1)
+  76 blocks
+
+group or peer without an owner (2)
+  .group
+  .peer
+
+instance with fixed variants (1)
+  dialog/DialogFooter/<DialogPrimitive.Close> renders Button with fixed props; markup sets them as data attributes
+
+manual mapping (4)
+  dialog/DialogContent/DialogPrimitive.Close -> :where([data-slot="dialog-content"]) > [data-slot="dialog-close"]
+  dropdown-menu/DropdownMenuContent/MenuPrimitive.Positioner -> -
+  dropdown-menu/DropdownMenuSubTrigger/IconPlaceholder -> :where([data-slot="dropdown-menu-sub-trigger"]) > svg:last-child
+  field/FieldError/ul -> :where([data-slot="field-error"]) > ul
+
+marker without a style rule (4)
+  cn-card-action
+  cn-field-orientation-horizontal
+  cn-field-orientation-responsive
+  cn-field-orientation-vertical
+
+markup utility class (1)
+  dialog/DialogContent/<span>: class="sr-only"
+
+physical class made logical (shadcn rtl transform) (15)
+  -translate-x-1/2 -> -translate-x-1/2 rtl:translate-x-1/2
+  data-[side=inline-end]:slide-in-from-left-2 -> data-[side=inline-end]:slide-in-from-start-2
+  data-[side=inline-start]:slide-in-from-right-2 -> data-[side=inline-start]:slide-in-from-end-2
+  data-inset:pl-7 -> data-inset:ps-7
+  has-data-[icon=inline-end]:pr-1.5 -> has-data-[icon=inline-end]:pe-1.5
+  has-data-[icon=inline-end]:pr-2 -> has-data-[icon=inline-end]:pe-2
+  has-data-[icon=inline-start]:pl-1.5 -> has-data-[icon=inline-start]:ps-1.5
+  has-data-[icon=inline-start]:pl-2 -> has-data-[icon=inline-start]:ps-2
+  left-1/2 -> start-1/2
+  ml-4 -> ms-4
+  ml-auto -> ms-auto
+  pl-1.5 -> ps-1.5
+  pr-8 -> pe-8
+  right-2 -> end-2
+  text-left -> text-start
+
+selector with a class that kit markup does not set (8)
+  .border-b in [data-slot="card-header"].border-b
+  .group in [data-slot="field-label"]:where(label):is(:where(.group)[data-disabled="true"] *)
+  .group in [data-slot="label"]:is(:where(.group)[data-disabled="true"] *)
+  .peer in [data-slot="field-label"]:where(label):is(:where(.peer):disabled ~ *)
+  .peer in [data-slot="label"]:is(:where(.peer):disabled ~ *)
+  .shimmer-none in .shimmer-none
+  .shimmer-once in .shimmer-once
+  .shimmer-reverse in .shimmer-reverse
+
+slot renamed by a data-[slot=...] variant (the element keeps the look of its part) (1)
+  field-group also matches data-slot=checkbox-group
+
+slot shared by several parts (1)
+  field-label: told apart by element (div, label)
+
+style rule not used by the source (10)
+  cn-dialog-content-aria
+  cn-dialog-overlay-aria
+  cn-dropdown-menu-content-aria
+  cn-dropdown-menu-sub-content-aria
+  cn-dropdown-menu-subcontent
+  cn-field-label-aria
+  cn-label-aria
+  cn-separator
+  cn-separator-horizontal
+  cn-separator-vertical

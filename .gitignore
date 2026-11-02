@@ -1,0 +1,7 @@
+/clanker-ui-server
+__pycache__/
+*.pyc
+.DS_Store
+*.merged
+/out/
+/site/

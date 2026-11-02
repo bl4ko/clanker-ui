@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui split: forms-needs</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../clanker-ui-core.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-forms.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-overlays.min.css">
+  <link rel="modulepreload" href="../../clanker-ui-core.min.js">
+  <script type="module" src="../../clanker-ui-core.min.js"></script>
+  <script type="module" src="../../clanker-ui-forms.min.js"></script>
+  <script type="module" src="../../clanker-ui-overlays.min.js"></script>
+</head>
+<body>
+  <main data-split="forms-needs">
+<section id="button-group" data-demo="section">
+        <h3 data-demo="title">Button Group</h3>
+        <p data-demo="description">A container that groups related buttons together with consistent styling.</p>
+        <div data-demo="preview">
+          <div data-slot="button-group" role="group" aria-label="Message actions">
+            <div id="button-group-back" data-slot="button-group" role="group">
+              <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Go back"><svg data-lucide="arrow-left"></svg></button>
+            </div>
+            <div data-slot="button-group" role="group">
+              <button type="button" data-slot="button" data-variant="outline">Archive</button>
+              <button type="button" data-slot="button" data-variant="outline">Report</button>
+            </div>
+            <div data-slot="button-group" role="group">
+              <button type="button" data-slot="button" data-variant="outline">Snooze</button>
+              <div id="button-group-more" data-slot="dropdown-menu">
+                <button type="button" data-slot="button" data-variant="outline" data-size="icon" data-dropdown-menu-trigger aria-label="More options"><svg data-lucide="more-horizontal"></svg></button>
+                <div data-slot="dropdown-menu-content" data-align="end">
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-item"><svg data-lucide="mail-check"></svg>Mark as Read</div>
+                    <div data-slot="dropdown-menu-item"><svg data-lucide="archive"></svg>Archive</div>
+                  </div>
+                  <div data-slot="dropdown-menu-separator"></div>
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-item"><svg data-lucide="clock"></svg>Snooze</div>
+                    <div data-slot="dropdown-menu-item"><svg data-lucide="calendar-plus"></svg>Add to Calendar</div>
+                    <div data-slot="dropdown-menu-item"><svg data-lucide="list-filter"></svg>Add to List</div>
+                    <div data-slot="dropdown-menu-sub">
+                      <div data-slot="dropdown-menu-sub-trigger"><svg data-lucide="tag"></svg>Label As...</div>
+                      <div data-slot="dropdown-menu-sub-content">
+                        <div data-slot="dropdown-menu-radio-group" data-value="personal">
+                          <div data-slot="dropdown-menu-radio-item" data-value="personal" data-state="checked">Personal</div>
+                          <div data-slot="dropdown-menu-radio-item" data-value="work">Work</div>
+                          <div data-slot="dropdown-menu-radio-item" data-value="other">Other</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-slot="dropdown-menu-separator"></div>
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Trash</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Orientation</h4>
+        <div data-demo="preview">
+          <div data-slot="button-group" role="group" data-orientation="vertical" aria-label="Media controls">
+            <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Increase"><svg data-lucide="plus"></svg></button>
+            <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Decrease"><svg data-lucide="minus"></svg></button>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Sizes</h4>
+        <div data-demo="preview column">
+          <div data-slot="button-group" role="group" aria-label="Small group">
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm">Small</button>
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm">Button</button>
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm">Group</button>
+            <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Add"><svg data-lucide="plus"></svg></button>
+          </div>
+          <div data-slot="button-group" role="group" aria-label="Default group">
+            <button type="button" data-slot="button" data-variant="outline">Default</button>
+            <button type="button" data-slot="button" data-variant="outline">Button</button>
+            <button type="button" data-slot="button" data-variant="outline">Group</button>
+            <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Add"><svg data-lucide="plus"></svg></button>
+          </div>
+          <div data-slot="button-group" role="group" aria-label="Large group">
+            <button type="button" data-slot="button" data-variant="outline" data-size="lg">Large</button>
+            <button type="button" data-slot="button" data-variant="outline" data-size="lg">Button</button>
+            <button type="button" data-slot="button" data-variant="outline" data-size="lg">Group</button>
+            <button type="button" data-slot="button" data-variant="outline" data-size="icon-lg" aria-label="Add"><svg data-lucide="plus"></svg></button>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Nested, separator, and split</h4>
+        <div data-demo="preview column">
+          <div data-slot="button-group" role="group" aria-label="Composer">
+            <div data-slot="button-group" role="group">
+              <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Attach"><svg data-lucide="plus"></svg></button>
+            </div>
+            <div data-slot="button-group" role="group">
+              <div data-slot="input-group">
+                <input data-slot="input-group-control" placeholder="Send a message..." aria-label="Message">
+                <div data-slot="input-group-addon" data-align="inline-end"><svg data-lucide="mic"></svg></div>
+              </div>
+            </div>
+          </div>
+          <div data-slot="button-group" role="group" aria-label="Clipboard">
+            <button type="button" data-slot="button" data-variant="secondary" data-size="sm">Copy</button>
+            <div data-slot="button-group-separator" data-orientation="vertical" role="none"></div>
+            <button type="button" data-slot="button" data-variant="secondary" data-size="sm">Paste</button>
+          </div>
+          <div data-slot="button-group" role="group" aria-label="Split button">
+            <button type="button" data-slot="button" data-variant="secondary">Button</button>
+            <div data-slot="button-group-separator" role="none"></div>
+            <button type="button" data-slot="button" data-variant="secondary" data-size="icon" aria-label="More"><svg data-lucide="plus"></svg></button>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Dropdown menu and popover</h4>
+        <div data-demo="preview">
+          <div data-slot="button-group" role="group" aria-label="Follow">
+            <button type="button" data-slot="button" data-variant="outline">Follow</button>
+            <div id="button-group-follow" data-slot="dropdown-menu">
+              <button type="button" data-slot="button" data-variant="outline" data-size="icon" data-dropdown-menu-trigger aria-label="More follow options"><svg data-lucide="chevron-down"></svg></button>
+              <div data-slot="dropdown-menu-content" data-align="end">
+                <div data-slot="dropdown-menu-group">
+                  <div data-slot="dropdown-menu-item"><svg data-lucide="volume-off"></svg>Mute Conversation</div>
+                  <div data-slot="dropdown-menu-item"><svg data-lucide="check"></svg>Mark as Read</div>
+                  <div data-slot="dropdown-menu-item"><svg data-lucide="triangle-alert"></svg>Report Conversation</div>
+                  <div data-slot="dropdown-menu-item"><svg data-lucide="user-round-x"></svg>Block User</div>
+                  <div data-slot="dropdown-menu-item"><svg data-lucide="share"></svg>Share Conversation</div>
+                  <div data-slot="dropdown-menu-item"><svg data-lucide="copy"></svg>Copy Conversation</div>
+                </div>
+                <div data-slot="dropdown-menu-separator"></div>
+                <div data-slot="dropdown-menu-group">
+                  <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete Conversation</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-slot="button-group" role="group" aria-label="Copilot">
+            <button type="button" data-slot="button" data-variant="outline"><svg data-lucide="bot"></svg>Copilot</button>
+            <div id="button-group-copilot" data-slot="popover">
+              <button type="button" data-slot="button" data-variant="outline" data-size="icon" data-popover-trigger aria-label="Open Popover"><svg data-lucide="chevron-down"></svg></button>
+              <div data-slot="popover-content" data-align="end">
+                <div data-slot="popover-header">
+                  <h4 data-slot="popover-title">Start a new task with Copilot</h4>
+                  <p data-slot="popover-description">Describe your task in natural language.</p>
+                </div>
+                <div data-slot="field">
+                  <label data-slot="field-label" class="sr-only" for="button-group-task">Task Description</label>
+                  <textarea id="button-group-task" data-slot="textarea" placeholder="I need to..."></textarea>
+                  <p data-slot="field-description">Copilot will open a pull request for review.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Input, select, and text</h4>
+        <div data-demo="preview column">
+          <div data-slot="button-group" role="group" aria-label="Search">
+            <input data-slot="input" placeholder="Search..." aria-label="Search">
+            <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Search"><svg data-lucide="search"></svg></button>
+          </div>
+          <div data-slot="button-group" role="group" aria-label="Payment">
+            <div data-slot="button-group" role="group">
+              <div data-slot="select" data-value="$" data-name="currency">
+                <button data-slot="select-trigger" aria-label="Currency" data-demo="mono"><span data-slot="select-value"></span></button>
+                <div data-slot="select-content" data-align-trigger="false">
+                  <div data-slot="select-item" data-value="$" data-label="$">$ <span data-demo="muted">US Dollar</span></div>
+                  <div data-slot="select-item" data-value="€" data-label="€">€ <span data-demo="muted">Euro</span></div>
+                  <div data-slot="select-item" data-value="£" data-label="£">£ <span data-demo="muted">British Pound</span></div>
+                </div>
+              </div>
+              <input data-slot="input" placeholder="10.00" pattern="[0-9]*" aria-label="Amount">
+            </div>
+            <div data-slot="button-group" role="group">
+              <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Send"><svg data-lucide="arrow-right"></svg></button>
+            </div>
+          </div>
+          <div data-slot="button-group" role="group" aria-label="Website">
+            <label data-slot="button-group-text" for="button-group-url">https://</label>
+            <input id="button-group-url" data-slot="input" placeholder="my-app">
+            <span data-slot="button-group-text">.com</span>
+          </div>
+        </div>
+      </section>
+  </main>
+</body>
+</html>

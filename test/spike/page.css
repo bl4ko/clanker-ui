@@ -1,0 +1,16 @@
+[data-page="main"] { display: grid; gap: 2rem; max-width: 56rem; margin: 0 auto; padding: 2rem 1rem 6rem; }
+[data-page="title"] { font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; margin-bottom: 0.75rem; }
+[data-page="preview"] { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; min-height: 10rem; padding: 2.5rem; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 1rem; }
+[data-page="row"] { display: flex; align-items: flex-start; gap: 0.5rem; }
+[data-page="card-demo"] { width: 100%; max-width: 24rem; }
+[data-page="field-demo"] { width: 100%; max-width: 28rem; }
+[data-page="stack-6"] { display: flex; flex-direction: column; gap: 1.5rem; }
+[data-page="grid-2"] { display: grid; gap: 0.5rem; }
+[data-page="row-center"] { display: flex; align-items: center; }
+[data-page="forgot"] { display: inline-block; margin-left: auto; font-size: 0.875rem; line-height: 1.25rem; text-underline-offset: 4px; }
+[data-page="footer-stack"] { flex-direction: column; gap: 0.5rem; }
+[data-page="w-full"] { width: 100%; }
+[data-page="w-40"] { width: 10rem; }
+[data-page="font-normal"] { font-weight: 400; }
+[data-page="resize-none"] { resize: none; }
+[data-slot="sonner"] { position: fixed; }

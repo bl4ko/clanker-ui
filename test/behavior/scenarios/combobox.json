@@ -1,0 +1,40 @@
+{
+  "parts": {
+    "input": {"role": "combobox"},
+    "button": {"role": "button"},
+    "content": {"slot": "combobox-content", "popup": true},
+    "listbox": {"role": "listbox", "popup": true},
+    "remix": {"role": "option", "name": "Remix", "in": "page"}
+  },
+  "anchor": "input",
+  "positions": [
+    ["content", "input"]
+  ],
+  "steps": [
+    {"do": "click", "target": "input", "motion": "content"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "End"},
+    {"do": "press", "key": "ArrowDown", "label": "ArrowDown on the last item"},
+    {"do": "press", "key": "Home"},
+    {"do": "press", "key": "Enter", "motion": "content"},
+    {"do": "press", "key": "Escape", "motion": "content"},
+    {"do": "press", "key": "ArrowDown", "motion": "content", "label": "ArrowDown on the closed input"},
+    {"do": "press", "key": "Escape", "motion": "content", "label": "press Escape again"},
+    {"do": "press", "key": "ControlOrMeta+a"},
+    {"do": "type", "text": "s"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "type", "text": "zz"},
+    {"do": "press", "key": "Backspace", "times": 3},
+    {"do": "press", "key": "Escape", "motion": "content", "label": "Escape while filtering"},
+    {"do": "click", "target": "button", "motion": "content"},
+    {"do": "click", "target": "remix", "motion": "content"},
+    {"do": "click", "target": "button", "motion": "content", "label": "click the button again"},
+    {"do": "click_outside", "motion": "content"},
+    {"do": "press", "key": "Tab"}
+  ],
+  "allowed": [
+    {"key": "combobox.trigger-name", "aria_name": "button", "reason": "the kit keeps its better ARIA: the trigger button has a name"},
+    {"key": "combobox.addon-in-tree", "match": "^ARIA tree \\(root\\) \\| \\d+ nodes \\| \\d+ nodes \\| ours only: group; ours only: button \\[expanded\\]$", "reason": "the kit keeps its better ARIA: while the list is open, Base UI sets aria-hidden on the input addon, which also hides the focusable trigger button; the kit keeps the addon group and the button in the tree"}
+  ]
+}

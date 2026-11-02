@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui split: layout</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../clanker-ui-core.min.css">
+  <link rel="stylesheet" href="../../clanker-ui-layout.min.css">
+  <link rel="modulepreload" href="../../clanker-ui-core.min.js">
+  <script type="module" src="../../clanker-ui-core.min.js"></script>
+  <script type="module" src="../../clanker-ui-layout.min.js"></script>
+</head>
+<body>
+  <main data-split="layout">
+<section id="tabs" data-demo="section">
+        <h3 data-demo="title">Tabs</h3>
+        <p data-demo="description">A set of layered sections of content, known as tab panels, that are displayed one at a time. Arrow keys move and activate tabs; Home and End jump to the ends.</p>
+        <div data-demo="preview">
+          <div id="tabs-demo" data-slot="tabs" data-default-value="overview" data-demo="medium">
+            <div data-slot="tabs-list">
+              <button data-slot="tabs-trigger" data-value="overview">Overview</button>
+              <button data-slot="tabs-trigger" data-value="analytics">Analytics</button>
+              <button data-slot="tabs-trigger" data-value="reports">Reports</button>
+              <button data-slot="tabs-trigger" data-value="settings">Settings</button>
+            </div>
+            <div data-slot="tabs-content" data-value="overview">
+              <div data-slot="card">
+                <div data-slot="card-header"><div data-slot="card-title">Overview</div><div data-slot="card-description">View your key metrics and recent project activity. Track progress across all your active projects.</div></div>
+                <div data-slot="card-content" data-demo="caption">You have 12 active projects and 3 pending tasks.</div>
+              </div>
+            </div>
+            <div data-slot="tabs-content" data-value="analytics">
+              <div data-slot="card">
+                <div data-slot="card-header"><div data-slot="card-title">Analytics</div><div data-slot="card-description">Track performance and user engagement metrics. Monitor trends and identify growth opportunities.</div></div>
+                <div data-slot="card-content" data-demo="caption">Page views are up 25% compared to last month.</div>
+              </div>
+            </div>
+            <div data-slot="tabs-content" data-value="reports">
+              <div data-slot="card">
+                <div data-slot="card-header"><div data-slot="card-title">Reports</div><div data-slot="card-description">Generate and download your detailed reports. Export data in multiple formats for analysis.</div></div>
+                <div data-slot="card-content" data-demo="caption">You have 5 reports ready and available to export.</div>
+              </div>
+            </div>
+            <div data-slot="tabs-content" data-value="settings">
+              <div data-slot="card">
+                <div data-slot="card-header"><div data-slot="card-title">Settings</div><div data-slot="card-description">Manage your account preferences and options. Customize your experience to fit your needs.</div></div>
+                <div data-slot="card-content" data-demo="caption">Configure notifications, security, and themes.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Line, icons, and disabled</h4>
+        <div data-demo="preview column">
+          <div id="tabs-line" data-slot="tabs">
+            <div data-slot="tabs-list" data-variant="line">
+              <button data-slot="tabs-trigger" data-value="overview">Overview</button>
+              <button data-slot="tabs-trigger" data-value="analytics">Analytics</button>
+              <button data-slot="tabs-trigger" data-value="reports">Reports</button>
+            </div>
+          </div>
+          <div id="tabs-icons" data-slot="tabs" data-default-value="preview">
+            <div data-slot="tabs-list">
+              <button data-slot="tabs-trigger" data-value="preview"><svg data-lucide="eye"></svg>Preview</button>
+              <button data-slot="tabs-trigger" data-value="code"><svg data-lucide="code"></svg>Code</button>
+              <button data-slot="tabs-trigger" data-value="locked" disabled><svg data-lucide="lock"></svg>Locked</button>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Vertical</h4>
+        <div data-demo="preview">
+          <div id="tabs-vertical" data-slot="tabs" data-orientation="vertical" data-default-value="account" data-demo="medium">
+            <div data-slot="tabs-list">
+              <button data-slot="tabs-trigger" data-value="account">Account</button>
+              <button data-slot="tabs-trigger" data-value="password">Password</button>
+              <button data-slot="tabs-trigger" data-value="notifications">Notifications</button>
+            </div>
+            <div data-slot="tabs-content" data-value="account" data-demo="caption">Make changes to your account here. Click save when you're done.</div>
+            <div data-slot="tabs-content" data-value="password" data-demo="caption">Change your password here. After saving, you'll be logged out.</div>
+            <div data-slot="tabs-content" data-value="notifications" data-demo="caption">Choose which notifications you want to receive.</div>
+          </div>
+          <div id="tabs-vertical-line" data-slot="tabs" data-orientation="vertical">
+            <div data-slot="tabs-list" data-variant="line">
+              <button data-slot="tabs-trigger" data-value="general">General</button>
+              <button data-slot="tabs-trigger" data-value="members">Members</button>
+              <button data-slot="tabs-trigger" data-value="billing">Billing</button>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="accordion" data-demo="section">
+        <h3 data-demo="title">Accordion</h3>
+        <p data-demo="description">A vertically stacked set of interactive headings that each reveal a section of content. Closed panels use <code>hidden="until-found"</code>, so find in page opens them.</p>
+        <div data-demo="preview">
+          <div id="accordion-demo" data-slot="accordion" data-type="single" data-demo="medium">
+            <div data-slot="accordion-item" data-value="shipping" data-state="open">
+              <h3><button type="button" data-slot="accordion-trigger">What are your shipping options?</button></h3>
+              <div data-slot="accordion-content"><div>We offer standard (5-7 days), express (2-3 days), and overnight shipping. Free shipping on international orders.</div></div>
+            </div>
+            <div data-slot="accordion-item" data-value="returns">
+              <h3><button type="button" data-slot="accordion-trigger">What is your return policy?</button></h3>
+              <div data-slot="accordion-content" hidden="until-found"><div>Returns accepted within 30 days. Items must be unused and in original packaging. Refunds processed within 5-7 business days.</div></div>
+            </div>
+            <div data-slot="accordion-item" data-value="support">
+              <h3><button type="button" data-slot="accordion-trigger">How can I contact customer support?</button></h3>
+              <div data-slot="accordion-content" hidden="until-found"><div>Reach us via email, live chat, or phone. We respond within 24 hours during business days.</div></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Multiple</h4>
+        <div data-demo="preview">
+          <div id="accordion-multiple" data-slot="accordion" data-type="multiple" data-demo="medium">
+            <div data-slot="accordion-item" data-value="notifications" data-state="open">
+              <h3><button type="button" data-slot="accordion-trigger">Notification Settings</button></h3>
+              <div data-slot="accordion-content"><div>Manage how you receive notifications. You can enable email alerts for updates or push notifications for mobile devices.</div></div>
+            </div>
+            <div data-slot="accordion-item" data-value="privacy">
+              <h3><button type="button" data-slot="accordion-trigger">Privacy &amp; Security</button></h3>
+              <div data-slot="accordion-content" hidden="until-found"><div>Control your privacy settings and security preferences. Enable two-factor authentication, manage connected devices, review active sessions, and configure data sharing preferences.</div></div>
+            </div>
+            <div data-slot="accordion-item" data-value="billing">
+              <h3><button type="button" data-slot="accordion-trigger">Billing &amp; Subscription</button></h3>
+              <div data-slot="accordion-content" hidden="until-found"><div>View your current plan, payment history, and upcoming invoices. Update your payment method, change your subscription tier, or cancel your subscription.</div></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Single with a disabled item</h4>
+        <div data-demo="preview">
+          <div id="accordion-disabled" data-slot="accordion" data-type="single" data-demo="medium">
+            <div data-slot="accordion-item" data-value="access" data-state="open">
+              <h3><button type="button" data-slot="accordion-trigger">Can I access my account history?</button></h3>
+              <div data-slot="accordion-content"><div>Yes, you can view your complete account history including all transactions, plan changes, and support tickets in the Account History section.</div></div>
+            </div>
+            <div data-slot="accordion-item" data-value="premium" data-disabled>
+              <h3><button type="button" data-slot="accordion-trigger">Premium feature information</button></h3>
+              <div data-slot="accordion-content" hidden="until-found"><div>This section contains information about premium features. Upgrade your plan to access this content.</div></div>
+            </div>
+            <div data-slot="accordion-item" data-value="email">
+              <h3><button type="button" data-slot="accordion-trigger">How do I update my email address?</button></h3>
+              <div data-slot="accordion-content" hidden="until-found"><div>You can update your email address in your account settings. You will receive a verification email at your new address to confirm the change.</div></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Borders and card</h4>
+        <div data-demo="preview">
+          <div id="accordion-borders" data-slot="accordion" data-type="single">
+            <div data-slot="accordion-item" data-value="billing">
+              <h3><button type="button" data-slot="accordion-trigger">How does billing work?</button></h3>
+              <div data-slot="accordion-content" hidden="until-found"><div>We offer monthly and annual subscription plans. Billing is charged at the beginning of each cycle, and you can cancel anytime.</div></div>
+            </div>
+            <div data-slot="accordion-item" data-value="security">
+              <h3><button type="button" data-slot="accordion-trigger">Is my data secure?</button></h3>
+              <div data-slot="accordion-content" hidden="until-found"><div>Yes. We use end-to-end encryption, SOC 2 Type II compliance, and regular third-party security audits.</div></div>
+            </div>
+            <div data-slot="accordion-item" data-value="integration">
+              <h3><button type="button" data-slot="accordion-trigger">What integrations do you support?</button></h3>
+              <div data-slot="accordion-content" hidden="until-found"><div>We integrate with 500+ popular tools including Slack, Zapier, Salesforce, HubSpot, and more.</div></div>
+            </div>
+          </div>
+          <div id="accordion-card" data-slot="card">
+            <div data-slot="card-header">
+              <div data-slot="card-title">Subscription &amp; Billing</div>
+              <div data-slot="card-description">Common questions about your account, plans, and payments</div>
+            </div>
+            <div data-slot="card-content">
+              <div data-slot="accordion" data-type="single">
+                <div data-slot="accordion-item" data-value="plans" data-state="open">
+                  <h3><button type="button" data-slot="accordion-trigger">What subscription plans do you offer?</button></h3>
+                  <div data-slot="accordion-content"><div>We offer three tiers: Starter ($9/month), Professional ($29/month), and Enterprise ($99/month).</div></div>
+                </div>
+                <div data-slot="accordion-item" data-value="cancel">
+                  <h3><button type="button" data-slot="accordion-trigger">Can I cancel my subscription anytime?</button></h3>
+                  <div data-slot="accordion-content" hidden="until-found"><div>Yes, you can cancel at any time without fees. Your access continues until the end of the billing period.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="collapsible" data-demo="section">
+        <h3 data-demo="title">Collapsible</h3>
+        <p data-demo="description">An interactive component which expands and collapses a panel. Use a <code>&lt;details&gt;</code> root, or a <code>&lt;div&gt;</code> root with a trigger button when content must stay visible around the trigger.</p>
+        <div data-demo="preview">
+          <div id="collapsible-demo" data-slot="collapsible" data-demo="narrow">
+            <div id="collapsible-head">
+              <h4>@peduarte starred 3 repositories</h4>
+              <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-collapsible-trigger><svg data-lucide="chevrons-up-down"></svg><span class="sr-only">Toggle repositories</span></button>
+            </div>
+            <div data-demo="caption" id="collapsible-always">@radix-ui/primitives</div>
+            <div data-slot="collapsible-content" id="collapsible-more" hidden>
+              <div data-demo="caption">@radix-ui/colors</div>
+              <div data-demo="caption">@stitches/react</div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Details element and file tree</h4>
+        <div data-demo="preview start">
+          <details id="collapsible-settings" data-slot="collapsible">
+            <summary data-slot="button" data-variant="outline" data-size="sm" data-collapsible-trigger>Advanced settings<svg data-lucide="chevron-down"></svg></summary>
+            <div data-slot="collapsible-content">
+              <p data-demo="caption">Cache responses for 5 minutes. Retry failed requests 3 times with exponential backoff.</p>
+            </div>
+          </details>
+          <div id="collapsible-tree">
+            <details data-slot="collapsible" open>
+              <summary data-slot="collapsible-trigger"><svg data-lucide="chevron-right"></svg><svg data-lucide="folder"></svg>components</summary>
+              <div data-slot="collapsible-content">
+                <details data-slot="collapsible">
+                  <summary data-slot="collapsible-trigger"><svg data-lucide="chevron-right"></svg><svg data-lucide="folder"></svg>ui</summary>
+                  <div data-slot="collapsible-content">
+                    <div><svg data-lucide="file"></svg>button.tsx</div>
+                    <div><svg data-lucide="file"></svg>card.tsx</div>
+                  </div>
+                </details>
+                <div><svg data-lucide="file"></svg>login-form.tsx</div>
+              </div>
+            </details>
+            <details data-slot="collapsible">
+              <summary data-slot="collapsible-trigger"><svg data-lucide="chevron-right"></svg><svg data-lucide="folder"></svg>lib</summary>
+              <div data-slot="collapsible-content">
+                <div><svg data-lucide="file"></svg>utils.ts</div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+<section id="carousel" data-demo="section">
+        <h3 data-demo="title">Carousel</h3>
+        <p data-demo="description">A carousel with CSS scroll snap, previous and next buttons, swipe, and arrow keys.</p>
+        <div data-demo="preview column">
+          <div id="carousel-demo" data-slot="carousel" aria-label="Numbered slides">
+            <div data-slot="carousel-content">
+              <div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">1</div></div></div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">2</div></div></div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">3</div></div></div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">4</div></div></div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">5</div></div></div>
+              </div>
+            </div>
+            <button data-slot="carousel-previous"></button>
+            <button data-slot="carousel-next"></button>
+          </div>
+          <p id="carousel-count" data-demo="caption" aria-live="polite">Slide 1 of 5</p>
+        </div>
+        <h4 data-demo="subtitle">Sizes and spacing</h4>
+        <div data-demo="preview">
+          <div id="carousel-sizes" data-slot="carousel" aria-label="Three per view">
+            <div data-slot="carousel-content">
+              <div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">1</div></div></div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">2</div></div></div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">3</div></div></div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">4</div></div></div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">5</div></div></div>
+              </div>
+            </div>
+            <button data-slot="carousel-previous"></button>
+            <button data-slot="carousel-next"></button>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Vertical</h4>
+        <div data-demo="preview tall">
+          <div id="carousel-vertical" data-slot="carousel" data-orientation="vertical" aria-label="Vertical slides">
+            <div data-slot="carousel-content">
+              <div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">1</div></div></div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">2</div></div></div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">3</div></div></div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">4</div></div></div>
+                <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">5</div></div></div>
+              </div>
+            </div>
+            <button data-slot="carousel-previous"></button>
+            <button data-slot="carousel-next"></button>
+          </div>
+        </div>
+      </section>
+<section id="pagination" data-demo="section">
+        <h3 data-demo="title">Pagination</h3>
+        <p data-demo="description">Pagination with page navigation, next and previous links.</p>
+        <div data-demo="preview">
+          <nav data-slot="pagination" aria-label="pagination" id="pagination-demo">
+            <ul data-slot="pagination-content">
+              <li data-slot="pagination-item"><a data-slot="pagination-link" data-pagination-previous data-size="default" href="#pagination" aria-label="Go to previous page"><svg data-lucide="chevron-left" data-icon="inline-start"></svg><span>Previous</span></a></li>
+              <li data-slot="pagination-item"><a data-slot="pagination-link" href="#pagination">1</a></li>
+              <li data-slot="pagination-item"><a data-slot="pagination-link" data-variant="outline" href="#pagination" data-active aria-current="page">2</a></li>
+              <li data-slot="pagination-item"><a data-slot="pagination-link" href="#pagination">3</a></li>
+              <li data-slot="pagination-item"><span data-slot="pagination-ellipsis" aria-hidden="true"><svg data-lucide="ellipsis"></svg><span class="sr-only">More pages</span></span></li>
+              <li data-slot="pagination-item"><a data-slot="pagination-link" data-pagination-next data-size="default" href="#pagination" aria-label="Go to next page"><span>Next</span><svg data-lucide="chevron-right" data-icon="inline-end"></svg></a></li>
+            </ul>
+          </nav>
+        </div>
+        <h4 data-demo="subtitle">Simple and icons only</h4>
+        <div data-demo="preview column">
+          <nav data-slot="pagination" aria-label="Pages">
+            <ul data-slot="pagination-content">
+              <li data-slot="pagination-item"><a data-slot="pagination-link" href="#pagination">1</a></li>
+              <li data-slot="pagination-item"><a data-slot="pagination-link" data-variant="outline" href="#pagination" data-active aria-current="page">2</a></li>
+              <li data-slot="pagination-item"><a data-slot="pagination-link" href="#pagination">3</a></li>
+              <li data-slot="pagination-item"><a data-slot="pagination-link" href="#pagination">4</a></li>
+              <li data-slot="pagination-item"><a data-slot="pagination-link" href="#pagination">5</a></li>
+            </ul>
+          </nav>
+          <nav data-slot="pagination" aria-label="Previous and next">
+            <ul data-slot="pagination-content">
+              <li data-slot="pagination-item"><a data-slot="pagination-link" href="#pagination" aria-label="Go to previous page"><svg data-lucide="chevron-left"></svg></a></li>
+              <li data-slot="pagination-item"><a data-slot="pagination-link" href="#pagination" aria-label="Go to next page"><svg data-lucide="chevron-right"></svg></a></li>
+            </ul>
+          </nav>
+        </div>
+      </section>
+<section id="resizable" data-demo="section">
+        <h3 data-demo="title">Resizable</h3>
+        <p data-demo="description">Accessible resizable panel groups and layouts with keyboard support (WAI-ARIA window splitter).</p>
+        <div data-demo="preview">
+          <div id="resizable-demo" data-slot="resizable-panel-group">
+            <div data-slot="resizable-panel" data-default-size="50" data-min-size="20"><div data-demo="caption">One</div></div>
+            <div data-slot="resizable-handle"></div>
+            <div data-slot="resizable-panel" data-default-size="50">
+              <div data-slot="resizable-panel-group" data-orientation="vertical" id="resizable-nested">
+                <div data-slot="resizable-panel" data-default-size="25"><div data-demo="caption">Two</div></div>
+                <div data-slot="resizable-handle"></div>
+                <div data-slot="resizable-panel" data-default-size="75"><div data-demo="caption">Three</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Vertical and with handle</h4>
+        <div data-demo="preview">
+          <div id="resizable-vertical" data-slot="resizable-panel-group" data-orientation="vertical">
+            <div data-slot="resizable-panel" data-default-size="25"><div data-demo="caption">Header</div></div>
+            <div data-slot="resizable-handle"></div>
+            <div data-slot="resizable-panel" data-default-size="75"><div data-demo="caption">Content</div></div>
+          </div>
+          <div id="resizable-grip" data-slot="resizable-panel-group">
+            <div data-slot="resizable-panel" data-default-size="25" data-min-size="15" data-max-size="60"><div data-demo="caption">Sidebar</div></div>
+            <div data-slot="resizable-handle" data-with-handle></div>
+            <div data-slot="resizable-panel" data-default-size="75"><div data-demo="caption">Content</div></div>
+          </div>
+        </div>
+      </section>
+<section id="scroll-area" data-demo="section">
+        <h3 data-demo="title">Scroll Area</h3>
+        <p data-demo="description">Native scrolling with styled scrollbars. Wheel, touch, keyboard, and screen readers use the real scroll container; the thumb can be dragged.</p>
+        <div data-demo="preview">
+          <div id="scroll-area-demo" data-slot="scroll-area">
+            <div data-slot="scroll-area-viewport" aria-label="Tags">
+              <div id="scroll-area-tags">
+                <h4>Tags</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Horizontal</h4>
+        <div data-demo="preview">
+          <div id="scroll-area-horizontal" data-slot="scroll-area">
+            <div data-slot="scroll-area-viewport" aria-label="Artwork">
+              <div id="scroll-area-row">
+                <figure><div data-slot="aspect-ratio" data-ratio="3/4"><img src="../../demo/assets/g3-photo-2.svg" alt="Photo by Ornella Binni" width="900" height="1600"></div><figcaption>Photo by <strong>Ornella Binni</strong></figcaption></figure>
+                <figure><div data-slot="aspect-ratio" data-ratio="3/4"><img src="../../demo/assets/g3-photo.svg" alt="Photo by Tom Byrom" width="1600" height="900"></div><figcaption>Photo by <strong>Tom Byrom</strong></figcaption></figure>
+                <figure><div data-slot="aspect-ratio" data-ratio="3/4"><img src="../../demo/assets/g3-photo-2.svg" alt="Photo by Vladimir Malyavko" width="900" height="1600"></div><figcaption>Photo by <strong>Vladimir Malyavko</strong></figcaption></figure>
+                <figure><div data-slot="aspect-ratio" data-ratio="3/4"><img src="../../demo/assets/g3-photo.svg" alt="Photo by Mara Ritter" width="1600" height="900"></div><figcaption>Photo by <strong>Mara Ritter</strong></figcaption></figure>
+              </div>
+            </div>
+            <div data-slot="scroll-area-scrollbar" data-orientation="horizontal"></div>
+          </div>
+        </div>
+      </section>
+<section id="item" data-demo="section">
+        <h3 data-demo="title">Item</h3>
+        <p data-demo="description">A versatile component that you can use to display any content.</p>
+        <div data-demo="preview">
+          <div data-demo="stack medium">
+            <div data-slot="item" data-variant="outline">
+              <div data-slot="item-content">
+                <div data-slot="item-title">Basic Item</div>
+                <p data-slot="item-description">A simple item with title and description.</p>
+              </div>
+              <div data-slot="item-actions"><button type="button" data-slot="button" data-variant="outline" data-size="sm">Action</button></div>
+            </div>
+            <a data-slot="item" data-variant="outline" data-size="sm" href="#item" id="item-link">
+              <div data-slot="item-media"><svg data-lucide="badge-check"></svg></div>
+              <div data-slot="item-content"><div data-slot="item-title">Your profile has been verified.</div></div>
+              <div data-slot="item-actions"><svg data-lucide="chevron-right"></svg></div>
+            </a>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Variants and sizes</h4>
+        <div data-demo="preview">
+          <div data-demo="stack medium">
+            <div data-slot="item">
+              <div data-slot="item-content"><div data-slot="item-title">Default Variant</div><p data-slot="item-description">Transparent background with no border.</p></div>
+            </div>
+            <div data-slot="item" data-variant="outline">
+              <div data-slot="item-content"><div data-slot="item-title">Outline Variant</div><p data-slot="item-description">Outlined style with a visible border.</p></div>
+            </div>
+            <div data-slot="item" data-variant="muted">
+              <div data-slot="item-content"><div data-slot="item-title">Muted Variant</div><p data-slot="item-description">Muted background for secondary content.</p></div>
+            </div>
+            <div data-slot="item" data-variant="outline" data-size="sm">
+              <div data-slot="item-content"><div data-slot="item-title">Small size</div></div>
+            </div>
+            <div data-slot="item" data-variant="outline" data-size="xs">
+              <div data-slot="item-content"><div data-slot="item-title">Extra small size</div></div>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Media, group, and header</h4>
+        <div data-demo="preview">
+          <div data-demo="stack medium">
+            <div data-slot="item" data-variant="outline">
+              <div data-slot="item-media" data-variant="icon"><svg data-lucide="shield"></svg></div>
+              <div data-slot="item-content">
+                <div data-slot="item-title">Security Alert</div>
+                <p data-slot="item-description">New login detected from unknown device.</p>
+              </div>
+              <div data-slot="item-actions"><button type="button" data-slot="button" data-size="sm" data-variant="outline">Review</button></div>
+            </div>
+            <div data-slot="item-group" role="list" id="item-group">
+              <div data-slot="item" role="listitem">
+                <div data-slot="item-media"><span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-1.svg" alt="shadcn"><span data-slot="avatar-fallback">S</span></span></div>
+                <div data-slot="item-content"><div data-slot="item-title">shadcn</div><p data-slot="item-description">shadcn@vercel.com</p></div>
+                <div data-slot="item-actions"><button type="button" data-slot="button" data-variant="ghost" data-size="icon" aria-label="Invite shadcn"><svg data-lucide="plus"></svg></button></div>
+              </div>
+              <div data-slot="item-separator"></div>
+              <div data-slot="item" role="listitem">
+                <div data-slot="item-media"><span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-2.svg" alt="maxleiter"><span data-slot="avatar-fallback">M</span></span></div>
+                <div data-slot="item-content"><div data-slot="item-title">maxleiter</div><p data-slot="item-description">maxleiter@vercel.com</p></div>
+                <div data-slot="item-actions"><button type="button" data-slot="button" data-variant="ghost" data-size="icon" aria-label="Invite maxleiter"><svg data-lucide="plus"></svg></button></div>
+              </div>
+            </div>
+            <div data-slot="item" data-variant="outline">
+              <div data-slot="item-media" data-variant="image"><img src="../../demo/assets/g3-photo.svg" alt="" width="1600" height="900"></div>
+              <div data-slot="item-content">
+                <div data-slot="item-title">Midnight City Lights</div>
+                <p data-slot="item-description">Electric Nights</p>
+              </div>
+              <div data-slot="item-content"><p data-slot="item-description">3:45</p></div>
+            </div>
+            <div data-slot="item" data-variant="outline">
+              <div data-slot="item-header" id="item-header"><img src="../../demo/assets/g3-photo.svg" alt="" width="1600" height="900"></div>
+              <div data-slot="item-content">
+                <div data-slot="item-title">v0-1.5-sm</div>
+                <p data-slot="item-description">Everyday tasks and UI generation.</p>
+              </div>
+              <div data-slot="item-footer"><span id="item-updated">Updated 2 days ago</span><span data-slot="badge" data-variant="outline">Beta</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="card" data-demo="section">
+        <h3 data-demo="title">Card</h3>
+        <p data-demo="description">Displays a card with header, content, and footer.</p>
+        <div data-demo="preview">
+          <div id="card-demo" data-slot="card" data-demo="narrow">
+            <div data-slot="card-header">
+              <div data-slot="card-title">Team members</div>
+              <div data-slot="card-description">Invite your team members to collaborate.</div>
+              <div data-slot="card-action"><button type="button" data-slot="button" data-variant="link">Invite</button></div>
+            </div>
+            <div data-slot="card-content">
+              <div data-slot="item-group" role="list">
+                <div data-slot="item" data-size="sm" role="listitem" id="card-member-1">
+                  <div data-slot="item-media"><span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-1.svg" alt="Sofia Davis"><span data-slot="avatar-fallback">SD</span></span></div>
+                  <div data-slot="item-content"><div data-slot="item-title">Sofia Davis</div><p data-slot="item-description">m@example.com</p></div>
+                  <div data-slot="item-actions"><span data-slot="badge" data-variant="secondary">Owner</span></div>
+                </div>
+                <div data-slot="item" data-size="sm" role="listitem">
+                  <div data-slot="item-media"><span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-3.svg" alt="Jackson Lee"><span data-slot="avatar-fallback">JL</span></span></div>
+                  <div data-slot="item-content"><div data-slot="item-title">Jackson Lee</div><p data-slot="item-description">p@example.com</p></div>
+                  <div data-slot="item-actions"><span data-slot="badge" data-variant="outline">Member</span></div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="card-footer">
+              <button type="button" data-slot="button" data-variant="outline" id="card-footer-button">Manage access</button>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Image, small size, and footer actions</h4>
+        <div data-demo="preview">
+          <div id="card-image" data-slot="card" data-demo="narrow">
+            <img src="../../demo/assets/g3-photo.svg" alt="A sunset over purple mountains" width="1600" height="900">
+            <div data-slot="card-header">
+              <div data-slot="card-title">Design systems meetup</div>
+              <div data-slot="card-description">A practical talk on component APIs, with live demos and open Q&amp;A.</div>
+              <div data-slot="card-action"><span data-slot="badge" data-variant="secondary">Featured</span></div>
+            </div>
+            <div data-slot="card-footer">
+              <button type="button" data-slot="button" id="card-image-button">View event</button>
+            </div>
+          </div>
+          <div id="card-small" data-slot="card" data-size="sm" data-demo="narrow">
+            <div data-slot="card-header">
+              <div data-slot="card-title">Scheduled reports</div>
+              <div data-slot="card-description">Manage your scheduled reports.</div>
+            </div>
+            <div data-slot="card-content">
+              <p data-demo="caption">The weekly usage report runs every Monday at 09:00.</p>
+            </div>
+            <div data-slot="card-footer" id="card-small-footer">
+              <button type="button" data-slot="button" data-variant="outline" data-size="sm">Cancel</button>
+              <button type="button" data-slot="button" data-size="sm">Save</button>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="empty" data-demo="section">
+        <h3 data-demo="title">Empty</h3>
+        <p data-demo="description">Use the Empty component to display an empty state.</p>
+        <div data-demo="preview">
+          <div data-slot="empty">
+            <div data-slot="empty-header">
+              <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="folder"></svg></div>
+              <div data-slot="empty-title">No Projects Yet</div>
+              <div data-slot="empty-description">You haven't created any projects yet. Get started by creating your first project.</div>
+            </div>
+            <div data-slot="empty-content">
+              <div data-demo="row">
+                <button type="button" data-slot="button">Create Project</button>
+                <button type="button" data-slot="button" data-variant="outline">Import Project</button>
+              </div>
+              <a data-slot="button" data-variant="link" data-size="sm" href="#empty">Learn More<svg data-lucide="arrow-right"></svg></a>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Outline, background, and avatars</h4>
+        <div data-demo="preview">
+          <div data-demo="grid">
+            <div data-slot="empty" data-variant="outline">
+              <div data-slot="empty-header">
+                <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="upload"></svg></div>
+                <div data-slot="empty-title">Cloud Storage Empty</div>
+                <div data-slot="empty-description">Upload files to your cloud storage to access them anywhere.</div>
+              </div>
+              <div data-slot="empty-content"><button type="button" data-slot="button" data-variant="outline" data-size="sm">Upload Files</button></div>
+            </div>
+            <div id="empty-muted" data-slot="empty">
+              <div data-slot="empty-header">
+                <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="bell"></svg></div>
+                <div data-slot="empty-title">No Notifications</div>
+                <div data-slot="empty-description">You're all caught up. New notifications will appear here.</div>
+              </div>
+              <div data-slot="empty-content"><button type="button" data-slot="button" data-variant="outline" data-size="sm"><svg data-lucide="refresh-cw"></svg>Refresh</button></div>
+            </div>
+            <div data-slot="empty" data-variant="outline">
+              <div data-slot="empty-header">
+                <div data-slot="empty-icon">
+                  <span data-slot="avatar" data-size="lg"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-1.svg" alt="@shadcn"><span data-slot="avatar-fallback">LR</span></span>
+                </div>
+                <div data-slot="empty-title">User Offline</div>
+                <div data-slot="empty-description">This user is currently offline. You can leave a message to notify them or try again later.</div>
+              </div>
+              <div data-slot="empty-content"><button type="button" data-slot="button" data-size="sm">Leave Message</button></div>
+            </div>
+            <div data-slot="empty" data-variant="outline">
+              <div data-slot="empty-header">
+                <div data-slot="empty-icon">
+                  <div data-slot="avatar-group">
+                    <span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-2.svg" alt="@maxleiter"><span data-slot="avatar-fallback">ML</span></span>
+                    <span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-3.svg" alt="@evilrabbit"><span data-slot="avatar-fallback">ER</span></span>
+                    <span data-slot="avatar"><img data-slot="avatar-image" src="../../demo/assets/g3-avatar-4.svg" alt="@jorge"><span data-slot="avatar-fallback">JZ</span></span>
+                  </div>
+                </div>
+                <div data-slot="empty-title">No Team Members</div>
+                <div data-slot="empty-description">Invite your team to collaborate on this project.</div>
+              </div>
+              <div data-slot="empty-content"><button type="button" data-slot="button" data-size="sm"><svg data-lucide="plus"></svg>Invite Members</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+<section id="spinner" data-demo="section">
+        <h3 data-demo="title">Spinner</h3>
+        <p data-demo="description">An indicator that can be used to show a loading state. <code>&lt;svg data-slot="spinner"&gt;&lt;/svg&gt;</code> gets the icon, <code>role="status"</code>, and the label "Loading".</p>
+        <div data-demo="preview">
+          <div data-slot="item" data-variant="muted" id="spinner-item">
+            <div data-slot="item-media"><svg data-slot="spinner"></svg></div>
+            <div data-slot="item-content"><div data-slot="item-title">Processing payment...</div></div>
+            <div data-slot="item-content" id="spinner-amount">$100.00</div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Sizes, button, and badge</h4>
+        <div data-demo="preview">
+          <svg data-slot="spinner" data-size="sm"></svg>
+          <svg data-slot="spinner"></svg>
+          <svg data-slot="spinner" data-size="lg"></svg>
+          <svg data-slot="spinner" data-size="xl" aria-label="Loading page"></svg>
+          <button type="button" data-slot="button" disabled><svg data-slot="spinner" role="none"></svg>Loading...</button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="sm" disabled><svg data-slot="spinner" role="none"></svg>Please wait</button>
+          <span data-slot="badge" data-variant="secondary"><svg data-slot="spinner" role="none"></svg>Syncing</span>
+        </div>
+      </section>
+  </main>
+</body>
+</html>

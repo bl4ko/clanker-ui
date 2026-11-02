@@ -1,0 +1,22 @@
+<div data-slot="context-menu">
+  <div data-slot="context-menu-trigger" tabindex="0" aria-label="Context menu area">Right click here</div>
+  <div data-slot="context-menu-content">
+    <div data-slot="context-menu-group">
+      <div data-slot="context-menu-item">Back<span data-slot="context-menu-shortcut">⌘[</span></div>
+      <div data-slot="context-menu-item" data-disabled>Forward</div>
+      <div data-slot="context-menu-sub">
+        <div data-slot="context-menu-sub-trigger">More Tools</div>
+        <div data-slot="context-menu-sub-content">
+          <div data-slot="context-menu-item" data-variant="destructive">Delete</div>
+        </div>
+      </div>
+    </div>
+    <div data-slot="context-menu-separator"></div>
+    <div data-slot="context-menu-checkbox-item" data-checked>Show Bookmarks</div>
+    <div data-slot="context-menu-radio-group" data-value="pedro">
+      <div data-slot="context-menu-label">People</div>
+      <div data-slot="context-menu-radio-item" data-value="pedro" data-checked>Pedro Duarte</div>
+      <div data-slot="context-menu-radio-item" data-value="colm">Colm Tuite</div>
+    </div>
+  </div>
+</div>

@@ -413,24 +413,6 @@ func compile(tailwind, dir, input string, imports ...string) (string, string, er
 	return string(b), stderr.String(), err
 }
 
-func minify(tailwind, dir, css string) (string, error) {
-	if err := checkCSS("minify input", css, nil); err != nil {
-		return "", err
-	}
-	in := dir + "/minify.css"
-	out := dir + "/minify.out.css"
-	if err := os.WriteFile(in, []byte(css), 0o644); err != nil {
-		return "", err
-	}
-	cmd := exec.Command(tailwind, "--input", in, "--output", out, "--minify")
-	cmd.Dir = dir
-	if b, err := cmd.CombinedOutput(); err != nil {
-		return "", fmt.Errorf("tailwindcss --minify: %v\n%s", err, b)
-	}
-	b, err := os.ReadFile(out)
-	return string(b), err
-}
-
 var rdpClass = regexp.MustCompile(`\.rdp-([a-z_]+)\b`)
 
 func (g *gen) rdpSelectors() map[string]string {

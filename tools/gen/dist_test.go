@@ -301,10 +301,10 @@ var distOrderAllowed = []struct {
 	pair   *regexp.Regexp
 	reason string
 }{
-	{regexp.MustCompile(`^\[data-slot=button\]:where\(\[data-calendar-day-button\]\)\t\[data-slot=button\]:where\(\[data-input-group-button\]\)`), "a button is a calendar day or an input group button, never both"},
+	{regexp.MustCompile(`^\[data-slot="button"\]:where\(\[data-calendar-day-button\]\)\t\[data-slot="button"\]:where\(\[data-input-group-button\]\)`), "a button is a calendar day or an input group button, never both"},
 	{regexp.MustCompile(`\t\[data-theme-set="toggle"\] (> svg\.lucide-contrast|\[data-lucide="sun"\])$`), "these theme toggle icons are only inside the core theme toggle button, not inside a part of another group"},
-	{regexp.MustCompile(`^\[data-slot=attachment-media\][^\t]* svg:not\(\[class\*=size-\],\[data-slot\]\)\t\[data-slot=avatar-group-count\][^\t]*>svg$`), "the avatar group count icon is a child of the count, not an icon in attachment media"},
-	{regexp.MustCompile(`^\[data-slot=chart\]\t\[data-date-picker-trigger\]$`), "the chart root is a div, the date picker trigger is a button"},
+	{regexp.MustCompile(`^\[data-slot="attachment-media"\][^\t]* svg:not\(\[class\*="size-"\], \[data-slot\]\)\t\[data-slot="avatar-group-count"\][^\t]* > svg$`), "the avatar group count icon is a child of the count, not an icon in attachment media"},
+	{regexp.MustCompile(`^\[data-slot="chart"\]\t\[data-date-picker-trigger\]$`), "the chart root is a div, the date picker trigger is a button"},
 }
 
 func mentionedSlots(sel string) []string {

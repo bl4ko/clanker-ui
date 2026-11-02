@@ -21,5 +21,8 @@
     {"do": "click", "target": "s1"},
     {"do": "click", "target": "s6"},
     {"do": "tab"}
+  ],
+  "allowed": [
+    {"key": "input-otp.linux-home-end", "match": "^(page scroll|form value) \\| ", "steps": [7, 8, 9], "engines": ["chromium", "firefox"], "platforms": ["linux"], "reason": "Linux key bindings: Home and End move the caret in a text input; on macOS, where the reference was recorded, they scroll the page"}
   ]
 }

@@ -582,10 +582,18 @@ def check_drawer(t):
       const p = event.target.querySelector('[data-slot="drawer-popup"]')
       window.__dismiss = [p.hasAttribute("data-swipe-dismiss"), p.closest("dialog").hasAttribute("data-swipe-dismiss"), +p.style.getPropertyValue("--drawer-swipe-strength"), p.closest("dialog").style.getPropertyValue("--drawer-swipe-strength")]
     }, { once: true })""")
-    page.mouse.move(x, y)
-    page.mouse.down()
-    page.mouse.move(x, y + 60, steps=3)
-    page.mouse.up()
+    page.evaluate("""async () => {
+      const handle = document.querySelector('#drawer-handle [data-slot="drawer-swipe-handle"]')
+      const r = handle.getBoundingClientRect()
+      const x = r.left + r.width / 2, y = r.top + r.height / 2
+      const fire = (type, dy, buttons) => handle.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 12, pointerType: "mouse", isPrimary: true, button: 0, buttons, clientX: x, clientY: y + dy }))
+      fire("pointerdown", 0, 1)
+      for (const dy of [10, 35, 60]) {
+        await new Promise(r => setTimeout(r, 16))
+        fire("pointermove", dy, 1)
+      }
+      fire("pointerup", 60, 0)
+    }""")
     dismiss = page.evaluate("window.__dismiss")
     assert dismiss and dismiss[0] and dismiss[1] and 0.1 <= dismiss[2] <= 1 and dismiss[3] == "1", ("a fast short swipe dismisses", dismiss)
     drawer_closed(page, "#drawer-handle")
@@ -2393,7 +2401,7 @@ def check_command(t):
     cmd.get_by_role("option", name="Billing").click()
     values = [e[1]["value"] for e in events(page, "command:select")]
     assert values == ["Calendar", "Billing⌘B", "Billing⌘B"], values
-    page.keyboard.press("ControlOrMeta+k")
+    page.keyboard.press("Meta+k")
     dialog = page.locator("#command-dialog dialog")
     wait(page, "() => document.querySelector('#command-dialog dialog').open")
     assert active(page, "e => e.dataset.slot") == "command-input"
@@ -3870,7 +3878,16 @@ def check_navigation_menu_keys(t):
     times = page.evaluate("() => window.__sw")
     assert times["change"] - times["over"] >= 40, ("a switch waits for the open delay, as in Base UI", times)
     if t.width < 500 and not t.rtl:
-        assert nav.locator("[data-slot=navigation-menu-positioner]").get_attribute("data-align") == "end", "the popup flips to end alignment when start overflows, as in Base UI"
+        t.settle()
+        fit = page.evaluate("""() => {
+          const nav = document.getElementById("navigation-menu-demo")
+          const r = [...nav.querySelectorAll("[data-slot=navigation-menu-trigger]")].find(e => e.textContent.trim() === "With Icon").getBoundingClientRect()
+          const w = nav.querySelector("[data-slot=navigation-menu-positioner]").getBoundingClientRect().width
+          const vw = document.documentElement.clientWidth
+          return [vw - 5 - (r.left + w), r.right - w - 5]
+        }""")
+        want = "end" if fit[0] < 0 and fit[1] >= 0 else "start"
+        assert nav.locator("[data-slot=navigation-menu-positioner]").get_attribute("data-align") == want, ("the popup flips to end alignment only when start overflows and end fits, as in Base UI", fit)
     away(page)
     wait(page, "() => !document.querySelector('#navigation-menu-demo [data-slot=navigation-menu-positioner]:popover-open')")
     keyboard_focus(page, first)

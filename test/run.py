@@ -110,7 +110,13 @@ class Skip(Exception):
     pass
 
 
+class Starved(Skip):
+    pass
+
+
 class T:
+    Starved = Starved
+
     def __init__(self, page, engine, theme, width, out, module, name, reduced_motion, rtl, base_url):
         self.page = page
         self.base_url = base_url
@@ -169,7 +175,10 @@ class T:
         self.page.evaluate(f"() => {{ window.__clankerSample = {sample} }}")
         self.page.evaluate(PAINT, [ms, arg])
         action()
-        return self.page.evaluate("() => window.__clankerPaint")
+        frames = self.page.evaluate("() => window.__clankerPaint")
+        if os.environ.get("GITHUB_ACTIONS") and len(frames) < ms / 100:
+            raise Starved(f"the runner painted {len(frames)} frames in {ms} ms; paint-sampled motion needs at least 10 frames per second")
+        return frames
 
     def skip(self, reason):
         raise Skip(reason)

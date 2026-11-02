@@ -268,7 +268,7 @@ def motion_retry(t, trigger, dialog, measure):
     for attempt in range(3):
         try:
             return measure()
-        except AssertionError:
+        except (AssertionError, t.Starved):
             if attempt == 2:
                 raise
             if page.evaluate(is_open):

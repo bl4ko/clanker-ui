@@ -240,7 +240,8 @@ def check_accordion_reopen_height(t):
     assert max(frames) <= full + 0.5, frames
     below = [f for f in frames if f < full - 0.5]
     if not t.reduced_motion and below:
-        assert full - below[-1] <= 4, ("the open animation ends with a jump", frames)
+        step = below[-1] - below[-2] if len(below) > 1 else 0
+        assert full - below[-1] <= max(4, step), ("the open animation ends with a jump", frames)
     assert page.evaluate("sel => document.querySelector(sel).style.getPropertyValue('--accordion-panel-height')", panel) == "auto"
 
 

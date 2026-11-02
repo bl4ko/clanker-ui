@@ -4238,3 +4238,48 @@ def check_popup_collision(t):
     }""")
     assert result["align"]["align"] == "end" and result["align"]["edge"] <= 1, ("start alignment that overflows flips to end, as in Base UI", result)
     assert result["side"]["side"] == "bottom" and result["side"]["top"] <= 1 and result["side"]["start"] <= 1, ("a side popup with no room on either side goes below, as in Base UI", result)
+
+
+def check_drawer_detached(t):
+    page = t.page
+    page.add_init_script(TOUCH_LISTENERS)
+    page.reload(wait_until="load")
+    section = t.section("drawer")
+    start = section.get_by_role("button", name="Open Drawer").first
+    for attrs in [{}, {"data-modal": "trap-focus"}]:
+        drawer_build(page, attrs, False)
+        page.locator("#built [data-drawer-trigger]").click()
+        wait(page, "() => document.querySelector('#built dialog').open")
+        assert page.evaluate("window.__touchListeners.size") == 1
+        page.evaluate("() => document.getElementById('built').remove()")
+        page.evaluate("() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))")
+        assert page.evaluate("window.__touchListeners.size") == 0, ("an open drawer that leaves the document drops its touch listener", attrs)
+        if t.engine == "chromium":
+            cdp = page.context.new_cdp_session(page)
+            doc = cdp.send("Runtime.evaluate", {"expression": "document"})["result"]["objectId"]
+            listeners = [l for l in cdp.send("DOMDebugger.getEventListeners", {"objectId": doc})["listeners"] if l["type"] == "touchmove" and not l["passive"]]
+            cdp.detach()
+            assert listeners == [], listeners
+        start.focus()
+        page.keyboard.press("Tab")
+        assert page.evaluate("() => document.activeElement !== document.querySelector('#drawer [data-drawer-trigger]') && document.activeElement !== document.body"), ("Tab still moves focus after an open drawer left the document", attrs, active(page, "e => e.outerHTML.slice(0, 80)"))
+
+
+def check_toast_detached(t):
+    page = t.page
+    section = t.section("toast")
+    toast_api(page)
+    page.evaluate("() => window.__toast.add({ title: 'Detached', timeout: 300 })")
+    page.locator("[data-slot=toast]").filter(has_text="Detached").wait_for()
+    page.evaluate("() => document.querySelectorAll('[data-slot=toast-portal]').forEach(e => e.remove())")
+    page.wait_for_timeout(800)
+    start = section.get_by_role("button").first
+    start.focus()
+    page.evaluate("() => { window.__f6 = null; addEventListener('keydown', e => { if (e.key === 'F6') window.__f6 = e.defaultPrevented }, { once: true }) }")
+    page.keyboard.press("F6")
+    result = page.evaluate("() => [window.__f6, document.querySelectorAll('[data-slot=toast-portal]').length, window.__toast.getToasts().length]")
+    assert result == [False, 0, 0], ("toasts that left the document do not capture F6 or bring back a portal", result)
+    assert start.evaluate("e => e === document.activeElement"), "F6 leaves focus where it was"
+    page.evaluate("() => window.__toast.add({ title: 'Again' })")
+    page.locator("[data-slot=toast]").filter(has_text="Again").wait_for()
+    assert page.locator("[data-slot=toast-portal]").count() == 1

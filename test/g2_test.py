@@ -2015,6 +2015,7 @@ def check_dropdown_menu(t):
     wait(page, open_js)
     content.get_by_role("menuitem", name="Invite users").hover()
     wait(page, "() => document.querySelector('#dropdown-menu-demo [data-slot=dropdown-menu-sub-content]').matches(':popover-open')")
+    t.settle()
     email = content.get_by_role("menuitem", name="Email")
     ib, eb = inline(t, box(content.get_by_role("menuitem", name="Invite users"))), inline(t, box(email))
     page.mouse.move(px(t, ib["x"] + ib["width"] - 4), ib["y"] + ib["height"] / 2, steps=2)

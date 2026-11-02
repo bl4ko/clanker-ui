@@ -123,7 +123,7 @@ A smaller page can load only the component groups that it uses: see [Minified an
 
    On a static host that cannot send headers, put the same policy without `frame-ancestors 'none'` in `<meta http-equiv="Content-Security-Policy" content="...">` as the first element of `<head>` (browsers ignore `frame-ancestors` in a meta tag). To load the kit from a CDN (for example jsDelivr, `https://cdn.jsdelivr.net/gh/bl4ko/clanker-ui@vX.Y.Z/dist/clanker-ui.min.css`), add the CDN host to `script-src` and `style-src` and use `integrity` hashes; copying the files stays the default.
 
-   Do not use inline `<script>`, inline `<style>`, `style=""`, or `on*=""` attributes. Setting `element.style.x` from JavaScript is allowed. The kit needs no `data:` URLs; `img-src data:` is for app images. WebKit reports one `style-src-attr` violation for each native `<select>` under `style-src 'self'`, also without the kit. Use the kit `select` where 0 violations matter.
+   Do not use inline `<script>`, inline `<style>`, `style=""`, or `on*=""` attributes. Setting `element.style.x` from JavaScript is allowed. The kit needs no `data:` URLs; `img-src data:` is for app images.
 
 Browsers: Chrome, Safari (also iOS), and Firefox released in the last two years.
 
@@ -711,7 +711,7 @@ The control can be a `textarea`. A click on an addon (not on a button) focuses t
 </div>
 ```
 
-CSS only. WebKit reports one `style-src-attr` violation for each native `<select>` under `style-src 'self'`, also without the kit. Use the kit `select` where 0 violations matter.
+CSS only.
 
 #### Select
 

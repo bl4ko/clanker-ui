@@ -58,7 +58,7 @@ A static host that cannot send headers uses a meta tag as the first element of `
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
 ```
 
-Do not use inline `<script>`, inline `<style>`, `style=""`, or `on*=""` attributes. WebKit reports one `style-src-attr` violation for each native `<select>` under `style-src 'self'`, also without the kit. Use the kit `select` where 0 violations matter. [csp.md](https://github.com/bl4ko/clanker-ui/blob/main/skills/clanker-ui/references/csp.md) has the Caddy and nginx lines and a small Go test server.
+Do not use inline `<script>`, inline `<style>`, `style=""`, or `on*=""` attributes. [csp.md](https://github.com/bl4ko/clanker-ui/blob/main/skills/clanker-ui/references/csp.md) has the Caddy and nginx lines and a small Go test server.
 
 ## Local test
 

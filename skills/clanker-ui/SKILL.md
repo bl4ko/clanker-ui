@@ -142,7 +142,7 @@ import { toast, dialogOpen } from "/vendor/clanker-ui/clanker-ui.min.js"
 
 Serve the page with the CSP from [references/csp.md](references/csp.md) (it has a small Go server), then open it in a browser:
 
-1. The console has 0 errors and 0 CSP or Trusted Types violations. Exception: WebKit reports one `style-src-attr` violation for each native `<select>` under `style-src 'self'`, also without the kit. Use the kit `select` where 0 violations matter.
+1. The console has 0 errors and 0 CSP or Trusted Types violations.
 2. Each interactive component works with the mouse and with the keyboard (Tab, Enter, Space, Escape, arrows), as listed in its "Keyboard and focus" text.
 3. Focus goes back to the trigger when a dialog or menu closes.
 

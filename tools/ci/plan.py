@@ -96,8 +96,10 @@ def classify(files):
 
 
 def plan(event, full_label, files):
+    if event == "push":
+        return "main", PR
     if event != "pull_request":
-        return "main", PR + FULL
+        return "full", PR + FULL
     if full_label:
         return "full-ci", PR + FULL
     tier, modules = classify(files)
@@ -180,7 +182,8 @@ def self_test():
     check("docs change runs Chromium pages only", plan("pull_request", False, ["README.md"]) == ("docs", [PAGES[0]]) and PAGES[0]["engine"] == "chromium")
     check("pages test change runs pages in 2 engines", plan("pull_request", False, ["test/pages_test.py"]) == ("tests", PAGES))
     check("label runs all", plan("pull_request", True, ["README.md"])[1] == PR + FULL)
-    check("push runs all", plan("push", False, [])[1] == PR + FULL)
+    check("push to main runs the pull request tier", plan("push", False, [])[1] == PR)
+    check("schedule and dispatch run all", all(plan(e, False, [])[1] == PR + FULL for e in ("schedule", "workflow_dispatch")))
     return 0 if ok else 1
 
 

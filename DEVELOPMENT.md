@@ -93,7 +93,8 @@ Behavior:
 
 | Change | Browser jobs |
 | --- | --- |
-| Push to `main`, nightly run, or label `full-ci` | All: Chromium, Firefox, and WebKit in light and dark, `--rtl`, `--reduced-motion`, the minified kit, and the exported pages. |
+| Nightly run, `workflow_dispatch` (release check), or label `full-ci` | All: Chromium, Firefox, and WebKit in light and dark, `--rtl`, `--reduced-motion`, the minified kit, and the exported pages. |
+| Push to `main` | Pull request tier. A new push cancels the running push run. |
 | Kit, generator, server, `test/run.py`, `ci.yml`, `tools/ci/plan.py`, or any other file | Pull request tier: Chromium and Firefox in light and dark, WebKit light (5 macOS jobs), a minified-kit smoke set, and the exported pages. |
 | Only `test/<module>_test.py`, `test/behavior/`, `test/split/`, or `test/spike/` (Go test files and docs can be in the same change) | The pull request tier, only for the changed modules. |
 | Only Markdown, `docs/*.txt`, `skills/`, licenses, issue templates, `release.yml`, `pages.yml`, or `renovate.json` | Only the exported pages in Chromium. |

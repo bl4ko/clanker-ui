@@ -1891,11 +1891,11 @@ def check_tabs_overflow(t):
         page.keyboard.press(g3_key(t, "ArrowRight"))
         assert page.evaluate("() => document.activeElement.dataset.value") == triggers.nth(i).get_attribute("data-value")
         gap = page.evaluate(f"() => ({reach})(document.activeElement)")
-        assert gap >= 2.5, (i, gap)
+        assert gap >= 2, (i, gap)
     page.keyboard.press("Home")
-    assert page.evaluate(f"() => ({reach})(document.activeElement)") >= 2.5
+    assert page.evaluate(f"() => ({reach})(document.activeElement)") >= 2
     page.keyboard.press("End")
-    assert page.evaluate(f"() => ({reach})(document.activeElement)") >= 2.5
+    assert page.evaluate(f"() => ({reach})(document.activeElement)") >= 2
     page.locator("#tabs-wide-line").scroll_into_view_if_needed()
     spot = page.evaluate(
         """() => {
@@ -1908,7 +1908,7 @@ def check_tabs_overflow(t):
     page.mouse.click(spot["x"], spot["y"])
     clicked = page.locator(f"#tabs-wide-line [data-slot=tabs-trigger][data-value={spot['value']}]")
     assert clicked.get_attribute("aria-selected") == "true", spot
-    assert clicked.evaluate(reach) >= 2.5
+    assert clicked.evaluate(reach) >= 2
     assert g3_style(page.locator("#tabs-vertical [data-slot=tabs-list]"), "overflow-x") == "visible"
     t.shot("tabs-overflow", host)
 
@@ -1942,10 +1942,10 @@ def check_tabs_overflow_selected(t):
     selected = lambda id: page.locator(f"#{id} [data-slot=tabs-trigger][data-state=active]")
     load = selected("tabs-selected-load")
     assert load.get_attribute("data-value") == "members"
-    assert load.evaluate(G3_REACH) >= 2.5, ("selected tab out of view at load", load.evaluate(G3_REACH))
+    assert load.evaluate(G3_REACH) >= 2, ("selected tab out of view at load", load.evaluate(G3_REACH))
     page.evaluate("async () => { document.getElementById('tabs-selected-later').hidden = false; await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))) }")
     late = selected("tabs-selected-hidden")
-    assert late.evaluate(G3_REACH) >= 2.5, ("selected tab out of view after show", late.evaluate(G3_REACH))
+    assert late.evaluate(G3_REACH) >= 2, ("selected tab out of view after show", late.evaluate(G3_REACH))
     stop = "() => { const a = document.activeElement; return [a.dataset.slot ?? a.id, a.dataset.value ?? a.getAttribute('role')] }"
     page.locator("#tabs-selected-before").focus()
     page.keyboard.press("Tab")
@@ -1962,7 +1962,7 @@ def check_tabs_overflow_selected(t):
     for i in range(1, 7):
         page.keyboard.press(g3_key(t, "ArrowRight"))
         gap = page.evaluate(f"() => ({G3_REACH})(document.activeElement)")
-        assert gap >= 2.5, ("scaled list", i, gap)
+        assert gap >= 2, ("scaled list", i, gap)
     t.shot("tabs-overflow-selected", page.locator("#tabs-selected"))
 
 

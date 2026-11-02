@@ -4,6 +4,7 @@ import importlib.util
 import json
 import pathlib
 import re
+import sys
 
 from playwright.sync_api import Error as PlaywrightError
 
@@ -1351,7 +1352,7 @@ def compare(sc, ref_rows, our_rows, engine=None):
         out.append(f)
     for f in out:
         for a in sc.get("allowed", []):
-            if "match" in a and ("steps" not in a or {step_no(f), *(int(x) for x in f["also"] if x.isdigit())} <= set(a["steps"])) and ("engines" not in a or engine in a["engines"]) and re.search(a["match"], f"{f['what']} | {f['shadcn']} | {f['ours']} | {f.get('note') or ''}"):
+            if "match" in a and ("steps" not in a or {step_no(f), *(int(x) for x in f["also"] if x.isdigit())} <= set(a["steps"])) and ("engines" not in a or engine in a["engines"]) and ("platforms" not in a or sys.platform in a["platforms"]) and re.search(a["match"], f"{f['what']} | {f['shadcn']} | {f['ours']} | {f.get('note') or ''}"):
                 f["allowed"] = a["reason"]
                 break
     first = first_divergence(out)

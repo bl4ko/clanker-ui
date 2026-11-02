@@ -175,6 +175,8 @@ def check_overlays_needs(t):
 
 
 def check_layout_needs(t):
+    if t.engine == "webkit" and t.width == 390:
+        t.skip("https://github.com/bl4ko/clanker-ui/issues/2")
     compare(t, "layout-needs")
     assert t.page.locator('[data-slot="sidebar"]').count() > 0
 

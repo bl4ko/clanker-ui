@@ -35,6 +35,7 @@
   ],
   "allowed": [
     {"key": "combobox.trigger-name", "aria_name": "button", "reason": "the kit keeps its better ARIA: the trigger button has a name"},
-    {"key": "combobox.addon-in-tree", "match": "^ARIA tree \\(root\\) \\| \\d+ nodes \\| \\d+ nodes \\| ours only: group; ours only: button \\[expanded\\]$", "reason": "the kit keeps its better ARIA: while the list is open, Base UI sets aria-hidden on the input addon, which also hides the focusable trigger button; the kit keeps the addon group and the button in the tree"}
+    {"key": "combobox.addon-in-tree", "match": "^ARIA tree \\(root\\) \\| \\d+ nodes \\| \\d+ nodes \\| ours only: group; ours only: button \\[expanded\\]$", "reason": "the kit keeps its better ARIA: while the list is open, Base UI sets aria-hidden on the input addon, which also hides the focusable trigger button; the kit keeps the addon group and the button in the tree"},
+    {"key": "combobox.linux-font-metrics", "match": "^content end size \\| ", "steps": [1, 9, 17, 19], "engines": ["chromium"], "platforms": ["linux"], "reason": "Linux runner font metrics: Chromium sizes the text input from the average character width of the Arial substitute; the reference was recorded on macOS"}
   ]
 }

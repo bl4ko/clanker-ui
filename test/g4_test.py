@@ -1248,12 +1248,12 @@ TRACE_REVERSE = """() => new Promise(resolve => {
       const b = document.querySelector("#trace-version [data-slot=trace-collapsible-trigger]")
       const height = () => c.getBoundingClientRect().height
       b.click()
-      setTimeout(() => {
+      setTimeout(() => requestAnimationFrame(() => {
         const middle = height()
         b.click()
         const reversed = height()
         requestAnimationFrame(() => requestAnimationFrame(() => resolve([middle, reversed, height(), c.scrollHeight])))
-      }, 100)
+      }), 100)
     })"""
 
 

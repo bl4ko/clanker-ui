@@ -6,6 +6,18 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ## Unreleased
 
+### Changed
+
+- `clanker-ui.css` is readable, not minified. Use `dist/clanker-ui.min.css` for the minified file. Every rule is in a `clanker.*` layer; a reduced-motion `.shimmer` rule outside all layers is gone. (#12)
+
+### Fixed
+
+- `.shimmer-once` runs once and `.shimmer-reverse` runs in reverse. (#12)
+- An open drawer that leaves the page (for example after an htmx or SPA swap) no longer blocks Tab on the page and removes its `touchmove` listener. (#13)
+- A toast that leaves the page no longer captures F6. (#13)
+- A `reset` event that the app cancels with `preventDefault()` no longer resets select, combobox, and calendar values. (#13)
+- The chart treats an impossible ISO date (`2026-02-30`) as invalid, not as the next month. (#13)
+
 ## 0.1.0 - 2026-11-02
 
 First public release.

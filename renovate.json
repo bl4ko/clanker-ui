@@ -20,7 +20,7 @@
   "packageRules": [
     {
       "groupName": "playwright",
-      "matchPackageNames": ["playwright", "/^microsoft/playwright/"]
+      "matchPackageNames": ["playwright"]
     },
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest", "pinDigest"],

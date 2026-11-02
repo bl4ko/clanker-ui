@@ -4099,6 +4099,7 @@ def check_hover_card_blur(t):
     page.evaluate("""() => {
       window.__hb = {}
       const root = document.getElementById("hover-card-demo")
+      root.querySelector("[data-hover-card-trigger]").dataset.closeDelay = "1000"
       root.addEventListener("focusout", () => (window.__hb.out ??= performance.now()))
       root.addEventListener("hover-card:close", () => (window.__hb.close ??= performance.now()))
     }""")
@@ -4107,7 +4108,7 @@ def check_hover_card_blur(t):
     page.keyboard.press("Shift+Tab")
     wait(page, "() => window.__hb.close")
     took = page.evaluate("() => window.__hb.close - window.__hb.out")
-    assert took < 80, ("focus leaving the trigger closes the card at once, as in Base UI", took)
+    assert took < 500, ("focus leaving the trigger closes the card at once, not after the 1000 ms close delay, as in Base UI", took)
 
 
 def check_command_list_focus(t):

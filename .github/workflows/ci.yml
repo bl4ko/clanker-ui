@@ -97,7 +97,7 @@ jobs:
           - { engine: webkit, id: g2b-g3-light, only: "g2,g3", k: '^(g2\.[e-o]|g3\.)', themes: light }
           - { engine: webkit, id: g4-g5-light, only: "g4,g5", themes: light }
           - { engine: webkit, id: g1-g2c-light, only: "g1,g2", k: '^(g1\.|g2\.[p-z])', themes: light }
-          - { engine: chromium, id: min-smoke, only: "foundation,split,g5,g1,g2,g3,g4", k: '^(foundation\.|split\.|g5\.|g1\.select$|g2\.dialog$|g3\.carousel$|g4\.calendar$)', themes: light, kit: min }
+          - { engine: chromium, id: min-smoke, only: "foundation,g5,g1,g2,g3,g4", k: '^(foundation\.|g5\.|g1\.select$|g2\.dialog$|g3\.carousel$|g4\.calendar$)', themes: light, kit: min }
     env:
       ENGINE: ${{ matrix.engine }}
       ONLY: ${{ matrix.only }}

@@ -82,6 +82,8 @@ def classify(files):
     modules, docs = set(), False
     for f in files:
         m = re.fullmatch(r"test/([a-z0-9]+)_test\.py", f)
+        if f.endswith("_test.go"):
+            continue
         if m:
             modules.add(m.group(1))
         elif any(f.startswith(d) for d in TEST_DIRS):
@@ -90,7 +92,7 @@ def classify(files):
             docs = True
         else:
             return "full", set()
-    return ("tests" if modules else "docs"), modules
+    return ("tests" if modules else "docs" if docs else "go"), modules
 
 
 def plan(event, full_label, files):
@@ -107,8 +109,10 @@ def plan(event, full_label, files):
             only = [m for m in j["only"].split(",") if m in modules]
             if only:
                 out.append({**j, "only": ",".join(only), "pages": False})
-    if tier == "docs" or "pages" in modules:
+    if "pages" in modules:
         out += PAGES
+    elif tier == "docs":
+        out += PAGES[:1]
     return tier, out
 
 
@@ -167,10 +171,14 @@ def self_test():
     check("ci.yml change is full", classify([".github/workflows/ci.yml"])[0] == "full")
     check("run.py change is full", classify(["test/run.py"])[0] == "full")
     check("plan change is full", classify(["tools/ci/plan.py"])[0] == "full")
+    check("Go test change adds no browser job", plan("pull_request", False, ["tools/gen/catalog_test.go", "banned_test.go"]) == ("go", []))
+    check("Go test and docs change is docs", plan("pull_request", False, ["tools/gen/catalog_test.go", "README.md"]) == ("docs", PAGES[:1]))
+    check("Go test and kit change is full", classify(["tools/gen/catalog_test.go", "tools/gen/catalog.go"])[0] == "full")
     check("test change is tests", classify(["test/g2_test.py", "test/behavior/scenarios/select.json"]) == ("tests", {"g2", "behavior"}))
     tier, jobs = plan("pull_request", False, ["test/g3_test.py"])
     check("g3 test change runs g3 in 3 engines only", tier == "tests" and {j["only"] for j in jobs} == {"g3"} and {j["engine"] for j in jobs} == {"chromium", "firefox", "webkit"} and not any(j["pages"] for j in jobs))
-    check("docs change runs pages only", plan("pull_request", False, ["README.md"]) == ("docs", PAGES))
+    check("docs change runs Chromium pages only", plan("pull_request", False, ["README.md"]) == ("docs", [PAGES[0]]) and PAGES[0]["engine"] == "chromium")
+    check("pages test change runs pages in 2 engines", plan("pull_request", False, ["test/pages_test.py"]) == ("tests", PAGES))
     check("label runs all", plan("pull_request", True, ["README.md"])[1] == PR + FULL)
     check("push runs all", plan("push", False, [])[1] == PR + FULL)
     return 0 if ok else 1

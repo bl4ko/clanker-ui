@@ -21,6 +21,36 @@ env:
   PLAYWRIGHT_VERSION: "1.64.1"
 
 jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      browser: ${{ steps.plan.outputs.browser }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            tools/ci
+            test
+      - id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          PR: ${{ github.event.pull_request.number }}
+          FULL_CI: ${{ contains(github.event.pull_request.labels.*.name, 'full-ci') }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          files="$RUNNER_TEMP/files"
+          : > "$files"
+          if [ "$EVENT" = pull_request ]; then
+            gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[] | .filename, (.previous_filename // empty)' > "$files"
+          fi
+          python3 -I tools/ci/plan.py "$files"
+
   go:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -48,8 +78,10 @@ jobs:
           version: "0.13.6"
           python-version: "3.13"
           enable-cache: false
-      - name: Parity self-test
-        run: uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I tools/parity/selftest.py
+      - name: Tool self-tests
+        run: |
+          uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I tools/parity/selftest.py
+          python3 -I tools/ci/plan.py --self-test
 
   gitleaks:
     runs-on: ubuntu-24.04
@@ -67,44 +99,21 @@ jobs:
 
   browser:
     name: ${{ matrix.engine }} ${{ matrix.id }}
+    needs: plan
+    if: needs.plan.outputs.browser == 'true'
     runs-on: ${{ matrix.engine == 'webkit' && 'macos-26' || 'ubuntu-24.04' }}
     timeout-minutes: 40
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - { engine: chromium, id: behavior, only: behavior, themes: light }
-          - { engine: chromium, id: foundation, only: foundation }
-          - { engine: chromium, id: g1-docs, only: "g1,docs" }
-          - { engine: chromium, id: g2a-split, only: "g2,split", k: '^(g2\.[a-d]|split\.)' }
-          - { engine: chromium, id: g2b-g5, only: "g2,g5", k: '^(g2\.[e-n]|g5\.)' }
-          - { engine: chromium, id: g2c, only: g2, k: '^g2\.[o-s]' }
-          - { engine: chromium, id: g2d-g4a, only: "g2,g4", k: '^(g2\.[t-z]|g4\.[a-c])' }
-          - { engine: chromium, id: g3a-spike, only: "g3,spike", k: '^(g3\.[a-c]|spike\.)' }
-          - { engine: chromium, id: g3b-pages, only: g3, k: '^g3\.[d-z]', pages: true }
-          - { engine: chromium, id: g4b, only: g4, k: '^g4\.[d-z]' }
-          - { engine: firefox, id: behavior-a-g1-light, only: "behavior,g1", k: '^(behavior\.[a-l]|g1\.)', themes: light }
-          - { engine: firefox, id: behavior-b-g4-light, only: "behavior,g4", k: '^(behavior\.[m-z]|g4\.)', themes: light }
-          - { engine: firefox, id: g1-g4-dark, only: "g1,g4", themes: dark }
-          - { engine: firefox, id: foundation, only: foundation }
-          - { engine: firefox, id: g3, only: g3 }
-          - { engine: firefox, id: g2a-split, only: "g2,split", k: '^(g2\.d|split\.)' }
-          - { engine: firefox, id: g2b, only: g2, k: '^g2\.[a-ce-n]' }
-          - { engine: firefox, id: g2c-spike-docs, only: "g2,spike,docs", k: '^(g2\.[o-s]|spike\.|docs\.)' }
-          - { engine: firefox, id: g2d-g5, only: "g2,g5", k: '^(g2\.[t-z]|g5\.)' }
-          - { engine: webkit, id: behavior-docs-spike-split-pages-light, only: "behavior,docs,spike,split", themes: light, pages: true }
-          - { engine: webkit, id: foundation-g2a-light, only: "foundation,g2", k: '^(foundation\.|g2\.[a-d])', themes: light }
-          - { engine: webkit, id: g2b-g3-light, only: "g2,g3", k: '^(g2\.[e-o]|g3\.)', themes: light }
-          - { engine: webkit, id: g4-g5-light, only: "g4,g5", themes: light }
-          - { engine: webkit, id: g1-g2c-light, only: "g1,g2", k: '^(g1\.|g2\.[p-z])', themes: light }
-          - { engine: chromium, id: min-smoke, only: "foundation,g5,g1,g2,g3,g4", k: '^(foundation\.|g5\.|g1\.select$|g2\.dialog$|g3\.carousel$|g4\.calendar$)', themes: light, kit: min }
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     env:
       ENGINE: ${{ matrix.engine }}
       ONLY: ${{ matrix.only }}
       K: ${{ matrix.k }}
       THEMES: ${{ matrix.themes || 'light,dark' }}
+      MODE: ${{ matrix.mode }}
       KIT: ${{ matrix.kit }}
-    steps: &browser-steps
+    steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -119,6 +128,7 @@ jobs:
       - name: Install browser
         run: uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" playwright install --with-deps "$ENGINE"
       - name: Start server
+        if: matrix.only
         run: |
           OUT="$RUNNER_TEMP/out"
           mkdir -p "$OUT"
@@ -130,6 +140,7 @@ jobs:
           done
           exit 1
       - name: Run checks
+        if: matrix.only
         run: |
           set +e
           OUT="$RUNNER_TEMP/out"
@@ -169,60 +180,18 @@ jobs:
           path: ${{ runner.temp }}/out
           retention-days: 14
 
-  browser-full:
-    name: ${{ matrix.engine }} ${{ matrix.id }}
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'full-ci')
-    runs-on: ${{ matrix.engine == 'webkit' && 'macos-26' || 'ubuntu-24.04' }}
-    timeout-minutes: 40
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { engine: webkit, id: foundation-docs-spike-split-pages-dark, only: "foundation,docs,spike,split", themes: dark, pages: true }
-          - { engine: webkit, id: g2a-g5-dark, only: "g2,g5", k: '^(g2\.[a-d]|g5\.)', themes: dark }
-          - { engine: webkit, id: g2b-dark, only: g2, k: '^g2\.[e-z]', themes: dark }
-          - { engine: webkit, id: g1-g3a-dark, only: "g1,g3", k: '^(g1\.|g3\.[a-c])', themes: dark }
-          - { engine: webkit, id: g3b-g4-dark, only: "g3,g4", k: '^(g3\.[d-z]|g4\.)', themes: dark }
-          - { engine: chromium, id: rtl-g2a-spike, only: "g2,spike", k: '^(g2\.[a-n]|spike\.)', themes: light, mode: rtl }
-          - { engine: chromium, id: rtl-g2b-g5, only: "g2,g5", k: '^(g2\.[o-z]|g5\.)', themes: light, mode: rtl }
-          - { engine: chromium, id: rtl-foundation-g1-docs, only: "foundation,g1,docs", themes: light, mode: rtl }
-          - { engine: chromium, id: rtl-g3-g4, only: "g3,g4", themes: light, mode: rtl }
-          - { engine: chromium, id: reduced-motion-g2a-spike, only: "g2,spike", k: '^(g2\.[a-n]|spike\.)', themes: light, mode: reduced-motion }
-          - { engine: chromium, id: reduced-motion-g2b-g5, only: "g2,g5", k: '^(g2\.[o-z]|g5\.)', themes: light, mode: reduced-motion }
-          - { engine: chromium, id: reduced-motion-foundation-g1-docs, only: "foundation,g1,docs", themes: light, mode: reduced-motion }
-          - { engine: chromium, id: reduced-motion-g3-g4, only: "g3,g4", themes: light, mode: reduced-motion }
-          - { engine: chromium, id: min-foundation-docs, only: "foundation,docs", kit: min }
-          - { engine: chromium, id: min-g1, only: g1, kit: min }
-          - { engine: chromium, id: min-g2a, only: g2, k: '^g2\.[a-d]', kit: min }
-          - { engine: chromium, id: min-g2b-g5, only: "g2,g5", k: '^(g2\.[e-n]|g5\.)', kit: min }
-          - { engine: chromium, id: min-g2c, only: g2, k: '^g2\.[o-s]', kit: min }
-          - { engine: chromium, id: min-g2d-g4a, only: "g2,g4", k: '^(g2\.[t-z]|g4\.[a-c])', kit: min }
-          - { engine: chromium, id: min-g3a-spike, only: "g3,spike", k: '^(g3\.[a-c]|spike\.)', kit: min }
-          - { engine: chromium, id: min-g3b, only: g3, k: '^g3\.[d-z]', kit: min }
-          - { engine: chromium, id: min-g4b, only: g4, k: '^g4\.[d-z]', kit: min }
-    env:
-      ENGINE: ${{ matrix.engine }}
-      ONLY: ${{ matrix.only }}
-      K: ${{ matrix.k }}
-      THEMES: ${{ matrix.themes || 'light,dark' }}
-      MODE: ${{ matrix.mode }}
-      KIT: ${{ matrix.kit }}
-    steps: *browser-steps
-
   ci-result:
     name: ci-result
     if: always()
-    needs: [go, gitleaks, browser, browser-full]
+    needs: [plan, go, gitleaks, browser]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Check results
         env:
-          RESULTS: ${{ needs.go.result }} ${{ needs.gitleaks.result }} ${{ needs.browser.result }}
-          FULL: ${{ needs.browser-full.result }}
+          RESULTS: ${{ join(needs.*.result, ' ') }}
         run: |
-          echo "$RESULTS $FULL"
+          echo "$RESULTS"
           for r in $RESULTS; do
-            [ "$r" = success ] || exit 1
+            [ "$r" = success ] || [ "$r" = skipped ] || exit 1
           done
-          [ "$FULL" = success ] || [ "$FULL" = skipped ]

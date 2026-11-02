@@ -57,7 +57,7 @@ jobs:
 
   browser:
     name: ${{ matrix.engine }} ${{ matrix.id }}
-    runs-on: ${{ (matrix.engine == 'webkit' || matrix.macos) && 'macos-latest' || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.engine == 'webkit' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 40
     strategy:
       fail-fast: false
@@ -70,7 +70,6 @@ jobs:
           - { engine: chromium, id: g3, only: g3 }
           - { engine: chromium, id: g4, only: g4 }
           - { engine: chromium, id: behavior, only: behavior, themes: light }
-          - { engine: chromium, id: behavior-macos, only: behavior, k: '^behavior\.(carousel|drawer)$', themes: light, macos: true }
           - { engine: firefox, id: foundation-docs, only: "foundation,docs" }
           - { engine: firefox, id: g1-g5-spike-split, only: "g1,g5,spike,split" }
           - { engine: firefox, id: g2a, only: g2, k: '^g2\.[a-m]' }

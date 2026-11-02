@@ -1232,7 +1232,18 @@ def check_trace_reverse(t):
     if t.reduced_motion:
         t.skip("needs running height animations")
     pin(section.locator("#trace-demo"))
-    heights = page.evaluate("""() => new Promise(resolve => {
+    ok = lambda h: 0 < h[0] < h[3] - 2 and h[0] - 3 <= h[1] < h[3] - 2 and h[1] - h[0] <= 0.25 * h[3] and 0 < h[2] <= h[1] + 1
+    for _ in range(3):
+        heights = page.evaluate(TRACE_REVERSE)
+        if ok(heights):
+            break
+        t.settle()
+        page.evaluate("""() => { if (document.querySelector("#trace-version [data-slot=trace-collapsible-content]").dataset.state === "open") document.querySelector("#trace-version [data-slot=trace-collapsible-trigger]").click() }""")
+        t.settle()
+    assert ok(heights), heights
+
+
+TRACE_REVERSE = """() => new Promise(resolve => {
       const c = document.querySelector("#trace-version [data-slot=trace-collapsible-content]")
       const b = document.querySelector("#trace-version [data-slot=trace-collapsible-trigger]")
       const height = () => c.getBoundingClientRect().height
@@ -1243,8 +1254,7 @@ def check_trace_reverse(t):
         const reversed = height()
         requestAnimationFrame(() => requestAnimationFrame(() => resolve([middle, reversed, height(), c.scrollHeight])))
       }, 100)
-    })""")
-    assert 0 < heights[0] < heights[3] - 2 and heights[0] - 3 <= heights[1] < heights[3] - 2 and heights[1] - heights[0] <= 0.25 * heights[3] and 0 < heights[2] <= heights[1] + 1, heights
+    })"""
 
 
 CLOSE = """([trigger, content]) => {

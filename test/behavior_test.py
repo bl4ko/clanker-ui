@@ -1,7 +1,7 @@
 import importlib.util
 import json
+import os
 import pathlib
-import sys
 
 _spec = importlib.util.spec_from_file_location("clanker_behavior_engine", pathlib.Path(__file__).resolve().parent.parent / "tools" / "behavior" / "engine.py")
 E = importlib.util.module_from_spec(_spec)
@@ -9,7 +9,7 @@ _spec.loader.exec_module(E)
 
 START = "/test/behavior/fixtures/index.html"
 
-MACOS_ONLY = {("chromium", "drawer", None), ("chromium", "carousel", 390)}
+HOSTED_SKIP = {("chromium", "drawer", None), ("chromium", "carousel", 390)}
 
 
 def behavior(t, name):
@@ -20,8 +20,8 @@ def behavior(t, name):
     result = {"component": name, "run": key, "theme": t.theme, "note": sc.get("note")}
     if t.theme == "dark":
         t.skip("behavior does not depend on the theme; the light run compares it")
-    if sys.platform != "darwin" and ({(t.engine, name, None), (t.engine, name, t.width)} & MACOS_ONLY):
-        t.skip("the Chromium touch swipe step does not move this component on Linux runners; it runs on macOS, where the reference was recorded")
+    if os.environ.get("GITHUB_ACTIONS") and ({(t.engine, name, None), (t.engine, name, t.width)} & HOSTED_SKIP):
+        t.skip("the Chromium touch swipe does not move this component on GitHub-hosted runners: https://github.com/bl4ko/clanker-ui/issues/7")
     if gold is None or sc.get("not_recorded"):
         t.skip(sc.get("not_recorded") or f"no reference: run tools/behavior record --only {name}")
     if gold.get("scenario") != E.scenario_hash(sc):

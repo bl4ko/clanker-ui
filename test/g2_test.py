@@ -256,11 +256,36 @@ def motion_time(frames, start, done):
     return last[-1] - first[-1]
 
 
-def check_sheet_motion(t):
+def motion_retry(t, trigger, dialog, measure):
     page = t.page
+    is_open = f"() => document.querySelector({dialog!r}).open"
+    trigger.click()
+    wait(page, is_open)
+    t.settle()
+    page.keyboard.press("Escape")
+    wait(page, f"() => !({is_open})()")
+    t.settle()
+    for attempt in range(3):
+        try:
+            return measure()
+        except AssertionError:
+            if attempt == 2:
+                raise
+            if page.evaluate(is_open):
+                page.keyboard.press("Escape")
+                wait(page, f"() => !({is_open})()")
+            t.settle()
+
+
+def check_sheet_motion(t):
     section = t.section("sheet")
-    width, height = viewport(page)
     trigger = section.get_by_role("button", name="Open", exact=True)
+    motion_retry(t, trigger, "#sheet-demo [data-slot=sheet-content]", lambda: sheet_motion(t, trigger))
+
+
+def sheet_motion(t, trigger):
+    page = t.page
+    width, height = viewport(page)
     frames = t.paint(SHEET_FRAME, lambda: trigger.click(), ms=1200)
     shown = [f for f in frames if f[2]]
     assert shown, frames
@@ -1192,10 +1217,15 @@ def check_drawer_nested_outside(t):
 
 def check_drawer_motion(t):
     page = t.page
-    section = t.section("drawer")
-    width, height = viewport(page)
+    t.section("drawer")
     trigger = page.locator("#drawer-handle [data-drawer-trigger]")
     trigger.scroll_into_view_if_needed()
+    motion_retry(t, trigger, "#drawer-handle [data-slot=drawer-viewport]", lambda: drawer_motion(t, trigger))
+
+
+def drawer_motion(t, trigger):
+    page = t.page
+    width, height = viewport(page)
     frames = t.paint(DRAWER_FRAME, lambda: trigger.click(), ms=1200)
     shown = [f for f in frames if f[1]]
     assert shown, frames

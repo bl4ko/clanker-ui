@@ -15,7 +15,7 @@ Each group has `clanker-ui-<group>.min.css` and (except core CSS-only parts) `cl
 | `chat` | `clanker-ui-chat.min.css` | `clanker-ui-chat.min.js` | message, bubble, attachment, message-scroller, trace, marker, questionnaire, code-block, calendar, date-picker |
 | `chart` | `clanker-ui-chart.min.css` | `clanker-ui-chart.min.js` | chart |
 
-Global attributes (any element): `data-align` `center`, `end`, `start`; `data-align-offset` number; `data-icon` `inline-end`, `inline-start`; `data-lucide` string; `data-scheme` string; `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top`; `data-side-offset` number; `data-theme-picker` string; `data-theme-set` `dark`, `light`, `system`, `toggle`; `data-typography` (empty), `blockquote`, `h1`, `h2`, `h3`, `h4`, `inline-code`, `large`, `lead`, `list`, `muted`, `p`, `small`, `table`; `data-string-<key>` (localized label override).
+Global attributes (any element): `data-align` `center`, `end`, `start`; `data-align-offset` number; `data-icon` `inline-end`, `inline-start`; `data-loop` boolean; `data-lucide` string; `data-multiple` boolean; `data-required` boolean; `data-scheme` string; `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top`; `data-side-offset` number; `data-theme-picker` string; `data-theme-set` `dark`, `light`, `system`, `toggle`; `data-typography` (empty), `blockquote`, `h1`, `h2`, `h3`, `h4`, `inline-code`, `large`, `lead`, `list`, `muted`, `p`, `small`, `table`; `data-string-<key>` (localized label override).
 
 ## Components
 
@@ -465,7 +465,7 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 | Part | Write | State |
 | --- | --- | --- |
-| `checkbox` (root) | `data-checked` boolean; `data-indeterminate` boolean; `data-name` string; `data-required` boolean | `data-state` |
+| `checkbox` (root) | `data-checked` boolean; `data-indeterminate` boolean; `data-name` string | `data-state` |
 | `checkbox-group` |  |  |
 | `checkbox-indicator` |  |  |
 
@@ -484,7 +484,7 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 | Part | Write | State |
 | --- | --- | --- |
-| `radio-group` (root) | `data-name` string; `data-required` boolean; `data-value` string |  |
+| `radio-group` (root) | `data-name` string; `data-value` string |  |
 | `radio-group-indicator` |  |  |
 | `radio-group-item` |  | `data-checked`, `data-state` |
 
@@ -550,7 +550,7 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 | Part | Write | State |
 | --- | --- | --- |
-| `select` (root) | `data-name` string; `data-required` boolean; `data-value` string |  |
+| `select` (root) | `data-name` string; `data-value` string |  |
 | `select-content` | `data-align-trigger` `false`, `true`; `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
 | `select-group` |  |  |
 | `select-icon` (kit adds) |  |  |
@@ -632,8 +632,6 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | `combobox-value` |  |  |
 
 Part attributes: `data-combobox-trigger` boolean.
-
-Other options named in the docs: `data-multiple` any.
 
 Events: `combobox:open`; `combobox:close`; `combobox:change` `{ value }`.
 
@@ -1185,7 +1183,7 @@ Group `overlays`. Needs `core`, `forms`. CSS and JS. Docs: https://bl4ko.github.
 | `command-separator` |  |  |
 | `command-shortcut` |  |  |
 
-Other options named in the docs: `data-loop` any; `data-should-filter` `false`, `true`.
+Other options named in the docs: `data-should-filter` `false`, `true`.
 
 Events: `command:select` `{ value, item }`.
 
@@ -1564,7 +1562,7 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 
 | Part | Write | State |
 | --- | --- | --- |
-| `carousel` (root) | `data-loop` boolean; `data-orientation` `horizontal`, `vertical` |  |
+| `carousel` (root) | `data-orientation` `horizontal`, `vertical` |  |
 | `carousel-content` |  |  |
 | `carousel-item` |  |  |
 | `carousel-next` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
@@ -1816,7 +1814,7 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 | `questionnaire-error` |  |  |
 | `questionnaire-input` |  |  |
 | `questionnaire-input-wrapper` (kit adds) |  |  |
-| `questionnaire-item` | `data-multiple` boolean; `data-required` boolean |  |
+| `questionnaire-item` |  |  |
 | `questionnaire-next` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 | `questionnaire-previous` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 | `questionnaire-progress` | `data-template` string |  |

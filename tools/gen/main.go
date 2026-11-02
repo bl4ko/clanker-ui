@@ -89,15 +89,14 @@ func main() {
 	var o options
 	flag.StringVar(&o.src, "src", os.Getenv("SHADCN_SRC"), "directory with the pinned inputs (go run ./tools/gen fetch -src DIR)")
 	flag.StringVar(&o.pin, "pin", "tools/gen/pin.tsv", "git blob hashes of the pinned inputs")
-	flag.StringVar(&o.out, "out", "tools/gen/out/clanker-ui.generated.css", "output CSS file")
-	flag.StringVar(&o.notes, "notes", "", "notes file (default: tools/gen/out/<name of -out>.notes.txt)")
+	flag.StringVar(&o.out, "out", "out/gen/clanker-ui.generated.css", "output CSS file")
+	flag.StringVar(&o.notes, "notes", "", "notes file (default: out/gen/<name of -out>.notes.txt)")
 	flag.StringVar(&o.kit, "kit", "tools/gen/kit.css", "hand-written kit CSS (plain CSS in kit layers), appended after the generated CSS when -out is set (skipped when the file does not exist; -kit \"\" turns it off)")
 	list := flag.String("components", "", "comma-separated component files (default: all)")
 	flag.StringVar(&o.tailwind, "tailwind", "tailwindcss", "Tailwind CSS CLI (Homebrew tailwindcss runs @tailwindcss/cli on Node)")
 	flag.StringVar(&o.mapFile, "map", "tools/gen/map.tsv", "hand selectors for elements without a data-slot")
 	flag.StringVar(&o.parts, "parts", "", "also write the parts as JSON to this file (for tools/parity)")
 	flag.BoolVar(&o.physical, "physical", false, "keep physical classes (ml-, right-) instead of the shadcn rtl mapping")
-	flag.BoolVar(&o.pretty, "pretty", false, "do not minify")
 	flag.Parse()
 	set := map[string]bool{}
 	flag.Visit(func(f *flag.Flag) { set[f.Name] = true })
@@ -108,24 +107,24 @@ func main() {
 	if *list != "" {
 		o.components = strings.Split(*list, ",")
 	}
-	notes, err := run(o)
+	summary, err := run(o)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Print(notes)
+	fmt.Println(summary)
 }
 
 type options struct {
 	src, pin, out, notes, kit, tailwind, mapFile, parts string
 	components                                          []string
-	physical, pretty                                    bool
+	physical                                            bool
 }
 
 func (o options) notesPath() string {
 	if o.notes != "" {
 		return o.notes
 	}
-	return filepath.Join("tools", "gen", "out", strings.TrimSuffix(filepath.Base(o.out), ".css")+".notes.txt")
+	return filepath.Join("out", "gen", strings.TrimSuffix(filepath.Base(o.out), ".css")+".notes.txt")
 }
 
 func checkTailwind(tailwind string) error {
@@ -297,14 +296,12 @@ func run(o options) (string, error) {
 	g.note("fallback removed (every target browser has color-mix and @property)", "%d blocks", dropFallbacks(tree))
 	g.defaultsPass(tree)
 	g.classSelectors(tree)
-	css = license + "\n" + tree.String()
-	if !o.pretty {
-		if css, err = minify(o.tailwind, work, css); err != nil {
-			return "", err
-		}
+	joinLines(tree)
+	g.layerStray(tree)
+	if s := strayRule(tree); s != "" {
+		return "", fmt.Errorf("generated CSS: %q is not in a layer", s)
 	}
-	first, rest, _ := strings.Cut(css, "\n")
-	css = first + "\n" + layerOrder + rest
+	css = license + "\n" + layerOrder + tree.String()
 	if kitCSS != "" {
 		fmt.Fprintf(os.Stderr, "kit CSS appended: %s (%d bytes)\n", o.kit, len(kitCSS))
 		g.note("kit CSS appended as it is", "%s, %d bytes", o.kit, len(kitCSS))
@@ -330,7 +327,7 @@ func run(o options) (string, error) {
 	if err := os.WriteFile(o.notesPath(), []byte(notes), 0o644); err != nil {
 		return "", err
 	}
-	return notes, nil
+	return g.summary(o.out, len(css), o.notesPath()), nil
 }
 
 func pinnedInputs(p *pinned) (inputs, error) {
@@ -419,6 +416,14 @@ func (g *gen) report(components []string, size int) string {
 		}
 	}
 	return b.String()
+}
+
+func (g *gen) summary(out string, size int, notesPath string) string {
+	n := 0
+	for _, items := range g.notes {
+		n += len(items)
+	}
+	return fmt.Sprintf("%s: %d bytes, %d parts, %d notes (%d unmapped) in %s", out, size, len(g.parts), n, len(g.notes["unmapped construct"]), notesPath)
 }
 
 func owner(cls string, names []string) string {

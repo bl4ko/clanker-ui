@@ -253,7 +253,7 @@ func TestDirModeIsLive(t *testing.T) {
 }
 
 func TestSpikeFilesOnlyInDirMode(t *testing.T) {
-	for _, path := range []string{"/test/spike/index.html", "/test/spike/page.css", "/tools/gen/out/spike.css"} {
+	for _, path := range []string{"/test/spike/index.html", "/test/spike/page.css"} {
 		rec := request(t, newSite(".").routes(), http.MethodGet, path)
 		if rec.Code != http.StatusOK {
 			t.Errorf("dir mode: %s status %d", path, rec.Code)
@@ -263,7 +263,7 @@ func TestSpikeFilesOnlyInDirMode(t *testing.T) {
 			t.Errorf("embedded mode: %s served with 200", path)
 		}
 	}
-	for _, path := range []string{"/test/run.py", "/test/spike/../run.py", "/tools/gen/main.go", "/tools/gen/out/spike.notes.txt"} {
+	for _, path := range []string{"/test/run.py", "/test/spike/../run.py", "/tools/gen/main.go", "/tools/gen/kit.css"} {
 		if rec := request(t, newSite(".").routes(), http.MethodGet, path); rec.Code == http.StatusOK {
 			t.Errorf("dir mode: %s served with 200", path)
 		}

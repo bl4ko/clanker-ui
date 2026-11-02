@@ -967,3 +967,27 @@ def check_chart_strings(t):
         "trend": "Sparkline, Trend: Prihodki. 2 točk od 1 do 2, low 1, high 2, latest 2.",
         "cells": ["#", "1", "2", "Vrednost", "1", "2"],
     }, f"chart strings: {result}"
+
+
+def check_chart_impossible_date(t):
+    page = t.page
+    result = page.evaluate(
+        """async () => {
+          const { chart } = await import("/clanker-ui-chart.js")
+          const out = {}
+          for (const [name, days] of Object.entries({ impossible: ["2026-02-30", "2026-03-01"], text: ["nope", "2026-03-01"], leap: ["2024-02-29", "2024-03-01"] })) {
+            const box = document.createElement("div")
+            document.body.append(box)
+            const view = chart(box, days.map((d, i) => ({ d, v: i + 1 })), { x: "d", type: "line", locale: "en-US" })
+            out[name] = box.querySelector('[data-slot="chart-svg"]').getAttribute("aria-label")
+            view.destroy()
+            box.remove()
+          }
+          return out
+        }"""
+    )
+    assert result == {
+        "impossible": "Line chart. V, 2 points from 2026-02-30 to 2026-03-01. V from 1 to 2.",
+        "text": "Line chart. V, 2 points from nope to 2026-03-01. V from 1 to 2.",
+        "leap": "Line chart. V, 2 points from Feb 29, 2024 to Mar 1, 2024. V from 1 to 2.",
+    }, ("an impossible ISO date counts as no date, not as a rolled-over day", result)

@@ -949,6 +949,20 @@ def check_shimmer_fallback(t):
     assert fill == color and fill != "rgba(0, 0, 0, 0)", ("the a11y layer keeps the text visible", fill, color)
 
 
+def check_shimmer_modifiers(t):
+    page = t.page
+    page.emulate_media(reduced_motion="no-preference")
+    got = page.evaluate("""() => ["shimmer-once", "shimmer-reverse"].map(m => {
+      const s = document.body.appendChild(document.createElement("span"))
+      s.className = "shimmer " + m
+      const cs = getComputedStyle(s)
+      const out = [cs.animationName, cs.animationIterationCount, cs.animationDirection]
+      s.remove()
+      return out
+    })""")
+    assert got == [["tw-shimmer", "1", "reverse" if t.rtl else "normal"], ["tw-shimmer", "infinite", "reverse"]], got
+
+
 GROUP_WRAPPERS = """async () => {
   const { h } = await import("/clanker-ui.js")
   const btn = (text, extra) => h("button", { type: "button", "data-slot": "button", "data-variant": "outline", ...extra }, text)

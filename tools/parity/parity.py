@@ -1399,7 +1399,6 @@ def main():
         return recompare(pathlib.Path(sys.argv[2]))
     ap = argparse.ArgumentParser(description="Appearance parity of the generated CSS with ui.shadcn.com (needs the network)")
     ap.add_argument("--src", default=os.environ.get("SHADCN_SRC"), help="pinned shadcn inputs (go run ./tools/gen fetch)")
-    ap.add_argument("--css", default=str(ROOT / "tools/gen/out/clanker-ui.generated.css"))
     ap.add_argument("--out", required=True)
     ap.add_argument("--only", default="")
     ap.add_argument("--engine", default="chromium")
@@ -1422,8 +1421,6 @@ def main():
         if r.returncode != 0:
             raise SystemExit(r.stderr)
     gen_css = (gen / "clanker-ui.generated.css").read_text()
-    if pathlib.Path(args.css).read_text() != gen_css:
-        log(f"warning: {args.css} differs from a fresh generator run; measuring the fresh output")
     data = json.loads((out / "parts.json").read_text())
     parts = Parts(data)
     names = data["components"]

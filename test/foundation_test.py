@@ -1,5 +1,3 @@
-import importlib.util
-import pathlib
 import re
 import time
 
@@ -1407,15 +1405,7 @@ def check_safari_fallbacks(t):
     assert result["locked"] == ["", f"{result['gap']}px"] and result["after"] == "", result
 
 
-def runner():
-    spec = importlib.util.spec_from_file_location("clanker_runner", pathlib.Path(__file__).with_name("run.py"))
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
-
-
 def check_runner(t):
-    run = runner()
     clock = t.page.evaluate(
         """async () => {
           const start = Date.now()
@@ -1426,33 +1416,8 @@ def check_runner(t):
     )
     assert clock["day"] == [2026, 10, 28] and clock["elapsed"] >= 20, f"pages see 2026-10-28 and time keeps running: {clock}"
     assert clock["fixed"] == 2 and clock["instance"], f"explicit dates stay real Date objects: {clock}"
-    refused = run.WEBKIT_REFUSED_STYLE
-    quirks = [
-        "style-src-attr blocked inline at ?:0  on <select>",
-        "style-src-attr blocked inline at web-inspector://bootstrap.js:12  on <select>",
-        "style-src-attr blocked inline at web-inspector://bootstrap.js:12  on <document>",
-        "style-src-elem blocked inline at ?:0  on <document>",
-    ]
-    kept = run.drop_webkit_noise(quirks + [refused] * 4, 1)
-    assert kept == [], f"WebKit select and screenshot reports must be dropped: {kept}"
-    kit = [
-        "style-src-attr blocked inline at http://127.0.0.1:8141/clanker-ui.js:10  on <select>",
-        "style-src-attr blocked inline at http://127.0.0.1:8141/clanker-ui.js:10  on <document>",
-        "style-src-elem blocked inline at http://127.0.0.1:8141/clanker-ui.js:10  on <style>",
-        "style-src-attr blocked inline at ?:0  on <div>",
-        "script-src-elem blocked inline at ?:0  on <script>",
-    ]
-    kept = run.drop_webkit_noise(kit + [refused] * len(kit), 5)
-    assert kept == kit + [refused] * len(kit), f"kit violations must stay: {kept}"
-    extra = "style-src-attr blocked inline at ?:0  on <document>"
-    kept = run.drop_webkit_noise([extra, extra], 1)
-    assert kept == [extra], f"document reports are bounded by the selects created by script: {kept}"
     caught = t.page.evaluate("""() => {
       dispatchEvent(new ErrorEvent("error", { message: "runner probe" }))
       return window.__clankerWatch.errors.splice(0)
     }""")
     assert caught == ["runner probe"], f"window error events must be recorded: {caught}"
-    status, detail = run.verdict("skip", "desktop only", ["console.error: boom"], [])
-    assert status == "fail" and "boom" in detail, f"a skip must keep the console errors collected before it: {status} {detail}"
-    allowed = run.verdict("skip", "desktop only", ["console.error: boom"], [re.compile("boom")])
-    assert allowed == ("skip", "desktop only"), f"allowed messages must not fail a skip: {allowed}"

@@ -23,11 +23,7 @@ func htmlScanFiles(t *testing.T) []string {
 }
 
 func cssScanFiles(t *testing.T) []string {
-	return slices.Concat(repoFiles(t, "clanker-ui*.css", "dist/clanker-ui*.css", "demo/*.css", "test/spike/*.css", "tools/gen/*.css", "tools/gen/out/*.css", "test/behavior/fixtures/*.css"), walkFiles(t, "docs", ".css"))
-}
-
-func generatedCSS(t *testing.T) []string {
-	return repoFiles(t, "tools/gen/out/*.css")
+	return slices.Concat(repoFiles(t, "clanker-ui*.css", "dist/clanker-ui*.css", "demo/*.css", "test/spike/*.css", "tools/gen/*.css", "test/behavior/fixtures/*.css"), walkFiles(t, "docs", ".css"))
 }
 
 func plainCommentFiles(t *testing.T) []string {
@@ -38,13 +34,11 @@ func TestScannedFiles(t *testing.T) {
 	for name, files := range map[string][]string{
 		"html security": htmlScanFiles(t),
 		"remote css":    cssScanFiles(t),
-		"generated css": generatedCSS(t),
 		"no comments":   plainCommentFiles(t),
 	} {
 		want := map[string][]string{
 			"html security": {"test/spike/index.html"},
-			"remote css":    {"test/spike/page.css", "tools/gen/out/clanker-ui.generated.css", "tools/gen/out/spike.css"},
-			"generated css": {"tools/gen/out/clanker-ui.generated.css", "tools/gen/out/spike.css"},
+			"remote css":    {"test/spike/page.css", "clanker-ui.css"},
 			"no comments":   {"test/spike/page.css", "tools/parity/parity.py", "tools/parity/parity.js"},
 		}[name]
 		for _, f := range want {
@@ -538,16 +532,6 @@ func TestCommentRules(t *testing.T) {
 		want := kitLicense(f)
 		if first != want {
 			t.Errorf("%s: first line must be the license line %q", f, want)
-		}
-		for _, line := range comments(f, "\n"+rest) {
-			t.Errorf("%s:%d has a comment; only the first-line license is allowed", f, line)
-		}
-	}
-	for _, f := range generatedCSS(t) {
-		src := readText(t, f)
-		first, rest, _ := strings.Cut(src, "\n")
-		if first != generatedLicenseLine {
-			t.Errorf("%s: first line must be the license line %q", f, generatedLicenseLine)
 		}
 		for _, line := range comments(f, "\n"+rest) {
 			t.Errorf("%s:%d has a comment; only the first-line license is allowed", f, line)

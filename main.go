@@ -42,7 +42,7 @@ var minShims = map[string][]string{"clanker-ui.js": {"clanker-ui-core.min.js", "
 
 var demoAsset = regexp.MustCompile(`^demo/(assets/)?[a-z0-9][a-z0-9-]*(\.[a-z0-9-]+)*\.(css|js|svg|png|jpg|webp|avif)$`)
 
-var devFile = regexp.MustCompile(`^(test/spike/[a-z0-9-]+\.(html|css)|test/behavior/fixtures/[a-z0-9-]+\.(html|css|js)|test/split/[a-z0-9-]+\.(html|js)|tools/gen/out/[a-z0-9-]+\.css)$`)
+var devFile = regexp.MustCompile(`^(test/spike/[a-z0-9-]+\.(html|css)|test/behavior/fixtures/[a-z0-9-]+\.(html|css|js)|test/split/[a-z0-9-]+\.(html|js))$`)
 
 var contentTypes = map[string]string{
 	".css":  "text/css; charset=utf-8",

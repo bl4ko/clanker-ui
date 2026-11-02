@@ -571,3 +571,67 @@ func TestDistKeepsCustomPropertyText(t *testing.T) {
 		}
 	}
 }
+
+var docImport = regexp.MustCompile(`import\s*\{([^}]*)\}\s*from\s*"([^"]+)"`)
+
+func TestDocsImportNames(t *testing.T) {
+	exports := map[string][]string{}
+	for _, f := range []string{"clanker-ui.js", "clanker-ui-chart.js"} {
+		exports[f] = esbuildBundle(t, "../..", f)
+	}
+	mins, err := filepath.Glob("../../dist/*.min.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, f := range mins {
+		exports[filepath.Base(f)] = esbuildBundle(t, "../../dist", filepath.Base(f))
+	}
+	docs := []string{"../../README.md", "../../skills/clanker-ui/SKILL.md"}
+	refs, _ := filepath.Glob("../../skills/clanker-ui/references/*.md")
+	docs = append(docs, refs...)
+	filepath.WalkDir("../../docs/content", func(p string, d os.DirEntry, err error) error {
+		if err == nil && strings.HasSuffix(p, ".md") {
+			docs = append(docs, p)
+		}
+		return err
+	})
+	n := 0
+	for _, f := range docs {
+		b, err := os.ReadFile(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, m := range docImport.FindAllStringSubmatch(string(b), -1) {
+			file := filepath.Base(m[2])
+			names, ok := exports[file]
+			if !ok {
+				t.Errorf("%s: import from unknown file %s", f, m[2])
+				continue
+			}
+			for _, name := range strings.Split(m[1], ",") {
+				name, _, _ = strings.Cut(strings.TrimSpace(name), " ")
+				n++
+				if !slices.Contains(names, name) {
+					t.Errorf("%s: %s does not export %s", f, file, name)
+				}
+			}
+		}
+	}
+	if n < 10 {
+		t.Errorf("found %d imported names in the docs", n)
+	}
+	cat := testCatalog(t)
+	for _, c := range cat.Components {
+		files := []string{readableModule(c.Group)}
+		for _, m := range strings.Split(minModules(c.Group), " or ") {
+			files = append(files, strings.Trim(m, "`"))
+		}
+		for _, name := range c.Exports {
+			for _, file := range files {
+				if !slices.Contains(exports[file], name) {
+					t.Errorf("components.md: %s names %s, which does not export %s", c.Name, file, name)
+				}
+			}
+		}
+	}
+}

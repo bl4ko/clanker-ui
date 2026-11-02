@@ -6,7 +6,7 @@ clanker-ui runs under this policy and needs nothing more. Send it on every HTML 
 Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; require-trusted-types-for 'script'
 ```
 
-The kit needs no `data:` URL; `img-src data:` is for app images. Add the hosts that your app needs (for example an API in `connect-src`). Do not add `'unsafe-inline'`, `'unsafe-eval'`, or a nonce for the kit.
+The kit needs no `data:` URL; `img-src data:` is for app images. WebKit reports one `style-src-attr` violation for each native `<select>` under `style-src 'self'`, also without the kit. Use the kit `select` where 0 violations matter. Add the hosts that your app needs (for example an API in `connect-src`). Do not add `'unsafe-inline'`, `'unsafe-eval'`, or a nonce for the kit.
 
 ## Static hosts (no headers)
 

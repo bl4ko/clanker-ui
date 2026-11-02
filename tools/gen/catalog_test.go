@@ -430,15 +430,24 @@ func TestLLMsTxt(t *testing.T) {
 		case u == catalogRepo+"/releases", u == catalogRepo:
 		case strings.HasPrefix(u, cat.Docs):
 			p := "/" + strings.TrimPrefix(u, cat.Docs)
+			page := strings.TrimSuffix(strings.TrimSuffix(p, ".md"), "/")
 			switch {
 			case p == "/llms-full.txt":
 			case p == "/demo/":
-			case strings.HasSuffix(p, ".md"):
-				if !pages[strings.TrimSuffix(p, ".md")] {
-					t.Errorf("llms.txt: %s is not a docs page", u)
+			case strings.HasPrefix(p, "/skills/clanker-ui/"):
+				if _, err := os.Stat(filepath.Join("../..", p)); err != nil {
+					t.Errorf("llms.txt: %s is not a skill file", u)
 				}
-			case !pages[strings.TrimSuffix(p, "/")]:
+			case !pages[page]:
 				t.Errorf("llms.txt: %s is not a docs page", u)
+			default:
+				dir := strings.TrimPrefix(strings.TrimPrefix(page, "/docs"), "/")
+				if dir == "" {
+					dir = "index"
+				}
+				if _, err := os.Stat(filepath.Join("../../docs/content", dir, "page.md")); err != nil {
+					t.Errorf("llms.txt: %s is a pending page with no page.md", u)
+				}
 			}
 		default:
 			t.Errorf("llms.txt: unexpected link %s", u)

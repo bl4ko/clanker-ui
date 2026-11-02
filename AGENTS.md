@@ -42,7 +42,7 @@ uv run --no-project --with playwright python -I tools/behavior gate --quick --ba
 
 - After a change to a kit file (`clanker-ui*.css`, `clanker-ui*.js`), run `go run ./tools/gen dist`. `go test` fails when `dist/` or the catalog is old.
 - After a change to `README.md`, `tools/gen/groups.tsv`, `tools/gen/examples/`, `docs/nav.json`, or kit slots and events, run `go run ./tools/gen catalog`.
-- Change component CSS in the generator or `tools/gen/kit.css`, never in `clanker-ui.css`.
+- Change component CSS in the generator or `tools/gen/kit.css`, never in `clanker-ui.css`. After a change to either, run `go run ./tools/gen -src "$SHADCN_SRC" -out clanker-ui.css` (it also runs `dist`; `go run ./tools/gen fetch -src <new empty directory>` makes `$SHADCN_SRC`). `dist` alone does not copy `kit.css` into `clanker-ui.css`.
 - On a merge conflict in a generated file, take either side and run the generator again.
 
 ## Code style

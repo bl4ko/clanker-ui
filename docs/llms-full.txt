@@ -4,45 +4,74 @@
 
 Version 0.1.0. Docs: https://bl4ko.github.io/clanker-ui/. Source: https://github.com/bl4ko/clanker-ui. Catalog: https://raw.githubusercontent.com/bl4ko/clanker-ui/main/skills/clanker-ui/references/clanker-ui.json. Agent skill: https://github.com/bl4ko/clanker-ui/tree/main/skills/clanker-ui.
 
+## Use with AI agents
+
+Add the [agent skill](skills/clanker-ui/SKILL.md) to a project with the [skills CLI](https://github.com/vercel-labs/skills). It finds the agents of the project and writes the skill to the skills folder of each one:
+
+```sh
+pnpm dlx skills add bl4ko/clanker-ui
+```
+
+- Pin the skill to a release: `pnpm dlx skills add https://github.com/bl4ko/clanker-ui/tree/v0.1.0/skills/clanker-ui`.
+- Without the CLI: copy `skills/clanker-ui/` from the release zip to `.agents/skills/` (Codex, Cursor, GitHub Copilot, Gemini CLI, Cline, OpenCode), `.claude/skills/` (Claude Code), or `.windsurf/skills/` (Windsurf). It is a portable [Agent Skill](https://agentskills.io) and works without network access.
+- Chat tools without skills: give the agent [`llms.txt`](https://bl4ko.github.io/clanker-ui/llms.txt). [`llms-full.txt`](https://bl4ko.github.io/clanker-ui/llms-full.txt) is the full text in one file.
+- Catalog: [`clanker-ui.json`](skills/clanker-ui/references/clanker-ui.json) lists each component with its group file, parts, attributes and allowed values, state attributes, events, keys, and a minimal example ([schema](skills/clanker-ui/references/clanker-ui.schema.json)). `go run ./tools/gen catalog` makes it; the skill has a Markdown copy.
+- Contributors: [`AGENTS.md`](AGENTS.md) has the build, test, and code rules.
+
 ## Quick start
 
-1. Get the files. Download one release and check it:
+1. Download the latest release, check it, and copy the two kit files into a new `site` folder:
 
    ```sh
-   gh release download vX.Y.Z -R bl4ko/clanker-ui -p 'clanker-ui-*.zip' -p SHA256SUMS
-   grep ' clanker-ui-X.Y.Z.zip$' SHA256SUMS | shasum -a 256 -c
+   gh release download -R bl4ko/clanker-ui -p 'clanker-ui-*.zip' -p SHA256SUMS
+   shasum -a 256 -c --ignore-missing SHA256SUMS
+   unzip -q clanker-ui-*.zip
+   mkdir site && cp clanker-ui-*/clanker-ui.css clanker-ui-*/clanker-ui.js site/
    ```
 
-   Each kit file is also a release asset (`https://github.com/bl4ko/clanker-ui/releases/latest/download/clanker-ui.css`). You can also copy the files from this repository.
+   On Linux, use `sha256sum` in place of `shasum -a 256`. Without `gh`, download the kit files one by one: each is a release asset (`https://github.com/bl4ko/clanker-ui/releases/latest/download/clanker-ui.css`). You can also copy the files from this repository.
 
-2. Put `clanker-ui.css` and `clanker-ui.js` in the static folder of your app, and load them:
-
-   ```html
-   <meta name="color-scheme" content="light dark">
-   <link rel="stylesheet" href="clanker-ui.css">
-   <link rel="stylesheet" href="app.css">
-   <script type="module" src="clanker-ui.js"></script>
-   ```
-
-3. Write shadcn markup:
+2. Save this page as `site/index.html`:
 
    ```html
-   <div data-slot="dialog">
-     <button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>Open</button>
-     <dialog data-slot="dialog-content">
-       <div data-slot="dialog-header">
-         <h2 data-slot="dialog-title">Edit profile</h2>
-         <p data-slot="dialog-description">Make changes here.</p>
-       </div>
-     </dialog>
-   </div>
+   <!doctype html>
+   <html lang="en">
+   <head>
+     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
+     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <meta name="color-scheme" content="light dark">
+     <title>clanker-ui</title>
+     <link rel="stylesheet" href="clanker-ui.css">
+     <script type="module" src="clanker-ui.js"></script>
+   </head>
+   <body>
+     <div data-slot="dialog">
+       <button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>Open</button>
+       <dialog data-slot="dialog-content">
+         <div data-slot="dialog-header">
+           <h2 data-slot="dialog-title">Edit profile</h2>
+           <p data-slot="dialog-description">Make changes here.</p>
+         </div>
+       </dialog>
+     </div>
+   </body>
+   </html>
    ```
 
    The kit finds every `data-slot` in the page, also in content that is added later. No init call is necessary.
 
-4. Send the CSP header from [Use in a project](#use-in-a-project). On a static host that cannot set headers, use the same policy in a `<meta http-equiv="Content-Security-Policy">` tag as the first element of `<head>`, without `frame-ancestors`.
+3. Serve the folder and open <http://127.0.0.1:8000/>:
 
-A smaller page can load only the component groups that it uses: see [Minified and group files](#minified-and-group-files).
+   ```sh
+   python3 -m http.server -b 127.0.0.1 -d site 8000
+   ```
+
+   Open the page through a web server, not as a file: browsers do not load module scripts from `file://`.
+
+4. In production, send the policy as a header with `frame-ancestors 'none'` (see [Use in a project](#use-in-a-project)). The meta tag is for static hosts that cannot set headers; it must be the first element of `<head>`. [`csp.md`](skills/clanker-ui/references/csp.md) has the Caddy and nginx lines and a small Go test server.
+
+A smaller page can load only the component groups that it uses: see [Minified and group files](#minified-and-group-files). To change the look, see [Override the kit](#override-the-kit).
 
 ## Files
 
@@ -96,6 +125,16 @@ A smaller page can load only the component groups that it uses: see [Minified an
 
 Browsers: Chrome, Safari (also iOS), and Firefox released in the last two years.
 
+### Override the kit
+
+Put overrides in `app.css` after the kit files, without a layer.
+
+- Change tokens, not properties. `.brand { --primary: oklch(0.55 0.2 260); --primary-foreground: oklch(0.985 0 0) }` on a button keeps the kit hover, focus, and dark states. A `background-color` on the button also wins, but then the hover shows no change.
+- A wider dialog or sheet: set `max-width` (`.wide { max-width: 50rem }` on `dialog-content`). The kit sets `max-width`, so a `width` alone does not make it wider.
+- Fonts: set `--font-sans` and `--font-mono` on `:root`. The body, the controls, and the popups use them.
+- Tailwind or other layered CSS: load a first stylesheet that has only `@layer theme, base, clanker, components, utilities;`. Without it, layers that come after the kit layers win over the kit: the Tailwind reset in `base` removes the background and the radius of the buttons.
+- Kit `!important` declarations (for example the 12 px icon in a badge) win over `app.css`, also over `!important` in `app.css`. Put `@layer app-important, clanker;` in that first stylesheet, and put the override in `@layer app-important { ... }` with `!important`.
+
 ### Minified and group files
 
 `dist/` has minified copies of the kit and one file for each component group, so an app loads only the groups that it uses. `go run ./tools/gen dist` makes them from the readable files, and the generator runs it after it writes `clanker-ui.css`. The readable files stay the source: do not edit `dist/`. Copy `dist/` files byte for byte into the same directory as the other kit files.
@@ -119,7 +158,14 @@ Browsers: Chrome, Safari (also iOS), and Firefox released in the last two years.
 | `chat` | message, bubble, attachment, message-scroller, trace, marker, questionnaire, code-block, calendar, date-picker | date-picker: `overlays`, `forms` |
 | `chart` | chart |  |
 
-1. Make a list of the components that the app uses and find their groups. Add the groups in the "Needs" column: these components put parts of another group in the page.
+1. Make a list of the components that the app uses and find their groups. Add the groups in the "Needs" column: these components put parts of another group in the page. This command lists the groups, with their "Needs", of the `data-slot` parts in the HTML files of the current folder. It reads `clanker-ui.json` (in the zip at `skills/clanker-ui/references/`):
+
+   ```sh
+   grep -rhoE 'data-slot="[a-z0-9-]+"' --include='*.html' . | cut -d'"' -f2 | sort -u |
+     jq -Rn --slurpfile c clanker-ui.json '[inputs] as $s | [$c[0].components[] | select(any(.parts[]; .slot as $p | $s | index($p))) | .group, .needs[]] | unique'
+   ```
+
+   Components that only JavaScript makes are not in the HTML: add `overlays` for `toast()` and `chart` for `chart()`. A missing group fails without a message, so if you are not sure, use the one-file set.
 2. If the app uses 3 or more of the 4 component groups (`forms`, `overlays`, `layout`, `chat`), use the one-file set: `clanker-ui.min.css`, `clanker-ui.min.js`, and `clanker-ui-core.min.js`.
 3. If not, link the CSS in this order: `core`, `forms`, `overlays`, `layout`, `chat`, `chart`, then `clanker-ui-themes.min.css`, `clanker-ui-a11y.min.css`, and `app.css`. Load one module script for each group whose behavior the app uses; the browser loads the core through the import. `modulepreload` for the core prevents a second round trip. A page with only core components loads `clanker-ui-core.min.js`.
 
@@ -548,7 +594,7 @@ show(content, { trigger, anchor = trigger, side, align, sideOffset = 4, alignOff
 
 `clanker-ui-a11y.css` is optional and loads after `clanker-ui.css` (and after `clanker-ui-themes.css`). It changes only what the list below names, in the kit layers, so `app.css` still wins.
 
-- With a [color scheme](#color-schemes), its last part (layer `clanker.themes`) has the changes for that scheme: the gate fixes in [Adjusted tokens](#adjusted-tokens), and the validated chart palette for the shadcn base schemes. It is made by the same script as `clanker-ui-themes.css`.
+- With a [color scheme](#color-schemes), its last part (layer `clanker.themes`) has the changes for that scheme: the gate fixes in [Adjusted tokens](#adjusted-tokens), and the validated chart palette for the shadcn base schemes. It is hand-written, like `clanker-ui-themes.css`; the `foundation` check `check_scheme_contrast` is the gate.
 
 - `--input-edge` (`--input` mixed with 35 % `--foreground`) is the border of form controls whose border is their only boundary: input, textarea, input group, select, native select, calendar dropdown, OTP slot, checkbox, radio (also the questionnaire choice indicator), combobox chips, and sidebar input; and the fill of the unchecked switch track. It has at least 3:1 on `--background`, `--card`, `--popover`, and `--sidebar` in both themes (WCAG 1.4.11). Focus, invalid, and checked states keep their shadcn colors. Decorative uses of `--input` (separators, outline buttons and toggles, tabs, code block, choice cards, `bg-input/30` fills) keep the shadcn value.
 - Focus: every `:focus-visible` element gets `outline: 3px solid var(--focus-ring)`. `--focus-ring` mixes `--ring` with 25 % `--foreground` (at least 3:1 on `--background`; the shadcn ring at 50 % is below 2:1). `aria-invalid="true"` and destructive buttons use `--focus-ring-invalid` (`--destructive`). Composite fields (input group, OTP slot, combobox chips, calendar dropdown, code block, questionnaire choice, slider thumb) draw the outline on the field, not on the inner control. Sidebar items use a 2 px outline of `--sidebar-ring` mixed with 25 % `--sidebar-foreground`; the resizable handle a 1 px outline.
@@ -1313,13 +1359,6 @@ Differences by design (each one is a narrow `allowed` entry in the behavior gate
 - The checked state of the context menu and menubar demo items changes after a click, as in an app (the live demos have fixed state).
 
 Details of all tools: [DEVELOPMENT.md](DEVELOPMENT.md).
-
-## Use with AI agents
-
-- Agent skill: copy [`skills/clanker-ui/`](skills/clanker-ui/SKILL.md) into the skills folder of your agent (for example `.agents/skills/clanker-ui/`). It is a portable [Agent Skill](https://agentskills.io) and works without network access.
-- Catalog: [`clanker-ui.json`](skills/clanker-ui/references/clanker-ui.json) lists each component with its group file, parts, attributes and allowed values, state attributes, events, keys, and a minimal example ([schema](skills/clanker-ui/references/clanker-ui.schema.json)). `go run ./tools/gen catalog` makes it; the skill has a Markdown copy.
-- Docs for agents: [`llms.txt`](https://bl4ko.github.io/clanker-ui/llms.txt) and [`llms-full.txt`](https://bl4ko.github.io/clanker-ui/llms-full.txt) on the docs site.
-- Contributors: [`AGENTS.md`](AGENTS.md) has the build, test, and code rules.
 
 ## Credits
 

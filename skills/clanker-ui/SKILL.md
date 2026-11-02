@@ -1,6 +1,6 @@
 ---
 name: clanker-ui
-description: Build web pages with clanker-ui, the shadcn/ui components (Base UI, Nova style) for plain HTML, CSS, and JavaScript. No build step, no npm, no framework; works under a strict Content-Security-Policy with Trusted Types. Use when a project needs shadcn-style UI without React or a bundler, when it has files named clanker-ui*.css or clanker-ui*.js, when markup uses data-slot attributes, or when the user mentions clanker-ui.
+description: Build web pages with clanker-ui, the shadcn/ui components (Base UI, Nova style) for plain HTML, CSS, and JavaScript. No build step, no npm, no framework; works under a strict Content-Security-Policy with Trusted Types. Use when a project needs shadcn-style UI without React or a bundler, when it has files named clanker-ui*.css or clanker-ui*.js, when plain HTML (not JSX or TSX) uses shadcn data-slot parts, or when the user mentions clanker-ui.
 license: MIT
 metadata:
   version: "0.1.0"
@@ -9,7 +9,7 @@ metadata:
 
 # clanker-ui
 
-clanker-ui is shadcn/ui as static files. You write the HTML that shadcn renders (`data-slot` parts). The kit module adds the behavior, ARIA, and missing decorations. You never call an init function.
+clanker-ui is shadcn/ui as static files. You write the HTML that shadcn renders (`data-slot` parts). The kit module adds the behavior, ARIA, and missing decorations. You never call an init function. In React projects, use shadcn/ui, not this kit.
 
 References in this skill:
 
@@ -33,7 +33,14 @@ Copy only the files that the page loads (step 2) into one directory of the stati
 
 ## 2. Choose a file set
 
-Make a list of the components on the page. Find the group of each component in [references/components.md](references/components.md) ("Groups" table, and "Group" and "Needs" in the component section).
+Make a list of the components on the page. Find the group of each component in [references/components.md](references/components.md) ("Groups" table, and "Group" and "Needs" in the component section). For existing HTML files, this command lists the groups with their "Needs" (use the path of `references/clanker-ui.json` in this skill):
+
+```sh
+grep -rhoE 'data-slot="[a-z0-9-]+"' --include='*.html' . | cut -d'"' -f2 | sort -u |
+  jq -Rn --slurpfile c references/clanker-ui.json '[inputs] as $s | [$c[0].components[] | select(any(.parts[]; .slot as $p | $s | index($p))) | .group, .needs[]] | unique'
+```
+
+Add `overlays` for `toast()` and `chart` for `chart()`: they have no markup. A missing group fails without a message; if you are not sure, use the one-file set.
 
 | Page uses | Load |
 | --- | --- |
@@ -82,6 +89,7 @@ Rules:
 6. Each component section links its full text ("Full text"). Read it for attribute meanings and edge cases.
 7. Icons: `<svg data-lucide="search"></svg>`. The kit fills it from its icon set (no network).
 8. Markup that you add later (with `h()` or by moving nodes) gets its behavior automatically.
+9. Form controls: a `<label for>` names the `id` of a `select-trigger`, a combobox input, or a switch, checkbox, or radio item button. `data-name` on the select, combobox, switch, checkbox, or radio group root submits the value. `form.reset()` restores the initial values. The kit sets `type="button"` on its trigger buttons, so they do not submit the form.
 
 ## 5. Use JavaScript only where needed
 
@@ -103,7 +111,7 @@ document.addEventListener("select:change", event => console.log(event.detail.val
 ## 6. Theme
 
 - Light and dark follow the system. A toggle button: `<button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>`. From code: `theme.set("light" | "dark" | "system")`.
-- Brand colors: override the shadcn tokens in `app.css` (`--primary`, `--radius`, ...). Light values on `:root`, dark values on `[data-theme="dark"]` and in `@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { ... } }`. Unlayered app CSS wins over the kit layers.
+- Brand colors: override the shadcn tokens in `app.css` (`--primary`, `--radius`, ...). Light values on `:root`, dark values on `[data-theme="dark"]` and in `@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { ... } }`. Unlayered app CSS wins over the kit layers. Override tokens, not properties, so hover and dark states stay. With Tailwind or other layered CSS, or to override a kit `!important` rule, read [Override the kit](https://github.com/bl4ko/clanker-ui#override-the-kit).
 - Color schemes: load `clanker-ui-themes.css` and set `data-scheme="<name>"` on `<html>`.
 
 ## 7. Accessibility rules

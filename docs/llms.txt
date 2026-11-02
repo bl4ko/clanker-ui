@@ -2,21 +2,21 @@
 
 > shadcn/ui (Base UI, Nova style) for plain HTML, CSS, and JavaScript. No build step, no npm, no framework. Markup uses the shadcn data-slot parts; behavior comes from HTML attributes and needs no init call. Everything runs under a strict Content-Security-Policy with Trusted Types.
 
-Start with the agent skill or the full reference. The catalog has, for each component, its group file, parts, attributes and allowed values, state attributes, events, keyboard keys, and a minimal markup example.
+Start with the agent skill or the full reference. Install the skill in a project with `pnpm dlx skills add bl4ko/clanker-ui`. The catalog has, for each component, its group file, parts, attributes and allowed values, state attributes, events, keyboard keys, and a minimal markup example.
 
 ## Docs
 
-- [Introduction](https://bl4ko.github.io/clanker-ui/docs.md): files, load order, CSP
+- [Introduction](https://bl4ko.github.io/clanker-ui/docs.md): files, load order, CSP, local test server
 - [Components](https://bl4ko.github.io/clanker-ui/docs/components.md): list of components
 - [Button](https://bl4ko.github.io/clanker-ui/docs/components/button.md): variants, sizes, button parts of other components
-- [Button Group](https://bl4ko.github.io/clanker-ui/docs/components/button-group.md): joined buttons and separators
 
 ## Reference
 
 - [Full reference](https://bl4ko.github.io/clanker-ui/llms-full.txt): usage, markup rules, JavaScript API, events, localization, security rules, and every component
 - [Component catalog](https://raw.githubusercontent.com/bl4ko/clanker-ui/main/skills/clanker-ui/references/clanker-ui.json): JSON with parts, attributes, events, keyboard, examples, and docs links
 - [Catalog schema](https://raw.githubusercontent.com/bl4ko/clanker-ui/main/skills/clanker-ui/references/clanker-ui.schema.json): JSON Schema of the catalog
-- [Agent skill](https://github.com/bl4ko/clanker-ui/tree/main/skills/clanker-ui): portable Agent Skill (SKILL.md) that adds clanker-ui to a project
+- [Agent skill](https://bl4ko.github.io/clanker-ui/skills/clanker-ui/SKILL.md): portable Agent Skill that adds clanker-ui to a project
+- [Component reference](https://bl4ko.github.io/clanker-ui/skills/clanker-ui/references/components.md): each component with its group, parts, attributes, state, events, keys, and a minimal example
 - [Contributor guide for agents](https://raw.githubusercontent.com/bl4ko/clanker-ui/main/AGENTS.md): build, test, and code rules of the repository
 
 ## Optional

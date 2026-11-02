@@ -481,8 +481,8 @@ function quietFocus(el) {
   el.focus({ preventScroll: true, focusVisible: false })
 }
 
-function focusGuard(edge) {
-  return h("span", { "data-slot": "focus-guard", "data-edge": edge, tabindex: "0", "aria-hidden": "true", style: { position: "fixed", top: "0", left: "0", width: "1px", height: "1px", margin: "-1px", padding: "0", border: "0", overflow: "hidden", clipPath: "inset(50%)", whiteSpace: "nowrap" } })
+function focusGuard(edge, attrs) {
+  return h("span", { "data-slot": "focus-guard", "data-edge": edge, tabindex: "0", "aria-hidden": "true", style: { position: "fixed", top: "0", left: "0", width: "1px", height: "1px", margin: "-1px", padding: "0", border: "0", overflow: "hidden", clipPath: "inset(50%)", whiteSpace: "nowrap" }, ...attrs })
 }
 
 export function trapFocus(container) {
@@ -2940,10 +2940,10 @@ define("combobox", {
       trigger,
       popup,
       valueEl,
-      clear: root.querySelector('[data-slot="combobox-clear"]') ?? comboboxStates.get(root)?.clear ?? null,
+      clear: root.querySelector('[data-slot="combobox-clear"]'),
       anchor: chips ?? (popup ? trigger : input),
       multiple: root.hasAttribute("data-multiple"),
-      placeholder: comboboxStates.get(root)?.placeholder ?? (valueEl ? [...valueEl.childNodes].map(n => n.cloneNode(true)) : []),
+      placeholder: valueEl ? [...valueEl.childNodes].map(n => n.cloneNode(true)) : [],
       value: root.hasAttribute("data-multiple") ? [] : "",
       highlighted: null,
       pressed: false,
@@ -2994,7 +2994,7 @@ define("combobox", {
       if (disabled) trigger.disabled = true
     }
     if (st.clear) {
-      st.clearSpot = st.clear.isConnected ? [st.clear.parentNode, st.clear.nextSibling] : comboboxStates.get(root).clearSpot
+      st.clearSpot = [st.clear.parentNode, st.clear.nextSibling]
       if (!st.clear.hasAttribute("tabindex")) st.clear.tabIndex = -1
       buttonType(st.clear)
       st.clear.dataset.size ??= "icon-xs"
@@ -3012,11 +3012,10 @@ define("combobox", {
     for (const sep of list.querySelectorAll('[data-slot="combobox-separator"]')) sep.setAttribute("aria-hidden", "true")
     if (chips) chips.setAttribute("role", "toolbar")
     st.native = proxyInput(root, { name: st.multiple ? null : st.name, form: st.form, required: root.hasAttribute("data-required"), disabled })
-    const prev = comboboxStates.get(root)
     comboboxStates.set(root, st)
     const raw = root.dataset.value ?? ""
-    st.initial = prev?.initial ?? (st.multiple ? raw.split(",").map(v => v.trim()).filter(Boolean) : [raw])
-    comboboxSet(st, prev ? prev.value : st.initial, false)
+    st.initial = st.multiple ? raw.split(",").map(v => v.trim()).filter(Boolean) : [raw]
+    comboboxSet(st, st.initial, false)
     if (input && !popup && !st.multiple) input.value = comboboxSelectedLabel(st)
     comboboxFilter(st, "")
   },
@@ -3265,7 +3264,7 @@ function formAfterReset(form) {
   }
 }
 
-document.addEventListener("reset", event => setTimeout(() => formAfterReset(event.target)))
+document.addEventListener("reset", event => setTimeout(() => event.defaultPrevented || formAfterReset(event.target)))
 
 define("form", {
   init(form) {
@@ -3368,7 +3367,6 @@ function dialogClosers(kind) {
 }
 
 function dialogInitContent(content, kind) {
-  const owner = `[data-slot="${kind}-content"]`
   for (const button of content.querySelectorAll(`${dialogClosers(kind)}, [data-slot="alert-dialog-action"], [data-alert-dialog-action]`)) buttonType(button)
   if (kind === "alert-dialog") content.setAttribute("role", "alertdialog")
   const title = own(content, `[data-slot="${kind}-title"]`)[0]
@@ -3712,7 +3710,7 @@ function drawerShow(found, trigger) {
   viewport.toggleAttribute("data-snap-points", o.snapPoints.length > 0 && !parent)
   transition(viewport, true)
   transition(popup, true)
-  show(viewport, { trigger, anchor: null, modal: o.modal === true, outside: o.dismissible, focusOutside: o.modal === false && o.dismissible, intentional: o.modal === false ? "mouse" : false, focus: popup, onDismiss: reason => dialogHide(viewport, reason) })
+  show(viewport, { trigger, anchor: null, modal: o.modal === true, outside: o.dismissible, focusOutside: o.modal === false && o.dismissible, intentional: o.modal === false ? "mouse" : false, focus: popup, onDismiss: reason => dialogHide(viewport, reason), onClose: () => viewport.isConnected || drawerDetached(viewport, popup) })
   popup.dataset.state = "open"
   state.height = popup.offsetHeight
   drawerSnapLayout(viewport)
@@ -3751,6 +3749,14 @@ function drawerHide(viewport) {
   })
   if (state) state.done = done
   drawerNestedSwipe(viewport, false, 0)
+  drawerStack()
+}
+
+function drawerDetached(viewport, popup) {
+  drawerTraps.get(viewport)?.()
+  drawerTraps.delete(viewport)
+  drawerResize.unobserve(popup)
+  drawerTrack(viewport, false)
   drawerStack()
 }
 
@@ -3836,7 +3842,7 @@ function drawerSwipeMove(viewport, x, y, timeStamp) {
   const swipe = drawerSwipes.get(viewport)
   if (!swipe) return
   const { popup } = drawerParts(viewport)
-  const { direction, axis } = swipe.o
+  const { axis } = swipe.o
   if (swipe.first) {
     swipe.first = false
     swipe.start = { x, y }
@@ -5281,7 +5287,7 @@ function navigationMenuPopup(root) {
   return { positioner, popup, viewport }
 }
 
-function navigationMenuSetOpen(root, trigger, content, open) {
+function navigationMenuSetOpen(trigger, content, open) {
   trigger.dataset.state = open ? "open" : "closed"
   trigger.toggleAttribute("data-popup-open", open)
   trigger.toggleAttribute("data-pressed", open)
@@ -5348,14 +5354,10 @@ function navigationMenuSize(root, popup, positioner, from) {
   })
 }
 
-function navigationMenuFocusGuard(edge) {
-  return h("span", { "data-slot": "navigation-menu-focus-guard", "data-edge": edge, tabindex: "0", "aria-hidden": "true", style: { position: "fixed", top: "0", left: "0", width: "1px", height: "1px", margin: "-1px", padding: "0", border: "0", overflow: "hidden", clipPath: "inset(50%)", whiteSpace: "nowrap" } })
-}
-
 function navigationMenuTriggerGuard(root, trigger) {
   let guard = own(root, '[data-slot="navigation-menu-focus-guard"][data-edge="trigger"]')[0]
   if (!trigger || navigationMenuPlain(root)) return guard?.remove()
-  guard ??= navigationMenuFocusGuard("trigger")
+  guard ??= focusGuard("trigger", { "data-slot": "navigation-menu-focus-guard" })
   if (guard.previousElementSibling !== trigger) trigger.after(guard)
 }
 
@@ -5393,7 +5395,7 @@ function navigationMenuOpen(root, item) {
     const old = navigationMenuParts(prev)
     const items = navigationMenuItems(root)
     const direction = items.indexOf(item) > items.indexOf(prev) ? "right" : "left"
-    navigationMenuSetOpen(root, old.trigger, old.content, false)
+    navigationMenuSetOpen(old.trigger, old.content, false)
     if (plain) {
       hide(old.content, { restoreFocus: false }).then(() => navigationMenuHome(old.content))
     } else {
@@ -5405,7 +5407,7 @@ function navigationMenuOpen(root, item) {
       content.dataset.activationDirection = direction
       content.hidden = false
       viewport.append(content)
-      navigationMenuSetOpen(root, trigger, content, true)
+      navigationMenuSetOpen(trigger, content, true)
       transition(content, true)
       state.stop?.()
       state.stop = position(positioner, trigger, { side: "bottom", align: root.dataset.align ?? "start", sideOffset: 8, alignOffset: 0, collisionPadding: 5 })
@@ -5430,7 +5432,7 @@ function navigationMenuOpen(root, item) {
         el.toggleAttribute("data-open", true)
         el.toggleAttribute("data-closed", false)
       }
-      navigationMenuSetOpen(root, trigger, content, true)
+      navigationMenuSetOpen(trigger, content, true)
       navigationMenuSize(root, popup, positioner, null)
       state.stop?.()
       state.stop = position(positioner, trigger, { side: "bottom", align: root.dataset.align ?? "start", sideOffset: 8, alignOffset: 0, collisionPadding: 5 })
@@ -5442,7 +5444,7 @@ function navigationMenuOpen(root, item) {
   }
   if (plain) {
     content.hidden = false
-    navigationMenuSetOpen(root, trigger, content, true)
+    navigationMenuSetOpen(trigger, content, true)
     show(content, { trigger, expanded: false, focus: null, restoreFocus: false, outside: false, side: "bottom", align: "start", sideOffset: 8, alignOffset: 0, collisionPadding: 5, onDismiss: reason => navigationMenuClose(root, reason === "escape") })
   }
   state.item = item
@@ -5466,7 +5468,7 @@ function navigationMenuClose(root, focusTrigger = false) {
   cancelAnimationFrame(state.resize)
   const focused = document.activeElement
   const refocus = focusTrigger && (!focused || focused === document.body || root.contains(focused))
-  navigationMenuSetOpen(root, trigger, content, false)
+  navigationMenuSetOpen(trigger, content, false)
   root.removeAttribute("data-open")
   own(root, '[data-slot="navigation-menu-list"]')[0]?.removeAttribute("data-open")
   if (navigationMenuPlain(root)) hide(content, { restoreFocus: false }).then(() => navigationMenuHome(content))
@@ -5516,7 +5518,7 @@ define("navigation-menu", {
     for (const old of own(root, '[data-slot="navigation-menu-viewport-wrapper"]')) old.remove()
     if (!plain && !navigationMenuPopup(root).viewport) {
       for (const old of own(root, '[data-slot="navigation-menu-positioner"]')) old.remove()
-      root.append(h("div", { "data-slot": "navigation-menu-positioner", role: "presentation", popover: "manual" }, h("nav", { "data-slot": "navigation-menu-popup", tabindex: "-1" }, navigationMenuFocusGuard("start"), h("div", { "data-slot": "navigation-menu-viewport" }), navigationMenuFocusGuard("end"))))
+      root.append(h("div", { "data-slot": "navigation-menu-positioner", role: "presentation", popover: "manual" }, h("nav", { "data-slot": "navigation-menu-popup", tabindex: "-1" }, focusGuard("start", { "data-slot": "navigation-menu-focus-guard" }), h("div", { "data-slot": "navigation-menu-viewport" }), focusGuard("end", { "data-slot": "navigation-menu-focus-guard" }))))
     }
     for (const trigger of own(root, '[data-slot="navigation-menu-trigger"]')) {
       const item = trigger.closest('[data-slot="navigation-menu-item"]')
@@ -6025,10 +6027,6 @@ function toastValidate(options) {
   if (typeof options.icon === "string") iconKey(options.icon)
 }
 
-function toastDelay(record) {
-  return record.options.timeout ?? toastConfig().timeout
-}
-
 function toastFill(record) {
   const { el, content, options: o } = record
   const portal = toastPortal()
@@ -6072,6 +6070,7 @@ function toastOutOfFocus() {
 }
 
 function toastLayout() {
+  if (!toastPrune()) return
   const viewport = toastViewport()
   const { limit } = toastConfig()
   const expanded = toastExpanded()
@@ -6269,6 +6268,11 @@ function toastAdd(options) {
   return toastCreate(o)
 }
 
+function toastPrune() {
+  for (const record of [...toastList]) if (!record.el.isConnected) toastDrop(record)
+  return toastList.length
+}
+
 function toastDrop(record) {
   toastClearTimer(record)
   record.el.remove()
@@ -6279,6 +6283,10 @@ function toastDrop(record) {
 
 function toastClose(record, reason) {
   if (record.ending) return
+  if (!record.el.isConnected) {
+    toastPrune()
+    return
+  }
   const all = reason === "dismiss-all"
   toastFocusAway(record, all)
   record.ending = true
@@ -6290,7 +6298,11 @@ function toastClose(record, reason) {
   if (reason !== "timeout") record.options.onDismiss?.(toastPublic(record))
   emit(record.el, "toast:close", { id: record.id, reason: all ? "dismiss" : reason })
   transition(record.el, false).then(() => {
-    if (!record.ending || !record.el.isConnected) return
+    if (!record.ending) return
+    if (!record.el.isConnected) {
+      toastPrune()
+      return
+    }
     toastDrop(record)
     record.options.onRemove?.()
     if (toastList.length) toastLayout()
@@ -6545,7 +6557,7 @@ document.addEventListener(
 )
 
 addEventListener("keydown", event => {
-  if (event.key !== "F6" || !toastList.length) return
+  if (event.key !== "F6" || !toastPrune()) return
   const viewport = toastViewport()
   if (event.target === viewport) return
   event.preventDefault()
@@ -9785,7 +9797,8 @@ function calendarConnect(s) {
   const observer = new MutationObserver(() => calendarReconfigure(s))
   observer.observe(s.el, { attributes: true, attributeFilter: calendarObserved })
   const form = s.el.closest("form")
-  const reset = () => setTimeout(() => {
+  const reset = event => setTimeout(() => {
+    if (event.defaultPrevented) return
     s.value = calendarCopy({ mode: s.mode, value: s.initial })
     s.focus = null
     calendarRender(s)

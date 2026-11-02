@@ -1937,3 +1937,36 @@ def check_forced_colors_scheme(t):
         assert not result["forced"] or result["body"] == result["system"], (scheme, result)
         assert result["switchOn"][0] != result["switchOn"][1] and result["checkbox"][0] != result["checkbox"][1] and result["slider"][0] != result["slider"][1], (scheme, result)
         t.shot(f"forced-colors-{scheme}", page.locator("#switch"))
+
+
+def check_form_reset_cancelled(t):
+    page = t.page
+    page.evaluate(FIXTURE)
+    result = page.evaluate(
+        """async () => {
+          const { h, calendarSetValue } = await import("/clanker-ui.js")
+          const wait = () => new Promise(r => setTimeout(r, 30))
+          const form = document.getElementById("fx-form")
+          const day = h("div", { "data-slot": "calendar", "data-month": "2026-01", "data-value": "2026-01-10", "data-name": "day" })
+          form.append(day)
+          await wait()
+          form.querySelector('[data-name="plan"] [data-value="team"]').click()
+          form.querySelector('[data-name="color"] [data-value="red"]').click()
+          calendarSetValue(day, "2026-01-20")
+          const values = () => {
+            const data = new FormData(form)
+            return [data.getAll("plan"), data.getAll("color"), data.getAll("day"), form.querySelector('[data-name="plan"] [data-slot="select-value"]').textContent.trim()]
+          }
+          const before = values()
+          form.addEventListener("reset", event => event.preventDefault(), { once: true })
+          form.reset()
+          await wait()
+          const cancelled = values()
+          form.reset()
+          await wait()
+          return { before, cancelled, reset: values() }
+        }"""
+    )
+    assert result["before"] == [["team"], ["red"], ["2026-01-20"], "TEAM"], result
+    assert result["cancelled"] == result["before"], ("a cancelled reset keeps the select, combobox, and calendar values", result)
+    assert result["reset"] == [[""], [""], ["2026-01-10"], "Pick a plan"], result

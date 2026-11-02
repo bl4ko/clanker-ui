@@ -87,6 +87,19 @@ Behavior:
 - `docs.js` (module): ⌘K, Ctrl+K, or `/` (not in a text field) toggles the search dialog (kit `command` in a `dialog`, items are links); On This Page marks the heading in the top 20 % of the viewport (`IntersectionObserver`, `rootMargin: "0% 0% -80% 0%"`); Copy Page writes the `.md` text to the clipboard (fetched on hover or focus, `ClipboardItem` with a promise while it loads) and shows a check for 2 s; View Code opens the code (kit `collapsible`, no animation) and focuses it; a pointer move over, pointer down on, or focus on a same-origin link adds `<link rel="prefetch">` once (a page that loads under a still pointer starts no request; Chromium and Firefox use it, Safari ignores it).
 - Header: main nav from 1024 px, else the "Menu" button that opens a full-screen kit `popover` (blurred `--background` at 90 %). Search button from 768 px. GitHub link and the kit [theme toggle](README.md#theme-toggle-and-switch) (`data-theme-set="toggle"`, `contrast` icon, `aria-keyshortcuts="D"`). The page has `<meta name="theme-color">`; `clanker-ui-theme.js` sets it before the first paint. Sidebar from 1024 px (288 px), On This Page from 1280 px (288 px), article 640 px.
 
+## CI
+
+`tools/ci/plan.py` reads the changed files of a pull request and writes the browser matrix. `go`, `gitleaks`, and `ci-result` always run. `ci-result` passes when every job passed or was skipped.
+
+| Change | Browser jobs |
+| --- | --- |
+| Push to `main`, nightly run, or label `full-ci` | All: Chromium, Firefox, and WebKit in light and dark, `--rtl`, `--reduced-motion`, the minified kit, and the exported pages. |
+| Kit, generator, server, `test/run.py`, `ci.yml`, `tools/ci/plan.py`, or any other file | Pull request tier: Chromium and Firefox in light and dark, WebKit light (5 macOS jobs), a minified-kit smoke set, and the exported pages. |
+| Only `test/<module>_test.py`, `test/behavior/`, `test/split/`, or `test/spike/` | The pull request tier, only for the changed modules. |
+| Only Markdown, `docs/*.txt`, `skills/`, licenses, issue templates, `release.yml`, `pages.yml`, or `renovate.json` | Only the exported pages in Chromium and WebKit. |
+
+`python3 -I tools/ci/plan.py --self-test` checks that each check runs once in each tier. The `go` job runs it.
+
 ## Demo and tests
 
 ```sh

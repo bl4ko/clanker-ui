@@ -2,8 +2,11 @@ name: ci
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
   push:
     branches: [main]
+  schedule:
+    - cron: "17 3 * * *"
   workflow_dispatch:
 
 permissions:
@@ -18,8 +21,38 @@ env:
   PLAYWRIGHT_VERSION: "1.64.1"
 
 jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      browser: ${{ steps.plan.outputs.browser }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            tools/ci
+            test
+      - id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          PR: ${{ github.event.pull_request.number }}
+          FULL_CI: ${{ contains(github.event.pull_request.labels.*.name, 'full-ci') }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          files="$RUNNER_TEMP/files"
+          : > "$files"
+          if [ "$EVENT" = pull_request ]; then
+            gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[] | .filename, (.previous_filename // empty)' > "$files"
+          fi
+          python3 -I tools/ci/plan.py "$files"
+
   go:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
       TAILWIND_VERSION: "4.3.3"
@@ -40,9 +73,18 @@ jobs:
           chmod +x "$bin/tailwindcss"
           echo "$bin" >> "$GITHUB_PATH"
       - run: go vet ./... && go test ./...
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.6"
+          python-version: "3.13"
+          enable-cache: false
+      - name: Tool self-tests
+        run: |
+          uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I tools/parity/selftest.py
+          python3 -I tools/ci/plan.py --self-test
 
   gitleaks:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -57,48 +99,13 @@ jobs:
 
   browser:
     name: ${{ matrix.engine }} ${{ matrix.id }}
-    runs-on: ${{ matrix.engine == 'webkit' && 'macos-latest' || 'ubuntu-latest' }}
+    needs: plan
+    if: needs.plan.outputs.browser == 'true'
+    runs-on: ${{ matrix.engine == 'webkit' && 'macos-26' || 'ubuntu-24.04' }}
     timeout-minutes: 40
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - { engine: chromium, id: foundation-docs, only: "foundation,docs" }
-          - { engine: chromium, id: g1-g5-spike-split, only: "g1,g5,spike,split" }
-          - { engine: chromium, id: g2a, only: g2, k: '^g2\.[a-m]' }
-          - { engine: chromium, id: g2b, only: g2, k: '^g2\.[n-z]' }
-          - { engine: chromium, id: g3, only: g3 }
-          - { engine: chromium, id: g4, only: g4 }
-          - { engine: chromium, id: behavior, only: behavior, themes: light }
-          - { engine: firefox, id: foundation-docs, only: "foundation,docs" }
-          - { engine: firefox, id: g1-g5-spike-split, only: "g1,g5,spike,split" }
-          - { engine: firefox, id: g2a, only: g2, k: '^g2\.[a-m]' }
-          - { engine: firefox, id: g2b, only: g2, k: '^g2\.[n-z]' }
-          - { engine: firefox, id: g3, only: g3 }
-          - { engine: firefox, id: g4, only: g4 }
-          - { engine: firefox, id: behavior, only: behavior, themes: light }
-          - { engine: webkit, id: foundation-docs-light, only: "foundation,docs", themes: light }
-          - { engine: webkit, id: foundation-docs-dark, only: "foundation,docs", themes: dark }
-          - { engine: webkit, id: g1, only: g1 }
-          - { engine: webkit, id: g2a-light, only: g2, k: '^g2\.[a-m]', themes: light }
-          - { engine: webkit, id: g2a-dark, only: g2, k: '^g2\.[a-m]', themes: dark }
-          - { engine: webkit, id: g2b-light, only: g2, k: '^g2\.[n-z]', themes: light }
-          - { engine: webkit, id: g2b-dark, only: g2, k: '^g2\.[n-z]', themes: dark }
-          - { engine: webkit, id: g3-light, only: g3, themes: light }
-          - { engine: webkit, id: g3-dark, only: g3, themes: dark }
-          - { engine: webkit, id: g4-light, only: g4, themes: light }
-          - { engine: webkit, id: g4-dark, only: g4, themes: dark }
-          - { engine: webkit, id: g5-spike-split, only: "g5,spike,split" }
-          - { engine: webkit, id: behavior, only: behavior, themes: light }
-          - { engine: chromium, id: rtl-1, only: "g2,g5,docs,spike", themes: light, mode: rtl }
-          - { engine: chromium, id: rtl-2, only: "foundation,g1,g3,g4", themes: light, mode: rtl }
-          - { engine: chromium, id: reduced-motion-1, only: "g2,g5,docs,spike", themes: light, mode: reduced-motion }
-          - { engine: chromium, id: reduced-motion-2, only: "foundation,g1,g3,g4", themes: light, mode: reduced-motion }
-          - { engine: chromium, id: min-foundation-docs-g5-spike, only: "foundation,docs,g5,spike", kit: min }
-          - { engine: chromium, id: min-g1-g4, only: "g1,g4", kit: min }
-          - { engine: chromium, id: min-g2a, only: g2, k: '^g2\.[a-m]', kit: min }
-          - { engine: chromium, id: min-g2b, only: g2, k: '^g2\.[n-z]', kit: min }
-          - { engine: chromium, id: min-g3, only: g3, kit: min }
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     env:
       ENGINE: ${{ matrix.engine }}
       ONLY: ${{ matrix.only }}
@@ -115,13 +122,13 @@ jobs:
           go-version-file: go.mod
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          # renovate: datasource=github-releases depName=astral-sh/uv
           version: "0.13.6"
           python-version: "3.13"
           enable-cache: false
       - name: Install browser
         run: uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" playwright install --with-deps "$ENGINE"
       - name: Start server
+        if: matrix.only
         run: |
           OUT="$RUNNER_TEMP/out"
           mkdir -p "$OUT"
@@ -133,6 +140,7 @@ jobs:
           done
           exit 1
       - name: Run checks
+        if: matrix.only
         run: |
           set +e
           OUT="$RUNNER_TEMP/out"
@@ -146,41 +154,13 @@ jobs:
           echo "::warning::rerun of failed checks: $failed"
           "${py[@]}" -k "^($failed)$" --out "$OUT/rerun" 2>&1 | tee "$OUT/rerun.log"
           code=${PIPESTATUS[0]}
-          [ "$code" -eq 0 ] && echo "::warning::rerun passed: $failed"
+          if [ "$code" -eq 0 ]; then
+            echo "::warning::rerun passed: $failed"
+            echo "Passed on rerun: \`${failed//|/\`, \`}\`" >> "$GITHUB_STEP_SUMMARY"
+          fi
           exit "$code"
-      - if: failure()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: out-${{ matrix.engine }}-${{ matrix.id }}
-          path: ${{ runner.temp }}/out
-          retention-days: 14
-
-  pages:
-    name: pages ${{ matrix.engine }}
-    runs-on: ${{ matrix.engine == 'webkit' && 'macos-latest' || 'ubuntu-latest' }}
-    timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix:
-        engine: [chromium, webkit]
-    env:
-      ENGINE: ${{ matrix.engine }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-        with:
-          go-version-file: go.mod
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-        with:
-          # renovate: datasource=github-releases depName=astral-sh/uv
-          version: "0.13.6"
-          python-version: "3.13"
-          enable-cache: false
-      - name: Install browser
-        run: uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" playwright install --with-deps "$ENGINE"
-      - name: Export and serve
+      - name: Check exported pages
+        if: matrix.pages && !cancelled()
         run: |
           OUT="$RUNNER_TEMP/out"
           ROOT="$RUNNER_TEMP/pages"
@@ -188,27 +168,23 @@ jobs:
           go run . -export "$ROOT/clanker-ui" -base /clanker-ui -site-url http://127.0.0.1:8120/clanker-ui/
           uv run --no-project python -I -m http.server 8120 --bind 127.0.0.1 --directory "$ROOT" > "$OUT/http.log" 2>&1 &
           for _ in $(seq 60); do
-            curl -fsS -o /dev/null http://127.0.0.1:8120/clanker-ui/ && exit 0
+            curl -fsS -o /dev/null http://127.0.0.1:8120/clanker-ui/ && break
             sleep 1
           done
-          exit 1
-      - name: Run checks
-        run: |
-          OUT="$RUNNER_TEMP/out"
-          uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I -u test/run.py --base-url http://127.0.0.1:8120/clanker-ui --engines "$ENGINE" --only pages --out "$OUT/run" 2>&1 | tee "$OUT/run.log"
+          uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I -u test/run.py --base-url http://127.0.0.1:8120/clanker-ui --engines "$ENGINE" --only pages --themes "$THEMES" --out "$OUT/pages" 2>&1 | tee "$OUT/pages.log"
           exit "${PIPESTATUS[0]}"
       - if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: out-pages-${{ matrix.engine }}
+          name: out-${{ matrix.engine }}-${{ matrix.id }}
           path: ${{ runner.temp }}/out
           retention-days: 14
 
   ci-result:
     name: ci-result
     if: always()
-    needs: [go, gitleaks, browser, pages]
-    runs-on: ubuntu-latest
+    needs: [plan, go, gitleaks, browser]
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Check results
@@ -217,5 +193,5 @@ jobs:
         run: |
           echo "$RESULTS"
           for r in $RESULTS; do
-            [ "$r" = success ] || exit 1
+            [ "$r" = success ] || [ "$r" = skipped ] || exit 1
           done

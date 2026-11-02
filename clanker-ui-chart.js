@@ -384,7 +384,10 @@ function chartDate(v) {
   if (v instanceof Date) return Number.isNaN(v.getTime()) ? null : v
   if (typeof v !== "string") return null
   const m = ISO_DATE.exec(v)
-  if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+  if (m) {
+    const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+    return d.getMonth() === Number(m[2]) - 1 && d.getDate() === Number(m[3]) ? d : null
+  }
   if (!ISO_STAMP.test(v)) return null
   const d = new Date(v)
   return Number.isNaN(d.getTime()) ? null : d
@@ -1266,7 +1269,7 @@ function chartRadar(c) {
   const spoke = svg("line", { "data-part": "crosshair", x1: cx, y1: cy, x2: cx, y2: cy })
   nodes.push(spoke)
   const marksGroup = svg("g", { "data-part": "marks" })
-  const pts = keys.map((key, k) => m.rows.map((_, i) => chartPolar(cx, cy, rad(vals[k][i]), ang(i))))
+  const pts = keys.map((_, k) => m.rows.map((_, i) => chartPolar(cx, cy, rad(vals[k][i]), ang(i))))
   keys.forEach((key, k) => {
     const e = m.byKey.get(key)
     const g = svg("g", { "data-part": "series", "data-key": key, style: { "--c": e.color } })

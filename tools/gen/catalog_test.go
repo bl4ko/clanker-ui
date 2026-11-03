@@ -37,6 +37,9 @@ func TestCatalogFresh(t *testing.T) {
 			t.Errorf("%s is not fresh: run go run ./tools/gen catalog", name)
 		}
 	}
+	for _, name := range extraCompFiles("../..", catFilesOut) {
+		t.Errorf("%s is not a catalog component: run go run ./tools/gen catalog", name)
+	}
 	again, _, err := buildCatalog("../..")
 	if err != nil {
 		t.Fatal(err)
@@ -57,8 +60,12 @@ func TestCatalogComponents(t *testing.T) {
 	var names []string
 	for _, c := range cat.Components {
 		names = append(names, c.Name)
-		if c.Readme == "" {
-			t.Errorf("%s has no README section", c.Name)
+		_, full, ok := strings.Cut(string(catFilesOut[c.Readme]), "\n## Full text\n\n#")
+		if !ok {
+			t.Errorf("%s: %s has no README full text", c.Name, c.Readme)
+		}
+		if strings.HasPrefix(c.ExampleSource, "README.md#") && !strings.Contains(full, "```html\n") {
+			t.Errorf("%s: %s has no example", c.Name, c.Readme)
 		}
 		if c.Example == "" {
 			t.Errorf("%s has no example", c.Name)
@@ -370,8 +377,19 @@ func TestSkillFormat(t *testing.T) {
 	if n := strings.Count(body, "\n"); n >= 500 {
 		t.Errorf("SKILL.md body has %d lines, want under 500", n)
 	}
-	for _, f := range []string{"SKILL.md", "references/csp.md"} {
-		for _, m := range mdLink.FindAllStringSubmatch(readFile(t, dir+"/"+f), -1) {
+	err := filepath.WalkDir(dir, func(name string, d os.DirEntry, err error) error {
+		if err != nil || d.IsDir() {
+			return err
+		}
+		f, _ := filepath.Rel(dir, name)
+		src := readFile(t, name)
+		if n := strings.Count(src, "\n"); f != "SKILL.md" && n > 500 {
+			t.Errorf("%s has %d lines, want at most 500", f, n)
+		}
+		if !strings.HasSuffix(f, ".md") {
+			return nil
+		}
+		for _, m := range mdLink.FindAllStringSubmatch(src, -1) {
 			link := m[1]
 			if strings.HasPrefix(link, "http") || strings.HasPrefix(link, "#") {
 				continue
@@ -383,6 +401,10 @@ func TestSkillFormat(t *testing.T) {
 				t.Errorf("%s: link %s does not resolve", f, link)
 			}
 		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
 	}
 	for _, word := range []string{"Claude", "Codex", "Cursor", "Gemini", "allowed-tools", "model:"} {
 		if strings.Contains(src, word) {
@@ -414,8 +436,11 @@ func TestLLMsTxt(t *testing.T) {
 	}
 	for _, c := range cat.Components {
 		page := strings.TrimSuffix(strings.TrimPrefix(c.Docs, strings.TrimSuffix(cat.Docs, "/")), "/")
-		if !pages[page] || c.DocsMarkdown != strings.TrimSuffix(c.Docs, "/")+".md" {
+		if !pages[page] {
 			t.Errorf("%s: docs link %s is not a page in docs/nav.json", c.Name, c.Docs)
+		}
+		if c.DocsMarkdown != catalogSite+"/"+c.Readme {
+			t.Errorf("%s: docsMarkdown %s is not the Pages copy of %s", c.Name, c.DocsMarkdown, c.Readme)
 		}
 	}
 	links := regexp.MustCompile(`(?m)^- \[[^\]]+\]\(([^)]+)\)`).FindAllStringSubmatch(src, -1)

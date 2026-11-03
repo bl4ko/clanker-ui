@@ -15,7 +15,7 @@ pnpm dlx skills add bl4ko/clanker-ui
 - Pin the skill to a release: `pnpm dlx skills add https://github.com/bl4ko/clanker-ui/tree/v0.1.0/skills/clanker-ui`.
 - Without the CLI: copy `skills/clanker-ui/` from the release zip to `.agents/skills/` (Codex, Cursor, GitHub Copilot, Gemini CLI, Cline, OpenCode), `.claude/skills/` (Claude Code), or `.windsurf/skills/` (Windsurf). It is a portable [Agent Skill](https://agentskills.io) and works without network access.
 - Chat tools without skills: give the agent [`llms.txt`](https://bl4ko.github.io/clanker-ui/llms.txt). [`llms-full.txt`](https://bl4ko.github.io/clanker-ui/llms-full.txt) is the full text in one file.
-- Catalog: [`clanker-ui.json`](skills/clanker-ui/references/clanker-ui.json) lists each component with its group file, parts, attributes and allowed values, state attributes, events, keys, and a minimal example ([schema](skills/clanker-ui/references/clanker-ui.schema.json)). `go run ./tools/gen catalog` makes it; the skill has a Markdown copy.
+- Catalog: [`clanker-ui.json`](skills/clanker-ui/references/clanker-ui.json) lists each component with its group file, parts, attributes and allowed values, state attributes, events, keys, and a minimal example ([schema](skills/clanker-ui/references/clanker-ui.schema.json)). `go run ./tools/gen catalog` makes it; the skill has a Markdown file for each component.
 - Contributors: [`AGENTS.md`](AGENTS.md) has the build, test, and code rules.
 
 ## Quick start
@@ -1372,7 +1372,7 @@ Per component: **Parts** lists each `data-slot`. **Write** = attributes you may 
 
 #### Button (`button`)
 
-Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/button/. Full text: https://github.com/bl4ko/clanker-ui#button
+Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/button/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -1380,7 +1380,7 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 #### Separator (`separator`)
 
-Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/separator/. Full text: https://github.com/bl4ko/clanker-ui#alert-aspect-ratio-badge-card-empty-item-separator-skeleton
+Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/separator/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -1394,10 +1394,7 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 #### Direction (`direction`)
 
-Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/direction/. Full text: https://github.com/bl4ko/clanker-ui#direction
-
-| Part | Write | State |
-| --- | --- | --- |
+Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/direction/.
 
 ```html
 <div dir="rtl" lang="ar">
@@ -1407,17 +1404,15 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 #### Theme Switch (`theme`)
 
-Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/theme-switch/. Full text: https://github.com/bl4ko/clanker-ui#theme-toggle-and-switch
+Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/theme-switch/.
 
-| Part | Write | State |
-| --- | --- | --- |
-| `theme-switch` |  |  |
+Other parts: `theme-switch`.
 
 Events: `theme:change` `{ mode, resolved, scheme }`.
 
 #### Input (`input`)
 
-Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/input/. Full text: https://github.com/bl4ko/clanker-ui#input-textarea-label-kbd
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/input/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -1425,42 +1420,31 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 #### Textarea (`textarea`)
 
-Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/textarea/. Full text: https://github.com/bl4ko/clanker-ui#input-textarea-label-kbd
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/textarea/.
 
-| Part | Write | State |
-| --- | --- | --- |
-| `textarea` (root) |  |  |
+Other parts: `textarea` (root).
 
 #### Label (`label`)
 
-Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/label/. Full text: https://github.com/bl4ko/clanker-ui#input-textarea-label-kbd
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/label/.
 
-| Part | Write | State |
-| --- | --- | --- |
-| `label` (root) |  |  |
+Other parts: `label` (root).
 
 #### Kbd (`kbd`)
 
-Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/kbd/. Full text: https://github.com/bl4ko/clanker-ui#input-textarea-label-kbd
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/kbd/.
 
-| Part | Write | State |
-| --- | --- | --- |
-| `kbd` (root) |  |  |
-| `kbd-group` |  |  |
+Other parts: `kbd` (root), `kbd-group`.
 
 #### Card (`card`)
 
-Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/card/. Full text: https://github.com/bl4ko/clanker-ui#alert-aspect-ratio-badge-card-empty-item-separator-skeleton
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/card/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `card` (root) | `data-size` `sm` |  |
-| `card-action` |  |  |
-| `card-content` |  |  |
-| `card-description` |  |  |
-| `card-footer` |  |  |
-| `card-header` |  |  |
-| `card-title` |  |  |
+
+Other parts: `card-action`, `card-content`, `card-description`, `card-footer`, `card-header`, `card-title`.
 
 ```html
 <div data-slot="card" data-size="sm">
@@ -1476,7 +1460,7 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 #### Badge (`badge`)
 
-Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/badge/. Full text: https://github.com/bl4ko/clanker-ui#alert-aspect-ratio-badge-card-empty-item-separator-skeleton
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/badge/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -1490,14 +1474,13 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 #### Alert (`alert`)
 
-Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/alert/. Full text: https://github.com/bl4ko/clanker-ui#alert-aspect-ratio-badge-card-empty-item-separator-skeleton
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/alert/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `alert` (root) | `data-variant` `default`, `destructive`, `info`, `success`, `warning` |  |
-| `alert-action` |  |  |
-| `alert-description` |  |  |
-| `alert-title` |  |  |
+
+Other parts: `alert-action`, `alert-description`, `alert-title`.
 
 ```html
 <div data-slot="alert" data-variant="destructive" role="alert">
@@ -1510,19 +1493,13 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 #### Table (`table`)
 
-Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/table/. Full text: https://github.com/bl4ko/clanker-ui#table
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/table/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `table` (root) |  |  |
-| `table-body` |  |  |
-| `table-caption` |  |  |
-| `table-cell` |  |  |
-| `table-container` |  |  |
-| `table-footer` |  |  |
-| `table-head` |  |  |
-| `table-header` |  |  |
 | `table-row` | `data-state` string |  |
+
+Other parts: `table` (root), `table-body`, `table-caption`, `table-cell`, `table-container`, `table-footer`, `table-head`, `table-header`.
 
 ```html
 <div data-slot="table-container">
@@ -1543,11 +1520,9 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 #### Skeleton (`skeleton`)
 
-Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/skeleton/. Full text: https://github.com/bl4ko/clanker-ui#alert-aspect-ratio-badge-card-empty-item-separator-skeleton
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/skeleton/.
 
-| Part | Write | State |
-| --- | --- | --- |
-| `skeleton` (root) |  |  |
+Other parts: `skeleton` (root).
 
 ```html
 <div data-slot="skeleton" id="avatar-placeholder"></div>
@@ -1556,7 +1531,7 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 #### Spinner (`spinner`)
 
-Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/spinner/. Full text: https://github.com/bl4ko/clanker-ui#progress-spinner
+Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/spinner/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -1569,16 +1544,15 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 #### Empty (`empty`)
 
-Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/empty/. Full text: https://github.com/bl4ko/clanker-ui#alert-aspect-ratio-badge-card-empty-item-separator-skeleton
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/empty/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `empty` (root) | `data-variant` `outline` |  |
-| `empty-content` |  |  |
-| `empty-description` |  |  |
 | `empty-header` | `data-variant` `icon` |  |
 | `empty-icon` | `data-variant` `default`, `icon` |  |
-| `empty-title` |  |  |
+
+Other parts: `empty-content`, `empty-description`, `empty-title`.
 
 ```html
 <div data-slot="empty" data-variant="outline">
@@ -1593,15 +1567,15 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 #### Progress (`progress`)
 
-Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/progress/. Full text: https://github.com/bl4ko/clanker-ui#progress-spinner
+Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/progress/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `progress` (root) | `data-max` number; `data-value` number |  |
-| `progress-indicator` (kit adds) |  |  |
-| `progress-label` |  |  |
-| `progress-track` (kit adds) |  |  |
-| `progress-value` |  |  |
+
+Other parts: `progress-label`, `progress-value`.
+
+Kit adds: `progress-indicator`, `progress-track`.
 
 ```html
 <div data-slot="progress" data-value="60" data-max="100" aria-label="Upload">
@@ -1612,7 +1586,7 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 #### Aspect Ratio (`aspect-ratio`)
 
-Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/aspect-ratio/. Full text: https://github.com/bl4ko/clanker-ui#alert-aspect-ratio-badge-card-empty-item-separator-skeleton
+Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/aspect-ratio/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -1626,58 +1600,53 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 #### Button Group (`button-group`)
 
-Group `forms`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/button-group/. Full text: https://github.com/bl4ko/clanker-ui#button-group
+Group `forms`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/button-group/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `button-group` (root) | `data-orientation` `horizontal`, `vertical` |  |
 | `button-group-separator` | `data-orientation` `horizontal`, `vertical` |  |
-| `button-group-text` |  |  |
+
+Other parts: `button-group-text`.
 
 #### Input Group (`input-group`)
 
-Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/input-group/. Full text: https://github.com/bl4ko/clanker-ui#input-group
+Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/input-group/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `input-group` (root) |  |  |
 | `input-group-addon` | `data-align` `block-end`, `block-start`, `inline-end`, `inline-start` |  |
 | `input-group-button` |  | `data-pressed` |
-| `input-group-control` |  |  |
-| `input-group-text` |  |  |
+
+Other parts: `input-group` (root), `input-group-control`, `input-group-text`.
 
 Part attributes: `data-input-group-button` boolean.
 
 #### Input OTP (`input-otp`)
 
-Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/input-otp/. Full text: https://github.com/bl4ko/clanker-ui#input-otp
+Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/input-otp/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `input-otp` (root) | `data-pattern` `alphanumeric`, `chars`, `digits` |  |
-| `input-otp-caret` (kit adds) |  |  |
-| `input-otp-group` |  |  |
-| `input-otp-separator` |  |  |
 | `input-otp-slot` |  | `data-active` |
+
+Other parts: `input-otp-group`, `input-otp-separator`.
+
+Kit adds: `input-otp-caret`.
 
 Events: `input-otp:complete` `{ value }`.
 
 #### Field (`field`)
 
-Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/field/. Full text: https://github.com/bl4ko/clanker-ui#field
+Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/field/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `field` (root) | `data-disabled` `false`, `true`; `data-invalid` `false`, `true`; `data-orientation` `horizontal`, `responsive`, `vertical` |  |
-| `field-content` |  |  |
-| `field-description` |  |  |
-| `field-error` |  |  |
-| `field-group` |  |  |
-| `field-label` |  |  |
 | `field-legend` | `data-variant` `label`, `legend` |  |
-| `field-separator` |  |  |
-| `field-separator-content` |  |  |
-| `field-set` |  |  |
+
+Other parts: `field-content`, `field-description`, `field-error`, `field-group`, `field-label`, `field-separator`, `field-separator-content`, `field-set`.
 
 ```html
 <fieldset data-slot="field-set">
@@ -1703,15 +1672,13 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 #### Form (`form`)
 
-Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/form/. Full text: https://github.com/bl4ko/clanker-ui#form
+Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/form/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `form` (root) |  |  |
-| `form-description` |  |  |
-| `form-item` |  |  |
 | `form-label` | `data-error` any |  |
-| `form-message` |  |  |
+
+Other parts: `form` (root), `form-description`, `form-item`, `form-message`.
 
 Other options named in the docs: `data-error-type-mismatch` any; `data-error-value-missing` any.
 
@@ -1719,25 +1686,28 @@ Events: `form:invalid` `{ errors }`; `form:submit` `{ formData, values, submitte
 
 #### Checkbox (`checkbox`)
 
-Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/checkbox/. Full text: https://github.com/bl4ko/clanker-ui#checkbox-switch-radio-group
+Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/checkbox/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `checkbox` (root) | `data-checked` boolean; `data-indeterminate` boolean; `data-name` string | `data-state` |
-| `checkbox-group` |  |  |
-| `checkbox-indicator` (kit adds) |  |  |
+
+Other parts: `checkbox-group`.
+
+Kit adds: `checkbox-indicator`.
 
 Events: `checkbox:change` `{ checked, value }`.
 
 #### Radio Group (`radio-group`)
 
-Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/radio-group/. Full text: https://github.com/bl4ko/clanker-ui#checkbox-switch-radio-group
+Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/radio-group/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `radio-group` (root) | `data-name` string; `data-value` string |  |
-| `radio-group-indicator` (kit adds) |  |  |
 | `radio-group-item` |  | `data-checked`, `data-state` |
+
+Kit adds: `radio-group-indicator`.
 
 Other options named in the docs: `data-checked` any.
 
@@ -1745,7 +1715,7 @@ Events: `radio-group:change` `{ value }`.
 
 #### Switch (`switch`)
 
-Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/switch/. Full text: https://github.com/bl4ko/clanker-ui#checkbox-switch-radio-group
+Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/switch/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -1758,7 +1728,7 @@ Events: `switch:change` `{ checked, value }`.
 
 #### Slider (`slider`)
 
-Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/slider/. Full text: https://github.com/bl4ko/clanker-ui#slider
+Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/slider/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -1769,61 +1739,45 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 #### Select (`select`)
 
-Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/select/. Full text: https://github.com/bl4ko/clanker-ui#select
+Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/select/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `select` (root) | `data-name` string; `data-value` string |  |
 | `select-content` | `data-align-trigger` `false`, `true`; `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `select-group` |  |  |
-| `select-icon` (kit adds) |  |  |
 | `select-item` | `data-disabled` boolean; `data-label` string; `data-value` string |  |
-| `select-item-indicator` (kit adds) |  |  |
-| `select-item-text` (kit adds) |  |  |
-| `select-label` |  |  |
-| `select-scroll-down-button` (kit adds) |  |  |
-| `select-scroll-up-button` (kit adds) |  |  |
-| `select-separator` |  |  |
 | `select-trigger` | `data-size` `default`, `sm` | `data-placeholder` |
-| `select-value` |  |  |
-| `select-viewport` (kit adds) |  |  |
+
+Other parts: `select-group`, `select-label`, `select-separator`, `select-value`.
+
+Kit adds: `select-icon`, `select-item-indicator`, `select-item-text`, `select-scroll-down-button`, `select-scroll-up-button`, `select-viewport`.
 
 Events: `select:open`; `select:close`; `select:change` `{ value }`.
 
 #### Native Select (`native-select`)
 
-Group `forms`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/native-select/. Full text: https://github.com/bl4ko/clanker-ui#native-select
+Group `forms`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/native-select/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `native-select` (root) | `data-size` `sm` |  |
-| `native-select-icon` |  |  |
-| `native-select-optgroup` |  |  |
-| `native-select-option` |  |  |
-| `native-select-wrapper` |  |  |
+
+Other parts: `native-select-icon`, `native-select-optgroup`, `native-select-option`, `native-select-wrapper`.
 
 #### Combobox (`combobox`)
 
-Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/combobox/. Full text: https://github.com/bl4ko/clanker-ui#combobox
+Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/combobox/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `combobox` (root) | `data-auto-highlight` boolean; `data-name` string; `data-value` string |  |
-| `combobox-chip` (kit adds) |  |  |
-| `combobox-chip-input` |  |  |
-| `combobox-chip-remove` (kit adds) |  |  |
-| `combobox-chips` |  |  |
-| `combobox-clear` |  |  |
 | `combobox-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-chips`, `data-closed`, `data-open`, `data-state` |
-| `combobox-empty` |  |  |
-| `combobox-group` |  |  |
 | `combobox-item` | `data-value` string | `data-disabled`, `data-highlighted` |
-| `combobox-item-indicator` (kit adds) |  |  |
-| `combobox-label` |  |  |
 | `combobox-list` |  | `data-empty` |
-| `combobox-separator` |  |  |
-| `combobox-trigger-icon` (kit adds) |  |  |
-| `combobox-value` |  |  |
+
+Other parts: `combobox-chip-input`, `combobox-chips`, `combobox-clear`, `combobox-empty`, `combobox-group`, `combobox-label`, `combobox-separator`, `combobox-value`.
+
+Kit adds: `combobox-chip`, `combobox-chip-remove`, `combobox-item-indicator`, `combobox-trigger-icon`.
 
 Part attributes: `data-combobox-trigger` boolean.
 
@@ -1831,7 +1785,7 @@ Events: `combobox:open`; `combobox:close`; `combobox:change` `{ value }`.
 
 #### Toggle (`toggle`)
 
-Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/toggle/. Full text: https://github.com/bl4ko/clanker-ui#toggle-and-toggle-group
+Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/toggle/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -1841,7 +1795,7 @@ Events: `toggle:change` `{ pressed, value }`.
 
 #### Toggle Group (`toggle-group`)
 
-Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/toggle-group/. Full text: https://github.com/bl4ko/clanker-ui#toggle-and-toggle-group
+Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/toggle-group/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -1852,17 +1806,14 @@ Events: `toggle-group:change` `{ value }`.
 
 #### Dialog (`dialog`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/dialog/. Full text: https://github.com/bl4ko/clanker-ui#dialog-alert-dialog-sheet-drawer
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/dialog/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `dialog` (root) |  |  |
-| `dialog-close` |  |  |
 | `dialog-content` |  | `data-closed`, `data-open`, `data-state` |
-| `dialog-description` |  |  |
 | `dialog-footer` | `data-show-close-button` boolean |  |
-| `dialog-header` |  |  |
-| `dialog-title` |  |  |
+
+Other parts: `dialog` (root), `dialog-close`, `dialog-description`, `dialog-header`, `dialog-title`.
 
 Part attributes: `data-dialog-close` boolean; `data-dialog-trigger` id.
 
@@ -1870,19 +1821,15 @@ Events: `dialog:open` `{ trigger }`; `dialog:close` `{ reason }` (cancelable).
 
 #### Alert Dialog (`alert-dialog`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/alert-dialog/. Full text: https://github.com/bl4ko/clanker-ui#dialog-alert-dialog-sheet-drawer
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/alert-dialog/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `alert-dialog` (root) |  |  |
 | `alert-dialog-action` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 | `alert-dialog-cancel` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 | `alert-dialog-content` | `data-size` `default`, `sm` | `data-closed`, `data-open`, `data-state` |
-| `alert-dialog-description` |  |  |
-| `alert-dialog-footer` |  |  |
-| `alert-dialog-header` |  |  |
-| `alert-dialog-media` |  |  |
-| `alert-dialog-title` |  |  |
+
+Other parts: `alert-dialog` (root), `alert-dialog-description`, `alert-dialog-footer`, `alert-dialog-header`, `alert-dialog-media`, `alert-dialog-title`.
 
 Part attributes: `data-alert-dialog-action` boolean; `data-alert-dialog-cancel` boolean; `data-alert-dialog-trigger` boolean.
 
@@ -1906,18 +1853,15 @@ Events: `alert-dialog:open` `{ trigger }`; `alert-dialog:close` `{ reason }` (ca
 
 #### Sheet (`sheet`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/sheet/. Full text: https://github.com/bl4ko/clanker-ui#dialog-alert-dialog-sheet-drawer
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/sheet/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `sheet` (root) |  |  |
-| `sheet-close` |  |  |
 | `sheet-content` | `data-side` `bottom`, `left`, `right`, `top` | `data-ending-style`, `data-starting-style` |
-| `sheet-description` |  |  |
-| `sheet-footer` |  |  |
-| `sheet-header` |  |  |
-| `sheet-overlay` (kit adds) |  |  |
-| `sheet-title` |  |  |
+
+Other parts: `sheet` (root), `sheet-close`, `sheet-description`, `sheet-footer`, `sheet-header`, `sheet-title`.
+
+Kit adds: `sheet-overlay`.
 
 Part attributes: `data-sheet-close` boolean; `data-sheet-trigger` boolean.
 
@@ -1942,19 +1886,17 @@ Events: `sheet:open` `{ trigger }`; `sheet:close` `{ reason }` (cancelable).
 
 #### Drawer (`drawer`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/drawer/. Full text: https://github.com/bl4ko/clanker-ui#dialog-alert-dialog-sheet-drawer
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/drawer/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `drawer` (root) | `data-show-swipe-handle` boolean; `data-swipe-direction` string |  |
 | `drawer-content` | `data-drawer-content` any |  |
-| `drawer-description` |  |  |
-| `drawer-footer` |  |  |
-| `drawer-header` |  |  |
 | `drawer-popup` |  | `data-ending-style`, `data-nested-drawer-open`, `data-nested-drawer-swiping`, `data-snap-points`, `data-starting-style`, `data-swipe-axis`, `data-swipe-direction`, `data-swiping` |
 | `drawer-swipe-handle` (kit adds) |  | `data-show-swipe-handle` |
-| `drawer-title` |  |  |
 | `drawer-viewport` |  | `data-ending-style`, `data-modal`, `data-snap-points`, `data-starting-style`, `data-swiping` |
+
+Other parts: `drawer-description`, `drawer-footer`, `drawer-header`, `drawer-title`.
 
 Part attributes: `data-drawer-close` boolean; `data-drawer-trigger` boolean.
 
@@ -1964,16 +1906,14 @@ Events: `drawer:open` `{ trigger }`; `drawer:close` `{ reason }` (cancelable); `
 
 #### Popover (`popover`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/popover/. Full text: https://github.com/bl4ko/clanker-ui#popover
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/popover/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `popover` (root) |  |  |
 | `popover-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `popover-description` |  |  |
-| `popover-header` |  |  |
-| `popover-title` |  |  |
 | `popover-trigger` | `data-popover-trigger` any |  |
+
+Other parts: `popover` (root), `popover-description`, `popover-header`, `popover-title`.
 
 Part attributes: `data-popover-trigger` boolean.
 
@@ -1993,14 +1933,15 @@ Events: `popover:open` `{ trigger }`; `popover:close` `{ reason }`.
 
 #### Tooltip (`tooltip`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/tooltip/. Full text: https://github.com/bl4ko/clanker-ui#tooltip-and-hover-card
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/tooltip/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `tooltip` (root) |  |  |
 | `tooltip-arrow` (kit adds) |  | `data-side` |
 | `tooltip-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
 | `tooltip-provider` | `data-delay-duration` any; `data-skip-delay-duration` any |  |
+
+Other parts: `tooltip` (root).
 
 Part attributes: `data-tooltip-trigger` boolean.
 
@@ -2017,12 +1958,13 @@ Events: `tooltip:open`; `tooltip:close`.
 
 #### Hover Card (`hover-card`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/hover-card/. Full text: https://github.com/bl4ko/clanker-ui#tooltip-and-hover-card
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/hover-card/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `hover-card` (root) |  |  |
 | `hover-card-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
+
+Other parts: `hover-card` (root).
 
 Part attributes: `data-hover-card-trigger` boolean.
 
@@ -2039,26 +1981,22 @@ Events: `hover-card:open`; `hover-card:close`.
 
 #### Dropdown Menu (`dropdown-menu`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/dropdown-menu/. Full text: https://github.com/bl4ko/clanker-ui#dropdown-menu-context-menu-menubar
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/dropdown-menu/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `dropdown-menu` (root) |  |  |
 | `dropdown-menu-checkbox-item` | `data-checked` boolean | `data-disabled`, `data-inset` |
-| `dropdown-menu-checkbox-item-indicator` (kit adds) |  |  |
 | `dropdown-menu-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `dropdown-menu-group` |  |  |
 | `dropdown-menu-item` | `data-variant` `destructive` | `data-disabled`, `data-inset` |
 | `dropdown-menu-label` |  | `data-inset` |
 | `dropdown-menu-radio-group` | `data-value` string |  |
 | `dropdown-menu-radio-item` | `data-checked` boolean; `data-value` string | `data-disabled`, `data-inset` |
-| `dropdown-menu-radio-item-indicator` (kit adds) |  |  |
-| `dropdown-menu-separator` |  |  |
-| `dropdown-menu-shortcut` |  |  |
-| `dropdown-menu-sub` |  |  |
 | `dropdown-menu-sub-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
 | `dropdown-menu-sub-trigger` |  | `data-inset`, `data-open`, `data-popup-open`, `data-state` |
-| `dropdown-menu-trigger` |  |  |
+
+Other parts: `dropdown-menu` (root), `dropdown-menu-group`, `dropdown-menu-separator`, `dropdown-menu-shortcut`, `dropdown-menu-sub`, `dropdown-menu-trigger`.
+
+Kit adds: `dropdown-menu-checkbox-item-indicator`, `dropdown-menu-radio-item-indicator`.
 
 Part attributes: `data-dropdown-menu-trigger` boolean.
 
@@ -2068,24 +2006,20 @@ Events: `dropdown-menu:open` `{ trigger }`; `dropdown-menu:close` `{ reason }`; 
 
 #### Context Menu (`context-menu`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/context-menu/. Full text: https://github.com/bl4ko/clanker-ui#dropdown-menu-context-menu-menubar
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/context-menu/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `context-menu` (root) |  |  |
 | `context-menu-checkbox-item` | `data-checked` boolean | `data-disabled`, `data-inset` |
 | `context-menu-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `context-menu-group` |  |  |
 | `context-menu-item` | `data-variant` `destructive` | `data-disabled`, `data-inset` |
 | `context-menu-label` |  | `data-inset` |
 | `context-menu-radio-group` | `data-value` string |  |
 | `context-menu-radio-item` | `data-checked` boolean; `data-value` string | `data-disabled`, `data-inset` |
-| `context-menu-separator` |  |  |
-| `context-menu-shortcut` |  |  |
-| `context-menu-sub` |  |  |
 | `context-menu-sub-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
 | `context-menu-sub-trigger` |  | `data-inset`, `data-open`, `data-state` |
-| `context-menu-trigger` |  |  |
+
+Other parts: `context-menu` (root), `context-menu-group`, `context-menu-separator`, `context-menu-shortcut`, `context-menu-sub`, `context-menu-trigger`.
 
 Other options named in the docs: `data-close-on-click` any; `data-disabled` any; `data-inset` any; `data-state` string; `data-text-value` any.
 
@@ -2118,25 +2052,20 @@ Events: `context-menu:open` `{ trigger }`; `context-menu:close` `{ reason }`; `c
 
 #### Menubar (`menubar`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/menubar/. Full text: https://github.com/bl4ko/clanker-ui#dropdown-menu-context-menu-menubar
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/menubar/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `menubar` (root) |  |  |
 | `menubar-checkbox-item` | `data-checked` boolean | `data-disabled`, `data-inset` |
 | `menubar-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `menubar-group` |  |  |
 | `menubar-item` | `data-variant` `destructive` | `data-disabled`, `data-inset` |
 | `menubar-label` |  | `data-inset` |
-| `menubar-menu` |  |  |
 | `menubar-radio-group` | `data-value` string |  |
 | `menubar-radio-item` | `data-checked` boolean; `data-value` string | `data-disabled`, `data-inset` |
-| `menubar-separator` |  |  |
-| `menubar-shortcut` |  |  |
-| `menubar-sub` |  |  |
 | `menubar-sub-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
 | `menubar-sub-trigger` |  | `data-inset`, `data-open`, `data-popup-open`, `data-state` |
-| `menubar-trigger` |  |  |
+
+Other parts: `menubar` (root), `menubar-group`, `menubar-menu`, `menubar-separator`, `menubar-shortcut`, `menubar-sub`, `menubar-trigger`.
 
 Other options named in the docs: `data-close-on-click` any; `data-disabled` any; `data-inset` any; `data-modal` `false`, `true`; `data-state` string; `data-text-value` any.
 
@@ -2172,22 +2101,20 @@ Events: `menubar:open` `{ trigger }`; `menubar:close` `{ reason }`; `menubar:sel
 
 #### Navigation Menu (`navigation-menu`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/navigation-menu/. Full text: https://github.com/bl4ko/clanker-ui#navigation-menu
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/navigation-menu/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `navigation-menu` (root) |  |  |
 | `navigation-menu-content` |  | `data-activation-direction`, `data-closed`, `data-ending-style`, `data-motion`, `data-open`, `data-starting-style`, `data-state` |
-| `navigation-menu-focus-guard` (kit adds) |  |  |
 | `navigation-menu-indicator` |  | `data-state` |
-| `navigation-menu-indicator-arrow` (kit adds) |  |  |
-| `navigation-menu-item` |  |  |
 | `navigation-menu-link` | `data-active` any; `data-close-on-click` any; `data-variant` `trigger` | `data-open`, `data-popup-open`, `data-state` |
-| `navigation-menu-list` |  |  |
 | `navigation-menu-popup` (kit adds) |  | `data-ending-style`, `data-starting-style` |
 | `navigation-menu-positioner` (kit adds) |  | `data-align`, `data-instant`, `data-side` |
 | `navigation-menu-trigger` |  | `data-open`, `data-popup-open`, `data-state` |
-| `navigation-menu-viewport` (kit adds) |  |  |
+
+Other parts: `navigation-menu` (root), `navigation-menu-item`, `navigation-menu-list`.
+
+Kit adds: `navigation-menu-focus-guard`, `navigation-menu-indicator-arrow`, `navigation-menu-viewport`.
 
 Other options named in the docs: `data-close-delay` any; `data-delay` any; `data-viewport` `false`, `true`.
 
@@ -2214,20 +2141,16 @@ Events: `navigation-menu:change` `{ value }`; `navigation-menu:select` `{ link, 
 
 #### Command (`command`)
 
-Group `overlays`. Needs `core`, `forms`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/command/. Full text: https://github.com/bl4ko/clanker-ui#command
+Group `overlays`. Needs `core`, `forms`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/command/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `command` (root) |  |  |
-| `command-empty` |  |  |
 | `command-group` | `data-heading` any |  |
-| `command-group-heading` (kit adds) |  |  |
-| `command-input` |  |  |
-| `command-input-wrapper` (kit adds) |  |  |
 | `command-item` | `data-disabled` any; `data-keywords` string; `data-value` any | `data-selected` |
-| `command-list` |  |  |
-| `command-separator` |  |  |
-| `command-shortcut` |  |  |
+
+Other parts: `command` (root), `command-empty`, `command-input`, `command-list`, `command-separator`, `command-shortcut`.
+
+Kit adds: `command-group-heading`, `command-input-wrapper`.
 
 Other options named in the docs: `data-should-filter` `false`, `true`.
 
@@ -2253,19 +2176,15 @@ Events: `command:select` `{ value, item }`.
 
 #### Toast (`toast`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/toast/. Full text: https://github.com/bl4ko/clanker-ui#toast-and-sonner
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/toast/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `toast` (root) (kit adds) |  | `data-ending-style`, `data-expanded`, `data-limited`, `data-starting-style`, `data-swipe-direction` |
-| `toast-action` (kit adds) |  |  |
-| `toast-close` (kit adds) |  |  |
 | `toast-content` (kit adds) |  | `data-behind`, `data-expanded` |
-| `toast-description` (kit adds) |  |  |
-| `toast-icon` (kit adds) |  |  |
 | `toast-portal` | `data-limit` number; `data-timeout` number |  |
-| `toast-title` (kit adds) |  |  |
-| `toast-viewport` (kit adds) |  |  |
+
+Kit adds: `toast-action`, `toast-close`, `toast-description`, `toast-icon`, `toast-title`, `toast-viewport`.
 
 Events: `toast:open` `{ id }`; `toast:close` `{ id, reason }`; `toast:action` `{ id }`.
 
@@ -2276,13 +2195,11 @@ Events: `toast:open` `{ id }`; `toast:close` `{ id, reason }`; `toast:action` `{
 
 #### Sonner (`sonner`)
 
-Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/sonner/. Full text: https://github.com/bl4ko/clanker-ui#toast-and-sonner
+Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/sonner/.
 
 Same component as `toast`: use its markup, events, and API.
 
-| Part | Write | State |
-| --- | --- | --- |
-| `sonner` (root) |  |  |
+Other parts: `sonner` (root).
 
 Other options named in the docs: `data-limit` any; `data-timeout` any.
 
@@ -2293,16 +2210,13 @@ Other options named in the docs: `data-limit` any; `data-timeout` any.
 
 #### Avatar (`avatar`)
 
-Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/avatar/. Full text: https://github.com/bl4ko/clanker-ui#avatar
+Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/avatar/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `avatar` (root) | `data-size` `lg`, `sm` |  |
-| `avatar-badge` |  |  |
-| `avatar-fallback` |  |  |
-| `avatar-group` |  |  |
-| `avatar-group-count` |  |  |
-| `avatar-image` |  |  |
+
+Other parts: `avatar-badge`, `avatar-fallback`, `avatar-group`, `avatar-group-count`, `avatar-image`.
 
 Other options named in the docs: `data-status` `error`, `loaded`, `loading`.
 
@@ -2310,27 +2224,29 @@ Events: `avatar:change` `{ value }`.
 
 #### Accordion (`accordion`)
 
-Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/accordion/. Full text: https://github.com/bl4ko/clanker-ui#accordion
+Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/accordion/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `accordion` (root) | `data-type` `multiple`, `single` |  |
 | `accordion-content` |  | `data-closed`, `data-open`, `data-state` |
 | `accordion-item` | `data-state` string; `data-value` string |  |
-| `accordion-trigger` |  |  |
-| `accordion-trigger-icon` (kit adds) |  |  |
+
+Other parts: `accordion-trigger`.
+
+Kit adds: `accordion-trigger-icon`.
 
 Events: `accordion:change` `{ value }`.
 
 #### Collapsible (`collapsible`)
 
-Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/collapsible/. Full text: https://github.com/bl4ko/clanker-ui#collapsible
+Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/collapsible/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `collapsible` (root) | `data-state` string |  |
-| `collapsible-content` |  |  |
-| `collapsible-trigger` |  |  |
+
+Other parts: `collapsible-content`, `collapsible-trigger`.
 
 Part attributes: `data-collapsible-trigger` boolean.
 
@@ -2338,7 +2254,7 @@ Events: `collapsible:open`; `collapsible:close`.
 
 #### Tabs (`tabs`)
 
-Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/tabs/. Full text: https://github.com/bl4ko/clanker-ui#tabs
+Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/tabs/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -2353,44 +2269,35 @@ Events: `tabs:change` `{ value }`.
 
 #### Breadcrumb (`breadcrumb`)
 
-Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/breadcrumb/. Full text: https://github.com/bl4ko/clanker-ui#breadcrumb
+Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/breadcrumb/.
 
-| Part | Write | State |
-| --- | --- | --- |
-| `breadcrumb` (root) |  |  |
-| `breadcrumb-ellipsis` |  |  |
-| `breadcrumb-item` |  |  |
-| `breadcrumb-link` |  |  |
-| `breadcrumb-list` |  |  |
-| `breadcrumb-page` |  |  |
-| `breadcrumb-separator` |  |  |
+Other parts: `breadcrumb` (root), `breadcrumb-ellipsis`, `breadcrumb-item`, `breadcrumb-link`, `breadcrumb-list`, `breadcrumb-page`, `breadcrumb-separator`.
 
 #### Pagination (`pagination`)
 
-Group `layout`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/pagination/. Full text: https://github.com/bl4ko/clanker-ui#pagination
+Group `layout`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/pagination/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `pagination` (root) |  |  |
-| `pagination-content` |  |  |
-| `pagination-ellipsis` |  |  |
-| `pagination-item` |  |  |
 | `pagination-link` | `data-active` boolean; `data-pagination-next` boolean; `data-pagination-previous` boolean; `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
+
+Other parts: `pagination` (root), `pagination-content`, `pagination-ellipsis`, `pagination-item`.
 
 #### Scroll Area (`scroll-area`)
 
-Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/scroll-area/. Full text: https://github.com/bl4ko/clanker-ui#scroll-area
+Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/scroll-area/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `scroll-area` (root) |  |  |
 | `scroll-area-scrollbar` | `data-orientation` `horizontal`, `vertical` | `data-overflow` |
-| `scroll-area-thumb` (kit adds) |  |  |
-| `scroll-area-viewport` |  |  |
+
+Other parts: `scroll-area` (root), `scroll-area-viewport`.
+
+Kit adds: `scroll-area-thumb`.
 
 #### Resizable (`resizable`)
 
-Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/resizable/. Full text: https://github.com/bl4ko/clanker-ui#resizable
+Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/resizable/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -2404,36 +2311,19 @@ Events: `resizable:change` `{ value }`.
 
 #### Sidebar (`sidebar`)
 
-Group `layout`. Needs `core`, `overlays`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/sidebar/. Full text: https://github.com/bl4ko/clanker-ui#sidebar
+Group `layout`. Needs `core`, `overlays`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/sidebar/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `sidebar` (root) | `data-collapsible` `icon`, `none`, `offcanvas`; `data-side` `bottom`, `left`, `right`, `top`; `data-variant` `floating`, `inset`, `sidebar` | `data-ending-style`, `data-mobile`, `data-starting-style`, `data-state` |
 | `sidebar-container` | `data-side` `left`, `right` |  |
-| `sidebar-content` |  |  |
-| `sidebar-footer` |  |  |
-| `sidebar-gap` |  |  |
-| `sidebar-group` |  |  |
-| `sidebar-group-action` |  |  |
-| `sidebar-group-content` |  |  |
-| `sidebar-group-label` |  |  |
-| `sidebar-header` |  |  |
-| `sidebar-inner` |  |  |
-| `sidebar-input` |  |  |
-| `sidebar-inset` |  |  |
-| `sidebar-menu` |  |  |
 | `sidebar-menu-action` | `data-show-on-hover` any |  |
-| `sidebar-menu-badge` |  |  |
 | `sidebar-menu-button` | `data-active` `false`, `true`; `data-size` `default`, `lg`, `sm`; `data-tooltip` string; `data-variant` `default`, `outline` | `data-state` |
-| `sidebar-menu-item` |  |  |
 | `sidebar-menu-skeleton` | `data-show-icon` any |  |
-| `sidebar-menu-sub` |  |  |
 | `sidebar-menu-sub-button` | `data-size` `md`, `sm` | `data-active`, `data-state` |
-| `sidebar-menu-sub-item` |  |  |
-| `sidebar-rail` |  |  |
 | `sidebar-separator` | `data-orientation` `horizontal`, `vertical` |  |
-| `sidebar-trigger` |  |  |
-| `sidebar-wrapper` |  |  |
+
+Other parts: `sidebar-content`, `sidebar-footer`, `sidebar-gap`, `sidebar-group`, `sidebar-group-action`, `sidebar-group-content`, `sidebar-group-label`, `sidebar-header`, `sidebar-inner`, `sidebar-input`, `sidebar-inset`, `sidebar-menu`, `sidebar-menu-badge`, `sidebar-menu-item`, `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-rail`, `sidebar-trigger`, `sidebar-wrapper`.
 
 Other options named in the docs: `data-mobile` string.
 
@@ -2441,34 +2331,29 @@ Events: `sidebar:open` `{ mobile }`; `sidebar:close` `{ mobile }`.
 
 #### Carousel (`carousel`)
 
-Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/carousel/. Full text: https://github.com/bl4ko/clanker-ui#carousel
+Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/carousel/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `carousel` (root) | `data-orientation` `horizontal`, `vertical` |  |
-| `carousel-content` |  |  |
-| `carousel-item` |  |  |
 | `carousel-next` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 | `carousel-previous` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
+
+Other parts: `carousel-content`, `carousel-item`.
 
 Events: `carousel:change` `{ value, count }`.
 
 #### Item (`item`)
 
-Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/item/. Full text: https://github.com/bl4ko/clanker-ui#alert-aspect-ratio-badge-card-empty-item-separator-skeleton
+Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/item/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `item` (root) | `data-size` `default`, `sm`, `xs`; `data-variant` `default`, `muted`, `outline` |  |
-| `item-actions` |  |  |
-| `item-content` |  |  |
-| `item-description` |  |  |
-| `item-footer` |  |  |
-| `item-group` |  |  |
-| `item-header` |  |  |
 | `item-media` | `data-variant` `default`, `icon`, `image` |  |
 | `item-separator` | `data-orientation` `horizontal`, `vertical` |  |
-| `item-title` |  |  |
+
+Other parts: `item-actions`, `item-content`, `item-description`, `item-footer`, `item-group`, `item-header`, `item-title`.
 
 ```html
 <div data-slot="item-group" role="list">
@@ -2489,55 +2374,49 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 
 #### Message (`message`)
 
-Group `chat`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/message/. Full text: https://github.com/bl4ko/clanker-ui#message-bubble-marker
+Group `chat`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/message/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `message` (root) | `data-align` `end` |  |
-| `message-avatar` |  |  |
-| `message-content` |  |  |
-| `message-footer` |  |  |
-| `message-group` |  |  |
-| `message-header` |  |  |
+
+Other parts: `message-avatar`, `message-content`, `message-footer`, `message-group`, `message-header`.
 
 #### Bubble (`bubble`)
 
-Group `chat`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/bubble/. Full text: https://github.com/bl4ko/clanker-ui#message-bubble-marker
+Group `chat`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/bubble/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `bubble` (root) | `data-align` `end`; `data-variant` `ghost`, `muted` |  |
-| `bubble-content` |  |  |
-| `bubble-group` |  |  |
 | `bubble-reactions` | `data-align` `end`, `start`; `data-side` `bottom`, `top` |  |
+
+Other parts: `bubble-content`, `bubble-group`.
 
 #### Attachment (`attachment`)
 
-Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/attachment/. Full text: https://github.com/bl4ko/clanker-ui#attachment
+Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/attachment/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `attachment` (root) | `data-orientation` `horizontal`, `vertical`; `data-size` `default`, `sm`, `xs`; `data-state` string |  |
 | `attachment-action` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
-| `attachment-actions` |  |  |
-| `attachment-content` |  |  |
-| `attachment-description` |  |  |
-| `attachment-group` |  |  |
 | `attachment-media` | `data-variant` `image` |  |
-| `attachment-title` |  |  |
-| `attachment-trigger` |  |  |
+
+Other parts: `attachment-actions`, `attachment-content`, `attachment-description`, `attachment-group`, `attachment-title`, `attachment-trigger`.
 
 #### Message Scroller (`message-scroller`)
 
-Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/message-scroller/. Full text: https://github.com/bl4ko/clanker-ui#message-scroller
+Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/message-scroller/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `message-scroller` (root) | `data-auto-scroll` boolean; `data-default-scroll-position` `end`, `last-anchor`, `start` |  |
 | `message-scroller-button` | `data-direction` string; `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `destructive`, `ghost`, `link`, `outline`, `secondary` | `data-active` |
-| `message-scroller-content` |  |  |
 | `message-scroller-item` | `data-message-id` string; `data-scroll-anchor` `false`, `true` |  |
 | `message-scroller-viewport` |  | `data-autoscrolling`, `data-pending-scroll` |
+
+Other parts: `message-scroller-content`.
 
 Part attributes: `data-message-scroller-spacer` boolean.
 
@@ -2547,31 +2426,29 @@ Events: `message-scroller:scrollable` `{ start, end }`.
 
 #### Trace (`trace`)
 
-Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/trace/. Full text: https://github.com/bl4ko/clanker-ui#trace
+Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/trace/.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `trace` (root) |  |  |
 | `trace-collapsible` | `data-default-open` boolean |  |
 | `trace-collapsible-content` |  | `data-ending-style`, `data-starting-style` |
-| `trace-collapsible-content-inner` (kit adds) |  |  |
-| `trace-collapsible-trigger` |  |  |
-| `trace-description` |  |  |
-| `trace-icon` |  |  |
 | `trace-line` | `data-status` `error`, `pending`, `running` |  |
-| `trace-title` |  |  |
+
+Other parts: `trace` (root), `trace-collapsible-trigger`, `trace-description`, `trace-icon`, `trace-title`.
+
+Kit adds: `trace-collapsible-content-inner`.
 
 Events: `trace:open`; `trace:close`.
 
 #### Marker (`marker`)
 
-Group `chat`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/marker/. Full text: https://github.com/bl4ko/clanker-ui#message-bubble-marker
+Group `chat`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/marker/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `marker` (root) | `data-variant` `border`, `separator` |  |
-| `marker-content` |  |  |
-| `marker-icon` |  |  |
+
+Other parts: `marker-content`, `marker-icon`.
 
 ```html
 <div data-slot="marker" role="status">
@@ -2585,52 +2462,38 @@ Group `chat`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/d
 
 #### Questionnaire (`questionnaire`)
 
-Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/questionnaire/. Full text: https://github.com/bl4ko/clanker-ui#questionnaire
+Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/questionnaire/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `questionnaire` (root) | `data-default-item` string; `data-shortcuts` `letters`, `numbers` |  |
-| `questionnaire-actions` |  |  |
 | `questionnaire-choice` | `data-default-checked` boolean; `data-value` string | `data-checked`, `data-disabled`, `data-invalid`, `data-state` |
-| `questionnaire-choice-description` |  |  |
-| `questionnaire-choice-indicator` (kit adds) |  |  |
-| `questionnaire-choice-indicator-check` (kit adds) |  |  |
-| `questionnaire-choice-indicator-dot` (kit adds) |  |  |
-| `questionnaire-choice-input` (kit adds) |  |  |
-| `questionnaire-choice-label` (kit adds) |  |  |
-| `questionnaire-choice-shortcut` (kit adds) |  |  |
-| `questionnaire-choices` |  |  |
-| `questionnaire-description` |  |  |
-| `questionnaire-error` |  |  |
-| `questionnaire-input` |  |  |
-| `questionnaire-input-wrapper` (kit adds) |  |  |
-| `questionnaire-item` |  |  |
 | `questionnaire-next` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 | `questionnaire-previous` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 | `questionnaire-progress` | `data-template` string |  |
 | `questionnaire-skip` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 | `questionnaire-submit` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
-| `questionnaire-title` |  |  |
+
+Other parts: `questionnaire-actions`, `questionnaire-choice-description`, `questionnaire-choices`, `questionnaire-description`, `questionnaire-error`, `questionnaire-input`, `questionnaire-item`, `questionnaire-title`.
+
+Kit adds: `questionnaire-choice-indicator`, `questionnaire-choice-indicator-check`, `questionnaire-choice-indicator-dot`, `questionnaire-choice-input`, `questionnaire-choice-label`, `questionnaire-choice-shortcut`, `questionnaire-input-wrapper`.
 
 Events: `questionnaire:change` `{ value, index, total }`; `questionnaire:status` `{ item, value }`; `questionnaire:submit` `{ value, status }`.
 
 #### Code Block (`code-block`)
 
-Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/code-block/. Full text: https://github.com/bl4ko/clanker-ui#code-block
+Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/code-block/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `code-block` (root) | `data-size` `sm`; `data-variant` `default`, `destructive` |  |
-| `code-block-actions` |  |  |
-| `code-block-code` |  |  |
 | `code-block-content` | `data-numbered` `false`, `true`; `data-start-line` number; `data-wrap` `false`, `true` |  |
 | `code-block-copy-button` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
-| `code-block-footer` |  |  |
-| `code-block-header` |  |  |
 | `code-block-line` | `data-variant` `added`, `highlighted`, `removed` |  |
-| `code-block-line-content` (kit adds) |  |  |
-| `code-block-title` |  |  |
-| `code-block-wrap-button` |  |  |
+
+Other parts: `code-block-actions`, `code-block-code`, `code-block-footer`, `code-block-header`, `code-block-title`, `code-block-wrap-button`.
+
+Kit adds: `code-block-line-content`.
 
 Other options named in the docs: `data-timeout` any.
 
@@ -2638,29 +2501,14 @@ Events: `code-block:copy` `{ value }`; `code-block:wrap` `{ value }`.
 
 #### Calendar (`calendar`)
 
-Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/calendar/. Full text: https://github.com/bl4ko/clanker-ui#calendar
+Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/calendar/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `calendar` (root) | `data-button-variant` any; `data-caption-layout` any; `data-disabled` any; `data-disabled-dates` any; `data-disabled-weekdays` any; `data-fixed-weeks` any; `data-label-next` any; `data-label-previous` any; `data-lang` any; `data-max` any; `data-min` any; `data-mode` `multiple`, `range`, `single`; `data-month` any; `data-months` any; `data-name` string; `data-outside-days` `false`, `true`; `data-required` any; `data-show-week-number` any; `data-today` any; `data-value` string; `data-week-start` any |  |
-| `calendar-button-next` (kit adds) |  |  |
-| `calendar-button-previous` (kit adds) |  |  |
-| `calendar-caption-label` (kit adds) |  |  |
 | `calendar-day` (kit adds) |  | `data-disabled`, `data-hidden`, `data-outside`, `data-range-end`, `data-range-middle`, `data-range-start`, `data-selected`, `data-today` |
-| `calendar-dropdown` (kit adds) |  |  |
-| `calendar-dropdown-root` (kit adds) |  |  |
-| `calendar-dropdowns` (kit adds) |  |  |
-| `calendar-month` (kit adds) |  |  |
-| `calendar-month-caption` (kit adds) |  |  |
-| `calendar-month-grid` (kit adds) |  |  |
-| `calendar-months` (kit adds) |  |  |
-| `calendar-nav` (kit adds) |  |  |
-| `calendar-week` (kit adds) |  |  |
-| `calendar-week-number` (kit adds) |  |  |
-| `calendar-week-number-header` (kit adds) |  |  |
-| `calendar-weekday` (kit adds) |  |  |
-| `calendar-weekdays` (kit adds) |  |  |
-| `calendar-weeks` (kit adds) |  |  |
+
+Kit adds: `calendar-button-next`, `calendar-button-previous`, `calendar-caption-label`, `calendar-dropdown`, `calendar-dropdown-root`, `calendar-dropdowns`, `calendar-month`, `calendar-month-caption`, `calendar-month-grid`, `calendar-months`, `calendar-nav`, `calendar-week`, `calendar-week-number`, `calendar-week-number-header`, `calendar-weekday`, `calendar-weekdays`, `calendar-weeks`.
 
 Other options named in the docs: `data-day` any; `data-hidden` `false`, `true`.
 
@@ -2672,12 +2520,13 @@ Events: `calendar:change` `{ value, mode, source }`; `calendar:navigate` `{ valu
 
 #### Date Picker (`date-picker`)
 
-Group `chat`. Needs `core`, `overlays`, `forms`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/date-picker/. Full text: https://github.com/bl4ko/clanker-ui#date-picker
+Group `chat`. Needs `core`, `overlays`, `forms`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/date-picker/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `date-picker` (root) | `data-format` string; `data-placeholder` string |  |
-| `date-picker-value` |  |  |
+
+Other parts: `date-picker-value`.
 
 Part attributes: `data-date-picker-content` boolean; `data-date-picker-input` boolean; `data-date-picker-preset` boolean; `data-date-picker-trigger` boolean.
 
@@ -2687,39 +2536,18 @@ Events: `date-picker:open`; `date-picker:close`.
 
 #### Chart (`chart`)
 
-Group `chart`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/chart/. Full text: https://github.com/bl4ko/clanker-ui#chart
+Group `chart`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/chart/.
 
 | Part | Write | State |
 | --- | --- | --- |
 | `chart` (root) |  | `data-sparkline` |
-| `chart-footer` (kit adds) |  |  |
-| `chart-legend` (kit adds) |  |  |
 | `chart-legend-indicator` (kit adds) |  | `data-shape` |
-| `chart-legend-item` (kit adds) |  |  |
-| `chart-legend-label` (kit adds) |  |  |
-| `chart-live` (kit adds) |  |  |
-| `chart-plot` (kit adds) |  |  |
-| `chart-probe` (kit adds) |  |  |
-| `chart-stat` |  |  |
-| `chart-stat-change` (kit adds) |  |  |
 | `chart-stat-delta` (kit adds) |  | `data-direction`, `data-tone` |
-| `chart-stat-description` (kit adds) |  |  |
-| `chart-stat-header` (kit adds) |  |  |
-| `chart-stat-label` (kit adds) |  |  |
-| `chart-stat-period` (kit adds) |  |  |
-| `chart-stat-trend` (kit adds) |  |  |
-| `chart-stat-value` (kit adds) |  |  |
-| `chart-svg` (kit adds) |  |  |
-| `chart-table` (kit adds) |  |  |
-| `chart-table-toggle` (kit adds) |  |  |
-| `chart-tooltip` (kit adds) |  |  |
-| `chart-tooltip-extra` (kit adds) |  |  |
-| `chart-tooltip-indicator` (kit adds) |  |  |
 | `chart-tooltip-item` (kit adds) |  | `data-total` |
-| `chart-tooltip-items` (kit adds) |  |  |
-| `chart-tooltip-label` (kit adds) |  |  |
-| `chart-tooltip-name` (kit adds) |  |  |
-| `chart-tooltip-value` (kit adds) |  |  |
+
+Other parts: `chart-stat`.
+
+Kit adds: `chart-footer`, `chart-legend`, `chart-legend-item`, `chart-legend-label`, `chart-live`, `chart-plot`, `chart-probe`, `chart-stat-change`, `chart-stat-description`, `chart-stat-header`, `chart-stat-label`, `chart-stat-period`, `chart-stat-trend`, `chart-stat-value`, `chart-svg`, `chart-table`, `chart-table-toggle`, `chart-tooltip`, `chart-tooltip-extra`, `chart-tooltip-indicator`, `chart-tooltip-items`, `chart-tooltip-label`, `chart-tooltip-name`, `chart-tooltip-value`.
 
 Other options named in the docs: `data-part` any.
 

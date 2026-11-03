@@ -136,8 +136,8 @@
         "example": { "type": "string", "description": "Minimal markup." },
         "exampleSource": { "type": "string" },
         "docs": { "type": "string", "format": "uri" },
-        "docsMarkdown": { "type": "string", "format": "uri" },
-        "readme": { "type": "string", "description": "README section: the full text reference of the component." },
+        "docsMarkdown": { "type": "string", "format": "uri", "description": "Pages URL of the readme file." },
+        "readme": { "type": "string", "description": "Repository path of the component file: the catalog entry and the README full text of the component. The skill has the same file in references/components/." },
         "sameAs": { "type": "string", "description": "This name is an alias of the named component." },
         "script": { "type": "string", "description": "JavaScript usage from the README section, when the component has an API." }
       }

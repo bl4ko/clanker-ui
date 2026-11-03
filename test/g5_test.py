@@ -1020,3 +1020,198 @@ def check_chart_extreme_values(t):
         assert bad == [], (name, bad)
     assert result["bar"][1][0] == result["bar"][1][1] > 0, result["bar"]
     assert result["horizontal"][1][0] == result["horizontal"][1][1] > 0, result["horizontal"]
+
+
+MAKE = """
+  const { chart } = await import("/clanker-ui-chart.js")
+  const make = (rows, options, width = 600) => {
+    const box = document.createElement("div")
+    box.style.width = `${width}px`
+    document.body.append(box)
+    const view = chart(box, rows, { animate: false, height: 300, locale: "en-US", ...options })
+    return { box, view, svg: box.querySelector('[data-slot="chart-svg"]') }
+  }
+  const boxOf = el => { const b = el.getBBox(); return { x0: b.x, x1: b.x + b.width, y0: b.y, y1: b.y + b.height } }
+  const plotOf = svg => {
+    const lines = [...svg.querySelectorAll('[data-part="grid"] line')]
+    const xs = lines.flatMap(l => [+l.getAttribute("x1"), +l.getAttribute("x2")])
+    const ys = lines.flatMap(l => [+l.getAttribute("y1"), +l.getAttribute("y2")])
+    return { x0: Math.min(...xs) - 0.5, x1: Math.max(...xs) + 0.5, y0: Math.min(...ys) - 0.5, y1: Math.max(...ys) + 0.5 }
+  }
+  const inside = (b, p) => b.x0 >= p.x0 - 1 && b.x1 <= p.x1 + 1 && b.y0 >= p.y0 - 1 && b.y1 <= p.y1 + 1
+  const overlap = list => list.some((a, i) => list.some((b, j) => i < j && a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0))
+  const ticks = (svg, axis) => [...svg.querySelectorAll(`[data-axis="${axis}"] text`)]
+  const at = (svg, attr) => Object.fromEntries(ticks(svg, "value").map((t, i) => [t.textContent, +svg.querySelectorAll('[data-part="grid"] line')[i].getAttribute(attr)]))
+"""
+
+
+def check_chart_references(t):
+    page = t.page
+    result = page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const out = {}
+          const rows = [186, 305, 237, 73, 209, 214].map((v, i) => ({ m: `m${i}`, v }))
+          let c = make(rows, { type: "line", x: "m", references: [{ value: 200, label: "Goal" }, { from: 300, to: 100, label: "Target", tone: "chart-2" }] })
+          const y = at(c.svg, "y1")
+          const lines = [...c.svg.querySelectorAll('[data-part="reference-line"]')]
+          const band = c.svg.querySelector('[data-part="reference-band"]')
+          const labels = [...c.svg.querySelectorAll('[data-part="reference-label"]')]
+          const plot = plotOf(c.svg)
+          out.line = {
+            ticks: Object.keys(y),
+            lines: lines.map(l => [+l.getAttribute("y1"), +l.getAttribute("y2"), +l.getAttribute("x1"), +l.getAttribute("x2")]),
+            grid: [y["200"], y["100"], y["300"], plot.x0 + 0.5, plot.x1 - 0.5],
+            band: band && [+band.getAttribute("y"), +band.getAttribute("height")],
+            dash: getComputedStyle(lines[0]).strokeDasharray,
+            bandFill: band && [getComputedStyle(band).fill === getComputedStyle(lines[1]).stroke, +getComputedStyle(band).fillOpacity],
+            tone: lines[1].style.getPropertyValue("--r"),
+            labels: labels.map(l => l.textContent),
+            inside: labels.every(l => inside(boxOf(l), plot)),
+            overlap: overlap(labels.map(boxOf)),
+            summary: c.svg.getAttribute("aria-label"),
+            legend: c.box.querySelector('[data-slot="chart-legend"]').hidden,
+            table: [...c.box.querySelectorAll('[data-slot="chart-table"] table[data-part="references"] tr')].map(r => [...r.children].map(e => e.textContent)),
+          }
+          c.svg.focus()
+          out.line.tip = c.box.querySelectorAll('[data-slot="chart-tooltip-item"]').length
+          c.box.remove()
+          c = make(rows, { type: "bar", x: "m", references: [{ value: 200, label: "Alpha" }, { value: 205, label: "Beta" }, { value: 400, label: "Top" }, { value: 0, label: "Bottom", position: "start" }] })
+          const close = [...c.svg.querySelectorAll('[data-part="reference-label"]')]
+          const cplot = plotOf(c.svg)
+          out.close = { labels: close.map(l => l.textContent), inside: close.every(l => inside(boxOf(l), cplot)), overlap: overlap(close.map(boxOf)), order: [...c.svg.children].map(n => n.dataset.part).filter(Boolean) }
+          c.box.remove()
+          c = make([{ m: "a", v: 1 }, { m: "b", v: 3 }], { type: "line", x: "m", references: [{ value: 120, label: "Far" }] })
+          out.grow = [ticks(c.svg, "value").at(-1).textContent, c.svg.querySelectorAll('[data-part="reference-line"]').length]
+          c.view.update(null, { domain: [0, 10] })
+          out.fixed = [ticks(c.svg, "value").at(-1).textContent, c.svg.querySelectorAll('[data-part="reference-line"]').length]
+          c.box.remove()
+          c = make(rows, { type: "bar", x: "m", horizontal: true, references: [{ value: 200, label: "Goal" }] })
+          const x = at(c.svg, "x1")
+          const v = c.svg.querySelector('[data-part="reference-line"]')
+          const hl = c.svg.querySelector('[data-part="reference-label"]')
+          out.horizontal = [+v.getAttribute("x1"), x["200"], inside(boxOf(hl), plotOf(c.svg))]
+          c.box.remove()
+          const attempt = (r, o) => { const b = document.createElement("div"); document.body.append(b); try { chart(b, r ?? rows, { x: "m", ...o }); return "ok" } catch (e) { return e.name } finally { b.remove() } }
+          out.errors = [
+            attempt(null, { references: "goal" }),
+            attempt(null, { references: [{ label: "no value" }] }),
+            attempt(null, { references: [{ from: 1 }] }),
+            attempt(null, { references: [{ value: 1, position: "middle" }] }),
+            attempt(null, { references: [{ value: 1, tone: "url(x)" }] }),
+            attempt(null, { type: "pie", y: "v", references: [{ value: 1 }] }),
+            attempt(null, { type: "line", references: [{ value: 1 }, { from: 0, to: 2 }] }),
+          ]
+          return out
+        }"""
+    )
+    line = result["line"]
+    assert line["ticks"] == ["0", "100", "200", "300", "400"], line
+    assert line["lines"][0][:2] == [line["grid"][0]] * 2, ("the reference line sits on its value", line)
+    assert [r[0] for r in line["lines"][1:]] == [line["grid"][1], line["grid"][2]] or [r[0] for r in line["lines"][1:]] == [line["grid"][2], line["grid"][1]], ("the band edges sit on from and to", line)
+    assert line["lines"][0][2:] == line["grid"][3:], ("the reference line spans the plot", line)
+    assert line["band"] and abs(line["band"][0] - line["grid"][2]) <= 1 and abs(line["band"][0] + line["band"][1] - line["grid"][1]) <= 1, ("the band fills from 300 to 100", line)
+    assert line["dash"] not in ("none", ""), line
+    assert line["bandFill"][0] and 0 < line["bandFill"][1] < 0.2, ("a light band fill in the tone", line)
+    assert line["tone"] == "var(--chart-2)", line
+    assert line["labels"] == ["Goal", "Target"] and line["inside"] and not line["overlap"], line
+    assert line["summary"].endswith("V from 73 to 305. Goal at 200. Target from 100 to 300."), line["summary"]
+    assert line["legend"] and line["tip"] == 1, ("references are not in the legend or the tooltip", line)
+    assert line["table"] == [["Reference", "Value"], ["Goal", "200"], ["Target", "100–300"]], line["table"]
+    close = result["close"]
+    assert close["labels"] == ["Alpha", "Beta", "Top", "Bottom"] and close["inside"] and not close["overlap"], ("labels of close lines and lines on the plot edge stay inside and apart", close)
+    assert close["order"].index("references") < close["order"].index("marks") < close["order"].index("reference-labels"), close
+    assert float(result["grow"][0]) >= 120 and result["grow"][1] == 1, ("the value axis grows to show a reference", result["grow"])
+    assert result["fixed"] == ["10", 0], ("a fixed domain hides a reference outside it", result["fixed"])
+    assert result["horizontal"][0] == result["horizontal"][1] and result["horizontal"][2], ("a vertical reference line in a horizontal bar chart", result["horizontal"])
+    assert result["errors"] == ["TypeError"] * 6 + ["ok"], result["errors"]
+
+
+def check_chart_time_axis(t):
+    page = t.page
+    result = page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const out = {}
+          const day = (y, m, d) => `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`
+          const span = (start, count, by) => Array.from({ length: count }, (_, i) => { const d = new Date(start[0], start[1] - 1, start[2] + i * by); return { d: day(d.getFullYear(), d.getMonth() + 1, d.getDate()), v: (i % 5) + 1 } })
+          let c = make([{ d: "2026-10-01", kg: 80.4 }, { d: "2026-10-02", kg: 80.1 }, { d: "2026-10-20", kg: 78.9 }], { type: "line", x: "d", scale: "time", dots: true, zero: false })
+          const cx = [...c.svg.querySelectorAll('[data-part="dot"]')].map(e => +e.getAttribute("cx"))
+          out.ratio = Math.round(((cx[2] - cx[1]) / (cx[1] - cx[0])) * 10) / 10
+          out.summary = c.svg.getAttribute("aria-label")
+          const r = c.svg.getBoundingClientRect()
+          c.svg.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, clientX: r.left + cx[2] - 30, clientY: r.top + 100, pointerType: "mouse" }))
+          out.hover = c.box.querySelector('[data-slot="chart-tooltip-label"]')?.textContent
+          c.box.remove()
+          const axis = (rows, width, options = {}) => {
+            const c = make(rows, { type: "line", x: "d", scale: "time", ...options }, width)
+            const list = ticks(c.svg, "category")
+            const w = +c.svg.getAttribute("width")
+            const boxes = list.map(e => { const x = +e.getAttribute("x"); const half = e.getComputedTextLength() / 2; return { x0: x - half, x1: x + half } })
+            const res = { ticks: list.map(e => e.textContent), inside: boxes.every(b => b.x0 >= -1 && b.x1 <= w + 1), apart: boxes.every((b, i) => !i || b.x0 - boxes[i - 1].x1 >= 8) }
+            c.box.remove()
+            return res
+          }
+          out.days = axis(span([2026, 10, 1], 7, 1), 600)
+          out.weeks = axis(span([2026, 9, 1], 26, 3), 900)
+          out.months = axis(span([2025, 11, 15], 12, 30), 600)
+          out.years = axis(span([2010, 3, 1], 17, 365), 600)
+          out.hours = axis([{ d: "2026-10-01T08:00:00", v: 1 }, { d: "2026-10-01T14:30:00", v: 2 }, { d: "2026-10-01T20:00:00", v: 3 }], 600)
+          out.narrow = axis(span([2026, 9, 1], 26, 3), 390)
+          out.format = axis(span([2026, 10, 1], 3, 1), 600, { xFormat: { day: "numeric" } })
+          const joined = connect => {
+            const c = make([{ d: "2026-10-01", plan: 1, a: 1 }, { d: "2026-10-02", a: 2 }, { d: "2026-10-03", plan: 3, a: 3 }], { type: "line", x: "d", scale: "time", connectNulls: connect })
+            const res = [...c.svg.querySelectorAll('[data-key="plan"] [data-part="line"]')].map(p => /[LC]/.test(p.getAttribute("d")))
+            c.box.remove()
+            return res
+          }
+          out.connect = [joined(undefined), joined(true), joined(["plan"]), joined(["a"])]
+          const attempt = (rows, o) => { const b = document.createElement("div"); document.body.append(b); try { chart(b, rows, { x: "d", ...o }); return "ok" } catch (e) { return e.name } finally { b.remove() } }
+          out.errors = [
+            attempt([{ d: "2026-10-01", v: 1 }], { type: "bar", scale: "time" }),
+            attempt([{ d: "soon", v: 1 }], { type: "line", scale: "time" }),
+            attempt([{ d: "2026-10-01", v: 1 }], { type: "line", scale: "linear" }),
+            attempt([{ d: new Date(2026, 9, 1), v: 1 }], { type: "area", scale: "time" }),
+          ]
+          return out
+        }"""
+    )
+    assert result["ratio"] == 18, ("the gap from 2 to 20 October is 18 times the gap from 1 to 2 October", result)
+    assert result["summary"] == "Line chart. Kg, 3 points from Oct 1, 2026 to Oct 20, 2026. Kg from 78.9 to 80.4.", result["summary"]
+    assert result["hover"] == "Oct 20, 2026", ("hover finds the nearest point by time", result["hover"])
+    expect = {
+        "days": ["Oct 1", "Oct 2", "Oct 3", "Oct 4", "Oct 5", "Oct 6", "Oct 7"],
+        "weeks": ["Sep 7", "Sep 14", "Sep 21", "Sep 28", "Oct 5", "Oct 12", "Oct 19", "Oct 26", "Nov 2", "Nov 9"],
+    }
+    for name, want in expect.items():
+        assert result[name]["ticks"] == want, (name, result[name])
+    for name in ["days", "weeks", "months", "years", "hours", "narrow", "format"]:
+        assert result[name]["inside"] and result[name]["apart"] and len(result[name]["ticks"]) >= 2, (name, result[name])
+    assert result["months"]["ticks"] == ["Dec", "2026", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"] or result["months"]["ticks"] == ["2026", "Apr", "Jul", "Oct"], result["months"]
+    years = [int(x) for x in result["years"]["ticks"]]
+    assert years[0] >= 2011 and years[-1] <= 2026 and len({b - a for a, b in zip(years, years[1:])}) == 1, result["years"]
+    assert all(x.endswith(("AM", "PM")) for x in result["hours"]["ticks"]), result["hours"]
+    assert result["narrow"]["ticks"] == ["Sep", "Oct", "Nov"], ("a narrow chart moves from weeks to months", result["narrow"])
+    assert result["format"]["ticks"] == ["1", "2", "3"], result["format"]
+    assert result["connect"] == [[False, False], [True], [True], [False, False]], ("connectNulls joins the plan points", result["connect"])
+    assert result["errors"] == ["TypeError", "TypeError", "TypeError", "ok"], result["errors"]
+
+
+def check_chart_reference_demo(t):
+    page = t.page
+    t.section("chart-line")
+    surface = svg_of(page, "chart-line-time")
+    surface.focus()
+    assert tip(page, "chart-line-time") == {"label": "Sep 1, 2026", "items": [["Actual", "84.2", False], ["Plan", "84", False]]}
+    page.keyboard.press("ArrowRight")
+    assert tip(page, "chart-line-time") == {"label": "Sep 8, 2026", "items": [["Actual", "83.6", False], ["Plan", "–", False]]}
+    page.keyboard.press("Escape")
+    assert page.locator("#chart-line-time [data-part='reference-label']").all_text_contents() == ["Goal 78 kg"]
+    assert page.locator("#chart-line-reference [data-part='reference-band']").count() == 1
+    assert page.locator("#chart-bar-reference [data-part='reference-line']").count() == 1
+    for cid in ["chart-line-time", "chart-line-reference"]:
+        t.shot(cid, card_of(page, cid))
+    t.section("chart-bar")
+    t.shot("chart-bar-reference", card_of(page, "chart-bar-reference"))

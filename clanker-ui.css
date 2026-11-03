@@ -16502,6 +16502,22 @@
     pointer-events: none;
   }
   [data-slot="chart-svg"] :is([data-part="cursor"], [data-part="crosshair"])[data-active] { visibility: visible; }
+  [data-slot="chart-svg"] [data-part="reference-line"] {
+    stroke: var(--r, var(--muted-foreground));
+    stroke-width: 1px;
+    stroke-dasharray: 3 3;
+    shape-rendering: crispEdges;
+  }
+  [data-slot="chart-svg"] [data-part="reference-band"] {
+    fill: var(--r, var(--muted-foreground));
+    fill-opacity: 0.08;
+  }
+  [data-slot="chart-svg"] text[data-part="reference-label"] {
+    stroke: var(--chart-surface);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
   [data-slot="chart-svg"] [data-part="bar"] {
     fill: var(--c);
     transition: opacity var(--default-transition-duration) var(--default-transition-timing-function);
@@ -16585,7 +16601,7 @@
     stroke-dasharray: 1;
     animation: clanker-chart-draw 700ms var(--ease-out) backwards;
   }
-  [data-slot="chart-svg"][data-animate] :is([data-part="area"], [data-part="shape"], [data-part="slice"], [data-part="arc"], [data-part="dot"], [data-part="labels"], [data-part="center"]) {
+  [data-slot="chart-svg"][data-animate] :is([data-part="area"], [data-part="shape"], [data-part="slice"], [data-part="arc"], [data-part="dot"], [data-part="labels"], [data-part="center"], [data-part="references"], [data-part="reference-labels"]) {
     animation: clanker-chart-fade 500ms var(--ease-out) backwards;
   }
   [data-slot="chart-tooltip"] {
@@ -16783,6 +16799,7 @@
     transition: background-color var(--default-transition-duration) var(--default-transition-timing-function);
   }
   [data-slot="chart-table"] tbody tr:last-child { border-bottom: 0; }
+  [data-slot="chart-table"] table + table { margin-top: 1rem; }
   [data-slot="chart"][data-sparkline] [data-slot="chart-table"] :is(th, td) {
     height: auto;
     padding: 0.125rem 0.5rem;

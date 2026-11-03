@@ -826,6 +826,7 @@ chartMount(
   { ...chartMonthOptions, type: "bar", diverging: true, labels: true, label: "Change in visitors, January to June 2024" },
 )
 chartMount("chart-bar-emphasis", { rows: chartMonths, config: chartDesktop }, { ...chartMonthOptions, type: "bar", highlight: 1 })
+chartMount("chart-bar-reference", { rows: chartMonths, config: chartDesktop }, { ...chartMonthOptions, type: "bar", references: [{ value: 200, label: "Goal" }] })
 
 chartMount("chart-line-default", { rows: chartMonths, config: chartDesktop }, { ...chartMonthOptions, type: "line" })
 chartMount("chart-line-linear", { rows: chartMonths, config: chartDesktop }, { ...chartMonthOptions, type: "line", curve: "linear" })
@@ -833,6 +834,28 @@ chartMount("chart-line-step", { rows: chartMonths, config: chartDesktop }, { ...
 chartMount("chart-line-multiple", chartMonthData, { ...chartMonthOptions, type: "line" })
 chartMount("chart-line-dots", chartMonthData, { ...chartMonthOptions, type: "line", dots: true })
 chartMount("chart-line-label", chartMonthData, { ...chartMonthOptions, type: "line", dots: true, labels: true })
+chartMount("chart-line-reference", { rows: chartMonths, config: chartDesktop }, { ...chartMonthOptions, type: "line", references: [{ from: 180, to: 250, label: "Target" }, { value: 300, label: "Limit", tone: "destructive" }] })
+chartMount(
+  "chart-line-time",
+  {
+    rows: [
+      { day: "2026-09-01", plan: 84, actual: 84.2 },
+      { day: "2026-09-08", actual: 83.6 },
+      { day: "2026-09-15", actual: 83.1 },
+      { day: "2026-09-29", actual: 82.4 },
+      { day: "2026-10-01", plan: 82 },
+      { day: "2026-10-06", actual: 81.7 },
+      { day: "2026-10-07", actual: 81.9 },
+      { day: "2026-10-08", actual: 81.5 },
+      { day: "2026-10-20", actual: 80.6 },
+      { day: "2026-11-01", plan: 80, actual: 79.8 },
+      { day: "2026-11-03", actual: 79.6 },
+      { day: "2026-12-01", plan: 78 },
+    ],
+    config: { actual: { label: "Actual" }, plan: { label: "Plan", color: "chart-other" } },
+  },
+  { type: "line", x: "day", scale: "time", connectNulls: true, curve: "linear", dots: true, zero: false, format: { maximumFractionDigits: 1 }, references: [{ value: 78, label: "Goal 78 kg", position: "start" }], label: "Weight, plan and actual, kg" },
+)
 
 const chartBrowserData = { rows: chartBrowsers, config: chartBrowserConfig }
 const chartBrowserOptions = { x: "browser", y: "visitors", label: "Visitors by browser, January to June 2024" }

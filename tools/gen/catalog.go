@@ -198,8 +198,9 @@ var (
 )
 
 var catalogTitleComps = map[string][]string{
-	"Theme toggle and switch": {"theme"},
-	"Stat tile and sparkline": {"chart"},
+	"Theme toggle and switch":       {"theme"},
+	"Stat tile and sparkline":       {"chart"},
+	"Reference lines and time axis": {"chart"},
 }
 
 var catalogMirror = [][2]string{{"dropdown-menu", "context-menu"}, {"dropdown-menu", "menubar"}}

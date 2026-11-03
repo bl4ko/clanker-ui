@@ -4,7 +4,7 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
-## Unreleased
+## 0.2.0 - 2026-11-03
 
 ### Breaking
 
@@ -15,10 +15,14 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - The `play` and `pause` icons. (#34)
 - Docs site: a Native Select page. Every docs page links its Markdown (`<link rel="alternate" type="text/markdown">`) and `llms.txt` (`rel="describedby"`). The Markdown of a component page that is not ported yet is the component file of the skill, and a guide page that is not ported yet links its README section. `sitemap.xml` lists only real pages, and the site has no `robots.txt`. (#43)
 - Chart reference lines and bands (`references`), a time axis for line and area charts (`scale: "time"`), and `connectNulls`. (#38)
+- Agent skill: one Markdown file for each component in `references/components/`; `components.md` is an index. Setup, theming, and test steps move from `SKILL.md` to `references/setup.md`, `theming.md`, and `testing.md`. `dialogOpen` and `dialogClose` are also listed for alert dialog, sheet, and drawer. (#41)
+- README: an install command for the agent skill, a quick start that works when you paste it, and recipes to override the kit (tokens, dialog width, fonts, Tailwind layer order, `!important`). (#14)
 
 ### Changed
 
 - `clanker-ui.css` is readable, not minified. Use `dist/clanker-ui.min.css` for the minified file. Every rule is in a `clanker.*` layer; a reduced-motion `.shimmer` rule outside all layers is gone. (#12)
+- Menubar: on a hover switch, the old menu closes 45 ms after the new menu opens, as in shadcn. After a press outside a modal menubar, focus goes back to the trigger. (#1, #4)
+- `llms-full.txt` is smaller (259 KB to 221 KB): it does not repeat README examples, keyboard lines, and exports. (#28)
 
 ### Fixed
 
@@ -38,6 +42,9 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - `toast()` works after the app replaces the content of an open modal dialog, and the visible toasts stay. (#30)
 - Focus goes back to a dialog trigger that was disabled when the dialog opened. (#31)
 - An alert dialog that opens with the pointer shows no focus ring flash on Cancel in Safari. (#32)
+- The navigation menu stays open after a click that comes less than 500 ms after a hover open. (#29)
+- The catalog gives each component of a combined README section its own lines, lists the indicators that the kit makes as kit parts, and gives no state from the attributes of other components. (#28)
+- The skill and README name the right file to import each export from, for the one-file set and for the group set. (#25)
 
 ## 0.1.0 - 2026-11-02
 

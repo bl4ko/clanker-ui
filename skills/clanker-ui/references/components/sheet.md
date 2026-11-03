@@ -16,6 +16,11 @@ Other options named in the docs: `data-show-close-button` `false`, `true`.
 
 Events: `sheet:open` `{ trigger }`; `sheet:close` `{ reason }` (cancelable).
 
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
+
+- `dialogOpen(target, { trigger }?) → boolean`: Works for `dialog`, `alert-dialog`, `sheet`, and `drawer`.
+- `dialogClose(target, reason = "api") → boolean`: `reason` goes to the `:close` event.
+
 ```html
 <div data-slot="sheet">
   <button type="button" data-slot="button" data-variant="outline" data-sheet-trigger>Open</button>

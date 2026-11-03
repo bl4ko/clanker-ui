@@ -18,6 +18,11 @@ Other options named in the docs: `data-base-ui-swipe-ignore` any; `data-disable-
 
 Events: `drawer:open` `{ trigger }`; `drawer:close` `{ reason }` (cancelable); `drawer:release` `{ delta }`; `drawer:snap-point-change` `{ snapPoint }`.
 
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
+
+- `dialogOpen(target, { trigger }?) → boolean`: Works for `dialog`, `alert-dialog`, `sheet`, and `drawer`.
+- `dialogClose(target, reason = "api") → boolean`: `reason` goes to the `:close` event.
+
 ## Full text
 
 ### Dialog, Alert Dialog, Sheet, Drawer

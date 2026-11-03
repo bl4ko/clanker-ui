@@ -14,6 +14,11 @@ Part attributes: `data-alert-dialog-action` boolean; `data-alert-dialog-cancel` 
 
 Events: `alert-dialog:open` `{ trigger }`; `alert-dialog:close` `{ reason }` (cancelable).
 
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
+
+- `dialogOpen(target, { trigger }?) → boolean`: Works for `dialog`, `alert-dialog`, `sheet`, and `drawer`.
+- `dialogClose(target, reason = "api") → boolean`: `reason` goes to the `:close` event.
+
 ```html
 <div data-slot="alert-dialog">
   <button type="button" data-slot="button" data-variant="outline" data-alert-dialog-trigger>Delete account</button>

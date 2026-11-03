@@ -1367,7 +1367,7 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 	}
 	comp.Needs = append(comp.Needs, b.t.needs[c]...)
 	for _, e := range exports {
-		if e.Component == c {
+		if e.Component == c || worksFor(exports, e.Component, c) {
 			comp.Exports = append(comp.Exports, e.Name)
 		}
 	}
@@ -1466,6 +1466,15 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 	return comp, nil
 }
 
+func worksFor(exports []catExport, owner, c string) bool {
+	for _, e := range exports {
+		if e.Component == owner && strings.HasPrefix(e.Notes, "Works for ") && strings.Contains(e.Notes, "`"+c+"`") {
+			return true
+		}
+	}
+	return false
+}
+
 func stripCode(s string) string {
 	return mdCode.ReplaceAllString(s, "")
 }
@@ -1543,15 +1552,12 @@ func catalogIndex(cat *catalog) string {
 	var b strings.Builder
 	b.WriteString("# clanker-ui components\n\n")
 	fmt.Fprintf(&b, "Generated from `%s` (same directory) by `go run ./tools/gen catalog`. Version %s, shadcn `%s`, Base UI %s.\n\n", filepath.Base(catalogFile), cat.Version, cat.Shadcn[:7], cat.BaseUI)
+	b.WriteString("Read the file of each component: `components/<name>.md`, for example [components/button.md](components/button.md).\n\n")
 	b.WriteString("## Groups\n\n")
 	b.WriteString("Each group has `clanker-ui-<group>.min.css` and (except core CSS-only parts) `clanker-ui-<group>.min.js`. Load `core` always, then the group of each component and the groups in its **Needs**.\n\n")
 	b.WriteString("| Group | Components |\n| --- | --- |\n")
 	for _, g := range cat.Groups {
-		var links []string
-		for _, c := range g.Components {
-			links = append(links, "["+c+"](components/"+c+".md)")
-		}
-		fmt.Fprintf(&b, "| `%s` | %s |\n", g.Name, strings.Join(links, ", "))
+		fmt.Fprintf(&b, "| `%s` | %s |\n", g.Name, strings.Join(g.Components, ", "))
 	}
 	b.WriteString("\n")
 	b.WriteString(globalsMarkdown(cat))

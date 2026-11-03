@@ -13,7 +13,7 @@ clanker-ui is shadcn/ui as static files. You write the HTML that shadcn renders 
 
 References in this skill:
 
-- [references/components.md](references/components.md): the groups, the global attributes, and a link to the file of each component.
+- [references/components.md](references/components.md): the groups with their components, and the global attributes.
 - `references/components/<name>.md`: one component: group, needs, parts, attributes, state, events, exports, and the full text with the examples and keys.
 - [references/csp.md](references/csp.md): the CSP header, the meta tag for static hosts, a small Go server, and the code rules.
 - [references/setup.md](references/setup.md): file checks, other ways to get the files, the group command for existing HTML, and which file exports which names.

@@ -1,3 +1,5 @@
+START = "/demo?only=charts"
+
 SECTIONS = ["chart", "chart-area", "chart-bar", "chart-line", "chart-pie", "chart-radar", "chart-radial", "chart-stat"]
 MONTHS = ["January", "February", "March", "April", "May", "June"]
 DESKTOP = [186, 305, 237, 73, 209, 214]

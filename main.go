@@ -269,8 +269,51 @@ func (s *site) routes() http.Handler {
 	return secure(mux)
 }
 
+var demoBlock = regexp.MustCompile(`(?m)^      <(?:section id="([a-z0-9-]+)" data-demo="[a-z]+"|h2 id="([a-z0-9-]+)" data-demo="category")>`)
+
 func (s *site) demo(w http.ResponseWriter, r *http.Request) {
-	s.file(w, r, "demo/index.html")
+	only := r.URL.Query().Get("only")
+	if only == "" {
+		s.file(w, r, "demo/index.html")
+		return
+	}
+	body, err := s.read("demo/index.html")
+	if err != nil {
+		http.Error(w, "internal error", http.StatusInternalServerError)
+		return
+	}
+	body, ok := demoOnly(body, strings.Split(only, ","))
+	if !ok {
+		http.Error(w, "unknown demo section", http.StatusBadRequest)
+		return
+	}
+	cache := "no-cache"
+	if s.live {
+		cache = "no-store"
+	}
+	serveBytes(w, r, "index.html", contentTypes[".html"], body, cache)
+}
+
+func demoOnly(body []byte, only []string) ([]byte, bool) {
+	var out []byte
+	last, category, found := 0, "", 0
+	for _, m := range demoBlock.FindAllSubmatchIndex(body, -1) {
+		if m[4] >= 0 {
+			category = string(body[m[4]:m[5]])
+			if slices.Contains(only, category) {
+				found++
+			}
+			continue
+		}
+		id := string(body[m[2]:m[3]])
+		if slices.Contains(only, id) {
+			found++
+		} else if !slices.Contains(only, category) {
+			out = append(append(out, body[last:m[1]-1]...), " hidden"...)
+			last = m[1] - 1
+		}
+	}
+	return append(out, body[last:]...), found == len(only)
 }
 
 func (s *site) serve(w http.ResponseWriter, r *http.Request) {

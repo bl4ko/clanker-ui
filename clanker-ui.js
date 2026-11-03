@@ -5673,6 +5673,7 @@ define("navigation-menu", {
         else navigationMenuOpen(root, item)
         state.sticky = true
       } else if (event.detail === 0 || performance.now() - state.hoveredAt > 500) navigationMenuClose(root)
+      else state.sticky = true
       state.hoveredAt = -Infinity
       return
     }

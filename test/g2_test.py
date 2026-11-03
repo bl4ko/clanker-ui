@@ -1169,6 +1169,31 @@ def check_hover_popup_leave(t):
     if after:
         page.keyboard.press("Escape")
     wait(page, f"() => !({expanded})()")
+    page.evaluate("""() => {
+      const root = document.querySelector('#navigation-menu-demo'), times = window.__navTimes = {}
+      root.addEventListener('navigation-menu:change', e => { if (e.detail.value) times.open = performance.now() })
+      root.addEventListener('click', () => { times.click = performance.now() }, true)
+    }""")
+    for _ in range(3):
+        away(page)
+        first.hover()
+        wait(page, expanded)
+        page.mouse.down()
+        page.mouse.up()
+        late = page.evaluate("() => window.__navTimes.click - window.__navTimes.open")
+        if late < 400:
+            break
+        if page.evaluate(expanded):
+            page.keyboard.press("Escape")
+            wait(page, f"() => !({expanded})()")
+    else:
+        t.skip(f"the click came {late:.0f} ms after the hover open; a click in 500 ms is needed")
+    t.settle()
+    away(page)
+    page.wait_for_timeout(400)
+    assert page.evaluate(expanded), ("a click in 500 ms after a hover open keeps the navigation menu open when the pointer leaves, as in Base UI", late)
+    page.keyboard.press("Escape")
+    wait(page, f"() => !({expanded})()")
 
 
 def check_select_trigger_release_outside(t):
@@ -4286,3 +4311,4 @@ def check_toast_detached(t):
     page.evaluate("() => window.__toast.add({ title: 'Again' })")
     page.locator("[data-slot=toast]").filter(has_text="Again").wait_for()
     assert page.locator("[data-slot=toast-portal]").count() == 1
+

@@ -13,6 +13,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 ### Added
 
 - The `play` and `pause` icons. (#34)
+- Chart reference lines and bands (`references`), a time axis for line and area charts (`scale: "time"`), and `connectNulls`. (#38)
 
 ### Changed
 

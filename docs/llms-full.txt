@@ -542,6 +542,7 @@ Object.assign(strings, { closeToast: "Zapri obvestilo", remove: "Odstrani {label
 | `legend`, `tableView`, `tableOf`, `trendOf` | `Legend`, `Table view`, `{caption} data`, `{label} trend` | chart legend, table toggle, table region, stat tile trend |
 | `total`, `value`, `share` | `Total`, `Value`, `Share` | chart tooltip and table |
 | `noData`, `allHidden`, `onePoint`, `points`, `noValues`, `seriesRange`, `sparklineRange` | `No data.`, `All series are hidden.`, `1 point, {x}`, `{count} points from {from} to {to}`, `{label} has no values`, `{label} from {low} to {high}`, `low {low}, high {high}, latest {latest}` | chart summary |
+| `reference`, `references`, `referenceAt`, `referenceBand` | `Reference`, `Reference lines`, `{label} at {value}`, `{label} from {from} to {to}` | chart reference lines in the summary and the table view |
 
 ### Behavior registry
 
@@ -1332,6 +1333,8 @@ view.destroy()
 | `stack` | `true` or `"expand"` for `bar` and `area` |
 | `horizontal`, `labels`, `diverging`, `highlight`, `barSize` | Bar options |
 | `curve`, `dots`, `gradient`, `zero`, `domain` | `monotone` (default), `linear`, `step`; dots; gradient fill; `zero: false`; fixed `[min, max]` (finite numbers or `null`; else a `TypeError`) |
+| `references` | Bar, line, and area: a list of `{ value, label, tone, position }` (a dashed line) or `{ from, to, label, tone, position }` (a band with dashed edges). See [Reference lines and time axis](#reference-lines-and-time-axis). |
+| `scale`, `connectNulls` | `scale: "time"` (line and area) puts each row at its date. `connectNulls`: `true` or a list of keys; the line goes across missing values. |
 | `grid`, `valueAxis`, `categoryAxis`, `legend`, `table` | `false` hides each part |
 | Pie and donut | `labels: "value" \| "percent" \| "name"`, `labelPosition: "inside"`, `innerRadius`, `center`, `highlight` |
 | Radar | `grid: "polygon" \| "circle" \| "none"`, `fill: false`, `dots`, `max` |
@@ -1345,6 +1348,28 @@ view.destroy()
 - Charts redraw on `theme:change` while they are in the document. A removed chart closes its tooltip, is not tracked, and redraws when it is inserted again. A destroyed chart never redraws.
 - Fixed labels (chart names, legend, table button, table header, summary sentences) come from `strings` (see [Localization](#localization)); `data-string-<key>` on the chart element or an ancestor overrides one chart.
 - Parts: `chart-plot`, `chart-svg`, `chart-tooltip` (`-label`, `-items`, `-item`, `-indicator`, `-name`, `-value`), `chart-legend`, `chart-legend-item`, `chart-table`, `chart-table-toggle`, `chart-footer`, `chart-live`. SVG marks use `data-part`.
+
+#### Reference lines and time axis
+
+```js
+chart(document.getElementById("weight"), {
+  rows: [
+    { day: "2026-09-01", plan: 84, actual: 84.2 },
+    { day: "2026-09-08", actual: 83.6 },
+    { day: "2026-10-01", plan: 82 },
+    { day: "2026-10-20", actual: 80.6 },
+    { day: "2026-11-01", plan: 80, actual: 79.8 },
+  ],
+  config: { actual: { label: "Actual" }, plan: { label: "Plan", color: "chart-other" } },
+}, {
+  type: "line", x: "day", scale: "time", connectNulls: true, zero: false, label: "Weight, kg",
+  references: [{ value: 78, label: "Goal 78 kg" }, { from: 79, to: 81, label: "Healthy", tone: "chart-2" }],
+})
+```
+
+- A reference is a dashed line at `value`, or a band from `from` to `to` with a light fill and dashed edges, across the plot (vertical in a horizontal bar chart). It is not in the legend or the tooltip. The value axis grows to show it, except past a fixed `domain`. `tone` is a color as in `config` (default `--muted-foreground`). The label is small text in `--muted-foreground` at the end of the line (`position: "start"` puts it at the start); it moves to the other side of the line, or is left out, when it would leave the plot or cover another label. A sparkline draws no reference labels. The automatic summary names each reference (`referenceAt`, `referenceBand`), and the table view has a second table with each reference. A reference that is not an object with a finite `value`, or a finite `from` and `to`, throws a `TypeError`; so do references on pie, donut, radar, and radial charts.
+- `scale: "time"` needs a `Date` or an ISO date (`2026-10-01`, or a date and time) in every `x` value; else it throws a `TypeError`. Give the rows in time order. The axis picks ticks of minutes, hours, days, weeks (from Monday), months, or years, so that the labels do not touch (24 px apart). A tick shows the day (`Oct 3`), the time, the month (`Oct`), or the year (on a January tick and on year ticks). An `xFormat` object sets the `Intl` options of all ticks; an `xFormat` function gets the tick `Date`. Hover finds the nearest point by time; the arrow keys move through the rows in data order.
+- Data with one row per plan point and one row per measurement leaves gaps in each series; `connectNulls` draws each series as one line.
 
 #### Stat tile and sparkline
 

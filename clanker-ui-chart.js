@@ -10,6 +10,9 @@ const MAX_TICKS = 50
 const TYPES = ["area", "bar", "line", "pie", "donut", "radar", "radial"]
 const CURVES = ["monotone", "linear", "step"]
 const INDICATORS = ["line", "dot", "dashed"]
+const SCALES = ["category", "time"]
+const DAY = 864e5
+const TIME_STEPS = [["minute", 1, 6e4], ["minute", 5, 3e5], ["minute", 15, 9e5], ["minute", 30, 18e5], ["hour", 1, 36e5], ["hour", 3, 108e5], ["hour", 6, 216e5], ["hour", 12, 432e5], ["day", 1, DAY], ["day", 2, 2 * DAY], ["week", 1, 7 * DAY], ["month", 1, 30 * DAY], ["month", 3, 91 * DAY], ["month", 6, 182 * DAY], ...[1, 2, 5, 10, 20, 50, 100].map(n => ["year", n, n * 365 * DAY])]
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/
 const ISO_STAMP = /^\d{4}-\d{2}-\d{2}T/
 const IDENT = /^[a-z][\w-]*$/i
@@ -140,6 +143,18 @@ function chartIngest(s, data, options) {
   if (!CURVES.includes(o.curve ?? "monotone")) throw new TypeError(`clanker-ui chart: unknown curve "${o.curve}"`)
   if (!INDICATORS.includes(o.tooltip?.indicator ?? "line")) throw new TypeError(`clanker-ui chart: unknown tooltip indicator "${o.tooltip.indicator}"`)
   if (o.domain != null && !(Array.isArray(o.domain) && o.domain.every(v => v == null || Number.isFinite(v)))) throw new TypeError("clanker-ui chart: domain must be [min, max] with finite numbers or null")
+  const cartesian = ["area", "bar", "line"].includes(o.type ?? "bar")
+  if (!SCALES.includes(o.scale ?? "category")) throw new TypeError(`clanker-ui chart: unknown scale "${o.scale}"`)
+  if (o.scale === "time" && o.type !== "line" && o.type !== "area") throw new TypeError('clanker-ui chart: scale "time" needs type "line" or "area"')
+  if (o.references != null) {
+    if (!Array.isArray(o.references)) throw new TypeError("clanker-ui chart: references must be an array")
+    if (o.references.length && !cartesian) throw new TypeError("clanker-ui chart: references need type bar, line, or area")
+    for (const r of o.references) {
+      if (!r || typeof r !== "object" || !(Number.isFinite(r.value) || (Number.isFinite(r.from) && Number.isFinite(r.to)))) throw new TypeError("clanker-ui chart: a reference needs a finite value, or a finite from and to")
+      if (r.position != null && r.position !== "start" && r.position !== "end") throw new TypeError(`clanker-ui chart: unknown reference position "${r.position}"`)
+      if (r.tone != null) chartColorValue(r.tone)
+    }
+  }
   if (options?.view !== undefined) {
     if (options.view !== "chart" && options.view !== "table") throw new TypeError(`clanker-ui chart: unknown view "${options.view}"`)
     s.view = options.view
@@ -321,6 +336,9 @@ function chartModel(s) {
     series = wanted.length ? wanted.filter(k => keys.includes(k)) : keys
   }
   const isDate = x != null && rows.length > 0 && rows.every(r => chartDate(r?.[x]) !== null)
+  const time = o.scale === "time"
+  if (time && !isDate && rows.length) throw new TypeError('clanker-ui chart: scale "time" needs an ISO date or a Date in every x value')
+  const times = time ? rows.map(r => chartDate(r[x]).getTime()) : null
   return {
     type,
     rows,
@@ -332,6 +350,13 @@ function chartModel(s) {
     valueKey,
     byCategory,
     isDate,
+    time,
+    times,
+    dateOnly: !times || times.every(t => {
+      const d = new Date(t)
+      return !d.getHours() && !d.getMinutes() && !d.getSeconds() && !d.getMilliseconds()
+    }),
+    references: (o.references ?? []).map(r => ({ ...r, band: !Number.isFinite(r.value), label: r.label == null ? "" : String(r.label), color: r.tone == null ? null : chartColorValue(r.tone) })),
     sparkline: !!o.sparkline,
     expand: o.stack === "expand" && (type === "area" || type === "bar"),
   }
@@ -453,9 +478,24 @@ function chartFormats(s, m) {
   }
   const xLabel = i => {
     if (typeof o.labelFormat === "function") return String(o.labelFormat(raw(i), i))
-    return m.isDate ? date(i, pick(o.labelFormat, { month: "short", day: "numeric", year: "numeric" })) : name(i)
+    return m.isDate ? date(i, pick(o.labelFormat, m.dateOnly ? { month: "short", day: "numeric", year: "numeric" } : { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })) : name(i)
   }
-  return { locale, value, percent, tick, xTick, xLabel }
+  const timeTick = (t, unit) => {
+    const d = new Date(t)
+    if (typeof o.xFormat === "function") return String(o.xFormat(d))
+    if (o.xFormat && typeof o.xFormat === "object") return chartDateFormat(locale, o.xFormat).format(d)
+    const midnight = !d.getHours() && !d.getMinutes()
+    const options =
+      unit === "year" || (unit === "month" && !d.getMonth())
+        ? { year: "numeric" }
+        : unit === "month"
+          ? { month: "short" }
+          : (unit === "minute" || unit === "hour") && !midnight
+            ? { hour: "numeric", minute: "2-digit" }
+            : { month: "short", day: "numeric" }
+    return chartDateFormat(locale, options).format(d)
+  }
+  return { locale, value, percent, tick, xTick, xLabel, timeTick }
 }
 
 function chartWidth(text, font) {
@@ -521,6 +561,31 @@ function chartTicks(lo, hi, count) {
   const ticks = []
   for (let i = 0; i <= steps; i++) ticks.push(Number((start + i * step).toFixed(digits)))
   return { lo: ticks[0], hi: ticks.at(-1), ticks }
+}
+
+function chartTimeFloor(t, unit, step) {
+  const d = new Date(t)
+  const y = d.getFullYear()
+  const mo = d.getMonth()
+  const day = d.getDate()
+  if (unit === "minute") return new Date(y, mo, day, d.getHours(), Math.floor(d.getMinutes() / step) * step)
+  if (unit === "hour") return new Date(y, mo, day, Math.floor(d.getHours() / step) * step)
+  if (unit === "day") return new Date(y, mo, day)
+  if (unit === "week") return new Date(y, mo, day - ((d.getDay() + 6) % 7))
+  if (unit === "month") return new Date(y, Math.floor(mo / step) * step, 1)
+  return new Date(Math.floor(y / step) * step, 0, 1)
+}
+
+function chartTimeTicks(t0, t1, unit, step) {
+  const out = []
+  const by = unit === "day" ? 1 : unit === "week" ? 7 : step
+  let d = chartTimeFloor(t0, unit, step)
+  while (d.getTime() <= t1 && out.length <= MAX_TICKS) {
+    if (d.getTime() >= t0 && (unit !== "day" || (d.getDate() - 1) % step === 0)) out.push(d.getTime())
+    const [y, mo, day, hr, min] = [d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes()]
+    d = unit === "minute" ? new Date(y, mo, day, hr, min + by) : unit === "hour" ? new Date(y, mo, day, hr + by) : unit === "month" ? new Date(y, mo + by, 1) : unit === "year" ? new Date(y + by, 0, 1) : new Date(y, mo, day + by)
+  }
+  return out
 }
 
 function chartScale(lo, hi, count, fixed) {
@@ -670,6 +735,7 @@ function chartCartesian(c) {
   const horizontal = bar && !!o.horizontal
   const stack = m.type === "line" ? false : m.expand ? "expand" : !!o.stack
   const curve = o.curve ?? "monotone"
+  const joined = k => o.connectNulls === true || (Array.isArray(o.connectNulls) && o.connectNulls.includes(k))
   const n = m.rows.length
   const entity = k => m.byKey.get(k)
   const vals = keys.map(k => m.rows.map(r => chartNum(r?.[k])))
@@ -709,6 +775,12 @@ function chartCartesian(c) {
     lo = 0
     hi = 1
   }
+  for (const r of m.references) {
+    for (const v of r.band ? [r.from, r.to] : [r.value]) {
+      lo = Math.min(lo, v)
+      hi = Math.max(hi, v)
+    }
+  }
   if (o.zero ?? !spark) {
     lo = Math.min(lo, 0)
     hi = Math.max(hi, 0)
@@ -736,7 +808,7 @@ function chartCartesian(c) {
   const maxAbs = Math.max(Math.abs(scale.lo), Math.abs(scale.hi))
   const tickText = scale.ticks.map(v => f.tick(v, maxAbs))
   const tickW = valueAxis ? tickText.reduce((a, t) => Math.max(a, chartWidth(t, font.tick)), 0) : 0
-  const catText = m.rows.map((_, i) => f.xTick(i))
+  const catText = m.time ? [] : m.rows.map((_, i) => f.xTick(i))
   const catW = horizontal && categoryAxis ? Math.min(W * 0.4, catText.reduce((a, t) => Math.max(a, chartWidth(t, font.tick)), 0)) : 0
   const labelText = []
   if (labels) {
@@ -773,7 +845,10 @@ function chartCartesian(c) {
   const clen = horizontal ? ph : pw
   const cstart = horizontal ? pt : pl
   const band = clen / Math.max(1, n)
-  const pos = bar ? i => cstart + band * (i + 0.5) : i => (n === 1 ? cstart + clen / 2 : cstart + (clen * i) / (n - 1))
+  const t0 = m.time ? m.times.reduce((a, t) => Math.min(a, t), Infinity) : 0
+  const t1 = m.time ? m.times.reduce((a, t) => Math.max(a, t), -Infinity) : 0
+  const tpos = t => (t1 === t0 ? cstart + clen / 2 : cstart + ((t - t0) / (t1 - t0)) * clen)
+  const pos = bar ? i => cstart + band * (i + 0.5) : m.time ? i => tpos(m.times[i]) : i => (n === 1 ? cstart + clen / 2 : cstart + (clen * i) / (n - 1))
   const nodes = []
   const defs = svg("defs")
   nodes.push(defs)
@@ -793,6 +868,7 @@ function chartCartesian(c) {
     const p = Math.round(v2p(0)) + 0.5
     nodes.push(horizontal ? svg("line", { "data-part": "baseline", x1: p, x2: p, y1: pt, y2: pt + ph }) : svg("line", { "data-part": "baseline", x1: pl, x2: pl + pw, y1: p, y2: p }))
   }
+  const refs = m.references.length ? chartReferences(c, nodes, { pl, pt, pw, ph, v2p, lo: scale.lo, hi: scale.hi, horizontal, labels: !spark }) : null
   if (valueAxis) {
     nodes.push(
       svg(
@@ -808,7 +884,9 @@ function chartCartesian(c) {
   }
   if (categoryAxis && n) {
     const out = []
-    if (horizontal) {
+    if (m.time) {
+      for (const tk of chartTimeAxis(c, t0, t1, tpos, clen)) out.push(svg("text", { x: chartRound(tk.x), y: chartRound(pt + ph + 20), "text-anchor": "middle" }, tk.text))
+    } else if (horizontal) {
       const step = Math.max(1, Math.ceil(16 / band))
       for (let i = 0; i < n; i += step) out.push(svg("text", { x: chartRound(pl - 8), y: chartRound(pos(i)), dy: "0.35em", "text-anchor": "end" }, chartFit(catText[i], catW, font.tick)))
     } else {
@@ -941,7 +1019,7 @@ function chartCartesian(c) {
           defs.append(svg("linearGradient", { id, x1: 0, y1: 0, x2: 0, y2: 1, style: { "--c": e.color } }, svg("stop", { offset: "5%", "data-part": "stop-start" }), svg("stop", { offset: "95%", "data-part": "stop-end" })))
           fill = `url(#${id})`
         }
-        for (const seg of chartSegments(pts[k])) {
+        for (const seg of chartSegments(joined(key) ? pts[k].filter(Boolean) : pts[k])) {
           const topPath = chartCurve(seg, curve)
           const bottomPath = chartCurve(seg.map(p => ({ x: p.x, y: p.y0 })).reverse(), curve).replace(/^M/, "L")
           const el = svg("path", { d: `${topPath}${bottomPath}Z`, "data-part": "area" })
@@ -960,7 +1038,7 @@ function chartCartesian(c) {
       const g = svg("g", { "data-part": "series", "data-key": key, style: { "--c": e.color } })
       const dots = o.dots && !spark
       const last = spark ? pts[k].findLast(Boolean) : null
-      for (const seg of chartSegments(pts[k])) {
+      for (const seg of chartSegments(joined(key) ? pts[k].filter(Boolean) : pts[k])) {
         const el = svg("path", { d: chartCurve(seg, curve), "data-part": "line", pathLength: "1" })
         if (spark) el.setAttribute("data-muted", "")
         g.append(el)
@@ -989,6 +1067,7 @@ function chartCartesian(c) {
       nodes.push(svg("g", { "data-part": "labels" }, out))
     }
   }
+  if (refs) nodes.push(...refs)
   nodes.push(active)
   const markAt = a => {
     const list = marks[a.sub] ?? []
@@ -1013,6 +1092,16 @@ function chartCartesian(c) {
       if (!n || !keys.length) return null
       const along = horizontal ? py : px
       let index = bar ? Math.floor((along - cstart) / band) : n === 1 ? 0 : Math.round(((along - cstart) / clen) * (n - 1))
+      if (m.time) {
+        let best = Infinity
+        for (let i = 0; i < n; i++) {
+          const d = Math.abs(pos(i) - along)
+          if (d < best) {
+            best = d
+            index = i
+          }
+        }
+      }
       index = Math.max(0, Math.min(n - 1, index))
       let sub = 0
       if (bar && keys.length > 1) {
@@ -1084,6 +1173,77 @@ function chartCartesian(c) {
     },
     deactivate,
   }
+}
+
+function chartReferences(c, nodes, p) {
+  const { m, font } = c
+  const { pl, pt, pw, ph, v2p, horizontal } = p
+  const bands = svg("g", { "data-part": "references" })
+  const lines = svg("g", { "data-part": "references" })
+  const labels = svg("g", { "data-part": "reference-labels" })
+  const used = []
+  const crisp = v => Math.round(v2p(v)) + 0.5
+  const fits = b => b.x0 >= pl - 0.5 && b.x1 <= pl + pw + 0.5 && b.y0 >= pt - 0.5 && b.y1 <= pt + ph + 0.5 && !used.some(u => b.x0 < u.x1 && b.x1 > u.x0 && b.y0 < u.y1 && b.y1 > u.y0)
+  for (const r of m.references) {
+    const a = r.band ? Math.max(p.lo, Math.min(r.from, r.to)) : r.value
+    const b = r.band ? Math.min(p.hi, Math.max(r.from, r.to)) : r.value
+    if (a > p.hi || b < p.lo || a > b) continue
+    const style = { "--r": r.color }
+    const edges = r.band ? [r.from, r.to].filter(v => v >= p.lo && v <= p.hi) : [r.value]
+    if (r.band) {
+      const [u, v] = [v2p(a), v2p(b)].sort((x, y) => x - y)
+      bands.append(horizontal ? svg("rect", { x: chartRound(u), y: pt, width: chartRound(v - u), height: ph, "data-part": "reference-band", style }) : svg("rect", { x: pl, y: chartRound(u), width: pw, height: chartRound(v - u), "data-part": "reference-band", style }))
+    }
+    for (const v of edges) {
+      const q = crisp(v)
+      lines.append(horizontal ? svg("line", { x1: q, x2: q, y1: pt, y2: pt + ph, "data-part": "reference-line", style }) : svg("line", { x1: pl, x2: pl + pw, y1: q, y2: q, "data-part": "reference-line", style }))
+    }
+    if (!p.labels || !r.label) continue
+    const text = chartFit(r.label, Math.max(8, pw - 8), font.tick)
+    const w = chartWidth(text, font.tick)
+    const lo = Math.min(v2p(a), v2p(b))
+    const hi = Math.max(v2p(a), v2p(b))
+    const cands = []
+    if (horizontal) {
+      const ys = r.position === "start" ? [pt + ph - 4, pt + 15] : [pt + 15, pt + ph - 4]
+      for (const y of ys) {
+        if (r.band && hi - lo >= w + 8) cands.push([lo + 4, y, "start"])
+        cands.push([hi + 4, y, "start"], [lo - 4, y, "end"])
+      }
+    } else {
+      const xs = r.position === "start" ? [[pl + 4, "start"], [pl + pw - 4, "end"]] : [[pl + pw - 4, "end"], [pl + 4, "start"]]
+      for (const [x, anchor] of xs) {
+        if (r.band && hi - lo >= 18) cands.push([x, lo + 15, anchor])
+        cands.push([x, lo - 4, anchor], [x, hi + 15, anchor])
+      }
+    }
+    for (const [x, y, anchor] of cands) {
+      const x0 = anchor === "end" ? x - w : x
+      const box = { x0, x1: x0 + w, y0: y - 11, y1: y + 3 }
+      if (!fits(box)) continue
+      used.push(box)
+      labels.append(svg("text", { x: chartRound(x), y: chartRound(y), "text-anchor": anchor, "data-part": "reference-label" }, text))
+      break
+    }
+  }
+  nodes.push(bands)
+  return [lines, labels]
+}
+
+function chartTimeAxis(c, t0, t1, tpos, clen) {
+  const { m, f, W, font } = c
+  for (const [unit, step, ms] of TIME_STEPS) {
+    if ((m.dateOnly && ms < DAY) || (t1 - t0) / ms > clen / 16) continue
+    const ticks = chartTimeTicks(t0, t1, unit, step).map(t => {
+      const text = f.timeTick(t, unit)
+      const w = chartWidth(text, font.tick)
+      return { t, text, w, x: Math.min(Math.max(tpos(t), w / 2), W - w / 2) }
+    })
+    if (ticks.length && ticks.every((k, j) => !j || k.x - k.w / 2 - (ticks[j - 1].x + ticks[j - 1].w / 2) >= 24)) return ticks
+  }
+  const text = f.timeTick(t0, m.dateOnly ? "day" : "minute")
+  const w = chartWidth(text, font.tick)
+  return [{ t: t0, text, w, x: Math.min(Math.max(tpos(t0), w / 2), W - w / 2) }]
 }
 
 function chartSet(el, attrs) {
@@ -1504,8 +1664,14 @@ function chartSummary(c) {
     const last = vs.at(-1)
     return m.sparkline ? say("sparklineRange", { low: f.value(lo), high: f.value(hi), latest: f.value(last) }) : say("seriesRange", { label: m.byKey.get(k).label, low: f.value(lo), high: f.value(hi) })
   })
-  if (m.sparkline) return `${head} ${range}, ${per.join("; ")}.`
-  return `${head} ${new Intl.ListFormat(f.locale, { type: "conjunction" }).format(keys.map(k => m.byKey.get(k).label))}, ${range}. ${per.join(". ")}.`
+  const refs = m.references.map(r => ` ${chartReferenceText(s, f, r)}.`).join("")
+  if (m.sparkline) return `${head} ${range}, ${per.join("; ")}.${refs}`
+  return `${head} ${new Intl.ListFormat(f.locale, { type: "conjunction" }).format(keys.map(k => m.byKey.get(k).label))}, ${range}. ${per.join(". ")}.${refs}`
+}
+
+function chartReferenceText(s, f, r) {
+  const label = r.label || stringFor(s.root, "reference")
+  return r.band ? stringFor(s.root, "referenceBand", { label, from: f.value(Math.min(r.from, r.to)), to: f.value(Math.max(r.from, r.to)) }) : stringFor(s.root, "referenceAt", { label, value: f.value(r.value) })
 }
 
 function chartName(s, m) {
@@ -1710,7 +1876,16 @@ function chartTable(s, m) {
     h("tbody", null, cells.slice(1).map(row => h("tr", null, row.map((t, i) => (i === 0 ? h("th", { scope: "row" }, t) : h("td", null, t)))))),
   )
   s.els.table.setAttribute("aria-label", stringFor(s.root, "tableOf", { caption }))
-  s.els.table.replaceChildren(table)
+  const refs = m.references.length
+    ? h(
+        "table",
+        { "data-part": "references" },
+        h("caption", { class: "sr-only" }, stringFor(s.root, "references")),
+        h("thead", null, h("tr", null, h("th", { scope: "col" }, stringFor(s.root, "reference")), h("th", { scope: "col" }, stringFor(s.root, "value")))),
+        h("tbody", null, m.references.map(r => h("tr", null, h("th", { scope: "row" }, r.label || stringFor(s.root, "reference")), h("td", null, r.band ? `${f.value(Math.min(r.from, r.to))}–${f.value(Math.max(r.from, r.to))}` : f.value(r.value))))),
+      )
+    : null
+  s.els.table.replaceChildren(table, ...(refs ? [refs] : []))
 }
 
 function chartView(s, view, render = true) {

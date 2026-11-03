@@ -219,6 +219,10 @@ export const strings = {
   noValues: "{label} has no values",
   seriesRange: "{label} from {low} to {high}",
   sparklineRange: "low {low}, high {high}, latest {latest}",
+  reference: "Reference",
+  references: "Reference lines",
+  referenceAt: "{label} at {value}",
+  referenceBand: "{label} from {from} to {to}",
 }
 
 const registry = new Map()

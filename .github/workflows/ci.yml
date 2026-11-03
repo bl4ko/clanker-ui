@@ -107,7 +107,7 @@ jobs:
     name: ${{ matrix.engine }} ${{ matrix.id }}
     needs: plan
     if: needs.plan.outputs.browser == 'true'
-    runs-on: ${{ matrix.engine == 'webkit' && 'macos-26' || 'ubuntu-24.04' }}
+    runs-on: ${{ matrix.engine == 'webkit' && 'macos-26' || 'ubuntu-26.04' }}
     timeout-minutes: 40
     strategy:
       fail-fast: false

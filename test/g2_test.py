@@ -1656,6 +1656,59 @@ def check_toast_dialog_focus(t):
     wait(page, "() => !document.querySelector('[data-slot=toast]')")
 
 
+def check_toast_dialog_replace(t):
+    page = t.page
+    t.section("dialog")
+    kept = page.evaluate("""async () => {
+      const { dialogOpen, toast, h } = await import('/clanker-ui.js')
+      const dialog = document.querySelector('#dialog-demo dialog')
+      toast('Before', { timeout: 0 })
+      const home = document.querySelector('[data-slot=toast-portal]').parentElement
+      dialogOpen('dialog-demo')
+      dialog.replaceChildren(h('p', {}, 'First'))
+      await new Promise(requestAnimationFrame)
+      const portal = document.querySelector('[data-slot=toast-portal]')
+      return [home === document.body, portal?.parentElement === dialog, portal?.querySelector('[data-slot=toast-viewport]').matches(':popover-open')]
+    }""")
+    assert kept == [True, True, True], ("the toast portal stays in the modal after its content changes", kept)
+    after = page.evaluate("""async () => {
+      const { toast, h } = await import('/clanker-ui.js')
+      const dialog = document.querySelector('#dialog-demo dialog')
+      dialog.replaceChildren(h('p', {}, 'Second'), h('button', { type: 'button' }, 'Done'))
+      try { toast('After', { timeout: 0 }) } catch (e) { return String(e) }
+      return document.querySelector('[data-slot=toast-portal]')?.parentElement === dialog
+    }""")
+    assert after is True, ("toast() works at once after the modal content changes", after)
+    for text in ("Before", "After"):
+        item = page.locator("[data-slot=toast]").filter(has_text=text)
+        item.wait_for()
+    t.settle()
+    b = page.locator("[data-slot=toast]").filter(has_text="After").bounding_box()
+    hit = page.evaluate("([x, y]) => document.elementFromPoint(x, y)?.closest('[data-slot=toast]')?.textContent.includes('After')", [b["x"] + b["width"] / 2, b["y"] + b["height"] / 2])
+    assert hit, "the new toast shows above the modal"
+    page.evaluate("async () => (await import('/clanker-ui.js')).dialogClose('dialog-demo')")
+    wait(page, "() => !document.querySelector('#dialog-demo dialog').open")
+    assert page.evaluate("() => document.querySelector('[data-slot=toast-portal]').parentElement === document.body"), "the portal goes back after the modal closes"
+    page.evaluate("async () => (await import('/clanker-ui.js')).toast.close()")
+    wait(page, "() => !document.querySelector('[data-slot=toast]')")
+
+
+def check_dialog_disabled_trigger_focus(t):
+    page = t.page
+    t.section("dialog")
+    page.evaluate("""async () => {
+      const { dialogOpen } = await import('/clanker-ui.js')
+      const trigger = document.querySelector('#dialog-demo [data-dialog-trigger]')
+      trigger.disabled = true
+      dialogOpen('dialog-demo', { trigger })
+      trigger.disabled = false
+    }""")
+    wait(page, "() => document.querySelector('#dialog-demo dialog').open")
+    page.keyboard.press("Escape")
+    wait(page, "() => !document.querySelector('#dialog-demo dialog').open")
+    wait(page, "() => document.activeElement === document.querySelector('#dialog-demo [data-dialog-trigger]')")
+
+
 def check_toast_above_popover(t):
     page = t.page
     t.section("toast")
@@ -3472,12 +3525,19 @@ def check_alert_dialog_slots(t):
     page = t.page
     section = t.section("alert-dialog")
     probe = """(e, value) => { const p = document.createElement('span'); p.style.color = value; e.append(p); const c = getComputedStyle(p).color; p.remove(); return c }"""
+    page.evaluate("""() => {
+      window.__cancelRing = []
+      const cancel = document.querySelector('#alert-dialog-basic [data-slot=alert-dialog-cancel]')
+      cancel.addEventListener('transitionrun', e => /border|shadow|outline/.test(e.propertyName) && window.__cancelRing.push(e.propertyName))
+    }""")
     section.get_by_role("button", name="Show Dialog").first.click()
     basic = page.locator("#alert-dialog-basic")
     wait(page, "() => document.getElementById('alert-dialog-basic').dataset.state === 'open'")
     t.settle()
     cancel, action = basic.locator("[data-slot=alert-dialog-cancel]"), basic.locator("[data-slot=alert-dialog-action]")
     assert cancel.get_attribute("data-variant") == "outline" and cancel.inner_text() == "Cancel" and action.inner_text() == "Continue"
+    ring = page.evaluate("window.__cancelRing")
+    assert ring == [], ("a pointer open shows no focus ring flash on Cancel", ring)
     edge = "var(--input)" if t.theme == "dark" else "var(--border)"
     assert cancel.evaluate("e => getComputedStyle(e).borderTopColor") == basic.evaluate(probe, edge)
     assert action.evaluate("e => getComputedStyle(e).backgroundColor") == basic.evaluate(probe, "var(--primary)")

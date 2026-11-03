@@ -285,21 +285,15 @@ def gate(args):
     widths = "1280" if args.quick else args.widths
     out = pathlib.Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
+    cmd = [sys.executable, "-I", str(E.ROOT / "test" / "run.py"), "--base-url", args.base_url, "--only", "behavior", "--themes", "light", "--widths", widths, "--engines", ",".join(engines), "--jobs", str(len(engines)), "--out", str(out)]
+    if args.k:
+        cmd += ["-k", args.k]
     queue = args.queue or os.environ.get("BEHAVIOR_QUEUE")
-    procs = []
-    for engine in engines:
-        cmd = [sys.executable, "-I", str(E.ROOT / "test" / "run.py"), "--base-url", args.base_url, "--only", "behavior", "--themes", "light", "--widths", widths, "--engines", engine, "--out", str(out)]
-        if args.k:
-            cmd += ["-k", args.k]
-        if queue:
-            cmd = ["sh", queue] + cmd
-        log = open(out / f"gate-{engine}.log", "w")
-        procs.append((engine, subprocess.Popen(cmd, stdout=log, stderr=subprocess.STDOUT), log))
-    code = 0
-    for engine, proc, log in procs:
-        code |= proc.wait()
-        log.close()
-        print((out / f"gate-{engine}.log").read_text().strip().splitlines()[-2])
+    if queue:
+        cmd = ["sh", queue] + cmd
+    with open(out / "gate.log", "w") as log:
+        code = subprocess.run(cmd, stdout=log, stderr=subprocess.STDOUT).returncode
+    print("\n".join(line for line in (out / "gate.log").read_text().splitlines() if re.match(r"(\w+: \d+ passed|\w+: NOT RUN|\d+ failures in )", line)))
     args.dir = str(out)
     report(args)
     return 1 if code else 0
@@ -405,14 +399,14 @@ def main():
     r.add_argument("--verbose", action="store_true")
     p = sub.add_parser("report", help="write <dir>/behavior-report.md from the results of test/run.py --only behavior --out <dir>")
     p.add_argument("dir")
-    g = sub.add_parser("gate", help="run the behavior module with one process per engine in parallel, then write the report")
+    g = sub.add_parser("gate", help="run the behavior module with test/run.py --jobs (one process per engine), then write the report")
     g.add_argument("--base-url", required=True)
     g.add_argument("--out", required=True)
     g.add_argument("--engines", default="chromium,firefox,webkit")
     g.add_argument("--widths", default="1280,390")
     g.add_argument("--quick", action="store_true", help="Chromium and WebKit at 1280 only")
     g.add_argument("-k", default="", help="regex on check names, as in test/run.py")
-    g.add_argument("--queue", default="", help="script that runs each process in a shared queue (also BEHAVIOR_QUEUE)")
+    g.add_argument("--queue", default="", help="script that runs test/run.py in a shared queue (also BEHAVIOR_QUEUE)")
     sub.add_parser("stamp", help="write the live deploy id and the @base-ui/react version into reference files that have none (needs the network)")
     sub.add_parser("status", help="list references to record again: changed scenario, pin, @base-ui/react on shadcn main, or live deploy (needs the network)")
     args = ap.parse_args()

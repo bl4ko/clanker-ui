@@ -3916,8 +3916,7 @@ def check_menubar_switch(t):
     tb = box(description)
     page.mouse.click(tb["x"] + 4, tb["y"] + tb["height"] / 2)
     wait(page, none_open)
-    page.wait_for_timeout(200)
-    assert not active(page, "e => !!e.closest('#menubar-demo')"), "an outside press does not return focus to the menubar, as in Base UI"
+    wait(page, "e => document.activeElement === e", edit.element_handle(), timeout=1000)
 
 
 def check_navigation_menu_keys(t):

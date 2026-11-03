@@ -6,9 +6,9 @@ PROPS = ["display", "position", "visibility", "opacity", "color", "background-co
 
 ID_ATTRS = {"id", "for", "aria-controls", "aria-labelledby", "aria-describedby", "aria-activedescendant", "aria-owns", "aria-details", "popovertarget", "list", "form"}
 
-SNAPSHOT = """([props, portal]) => [...document.querySelectorAll(portal ? "main *, [data-slot=toast-portal], [data-slot=toast-portal] *" : "main *")].map(e => {
+SNAPSHOT = """([props, portal, rendered]) => [...document.querySelectorAll(portal ? "main *, [data-slot=toast-portal], [data-slot=toast-portal] *" : "main *")].map(e => {
   const s = getComputedStyle(e)
-  return [e.localName, [...e.attributes].map(a => [a.name, a.value]), props.map(p => s.getPropertyValue(p))]
+  return [e.localName, [...e.attributes].map(a => [a.name, a.value]), rendered && !e.checkVisibility() ? null : props.map(p => s.getPropertyValue(p))]
 })"""
 
 SETTLE = """async () => {
@@ -71,18 +71,23 @@ def load(t, group):
 
 
 def compare(t, group, interact=None):
+    args = [PROPS, "overlays" in group, t.engine == "webkit"]
     load(t, group)
-    split = normalize(t.page.evaluate(SNAPSHOT, [PROPS, "overlays" in group]))
+    split = normalize(t.page.evaluate(SNAPSHOT, args))
     split_result = interact(t) if interact else None
     full_kit(t)
     load(t, group)
-    full = normalize(t.page.evaluate(SNAPSHOT, [PROPS, "overlays" in group]))
+    full = normalize(t.page.evaluate(SNAPSHOT, args))
     full_result = interact(t) if interact else None
     assert len(split) == len(full), f"{group}: {len(split)} elements with the split files, {len(full)} with the full files"
     diffs = []
     for i, (a, b) in enumerate(zip(split, full)):
         if a[0] != b[0] or a[1] != b[1]:
             diffs.append(f"element {i} <{b[0]}>: attributes {a[1]} != {b[1]}")
+            continue
+        if a[2] is None or b[2] is None:
+            if a[2] != b[2]:
+                diffs.append(f"element {i} <{b[0]} {dict(b[1]).get('data-slot', '')}>: rendered {a[2] is not None} != {b[2] is not None}")
             continue
         for p, x, y in zip(PROPS, a[2], b[2]):
             if x != y:
@@ -175,8 +180,6 @@ def check_overlays_needs(t):
 
 
 def check_layout_needs(t):
-    if t.engine == "webkit" and t.width == 390:
-        t.skip("https://github.com/bl4ko/clanker-ui/issues/2")
     compare(t, "layout-needs")
     assert t.page.locator('[data-slot="sidebar"]').count() > 0
 

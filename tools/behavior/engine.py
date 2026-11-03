@@ -2,9 +2,11 @@ import difflib
 import hashlib
 import importlib.util
 import json
+import math
 import pathlib
 import re
 import sys
+import time
 
 from playwright.sync_api import Error as PlaywrightError
 
@@ -18,6 +20,7 @@ SITE_HOST = "ui.shadcn.com"
 FONT = "Arial"
 ANCHOR_Y = 300
 TOLERANCE = {"ms": 20, "px": 1, "opacity": 0.02}
+TOUCH_SLOP = 15
 FRAME = 17
 INTENT = {"hover", "leave", "focus", "tab_in", "tab", "shift_tab", "wait"}
 CLASSES = ("focus", "keyboard", "state", "ARIA", "dismiss", "timing", "geometry")
@@ -610,9 +613,17 @@ def outside(page):
 
 def touch(page, x, y, dx, dy, n, interval):
     cdp = page.context.new_cdp_session(page)
+    length = math.hypot(dx, dy) or 1
+    dx, dy = dx * (1 + TOUCH_SLOP / length), dy * (1 + TOUCH_SLOP / length)
     try:
-        speed = max(200, round(max(abs(dx), abs(dy)) * 1000 / max(n * interval, 1)))
-        cdp.send("Input.synthesizeScrollGesture", {"x": x, "y": y, "xDistance": dx, "yDistance": dy, "gestureSourceType": "touch", "speed": speed, "preventFling": True})
+        cdp.send("Input.dispatchTouchEvent", {"type": "touchStart", "touchPoints": [{"x": x, "y": y}]})
+        start, i = time.monotonic(), 0
+        while i < n:
+            i = min(n, max(i + 1, int((time.monotonic() - start) * 1000 / interval)))
+            time.sleep(max(0, start + i * interval / 1000 - time.monotonic()))
+            cdp.send("Input.dispatchTouchEvent", {"type": "touchMove", "touchPoints": [{"x": x + dx * i / n, "y": y + dy * i / n}]})
+        time.sleep(0.1)
+        cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []})
     finally:
         cdp.detach()
 

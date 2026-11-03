@@ -13,30 +13,24 @@ def job(engine, id, only, k="", themes="", **extra):
 
 
 PR = [
-    job("chromium", "behavior", "behavior", themes="light"),
-    job("chromium", "foundation", "foundation"),
-    job("chromium", "g1-docs", "g1,docs"),
-    job("chromium", "g2a-split", "g2,split", r"^(g2\.[a-d]|split\.)"),
-    job("chromium", "g2b-g5", "g2,g5", r"^(g2\.[e-n]|g5\.)"),
-    job("chromium", "g2c", "g2", r"^g2\.[o-s]"),
-    job("chromium", "g2d-g4a", "g2,g4", r"^(g2\.[t-z]|g4\.[a-c])"),
-    job("chromium", "g3a-spike", "g3,spike", r"^(g3\.[a-c]|spike\.)"),
-    job("chromium", "g3b-pages", "g3", r"^g3\.[d-z]", pages=True),
-    job("chromium", "g4b", "g4", r"^g4\.[d-z]"),
-    job("firefox", "behavior-a-g1-light", "behavior,g1", r"^(behavior\.[a-l]|g1\.)", "light"),
-    job("firefox", "behavior-b-g4-light", "behavior,g4", r"^(behavior\.[m-z]|g4\.)", "light"),
-    job("firefox", "g1-g4-dark", "g1,g4", themes="dark"),
-    job("firefox", "foundation", "foundation"),
-    job("firefox", "g3", "g3"),
-    job("firefox", "g2a-split", "g2,split", r"^(g2\.d|split\.)"),
-    job("firefox", "g2b", "g2", r"^g2\.[a-ce-n]"),
-    job("firefox", "g2c-spike-docs", "g2,spike,docs", r"^(g2\.[o-s]|spike\.|docs\.)"),
-    job("firefox", "g2d-g5", "g2,g5", r"^(g2\.[t-z]|g5\.)"),
-    job("webkit", "behavior-docs-spike-split-pages-light", "behavior,docs,spike,split", themes="light", pages=True),
-    job("webkit", "foundation-g2a-light", "foundation,g2", r"^(foundation\.|g2\.[a-d])", "light"),
-    job("webkit", "g2b-g3-light", "g2,g3", r"^(g2\.[e-o]|g3\.)", "light"),
-    job("webkit", "g4-g5-light", "g4,g5", themes="light"),
-    job("webkit", "g1-g2c-light", "g1,g2", r"^(g1\.|g2\.[p-z])", "light"),
+    job("chromium", "behavior-a-d-g3-g5-split-spike-light", "behavior,g3,g5,split,spike", r"^(behavior\.[a-d]|g3\.|g5\.|split\.|spike\.)", "light"),
+    job("chromium", "behavior-e-z-docs-g4-light", "behavior,docs,g4", r"^(behavior\.[e-z]|docs\.|g4\.)", "light"),
+    job("chromium", "docs-g3-g4-g5-split-spike-dark", "docs,g3,g4,g5,split,spike", themes="dark"),
+    job("chromium", "foundation-g1-g2a-pages", "foundation,g1,g2", r"^(foundation\.|g1\.|g2\.[ab])", pages=True),
+    job("chromium", "g2b", "g2", r"^g2\.[c-n]"),
+    job("chromium", "g2c", "g2", r"^g2\.[o-z]"),
+    job("firefox", "behavior-a-c-g3-g5-light", "behavior,g3,g5", r"^(behavior\.[a-c]|g3\.|g5\.)", "light"),
+    job("firefox", "behavior-d-m-g1-g4-light", "behavior,g1,g4", r"^(behavior\.[d-m]|g1\.|g4\.)", "light"),
+    job("firefox", "behavior-n-z-docs-foundation-spike-split-light", "behavior,docs,foundation,spike,split", r"^(behavior\.[n-z]|docs\.|foundation\.|spike\.|split\.)", "light"),
+    job("firefox", "g3-g4-g5-dark", "g3,g4,g5", themes="dark"),
+    job("firefox", "docs-foundation-g1-spike-split-dark", "docs,foundation,g1,spike,split", themes="dark"),
+    job("firefox", "g2a", "g2", r"^g2\.[a-m]"),
+    job("firefox", "g2b", "g2", r"^g2\.[n-z]"),
+    job("webkit", "behavior-a-d-g1-g4b-light", "behavior,g1,g4", r"^(behavior\.[a-d]|g1\.|g4\.[d-l])", "light"),
+    job("webkit", "behavior-e-z-docs-g3b-spike-split-pages-light", "behavior,docs,g3,spike,split", r"^(behavior\.[e-z]|docs\.|g3\.[d-o]|spike\.|split\.)", "light", pages=True),
+    job("webkit", "foundation-g4c-g5-light", "foundation,g4,g5", r"^(foundation\.|g4\.[m-z]|g5\.)", "light"),
+    job("webkit", "g2a-g3a-light", "g2,g3", r"^(g2\.[a-gk-m]|g3\.[a-c])", "light"),
+    job("webkit", "g2b-g3c-g4a-light", "g2,g3,g4", r"^(g2\.[h-jn-z]|g3\.[p-z]|g4\.[a-c])", "light"),
     job("chromium", "min-smoke", "foundation,g5,g1,g2,g3,g4", r"^(foundation\.|g5\.|g1\.select$|g2\.dialog$|g3\.carousel$|g4\.calendar$)", "light", kit="min"),
 ]
 
@@ -96,8 +90,6 @@ def classify(files):
 
 
 def plan(event, full_label, files):
-    if event == "push":
-        return "main", PR
     if event != "pull_request":
         return "full", PR + FULL
     if full_label:
@@ -182,7 +174,6 @@ def self_test():
     check("docs change runs Chromium pages only", plan("pull_request", False, ["README.md"]) == ("docs", [PAGES[0]]) and PAGES[0]["engine"] == "chromium")
     check("pages test change runs pages in 2 engines", plan("pull_request", False, ["test/pages_test.py"]) == ("tests", PAGES))
     check("label runs all", plan("pull_request", True, ["README.md"])[1] == PR + FULL)
-    check("push to main runs the pull request tier", plan("push", False, [])[1] == PR)
     check("schedule and dispatch run all", all(plan(e, False, [])[1] == PR + FULL for e in ("schedule", "workflow_dispatch")))
     return 0 if ok else 1
 

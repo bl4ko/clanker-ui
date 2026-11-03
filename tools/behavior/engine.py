@@ -614,16 +614,19 @@ def outside(page):
 def touch(page, x, y, dx, dy, n, interval):
     cdp = page.context.new_cdp_session(page)
     length = math.hypot(dx, dy) or 1
+    speed = max(200, max(abs(dx), abs(dy)) * 1000 / max(n * interval, 1))
+    step = (length + TOUCH_SLOP) / speed / n
     dx, dy = dx * (1 + TOUCH_SLOP / length), dy * (1 + TOUCH_SLOP / length)
     try:
-        cdp.send("Input.dispatchTouchEvent", {"type": "touchStart", "touchPoints": [{"x": x, "y": y}]})
+        stamp = time.time()
+        cdp.send("Input.dispatchTouchEvent", {"type": "touchStart", "touchPoints": [{"x": x, "y": y}], "timestamp": stamp})
         start, i = time.monotonic(), 0
         while i < n:
-            i = min(n, max(i + 1, int((time.monotonic() - start) * 1000 / interval)))
-            time.sleep(max(0, start + i * interval / 1000 - time.monotonic()))
-            cdp.send("Input.dispatchTouchEvent", {"type": "touchMove", "touchPoints": [{"x": x + dx * i / n, "y": y + dy * i / n}]})
-        time.sleep(max(0, start + (n * interval + 100) / 1000 - time.monotonic()))
-        cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []})
+            i = min(n, max(i + 1, int((time.monotonic() - start) / step)))
+            time.sleep(max(0, start + i * step - time.monotonic()))
+            cdp.send("Input.dispatchTouchEvent", {"type": "touchMove", "touchPoints": [{"x": x + dx * i / n, "y": y + dy * i / n}], "timestamp": stamp + i * step})
+        time.sleep(max(0, start + n * step + 0.1 - time.monotonic()))
+        cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": [], "timestamp": stamp + n * step + 0.1})
     finally:
         cdp.detach()
 

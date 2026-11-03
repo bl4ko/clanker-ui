@@ -1,5 +1,7 @@
 import re
 
+START = "/demo?only=layout"
+
 
 def g3_listen(page, selector, names):
     page.evaluate(

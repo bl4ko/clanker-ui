@@ -1,6 +1,8 @@
 import datetime
 import re
 
+START = "/demo?only=chat,input"
+
 RECORD = """names => {
   window.__g4 = []
   for (const name of names) document.addEventListener(name, e => window.__g4.push({ type: e.type, id: e.target.id || e.target.getAttribute("data-slot"), detail: JSON.parse(JSON.stringify(e.detail ?? null)) }), true)

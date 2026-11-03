@@ -12,7 +12,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Added
 
-- The `play` and `pause` icons.
+- The `play` and `pause` icons. (#34)
 
 ### Changed
 
@@ -28,9 +28,9 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Select and combobox keep the authored `data-value` when the items arrive later, and follow a later `data-value` change. (#16)
 - The slider shows a `value` change from code after an `input` or `change` event, and `disabled`, `min`, `max`, and `step` changes on its inputs. (#16)
 - `el.disabled = false` enables a checkbox, switch, or radio item again. (#16)
-- A fast click on a select trigger no longer leaves a `mouseup` listener on the document that keeps the removed select in memory.
-- The chart draws values near ±1e308 without NaN coordinates and console errors; a stacked total that is not a finite number is left out, like a value that is not a finite number.
-- The message scroller no longer reads the layout of every message on each scroll event (8000 messages: 6.3 ms to 0.07 ms per event).
+- A fast click on a select trigger no longer leaves a `mouseup` listener on the document that keeps the removed select in memory. (#34)
+- The chart draws values near ±1e308 without NaN coordinates and console errors; a stacked total that is not a finite number is left out, like a value that is not a finite number. (#34)
+- The message scroller no longer reads the layout of every message on each scroll event (8000 messages: 6.3 ms to 0.07 ms per event). (#34)
 
 ## 0.1.0 - 2026-11-02
 

@@ -564,6 +564,31 @@ def check_safe_dom(t):
     assert result["ns"] == "http://www.w3.org/2000/svg"
 
 
+def check_safe_dom_select(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const seen = []
+          const watch = e => seen.push(`${e.violatedDirective} on <${e.target?.localName ?? "document"}>`)
+          document.addEventListener("securitypolicyviolation", watch)
+          const changed = []
+          const made = [h("select", { name: "a", value: "2", onchange: e => changed.push(e.target.value) }, h("option", { value: "1" }, "One"), h("option", { value: "2" }, "Two")), h("SELECT", { multiple: true, size: "3" }, h("option", null, "x")), h("select")]
+          const form = h("form", null, ...made)
+          document.body.append(form)
+          made[0].value = "1"
+          made[0].dispatchEvent(new Event("change"))
+          const data = [...new FormData(form)].map(e => e.join("="))
+          await new Promise(r => setTimeout(r, 100))
+          form.remove()
+          document.removeEventListener("securitypolicyviolation", watch)
+          return { seen, changed, data, owner: made.every(s => s.ownerDocument === document && s instanceof HTMLSelectElement && s.form === form), multiple: made[1].multiple && made[1].size === 3 }
+        }"""
+    )
+    assert result["seen"] == [], f"h() selects must not report a style-src-attr violation (WebKit bug 327212): {result['seen']}"
+    assert result["changed"] == ["1"] and result["data"] == ["a=1"], result
+    assert result["owner"] and result["multiple"], result
+
+
 def check_trusted_types(t):
     page = t.page
     if not page.evaluate("'trustedTypes' in window"):

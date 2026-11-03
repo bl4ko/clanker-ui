@@ -125,6 +125,8 @@ A smaller page can load only the component groups that it uses: see [Minified an
 
    Do not use inline `<script>`, inline `<style>`, `style=""`, or `on*=""` attributes. Setting `element.style.x` from JavaScript is allowed. The kit needs no `data:` URLs; `img-src data:` is for app images.
 
+   Safari 27.2 logs one "Refused to apply a stylesheet" error (a `style-src-attr` violation, also sent to CSP report endpoints) for each `<select>` in the HTML of a page with this policy ([WebKit bug 327212](https://bugs.webkit.org/show_bug.cgi?id=327212)). It has no visual effect unless the select sets `text-overflow`. Selects made with `h()` do not report it.
+
 Browsers: Chrome, Safari (also iOS), and Firefox released in the last two years.
 
 ### Override the kit

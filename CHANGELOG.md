@@ -24,6 +24,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Select and combobox keep the authored `data-value` when the items arrive later, and follow a later `data-value` change. (#16)
 - The slider shows a `value` change from code after an `input` or `change` event, and `disabled`, `min`, `max`, and `step` changes on its inputs. (#16)
 - `el.disabled = false` enables a checkbox, switch, or radio item again. (#16)
+- A `<select>` made with `h()` no longer reports a `style-src-attr` CSP violation in Safari 27.2 (WebKit bug 327212).
 
 ## 0.1.0 - 2026-11-02
 

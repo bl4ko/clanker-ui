@@ -18,12 +18,13 @@ Thank you for your help. Bug reports with a small page that shows the problem ar
 ```sh
 DIR=. ADDR=127.0.0.1:8110 go run .
 go vet ./... && go test ./...
-uv run --no-project --with playwright python -I test/run.py --base-url http://127.0.0.1:8110 --out out/run
+uv run --no-project --with playwright python -I test/run.py --base-url http://127.0.0.1:8110 --only g1 -k select --themes light --jobs 3 --out out/run
 uv run --no-project --with playwright python -I tools/behavior gate --quick --base-url http://127.0.0.1:8110 --out out/gate
 ```
 
 - The dev server serves the demo at `/demo` and the docs at `/docs`. `DIR=.` reads the files from disk, so a change shows without a rebuild. It also serves the behavior fixtures.
-- `test/run.py` runs every check in Chromium, Firefox, and WebKit, in light and dark, at 1280 and 390 px. Use `--engines`, `--themes`, `--widths`, `--only <module>`, and `-k <regex>` for a smaller run, for example `--engines chromium --themes light --widths 1280 --only foundation,docs`.
+- Without filters, `test/run.py` runs every check in Chromium, Firefox, and WebKit, in light and dark, at 1280 and 390 px. That takes about 5 hours (about half with `--jobs 3`). Use `--only <module>`, `-k <regex>`, `--engines`, `--themes`, and `--widths` for a smaller run, for example `--engines chromium --themes light --widths 1280 --only foundation,docs`. `--list` prints the names of the checks. `--jobs 3` runs the 3 engines in parallel.
+- On Linux, run `--engines chromium,firefox`. CI runs WebKit on macOS, and the behavior references are recorded on macOS.
 - For a fix in one component, run the tests of that component in all 3 engines. For a change in shared code, also run `foundation` and the group of the component.
 
 ## Rules

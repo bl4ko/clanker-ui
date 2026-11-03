@@ -34,7 +34,7 @@ uv run --no-project --with playwright python -I tools/behavior gate --quick --ba
 ```
 
 - `DIR=.` serves the working tree, so a change shows without a rebuild; without it the server uses the files embedded at build time. `out/` is ignored by git.
-- `test/run.py` flags: `--engines chromium,firefox,webkit`, `--themes light,dark`, `--widths 1280,390`, `--only <test file prefixes>`, `-k <regex>`, `--rtl`, `--reduced-motion`. A check fails on any console error or warning.
+- `test/run.py` flags: `--engines chromium,firefox,webkit`, `--themes light,dark`, `--widths 1280,390`, `--only <test file prefixes>`, `-k <regex>`, `--rtl`, `--reduced-motion`, `--jobs 3` (engines in parallel), `--retry`, `--exitfirst`, `--list`, `--shots` (screenshots of passes too; a failure always saves one). A check fails on any console error or warning.
 - Python tools run with `uv` only. Never use `pip`. JavaScript tools, if a task needs one, use `pnpm` only. The kit itself has no package manager.
 - Install Playwright browsers once: `uv run --no-project --with playwright playwright install chromium firefox webkit`.
 

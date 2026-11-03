@@ -2013,8 +2013,11 @@ def check_dropdown_menu(t):
     assert active(page) == "Open"
     trigger.click()
     wait(page, open_js)
+    t.settle()
     content.get_by_role("menuitem", name="Invite users").hover()
     wait(page, "() => document.querySelector('#dropdown-menu-demo [data-slot=dropdown-menu-sub-content]').matches(':popover-open')")
+    t.settle()
+    assert is_open(sub), page.evaluate("() => ({ active: document.activeElement?.textContent.slice(0, 20), keyboard: document.documentElement.hasAttribute('data-keyboard'), highlighted: [...document.querySelectorAll('#dropdown-menu-demo [data-highlighted]')].map(e => e.textContent.slice(0, 20)) })")
     email = content.get_by_role("menuitem", name="Email")
     ib, eb = inline(t, box(content.get_by_role("menuitem", name="Invite users"))), inline(t, box(email))
     page.mouse.move(px(t, ib["x"] + ib["width"] - 4), ib["y"] + ib["height"] / 2, steps=2)

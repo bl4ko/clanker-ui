@@ -556,10 +556,14 @@ func subjectSlots(sel string) []string {
 	return slots
 }
 
+func noComponent(slot string) error {
+	return fmt.Errorf("data-slot %q has no component in groups.tsv; add a line <component><TAB><group> to tools/gen/groups.tsv (groups: %s)", slot, strings.Join(distGroups, ", "))
+}
+
 func (t *groupTable) slotGroup(slot string) (string, error) {
 	c := t.component(slot)
 	if c == "" {
-		return "", fmt.Errorf("data-slot %q has no component in groups.tsv", slot)
+		return "", noComponent(slot)
 	}
 	return t.group[c], nil
 }
@@ -614,7 +618,7 @@ func (t *groupTable) exprRank(s string) (int, error) {
 				case m[1] == "slot" && m[2] != "" && strings.HasPrefix(s[i+len("[data-slot"):], "="):
 					c := t.component(m[2])
 					if c == "" {
-						return 0, fmt.Errorf("data-slot %q has no component in groups.tsv", m[2])
+						return 0, noComponent(m[2])
 					}
 					raise(c)
 				case m[1] == "backdrop-of" && m[2] != "":
@@ -943,7 +947,7 @@ func (t *groupTable) assignJS(src string, stmts []jsStmt) error {
 		case st.slot != "":
 			g = t.group[t.component(st.slot)]
 			if g == "" {
-				return fmt.Errorf("line %d: data-slot %q has no component in groups.tsv", st.line, st.slot)
+				return fmt.Errorf("line %d: %w", st.line, noComponent(st.slot))
 			}
 		case st.name != "":
 			var ok bool

@@ -32,27 +32,46 @@ def prop_counts(path, parts):
     return counts
 
 
+def cause_keys(path):
+    lines = path.read_text().splitlines()
+    start = next((i for i, line in enumerate(lines) if line.strip() == "| Key | Cause |"), None)
+    if start is None:
+        return set()
+    keys = set()
+    for line in lines[start + 2:]:
+        if not line.strip().startswith("|"):
+            break
+        keys.add(line.strip().strip("|").split("|")[0].strip())
+    return keys
+
+
 def main():
     ap = argparse.ArgumentParser(description="Markdown summary of a tools/parity/parity.py run")
     ap.add_argument("out")
     ap.add_argument("--top", type=int, default=3)
-    ap.add_argument("--strict", action="store_true", help="also fail when a (part, property) differs in more pairs than --known allows, or a component has no measured part")
+    ap.add_argument("--strict", action="store_true", help="also fail when a (part, property) differs in more pairs than --known allows, a component has no measured part, or a cause key of --known is not in --causes")
     ap.add_argument("--known", default=str(pathlib.Path(__file__).with_name("known.tsv")), help="reviewed known differences: component<TAB>part<TAB>property<TAB>pairs<TAB>cause")
+    ap.add_argument("--causes", default=str(pathlib.Path(__file__).resolve().parents[2] / "DEVELOPMENT.md"), help="file with the '| Key | Cause |' table of the cause keys that --strict accepts in --known")
     ap.add_argument("--write-known", default="", help="write the differences of this run in the known.tsv format (causes from --known, else 'to check') to this file")
     args = ap.parse_args()
-    known = {}
+    known, bad_causes = {}, []
     kp = pathlib.Path(args.known)
+    cp = pathlib.Path(args.causes)
+    causes = cause_keys(cp) if args.strict and cp.exists() else set()
     if kp.exists():
-        for line in kp.read_text().splitlines():
+        for n, line in enumerate(kp.read_text().splitlines(), 1):
             f = line.split("\t")
             if len(f) == 5 and f[3].isdigit():
                 known[(f[0], f[1], f[2])] = (int(f[3]), f[4])
+                key = (f[4].split() or [""])[0]
+                if args.strict and key not in causes:
+                    bad_causes.append(f"{kp.name}:{n}: cause key {key!r} is not in the cause table of {cp.name}")
     seen_known, kept_lines, measured_known = set(), [], []
     out = pathlib.Path(args.out)
     rows, parts_lines = [], []
     tot = dict.fromkeys(("parts", "parts_equal", "pairs", "pairs_equal", "meaningful", "meaningful_equal", "measured", "equal"), 0)
     states = {}
-    failures, sites = [], set()
+    failures, sites = bad_causes, set()
     other = dict.fromkeys(("parts", "parts_equal", "pairs", "pairs_equal"), 0)
     other_comps, other_lines = [], []
     for f in sorted(out.glob("*.json")):

@@ -11,7 +11,7 @@ Thank you for your help. Bug reports with a small page that shows the problem ar
   uv run --no-project --with playwright playwright install chromium firefox webkit
   ```
 
-- Optional: the Tailwind CSS CLI (`brew install tailwindcss`) for the generator tests that compile CSS. Without it, these tests skip.
+- Optional: the Tailwind CSS CLI for the generator and its tests that compile CSS. Without it, these tests skip. Use the exact version of `tailwindVersion` in `tools/gen/main.go`: download `tailwindcss-<os>-<arch>` of that version from the [Tailwind CSS releases](https://github.com/tailwindlabs/tailwindcss/releases), and pass `-tailwind PATH` to the generator or put it on `PATH` as `tailwindcss`. Homebrew gives only the newest version.
 
 ## Run and test
 

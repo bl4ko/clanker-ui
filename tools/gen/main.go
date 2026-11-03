@@ -23,6 +23,8 @@ const (
 	uiDir            = "apps/v4/registry/bases/base/ui"
 )
 
+const tailwindHelp = "Tailwind CSS CLI v" + tailwindVersion + " (the standalone tailwindcss-<os>-<arch> binary of the Tailwind GitHub release)"
+
 var sourceFixes = []struct {
 	re         *regexp.Regexp
 	repl, kind string
@@ -36,7 +38,6 @@ var ignoredMarkers = map[string]string{
 	"cn-menu-target":      "",
 	"cn-menu-translucent": "",
 	"cn-font-heading":     "",
-	"cn-logical-sides":    "",
 	"cn-rtl-flip":         "rtl:rotate-180",
 }
 
@@ -67,7 +68,7 @@ func main() {
 		pin := fs.String("pin", "tools/gen/pin.tsv", "git blob hashes of the pinned inputs")
 		content := fs.String("content", "", "file whose class names become utilities")
 		out := fs.String("out", "", "output CSS file")
-		tailwind := fs.String("tailwind", "tailwindcss", "Tailwind CSS CLI (Homebrew tailwindcss runs @tailwindcss/cli on Node)")
+		tailwind := fs.String("tailwind", "tailwindcss", tailwindHelp)
 		fs.Parse(os.Args[2:])
 		if err := utilities(*src, *pin, *content, *out, *tailwind); err != nil {
 			log.Fatal(err)
@@ -92,9 +93,10 @@ func main() {
 	flag.StringVar(&o.out, "out", "out/gen/clanker-ui.generated.css", "output CSS file")
 	flag.StringVar(&o.notes, "notes", "", "notes file (default: out/gen/<name of -out>.notes.txt)")
 	flag.StringVar(&o.kit, "kit", "tools/gen/kit.css", "hand-written kit CSS (plain CSS in kit layers), appended after the generated CSS when -out is set (skipped when the file does not exist; -kit \"\" turns it off)")
-	list := flag.String("components", "", "comma-separated component files (default: all)")
-	flag.StringVar(&o.tailwind, "tailwind", "tailwindcss", "Tailwind CSS CLI (Homebrew tailwindcss runs @tailwindcss/cli on Node)")
+	list := flag.String("components", "", "comma-separated component files (default: the components in -groups)")
+	flag.StringVar(&o.tailwind, "tailwind", "tailwindcss", tailwindHelp)
 	flag.StringVar(&o.mapFile, "map", "tools/gen/map.tsv", "hand selectors for elements without a data-slot")
+	flag.StringVar(&o.groups, "groups", "tools/gen/groups.tsv", "ported components; the default component list (other pinned components get a note)")
 	flag.StringVar(&o.parts, "parts", "", "also write the parts as JSON to this file (for tools/parity)")
 	flag.BoolVar(&o.physical, "physical", false, "keep physical classes (ml-, right-) instead of the shadcn rtl mapping")
 	flag.Parse()
@@ -115,9 +117,9 @@ func main() {
 }
 
 type options struct {
-	src, pin, out, notes, kit, tailwind, mapFile, parts string
-	components                                          []string
-	physical                                            bool
+	src, pin, out, notes, kit, tailwind, mapFile, parts, groups string
+	components                                                  []string
+	physical                                                    bool
 }
 
 func (o options) notesPath() string {
@@ -130,7 +132,7 @@ func (o options) notesPath() string {
 func checkTailwind(tailwind string) error {
 	v, err := exec.Command(tailwind, "--help").CombinedOutput()
 	if err != nil || !strings.Contains(string(v), "tailwindcss v"+tailwindVersion) {
-		return fmt.Errorf("need tailwindcss v%s (brew install tailwindcss): %s", tailwindVersion, firstLine(string(v)))
+		return fmt.Errorf("need tailwindcss v%s: download tailwindcss-<os>-<arch> from https://github.com/tailwindlabs/tailwindcss/releases/tag/v%s and pass -tailwind PATH: %s", tailwindVersion, tailwindVersion, firstLine(string(v)))
 	}
 	return nil
 }
@@ -206,9 +208,13 @@ func run(o options) (string, error) {
 		order = append(order, n)
 		return nil
 	}
-	components := o.components
+	components, notPorted := o.components, []string(nil)
 	if len(components) == 0 {
-		components = p.ui
+		t, err := readGroups(o.groups)
+		if err != nil {
+			return "", err
+		}
+		components, notPorted = portedComponents(p.ui, t)
 	}
 	for _, c := range components {
 		if err := load(c); err != nil {
@@ -236,13 +242,10 @@ func run(o options) (string, error) {
 	g.fps = fps
 	g.physical = o.physical
 	g.kit = kit
-	for _, c := range components {
-		g.component(c)
+	for _, c := range notPorted {
+		g.note("upstream component not ported (port it, then add it to tools/gen/groups.tsv)", "%s", c)
 	}
-	if err := g.unsafeErr(); err != nil {
-		return "", err
-	}
-	if err := g.mapErr(components); err != nil {
+	if err := g.generate(components, len(o.components) == 0); err != nil {
 		return "", err
 	}
 	g.applyShadows()
@@ -328,6 +331,51 @@ func run(o options) (string, error) {
 		return "", err
 	}
 	return g.summary(o.out, len(css), o.notesPath()), nil
+}
+
+func portedComponents(ui []string, t *groupTable) (ported, notPorted []string) {
+	for _, c := range ui {
+		if _, ok := t.group[c]; ok {
+			ported = append(ported, c)
+		} else {
+			notPorted = append(notPorted, c)
+		}
+	}
+	return ported, notPorted
+}
+
+func (g *gen) generate(components []string, all bool) error {
+	for _, c := range components {
+		g.component(c)
+	}
+	if err := g.unsafeErr(); err != nil {
+		return err
+	}
+	if err := g.mapErr(components); err != nil {
+		return err
+	}
+	if all {
+		return g.staleErr()
+	}
+	return nil
+}
+
+func (g *gen) staleErr() error {
+	var stale []string
+	for i, f := range sourceFixes {
+		if !slices.ContainsFunc(g.notes[f.kind], func(n string) bool { return strings.HasSuffix(n, " ("+f.why+")") }) {
+			stale = append(stale, fmt.Sprintf("source fix %d (%s) matched nothing", i+1, f.re))
+		}
+	}
+	for _, m := range sortedKeys(g.ignored) {
+		if !g.used[m] {
+			stale = append(stale, fmt.Sprintf("ignored marker %s matched nothing", m))
+		}
+	}
+	if len(stale) > 0 {
+		return fmt.Errorf("%s at shadcn %s; remove it from tools/gen/main.go", strings.Join(stale, "; "), shadcnSHA[:12])
+	}
+	return nil
 }
 
 func pinnedInputs(p *pinned) (inputs, error) {

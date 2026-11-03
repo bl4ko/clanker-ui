@@ -243,6 +243,7 @@ let outsideTouch = null
 let pointerCancelled = false
 let anchorHolds = 0
 let typed = ""
+let selectDocument = null
 let typedAt = 0
 let memoryTheme = "system"
 let memoryScheme = null
@@ -270,8 +271,9 @@ export function svg(tag, attrs, ...children) {
 }
 
 function build(tag, isSvg, attrs, children) {
-  if (BLOCKED_TAGS.has(String(tag).toLowerCase())) throw new TypeError(`clanker-ui: h() refuses <${tag}>`)
-  const el = isSvg ? document.createElementNS(SVG_NS, tag) : document.createElement(tag)
+  const name = String(tag).toLowerCase()
+  if (BLOCKED_TAGS.has(name)) throw new TypeError(`clanker-ui: h() refuses <${tag}>`)
+  const el = isSvg ? document.createElementNS(SVG_NS, tag) : (name === "select" ? (selectDocument ??= document.implementation.createHTMLDocument("")) : document).createElement(tag)
   if (attrs != null && (typeof attrs !== "object" || attrs instanceof Node || Symbol.iterator in attrs)) {
     children.unshift(attrs)
     attrs = null

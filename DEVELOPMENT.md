@@ -100,6 +100,8 @@ Behavior:
 | Only Markdown, `docs/*.txt`, `skills/`, licenses, issue templates, `release.yml`, `pages.yml`, or `renovate.json` | Only the exported pages in Chromium. |
 | Only Go test files (`*_test.go`) | None. |
 
+The `go` job also runs `test/run.py --self-test` and makes `clanker-ui.css` again from the pinned inputs (`tools/gen fetch`, then `tools/gen -out clanker-ui.css`). It fails when the file differs, so a hand edit of `clanker-ui.css` cannot merge.
+
 `python3 -I tools/ci/plan.py --self-test` checks that each check runs once in each tier. The `go` job runs it.
 
 ## Demo and tests

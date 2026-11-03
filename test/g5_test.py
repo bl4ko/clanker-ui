@@ -993,3 +993,30 @@ def check_chart_impossible_date(t):
         "text": "Line chart. V, 2 points from nope to 2026-03-01. V from 1 to 2.",
         "leap": "Line chart. V, 2 points from Feb 29, 2024 to Mar 1, 2024. V from 1 to 2.",
     }, ("an impossible ISO date counts as no date, not as a rolled-over day", result)
+
+
+def check_chart_extreme_values(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { chart } = await import("/clanker-ui-chart.js")
+          const rows = [{ m: "a", v: 1e308, w: 1e308 }, { m: "b", v: -1e308, w: 1 }, { m: "c", v: 5, w: 2 }]
+          const out = {}
+          for (const [name, options] of Object.entries({ bar: { type: "bar" }, horizontal: { type: "bar", horizontal: true }, stack: { type: "bar", stack: true, y: ["v", "w"] }, line: { type: "line" }, area: { type: "area", stack: true, y: ["v", "w"] }, domain: { type: "line", domain: [-1.7e308, 1.7e308] } })) {
+            const box = document.createElement("div")
+            box.style.width = "400px"
+            document.body.append(box)
+            const view = chart(box, rows, { x: "m", y: "v", animate: false, ...options })
+            const svg = box.querySelector('[data-slot="chart-svg"]')
+            const bad = [...svg.querySelectorAll("*")].flatMap(n => [...n.attributes].filter(a => /NaN|Infinity/.test(a.value)).map(a => `${n.localName}.${a.name}`))
+            const bars = [...svg.querySelectorAll('[data-part="bar"]')].map(b => Math.round(b.getBBox()[options.horizontal ? "width" : "height"]))
+            out[name] = [bad, bars]
+            view.destroy()
+            box.remove()
+          }
+          return out
+        }"""
+    )
+    for name, (bad, bars) in result.items():
+        assert bad == [], (name, bad)
+    assert result["bar"][1][0] == result["bar"][1][1] > 0, result["bar"]
+    assert result["horizontal"][1][0] == result["horizontal"][1][1] > 0, result["horizontal"]

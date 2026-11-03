@@ -20,7 +20,7 @@ env:
 
 jobs:
   plan:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     permissions:
       contents: read
@@ -50,7 +50,7 @@ jobs:
           python3 -I tools/ci/plan.py "$files"
 
   go:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 15
     env:
       TAILWIND_VERSION: "4.3.3"
@@ -90,7 +90,7 @@ jobs:
           git diff --exit-code clanker-ui.css
 
   gitleaks:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -107,7 +107,7 @@ jobs:
     name: ${{ matrix.engine }} ${{ matrix.id }}
     needs: plan
     if: needs.plan.outputs.browser == 'true'
-    runs-on: ${{ matrix.engine == 'webkit' && 'macos-26' || 'ubuntu-24.04' }}
+    runs-on: ${{ matrix.engine == 'webkit' && 'macos-26' || 'ubuntu-26.04' }}
     timeout-minutes: 40
     strategy:
       fail-fast: false
@@ -184,7 +184,7 @@ jobs:
     name: ci-result
     if: always()
     needs: [plan, go, gitleaks, browser]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     steps:
       - name: Check results

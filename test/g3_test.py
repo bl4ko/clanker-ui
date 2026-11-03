@@ -2038,3 +2038,19 @@ def check_layout_overflow(t):
         ids,
     )
     assert outside == [], outside[:10]
+
+
+def check_carousel_loop_false(t):
+    page = t.page
+    t.section("carousel")
+    disabled = page.evaluate("""async () => {
+      const { h } = await import("/clanker-ui.js")
+      const items = ["1", "2", "3"].map(n => h("div", { "data-slot": "carousel-item" }, n))
+      const host = h("div", { "data-slot": "carousel", "data-loop": "false" }, h("div", { "data-slot": "carousel-content" }, h("div", null, ...items)), h("button", { "data-slot": "carousel-previous" }), h("button", { "data-slot": "carousel-next" }))
+      document.querySelector("#carousel [data-demo~=preview]").append(host)
+      await new Promise(r => setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(r)), 20))
+      const out = [host.querySelector("[data-slot=carousel-previous]").disabled, host.querySelector("[data-slot=carousel-next]").disabled]
+      host.remove()
+      return out
+    }""")
+    assert disabled == [True, False], ('data-loop="false" does not loop', disabled)

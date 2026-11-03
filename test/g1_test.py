@@ -1970,3 +1970,146 @@ def check_form_reset_cancelled(t):
     assert result["before"] == [["team"], ["red"], ["2026-01-20"], "TEAM"], result
     assert result["cancelled"] == result["before"], ("a cancelled reset keeps the select, combobox, and calendar values", result)
     assert result["reset"] == [[""], [""], ["2026-01-10"], "Pick a plan"], result
+
+
+def check_flag_false(t):
+    page = t.page
+    t.section("select")
+    result = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const wait = () => new Promise(r => setTimeout(r, 30))
+          const select = h("div", { "data-slot": "select", "data-name": "fx-flag-select" },
+            h("button", { "data-slot": "select-trigger" }, h("span", { "data-slot": "select-value" }, "Pick")),
+            h("div", { "data-slot": "select-content", "data-position": "popper" }, h("div", { "data-slot": "select-item", "data-value": "a", "data-disabled": "false" }, "A")))
+          const combo = multiple => h("div", { "data-slot": "combobox", "data-name": `fx-flag-${multiple}`, "data-multiple": multiple },
+            h("div", { "data-slot": "input-group" }, h("input", { "data-slot": "input-group-control", "aria-label": "Flag" })),
+            h("div", { "data-slot": "combobox-content" }, h("div", { "data-slot": "combobox-list" }, h("div", { "data-slot": "combobox-item", "data-value": "a", "data-disabled": "false" }, "A"), h("div", { "data-slot": "combobox-item", "data-value": "b" }, "B"))))
+          const single = combo("false")
+          const form = h("form", null, select, single)
+          document.body.prepend(form)
+          await wait()
+          const item = select.querySelector("[data-slot=select-item]")
+          const disabledAttr = [item.getAttribute("aria-disabled"), single.querySelector("[data-value=a]").getAttribute("aria-disabled")]
+          item.click()
+          single.querySelector("[data-value=a]").click()
+          const data = new FormData(form)
+          const out = { disabledAttr, select: data.getAll("fx-flag-select"), combo: data.getAll("fx-flag-false"), multi: single.querySelector("[data-slot=combobox-list]").getAttribute("aria-multiselectable") }
+          form.remove()
+          return out
+        }"""
+    )
+    assert result == {"disabledAttr": [None, None], "select": ["a"], "combo": ["a"], "multi": None}, ('data-disabled="false" items can be chosen; data-multiple="false" is single', result)
+
+
+def check_select_late_items(t):
+    page = t.page
+    t.section("select")
+    result = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const wait = () => new Promise(r => setTimeout(r, 30))
+          const events = []
+          const select = h("div", { "data-slot": "select", "data-name": "fx-late-select", "data-value": "b" },
+            h("button", { "data-slot": "select-trigger" }, h("span", { "data-slot": "select-value" }, "Pick")),
+            h("div", { "data-slot": "select-content", "data-position": "popper" }))
+          const combo = h("div", { "data-slot": "combobox", "data-name": "fx-late-combo", "data-value": "b" },
+            h("div", { "data-slot": "input-group" }, h("input", { "data-slot": "input-group-control", "aria-label": "Late" })),
+            h("div", { "data-slot": "combobox-content" }, h("div", { "data-slot": "combobox-list" })))
+          const form = h("form", null, select, combo)
+          for (const n of ["change", "input", "select:change", "combobox:change"]) form.addEventListener(n, () => events.push(n))
+          document.body.prepend(form)
+          await wait()
+          const label = () => [select.querySelector("[data-slot=select-value]").textContent.trim(), combo.querySelector("input[data-slot]").value]
+          const values = () => { const d = new FormData(form); return [d.get("fx-late-select"), d.get("fx-late-combo")] }
+          const early = [label(), values(), select.dataset.value]
+          select.querySelector("[data-slot=select-content]").append(...["a", "b"].map(v => h("div", { "data-slot": "select-item", "data-value": v }, v.toUpperCase())))
+          combo.querySelector("[data-slot=combobox-list]").append(...["a", "b"].map(v => h("div", { "data-slot": "combobox-item", "data-value": v }, v.toUpperCase())))
+          await wait()
+          const late = [label(), values()]
+          let records = 0
+          const mo = new MutationObserver(list => { records += list.filter(r => r.attributeName === "data-value").length })
+          for (const el of [select, combo]) mo.observe(el, { attributes: true })
+          select.dataset.value = "a"
+          combo.dataset.value = "a"
+          await wait()
+          mo.disconnect()
+          const changed = [label(), values(), select.querySelector("[aria-selected=true]")?.dataset.value, combo.querySelector("[aria-selected=true]")?.dataset.value]
+          form.remove()
+          return { early, late, changed, records, events }
+        }"""
+    )
+    assert result["early"] == [["Pick", ""], ["", ""], "b"], result
+    assert result["late"] == [["B", "B"], ["b", "b"]], ("items that arrive later select the authored data-value", result)
+    assert result["changed"] == [["A", "A"], ["a", "a"], "a", "a"], ("a later data-value change selects the item", result)
+    assert result["records"] < 10 and result["events"] == [], ("no mutation loop and no change event", result)
+
+
+def check_choice_reenable(t):
+    page = t.page
+    t.section("checkbox")
+    result = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const wait = () => new Promise(r => setTimeout(r, 30))
+          const box = h("button", { "data-slot": "checkbox" })
+          const sw = h("button", { "data-slot": "switch" })
+          const radio = h("button", { "data-slot": "radio-group-item", value: "a" })
+          const host = h("div", null, box, sw, h("div", { "data-slot": "radio-group" }, radio))
+          document.body.prepend(host)
+          await wait()
+          const out = []
+          for (const el of [box, sw, radio]) {
+            el.disabled = true
+            await wait()
+            const off = [el.disabled, el.getAttribute("aria-disabled"), el.hasAttribute("data-disabled")]
+            el.click()
+            const stays = el.getAttribute("aria-checked")
+            el.disabled = false
+            await wait()
+            const on = [el.disabled, el.getAttribute("aria-disabled"), el.hasAttribute("data-disabled"), el.tabIndex]
+            el.click()
+            out.push([off, stays, on, el.getAttribute("aria-checked")])
+            el.setAttribute("disabled", "")
+            await wait()
+            out.push([el.disabled, el.hasAttribute("disabled")])
+          }
+          host.remove()
+          return out
+        }"""
+    )
+    for name, (off, stays, on, checked), again in zip(["checkbox", "switch", "radio"], result[0::2], result[1::2]):
+        assert off == [True, "true", True] and stays == "false", (name, "disabled = true disables", off, stays)
+        assert on[:3] == [False, None, False] and on[3] == 0 and checked == "true", (name, "disabled = false enables again", on, checked)
+        assert again == [True, False], (name, "the disabled attribute still disables", again)
+
+
+def check_slider_programmatic(t):
+    page = t.page
+    t.section("slider")
+    result = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const frame = () => new Promise(r => requestAnimationFrame(() => setTimeout(r, 30)))
+          const input = h("input", { type: "range", min: "0", max: "100", value: "20", "aria-label": "Volume" })
+          const root = h("div", { "data-slot": "slider" }, input)
+          document.getElementById("slider").prepend(root)
+          await frame()
+          const thumb = root.querySelector("[data-slot=slider-thumb]")
+          const pos = () => thumb.style.getPropertyValue("--position")
+          const start = pos()
+          input.value = "80"
+          input.dispatchEvent(new Event("input", { bubbles: true }))
+          const value = [input.getAttribute("aria-valuenow"), pos() !== start, pos().includes("0.8 ")]
+          input.disabled = true
+          await frame()
+          const disabled = [root.hasAttribute("data-disabled"), thumb.hasAttribute("data-disabled")]
+          input.disabled = false
+          input.max = "200"
+          await frame()
+          const after = [root.hasAttribute("data-disabled"), pos().includes("0.4 ")]
+          root.remove()
+          return { value, disabled, after }
+        }"""
+    )
+    assert result == {"value": ["80", True, True], "disabled": [True, True], "after": [False, True]}, ("code changes update the slider", result)

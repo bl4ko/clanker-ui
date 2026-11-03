@@ -30,7 +30,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - `el.disabled = false` enables a checkbox, switch, or radio item again. (#16)
 - A fast click on a select trigger no longer leaves a `mouseup` listener on the document that keeps the removed select in memory.
 - The chart draws values near ±1e308 without NaN coordinates and console errors; a stacked total that is not a finite number is left out, like a value that is not a finite number.
-- The message scroller no longer reads the layout of every message on each scroll event, and handles scroll once per frame (8000 messages: 6.6 ms to 0.1 ms per frame).
+- The message scroller no longer reads the layout of every message on each scroll event (8000 messages: 6.3 ms to 0.07 ms per event).
 
 ## 0.1.0 - 2026-11-02
 

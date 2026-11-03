@@ -8650,9 +8650,6 @@ function messageScrollerSchedule(s) {
   s.frame = requestAnimationFrame(() => {
     s.frame = 0
     messageScrollerCommit(s)
-    if (!s.capture) return
-    s.capture = false
-    messageScrollerCapture(s)
   })
 }
 
@@ -8943,7 +8940,6 @@ function messageScrollerSetup(root) {
     autoscrolling: false,
     autoTimer: 0,
     frame: 0,
-    capture: false,
     resizeFrame: 0,
     applied: false,
     prepend: null,
@@ -9069,8 +9065,8 @@ define("message-scroller-viewport", {
   scroll(event, el) {
     const s = messageScrollerStates.get(el.closest('[data-slot="message-scroller"]'))
     if (!s || s.viewport !== el) return
-    s.capture = true
-    messageScrollerSchedule(s)
+    messageScrollerCommit(s)
+    messageScrollerCapture(s)
   },
   keydown(event, el) {
     if (event.target !== el || !messageScrollerKeys.has(event.key)) return

@@ -1517,7 +1517,6 @@ def check_message_scroller_scroll_cost(t):
           Element.prototype.getBoundingClientRect = function () { reads++; return read.call(this) }
           viewport.scrollTop -= 3000
           viewport.dispatchEvent(new Event("scroll"))
-          const sync = reads
           await frame()
           Element.prototype.getBoundingClientRect = read
           const state = root.getAttribute("data-scrollable")
@@ -1535,10 +1534,10 @@ def check_message_scroller_scroll_cost(t):
           await frame()
           const after = first.getBoundingClientRect().top
           root.remove()
-          return { sync, reads, state, moved: Math.round(after - before) }
+          return { reads, state, moved: Math.round(after - before) }
         }"""
     )
-    assert result["sync"] == 0 and result["reads"] < 50 and result["state"] == "start end" and abs(result["moved"]) <= 1, result
+    assert result["reads"] < 50 and result["state"] == "start end" and abs(result["moved"]) <= 1, result
 
 
 def check_message_scroller_pending(t):

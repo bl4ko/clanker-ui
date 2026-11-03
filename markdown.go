@@ -20,6 +20,7 @@ type mdHooks struct {
 	components func(variant string) (string, error)
 	code       func(lang, title, src string) (string, error)
 	link       func(url string) string
+	reserved   []string
 }
 
 type mdTag struct {
@@ -146,6 +147,9 @@ type mdRenderer struct {
 
 func renderMarkdown(src string, hooks mdHooks) (string, []tocEntry, error) {
 	r := &mdRenderer{hooks: hooks, ids: map[string]int{}}
+	for _, id := range hooks.reserved {
+		r.ids[id] = 0
+	}
 	var b strings.Builder
 	if err := r.blocks(&b, strings.Split(strings.ReplaceAll(src, "\r\n", "\n"), "\n"), false); err != nil {
 		return "", nil, err
@@ -229,7 +233,28 @@ func (r *mdRenderer) blocks(b *strings.Builder, lines []string, tight bool) erro
 			}
 			i = next
 		case line != strings.TrimLeft(line, " \t"):
-			return fmt.Errorf("unexpected indented line %q", line)
+			n := len(line) - len(strings.TrimLeft(line, " "))
+			if n == 0 || n > 3 {
+				return fmt.Errorf("unexpected indented line %q", line)
+			}
+			if !isFence(line[n:]) {
+				lines[i] = line[n:]
+				continue
+			}
+			sub := make([]string, 0, len(lines)-i)
+			for _, l := range lines[i:] {
+				sub = append(sub, l[min(n, len(l)-len(strings.TrimLeft(l, " "))):])
+			}
+			f, next, err := parseFence(sub, 0)
+			if err != nil {
+				return err
+			}
+			out, err := r.hooks.code(f.lang, f.title, strings.Join(f.lines, "\n"))
+			if err != nil {
+				return err
+			}
+			b.WriteString(out)
+			i += next
 		default:
 			var para []string
 			for ; i < len(lines) && !blank(lines[i]) && (len(para) == 0 || !r.startsBlock(lines[i])); i++ {

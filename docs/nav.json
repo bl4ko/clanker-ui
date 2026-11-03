@@ -96,22 +96,22 @@
       "title": "Get Started",
       "items": [
         {"title": "Introduction", "href": "/docs", "mobileOnly": true},
-        {"title": "Installation", "href": "/docs/installation", "readme": "use-in-a-project"},
-        {"title": "Theming", "href": "/docs/theming"},
+        {"title": "Installation", "href": "/docs/installation", "readme": "use-in-a-project", "description": "Load the kit files in a project: the order, the CSP, overrides, and the minified group files."},
+        {"title": "Theming", "href": "/docs/theming", "readme": "color-schemes"},
         {"title": "Typography", "href": "/docs/typography"},
-        {"title": "Dark Mode", "href": "/docs/dark-mode", "readme": "theme-toggle-and-switch"},
-        {"title": "JavaScript", "href": "/docs/javascript", "readme": "core-exports"},
-        {"title": "Markup Conventions", "href": "/docs/markup", "readme": "markup-conventions"},
-        {"title": "Localization", "href": "/docs/localization", "readme": "localization"},
-        {"title": "Security", "href": "/docs/security", "readme": "security-rules"},
+        {"title": "Dark Mode", "href": "/docs/dark-mode", "readme": "theme-toggle-and-switch", "description": "Light, dark, and system modes with a theme toggle or a theme switch."},
+        {"title": "JavaScript", "href": "/docs/javascript", "readme": "core-exports", "description": "The core exports of clanker-ui.js: the safe DOM builder, icons, strings, the theme, and the direction."},
+        {"title": "Markup Conventions", "href": "/docs/markup", "readme": "markup-conventions", "description": "Write the HTML that shadcn/ui renders: data-slot parts, state attributes, and parts that are other components."},
+        {"title": "Localization", "href": "/docs/localization", "readme": "localization", "description": "Every fixed label of the kit comes from the strings object. Change it for a language or for one element."},
+        {"title": "Security", "href": "/docs/security", "readme": "security-rules", "description": "The code rules that keep the kit, the demo, and the docs safe under a strict CSP with Trusted Types."},
         {"title": "RTL", "href": "/docs/rtl", "readme": "direction"}
       ]
     },
     {
       "title": "Utilities",
       "items": [
-        {"title": "scroll-fade", "href": "/docs/utils/scroll-fade", "readme": "css-rules-for-components"},
-        {"title": "shimmer", "href": "/docs/utils/shimmer", "readme": "css-rules-for-components"}
+        {"title": "scroll-fade", "href": "/docs/utils/scroll-fade", "readme": "css-rules-for-components", "description": "A mask that fades the edge of a scroll container where more content is."},
+        {"title": "shimmer", "href": "/docs/utils/shimmer", "readme": "css-rules-for-components", "description": "A text shimmer for loading and status text."}
       ]
     },
     {

@@ -19,7 +19,7 @@ clanker-ui is a dependency-free port of shadcn/ui (Base UI base, Nova style) to 
 | `test/` | Browser tests (`test/run.py`, Playwright) and behavior scenarios |
 | `docs/`, `demo/` | Docs site content and templates, demo page |
 | `skills/clanker-ui/` | Portable Agent Skill for users of the kit |
-| `main.go`, `docs.go`, `markdown.go` | Server (Go standard library only) |
+| `main.go`, `docs.go`, `pages.go`, `markdown.go` | Server (Go standard library only); `pages.go` builds the docs pages that have no `page.md` |
 
 ## Commands
 

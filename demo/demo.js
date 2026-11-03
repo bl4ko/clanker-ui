@@ -3,32 +3,24 @@ import * as ui from "../clanker-ui.js"
 const demoTokens = ["background", "foreground", "card", "card-foreground", "popover", "popover-foreground", "primary", "primary-foreground", "secondary", "secondary-foreground", "muted", "muted-foreground", "accent", "accent-foreground", "destructive", "border", "input", "ring", "chart-1", "chart-2", "chart-3", "chart-4", "chart-5", "chart-6", "chart-7", "chart-8", "sidebar", "sidebar-foreground", "sidebar-primary", "sidebar-primary-foreground", "sidebar-accent", "sidebar-accent-foreground", "sidebar-border", "sidebar-ring"]
 const demoRadii = ["sm", "md", "lg", "xl", "2xl", "3xl", "4xl"]
 const demoNav = document.getElementById("demo-nav")
-const demoNarrow = matchMedia("(max-width: 767px)")
-function demoNavMode() {
-  if (!demoNarrow.matches && demoNav.matches(":popover-open")) demoNav.hidePopover()
-  demoNav.popover = demoNarrow.matches ? "auto" : null
-}
-demoNavMode()
-demoNarrow.addEventListener("change", demoNavMode)
-const demoLinks = [...demoNav.querySelectorAll('a[href^="#"]')]
 
-document.getElementById("h-proof").replaceChildren(ui.h("code", null, '<img src="x" onerror="alert(document.domain)">'))
+document.getElementById("h-proof")?.replaceChildren(ui.h("code", null, '<img src="x" onerror="alert(document.domain)">'))
 
-document.getElementById("theme-colors").replaceChildren(
+document.getElementById("theme-colors")?.replaceChildren(
   ...demoTokens.map(token => ui.h("div", { "data-demo": "swatch" }, ui.h("div", { "data-demo": "swatch-chip", style: { background: `var(--${token})` } }), ui.h("code", null, `--${token}`))),
 )
 
-document.getElementById("theme-radius").replaceChildren(
+document.getElementById("theme-radius")?.replaceChildren(
   ...demoRadii.map(size => ui.h("div", { "data-demo": "radius" }, ui.h("div", { "data-demo": "radius-box", style: { borderRadius: `var(--radius-${size})` } }), `radius-${size}`)),
 )
 
-document.getElementById("icon-grid").replaceChildren(...ui.iconNames.map(name => ui.h("div", { "data-demo": "icon-tile", title: name }, ui.icon(name), name)))
-document.getElementById("icon-grid").after(ui.h("p", { "data-demo": "icon-count" }, `${ui.iconNames.length} icons. Aliases: loader-2, more-horizontal, more-vertical, home, trash-2, filter, circle-help.`))
+document.getElementById("icon-grid")?.replaceChildren(...ui.iconNames.map(name => ui.h("div", { "data-demo": "icon-tile", title: name }, ui.icon(name), name)))
+document.getElementById("icon-grid")?.after(ui.h("p", { "data-demo": "icon-count" }, `${ui.iconNames.length} icons. Aliases: loader-2, more-horizontal, more-vertical, home, trash-2, filter, circle-help.`))
 
 const demoSchemeGrid = document.getElementById("scheme-grid")
 const demoBaseSchemes = ui.theme.schemes.filter(s => s.group !== "accent")
 const demoSwatchTokens = ["primary", "secondary", "accent", "destructive", "chart-1", "chart-2", "chart-3", "chart-4", "chart-5"]
-demoSchemeGrid.replaceChildren(
+demoSchemeGrid?.replaceChildren(
   ...demoBaseSchemes.map(({ value, label }) =>
     ui.h(
       "button",
@@ -39,7 +31,7 @@ demoSchemeGrid.replaceChildren(
     ),
   ),
 )
-demoSchemeGrid.addEventListener("click", event => {
+demoSchemeGrid?.addEventListener("click", event => {
   const tile = event.target.closest("[data-demo='scheme-tile']")
   if (!tile) return
   const bases = new Set(demoBaseSchemes.map(s => s.value))
@@ -47,7 +39,9 @@ demoSchemeGrid.addEventListener("click", event => {
 })
 
 function demoThemeStatus() {
-  document.getElementById("theme-status").textContent = `Mode: ${ui.theme.get()}. Showing ${ui.theme.resolved()}.`
+  const status = document.getElementById("theme-status")
+  if (status) status.textContent = `Mode: ${ui.theme.get()}. Showing ${ui.theme.resolved()}.`
+  if (!demoSchemeGrid) return
   const scheme = ui.theme.scheme()
   document.getElementById("scheme-status").textContent = `Scheme: ${scheme || "none (kit default)"}.`
   const tokens = scheme.split(" ")
@@ -57,79 +51,90 @@ function demoThemeStatus() {
 demoThemeStatus()
 document.documentElement.addEventListener("theme:change", demoThemeStatus)
 
-demoNav.addEventListener("click", event => {
-  if (event.target.closest("a") && demoNav.matches(":popover-open")) demoNav.hidePopover()
-})
+if (demoNav) {
+  const demoNarrow = matchMedia("(max-width: 767px)")
+  function demoNavMode() {
+    if (!demoNarrow.matches && demoNav.matches(":popover-open")) demoNav.hidePopover()
+    demoNav.popover = demoNarrow.matches ? "auto" : null
+  }
+  demoNavMode()
+  demoNarrow.addEventListener("change", demoNavMode)
+  const demoLinks = [...demoNav.querySelectorAll('a[href^="#"]')]
 
-const demoSections = [...document.querySelectorAll('[data-demo="section"], [data-demo="hero"]')]
-let demoFrame = 0
-let demoCurrent = null
-function demoReveal(link) {
-  if (!demoNav.checkVisibility()) return
-  const edge = 48
-  const nav = demoNav.getBoundingClientRect()
-  const r = link.getBoundingClientRect()
-  if (r.top < nav.top + edge) demoNav.scrollTop -= nav.top + edge - r.top
-  else if (r.bottom > nav.bottom - edge) demoNav.scrollTop += r.bottom - nav.bottom + edge
+  demoNav.addEventListener("click", event => {
+    if (event.target.closest("a") && demoNav.matches(":popover-open")) demoNav.hidePopover()
+  })
+
+  const demoSections = [...document.querySelectorAll('[data-demo="section"], [data-demo="hero"]')]
+  let demoFrame = 0
+  let demoCurrent = null
+  function demoReveal(link) {
+    if (!demoNav.checkVisibility()) return
+    const edge = 48
+    const nav = demoNav.getBoundingClientRect()
+    const r = link.getBoundingClientRect()
+    if (r.top < nav.top + edge) demoNav.scrollTop -= nav.top + edge - r.top
+    else if (r.bottom > nav.bottom - edge) demoNav.scrollTop += r.bottom - nav.bottom + edge
+  }
+  function demoTrack() {
+    demoFrame = 0
+    let current = demoSections[0]
+    for (const section of demoSections) if (section.getBoundingClientRect().top <= 120) current = section
+    const link = demoLinks.find(l => l.hash === `#${current.id}`) ?? null
+    if (link === demoCurrent) return
+    demoCurrent?.removeAttribute("aria-current")
+    demoCurrent = link
+    if (!link) return
+    link.setAttribute("aria-current", "true")
+    demoReveal(link)
+  }
+  addEventListener("scroll", () => {
+    if (!demoFrame) demoFrame = requestAnimationFrame(demoTrack)
+  }, { passive: true })
+  demoNav.addEventListener("toggle", event => {
+    if (event.newState === "open" && demoCurrent) demoReveal(demoCurrent)
+  })
+  demoTrack()
 }
-function demoTrack() {
-  demoFrame = 0
-  let current = demoSections[0]
-  for (const section of demoSections) if (section.getBoundingClientRect().top <= 120) current = section
-  const link = demoLinks.find(l => l.hash === `#${current.id}`) ?? null
-  if (link === demoCurrent) return
-  demoCurrent?.removeAttribute("aria-current")
-  demoCurrent = link
-  if (!link) return
-  link.setAttribute("aria-current", "true")
-  demoReveal(link)
-}
-addEventListener("scroll", () => {
-  if (!demoFrame) demoFrame = requestAnimationFrame(demoTrack)
-}, { passive: true })
-demoNav.addEventListener("toggle", event => {
-  if (event.newState === "open" && demoCurrent) demoReveal(demoCurrent)
-})
-demoTrack()
 const formDemo = document.getElementById("form-profile")
 const formDemoResult = document.getElementById("form-result")
 
-formDemo.addEventListener("form:submit", event => {
+formDemo?.addEventListener("form:submit", event => {
   event.preventDefault()
   formDemoResult.textContent = `Submitted: ${JSON.stringify(event.detail.values)}`
 })
-formDemo.addEventListener("form:invalid", event => {
+formDemo?.addEventListener("form:invalid", event => {
   const count = event.detail.errors.length
   formDemoResult.textContent = `${count} ${count === 1 ? "field needs" : "fields need"} attention.`
 })
-formDemo.addEventListener("reset", () => {
+formDemo?.addEventListener("reset", () => {
   formDemoResult.textContent = ""
 })
-document.getElementById("form-items").addEventListener("form:submit", event => event.preventDefault())
-document.getElementById("field-checkout").addEventListener("submit", event => event.preventDefault())
+document.getElementById("form-items")?.addEventListener("form:submit", event => event.preventDefault())
+document.getElementById("field-checkout")?.addEventListener("submit", event => event.preventDefault())
 
 const fieldDemoPrice = document.getElementById("field-price")
-fieldDemoPrice.addEventListener("input", () => {
+fieldDemoPrice?.addEventListener("input", () => {
   const [low, high] = fieldDemoPrice.querySelectorAll("input")
   document.getElementById("field-price-min").textContent = low.value
   document.getElementById("field-price-max").textContent = high.value
 })
 
 const inputOtpDemoValue = document.getElementById("input-otp-value")
-document.getElementById("input-otp-controlled").addEventListener("input", event => {
+document.getElementById("input-otp-controlled")?.addEventListener("input", event => {
   inputOtpDemoValue.textContent = event.target.value ? `You entered: ${event.target.value}` : "Enter your one-time password."
 })
 
 const sliderDemoTemperature = document.getElementById("slider-temperature")
-sliderDemoTemperature.addEventListener("input", () => {
+sliderDemoTemperature?.addEventListener("input", () => {
   document.getElementById("slider-temperature-value").textContent = [...sliderDemoTemperature.querySelectorAll("input")].map(i => i.value).join(", ")
 })
 
-document.getElementById("select-align").addEventListener("switch:change", event => {
+document.getElementById("select-align")?.addEventListener("switch:change", event => {
   document.querySelector('#select-aligned [data-slot="select-content"]').dataset.alignTrigger = String(event.detail.checked)
 })
 
-document.getElementById("toggle-group-weight").addEventListener("toggle-group:change", event => {
+document.getElementById("toggle-group-weight")?.addEventListener("toggle-group:change", event => {
   document.querySelector("#toggle-group-weight-text code").textContent = `font-${event.detail.value || "normal"}`
 })
 const toastDemoActions = {
@@ -179,10 +184,9 @@ document.addEventListener("click", event => {
   for (const control of document.querySelectorAll("[data-drawer-goal]")) control.disabled = Number(control.dataset.drawerGoal) < 0 ? drawerDemoGoal <= 200 : drawerDemoGoal >= 400
 })
 
-const drawerDemo = document.getElementById("drawer-demo")
 const drawerMobile = matchMedia("(max-width: 767px)")
 const drawerDemoMode = () => {
-  for (const root of [drawerDemo, ...document.querySelectorAll("[data-demo-responsive-drawer]")]) {
+  for (const root of document.querySelectorAll("#drawer-demo, [data-demo-responsive-drawer]")) {
     root.dataset.swipeDirection = drawerMobile.matches ? "down" : "right"
     root.toggleAttribute("data-show-swipe-handle", drawerMobile.matches)
   }
@@ -195,7 +199,7 @@ document.getElementById("drawer-responsive")?.addEventListener("click", event =>
 })
 
 document.addEventListener("keydown", event => {
-  if ((event.key !== "k" && event.key !== "K") || !(event.metaKey || event.ctrlKey) || event.altKey || event.shiftKey) return
+  if ((event.key !== "k" && event.key !== "K") || !(event.metaKey || event.ctrlKey) || event.altKey || event.shiftKey || event.defaultPrevented || !document.getElementById("command-dialog")) return
   if (event.ctrlKey && !event.metaKey && event.target instanceof Element && event.target.closest('[data-slot="command"]')) return
   event.preventDefault()
   if (!ui.dialogClose("command-dialog", "shortcut")) ui.dialogOpen("command-dialog")
@@ -210,7 +214,7 @@ document.getElementById("dialog-demo")?.addEventListener("dialog:close", event =
   if (event.detail.reason === "submit") ui.toast.success("Profile updated")
 })
 const carouselDemo = document.getElementById("carousel-demo")
-carouselDemo.addEventListener("carousel:change", event => {
+carouselDemo?.addEventListener("carousel:change", event => {
   document.getElementById("carousel-count").textContent = `Slide ${event.detail.value + 1} of ${event.detail.count}`
 })
 
@@ -220,10 +224,10 @@ function progressDemoStep(delta) {
   bar.dataset.value = String(value)
   document.getElementById("progress-text").textContent = `${value}%`
 }
-document.getElementById("progress-less").addEventListener("click", () => progressDemoStep(-10))
-document.getElementById("progress-more").addEventListener("click", () => progressDemoStep(10))
+document.getElementById("progress-less")?.addEventListener("click", () => progressDemoStep(-10))
+document.getElementById("progress-more")?.addEventListener("click", () => progressDemoStep(10))
 
-document.getElementById("scroll-area-tags").append(...Array.from({ length: 50 }, (_, i) => [ui.h("div", null, `v1.2.0-beta.${50 - i}`), ui.h("div", { "data-slot": "separator" })]).flat())
+document.getElementById("scroll-area-tags")?.append(...Array.from({ length: 50 }, (_, i) => [ui.h("div", null, `v1.2.0-beta.${50 - i}`), ui.h("div", { "data-slot": "separator" })]).flat())
 
 const tablePayments = [
   { id: "m5gr84i9", amount: 316, status: "success", email: "ken99@example.com" },
@@ -405,7 +409,7 @@ function tableRender() {
   tableSync()
 }
 
-tableRoot.addEventListener("dropdown-menu:select", event => {
+tableRoot?.addEventListener("dropdown-menu:select", event => {
   const value = String(event.detail.value)
   if (!value.startsWith("copy:")) return
   const id = value.slice(5)
@@ -413,19 +417,19 @@ tableRoot.addEventListener("dropdown-menu:select", event => {
   ui.toast("Payment ID copied", { description: id })
 })
 
-tableRoot.replaceChildren(
+tableRoot?.replaceChildren(
   ui.h("div", { "data-demo": "table-toolbar" }, tableFilter, tableColumnMenu),
   ui.h("div", { "data-slot": "table-container" }, ui.h("table", { "data-slot": "table", "aria-label": "Payments" }, ui.h("thead", { "data-slot": "table-header" }, tableHeadRow), tableBody)),
   ui.h("div", { "data-demo": "table-footer" }, tableCount, tablePageLabel, tablePrevious, tableNext),
 )
-tableRender()
+if (tableRoot) tableRender()
 function calendarDemoIso(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
 }
 
 const calendarDemoToday = calendarDemoIso(new Date())
 
-document.getElementById("attachment").addEventListener("click", event => {
+document.getElementById("attachment")?.addEventListener("click", event => {
   const status = document.getElementById("attachment-status")
   const remove = event.target.closest("[data-attachment-remove]")
   if (remove) {
@@ -438,47 +442,51 @@ document.getElementById("attachment").addEventListener("click", event => {
   else if (event.target.closest("#attachment-copy-link")) status.textContent = "Copied the link to research-summary.pdf."
 })
 
-document.getElementById("bubble-buttons").addEventListener("click", event => {
+document.getElementById("bubble-buttons")?.addEventListener("click", event => {
   const reply = event.target.closest('[data-slot="bubble-content"]')
   if (!reply || !reply.matches("button, a")) return
   event.preventDefault()
   document.getElementById("bubble-status").textContent = `You picked: ${reply.textContent}`
 })
 
-document.getElementById("bubble-run").addEventListener("click", event => {
+document.getElementById("bubble-run")?.addEventListener("click", event => {
   event.currentTarget.textContent = "Running..."
   event.currentTarget.disabled = true
 })
 
 const bubbleDemoText = "The accessibility review found two focus states that were visually too subtle in dark mode.\n\nI checked the dialog, menu, and drawer paths because each one renders focusable controls inside a layered surface.\n\nThe dialog and drawer are fine. The menu needs the hover and focus tokens split so keyboard focus stays visible when the pointer is not involved.\n\nI also recommend keeping the change in the style file instead of the primitive so the other themes can choose their own focus treatment later."
 
-document.getElementById("bubble-more-toggle").addEventListener("click", event => {
+document.getElementById("bubble-more-toggle")?.addEventListener("click", event => {
   const toggle = event.currentTarget
   const open = toggle.getAttribute("aria-expanded") !== "true"
   toggle.setAttribute("aria-expanded", String(open))
   document.getElementById("bubble-more-text").textContent = open ? bubbleDemoText : `${bubbleDemoText.slice(0, 180)}...`
   toggle.replaceChildren(open ? "Show less" : "Show more", ui.icon("chevron-down", { "data-icon": "inline-end" }))
 })
-document.getElementById("bubble-more-text").textContent = `${bubbleDemoText.slice(0, 180)}...`
+const bubbleDemoMore = document.getElementById("bubble-more-text")
+if (bubbleDemoMore) bubbleDemoMore.textContent = `${bubbleDemoText.slice(0, 180)}...`
 
-document.getElementById("calendar-range").setAttribute("data-max", calendarDemoToday)
-document.querySelector('#date-picker-birth [data-slot="calendar"]').setAttribute("data-max", calendarDemoToday)
-ui.calendarSetValue(document.getElementById("calendar-demo"), calendarDemoToday)
-document.getElementById("calendar-demo-value").textContent = `Selected ${calendarDemoToday}.`
+document.getElementById("calendar-range")?.setAttribute("data-max", calendarDemoToday)
+document.querySelector('#date-picker-birth [data-slot="calendar"]')?.setAttribute("data-max", calendarDemoToday)
+const calendarDemo = document.getElementById("calendar-demo")
+if (calendarDemo) {
+  ui.calendarSetValue(calendarDemo, calendarDemoToday)
+  document.getElementById("calendar-demo-value").textContent = `Selected ${calendarDemoToday}.`
+}
 
-document.getElementById("calendar").addEventListener("calendar:change", event => {
+document.getElementById("calendar")?.addEventListener("calendar:change", event => {
   const value = event.detail.value
   if (event.target.id === "calendar-demo") document.getElementById("calendar-demo-value").textContent = value ? `Selected ${value}.` : "No date selected."
   if (event.target.id === "calendar-range") document.getElementById("calendar-range-value").textContent = value ? `Range: ${value.from} to ${value.to}` : "No range selected."
 })
 
-document.getElementById("calendar-form").addEventListener("submit", event => {
+document.getElementById("calendar-form")?.addEventListener("submit", event => {
   event.preventDefault()
   const stay = new FormData(event.currentTarget).get("stay")
   document.getElementById("calendar-form-value").textContent = `The form sent stay=${stay || "(empty)"}.`
 })
 
-document.getElementById("code-block-more-toggle").addEventListener("click", event => {
+document.getElementById("code-block-more-toggle")?.addEventListener("click", event => {
   const toggle = event.currentTarget
   const content = document.getElementById("code-block-more-content")
   const open = !content.toggleAttribute("data-collapsed")
@@ -486,21 +494,21 @@ document.getElementById("code-block-more-toggle").addEventListener("click", even
   toggle.replaceChildren(open ? "Show less" : "Show more", ui.icon("chevron-down", { "data-icon": "inline-end" }))
 })
 
-document.getElementById("date-picker-form").addEventListener("submit", event => {
+document.getElementById("date-picker-form")?.addEventListener("submit", event => {
   const due = new FormData(event.currentTarget).get("due")
   document.getElementById("date-picker-form-value").textContent = due ? `Scheduled for ${due}.` : "No date picked."
 })
 
-document.getElementById("marker-revert").addEventListener("click", () => {
+document.getElementById("marker-revert")?.addEventListener("click", () => {
   document.getElementById("marker-status-text").textContent = "You clicked the revert button."
 })
 
-document.getElementById("message-actions").addEventListener("click", event => {
+document.getElementById("message-actions")?.addEventListener("click", event => {
   const button = event.target.closest('[data-slot="button"][aria-pressed]')
   if (button) button.setAttribute("aria-pressed", String(button.getAttribute("aria-pressed") !== "true"))
 })
 
-document.getElementById("message-retry").addEventListener("click", event => {
+document.getElementById("message-retry")?.addEventListener("click", event => {
   document.getElementById("message-failed-text").textContent = "Delivered"
   document.getElementById("message-failed-text").removeAttribute("id")
   event.currentTarget.remove()
@@ -509,7 +517,7 @@ document.getElementById("message-retry").addEventListener("click", event => {
 const messageScrollerDemoRoot = document.getElementById("message-scroller-main")
 const messageScrollerDemoContent = document.getElementById("message-scroller-transcript")
 const messageScrollerDemoInput = document.getElementById("message-scroller-input")
-const messageScrollerDemoRows = () => messageScrollerDemoContent.querySelectorAll(':scope > [data-slot="message-scroller-item"]')
+const messageScrollerDemoRows = () => messageScrollerDemoContent?.querySelectorAll(':scope > [data-slot="message-scroller-item"]') ?? []
 const messageScrollerDemoInitialCount = messageScrollerDemoRows().length
 const messageScrollerDemoPrompts = ["How do I stop this from happening again?", "Can CI tell me which package changed?", "Thanks. Summarize the fix in one line."]
 const messageScrollerDemoReplies = [
@@ -587,7 +595,7 @@ function messageScrollerDemoSend(text, reply) {
   messageScrollerDemoStream(`a${turn}`, reply, messageScrollerDemoFinish)
 }
 
-document.getElementById("message-scroller-composer").addEventListener("submit", event => {
+document.getElementById("message-scroller-composer")?.addEventListener("submit", event => {
   event.preventDefault()
   const text = messageScrollerDemoInput.value.trim()
   if (!text) return
@@ -595,23 +603,23 @@ document.getElementById("message-scroller-composer").addEventListener("submit", 
   messageScrollerDemoSend(text, messageScrollerDemoReplies[messageScrollerDemoTurn % messageScrollerDemoReplies.length])
 })
 
-messageScrollerDemoInput.addEventListener("keydown", event => {
+messageScrollerDemoInput?.addEventListener("keydown", event => {
   if (event.key !== "Enter" || event.shiftKey || event.isComposing) return
   event.preventDefault()
   event.currentTarget.form.requestSubmit()
 })
 
-document.getElementById("message-scroller-question").addEventListener("submit", event => {
+document.getElementById("message-scroller-question")?.addEventListener("submit", event => {
   event.preventDefault()
 })
 
-document.getElementById("message-scroller-question").addEventListener("questionnaire:submit", event => {
+document.getElementById("message-scroller-question")?.addEventListener("questionnaire:submit", event => {
   const choice = event.detail.value.lockfile
   const label = choice === "patch" ? "Patch the changed entry" : "Regenerate it"
   messageScrollerDemoSend(label, messageScrollerDemoAnswers[choice] ?? messageScrollerDemoAnswers.regenerate)
 })
 
-document.getElementById("message-scroller-reset").addEventListener("click", () => {
+document.getElementById("message-scroller-reset")?.addEventListener("click", () => {
   for (const row of [...messageScrollerDemoRows()].slice(messageScrollerDemoInitialCount)) row.remove()
   messageScrollerDemoTurn = 0
   messageScrollerDemoFinish()
@@ -644,36 +652,36 @@ function messageScrollerDemoTopicItems(index) {
 }
 
 const messageScrollerDemoHistory = document.getElementById("message-scroller-history-content")
-messageScrollerDemoHistory.append(...Array.from({ length: 6 }, (_, i) => messageScrollerDemoTopicItems(i + 6)).flat())
+messageScrollerDemoHistory?.append(...Array.from({ length: 6 }, (_, i) => messageScrollerDemoTopicItems(i + 6)).flat())
 
-document.getElementById("message-scroller-load").addEventListener("click", event => {
+document.getElementById("message-scroller-load")?.addEventListener("click", event => {
   if (messageScrollerDemoLoaded) return
   messageScrollerDemoLoaded = true
   messageScrollerDemoHistory.prepend(...Array.from({ length: 6 }, (_, i) => messageScrollerDemoTopicItems(i)).flat())
   event.currentTarget.disabled = true
 })
 
-document.getElementById("message-scroller-jump").addEventListener("click", () => {
+document.getElementById("message-scroller-jump")?.addEventListener("click", () => {
   ui.messageScrollerScrollToMessage(document.getElementById("message-scroller-history"), messageScrollerDemoLoaded ? "h1-q" : "h7-q", { behavior: "smooth" })
 })
 
-document.getElementById("message-scroller-latest").addEventListener("click", () => {
+document.getElementById("message-scroller-latest")?.addEventListener("click", () => {
   ui.messageScrollerScrollToEnd(document.getElementById("message-scroller-history"), { behavior: "smooth" })
 })
 
-document.getElementById("questionnaire-demo").addEventListener("submit", event => event.preventDefault())
-document.getElementById("questionnaire-demo").addEventListener("questionnaire:submit", event => {
+document.getElementById("questionnaire-demo")?.addEventListener("submit", event => event.preventDefault())
+document.getElementById("questionnaire-demo")?.addEventListener("questionnaire:submit", event => {
   const value = event.detail.value
   document.getElementById("questionnaire-result").textContent = `Agent plan saved. Direction: ${value.direction ?? "None"} · Progress signals: ${value.signals.join(", ") || "None"} · Timing: ${value.timing ?? "None"}`
 })
 
-document.getElementById("questionnaire-resume").addEventListener("submit", event => event.preventDefault())
-document.getElementById("questionnaire-resume").addEventListener("questionnaire:submit", event => {
+document.getElementById("questionnaire-resume")?.addEventListener("submit", event => event.preventDefault())
+document.getElementById("questionnaire-resume")?.addEventListener("questionnaire:submit", event => {
   const { value, status } = event.detail
   document.getElementById("questionnaire-resume-result").textContent = `Prototype: ${value.prototype ?? "None"} · Detail: ${status.detail === "skipped" ? "Skipped" : (value.detail ?? "None")}${"audience" in value ? ` · Audience: ${value.audience ?? "None"}` : ""}`
 })
 
-document.getElementById("questionnaire-toggle").addEventListener("checkbox:change", event => {
+document.getElementById("questionnaire-toggle")?.addEventListener("checkbox:change", event => {
   document.getElementById("questionnaire-audience").disabled = !event.detail.checked
   ui.questionnaireRefresh(document.getElementById("questionnaire-resume"))
 })
@@ -685,7 +693,7 @@ const traceDemoSteps = [
   { id: "trace-sources", running: "Using 2 sources", icon: "globe", time: 800 },
 ]
 
-for (const step of traceDemoSteps) step.title = document.querySelector(`#${step.id} [data-slot="trace-title"]`).textContent
+for (const step of traceDemoSteps) step.title = document.querySelector(`#${step.id} [data-slot="trace-title"]`)?.textContent
 
 function traceDemoLine(step, running) {
   const collapsible = document.getElementById(step.id)
@@ -698,7 +706,7 @@ function traceDemoLine(step, running) {
   return collapsible
 }
 
-document.getElementById("trace-replay").addEventListener("click", event => {
+document.getElementById("trace-replay")?.addEventListener("click", event => {
   const replay = event.currentTarget
   replay.disabled = true
   const answer = document.getElementById("trace-demo-answer")
@@ -728,17 +736,17 @@ document.getElementById("trace-replay").addEventListener("click", event => {
   })
 })
 
-document.getElementById("trace-pnpm-toggle").addEventListener("click", event => {
+document.getElementById("trace-pnpm-toggle")?.addEventListener("click", event => {
   const collapsible = document.getElementById("trace-pnpm")
   if (collapsible.dataset.state === "open") ui.traceClose(collapsible)
   else ui.traceOpen(collapsible)
 })
 
-document.getElementById("trace-pnpm").addEventListener("trace:open", () => {
+document.getElementById("trace-pnpm")?.addEventListener("trace:open", () => {
   document.getElementById("trace-pnpm-toggle").textContent = "Hide the pnpm output"
 })
 
-document.getElementById("trace-pnpm").addEventListener("trace:close", () => {
+document.getElementById("trace-pnpm")?.addEventListener("trace:close", () => {
   document.getElementById("trace-pnpm-toggle").textContent = "Show the pnpm output"
 })
 import { chart, sparkline as chartSparkline, statTile as chartStatTile } from "../clanker-ui-chart.js"
@@ -880,43 +888,45 @@ chartMount("chart-radial-text", { rows: [{ browser: "safari", visitors: 200 }], 
 chartMount("chart-radial-shape", { rows: [{ browser: "safari", visitors: 1260 }], config: chartBrowserConfig }, { ...chartBrowserOptions, type: "radial", max: 4500, track: "full", center: true, label: "Safari visitors against a goal of 4,500" })
 chartMount("chart-radial-stacked", { rows: [{ month: "January", desktop: 1260, mobile: 570 }], config: chartDevices }, { type: "radial", x: "month", stacked: true, startAngle: -90, endAngle: 90, center: { label: "Visitors" }, label: "Visitors in January 2024" })
 
-chartStatTile(document.getElementById("chart-stat-revenue"), { label: "Total revenue", value: 1250, format: { style: "currency", currency: "USD" }, delta: 0.125, period: "vs last month", trend: [820, 940, 910, 1010, 980, 1100, 1060, 1150, 1120, 1190, 1210, 1250] })
-chartStatTile(document.getElementById("chart-stat-customers"), { label: "New customers", value: 1234, delta: -0.2, period: "vs last month", trend: [1650, 1590, 1600, 1520, 1480, 1500, 1420, 1390, 1350, 1300, 1270, 1234] })
-chartStatTile(document.getElementById("chart-stat-accounts"), { label: "Active accounts", value: 45678, delta: 0.125, period: "vs last month", trend: [38900, 39400, 40100, 40600, 41000, 41900, 42300, 43000, 43800, 44500, 45100, 45678] })
-chartStatTile(document.getElementById("chart-stat-churn"), { label: "Churn rate", value: 0.024, format: { style: "percent", maximumFractionDigits: 1 }, delta: 0.003, deltaFormat: { style: "percent", maximumFractionDigits: 1, signDisplay: "always" }, goodWhen: "down", period: "vs last month", trend: [0.018, 0.019, 0.019, 0.02, 0.021, 0.02, 0.022, 0.021, 0.022, 0.023, 0.023, 0.024] })
+if (document.getElementById("chart-stat")) {
+  chartStatTile(document.getElementById("chart-stat-revenue"), { label: "Total revenue", value: 1250, format: { style: "currency", currency: "USD" }, delta: 0.125, period: "vs last month", trend: [820, 940, 910, 1010, 980, 1100, 1060, 1150, 1120, 1190, 1210, 1250] })
+  chartStatTile(document.getElementById("chart-stat-customers"), { label: "New customers", value: 1234, delta: -0.2, period: "vs last month", trend: [1650, 1590, 1600, 1520, 1480, 1500, 1420, 1390, 1350, 1300, 1270, 1234] })
+  chartStatTile(document.getElementById("chart-stat-accounts"), { label: "Active accounts", value: 45678, delta: 0.125, period: "vs last month", trend: [38900, 39400, 40100, 40600, 41000, 41900, 42300, 43000, 43800, 44500, 45100, 45678] })
+  chartStatTile(document.getElementById("chart-stat-churn"), { label: "Churn rate", value: 0.024, format: { style: "percent", maximumFractionDigits: 1 }, delta: 0.003, deltaFormat: { style: "percent", maximumFractionDigits: 1, signDisplay: "always" }, goodWhen: "down", period: "vs last month", trend: [0.018, 0.019, 0.019, 0.02, 0.021, 0.02, 0.022, 0.021, 0.022, 0.023, 0.023, 0.024] })
 
-const chartDashTiles = {
-  visitors: chartStatTile(document.getElementById("chart-stat-visitors"), { label: "Visitors" }),
-  desktop: chartStatTile(document.getElementById("chart-stat-desktop"), { label: "Desktop visitors" }),
-  mobile: chartStatTile(document.getElementById("chart-stat-mobile"), { label: "Mobile visitors" }),
-}
-const chartDashArea = chartMount("chart-stat-area", { rows: [], config: chartDevices }, { type: "area", x: "date", stack: true, gradient: true, height: 250, label: "Desktop and mobile visitors per day" })
-
-function chartDashRange(days) {
-  const rows = chartDaily.slice(-days)
-  const before = chartDaily.slice(-2 * days, -days)
-  const sum = (list, key) => list.reduce((a, r) => a + (key ? r[key] : r.desktop + r.mobile), 0)
-  const change = (now, then) => (then ? now / then - 1 : null)
-  const period = `vs previous ${days} days`
-  for (const [key, tile] of Object.entries(chartDashTiles)) {
-    const field = key === "visitors" ? null : key
-    const now = sum(rows, field)
-    tile.update({ value: now, delta: change(now, sum(before, field)), period, trend: rows.map(r => (field ? r[field] : r.desktop + r.mobile)) })
+  const chartDashTiles = {
+    visitors: chartStatTile(document.getElementById("chart-stat-visitors"), { label: "Visitors" }),
+    desktop: chartStatTile(document.getElementById("chart-stat-desktop"), { label: "Desktop visitors" }),
+    mobile: chartStatTile(document.getElementById("chart-stat-mobile"), { label: "Mobile visitors" }),
   }
-  chartDashArea?.update({ rows })
-  for (const button of document.querySelectorAll("#chart-stat [data-range]")) {
-    const on = Number(button.dataset.range) === days
-    button.setAttribute("aria-pressed", String(on))
-    button.dataset.variant = on ? "secondary" : "outline"
+  const chartDashArea = chartMount("chart-stat-area", { rows: [], config: chartDevices }, { type: "area", x: "date", stack: true, gradient: true, height: 250, label: "Desktop and mobile visitors per day" })
+
+  function chartDashRange(days) {
+    const rows = chartDaily.slice(-days)
+    const before = chartDaily.slice(-2 * days, -days)
+    const sum = (list, key) => list.reduce((a, r) => a + (key ? r[key] : r.desktop + r.mobile), 0)
+    const change = (now, then) => (then ? now / then - 1 : null)
+    const period = `vs previous ${days} days`
+    for (const [key, tile] of Object.entries(chartDashTiles)) {
+      const field = key === "visitors" ? null : key
+      const now = sum(rows, field)
+      tile.update({ value: now, delta: change(now, sum(before, field)), period, trend: rows.map(r => (field ? r[field] : r.desktop + r.mobile)) })
+    }
+    chartDashArea?.update({ rows })
+    for (const button of document.querySelectorAll("#chart-stat [data-range]")) {
+      const on = Number(button.dataset.range) === days
+      button.setAttribute("aria-pressed", String(on))
+      button.dataset.variant = on ? "secondary" : "outline"
+    }
   }
+
+  document.querySelector('#chart-stat [data-demo="chart-filters"]')?.addEventListener("click", event => {
+    const button = event.target.closest("[data-range]")
+    if (button) chartDashRange(Number(button.dataset.range))
+  })
+  chartDashRange(30)
+
+  chartSparkline(document.getElementById("chart-stat-spark-line"), [980, 1020, 1110, 1060, 1190, 1150, 1230, 1210, 1180, 1260, 1240, 1284], { label: "Requests per minute" })
+  chartSparkline(document.getElementById("chart-stat-spark-area"), [0.48, 0.5, 0.53, 0.52, 0.55, 0.57, 0.56, 0.58, 0.6, 0.59, 0.61, 0.62], { area: true, label: "Memory use", format: { style: "percent", maximumFractionDigits: 0 } })
+  chartSparkline(document.getElementById("chart-stat-spark-flat"), [0.002, 0.002, 0.003, 0.002, 0.002, 0.002, 0.002, 0.003, 0.002, 0.002, 0.002, 0.002], { label: "Error rate", zero: true, format: { style: "percent", maximumFractionDigits: 1 } })
 }
-
-document.querySelector('#chart-stat [data-demo="chart-filters"]')?.addEventListener("click", event => {
-  const button = event.target.closest("[data-range]")
-  if (button) chartDashRange(Number(button.dataset.range))
-})
-chartDashRange(30)
-
-chartSparkline(document.getElementById("chart-stat-spark-line"), [980, 1020, 1110, 1060, 1190, 1150, 1230, 1210, 1180, 1260, 1240, 1284], { label: "Requests per minute" })
-chartSparkline(document.getElementById("chart-stat-spark-area"), [0.48, 0.5, 0.53, 0.52, 0.55, 0.57, 0.56, 0.58, 0.6, 0.59, 0.61, 0.62], { area: true, label: "Memory use", format: { style: "percent", maximumFractionDigits: 0 } })
-chartSparkline(document.getElementById("chart-stat-spark-flat"), [0.002, 0.002, 0.003, 0.002, 0.002, 0.002, 0.002, 0.003, 0.002, 0.002, 0.002, 0.002], { label: "Error rate", zero: true, format: { style: "percent", maximumFractionDigits: 1 } })

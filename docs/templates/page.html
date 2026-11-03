@@ -17,9 +17,12 @@
   <link rel="describedby" href="{{url "/llms.txt"}}">
 {{- end}}
   <link rel="stylesheet" href="{{asset "clanker-ui.css"}}">
+{{- range .Styles}}
+  <link rel="stylesheet" href="{{asset .}}">
+{{- end}}
   <link rel="stylesheet" href="{{asset "docs.css"}}">
   <script src="{{asset "clanker-ui-theme.js"}}"></script>
-{{- if or (eq .Kind "docs") (eq .Kind "pending") (eq .Kind "not-found")}}
+{{- if or (eq .Kind "docs") (eq .Kind "not-found")}}
   <script src="{{asset "docs-sidebar.js"}}"></script>
 {{- end}}
   <script type="module" src="{{asset "clanker-ui.js"}}"></script>
@@ -37,9 +40,9 @@
   <div data-docs="layout">
     {{template "header" .}}
     <main data-docs="main">
-      {{- if or (eq .Kind "docs") (eq .Kind "pending") (eq .Kind "not-found")}}{{template "docs" .}}{{else}}{{template "home" .}}{{end}}
+      {{- if or (eq .Kind "docs") (eq .Kind "not-found")}}{{template "docs" .}}{{else}}{{template "home" .}}{{end}}
     </main>
-    {{- if not (or (eq .Kind "docs") (eq .Kind "pending") (eq .Kind "not-found"))}}
+    {{- if not (or (eq .Kind "docs") (eq .Kind "not-found"))}}
     {{template "footer" .}}
     {{- end}}
   </div>
@@ -129,14 +132,9 @@
                     </div>
                     <p data-docs="description">{{.Description}}</p>
                   </div>
-                  <div data-docs="content">
+                  <div data-docs="content"{{with .Page}}{{with .Section}} id="{{.}}"{{end}}{{end}}>
                     {{- if .Page}}
                     {{.Page.HTML}}
-                    {{- else if eq .Kind "pending"}}
-                    {{- with .Readme}}
-                    <p>Read <a href="{{.}}">{{$.Title}} in the README</a>.</p>
-                    {{- end}}
-                    <p>See <a href="{{.DemoHref}}">{{.Title}} in the component demo</a>.</p>
                     {{- else}}
                     <p>Go to the <a href="{{url "/docs"}}">Introduction</a> or <a href="{{url "/docs/components"}}">Components</a>.</p>
                     {{- end}}
@@ -170,7 +168,6 @@
       </div>{{end}}
 
 {{define "home"}}<div data-docs="page-header">
-        {{- if eq .Kind "home"}}
         <a data-slot="badge" data-variant="secondary" data-docs="announcement" href="{{url "/demo"}}">All components on one page<svg data-lucide="arrow-right"></svg></a>
         <h1 data-docs="hero-title">shadcn/ui for plain HTML</h1>
         <p data-docs="hero-text">{{.Description}} No build step, no npm, no CDN. It runs under a strict CSP with Trusted Types.</p>
@@ -178,14 +175,6 @@
           <a data-slot="button" href="{{url "/docs"}}">Get Started</a>
           <a data-slot="button" data-variant="secondary" href="{{url "/docs/components"}}">View Components</a>
         </div>
-        {{- else}}
-        <h1 data-docs="hero-title">{{.Title}}</h1>
-        <p data-docs="hero-text">{{.Description}}</p>
-        <div data-docs="hero-actions">
-          <a data-slot="button" href="{{.DemoHref}}">Open the component demo</a>
-          <a data-slot="button" data-variant="secondary" href="{{url "/docs"}}">Read the docs</a>
-        </div>
-        {{- end}}
       </div>{{end}}
 
 {{define "overlays"}}<div data-slot="popover" id="docs-menu" data-docs="mobile-menu">

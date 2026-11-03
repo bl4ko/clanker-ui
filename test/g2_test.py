@@ -1,3 +1,5 @@
+START = "/demo?only=overlays,combobox,select,questionnaire,date-picker"
+
 LISTEN = """names => {
   window.__g2 = []
   for (const name of names) document.addEventListener(name, event => {
@@ -3414,6 +3416,7 @@ def check_alert_dialog_slots(t):
     section.get_by_role("button", name="Show Dialog").first.click()
     basic = page.locator("#alert-dialog-basic")
     wait(page, "() => document.getElementById('alert-dialog-basic').dataset.state === 'open'")
+    t.settle()
     cancel, action = basic.locator("[data-slot=alert-dialog-cancel]"), basic.locator("[data-slot=alert-dialog-action]")
     assert cancel.get_attribute("data-variant") == "outline" and cancel.inner_text() == "Cancel" and action.inner_text() == "Continue"
     edge = "var(--input)" if t.theme == "dark" else "var(--border)"

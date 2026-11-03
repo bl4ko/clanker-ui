@@ -6,6 +6,10 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ## Unreleased
 
+### Breaking
+
+- A boolean option with the value `"false"` is now off, like an absent option, everywhere (for example `data-disabled="false"` on select and combobox items, `data-multiple="false"`, `data-loop="false"`). Before, some options read any value as on. To upgrade: remove `data-x="false"` where you want the option on. (#16)
+
 ### Changed
 
 - `clanker-ui.css` is readable, not minified. Use `dist/clanker-ui.min.css` for the minified file. Every rule is in a `clanker.*` layer; a reduced-motion `.shimmer` rule outside all layers is gone. (#12)
@@ -17,6 +21,9 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - A toast that leaves the page no longer captures F6. (#13)
 - A `reset` event that the app cancels with `preventDefault()` no longer resets select, combobox, and calendar values. (#13)
 - The chart treats an impossible ISO date (`2026-02-30`) as invalid, not as the next month. (#13)
+- Select and combobox keep the authored `data-value` when the items arrive later, and follow a later `data-value` change. (#16)
+- The slider shows a `value` change from code after an `input` or `change` event, and `disabled`, `min`, `max`, and `step` changes on its inputs. (#16)
+- `el.disabled = false` enables a checkbox, switch, or radio item again. (#16)
 
 ## 0.1.0 - 2026-11-02
 

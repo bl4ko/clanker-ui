@@ -38,6 +38,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - `toast()` works after the app replaces the content of an open modal dialog, and the visible toasts stay. (#30)
 - Focus goes back to a dialog trigger that was disabled when the dialog opened. (#31)
 - An alert dialog that opens with the pointer shows no focus ring flash on Cancel in Safari. (#32)
+- Docs site: no page shows "This page is not ported yet." Every component and guide page is a real page made from the catalog, the README, and the live demo section: preview, installation, usage, examples, API reference, and keyboard notes. (#47)
 
 ## 0.1.0 - 2026-11-02
 

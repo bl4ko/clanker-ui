@@ -200,9 +200,11 @@ var catalogGeneric = map[string]bool{
 	"datetime": true, "rows": true, "cols": true,
 }
 
+var catalogKitMade = []string{"checkbox-indicator", "radio-group-indicator", "dropdown-menu-checkbox-item-indicator", "dropdown-menu-radio-item-indicator"}
+
 var catalogKitGlobal = map[string]bool{"data-system-theme": true, "data-keyboard": true}
 
-var catalogDevSections = []string{"Docs site", "Demo and tests", "Contributing"}
+var catalogDevSections = []string{"Docs site", "Demo and tests", "How parity with shadcn is tested", "Contributing", "Credits"}
 
 func mdSlug(title string) string {
 	s := strings.ToLower(strings.TrimSpace(title))
@@ -440,6 +442,7 @@ type catalogBuild struct {
 	cssSlots   map[string]bool
 	jsEvents   map[string]bool
 	listedPart map[string]bool
+	named      map[string]bool
 }
 
 func (b *catalogBuild) markupElem(n *htmlNode) {
@@ -500,7 +503,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	b := &catalogBuild{t: t, data: map[string]*compData{}, global: attrSet{}, markup: map[string]bool{}, defined: map[string]bool{}, made: map[string]bool{}, jsSet: map[string]bool{}, cssSlots: map[string]bool{}, jsEvents: map[string]bool{}, listedPart: map[string]bool{}}
+	b := &catalogBuild{t: t, data: map[string]*compData{}, global: attrSet{}, markup: map[string]bool{}, defined: map[string]bool{}, made: map[string]bool{}, jsSet: map[string]bool{}, cssSlots: map[string]bool{}, jsEvents: map[string]bool{}, listedPart: map[string]bool{}, named: map[string]bool{}}
 	for _, c := range t.order {
 		b.data[c] = newCompData()
 	}
@@ -787,6 +790,9 @@ func (b *catalogBuild) scanJS(src string) {
 	for _, m := range jsMadeSlot.FindAllStringSubmatch(src, -1) {
 		b.made[m[1]+m[2]+m[3]] = true
 	}
+	for _, s := range catalogKitMade {
+		b.made[s] = true
+	}
 	for _, m := range jsSetAttr.FindAllStringSubmatch(src, -1) {
 		if m[1] != "" {
 			b.jsSet[m[1]] = true
@@ -869,6 +875,9 @@ func (b *catalogBuild) cssSelector(sel string) {
 		}
 		b.cssSlots[slot] = true
 		d := b.data[c]
+		if b.foreignContext(comp, c) {
+			continue
+		}
 		for _, m := range cssAttrSel.FindAllStringSubmatch(comp, -1) {
 			name := m[1]
 			if name == "data-slot" {
@@ -884,6 +893,15 @@ func (b *catalogBuild) cssSelector(sel string) {
 			d.state[slot][name] = true
 		}
 	}
+}
+
+func (b *catalogBuild) foreignContext(compound, c string) bool {
+	for _, m := range cssAttrSel.FindAllStringSubmatch(compound, -1) {
+		if pc := b.t.partComponent(strings.TrimPrefix(m[1], "data-")); pc != "" && pc != c && !strings.HasPrefix(c, pc+"-") {
+			return true
+		}
+	}
+	return false
 }
 
 func (b *catalogBuild) scanSection(s mdSection) {
@@ -925,7 +943,7 @@ func (b *catalogBuild) scanSection(s mdSection) {
 			if loc[0] > from {
 				walkNodes(parseFragment(m[1]), func(n *htmlNode) {
 					if slot, _ := n.attr("data-slot"); slot != "" {
-						b.markup[slot] = true
+						b.named[slot] = true
 					}
 				})
 				continue
@@ -1076,7 +1094,7 @@ func (b *catalogBuild) knownPartAttr(name string) string {
 	if pc == "" || pc == stem {
 		return ""
 	}
-	if b.listedPart[name] || b.cssSlots[stem] || b.defined[stem] || b.made[stem] || b.markup[stem] {
+	if b.listedPart[name] || b.cssSlots[stem] || b.defined[stem] || b.made[stem] || b.markup[stem] || b.named[stem] {
 		return pc
 	}
 	return ""
@@ -1334,7 +1352,7 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 			slots[s] = true
 		}
 	}
-	for _, set := range []map[string]bool{b.defined, b.made, b.markup} {
+	for _, set := range []map[string]bool{b.defined, b.made, b.markup, b.named} {
 		for s := range set {
 			if b.t.component(s) == c {
 				slots[s] = true
@@ -1351,11 +1369,11 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 	sort.SliceStable(names, func(i, j int) bool { return names[i] == c && names[j] != c })
 	for _, s := range names {
 		p := catPart{Slot: s, Root: s == c, JS: b.defined[s], Attributes: catAttrs{}, State: []string{}}
-		if b.made[s] && !b.markup[s] {
+		if b.made[s] && !b.markup[s] || slices.Contains(catalogKitMade, s) {
 			p.KitAdds = true
 			comp.KitAdds = append(comp.KitAdds, s)
 		}
-		if a := d.parts[s]; a != nil {
+		if a := d.parts[s]; a != nil && !p.KitAdds {
 			p.Attributes = a.json()
 		}
 		for name := range d.state[s] {
@@ -1364,6 +1382,13 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 			}
 			if d.parts[s] == nil || d.parts[s][name] == nil {
 				p.State = append(p.State, name)
+			}
+		}
+		if p.KitAdds {
+			for name := range d.parts[s] {
+				if !slices.Contains(p.State, name) {
+					p.State = append(p.State, name)
+				}
 			}
 		}
 		sort.Strings(p.State)
@@ -1482,18 +1507,19 @@ func catalogMarkdown(cat *catalog, level int) string {
 	if level == 1 {
 		fmt.Fprintf(&b, "%sclanker-ui components\n\n", h(1))
 		fmt.Fprintf(&b, "Generated from `%s` (same directory) by `go run ./tools/gen catalog`. Version %s, shadcn `%s`, Base UI %s.\n\n", filepath.Base(catalogFile), cat.Version, cat.Shadcn[:7], cat.BaseUI)
-	}
-	fmt.Fprintf(&b, "%sGroups\n\n", h(2))
-	b.WriteString("Each group has `clanker-ui-<group>.min.css` and (except core CSS-only parts) `clanker-ui-<group>.min.js`. Load `core` always, then the group of each component and the groups in its **Needs**.\n\n")
-	b.WriteString("| Group | CSS | JS | Components |\n| --- | --- | --- | --- |\n")
-	for _, g := range cat.Groups {
-		js := g.JS
-		if g.Name == "core" {
-			js = "clanker-ui-core.min.js"
+		fmt.Fprintf(&b, "%sGroups\n\n", h(2))
+		b.WriteString("Each group has `clanker-ui-<group>.min.css` and (except core CSS-only parts) `clanker-ui-<group>.min.js`. Load `core` always, then the group of each component and the groups in its **Needs**.\n\n")
+		b.WriteString("| Group | CSS | JS | Components |\n| --- | --- | --- | --- |\n")
+		for _, g := range cat.Groups {
+			js := g.JS
+			if g.Name == "core" {
+				js = "clanker-ui-core.min.js"
+			}
+			fmt.Fprintf(&b, "| `%s` | `%s` | `%s` | %s |\n", g.Name, g.CSS, js, strings.Join(g.Components, ", "))
 		}
-		fmt.Fprintf(&b, "| `%s` | `%s` | `%s` | %s |\n", g.Name, g.CSS, js, strings.Join(g.Components, ", "))
+		b.WriteString("\n")
 	}
-	b.WriteString("\nGlobal attributes (any element): ")
+	b.WriteString("Global attributes (any element): ")
 	b.WriteString(attrsText(cat.Global))
 	b.WriteString("; `data-string-<key>` (localized label override).\n\n")
 	fmt.Fprintf(&b, "%sComponents\n\n", h(2))
@@ -1570,6 +1596,9 @@ func catalogMarkdown(cat *catalog, level int) string {
 			}
 			b.WriteString("\n")
 		}
+		if level == 2 && strings.HasPrefix(c.ExampleSource, "README.md#") {
+			continue
+		}
 		fmt.Fprintf(&b, "```html\n%s\n```\n\n", c.Example)
 		if c.Script != "" {
 			fmt.Fprintf(&b, "```js\n%s\n```\n\n", c.Script)
@@ -1618,7 +1647,13 @@ func llmsFull(cat *catalog, sections []mdSection) string {
 		fmt.Fprintf(&b, "%s %s\n%s", strings.Repeat("#", s.level), s.title, s.body)
 	}
 	b.WriteString("\n## Component reference\n\n")
-	b.WriteString(catalogMarkdown(cat, 2))
+	short := *cat
+	short.Components = nil
+	for _, c := range cat.Components {
+		c.Keyboard, c.Exports, c.Script = nil, nil, ""
+		short.Components = append(short.Components, c)
+	}
+	b.WriteString(catalogMarkdown(&short, 2))
 	return b.String()
 }
 

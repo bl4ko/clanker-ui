@@ -1,3 +1,5 @@
+START = "/test/spike/index.html"
+
 COLOR = """expr => {
   const p = document.createElement("p")
   p.style.color = expr

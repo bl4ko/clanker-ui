@@ -1,6 +1,8 @@
 import re
 import time
 
+START = "/demo?only=introduction,getting-started"
+
 EVIL = '<img src="x" onerror="alert(document.domain)">'
 
 
@@ -21,6 +23,7 @@ def page_is_dark(page):
 
 
 def check_page(t):
+    t.docs("/demo")
     page = t.page
     assert page.title() == "clanker-ui"
     assert page.locator("h1").first.is_visible()
@@ -92,6 +95,7 @@ def demo_nav_open(t):
 
 
 def check_demo_nav(t):
+    t.docs("/demo")
     page = t.page
     nav = demo_nav_open(t)
     current = nav.locator("a[aria-current]")
@@ -420,6 +424,7 @@ def check_theme_toggle(t):
 
 
 def check_theme_key(t):
+    t.docs("/demo?only=theming,input")
     page = t.page
     dark = t.theme == "dark"
     page.evaluate("document.querySelector(\"#theming [data-theme-set='toggle']\").setAttribute('aria-keyshortcuts', 'D')")
@@ -497,6 +502,7 @@ TRANSITIONS = """() => new Promise(r => requestAnimationFrame(() => requestAnima
 
 
 def check_theme_no_transitions(t):
+    t.docs("/demo")
     page = t.page
     switch = t.section("theming").locator("[data-slot='theme-switch']")
     t.settle()
@@ -603,6 +609,7 @@ def check_trusted_types(t):
 
 
 def check_button(t):
+    t.docs("/demo?only=button")
     page = t.page
     section = t.section("button")
     sizes = page.evaluate(
@@ -882,6 +889,7 @@ def check_core_popover_reset(t):
 
 
 def check_forced_colors_item_focus(t):
+    t.docs("/demo?only=dropdown-menu")
     page = t.page
     t.a11y()
     page.emulate_media(forced_colors="active")
@@ -897,6 +905,7 @@ def check_forced_colors_item_focus(t):
 
 
 def check_core_button_tabindex(t):
+    t.docs("/demo?only=accordion,carousel,dialog,sheet")
     page = t.page
     found = page.evaluate("""async () => {
       const { h, toast } = await import("/clanker-ui.js")
@@ -926,6 +935,7 @@ def check_core_button_tabindex(t):
 
 
 def check_toast_in_modal_layout(t):
+    t.docs("/demo?only=dialog")
     page = t.page
     t.section("dialog")
     page.locator("#dialog-demo [data-dialog-trigger]").evaluate("b => b.click()")
@@ -1251,6 +1261,7 @@ def resolved(page, prop, value, el="body"):
 
 
 def check_focus_contrast(t):
+    t.docs("/demo?only=input")
     page = t.page
     t.a11y()
     bg = resolved(page, "color", "var(--background)")
@@ -1317,6 +1328,7 @@ EXACT_CONTRAST = r"""([fg, bg]) => {
 
 
 def check_input_contrast(t):
+    t.docs("/demo?only=input,textarea,input-group,checkbox,radio-group,switch,select,native-select,input-otp,combobox,calendar,questionnaire,sidebar")
     page = t.page
     t.settle()
     t.a11y()
@@ -1355,6 +1367,7 @@ DECORATIVE = """([parts, upstream]) => parts.map(([sel, prop, expr]) => {
 
 
 def check_input_decorative(t):
+    t.docs("/demo?only=button,button-group,combobox,input,toggle,tabs,code-block,message-scroller,questionnaire")
     page = t.page
     t.settle()
     mix = lambda n: f"color-mix(in oklab, UP {n}%, transparent)"

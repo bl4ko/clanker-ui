@@ -184,7 +184,12 @@ Put overrides in `app.css` after the kit files, without a layer.
 4. Charts: `clanker-ui-chart.min.js`, and `clanker-ui-chart.min.css` with group files (`clanker-ui.min.css` has the chart CSS).
 
 - Use the `.min` files together or the readable files together, never both: two cores attach every listener two times. Two group files never define the same slot; `clanker-ui.min.js` together with a group file stops with "already defined".
-- In the `.min` set, import the core API (`h`, `svg`, `icon`, `define`, `strings`, `theme`, `direction`, and the other core exports) from `./clanker-ui-core.min.js`. Import a component API (`toast`, `dialogOpen`, `calendarSetValue`, ...) from the file that the page loads: `clanker-ui.min.js` or the group file. `clanker-ui.min.js` and the group files do not export the core API again.
+- In the readable set, `clanker-ui.js` exports everything except the chart API (`clanker-ui-chart.js`). In the `.min` set, import the core API (`h`, `svg`, `icon`, `define`, `strings`, `theme`, `direction`, and the other core exports) from `./clanker-ui-core.min.js`. Import a component API (`toast`, `dialogOpen`, `calendarSetValue`, ...) from the file that the page loads: `clanker-ui.min.js` or the group file. `clanker-ui.min.js` and the group files do not export the core API again:
+
+   ```js
+   import { h, icon, theme } from "./clanker-ui-core.min.js"
+   import { toast, dialogOpen } from "./clanker-ui.min.js"
+   ```
 - All files are external modules from `'self'` with static relative imports, so the strict CSP and Trusted Types need no change.
 
 ## Markup conventions
@@ -1137,7 +1142,7 @@ The viewport is the real scroll container; the kit makes it focusable, hides the
 
 Manual activation as in Base UI: the arrow keys move focus, Enter, Space, or a click selects (`data-activation="automatic"` selects on focus), roving tabindex, arrows (RTL aware), Home, End; disabled tabs are skipped. Tab panels are focusable (`tabindex="0"`) and show the standard focus ring.
 
-A horizontal `tabs-list` is never wider than the root: when the triggers do not fit, the list scrolls horizontally without a scrollbar, and the triggers keep their width. The selected trigger scrolls fully into view at load, when the list becomes visible, and when the list changes size. A trigger that gets keyboard focus (arrow keys, Home, End, Tab) or a click also scrolls fully into view. Only the list scrolls, also in a scaled container. The kit measures the list before it changes the tab and reads no layout after `tabs:change`, so an app can fill the new panel in the same task (for example in a microtask) and the page does not jump. A fill in a later task (fetch, timer) can still change the page height. App CSS that makes the selected trigger wider than the others can leave part of it hidden, because the kit measures before the change. The kit sets `tabindex="-1"` on a horizontal list that has no `tabindex`, so the list is not a Tab stop (Firefox stops on a scroll container). The horizontal root has `min-width: 0`, so a long list does not widen a grid or flex parent. Vertical tabs do not scroll.
+A horizontal `tabs-list` is never wider than the root: when the triggers do not fit, the list scrolls horizontally without a scrollbar, and the triggers keep their width. The selected trigger scrolls fully into view at load, when the list becomes visible, and when the list changes size. A trigger that gets keyboard focus (arrow keys, Home, End, Tab) or a click also scrolls fully into view. Only the list scrolls, also in a scaled container. The kit hides the old panel before `tabs:change`. In the handler, render only the new panel, not the whole tabs root: a new root makes the page jump. The kit measures the list before it changes the tab and reads no layout after `tabs:change`, so an app can fill the new panel in the same task (for example in a microtask) and the page does not jump. A fill in a later task (fetch, timer) can still change the page height. App CSS that makes the selected trigger wider than the others can leave part of it hidden, because the kit measures before the change. The kit sets `tabindex="-1"` on a horizontal list that has no `tabindex`, so the list is not a Tab stop (Firefox stops on a scroll container). The horizontal root has `min-width: 0`, so a long list does not widen a grid or flex parent. Vertical tabs do not scroll.
 
 ### Chat and calendar
 

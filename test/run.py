@@ -113,14 +113,15 @@ A11Y = """() => new Promise((resolve, reject) => {
 })"""
 
 
-RUNNING = """() => document.getAnimations()
-  .filter(a => a.playState === "running" && a.timeline === document.timeline && a.effect?.getComputedTiming().endTime !== Infinity && a.effect?.target?.checkVisibility({ contentVisibilityAuto: true }))
-  .map(a => {
-    const el = a.effect.target
-    const name = a.animationName || a.transitionProperty || a.id || a.constructor.name
-    const where = el.dataset?.slot ? `[data-slot="${el.dataset.slot}"]` : `<${el.localName}>`
-    return `${name} on ${where}${a.effect.pseudoElement || ""} at ${Math.round(a.currentTime)} of ${Math.round(a.effect.getComputedTiming().endTime)} ms`
-  })"""
+RUNNING = """() => {
+  const where = el => el.dataset?.slot ? `[data-slot="${el.dataset.slot}"]` : `<${el.localName}>`
+  return [
+    ...document.getAnimations()
+      .filter(a => a.playState === "running" && a.timeline === document.timeline && a.effect?.getComputedTiming().endTime !== Infinity && a.effect?.target?.checkVisibility({ contentVisibilityAuto: true }))
+      .map(a => `${a.animationName || a.transitionProperty || a.id || a.constructor.name} on ${where(a.effect.target)}${a.effect.pseudoElement || ""} at ${Math.round(a.currentTime)} of ${Math.round(a.effect.getComputedTiming().endTime)} ms`),
+    ...[...document.querySelectorAll("[data-starting-style]")].filter(el => el.checkVisibility()).map(el => `starting style on ${where(el)}`),
+  ]
+}"""
 
 
 class Skip(Exception):

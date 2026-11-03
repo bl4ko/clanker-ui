@@ -1549,7 +1549,7 @@ func catalogMarkdown(cat *catalog, level int) string {
 			fmt.Fprintf(&b, "Events: %s.\n\n", strings.Join(ev, "; "))
 		}
 		if len(c.Exports) > 0 {
-			b.WriteString("Exports (import from the module that the page loads):\n\n")
+			fmt.Fprintf(&b, "Exports (readable set: `%s`; `.min` set: %s):\n\n", readableModule(c.Group), minModules(c.Group))
 			for _, name := range c.Exports {
 				for _, e := range cat.Exports {
 					if e.Name == name {
@@ -1620,4 +1620,21 @@ func llmsFull(cat *catalog, sections []mdSection) string {
 	b.WriteString("\n## Component reference\n\n")
 	b.WriteString(catalogMarkdown(cat, 2))
 	return b.String()
+}
+
+func readableModule(group string) string {
+	if group == "chart" {
+		return "clanker-ui-chart.js"
+	}
+	return "clanker-ui.js"
+}
+
+func minModules(group string) string {
+	switch group {
+	case "core":
+		return "`" + distCore + "`"
+	case "chart":
+		return "`clanker-ui-chart.min.js`"
+	}
+	return "`" + distAll + "` or `clanker-ui-" + group + ".min.js`"
 }

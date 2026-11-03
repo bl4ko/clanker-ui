@@ -622,7 +622,7 @@ def touch(page, x, y, dx, dy, n, interval):
             i = min(n, max(i + 1, int((time.monotonic() - start) * 1000 / interval)))
             time.sleep(max(0, start + i * interval / 1000 - time.monotonic()))
             cdp.send("Input.dispatchTouchEvent", {"type": "touchMove", "touchPoints": [{"x": x + dx * i / n, "y": y + dy * i / n}]})
-        time.sleep(0.1)
+        time.sleep(max(0, start + (n * interval + 100) / 1000 - time.monotonic()))
         cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []})
     finally:
         cdp.detach()

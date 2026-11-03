@@ -251,6 +251,27 @@ SHEET_FRAME = """() => {
 }"""
 
 
+SHEET_CLOSE = """() => {
+  const c = document.querySelector('#sheet-demo [data-slot="sheet-content"]')
+  const out = window.__sheetClose = {}
+  const close = c.close
+  c.close = function () {
+    out.closed = performance.now()
+    delete c.close
+    return close.call(this)
+  }
+  c.addEventListener("click", () => { out.click = performance.now() }, { capture: true, once: true })
+  new MutationObserver((records, observer) => {
+    if (!c.hasAttribute("data-ending-style")) return
+    observer.disconnect()
+    out.set = performance.now()
+    const fade = c.getAnimations().find(a => a.transitionProperty === "opacity")
+    if (fade) fade.ready.then(() => { out.start = fade.startTime })
+    else out.start = out.set
+  }).observe(c, { attributes: true, attributeFilter: ["data-ending-style"] })
+}"""
+
+
 def motion_time(frames, start, done):
     first = next((f for f in frames if start(f)), None)
     last = next((f for f in frames if first and f[-1] >= first[-1] and done(f)), None)
@@ -302,9 +323,11 @@ def sheet_motion(t, trigger):
         assert any(0.2 < f[1] < 0.95 for f in shown), shown
     content = page.locator("#sheet-demo [data-slot=sheet-content]")
     assert not content.evaluate("e => e.hasAttribute('data-starting-style')")
+    page.evaluate(SHEET_CLOSE)
     frames = t.paint(SHEET_FRAME, lambda: content.locator(":scope > [data-slot=sheet-close]").click(), ms=1200)
-    spent = motion_time(frames, lambda f: f[4] or not f[2], lambda f: not f[2] or f[1] <= 0.01)
-    assert spent <= 300, ("the sheet closes in 200 ms like shadcn", spent)
+    times = page.evaluate("() => window.__sheetClose")
+    assert times.get("set", 1e9) - times.get("click", 0) < 50, ("the close motion starts on the click", times)
+    assert times.get("closed", 1e9) - times.get("start", 0) <= 300, ("the sheet closes in 200 ms like shadcn, from the start of the fade to dialog.close()", times)
     if not t.reduced_motion:
         ending = [f for f in frames if f[2] and f[4]]
         assert len(ending) >= 3 and ending[0][5] == "closed", frames
@@ -1170,6 +1193,31 @@ def check_hover_popup_leave(t):
     assert after == (t.engine != "firefox"), ("after the release, live keeps it open in Chromium and WebKit and closes it in Firefox", after)
     if after:
         page.keyboard.press("Escape")
+    wait(page, f"() => !({expanded})()")
+    page.evaluate("""() => {
+      const root = document.querySelector('#navigation-menu-demo'), times = window.__navTimes = {}
+      root.addEventListener('navigation-menu:change', e => { if (e.detail.value) times.open = performance.now() })
+      root.addEventListener('click', () => { times.click = performance.now() }, true)
+    }""")
+    for _ in range(3):
+        away(page)
+        first.hover()
+        wait(page, expanded)
+        page.mouse.down()
+        page.mouse.up()
+        late = page.evaluate("() => window.__navTimes.click - window.__navTimes.open")
+        if late < 400:
+            break
+        if page.evaluate(expanded):
+            page.keyboard.press("Escape")
+            wait(page, f"() => !({expanded})()")
+    else:
+        t.skip(f"the click came {late:.0f} ms after the hover open; a click in 500 ms is needed")
+    t.settle()
+    away(page)
+    page.wait_for_timeout(400)
+    assert page.evaluate(expanded), ("a click in 500 ms after a hover open keeps the navigation menu open when the pointer leaves, as in Base UI", late)
+    page.keyboard.press("Escape")
     wait(page, f"() => !({expanded})()")
 
 
@@ -4324,3 +4372,5 @@ def check_toast_detached(t):
     page.evaluate("() => window.__toast.add({ title: 'Again' })")
     page.locator("[data-slot=toast]").filter(has_text="Again").wait_for()
     assert page.locator("[data-slot=toast-portal]").count() == 1
+
+

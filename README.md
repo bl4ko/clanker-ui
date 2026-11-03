@@ -17,7 +17,7 @@ pnpm dlx skills add bl4ko/clanker-ui
 - Pin the skill to a release: `pnpm dlx skills add https://github.com/bl4ko/clanker-ui/tree/v0.1.0/skills/clanker-ui`.
 - Without the CLI: copy `skills/clanker-ui/` from the release zip to `.agents/skills/` (Codex, Cursor, GitHub Copilot, Gemini CLI, Cline, OpenCode), `.claude/skills/` (Claude Code), or `.windsurf/skills/` (Windsurf). It is a portable [Agent Skill](https://agentskills.io) and works without network access.
 - Chat tools without skills: give the agent [`llms.txt`](https://bl4ko.github.io/clanker-ui/llms.txt). [`llms-full.txt`](https://bl4ko.github.io/clanker-ui/llms-full.txt) is the full text in one file.
-- Catalog: [`clanker-ui.json`](skills/clanker-ui/references/clanker-ui.json) lists each component with its group file, parts, attributes and allowed values, state attributes, events, keys, and a minimal example ([schema](skills/clanker-ui/references/clanker-ui.schema.json)). `go run ./tools/gen catalog` makes it; the skill has a Markdown copy.
+- Catalog: [`clanker-ui.json`](skills/clanker-ui/references/clanker-ui.json) lists each component with its group file, parts, attributes and allowed values, state attributes, events, keys, and a minimal example ([schema](skills/clanker-ui/references/clanker-ui.schema.json)). `go run ./tools/gen catalog` makes it; the skill has a Markdown file for each component.
 - Contributors: [`AGENTS.md`](AGENTS.md) has the build, test, and code rules.
 
 ## Quick start
@@ -124,6 +124,8 @@ A smaller page can load only the component groups that it uses: see [Minified an
    On a static host that cannot send headers, put the same policy without `frame-ancestors 'none'` in `<meta http-equiv="Content-Security-Policy" content="...">` as the first element of `<head>` (browsers ignore `frame-ancestors` in a meta tag). To load the kit from a CDN (for example jsDelivr, `https://cdn.jsdelivr.net/gh/bl4ko/clanker-ui@vX.Y.Z/dist/clanker-ui.min.css`), add the CDN host to `script-src` and `style-src` and use `integrity` hashes; copying the files stays the default.
 
    Do not use inline `<script>`, inline `<style>`, `style=""`, or `on*=""` attributes. Setting `element.style.x` from JavaScript is allowed. The kit needs no `data:` URLs; `img-src data:` is for app images.
+
+   Safari 27.2 logs one "Refused to apply a stylesheet" error (a `style-src-attr` violation, also sent to CSP report endpoints) for each `<select>` in the HTML of a page with this policy ([WebKit bug 327212](https://bugs.webkit.org/show_bug.cgi?id=327212)). It has no visual effect unless the select sets `text-overflow`. Selects made with `h()` do not report it.
 
 Browsers: Chrome, Safari (also iOS), and Firefox released in the last two years.
 

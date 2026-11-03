@@ -243,6 +243,7 @@ let outsideTouch = null
 let pointerCancelled = false
 let anchorHolds = 0
 let typed = ""
+let selectDocument = null
 let typedAt = 0
 let memoryTheme = "system"
 let memoryScheme = null
@@ -270,8 +271,9 @@ export function svg(tag, attrs, ...children) {
 }
 
 function build(tag, isSvg, attrs, children) {
-  if (BLOCKED_TAGS.has(String(tag).toLowerCase())) throw new TypeError(`clanker-ui: h() refuses <${tag}>`)
-  const el = isSvg ? document.createElementNS(SVG_NS, tag) : document.createElement(tag)
+  const name = String(tag).toLowerCase()
+  if (BLOCKED_TAGS.has(name)) throw new TypeError(`clanker-ui: h() refuses <${tag}>`)
+  const el = isSvg ? document.createElementNS(SVG_NS, tag) : (name === "select" ? (selectDocument ??= document.implementation.createHTMLDocument("")) : document).createElement(tag)
   if (attrs != null && (typeof attrs !== "object" || attrs instanceof Node || Symbol.iterator in attrs)) {
     children.unshift(attrs)
     attrs = null
@@ -476,16 +478,14 @@ export function tabbables(root) {
 }
 
 export function focusFirst(container) {
-  const target = container.querySelector("[autofocus]") ?? tabbables(container).find(el => !el.closest('[data-slot="toast-portal"]')) ?? container
-  if (target === container && !container.hasAttribute("tabindex")) container.tabIndex = -1
-  target.focus({ preventScroll: true })
-  return target
+  return focusFirstQuiet(container, false)
 }
 
-function quietFocus(el) {
-  if (document.activeElement !== el || !el.matches(":focus-visible") || el.matches(TEXT_ENTRY)) return
-  el.blur()
-  el.focus({ preventScroll: true, focusVisible: false })
+function focusFirstQuiet(container, quiet) {
+  const target = container.querySelector("[autofocus]") ?? tabbables(container).find(el => !el.closest('[data-slot="toast-portal"]')) ?? container
+  if (target === container && !container.hasAttribute("tabindex")) container.tabIndex = -1
+  target.focus(quiet && !target.matches(TEXT_ENTRY) ? { preventScroll: true, focusVisible: false } : { preventScroll: true })
+  return target
 }
 
 function focusGuard(edge, attrs) {
@@ -514,7 +514,7 @@ export function trapFocus(container) {
 
 export function saveFocus(trigger) {
   if (trigger?.isConnected && document.activeElement !== trigger) trigger.focus({ preventScroll: true, focusVisible: focusKeyboard })
-  const el = document.activeElement
+  const el = trigger?.isConnected && trigger.disabled ? trigger : document.activeElement
   const restore = visible => {
     if (!el || el === document.body || !el.isConnected || typeof el.focus !== "function") return
     visible ??= focusKeyboard
@@ -609,8 +609,11 @@ export function show(el, options = {}) {
   const state = { o, cleanup: [], stop: null, restore: o.restoreFocus ? (from ? (from.restore ?? saveFocus()) : saveFocus(o.trigger)) : null }
   opened.set(el, state)
   closing.delete(el)
+  const quiet = pointer && o.modal && o.focus === "first" && el instanceof HTMLDialogElement
   if (el instanceof HTMLDialogElement) {
     if (!el.open) o.modal ? el.showModal() : el.show()
+    const native = document.activeElement
+    if (quiet && native !== el && el.contains(native) && native.matches(":focus-visible") && !native.matches(TEXT_ENTRY)) native.blur()
   } else if (el.hasAttribute("popover")) {
     if (!el.matches(":popover-open")) el.showPopover()
   } else if (el instanceof HTMLDetailsElement) el.open = true
@@ -630,8 +633,7 @@ export function show(el, options = {}) {
     state.cleanup.push(() => watch.disconnect())
   }
   if (o.focus === "first") {
-    const target = focusFirst(el)
-    if (pointer && o.modal && el instanceof HTMLDialogElement) quietFocus(target)
+    focusFirstQuiet(el, quiet)
   } else if (o.focus === "content") {
     if (!el.hasAttribute("tabindex")) el.tabIndex = -1
     el.focus({ preventScroll: true, focusVisible: focusKeyboard })
@@ -5997,8 +5999,10 @@ const toastState = { hovering: false, focused: false, windowFocused: true, pause
 let toastSeed = 0
 let toastOrigin = null
 let toastResizeFrame = 0
+const toastHome = new MutationObserver(() => toastOrigin && !toastOrigin.portal.isConnected && toastRehome())
 
 function toastPortal() {
+  if (toastOrigin && !toastOrigin.portal.isConnected) toastRehome()
   let portal = toastOrigin?.portal ?? document.querySelector('[data-slot="toast-portal"]')
   if (!portal) {
     portal = h("div", { "data-slot": "toast-portal" })
@@ -6055,10 +6059,13 @@ function toastRehome() {
     toastOrigin ??= { portal, parent: portal.parentElement, next: portal.nextSibling }
     modal.append(portal)
     portal.style.display = "contents"
+    toastHome.disconnect()
+    toastHome.observe(modal, { childList: true })
   } else {
     if (!toastOrigin) return
     const { parent, next } = toastOrigin
     toastOrigin = null
+    toastHome.disconnect()
     portal.style.display = ""
     if (parent?.isConnected) parent.insertBefore(portal, next?.parentNode === parent ? next : null)
     else document.body.append(portal)

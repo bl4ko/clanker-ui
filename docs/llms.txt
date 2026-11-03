@@ -16,7 +16,7 @@ Start with the agent skill or the full reference. Install the skill in a project
 - [Component catalog](https://raw.githubusercontent.com/bl4ko/clanker-ui/main/skills/clanker-ui/references/clanker-ui.json): JSON with parts, attributes, events, keyboard, examples, and docs links
 - [Catalog schema](https://raw.githubusercontent.com/bl4ko/clanker-ui/main/skills/clanker-ui/references/clanker-ui.schema.json): JSON Schema of the catalog
 - [Agent skill](https://bl4ko.github.io/clanker-ui/skills/clanker-ui/SKILL.md): portable Agent Skill that adds clanker-ui to a project
-- [Component reference](https://bl4ko.github.io/clanker-ui/skills/clanker-ui/references/components.md): each component with its group, parts, attributes, state, events, keys, and a minimal example
+- [Component reference](https://bl4ko.github.io/clanker-ui/skills/clanker-ui/references/components.md): the groups and the components, with one Markdown file per component (parts, attributes, state, events, examples, full text)
 - [Contributor guide for agents](https://raw.githubusercontent.com/bl4ko/clanker-ui/main/AGENTS.md): build, test, and code rules of the repository
 
 ## Optional

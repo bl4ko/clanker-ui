@@ -84,6 +84,8 @@ jobs:
           uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I test/run.py --self-test
           python3 -I tools/ci/plan.py --self-test
       - name: Generated CSS is current
+        env:
+          NO_COLOR: "1"
         run: |
           go run ./tools/gen fetch -src "$RUNNER_TEMP/shadcn"
           go run ./tools/gen -src "$RUNNER_TEMP/shadcn" -out clanker-ui.css

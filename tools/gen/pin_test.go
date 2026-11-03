@@ -6,6 +6,7 @@ import (
 	"compress/gzip"
 	"os"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strings"
 	"testing"
@@ -112,5 +113,23 @@ func TestUntarAnimate(t *testing.T) {
 	data := writeTgz(t, map[string]string{animateCSS: "x"})
 	if _, err := untarAnimate(data); err == nil || !strings.Contains(err.Error(), "sha512") {
 		t.Errorf("unpinned tarball accepted: %v", err)
+	}
+}
+
+func TestTailwindVersionPins(t *testing.T) {
+	ci, err := os.ReadFile("../../.github/workflows/ci.yml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	m := regexp.MustCompile(`(?m)^\s*TAILWIND_VERSION:\s*"?([^"\s]+)"?\s*$`).FindAllSubmatch(ci, -1)
+	if len(m) != 1 || string(m[0][1]) != tailwindVersion {
+		t.Errorf("TAILWIND_VERSION in ci.yml must be tailwindVersion %s (change both and the SHA-256): %q", tailwindVersion, m)
+	}
+	notices, err := os.ReadFile("../../THIRD_PARTY_NOTICES")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(notices), "Tailwind CSS "+tailwindVersion+" (") {
+		t.Errorf("THIRD_PARTY_NOTICES does not name Tailwind CSS %s", tailwindVersion)
 	}
 }

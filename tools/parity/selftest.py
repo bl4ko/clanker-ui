@@ -2,6 +2,7 @@ import sys
 
 sys.dont_write_bytecode = True
 
+import json
 import pathlib
 import subprocess
 import tempfile
@@ -209,9 +210,27 @@ def nova_page_checks():
 
 
 def report_checks():
+    report = str(pathlib.Path(__file__).with_name("report.py"))
     with tempfile.TemporaryDirectory() as d:
-        r = subprocess.run([sys.executable, "-I", str(pathlib.Path(__file__).with_name("report.py")), d, "--strict"], capture_output=True)
-    return [check("report.py fails on a directory without component results", r.returncode == 1)]
+        r = subprocess.run([sys.executable, "-I", report, d, "--strict"], capture_output=True)
+        out = pathlib.Path(d, "out")
+        out.mkdir()
+        out.joinpath("badge.json").write_text(json.dumps({"component": "badge", "parts": 1, "parts_equal": 1, "pairs": 2, "pairs_equal": 2, "meaningful": 4, "meaningful_equal": 4, "measured": 8, "equal": 8, "by_state": {"rest": [2, 2]}, "top": [], "differing_parts": []}))
+        known = pathlib.Path(d, "known.tsv")
+
+        def strict(cause):
+            known.write_text(f"badge\tbadge\tcolor\t1\t{cause}\n")
+            return subprocess.run([sys.executable, "-I", report, str(out), "--strict", "--known", str(known)], capture_output=True, text=True)
+
+        repo = subprocess.run([sys.executable, "-I", report, str(out), "--strict"], capture_output=True, text=True)
+        defined, z9, unchecked = strict("R2 reference"), strict("Z9 tool"), strict("to check")
+    return [
+        check("report.py fails on a directory without component results", r.returncode == 1),
+        check("every cause key in known.tsv is in the DEVELOPMENT.md table", repo.returncode == 0),
+        check("report.py --strict accepts a defined cause key", defined.returncode == 0),
+        check("report.py --strict fails on the undefined cause key Z9", z9.returncode == 1 and "'Z9'" in z9.stdout),
+        check("report.py --strict fails on a 'to check' cause", unchecked.returncode == 1),
+    ]
 
 
 def main():

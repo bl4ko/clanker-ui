@@ -34,7 +34,7 @@ uv run --no-project --with playwright python -I tools/behavior gate --quick --ba
 ```
 
 - `DIR=.` serves the working tree, so a change shows without a rebuild; without it the server uses the files embedded at build time. `out/` is ignored by git.
-- `test/run.py` flags: `--engines chromium,firefox,webkit`, `--themes light,dark`, `--widths 1280,390`, `--only <test file prefixes>`, `-k <regex>`, `--rtl`, `--reduced-motion`. A check fails on any console error or warning.
+- `test/run.py` flags: `--engines chromium,firefox,webkit`, `--themes light,dark`, `--widths 1280,390`, `--only <test file prefixes>`, `-k <regex>`, `--rtl`, `--reduced-motion`, `--jobs 3` (engines in parallel), `--retry`, `--exitfirst`, `--list`, `--shots` (screenshots of passes too; a failure always saves one). A check fails on any console error or warning.
 - Python tools run with `uv` only. Never use `pip`. JavaScript tools, if a task needs one, use `pnpm` only. The kit itself has no package manager.
 - Install Playwright browsers once: `uv run --no-project --with playwright playwright install chromium firefox webkit`.
 
@@ -73,4 +73,5 @@ uv run --no-project --with playwright python -I tools/behavior gate --quick --ba
 - Conventional Commits: `<type>(<scope>): <subject>` with `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, or `perf`. Short subject; details go in the pull request.
 - Sign every commit (`git commit -S`). Unsigned commits cannot merge.
 - Open a pull request into `main`. Required checks: `ci-result` (tests in all engines) and `gitleaks` (secret scan).
+- CI on pull requests and `main` pushes skips WebKit dark, `--rtl`, `--reduced-motion`, and most of the minified kit; the nightly run has the full matrix. A pull request runs only the jobs that its changed files need (DEVELOPMENT.md, CI). Add the label `full-ci` when a change touches color, direction, motion, or minify.
 - Never commit secrets, tokens, private keys, or personal data.

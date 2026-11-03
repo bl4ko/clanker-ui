@@ -454,6 +454,11 @@ export function stringFor(el, key, params) {
   return String(value).replace(/\{(\w+)\}/g, (match, k) => (params && Object.hasOwn(params, k) ? String(params[k]) : match))
 }
 
+function flag(el, name) {
+  const value = el?.getAttribute(name)
+  return value != null && value !== "false"
+}
+
 function disabled(el) {
   return el.matches(":disabled, [aria-disabled='true'], [data-disabled]:not([data-disabled='false'])")
 }
@@ -481,8 +486,8 @@ function quietFocus(el) {
   el.focus({ preventScroll: true, focusVisible: false })
 }
 
-function focusGuard(edge) {
-  return h("span", { "data-slot": "focus-guard", "data-edge": edge, tabindex: "0", "aria-hidden": "true", style: { position: "fixed", top: "0", left: "0", width: "1px", height: "1px", margin: "-1px", padding: "0", border: "0", overflow: "hidden", clipPath: "inset(50%)", whiteSpace: "nowrap" } })
+function focusGuard(edge, attrs) {
+  return h("span", { "data-slot": "focus-guard", "data-edge": edge, tabindex: "0", "aria-hidden": "true", style: { position: "fixed", top: "0", left: "0", width: "1px", height: "1px", margin: "-1px", padding: "0", border: "0", overflow: "hidden", clipPath: "inset(50%)", whiteSpace: "nowrap" }, ...attrs })
 }
 
 export function trapFocus(container) {
@@ -1398,10 +1403,6 @@ const choiceMixed = new WeakSet()
 const choiceSynced = new WeakMap()
 const choiceSelector = choiceSlots.map(slot => `[data-slot="${slot}"]`).join(", ")
 
-function choiceOn(el, name) {
-  return el.hasAttribute(name) && el.getAttribute(name) !== "false"
-}
-
 function choiceDisabled(el) {
   if (el.hasAttribute("disabled")) {
     el.removeAttribute("disabled")
@@ -1441,7 +1442,15 @@ function choiceSetup(el) {
   const root = radio ? radioGroupOf(el) : null
   buttonType(el)
   el.setAttribute("role", radio ? "radio" : slot)
-  if (root?.hasAttribute("data-disabled")) el.setAttribute("disabled", "")
+  Object.defineProperty(el, "disabled", {
+    configurable: true,
+    get: () => el.getAttribute("aria-disabled") === "true",
+    set(on) {
+      el.removeAttribute("disabled")
+      choiceSet(el, "aria-disabled", on ? "true" : null)
+    },
+  })
+  if (flag(root, "data-disabled")) el.setAttribute("disabled", "")
   choiceDisabled(el)
   const next = el.nextElementSibling
   const reuse = next instanceof HTMLInputElement && next.getAttribute("aria-hidden") === "true" && next.type === (radio ? "radio" : "checkbox") && !choiceButtons.has(next)
@@ -1456,8 +1465,8 @@ function choiceSetup(el) {
   if (name) input.name = name
   const state = el.dataset.state
   const aria = el.getAttribute("aria-checked")
-  const checked = choiceOn(el, "data-checked") || aria === "true" || state === "checked" || (radio && root?.dataset.value != null && root.dataset.value === (value ?? ""))
-  const mixed = slot === "checkbox" && (choiceOn(el, "data-indeterminate") || aria === "mixed" || state === "indeterminate")
+  const checked = flag(el, "data-checked") || aria === "true" || state === "checked" || (radio && root?.dataset.value != null && root.dataset.value === (value ?? ""))
+  const mixed = slot === "checkbox" && (flag(el, "data-indeterminate") || aria === "mixed" || state === "indeterminate")
   if (!reuse) input.defaultChecked = checked && !mixed
   input.checked = checked && !mixed
   input.indeterminate = mixed
@@ -1484,8 +1493,8 @@ function choiceSync(el) {
   const root = radio ? radioGroupOf(el) : null
   const mixed = slot === "checkbox" && input.indeterminate
   const checked = !mixed && input.checked
-  const readonly = choiceOn(el, "data-readonly") || (!!root && choiceOn(root, "data-readonly"))
-  const required = choiceOn(el, "data-required") || (!!root && choiceOn(root, "data-required"))
+  const readonly = flag(el, "data-readonly") || (!!root && flag(root, "data-readonly"))
+  const required = flag(el, "data-required") || (!!root && flag(root, "data-required"))
   const invalid = el.getAttribute("aria-invalid") === "true"
   const off = choiceDisabled(el)
   input.disabled = off
@@ -1526,8 +1535,8 @@ const choiceWatch = new MutationObserver(records => {
   for (const { target } of records) {
     const input = choiceInputs.get(target)
     if (!input) continue
-    const mixed = target.dataset.slot === "checkbox" && choiceOn(target, "data-indeterminate")
-    const checked = !mixed && choiceOn(target, "data-checked")
+    const mixed = target.dataset.slot === "checkbox" && flag(target, "data-indeterminate")
+    const checked = !mixed && flag(target, "data-checked")
     const last = choiceSynced.get(target)
     if (!last || last[0] !== checked || last[1] !== mixed) {
       if (input.indeterminate !== mixed) input.indeterminate = mixed
@@ -1548,7 +1557,7 @@ function radioGroupSync(root) {
   const active = usable.find(item => choiceInputs.get(item).checked) ?? usable[0]
   setRoving(kit, active)
   for (const item of kit) item.toggleAttribute("data-composite-item-active", item === active)
-  for (const [attr, on] of [["aria-required", choiceOn(root, "data-required")], ["aria-readonly", choiceOn(root, "data-readonly")], ["aria-disabled", choiceOn(root, "data-disabled")]]) {
+  for (const [attr, on] of [["aria-required", flag(root, "data-required")], ["aria-readonly", flag(root, "data-readonly")], ["aria-disabled", flag(root, "data-disabled")]]) {
     if (on) root.setAttribute(attr, "true")
     else root.removeAttribute(attr)
   }
@@ -1562,7 +1571,7 @@ function choiceRefresh(el) {
 
 function choiceReadonly(el) {
   const root = el.dataset.slot === "radio-group-item" ? radioGroupOf(el) : null
-  return choiceOn(el, "data-readonly") || (!!root && choiceOn(root, "data-readonly"))
+  return flag(el, "data-readonly") || (!!root && flag(root, "data-readonly"))
 }
 
 function choiceKeydown(event, el) {
@@ -1698,7 +1707,7 @@ define("toggle-group", {
     root.dataset.orientation ??= "horizontal"
     root.style.setProperty("--gap", root.dataset.spacing)
     const items = toggleGroupItems(root)
-    const disabled = root.hasAttribute("data-disabled")
+    const disabled = flag(root, "data-disabled")
     for (const item of items) {
       buttonType(item)
       toggleGroupContext(root, item)
@@ -1818,6 +1827,10 @@ function sliderSnap(input, value) {
   return Math.min(max, Math.max(min, v))
 }
 
+const sliderWatch = new MutationObserver(records => {
+  for (const root of new Set(records.map(r => r.target.closest('[data-slot="slider"]')))) if (root) sliderRender(root)
+})
+
 function sliderSetup(root) {
   const o = root.dataset.orientation === "vertical" ? "vertical" : "horizontal"
   root.dataset.orientation = o
@@ -1851,6 +1864,7 @@ function sliderSetup(root) {
     return thumb
   })
   sliderStates.set(root, { control, track, range, thumbs, inputs, size: 0, active: -1 })
+  for (const input of inputs) sliderWatch.observe(input, { attributes: true, attributeFilter: ["disabled", "min", "max", "step", "value"] })
   for (const part of [control, track, range, ...thumbs]) part.dataset.orientation = o
 }
 
@@ -1908,6 +1922,10 @@ function sliderRender(root) {
   for (const thumb of thumbs) if (disabled) thumb.setAttribute("data-disabled", "")
 }
 
+function sliderSync(root, input) {
+  if (sliderInputs(root).includes(input) && input.getAttribute("aria-valuenow") !== input.value) sliderRender(root)
+}
+
 function sliderSet(root, index, value, commit, push) {
   const inputs = sliderInputs(root)
   const before = inputs.map(i => i.value)
@@ -1922,9 +1940,9 @@ function sliderSet(root, index, value, commit, push) {
     for (let j = index + 1; j < inputs.length; j++) if (inputs[j].valueAsNumber < v) inputs[j].value = String(v)
   }
   const changed = inputs.filter((i, k) => i.value !== before[k])
+  sliderRender(root)
   for (const i of changed) i.dispatchEvent(new Event("input", { bubbles: true }))
   if (commit) for (const i of changed) i.dispatchEvent(new Event("change", { bubbles: true }))
-  sliderRender(root)
 }
 
 function sliderFromPointer(root, event) {
@@ -1965,7 +1983,7 @@ define("slider", {
   },
   pointerdown(event, root) {
     const st = sliderStates.get(root)
-    if (!st || event.button !== 0 || root.hasAttribute("data-disabled")) return
+    if (!st || event.button !== 0 || flag(root, "data-disabled")) return
     const usable = st.inputs.map((input, k) => [input, k]).filter(([input]) => !input.disabled)
     if (!usable.length) return
     event.preventDefault()
@@ -2030,8 +2048,12 @@ define("slider", {
   input(event, root) {
     const inputs = sliderInputs(root)
     const index = inputs.indexOf(event.target)
-    if (index < 0 || !event.isTrusted) return
-    sliderSet(root, index, inputs[index].valueAsNumber, false, false)
+    if (index < 0) return
+    if (event.isTrusted) sliderSet(root, index, inputs[index].valueAsNumber, false, false)
+    else sliderSync(root, event.target)
+  },
+  change(event, root) {
+    if (!event.isTrusted) sliderSync(root, event.target)
   },
 })
 
@@ -2248,7 +2270,7 @@ function selectItems(root) {
 }
 
 function selectEnabled(root) {
-  return selectItems(root).filter(item => !item.hasAttribute("data-disabled") && !item.hidden)
+  return selectItems(root).filter(item => !flag(item, "data-disabled") && !item.hidden)
 }
 
 function selectText(item) {
@@ -2276,13 +2298,16 @@ function selectItemSetup(item) {
   item.setAttribute("role", "option")
   ensureId(item, "select-item")
   item.tabIndex = -1
-  if (item.hasAttribute("data-disabled")) item.setAttribute("aria-disabled", "true")
+  if (flag(item, "data-disabled")) item.setAttribute("aria-disabled", "true")
   if (!item.querySelector('[data-slot="select-item-text"]')) {
     const text = h("div", { "data-slot": "select-item-text" })
     text.append(...item.childNodes)
     item.append(text)
   }
   if (!item.hasAttribute("aria-selected")) item.setAttribute("aria-selected", "false")
+  const root = item.closest('[data-slot="select"]')
+  const st = root && selectStates.get(root)
+  if (st?.want != null && item.dataset.value === st.want) selectSetValue(root, st.want, false)
 }
 
 function selectReveal(container, item) {
@@ -2293,6 +2318,14 @@ function selectReveal(container, item) {
   else if (r.bottom > c.bottom - pad) container.scrollTop += r.bottom - (c.bottom - pad)
 }
 
+const selectWatch = new MutationObserver(records => {
+  for (const root of new Set(records.map(r => r.target))) {
+    const st = selectStates.get(root)
+    const value = root.dataset.value ?? ""
+    if (st && value !== (st.want ?? st.value)) selectSetValue(root, value, false)
+  }
+})
+
 function selectSetValue(root, value, user) {
   const st = selectStates.get(root)
   if (!st) return
@@ -2300,6 +2333,7 @@ function selectSetValue(root, value, user) {
   const item = value === "" ? null : (items.find(i => (i.dataset.value ?? "") === value) ?? null)
   const next = item ? value : ""
   const changed = st.value !== next
+  st.want = item || value === "" ? null : value
   const selected = item ?? items.find(i => i.dataset.value === "") ?? null
   for (const i of items) {
     const on = i === selected
@@ -2312,7 +2346,7 @@ function selectSetValue(root, value, user) {
   }
   st.native.value = next
   st.value = next
-  root.dataset.value = next
+  if (root.dataset.value !== value) root.dataset.value = value
   st.valueEl.replaceChildren(...(item?.dataset.label != null ? [item.dataset.label] : selectClone(item ? [...selectText(item).childNodes] : st.placeholder)))
   st.trigger.toggleAttribute("data-placeholder", !item)
   st.valueEl.toggleAttribute("data-placeholder", !item)
@@ -2466,7 +2500,7 @@ function selectClose(root, restoreFocus = true) {
 }
 
 function selectChoose(root, item) {
-  if (!item || item.hasAttribute("data-disabled")) return
+  if (!item || flag(item, "data-disabled")) return
   selectSetValue(root, item.dataset.value ?? "", true)
   selectClose(root)
 }
@@ -2539,11 +2573,12 @@ define("select", {
       if (label) group.setAttribute("aria-labelledby", ensureId(label, "select-label"))
     }
     for (const sep of root.querySelectorAll('[data-slot="select-separator"]')) sep.setAttribute("aria-hidden", "true")
-    const native = proxyInput(root, { name: root.dataset.name, form: root.dataset.form, required: root.hasAttribute("data-required"), disabled: trigger.disabled })
+    const native = proxyInput(root, { name: root.dataset.name, form: root.dataset.form, required: flag(root, "data-required"), disabled: trigger.disabled })
     const initial = prev?.initial ?? root.dataset.value ?? selectItems(root).find(i => i.dataset.state === "checked" || i.getAttribute("aria-selected") === "true")?.dataset.value ?? ""
     const st = { trigger, content, viewport, valueEl, placeholder, native, up, down, initial, value: null, lock: null, timer: 0, press: null, side: prev?.side ?? content.dataset.side ?? "bottom", align: prev?.align ?? content.dataset.align ?? "center" }
     selectStates.set(root, st)
-    selectSetValue(root, prev ? prev.value : initial, false)
+    selectSetValue(root, prev ? (prev.want ?? prev.value) : initial, false)
+    selectWatch.observe(root, { attributes: true, attributeFilter: ["data-value"] })
     return () => selectStopScroll(st)
   },
 })
@@ -2656,7 +2691,7 @@ define("select-item", {
     if (root) selectChoose(root, item)
   },
   pointermove(event, item) {
-    if (!pointerMoved(event) || item.hasAttribute("data-disabled")) return
+    if (!pointerMoved(event) || flag(item, "data-disabled")) return
     if (document.activeElement !== item) item.focus({ preventScroll: true })
   },
   pointerup(event, item) {
@@ -2697,7 +2732,7 @@ function comboboxItems(st) {
 }
 
 function comboboxVisible(st) {
-  return comboboxItems(st).filter(item => !item.hidden && !item.closest("[hidden]") && !item.hasAttribute("data-disabled"))
+  return comboboxItems(st).filter(item => !item.hidden && !item.closest("[hidden]") && !flag(item, "data-disabled"))
 }
 
 function comboboxLabel(item) {
@@ -2724,8 +2759,26 @@ function comboboxItemSetup(item) {
   item.setAttribute("role", "option")
   ensureId(item, "combobox-item")
   if (!item.hasAttribute("aria-selected")) item.setAttribute("aria-selected", "false")
-  if (item.hasAttribute("data-disabled")) item.setAttribute("aria-disabled", "true")
+  if (flag(item, "data-disabled")) item.setAttribute("aria-disabled", "true")
+  const st = comboboxStates.get(item.closest('[data-slot="combobox"]'))
+  if (st?.want.includes(comboboxValueOf(item))) comboboxApply(st, st.multiple ? [...st.value, ...st.want] : st.want)
 }
+
+function comboboxValues(st, raw) {
+  return st.multiple ? raw.split(",").map(v => v.trim()).filter(Boolean) : [raw]
+}
+
+function comboboxApply(st, next) {
+  comboboxSet(st, next, false)
+  if (st.input && !st.popup && !st.multiple) st.input.value = comboboxSelectedLabel(st)
+}
+
+const comboboxWatch = new MutationObserver(records => {
+  for (const root of new Set(records.map(r => r.target))) {
+    const st = comboboxStates.get(root)
+    if (st) comboboxApply(st, comboboxValues(st, root.dataset.value ?? ""))
+  }
+})
 
 function comboboxChip(st, value, label) {
   return h(
@@ -2750,8 +2803,10 @@ function comboboxRenderChips(st) {
 function comboboxSet(st, next, user) {
   const items = comboboxItems(st)
   const known = new Set(items.map(comboboxValueOf))
-  let list = (Array.isArray(next) ? next : [next]).filter(v => v !== "" && known.has(v))
+  const asked = (Array.isArray(next) ? next : [next]).filter(v => v !== "")
+  let list = asked.filter(v => known.has(v))
   if (!st.multiple) list = list.slice(0, 1)
+  st.want = user || (!st.multiple && list.length) ? [] : asked.filter(v => !known.has(v))
   const before = (st.multiple ? st.value : [st.value].filter(Boolean)).join("\u0000")
   st.value = st.multiple ? list : (list[0] ?? "")
   for (const item of items) {
@@ -2836,7 +2891,7 @@ function comboboxPressed(st, open) {
 }
 
 function comboboxOpen(st, highlight) {
-  if (isOpen(st.content) || st.root.hasAttribute("data-disabled")) return
+  if (isOpen(st.content) || flag(st.root, "data-disabled")) return
   const typed = st.input && !st.popup ? st.input.value : ""
   comboboxFilter(st, !st.multiple && typed === comboboxSelectedLabel(st) ? "" : typed)
   show(st.content, {
@@ -2879,7 +2934,7 @@ function comboboxClose(st, restoreFocus = true) {
 }
 
 function comboboxChoose(st, item) {
-  if (!item || item.hasAttribute("data-disabled")) return
+  if (!item || flag(item, "data-disabled")) return
   const value = comboboxValueOf(item)
   if (st.multiple) {
     comboboxSet(st, st.value.includes(value) ? st.value.filter(v => v !== value) : [...st.value, value], true)
@@ -2940,11 +2995,11 @@ define("combobox", {
       trigger,
       popup,
       valueEl,
-      clear: root.querySelector('[data-slot="combobox-clear"]') ?? comboboxStates.get(root)?.clear ?? null,
+      clear: root.querySelector('[data-slot="combobox-clear"]'),
       anchor: chips ?? (popup ? trigger : input),
-      multiple: root.hasAttribute("data-multiple"),
-      placeholder: comboboxStates.get(root)?.placeholder ?? (valueEl ? [...valueEl.childNodes].map(n => n.cloneNode(true)) : []),
-      value: root.hasAttribute("data-multiple") ? [] : "",
+      multiple: flag(root, "data-multiple"),
+      placeholder: valueEl ? [...valueEl.childNodes].map(n => n.cloneNode(true)) : [],
+      value: flag(root, "data-multiple") ? [] : "",
       highlighted: null,
       pressed: false,
       dismiss: null,
@@ -2952,6 +3007,7 @@ define("combobox", {
       name: root.dataset.name,
       form: root.dataset.form,
       initial: [],
+      want: [],
     }
     if (!st.anchor) return
     if (!content.hasAttribute("popover")) content.setAttribute("popover", "manual")
@@ -2969,7 +3025,7 @@ define("combobox", {
     }
     ensureId(list, "combobox-list")
     if (st.multiple) list.setAttribute("aria-multiselectable", "true")
-    const disabled = root.hasAttribute("data-disabled") || !!input?.disabled || (popup && !!trigger?.disabled)
+    const disabled = flag(root, "data-disabled") || !!input?.disabled || (popup && !!trigger?.disabled)
     const group = input?.closest('[data-slot="input-group"]')
     if (group && root.contains(group)) group.setAttribute("data-combobox-input", "")
     if (input) {
@@ -2994,7 +3050,7 @@ define("combobox", {
       if (disabled) trigger.disabled = true
     }
     if (st.clear) {
-      st.clearSpot = st.clear.isConnected ? [st.clear.parentNode, st.clear.nextSibling] : comboboxStates.get(root).clearSpot
+      st.clearSpot = [st.clear.parentNode, st.clear.nextSibling]
       if (!st.clear.hasAttribute("tabindex")) st.clear.tabIndex = -1
       buttonType(st.clear)
       st.clear.dataset.size ??= "icon-xs"
@@ -3011,14 +3067,12 @@ define("combobox", {
     }
     for (const sep of list.querySelectorAll('[data-slot="combobox-separator"]')) sep.setAttribute("aria-hidden", "true")
     if (chips) chips.setAttribute("role", "toolbar")
-    st.native = proxyInput(root, { name: st.multiple ? null : st.name, form: st.form, required: root.hasAttribute("data-required"), disabled })
-    const prev = comboboxStates.get(root)
+    st.native = proxyInput(root, { name: st.multiple ? null : st.name, form: st.form, required: flag(root, "data-required"), disabled })
     comboboxStates.set(root, st)
-    const raw = root.dataset.value ?? ""
-    st.initial = prev?.initial ?? (st.multiple ? raw.split(",").map(v => v.trim()).filter(Boolean) : [raw])
-    comboboxSet(st, prev ? prev.value : st.initial, false)
-    if (input && !popup && !st.multiple) input.value = comboboxSelectedLabel(st)
+    st.initial = comboboxValues(st, root.dataset.value ?? "")
+    comboboxApply(st, st.initial)
     comboboxFilter(st, "")
+    comboboxWatch.observe(root, { attributes: true, attributeFilter: ["data-value"] })
   },
   keydown(event, root) {
     const st = comboboxStates.get(root)
@@ -3079,13 +3133,13 @@ define("combobox", {
     if (!isOpen(st.content)) comboboxOpen(st, null)
     comboboxFilter(st, st.input.value)
     const items = comboboxVisible(st)
-    if (root.hasAttribute("data-auto-highlight")) comboboxHighlight(st, items[0] ?? null)
+    if (flag(root, "data-auto-highlight")) comboboxHighlight(st, items[0] ?? null)
     else if (st.highlighted && !items.includes(st.highlighted)) comboboxHighlight(st, null)
   },
   pointerdown(event, root) {
     const st = comboboxStates.get(root)
     const trigger = event.target.closest?.('[data-slot="combobox-trigger"], [data-combobox-trigger], [data-slot="input-group-button"]')
-    if (!st || !trigger || trigger !== st.trigger || event.button !== 0 || event.pointerType === "touch" || root.hasAttribute("data-disabled")) return
+    if (!st || !trigger || trigger !== st.trigger || event.button !== 0 || event.pointerType === "touch" || flag(root, "data-disabled")) return
     st.pressed = true
     if (isOpen(st.content)) comboboxClose(st)
     else {
@@ -3102,7 +3156,7 @@ define("combobox", {
   },
   click(event, root) {
     const st = comboboxStates.get(root)
-    if (!st || root.hasAttribute("data-disabled")) return
+    if (!st || flag(root, "data-disabled")) return
     const target = event.target
     const remove = target.closest('[data-slot="combobox-chip-remove"]')
     if (remove && st.chips?.contains(remove)) {
@@ -3141,7 +3195,7 @@ define("combobox", {
 define("combobox-item", {
   init: comboboxItemSetup,
   pointermove(event, item) {
-    if (!pointerMoved(event) || item.hasAttribute("data-disabled")) return
+    if (!pointerMoved(event) || flag(item, "data-disabled")) return
     const st = comboboxStates.get(item.closest('[data-slot="combobox"]'))
     if (st && st.highlighted !== item) comboboxHighlight(st, item, false)
   },
@@ -3242,8 +3296,8 @@ function formAfterReset(form) {
   for (const root of form.querySelectorAll('[data-slot="combobox"]')) {
     const st = comboboxStates.get(root)
     if (!st) continue
-    comboboxSet(st, st.initial, false)
-    if (st.input && !st.popup) st.input.value = st.multiple ? "" : comboboxSelectedLabel(st)
+    comboboxApply(st, st.initial)
+    if (st.input && !st.popup && st.multiple) st.input.value = ""
   }
   for (const root of form.querySelectorAll('[data-slot="slider"]')) sliderRender(root)
   for (const root of form.querySelectorAll('[data-slot="input-otp"]')) inputOtpRender(root)
@@ -3265,7 +3319,7 @@ function formAfterReset(form) {
   }
 }
 
-document.addEventListener("reset", event => setTimeout(() => formAfterReset(event.target)))
+document.addEventListener("reset", event => setTimeout(() => event.defaultPrevented || formAfterReset(event.target)))
 
 define("form", {
   init(form) {
@@ -3368,7 +3422,6 @@ function dialogClosers(kind) {
 }
 
 function dialogInitContent(content, kind) {
-  const owner = `[data-slot="${kind}-content"]`
   for (const button of content.querySelectorAll(`${dialogClosers(kind)}, [data-slot="alert-dialog-action"], [data-alert-dialog-action]`)) buttonType(button)
   if (kind === "alert-dialog") content.setAttribute("role", "alertdialog")
   const title = own(content, `[data-slot="${kind}-title"]`)[0]
@@ -3472,16 +3525,15 @@ function drawerOptions(viewport) {
   const d = root?.dataset ?? {}
   const raw = d.swipeDirection ?? drawerLegacyDirections[d.direction] ?? "down"
   const direction = drawerDirections.includes(raw) ? raw : "down"
-  const flag = name => !!root?.hasAttribute(name) && root.getAttribute(name) !== "false"
   return {
     direction,
     axis: direction === "down" || direction === "up" ? "y" : "x",
     modal: d.modal === "false" ? false : d.modal === "trap-focus" ? "trap-focus" : true,
-    handle: flag("data-show-swipe-handle"),
-    dismissible: !flag("data-disable-pointer-dismissal"),
+    handle: flag(root, "data-show-swipe-handle"),
+    dismissible: !flag(root, "data-disable-pointer-dismissal"),
     snapPoints: drawerSnapValues(d.snapPoints),
     snapPoint: drawerSnapValues(d.snapPoint)[0],
-    sequential: flag("data-snap-to-sequential-points"),
+    sequential: flag(root, "data-snap-to-sequential-points"),
   }
 }
 
@@ -3712,7 +3764,7 @@ function drawerShow(found, trigger) {
   viewport.toggleAttribute("data-snap-points", o.snapPoints.length > 0 && !parent)
   transition(viewport, true)
   transition(popup, true)
-  show(viewport, { trigger, anchor: null, modal: o.modal === true, outside: o.dismissible, focusOutside: o.modal === false && o.dismissible, intentional: o.modal === false ? "mouse" : false, focus: popup, onDismiss: reason => dialogHide(viewport, reason) })
+  show(viewport, { trigger, anchor: null, modal: o.modal === true, outside: o.dismissible, focusOutside: o.modal === false && o.dismissible, intentional: o.modal === false ? "mouse" : false, focus: popup, onDismiss: reason => dialogHide(viewport, reason), onClose: () => viewport.isConnected || drawerDetached(viewport, popup) })
   popup.dataset.state = "open"
   state.height = popup.offsetHeight
   drawerSnapLayout(viewport)
@@ -3751,6 +3803,14 @@ function drawerHide(viewport) {
   })
   if (state) state.done = done
   drawerNestedSwipe(viewport, false, 0)
+  drawerStack()
+}
+
+function drawerDetached(viewport, popup) {
+  drawerTraps.get(viewport)?.()
+  drawerTraps.delete(viewport)
+  drawerResize.unobserve(popup)
+  drawerTrack(viewport, false)
   drawerStack()
 }
 
@@ -3836,7 +3896,7 @@ function drawerSwipeMove(viewport, x, y, timeStamp) {
   const swipe = drawerSwipes.get(viewport)
   if (!swipe) return
   const { popup } = drawerParts(viewport)
-  const { direction, axis } = swipe.o
+  const { axis } = swipe.o
   if (swipe.first) {
     swipe.first = false
     swipe.start = { x, y }
@@ -4151,7 +4211,7 @@ for (const kind of dialogKinds) {
 
 define("dialog-footer", {
   init(footer) {
-    if (!footer.hasAttribute("data-show-close-button") || footer.dataset.showCloseButton === "false" || footer.querySelector("[data-dialog-close]")) return
+    if (!flag(footer, "data-show-close-button") || footer.querySelector("[data-dialog-close]")) return
     footer.append(h("button", { type: "button", "data-slot": "button", "data-variant": "outline", "data-dialog-close": "" }, stringFor(footer, "close")))
   },
 })
@@ -4235,7 +4295,7 @@ function popoverShow(found, trigger, anchor) {
   const parts = popoverParts(found)
   trigger ??= parts.trigger
   anchor ??= parts.anchor ?? trigger
-  const modal = root.hasAttribute("data-modal") && root.dataset.modal !== "false"
+  const modal = flag(root, "data-modal")
   show(content, {
     trigger,
     anchor,
@@ -4945,7 +5005,7 @@ function dropdownMenuInitItem(item) {
   }
   if (type === "checkbox-item" || type === "radio-item") {
     const aria = item.getAttribute("aria-checked")
-    const state = aria === "mixed" || item.dataset.state === "indeterminate" ? "indeterminate" : aria === "true" || item.dataset.state === "checked" || (item.hasAttribute("data-checked") && item.dataset.checked !== "false") ? "checked" : "unchecked"
+    const state = aria === "mixed" || item.dataset.state === "indeterminate" ? "indeterminate" : aria === "true" || item.dataset.state === "checked" || flag(item, "data-checked") ? "checked" : "unchecked"
     let indicator = item.querySelector(`:scope > [data-slot="${kind}-${type}-indicator"], :scope > [data-slot="${kind}-item-indicator"]`)
     if (!indicator) item.prepend((indicator = h("span", kind === "dropdown-menu" ? { "data-slot": `${kind}-${type}-indicator` } : {})))
     else if (kind === "dropdown-menu") indicator.dataset.slot = `${kind}-${type}-indicator`
@@ -5281,7 +5341,7 @@ function navigationMenuPopup(root) {
   return { positioner, popup, viewport }
 }
 
-function navigationMenuSetOpen(root, trigger, content, open) {
+function navigationMenuSetOpen(trigger, content, open) {
   trigger.dataset.state = open ? "open" : "closed"
   trigger.toggleAttribute("data-popup-open", open)
   trigger.toggleAttribute("data-pressed", open)
@@ -5348,14 +5408,10 @@ function navigationMenuSize(root, popup, positioner, from) {
   })
 }
 
-function navigationMenuFocusGuard(edge) {
-  return h("span", { "data-slot": "navigation-menu-focus-guard", "data-edge": edge, tabindex: "0", "aria-hidden": "true", style: { position: "fixed", top: "0", left: "0", width: "1px", height: "1px", margin: "-1px", padding: "0", border: "0", overflow: "hidden", clipPath: "inset(50%)", whiteSpace: "nowrap" } })
-}
-
 function navigationMenuTriggerGuard(root, trigger) {
   let guard = own(root, '[data-slot="navigation-menu-focus-guard"][data-edge="trigger"]')[0]
   if (!trigger || navigationMenuPlain(root)) return guard?.remove()
-  guard ??= navigationMenuFocusGuard("trigger")
+  guard ??= focusGuard("trigger", { "data-slot": "navigation-menu-focus-guard" })
   if (guard.previousElementSibling !== trigger) trigger.after(guard)
 }
 
@@ -5393,7 +5449,7 @@ function navigationMenuOpen(root, item) {
     const old = navigationMenuParts(prev)
     const items = navigationMenuItems(root)
     const direction = items.indexOf(item) > items.indexOf(prev) ? "right" : "left"
-    navigationMenuSetOpen(root, old.trigger, old.content, false)
+    navigationMenuSetOpen(old.trigger, old.content, false)
     if (plain) {
       hide(old.content, { restoreFocus: false }).then(() => navigationMenuHome(old.content))
     } else {
@@ -5405,7 +5461,7 @@ function navigationMenuOpen(root, item) {
       content.dataset.activationDirection = direction
       content.hidden = false
       viewport.append(content)
-      navigationMenuSetOpen(root, trigger, content, true)
+      navigationMenuSetOpen(trigger, content, true)
       transition(content, true)
       state.stop?.()
       state.stop = position(positioner, trigger, { side: "bottom", align: root.dataset.align ?? "start", sideOffset: 8, alignOffset: 0, collisionPadding: 5 })
@@ -5430,7 +5486,7 @@ function navigationMenuOpen(root, item) {
         el.toggleAttribute("data-open", true)
         el.toggleAttribute("data-closed", false)
       }
-      navigationMenuSetOpen(root, trigger, content, true)
+      navigationMenuSetOpen(trigger, content, true)
       navigationMenuSize(root, popup, positioner, null)
       state.stop?.()
       state.stop = position(positioner, trigger, { side: "bottom", align: root.dataset.align ?? "start", sideOffset: 8, alignOffset: 0, collisionPadding: 5 })
@@ -5442,7 +5498,7 @@ function navigationMenuOpen(root, item) {
   }
   if (plain) {
     content.hidden = false
-    navigationMenuSetOpen(root, trigger, content, true)
+    navigationMenuSetOpen(trigger, content, true)
     show(content, { trigger, expanded: false, focus: null, restoreFocus: false, outside: false, side: "bottom", align: "start", sideOffset: 8, alignOffset: 0, collisionPadding: 5, onDismiss: reason => navigationMenuClose(root, reason === "escape") })
   }
   state.item = item
@@ -5466,7 +5522,7 @@ function navigationMenuClose(root, focusTrigger = false) {
   cancelAnimationFrame(state.resize)
   const focused = document.activeElement
   const refocus = focusTrigger && (!focused || focused === document.body || root.contains(focused))
-  navigationMenuSetOpen(root, trigger, content, false)
+  navigationMenuSetOpen(trigger, content, false)
   root.removeAttribute("data-open")
   own(root, '[data-slot="navigation-menu-list"]')[0]?.removeAttribute("data-open")
   if (navigationMenuPlain(root)) hide(content, { restoreFocus: false }).then(() => navigationMenuHome(content))
@@ -5516,7 +5572,7 @@ define("navigation-menu", {
     for (const old of own(root, '[data-slot="navigation-menu-viewport-wrapper"]')) old.remove()
     if (!plain && !navigationMenuPopup(root).viewport) {
       for (const old of own(root, '[data-slot="navigation-menu-positioner"]')) old.remove()
-      root.append(h("div", { "data-slot": "navigation-menu-positioner", role: "presentation", popover: "manual" }, h("nav", { "data-slot": "navigation-menu-popup", tabindex: "-1" }, navigationMenuFocusGuard("start"), h("div", { "data-slot": "navigation-menu-viewport" }), navigationMenuFocusGuard("end"))))
+      root.append(h("div", { "data-slot": "navigation-menu-positioner", role: "presentation", popover: "manual" }, h("nav", { "data-slot": "navigation-menu-popup", tabindex: "-1" }, focusGuard("start", { "data-slot": "navigation-menu-focus-guard" }), h("div", { "data-slot": "navigation-menu-viewport" }), focusGuard("end", { "data-slot": "navigation-menu-focus-guard" }))))
     }
     for (const trigger of own(root, '[data-slot="navigation-menu-trigger"]')) {
       const item = trigger.closest('[data-slot="navigation-menu-item"]')
@@ -5623,7 +5679,7 @@ define("navigation-menu", {
     const link = event.target instanceof Element ? event.target.closest('[data-slot="navigation-menu-link"]') : null
     if (link && link.closest('[data-slot="navigation-menu"]') === root) {
       emit(root, "navigation-menu:select", { link, href: link.getAttribute("href") })
-      if (link.closest('[data-slot="navigation-menu-content"]') && link.hasAttribute("data-close-on-click") && link.dataset.closeOnClick !== "false") navigationMenuClose(root)
+      if (link.closest('[data-slot="navigation-menu-content"]') && flag(link, "data-close-on-click")) navigationMenuClose(root)
     }
   },
   keydown(event, root) {
@@ -5660,7 +5716,7 @@ define("navigation-menu", {
 })
 
 function navigationMenuLinkActive(link) {
-  return link.hasAttribute("data-active") && link.dataset.active !== "false"
+  return flag(link, "data-active")
 }
 
 const navigationMenuLinkWatch = new MutationObserver(records => {
@@ -5754,7 +5810,7 @@ function commandFilter(root, keep = false) {
   for (const list of own(root, '[data-slot="command-list"]')) {
     commandSort(list, [...list.children], active ? el => (scores.has(el) ? scores.get(el) : groups.includes(el) ? best(el) : -1) : null)
   }
-  for (const separator of own(root, '[data-slot="command-separator"]')) separator.hidden = active && !separator.hasAttribute("data-always-render")
+  for (const separator of own(root, '[data-slot="command-separator"]')) separator.hidden = active && !flag(separator, "data-always-render")
   for (const empty of own(root, '[data-slot="command-empty"]')) empty.hidden = visible > 0
   if (!active) for (const parent of parents) [...parent.children].forEach((el, i) => commandOrder.set(el, i))
   const selectable = commandSelectable(root)
@@ -5874,7 +5930,7 @@ define("command", {
     const list = commandSelectable(root)
     const current = list.find(item => item.dataset.selected === "true")
     const i = list.indexOf(current)
-    const loop = root.hasAttribute("data-loop") && root.dataset.loop !== "false"
+    const loop = flag(root, "data-loop")
     const down = event.key === "ArrowDown" || (event.ctrlKey && (event.key === "n" || event.key === "j"))
     const up = event.key === "ArrowUp" || (event.ctrlKey && (event.key === "p" || event.key === "k"))
     let next = null
@@ -6025,10 +6081,6 @@ function toastValidate(options) {
   if (typeof options.icon === "string") iconKey(options.icon)
 }
 
-function toastDelay(record) {
-  return record.options.timeout ?? toastConfig().timeout
-}
-
 function toastFill(record) {
   const { el, content, options: o } = record
   const portal = toastPortal()
@@ -6072,6 +6124,7 @@ function toastOutOfFocus() {
 }
 
 function toastLayout() {
+  if (!toastPrune()) return
   const viewport = toastViewport()
   const { limit } = toastConfig()
   const expanded = toastExpanded()
@@ -6269,6 +6322,11 @@ function toastAdd(options) {
   return toastCreate(o)
 }
 
+function toastPrune() {
+  for (const record of [...toastList]) if (!record.el.isConnected) toastDrop(record)
+  return toastList.length
+}
+
 function toastDrop(record) {
   toastClearTimer(record)
   record.el.remove()
@@ -6279,6 +6337,10 @@ function toastDrop(record) {
 
 function toastClose(record, reason) {
   if (record.ending) return
+  if (!record.el.isConnected) {
+    toastPrune()
+    return
+  }
   const all = reason === "dismiss-all"
   toastFocusAway(record, all)
   record.ending = true
@@ -6290,7 +6352,11 @@ function toastClose(record, reason) {
   if (reason !== "timeout") record.options.onDismiss?.(toastPublic(record))
   emit(record.el, "toast:close", { id: record.id, reason: all ? "dismiss" : reason })
   transition(record.el, false).then(() => {
-    if (!record.ending || !record.el.isConnected) return
+    if (!record.ending) return
+    if (!record.el.isConnected) {
+      toastPrune()
+      return
+    }
     toastDrop(record)
     record.options.onRemove?.()
     if (toastList.length) toastLayout()
@@ -6545,7 +6611,7 @@ document.addEventListener(
 )
 
 addEventListener("keydown", event => {
-  if (event.key !== "F6" || !toastList.length) return
+  if (event.key !== "F6" || !toastPrune()) return
   const viewport = toastViewport()
   if (event.target === viewport) return
   event.preventDefault()
@@ -6662,7 +6728,7 @@ function accordionContent(item) {
 }
 
 function accordionDisabled(item) {
-  return item.hasAttribute("data-disabled") && item.dataset.disabled !== "false"
+  return flag(item, "data-disabled")
 }
 
 function accordionSingle(root) {
@@ -6795,7 +6861,7 @@ function collapsibleParts(root) {
 }
 
 function collapsibleDisabled(root) {
-  return root.hasAttribute("data-disabled") && root.dataset.disabled !== "false"
+  return flag(root, "data-disabled")
 }
 
 function collapsibleSet(root, open, animate) {
@@ -7342,7 +7408,7 @@ define("resizable-panel-group", {
       if (!handle.hasAttribute("aria-label")) handle.setAttribute("aria-label", stringFor(handle, "resize"))
       const prev = handle.previousElementSibling
       if (prev?.matches('[data-slot="resizable-panel"]')) handle.setAttribute("aria-controls", prev.id)
-      if (handle.hasAttribute("data-with-handle") && !handle.firstElementChild) handle.append(h("div"))
+      if (flag(handle, "data-with-handle") && !handle.firstElementChild) handle.append(h("div"))
     }
     resizableRender(group)
   },
@@ -7743,7 +7809,7 @@ function carouselMount(inst) {
   const o = {
     axis: root.dataset.orientation === "vertical" ? "y" : "x",
     direction: getComputedStyle(viewport).direction === "rtl" ? "rtl" : "ltr",
-    loop: root.hasAttribute("data-loop"),
+    loop: flag(root, "data-loop"),
     align: root.dataset.align,
     duration: 25,
     startIndex: inst.start,
@@ -8168,7 +8234,7 @@ define("sidebar-separator", { init: separatorInit })
 define("sidebar-menu-skeleton", {
   init(el) {
     if (!el.firstElementChild) {
-      if (el.hasAttribute("data-show-icon")) el.append(h("div", { "data-slot": "skeleton", "data-sidebar": "menu-skeleton-icon" }))
+      if (flag(el, "data-show-icon")) el.append(h("div", { "data-slot": "skeleton", "data-sidebar": "menu-skeleton-icon" }))
       el.append(h("div", { "data-slot": "skeleton", "data-sidebar": "menu-skeleton-text" }))
     }
     if (!el.style.getPropertyValue("--skeleton-width")) {
@@ -8357,7 +8423,7 @@ define("trace-collapsible-trigger", {
   click(event, el) {
     const collapsible = el.parentElement
     if (collapsible?.getAttribute("data-slot") !== "trace-collapsible") return
-    if (el.matches(":disabled, [aria-disabled='true']") || collapsible.hasAttribute("data-disabled")) return
+    if (el.matches(":disabled, [aria-disabled='true']") || flag(collapsible, "data-disabled")) return
     traceSet(collapsible, collapsible.dataset.state !== "open", true)
   },
 })
@@ -8385,7 +8451,7 @@ function codeBlockPrepare(pre) {
   if (lines.length) {
     for (const node of [...code.childNodes]) if (node.nodeType === Node.TEXT_NODE && !node.data.trim()) node.remove()
     for (const line of lines) codeBlockLineContent(line)
-  } else if (pre.hasAttribute("data-numbered") && [...code.childNodes].every(node => node.nodeType === Node.TEXT_NODE)) {
+  } else if (flag(pre, "data-numbered") && [...code.childNodes].every(node => node.nodeType === Node.TEXT_NODE)) {
     const text = code.textContent.replace(/\n$/, "")
     code.replaceChildren(...text.split("\n").map(part => {
       const line = h("span", { "data-slot": "code-block-line" }, part)
@@ -8480,7 +8546,7 @@ define("code-block-wrap-button", {
     buttonType(el)
     if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", stringFor(el, "wrapLines"))
     const content = el.closest('[data-slot="code-block"]')?.querySelector('[data-slot="code-block-content"]')
-    el.setAttribute("aria-pressed", String(Boolean(content?.hasAttribute("data-wrap") && content.getAttribute("data-wrap") !== "false")))
+    el.setAttribute("aria-pressed", String(flag(content, "data-wrap")))
   },
   click(event, el) {
     if (el.matches(":disabled, [aria-disabled='true']")) return
@@ -9049,16 +9115,6 @@ function questionnaireInfo(s, item) {
   return info
 }
 
-function questionnaireRequired(item) {
-  const value = item.getAttribute("data-required")
-  return value !== null && value !== "false"
-}
-
-function questionnaireMultiple(item) {
-  const value = item.getAttribute("data-multiple")
-  return value !== null && value !== "false"
-}
-
 function questionnaireStatus(s, item) {
   if (questionnaireInfo(s, item).skipped) return "skipped"
   return questionnaireAnswers(item).some(questionnaireFilled) ? "answered" : "unanswered"
@@ -9071,13 +9127,13 @@ function questionnaireBadInput(item) {
 function questionnaireValid(s, item) {
   if (item.disabled) return true
   const status = questionnaireStatus(s, item)
-  if (status === "skipped" && !questionnaireRequired(item)) return true
+  if (status === "skipped" && !flag(item, "data-required")) return true
   return status === "answered" && !item.hasAttribute("data-external-invalid") && !questionnaireBadInput(item)
 }
 
 function questionnaireInvalid(s, item) {
   if (item.disabled) return false
-  if (questionnaireStatus(s, item) === "skipped" && !questionnaireRequired(item)) return false
+  if (questionnaireStatus(s, item) === "skipped" && !flag(item, "data-required")) return false
   return item.hasAttribute("data-external-invalid") || (questionnaireInfo(s, item).attempted && !questionnaireValid(s, item))
 }
 
@@ -9099,11 +9155,11 @@ function questionnaireBuildChoice(choice, item) {
   if (!input) {
     const children = [...choice.childNodes]
     input = h("input", { "data-slot": "questionnaire-choice-input", value: choice.getAttribute("data-value") ?? "" })
-    if (choice.hasAttribute("data-default-checked")) {
+    if (flag(choice, "data-default-checked")) {
       input.defaultChecked = true
       input.checked = true
     }
-    if (choice.hasAttribute("data-disabled")) input.disabled = true
+    if (flag(choice, "data-disabled")) input.disabled = true
     choice.replaceChildren(
       input,
       h("span", { "data-slot": "questionnaire-choice-indicator", "aria-hidden": "true" }, h("span", { "data-slot": "questionnaire-choice-indicator-dot" }), icon("check", { "data-slot": "questionnaire-choice-indicator-check" })),
@@ -9112,7 +9168,7 @@ function questionnaireBuildChoice(choice, item) {
     )
   }
   input.setAttribute("data-slot", "questionnaire-choice-input")
-  input.type = questionnaireMultiple(item) ? "checkbox" : "radio"
+  input.type = flag(item, "data-multiple") ? "checkbox" : "radio"
   ensureId(input, "questionnaire-choice")
 }
 
@@ -9127,7 +9183,7 @@ function questionnaireSetup(root) {
     errorAuto: new WeakSet(),
   }
   questionnaireStates.set(root, s)
-  if (root instanceof HTMLFormElement && !root.hasAttribute("data-native-validation")) root.noValidate = true
+  if (root instanceof HTMLFormElement && !flag(root, "data-native-validation")) root.noValidate = true
   for (const progress of own(root, '[data-slot="questionnaire-progress"]')) if (!progress.textContent.trim()) s.progressAuto.add(progress)
   for (const item of questionnaireItems(root)) {
     item.tabIndex = -1
@@ -9180,7 +9236,7 @@ function questionnaireSync(s) {
   const last = total > 0 && index === total - 1
   const activeItem = enabled[index] ?? null
   const status = activeItem ? questionnaireStatus(s, activeItem) : null
-  const required = activeItem ? questionnaireRequired(activeItem) : null
+  const required = activeItem ? flag(activeItem, "data-required") : null
   for (const target of [root, ...own(root, '[data-slot="questionnaire-progress"]')]) {
     messageAttr(target, "data-current", current)
     messageAttr(target, "data-total", total)
@@ -9230,8 +9286,8 @@ function questionnaireSync(s) {
 function questionnaireSyncItem(s, item, active, first, last) {
   const status = questionnaireStatus(s, item)
   const invalid = questionnaireInvalid(s, item)
-  const required = questionnaireRequired(item)
-  const multiple = questionnaireMultiple(item)
+  const required = flag(item, "data-required")
+  const multiple = flag(item, "data-multiple")
   const shortcuts = questionnaireShortcuts(s, item)
   const answers = questionnaireAnswers(item)
   item.hidden = !active
@@ -9372,7 +9428,7 @@ function questionnaireSkip(s) {
   const enabled = questionnaireEnabled(s.root)
   const index = enabled.findIndex(item => item.name === s.active)
   const item = enabled[index]
-  if (!item || questionnaireRequired(item)) return
+  if (!item || flag(item, "data-required")) return
   for (const input of own(item, '[data-slot="questionnaire-choice-input"]')) input.checked = false
   for (const input of own(item, '[data-slot="questionnaire-input"]')) questionnaireSelected.delete(input)
   questionnaireInfo(s, item).skipped = true
@@ -9415,7 +9471,7 @@ function questionnaireValues(root) {
   for (const item of questionnaireEnabled(root)) {
     if (!item.name) continue
     const all = data.getAll(item.name).map(String)
-    value[item.name] = questionnaireMultiple(item) ? all : (all[0] ?? null)
+    value[item.name] = flag(item, "data-multiple") ? all : (all[0] ?? null)
     if (s) status[item.name] = questionnaireStatus(s, item)
   }
   return { value, status }
@@ -9474,7 +9530,7 @@ define("questionnaire", {
     const item = input.closest('[data-slot="questionnaire-item"]')
     if (!item) return
     questionnaireInfo(s, item).skipped = false
-    if (input.checked && !questionnaireMultiple(item)) for (const text of own(item, '[data-slot="questionnaire-input"]')) questionnaireSelected.delete(text)
+    if (input.checked && !flag(item, "data-multiple")) for (const text of own(item, '[data-slot="questionnaire-input"]')) questionnaireSelected.delete(text)
     questionnaireStatusChanged(s, item)
     questionnaireSync(s)
   },
@@ -9488,7 +9544,7 @@ define("questionnaire", {
     questionnaireInfo(s, item).skipped = false
     if (filled) {
       questionnaireSelected.add(input)
-      if (!questionnaireMultiple(item)) for (const choice of own(item, '[data-slot="questionnaire-choice-input"]')) choice.checked = false
+      if (!flag(item, "data-multiple")) for (const choice of own(item, '[data-slot="questionnaire-choice-input"]')) choice.checked = false
     } else questionnaireSelected.delete(input)
     questionnaireStatusChanged(s, item)
     questionnaireSync(s)
@@ -9660,11 +9716,6 @@ function calendarWeekNumber(date) {
   return 1 + Math.round(((thursday - january) / 864e5 - 3 + ((january.getDay() + 6) % 7)) / 7)
 }
 
-function calendarFlag(el, name) {
-  const value = el.getAttribute(name)
-  return value !== null && value !== "false"
-}
-
 function calendarConfig(el) {
   const get = name => el.getAttribute(name)
   const mode = ["multiple", "range"].includes(get("data-mode")) ? get("data-mode") : "single"
@@ -9710,13 +9761,13 @@ function calendarConfig(el) {
     todayIso: calendarIso(today),
     ranges,
     weekdays,
-    disabledAll: calendarFlag(el, "data-disabled"),
+    disabledAll: flag(el, "data-disabled"),
     caption,
     buttonVariant,
     outside: get("data-outside-days") !== "false",
-    weekNumbers: calendarFlag(el, "data-show-week-number"),
-    fixedWeeks: calendarFlag(el, "data-fixed-weeks"),
-    required: calendarFlag(el, "data-required"),
+    weekNumbers: flag(el, "data-show-week-number"),
+    fixedWeeks: flag(el, "data-fixed-weeks"),
+    required: flag(el, "data-required"),
     name: get("data-name"),
     startYear,
     endYear,
@@ -9785,7 +9836,8 @@ function calendarConnect(s) {
   const observer = new MutationObserver(() => calendarReconfigure(s))
   observer.observe(s.el, { attributes: true, attributeFilter: calendarObserved })
   const form = s.el.closest("form")
-  const reset = () => setTimeout(() => {
+  const reset = event => setTimeout(() => {
+    if (event.defaultPrevented) return
     s.value = calendarCopy({ mode: s.mode, value: s.initial })
     s.focus = null
     calendarRender(s)
@@ -9881,7 +9933,7 @@ function calendarDayCell(s, date, first, focusIso) {
   const today = iso === s.todayIso
   const sel = calendarSelection(s, iso)
   const range = s.mode === "range" && !!s.value
-  const flag = value => (value ? "true" : range ? "false" : null)
+  const rangeFlag = value => (value ? "true" : range ? "false" : null)
   const td = h("td", {
     "data-slot": "calendar-day",
     role: "gridcell",
@@ -9912,9 +9964,9 @@ function calendarDayCell(s, date, first, focusIso) {
     disabled: disabled || null,
     "aria-label": label,
     "data-selected-single": sel.single ? "true" : sel.selected ? "false" : null,
-    "data-range-start": flag(sel.start),
-    "data-range-middle": flag(sel.middle),
-    "data-range-end": flag(sel.end),
+    "data-range-start": rangeFlag(sel.start),
+    "data-range-middle": rangeFlag(sel.middle),
+    "data-range-end": rangeFlag(sel.end),
   }, calendarNumber(s, date.getDate())))
   return td
 }
@@ -10422,6 +10474,6 @@ define("date-picker", {
   "calendar:change"(event, root) {
     datePickerLabel(root)
     const { content } = datePickerParts(root)
-    if (event.detail?.source === "day" && event.detail.mode === "single" && event.detail.value && content && isOpen(content) && !root.hasAttribute("data-keep-open")) datePickerClose(root)
+    if (event.detail?.source === "day" && event.detail.mode === "single" && event.detail.value && content && isOpen(content) && !flag(root, "data-keep-open")) datePickerClose(root)
   },
 })

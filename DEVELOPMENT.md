@@ -93,10 +93,12 @@ Behavior:
 
 | Change | Browser jobs |
 | --- | --- |
-| Push to `main`, nightly run, or label `full-ci` | All: Chromium, Firefox, and WebKit in light and dark, `--rtl`, `--reduced-motion`, the minified kit, and the exported pages. |
+| Nightly run, `workflow_dispatch` (release check), or label `full-ci` | All: Chromium, Firefox, and WebKit in light and dark, `--rtl`, `--reduced-motion`, the minified kit, and the exported pages. |
+| Push to `main` | Pull request tier. A new push cancels the running push run. |
 | Kit, generator, server, `test/run.py`, `ci.yml`, `tools/ci/plan.py`, or any other file | Pull request tier: Chromium and Firefox in light and dark, WebKit light (5 macOS jobs), a minified-kit smoke set, and the exported pages. |
-| Only `test/<module>_test.py`, `test/behavior/`, `test/split/`, or `test/spike/` | The pull request tier, only for the changed modules. |
-| Only Markdown, `docs/*.txt`, `skills/`, licenses, issue templates, `release.yml`, `pages.yml`, or `renovate.json` | Only the exported pages in Chromium and WebKit. |
+| Only `test/<module>_test.py`, `test/behavior/`, `test/split/`, or `test/spike/` (Go test files and docs can be in the same change) | The pull request tier, only for the changed modules. |
+| Only Markdown, `docs/*.txt`, `skills/`, licenses, issue templates, `release.yml`, `pages.yml`, or `renovate.json` | Only the exported pages in Chromium. |
+| Only Go test files (`*_test.go`) | None. |
 
 `python3 -I tools/ci/plan.py --self-test` checks that each check runs once in each tier. The `go` job runs it.
 
@@ -238,3 +240,11 @@ def check_select(t):
 | `t.engine`, `t.theme`, `t.width`, `t.mobile`, `t.reduced_motion`, `t.rtl` | Current run. |
 
 A `<dialog>` keeps `open` during its exit animation. To find if a popup is visible, use `data-state` or its geometry.
+
+## Release
+
+1. In one pull request: move the `Unreleased` entries of `CHANGELOG.md` to a new section `## X.Y.Z - YYYY-MM-DD`, set `catalogVersion` in `tools/gen/catalog.go` and `version` and the download links in `skills/clanker-ui/SKILL.md` to `X.Y.Z`, and run `go run ./tools/gen dist`.
+2. Merge it. Run the full matrix on that commit (`gh workflow run ci.yml --ref main`) and wait until it is green, or use a commit with a green nightly run.
+3. Push a signed tag on that commit: `git tag -s vX.Y.Z -m vX.Y.Z && git push origin vX.Y.Z`.
+
+`release.yml` stops before it packs when the tagged commit has no successful full run of `ci.yml` (event `schedule` or `workflow_dispatch`) or is not on `main`, when the tag does not agree with `catalogVersion`, the skill version, or the skill download links, or when `CHANGELOG.md` has no section for the version. That section becomes the release notes. The zip is reproducible: all files get the commit time, a sorted file list, and fixed modes, so a second pack of the tag gives the same `SHA256SUMS`. The release then starts `pages.yml` on the tag. `pages.yml` builds only on a `v*` tag, so the docs site always shows a release.

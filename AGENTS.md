@@ -73,5 +73,5 @@ uv run --no-project --with playwright python -I tools/behavior gate --quick --ba
 - Conventional Commits: `<type>(<scope>): <subject>` with `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, or `perf`. Short subject; details go in the pull request.
 - Sign every commit (`git commit -S`). Unsigned commits cannot merge.
 - Open a pull request into `main`. Required checks: `ci-result` (tests in all engines) and `gitleaks` (secret scan).
-- Pull request CI skips WebKit dark, `--rtl`, `--reduced-motion`, and most of the minified kit, and runs only the jobs that the changed files need (DEVELOPMENT.md, CI). Add the label `full-ci` when a change touches color, direction, motion, or minify.
+- CI on pull requests and `main` pushes skips WebKit dark, `--rtl`, `--reduced-motion`, and most of the minified kit; the nightly run has the full matrix. A pull request runs only the jobs that its changed files need (DEVELOPMENT.md, CI). Add the label `full-ci` when a change touches color, direction, motion, or minify.
 - Never commit secrets, tokens, private keys, or personal data.

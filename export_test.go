@@ -74,7 +74,7 @@ func TestExportSite(t *testing.T) {
 					t.Errorf("nav link %s has no %s", href, pageFile(href))
 				}
 			}
-			for _, name := range []string{"index.html", "404.html", "sitemap.xml", "robots.txt", "demo/index.html", "docs.md", "docs/components/button.md", "clanker-ui.css", "clanker-ui.js", "dist/clanker-ui.min.css", "clanker-ui.min.css", "assets/" + d.hash + "/docs.js"} {
+			for _, name := range []string{"index.html", "404.html", "sitemap.xml", "demo/index.html", "docs.md", "docs/components/button.md", "clanker-ui.css", "clanker-ui.js", "dist/clanker-ui.min.css", "clanker-ui.min.css", "assets/" + d.hash + "/docs.js"} {
 				if _, err := os.Stat(filepath.Join(out, name)); err != nil {
 					t.Errorf("%s is not exported", name)
 				}
@@ -109,18 +109,27 @@ func TestExportSite(t *testing.T) {
 			}
 			sitemap, _ := os.ReadFile(filepath.Join(out, "sitemap.xml"))
 			locs := sitemapLoc.FindAllStringSubmatch(string(sitemap), -1)
-			if len(locs) < len(d.titles) {
-				t.Errorf("sitemap has %d URLs, want at least %d", len(locs), len(d.titles))
+			if len(locs) != len(d.pages)+2 {
+				t.Errorf("sitemap has %d URLs, want %d (pages, home, demo)", len(locs), len(d.pages)+2)
 			}
 			for _, m := range locs {
 				rest, ok := strings.CutPrefix(m[1], strings.TrimSuffix(exportSiteURL, "/"))
-				if !ok || !exportedFile(out, rest) {
-					t.Errorf("sitemap URL %s is not an exported page", m[1])
+				href := strings.TrimSuffix(rest, "/")
+				if !ok || !exportedFile(out, rest) || d.pages[href] == nil && href != "" && href != "/demo" {
+					t.Errorf("sitemap URL %s is not a real exported page", m[1])
 				}
 			}
-			robots, _ := os.ReadFile(filepath.Join(out, "robots.txt"))
-			if !strings.Contains(string(robots), "Sitemap: "+exportSiteURL+"sitemap.xml\n") {
-				t.Errorf("robots.txt = %q", robots)
+			if _, err := os.Stat(filepath.Join(out, "robots.txt")); !os.IsNotExist(err) {
+				t.Errorf("robots.txt is exported: %v", err)
+			}
+			if len(d.refs) < 67 {
+				t.Errorf("%d component reference files, want at least 67", len(d.refs))
+			}
+			for href, ref := range d.refs {
+				b, err := os.ReadFile(filepath.Join(out, filepath.FromSlash(href+".md")))
+				if err != nil || d.pages[href] == nil && string(b) != string(ref) || strings.Contains(string(b), "not ported yet") {
+					t.Errorf("%s.md is not the page or the component reference: %v", href, err)
+				}
 			}
 			for to, from := range exportExtras {
 				want, err := fs.ReadFile(src, from)

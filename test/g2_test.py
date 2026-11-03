@@ -1237,6 +1237,42 @@ def check_select_trigger_release_outside(t):
     wait(page, f"() => !({opened})()", timeout=1500)
 
 
+def check_select_fast_click_listener(t):
+    page = t.page
+    t.section("select")
+    page.evaluate(
+        """() => {
+          const trigger = document.querySelector("#select-demo-trigger")
+          const r = trigger.getBoundingClientRect()
+          const at = { bubbles: true, cancelable: true, composed: true, button: 0, clientX: r.x + r.width / 2, clientY: r.y + r.height / 2 }
+          window.__fire = (...types) => { for (const type of types) trigger.dispatchEvent(type.startsWith("pointer") ? new PointerEvent(type, { ...at, pointerType: "mouse", isPrimary: true }) : new MouseEvent(type, { ...at, detail: 1 })) }
+          const add = document.addEventListener
+          window.__added = 0
+          document.addEventListener = function (type, ...rest) {
+            if (type === "mouseup") window.__added++
+            return add.call(this, type, ...rest)
+          }
+        }"""
+    )
+    opened = "document.querySelector('#select-demo [data-slot=select-content]').hasAttribute('data-open')"
+    run = """async types => {
+      window.__added = 0
+      window.__fire(...types)
+      await new Promise(r => setTimeout(r, 100))
+      return window.__added
+    }"""
+    fast = page.evaluate(run, ["pointerdown", "mousedown", "pointerup", "mouseup", "click"])
+    assert page.evaluate(opened)
+    page.keyboard.press("Escape")
+    wait(page, f"() => !{opened}")
+    held = page.evaluate(run, ["pointerdown", "mousedown"])
+    page.evaluate("window.__fire('pointerup', 'mouseup', 'click')")
+    still = page.evaluate(opened)
+    page.evaluate("delete document.addEventListener")
+    assert [fast, held, still] == [0, 1, True], ("a fast click adds no late mouseup listener; a held press adds one", fast, held, still)
+    page.keyboard.press("Escape")
+
+
 def check_drawer_nested_outside(t):
     page = t.page
     t.section("drawer")

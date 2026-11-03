@@ -1477,6 +1477,69 @@ PENDING = """async () => {
 }"""
 
 
+def check_message_scroller_scroll_cost(t):
+    page = t.page
+    page.evaluate(
+        """async () => {
+          const root = document.createElement("div")
+          root.id = "scroller-cost"
+          root.dataset.slot = "message-scroller"
+          root.style.height = "400px"
+          root.style.display = "flex"
+          const viewport = document.createElement("div")
+          viewport.dataset.slot = "message-scroller-viewport"
+          viewport.style.overflowAnchor = "none"
+          const content = document.createElement("div")
+          content.dataset.slot = "message-scroller-content"
+          for (let i = 0; i < 2000; i++) {
+            const item = document.createElement("div")
+            item.dataset.slot = "message-scroller-item"
+            item.dataset.messageId = `m${i}`
+            item.textContent = `message ${i}`
+            item.style.contentVisibility = "visible"
+            content.append(item)
+          }
+          viewport.append(content)
+          root.append(viewport)
+          document.body.prepend(root)
+          await new Promise(r => setTimeout(r, 100))
+          viewport.scrollTop = viewport.scrollHeight
+        }"""
+    )
+    page.wait_for_function("() => document.querySelector('#scroller-cost').getAttribute('data-scrollable') === 'start'", timeout=3000)
+    result = page.evaluate(
+        """async () => {
+          const root = document.querySelector("#scroller-cost")
+          const viewport = root.querySelector('[data-slot="message-scroller-viewport"]')
+          const frame = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+          const read = Element.prototype.getBoundingClientRect
+          let reads = 0
+          Element.prototype.getBoundingClientRect = function () { reads++; return read.call(this) }
+          viewport.scrollTop -= 3000
+          viewport.dispatchEvent(new Event("scroll"))
+          await frame()
+          Element.prototype.getBoundingClientRect = read
+          const state = root.getAttribute("data-scrollable")
+          const first = [...viewport.querySelectorAll("[data-message-id]")].find(e => e.getBoundingClientRect().bottom > viewport.getBoundingClientRect().top)
+          const before = first.getBoundingClientRect().top
+          const content = viewport.firstElementChild
+          for (let i = 0; i < 20; i++) {
+            const item = document.createElement("div")
+            item.dataset.slot = "message-scroller-item"
+            item.dataset.messageId = `old${i}`
+            item.textContent = `old ${i}`
+            item.style.contentVisibility = "visible"
+            content.prepend(item)
+          }
+          await frame()
+          const after = first.getBoundingClientRect().top
+          root.remove()
+          return { reads, state, moved: Math.round(after - before) }
+        }"""
+    )
+    assert result["reads"] < 50 and result["state"] == "start end" and abs(result["moved"]) <= 1, result
+
+
 def check_message_scroller_pending(t):
     page = t.page
     t.section("message-scroller")

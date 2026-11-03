@@ -89,7 +89,7 @@ A smaller page can load only the component groups that it uses: see [Minified an
 
 ## Use in a project
 
-1. Copy the files from one release. Never edit a copy: fix a bug in this repository (or report it), then copy the new files again. Find outdated copies with `shasum`.
+1. Copy the files from one release. Never edit a copy: fix a bug in this repository (or report it), then copy the new files again. Find outdated copies with `shasum`. Read [CHANGELOG.md](CHANGELOG.md) before an update: it lists the breaking markup changes first.
 2. Load the kit first, then the app:
 
    ```html
@@ -683,7 +683,7 @@ The control can be a `textarea`. A click on an addon (not on a button) focuses t
 <button type="button" data-slot="checkbox" id="terms" data-name="terms" value="yes" data-checked data-required></button>
 <label data-slot="label" for="terms">Accept terms</label>
 <button type="button" data-slot="checkbox" data-indeterminate aria-label="Select all"></button>
-<button type="button" data-slot="switch" id="airplane" data-size="sm"></button>
+<button type="button" data-slot="switch" id="airplane" data-name="airplane" data-size="sm"></button>
 <div data-slot="radio-group" data-name="plan" data-value="free" data-required>
   <button type="button" data-slot="radio-group-item" id="plan-free" value="free"></button>
 </div>
@@ -692,8 +692,10 @@ The control can be a `textarea`. A click on an addon (not on a button) focuses t
 - The Base UI DOM with a native button: `role="checkbox"`, `role="switch"`, or `role="radio"`, `aria-checked` (`mixed` for indeterminate), and the state attributes `data-checked` or `data-unchecked`, `data-indeterminate`, `data-disabled`, `data-readonly`, `data-required`, `data-invalid` (from `aria-invalid="true"`). `data-state` stays in sync.
 - The kit adds a hidden native input right after the button (`aria-hidden`, `tabindex="-1"`) for form submission, reset, and validation. It gets `data-name` (radio: the group `data-name`), `value` (default `on`), `required` (`data-required` on the button or the group), and `disabled`. Focus on the hidden input moves to the button. The input follows the button: a removed button takes it out of the form, a moved button moves it. `form.reset()` restores the initial state, also `data-indeterminate`.
 - Children: `checkbox-indicator` (check icon) and `radio-group-indicator` exist only while checked; `switch-thumb` is always there and has the same state attributes.
-- Initial state: `data-checked`, `data-indeterminate`, or the group `data-value`. Change it later the same way: toggle `data-checked` or `data-indeterminate` on the button. `disabled`, `aria-invalid`, `data-required`, and `data-readonly` changes are applied at once. The kit moves `disabled` to `aria-disabled`, so enable the control again with `el.disabled = false` or by removing `aria-disabled` (removing the `disabled` attribute has no effect). `data-disabled`, `data-readonly`, and `data-required` on the group apply to all items (`data-disabled` only at init).
-- Click, Space, and a `<label for>` or wrapping `<label>` toggle. Enter toggles only the switch. Read-only controls do not change. A click on a disabled control does not move focus. Radio: one tab stop (the checked item, else the first enabled one, with `data-composite-item-active`); arrows move and check, wrap, skip disabled items, and follow RTL; Home and End do nothing.
+- Initial state: `data-checked` on the button. Change it later the same way: toggle `data-checked` on the button. `disabled`, `aria-invalid`, `data-required`, and `data-readonly` changes are applied at once. The kit moves `disabled` to `aria-disabled`, so enable the control again with `el.disabled = false` or by removing `aria-disabled` (removing the `disabled` attribute has no effect). Read-only controls do not change. A click on a disabled control does not move focus.
+- Checkbox: `data-indeterminate` gives the mixed state; toggle it later the same way. Click, Space, and a `<label for>` or wrapping `<label>` toggle; Enter does nothing.
+- Switch: `data-name`, `data-required`, and `data-readonly` on the button. Click, Space, Enter, and a `<label for>` or wrapping `<label>` toggle.
+- Radio group: the group `data-value` selects the initial item. `data-disabled`, `data-readonly`, and `data-required` on the group apply to all items (`data-disabled` only at init). One tab stop (the checked item, else the first enabled one, with `data-composite-item-active`); arrows move and check, wrap, skip disabled items, and follow RTL; Home and End do nothing. Click, Space, and a `<label for>` check an item; Enter does nothing.
 - Events: `checkbox:change` and `switch:change` on the button (`{ checked, value }`), `radio-group:change` on the group (`{ value }`), and native `input` and `change` on the hidden input.
 
 #### Native Select
@@ -799,7 +801,9 @@ One real input lies over the slots (autofill, form value, `required`, `minlength
 </div>
 ```
 
-A `toggle` gets `tabindex="0"` like the Base UI toggle. Single items use `role="radio"` and `aria-checked`, multiple items `aria-pressed`. One tab stop, arrows (RTL aware), Home, End. A pressed single item can be unpressed. Like shadcn, the group gets `data-spacing` (default `2`, an 8 px gap with separate rounded items; `0` joins them) and `data-orientation` (default `horizontal`), and `--gap` from `data-spacing`. Items get the group `data-variant` and `data-size` (the group wins over the item; `default` when neither has one), its `data-spacing`, and `data-pressed` while pressed.
+A `toggle` gets `tabindex="0"` like the Base UI toggle.
+
+Toggle group: one tab stop, arrows (RTL aware), Home, End. Single items use `role="radio"` and `aria-checked`, multiple items `aria-pressed`. A pressed single item can be unpressed. Like shadcn, the group gets `data-spacing` (default `2`, an 8 px gap with separate rounded items; `0` joins them) and `data-orientation` (default `horizontal`), and `--gap` from `data-spacing`. Items get the group `data-variant` and `data-size` (the group wins over the item; `default` when neither has one), its `data-spacing`, and `data-pressed` while pressed.
 
 ### Overlays and menus
 
@@ -826,7 +830,8 @@ The kit sets `type="button"` on dialog, alert dialog, sheet, drawer, popover, dr
 </div>
 ```
 
-- A native `<dialog>` opened with `showModal()`: focus trap, Escape, scroll lock, inert page, focus returns to the trigger. A main-button click on `::backdrop` closes, as Base UI (not for alert dialogs): a held press closes after the release; a right or middle click, a press that starts or ends in the popup, and a touch drag do not close. The first tabbable element gets the focus; a pointer open shows no focus ring on a button.
+- A dialog, alert dialog, or sheet is a native `<dialog>` opened with `showModal()`: focus trap, Escape, scroll lock, inert page, focus returns to the trigger. The first tabbable element gets the focus; a pointer open shows no focus ring on a button.
+- A main-button click on `::backdrop` closes a dialog, sheet, or drawer, as Base UI (an alert dialog stays open): a held press closes after the release; a right or middle click, a press that starts or ends in the popup, and a touch drag do not close.
 - Dialog and sheet add a close button unless `data-show-close-button="false"`. `<div data-slot="dialog-footer" data-show-close-button>` adds an outline Close button. A `<form method="dialog">` inside closes with an exit animation.
 - Alert dialog: `data-size="sm"`, `alert-dialog-media`. The footer buttons are `<button data-slot="alert-dialog-cancel" data-variant="outline">` and `<button data-slot="alert-dialog-action">` (`data-variant="destructive"` for a red action), as in shadcn (`data-alert-dialog-cancel` and `data-alert-dialog-action` on a `button` part also work). Cancel closes it. The action is a plain button, as in shadcn: it does not close the dialog, so the app closes it with `dialogClose()` when its work is done, or the action gets `data-alert-dialog-close`. Like Base UI, the first tabbable element gets the initial focus (usually Cancel).
 - Sheet: `data-side="top|right|bottom|left"` (default `right`). It opens with `data-starting-style` (set before `showModal()`, removed after one frame) and closes with `data-ending-style` until its transition ends, as Base UI; the backdrop follows the same attributes.
@@ -948,7 +953,7 @@ toast.dismiss(id); toast.dismiss(); toast.getToasts()
 #### Accordion
 
 ```html
-<div data-slot="accordion" data-type="single">
+<div data-slot="accordion" data-type="single|multiple">
   <div data-slot="accordion-item" data-value="shipping" data-state="open">
     <h3><button type="button" data-slot="accordion-trigger">What are your shipping options?</button></h3>
     <div data-slot="accordion-content"><div>Standard, express, and overnight.</div></div>

@@ -318,10 +318,17 @@ func TestCatalogReferences(t *testing.T) {
 		}
 	}
 	full := string(catFilesOut[catalogLLMs])
+	readme := readFile(t, "../../README.md")
 	for _, c := range cat.Components {
 		if !strings.Contains(full, "### "+c.Title+" (`"+c.Name+"`)") {
 			t.Errorf("llms-full.txt has no heading for %s", c.Name)
 		}
+		if block := "```html\n" + c.Example + "\n```"; strings.HasPrefix(c.ExampleSource, "README.md#") && strings.Count(full, block) > strings.Count(readme, block) {
+			t.Errorf("llms-full.txt repeats the README example of %s", c.Name)
+		}
+	}
+	if strings.Contains(full, "Keyboard and focus:") {
+		t.Error("llms-full.txt repeats the README keyboard lines")
 	}
 	for _, dev := range catalogDevSections {
 		if strings.Contains(full, "\n## "+dev+"\n") {
@@ -480,6 +487,119 @@ func TestCatalogExports(t *testing.T) {
 			if !listed[f+" "+n] && f == "clanker-ui.js" {
 				t.Errorf("%s exports %s, but the README export tables do not list it", f, n)
 			}
+		}
+	}
+}
+
+func kitKeyboardComponents(t *testing.T, g *groupTable) map[string]bool {
+	js := readFile(t, "../../clanker-ui.js")
+	lines := strings.Split(js, "\n")
+	arrays := map[string][]string{}
+	for _, m := range regexp.MustCompile(`(?m)^const (\w+) = \[([^\]]*)\]`).FindAllStringSubmatch(js, -1) {
+		for _, v := range regexp.MustCompile(`"([a-z0-9-]+)"`).FindAllStringSubmatch(m[2], -1) {
+			arrays[m[1]] = append(arrays[m[1]], v[1])
+		}
+	}
+	loop := regexp.MustCompile(`^for \(const (\w+) of (\w+)\) \{$`)
+	open := regexp.MustCompile(`^(\s*)define\(("[a-z0-9-]+"|\w+), \{$`)
+	out := map[string]bool{}
+	for _, slot := range arrays["dialogKinds"] {
+		out[g.component(slot)] = true
+	}
+	loopVar, loopArr := "", ""
+	for i, line := range lines {
+		if m := loop.FindStringSubmatch(line); m != nil {
+			loopVar, loopArr = m[1], m[2]
+		}
+		m := open.FindStringSubmatch(line)
+		if m == nil {
+			continue
+		}
+		var slots []string
+		switch {
+		case strings.HasPrefix(m[2], `"`):
+			slots = []string{strings.Trim(m[2], `"`)}
+		case m[2] == loopVar:
+			slots = arrays[loopArr]
+		}
+		for _, l := range lines[i+1:] {
+			if l == m[1]+"})" {
+				break
+			}
+			if regexp.MustCompile(`^\s+keydown[(:]`).MatchString(l) {
+				for _, s := range slots {
+					out[g.component(s)] = true
+				}
+				break
+			}
+		}
+	}
+	return out
+}
+
+func TestCatalogKeyboard(t *testing.T) {
+	cat := testCatalog(t)
+	g, err := readGroups("groups.tsv")
+	if err != nil {
+		t.Fatal(err)
+	}
+	keys := kitKeyboardComponents(t, g)
+	for _, want := range []string{"checkbox", "switch", "radio-group", "dialog", "sheet", "select", "tabs"} {
+		if !keys[want] {
+			t.Errorf("the kit keyboard scan misses %s", want)
+		}
+	}
+	label := regexp.MustCompile(`^([A-Z][A-Za-z]*(?: [A-Za-z]+)*):`)
+	for _, c := range cat.Components {
+		if keys[c.Name] && c.SameAs == "" && len(c.Keyboard) == 0 {
+			t.Errorf("%s: the kit handles keys, but the catalog has no keyboard line", c.Name)
+		}
+		for _, k := range c.Keyboard {
+			lead := ""
+			if m := label.FindStringSubmatch(k); m != nil {
+				lead = strings.ToLower(m[1])
+			}
+			for _, o := range cat.Components {
+				title := strings.ToLower(o.Title)
+				if o.Name == c.Name || strings.HasPrefix(strings.ToLower(c.Title), title) {
+					continue
+				}
+				if strings.HasPrefix(strings.ToLower(k), title+" ") || strings.HasPrefix(strings.ToLower(k), title+":") || lead != "" && strings.HasPrefix(title, lead) && !strings.HasPrefix(strings.ToLower(c.Title), lead) {
+					t.Errorf("%s keyboard line is about %s: %s", c.Name, o.Name, k)
+				}
+			}
+		}
+	}
+}
+
+func TestCatalogKitAdds(t *testing.T) {
+	cat := testCatalog(t)
+	g, err := readGroups("groups.tsv")
+	if err != nil {
+		t.Fatal(err)
+	}
+	adds := map[string]bool{}
+	for _, c := range cat.Components {
+		for _, p := range c.Parts {
+			for _, st := range p.State {
+				if pc := g.partComponent(strings.TrimPrefix(st, "data-")); pc != "" && pc != c.Name && !strings.HasPrefix(c.Name, pc+"-") {
+					t.Errorf("%s: part %s has the state %s of %s", c.Name, p.Slot, st, pc)
+				}
+			}
+			if p.KitAdds != slices.Contains(c.KitAdds, p.Slot) {
+				t.Errorf("%s: part %s and kitAdds disagree", c.Name, p.Slot)
+			}
+			if p.KitAdds {
+				adds[p.Slot] = true
+				if len(p.Attributes) > 0 {
+					t.Errorf("%s: kit-added part %s has Write attributes %v", c.Name, p.Slot, p.Attributes)
+				}
+			}
+		}
+	}
+	for _, s := range []string{"switch-thumb", "slider-thumb", "checkbox-indicator", "radio-group-indicator", "dropdown-menu-checkbox-item-indicator", "dropdown-menu-radio-item-indicator"} {
+		if !adds[s] {
+			t.Errorf("%s is not in kitAdds", s)
 		}
 	}
 }

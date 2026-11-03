@@ -87,7 +87,7 @@ A smaller page can load only the component groups that it uses: see [Minified an
 
 ## Use in a project
 
-1. Copy the files from one release. Never edit a copy: fix a bug in this repository (or report it), then copy the new files again. Find outdated copies with `shasum`.
+1. Copy the files from one release. Never edit a copy: fix a bug in this repository (or report it), then copy the new files again. Find outdated copies with `shasum`. Read [CHANGELOG.md](CHANGELOG.md) before an update: it lists the breaking markup changes first.
 2. Load the kit first, then the app:
 
    ```html
@@ -681,7 +681,7 @@ The control can be a `textarea`. A click on an addon (not on a button) focuses t
 <button type="button" data-slot="checkbox" id="terms" data-name="terms" value="yes" data-checked data-required></button>
 <label data-slot="label" for="terms">Accept terms</label>
 <button type="button" data-slot="checkbox" data-indeterminate aria-label="Select all"></button>
-<button type="button" data-slot="switch" id="airplane" data-size="sm"></button>
+<button type="button" data-slot="switch" id="airplane" data-name="airplane" data-size="sm"></button>
 <div data-slot="radio-group" data-name="plan" data-value="free" data-required>
   <button type="button" data-slot="radio-group-item" id="plan-free" value="free"></button>
 </div>
@@ -690,8 +690,10 @@ The control can be a `textarea`. A click on an addon (not on a button) focuses t
 - The Base UI DOM with a native button: `role="checkbox"`, `role="switch"`, or `role="radio"`, `aria-checked` (`mixed` for indeterminate), and the state attributes `data-checked` or `data-unchecked`, `data-indeterminate`, `data-disabled`, `data-readonly`, `data-required`, `data-invalid` (from `aria-invalid="true"`). `data-state` stays in sync.
 - The kit adds a hidden native input right after the button (`aria-hidden`, `tabindex="-1"`) for form submission, reset, and validation. It gets `data-name` (radio: the group `data-name`), `value` (default `on`), `required` (`data-required` on the button or the group), and `disabled`. Focus on the hidden input moves to the button. The input follows the button: a removed button takes it out of the form, a moved button moves it. `form.reset()` restores the initial state, also `data-indeterminate`.
 - Children: `checkbox-indicator` (check icon) and `radio-group-indicator` exist only while checked; `switch-thumb` is always there and has the same state attributes.
-- Initial state: `data-checked`, `data-indeterminate`, or the group `data-value`. Change it later the same way: toggle `data-checked` or `data-indeterminate` on the button. `disabled`, `aria-invalid`, `data-required`, and `data-readonly` changes are applied at once. The kit moves `disabled` to `aria-disabled`, so enable the control again with `el.disabled = false` or by removing `aria-disabled` (removing the `disabled` attribute has no effect). `data-disabled`, `data-readonly`, and `data-required` on the group apply to all items (`data-disabled` only at init).
-- Click, Space, and a `<label for>` or wrapping `<label>` toggle. Enter toggles only the switch. Read-only controls do not change. A click on a disabled control does not move focus. Radio: one tab stop (the checked item, else the first enabled one, with `data-composite-item-active`); arrows move and check, wrap, skip disabled items, and follow RTL; Home and End do nothing.
+- Initial state: `data-checked` on the button. Change it later the same way: toggle `data-checked` on the button. `disabled`, `aria-invalid`, `data-required`, and `data-readonly` changes are applied at once. The kit moves `disabled` to `aria-disabled`, so enable the control again with `el.disabled = false` or by removing `aria-disabled` (removing the `disabled` attribute has no effect). Read-only controls do not change. A click on a disabled control does not move focus.
+- Checkbox: `data-indeterminate` gives the mixed state; toggle it later the same way. Click, Space, and a `<label for>` or wrapping `<label>` toggle; Enter does nothing.
+- Switch: `data-name`, `data-required`, and `data-readonly` on the button. Click, Space, Enter, and a `<label for>` or wrapping `<label>` toggle.
+- Radio group: the group `data-value` selects the initial item. `data-disabled`, `data-readonly`, and `data-required` on the group apply to all items (`data-disabled` only at init). One tab stop (the checked item, else the first enabled one, with `data-composite-item-active`); arrows move and check, wrap, skip disabled items, and follow RTL; Home and End do nothing. Click, Space, and a `<label for>` check an item; Enter does nothing.
 - Events: `checkbox:change` and `switch:change` on the button (`{ checked, value }`), `radio-group:change` on the group (`{ value }`), and native `input` and `change` on the hidden input.
 
 #### Native Select
@@ -797,7 +799,9 @@ One real input lies over the slots (autofill, form value, `required`, `minlength
 </div>
 ```
 
-A `toggle` gets `tabindex="0"` like the Base UI toggle. Single items use `role="radio"` and `aria-checked`, multiple items `aria-pressed`. One tab stop, arrows (RTL aware), Home, End. A pressed single item can be unpressed. Like shadcn, the group gets `data-spacing` (default `2`, an 8 px gap with separate rounded items; `0` joins them) and `data-orientation` (default `horizontal`), and `--gap` from `data-spacing`. Items get the group `data-variant` and `data-size` (the group wins over the item; `default` when neither has one), its `data-spacing`, and `data-pressed` while pressed.
+A `toggle` gets `tabindex="0"` like the Base UI toggle.
+
+Toggle group: one tab stop, arrows (RTL aware), Home, End. Single items use `role="radio"` and `aria-checked`, multiple items `aria-pressed`. A pressed single item can be unpressed. Like shadcn, the group gets `data-spacing` (default `2`, an 8 px gap with separate rounded items; `0` joins them) and `data-orientation` (default `horizontal`), and `--gap` from `data-spacing`. Items get the group `data-variant` and `data-size` (the group wins over the item; `default` when neither has one), its `data-spacing`, and `data-pressed` while pressed.
 
 ### Overlays and menus
 
@@ -824,7 +828,8 @@ The kit sets `type="button"` on dialog, alert dialog, sheet, drawer, popover, dr
 </div>
 ```
 
-- A native `<dialog>` opened with `showModal()`: focus trap, Escape, scroll lock, inert page, focus returns to the trigger. A main-button click on `::backdrop` closes, as Base UI (not for alert dialogs): a held press closes after the release; a right or middle click, a press that starts or ends in the popup, and a touch drag do not close. The first tabbable element gets the focus; a pointer open shows no focus ring on a button.
+- A dialog, alert dialog, or sheet is a native `<dialog>` opened with `showModal()`: focus trap, Escape, scroll lock, inert page, focus returns to the trigger. The first tabbable element gets the focus; a pointer open shows no focus ring on a button.
+- A main-button click on `::backdrop` closes a dialog, sheet, or drawer, as Base UI (an alert dialog stays open): a held press closes after the release; a right or middle click, a press that starts or ends in the popup, and a touch drag do not close.
 - Dialog and sheet add a close button unless `data-show-close-button="false"`. `<div data-slot="dialog-footer" data-show-close-button>` adds an outline Close button. A `<form method="dialog">` inside closes with an exit animation.
 - Alert dialog: `data-size="sm"`, `alert-dialog-media`. The footer buttons are `<button data-slot="alert-dialog-cancel" data-variant="outline">` and `<button data-slot="alert-dialog-action">` (`data-variant="destructive"` for a red action), as in shadcn (`data-alert-dialog-cancel` and `data-alert-dialog-action` on a `button` part also work). Cancel closes it. The action is a plain button, as in shadcn: it does not close the dialog, so the app closes it with `dialogClose()` when its work is done, or the action gets `data-alert-dialog-close`. Like Base UI, the first tabbable element gets the initial focus (usually Cancel).
 - Sheet: `data-side="top|right|bottom|left"` (default `right`). It opens with `data-starting-style` (set before `showModal()`, removed after one frame) and closes with `data-ending-style` until its transition ends, as Base UI; the backdrop follows the same attributes.
@@ -946,7 +951,7 @@ toast.dismiss(id); toast.dismiss(); toast.getToasts()
 #### Accordion
 
 ```html
-<div data-slot="accordion" data-type="single">
+<div data-slot="accordion" data-type="single|multiple">
   <div data-slot="accordion-item" data-value="shipping" data-state="open">
     <h3><button type="button" data-slot="accordion-trigger">What are your shipping options?</button></h3>
     <div data-slot="accordion-content"><div>Standard, express, and overnight.</div></div>
@@ -1346,48 +1351,12 @@ sparkline(el, [980, 1020, 1284], { area: true, label: "Requests per minute" })
 - `sparkline` is a line (or `area: true`) without axes or legend, in `--chart-other` with the latest point in the accent. It keeps the tooltip, the keyboard readout, and the table view: a toggle next to the line shows a transposed table (one row per series, one column per point). Pass `table: false` only when the same values are visible next to it.
 
 
-## How parity with shadcn is tested
-
-The reference is the live site <https://ui.shadcn.com> at one pinned shadcn commit and the Base UI version of that commit (1.6.0 now).
-
-- **CSS.** `tools/gen` makes `clanker-ui.css` from the pinned shadcn source. `tools/parity` loads each live component page and a copy of it with the generated CSS, and compares 96 computed style properties of every part in light and dark, at rest and with hover, press, focus, open, and disabled states. The strict mode fails when a part differs more than the reviewed list `tools/parity/known.tsv` allows.
-- **Behavior.** `tools/behavior` runs the same scripted user actions (click, keys, hover, drag, touch swipe) on the live page and on a kit page in Chromium, Firefox, and WebKit. It compares what a user can observe: focus, ARIA tree, state attributes, popup position, scroll lock, form values, and the timing of open and close animations. The live runs are stored as reference files, so the gate runs offline in CI.
-- **Browser tests.** `test/run.py` runs more than 300 checks in 3 engines, light and dark, at 1280 and 390 px. A check also fails on any console error, CSP or Trusted Types violation, or failed request.
-
-Differences by design (each one is a narrow `allowed` entry in the behavior gate):
-
-- Better ARIA than the live site: tooltip `role=tooltip` and `aria-describedby`; names on the resizable handles, the combobox trigger, the command input ("Command menu"), the carousel slides, and the calendar navigation; a command `aria-activedescendant` that points at the selected item (cmdk can keep a stale value); the combobox keeps its input addon and trigger button in the ARIA tree while the list is open (Base UI hides the addon with `aria-hidden`, and with it a focusable button); the drawer keeps the native `<dialog>` as the dialog.
-- Live defects that the kit does not copy: the calendar keeps focus on the day after Enter or a click (the live page replaces the day buttons, so focus falls to the body); a resizable touch swipe that is cancelled does not set the panel to 100 %.
-- Firefox keeps the keyboard focus ring after a key closes a select, dropdown menu, or drawer, or moves in a radio group (Base UI moves focus after the key event, so live Firefox paints no ring).
-- The checked state of the context menu and menubar demo items changes after a click, as in an app (the live demos have fixed state).
-
-Details of all tools: [DEVELOPMENT.md](DEVELOPMENT.md).
-
-## Credits
-
-clanker-ui ports [shadcn/ui](https://github.com/shadcn-ui/ui) and [Base UI](https://github.com/mui/base-ui), and its carousel is a port of [Embla Carousel](https://github.com/davidjerleke/embla-carousel). The CSS includes output of [Tailwind CSS](https://github.com/tailwindlabs/tailwindcss) and [tw-animate-css](https://github.com/Wombosvideo/tw-animate-css). Icons are from [Lucide](https://github.com/lucide-icons/lucide). The color schemes use the editor palettes that `THIRD_PARTY_NOTICES` lists. Behavior references: [react-day-picker](https://github.com/gpbl/react-day-picker), [cmdk](https://github.com/pacocoursey/cmdk), [Floating UI](https://github.com/floating-ui/floating-ui), [vaul](https://github.com/emilkowalski/vaul), [input-otp](https://github.com/guilhermerodz/input-otp), [react-resizable-panels](https://github.com/bvaughn/react-resizable-panels), [Radix Primitives](https://github.com/radix-ui/primitives), [Recharts](https://github.com/recharts/recharts), and [date-fns](https://github.com/date-fns/date-fns). The generator follows the method of [Basecoat](https://basecoatui.com).
-
-clanker-ui is not affiliated with shadcn/ui, Base UI, or Vercel.
-
 ## License
 
 MIT, see [LICENSE](LICENSE). The notices and licenses of the third-party parts are in [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES). Each kit file starts with a one-line license comment that names them; keep it when you copy or minify the file.
 
 
 ## Component reference
-
-### Groups
-
-Each group has `clanker-ui-<group>.min.css` and (except core CSS-only parts) `clanker-ui-<group>.min.js`. Load `core` always, then the group of each component and the groups in its **Needs**.
-
-| Group | CSS | JS | Components |
-| --- | --- | --- | --- |
-| `core` | `clanker-ui-core.min.css` | `clanker-ui-core.min.js` | button, separator, direction, theme, input, textarea, label, kbd, card, badge, alert, table, skeleton, spinner, empty, progress, aspect-ratio |
-| `forms` | `clanker-ui-forms.min.css` | `clanker-ui-forms.min.js` | button-group, input-group, input-otp, field, form, checkbox, radio-group, switch, slider, select, native-select, combobox, toggle, toggle-group |
-| `overlays` | `clanker-ui-overlays.min.css` | `clanker-ui-overlays.min.js` | dialog, alert-dialog, sheet, drawer, popover, tooltip, hover-card, dropdown-menu, context-menu, menubar, navigation-menu, command, toast, sonner |
-| `layout` | `clanker-ui-layout.min.css` | `clanker-ui-layout.min.js` | avatar, accordion, collapsible, tabs, breadcrumb, pagination, scroll-area, resizable, sidebar, carousel, item |
-| `chat` | `clanker-ui-chat.min.css` | `clanker-ui-chat.min.js` | message, bubble, attachment, message-scroller, trace, marker, questionnaire, code-block, calendar, date-picker |
-| `chart` | `clanker-ui-chart.min.css` | `clanker-ui-chart.min.js` | chart |
 
 Global attributes (any element): `data-align` `center`, `end`, `start`; `data-align-offset` number; `data-icon` `inline-end`, `inline-start`; `data-loop` boolean; `data-lucide` string; `data-multiple` boolean; `data-required` boolean; `data-scheme` string; `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top`; `data-side-offset` number; `data-theme-picker` string; `data-theme-set` `dark`, `light`, `system`, `toggle`; `data-typography` (empty), `blockquote`, `h1`, `h2`, `h3`, `h4`, `inline-code`, `large`, `lead`, `list`, `muted`, `p`, `small`, `table`; `data-string-<key>` (localized label override).
 
@@ -1401,16 +1370,7 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 | Part | Write | State |
 | --- | --- | --- |
-| `button` (root) | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` | `data-calendar-day-button`, `data-range-end`, `data-range-middle`, `data-range-start`, `data-selected-single` |
-
-Keyboard and focus:
-
-- A `<button>` without a `tabindex` gets `tabindex="0"` like the Base UI button, so Tab reaches it also in Safari.
-
-```html
-<button type="button" data-slot="button" data-variant="outline" data-size="sm"><svg data-lucide="send"></svg>Send</button>
-<a data-slot="button" data-variant="link" href="/docs">Docs</a>
-```
+| `button` (root) | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 
 #### Separator (`separator`)
 
@@ -1437,12 +1397,6 @@ Exports (import from the module that the page loads):
 
 - `direction(el = <html>) → "ltr" | "rtl"`
 
-Keyboard and focus:
-
-- Kit styles use logical properties (`inset-inline`, `margin-inline`, `padding-inline`, `border-inline`, `text-align: start`) for everything that follows the reading direction; icons that point along the reading direction flip with `:dir(rtl)`; keyboard arrows follow the visual direction.
-- Physical sides stay where a value names one: sheet `data-side`, drawer `data-swipe-direction`, popup `data-side="left|right"`, toast swipe directions, and parts that JavaScript places (popups, the tooltip arrow, the slider thumb, the chart tooltip).
-- The questionnaire keeps the upstream keys in RTL (ArrowLeft goes to the previous item).
-
 ```html
 <div dir="rtl" lang="ar">
   <button type="button" data-slot="button" data-variant="outline"><svg data-lucide="arrow-right"></svg>التالي</button>
@@ -1463,18 +1417,6 @@ Exports (import from the module that the page loads):
 
 - `theme.get(), theme.set("light"|"dark"|"system"), theme.resolved(), theme.toggle(), theme.scheme(), theme.setScheme(value), theme.schemes`: The mode is stored in `localStorage["clanker-ui-theme"]` and applied as `data-theme` on `<html>`. `resolved()` returns the mode that shows (`dark` for a dark-only scheme). `toggle()` does what the toggle button does. `scheme()` returns `data-scheme` (`""` when there is none). `setScheme` takes names separated by spaces (`a-z`, `0-9`, `-`, at most 200 characters, else a `TypeError`) and stores them in `localStorage["clanker-ui-scheme"]`; `""` removes the scheme. `schemes` is the frozen list `{ value, label, group }` (`group`: `shadcn`, `editor`, or `accent`). See [Color schemes](https://github.com/bl4ko/clanker-ui#color-schemes).
 
-Keyboard and focus:
-
-- `aria-keyshortcuts="D"` on a toggle turns on the shadcn `D` key: `D` without Ctrl, Meta, or Alt toggles the theme.
-
-```html
-<div data-slot="theme-switch" role="group" aria-label="Theme">
-  <button type="button" data-theme-set="light" aria-label="Light theme"><svg data-lucide="sun"></svg></button>
-  <button type="button" data-theme-set="dark" aria-label="Dark theme"><svg data-lucide="moon"></svg></button>
-  <button type="button" data-theme-set="system" aria-label="System theme"><svg data-lucide="monitor"></svg></button>
-</div>
-```
-
 #### Input (`input`)
 
 Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/input/. Full text: https://github.com/bl4ko/clanker-ui#input-textarea-label-kbd
@@ -1482,10 +1424,6 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 | Part | Write | State |
 | --- | --- | --- |
 | `input` (root) | `data-error-value-missing` string |  |
-
-```html
-<input data-slot="input" type="email" placeholder="Email">
-```
 
 #### Textarea (`textarea`)
 
@@ -1495,10 +1433,6 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 | --- | --- | --- |
 | `textarea` (root) |  |  |
 
-```html
-<textarea data-slot="textarea"></textarea>
-```
-
 #### Label (`label`)
 
 Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/label/. Full text: https://github.com/bl4ko/clanker-ui#input-textarea-label-kbd
@@ -1506,10 +1440,6 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 | Part | Write | State |
 | --- | --- | --- |
 | `label` (root) |  |  |
-
-```html
-<label data-slot="label" for="email">Email</label>
-```
 
 #### Kbd (`kbd`)
 
@@ -1519,10 +1449,6 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 | --- | --- | --- |
 | `kbd` (root) |  |  |
 | `kbd-group` |  |  |
-
-```html
-<kbd data-slot="kbd-group"><kbd data-slot="kbd">Ctrl</kbd><kbd data-slot="kbd">K</kbd></kbd>
-```
 
 #### Card (`card`)
 
@@ -1710,38 +1636,19 @@ Group `forms`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/
 | `button-group-separator` | `data-orientation` `horizontal`, `vertical` |  |
 | `button-group-text` |  |  |
 
-```html
-<div data-slot="button-group" role="group" aria-label="Actions" data-orientation="horizontal">
-  <button type="button" data-slot="button" data-variant="outline">Archive</button>
-  <div data-slot="button-group-separator" data-orientation="vertical" role="none"></div>
-  <span data-slot="button-group-text">.com</span>
-</div>
-```
-
 #### Input Group (`input-group`)
 
 Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/input-group/. Full text: https://github.com/bl4ko/clanker-ui#input-group
 
 | Part | Write | State |
 | --- | --- | --- |
-| `input-group` (root) |  | `data-combobox-input` |
+| `input-group` (root) |  |  |
 | `input-group-addon` | `data-align` `block-end`, `block-start`, `inline-end`, `inline-start` |  |
 | `input-group-button` |  | `data-pressed` |
 | `input-group-control` |  |  |
 | `input-group-text` |  |  |
 
 Part attributes: `data-input-group-button` boolean.
-
-```html
-<div data-slot="input-group" role="group">
-  <input data-slot="input-group-control" placeholder="Search...">
-  <div data-slot="input-group-addon" data-align="inline-start">
-    <svg data-lucide="search"></svg>
-    <span data-slot="input-group-text">USD</span>
-    <button type="button" data-slot="button" data-input-group-button data-size="xs">Copy</button>
-  </div>
-</div>
-```
 
 #### Input OTP (`input-otp`)
 
@@ -1756,18 +1663,6 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | `input-otp-slot` |  | `data-active` |
 
 Events: `input-otp:complete` `{ value }`.
-
-Keyboard and focus:
-
-- Arrows move between slots; in RTL the slots run right to left and the kit moves the caret with the visual arrow (ArrowRight goes to the previous slot) in every engine.
-
-```html
-<div data-slot="input-otp" data-pattern="digits">
-  <input maxlength="6" name="code" aria-label="One-time code">
-  <div data-slot="input-otp-group"><div data-slot="input-otp-slot"></div></div>
-  <div data-slot="input-otp-separator" role="separator"><svg data-lucide="minus"></svg></div>
-</div>
-```
 
 #### Field (`field`)
 
@@ -1824,15 +1719,6 @@ Other options named in the docs: `data-error-type-mismatch` any; `data-error-val
 
 Events: `form:invalid` `{ errors }`; `form:submit` `{ formData, values, submitter }` (cancelable).
 
-```html
-<form data-slot="form">
-  <div data-slot="field" role="group">
-    <label data-slot="field-label" for="name">Name</label>
-    <input id="name" data-slot="input" name="name" required data-error-value-missing="Name is required.">
-  </div>
-</form>
-```
-
 #### Checkbox (`checkbox`)
 
 Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/checkbox/. Full text: https://github.com/bl4ko/clanker-ui#checkbox-switch-radio-group
@@ -1841,16 +1727,9 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | --- | --- | --- |
 | `checkbox` (root) | `data-checked` boolean; `data-indeterminate` boolean; `data-name` string | `data-state` |
 | `checkbox-group` |  |  |
-| `checkbox-indicator` |  |  |
-
-Other options named in the docs: `data-value` any.
+| `checkbox-indicator` (kit adds) |  |  |
 
 Events: `checkbox:change` `{ checked, value }`.
-
-```html
-<button type="button" data-slot="checkbox" id="terms" data-name="terms" value="yes" data-checked data-required></button>
-<button type="button" data-slot="checkbox" data-indeterminate aria-label="Select all"></button>
-```
 
 #### Radio Group (`radio-group`)
 
@@ -1859,18 +1738,12 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | Part | Write | State |
 | --- | --- | --- |
 | `radio-group` (root) | `data-name` string; `data-value` string |  |
-| `radio-group-indicator` |  |  |
+| `radio-group-indicator` (kit adds) |  |  |
 | `radio-group-item` |  | `data-checked`, `data-state` |
 
-Other options named in the docs: `data-checked` any; `data-indeterminate` any.
+Other options named in the docs: `data-checked` any.
 
 Events: `radio-group:change` `{ value }`.
-
-```html
-<div data-slot="radio-group" data-name="plan" data-value="free" data-required>
-  <button type="button" data-slot="radio-group-item" id="plan-free" value="free"></button>
-</div>
-```
 
 #### Switch (`switch`)
 
@@ -1878,22 +1751,12 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 | Part | Write | State |
 | --- | --- | --- |
-| `switch` (root) | `data-size` `default`, `sm` | `data-checked`, `data-disabled`, `data-state`, `data-unchecked` |
+| `switch` (root) | `data-name` string; `data-size` `default`, `sm` | `data-checked`, `data-disabled`, `data-state`, `data-unchecked` |
 | `switch-thumb` (kit adds) |  | `data-checked`, `data-state`, `data-unchecked` |
 
-Other options named in the docs: `data-checked` any; `data-indeterminate` any; `data-value` any.
+Other options named in the docs: `data-checked` any; `data-readonly` any.
 
 Events: `switch:change` `{ checked, value }`.
-
-Keyboard and focus:
-
-- Click, Space, and a `<label for>` or wrapping `<label>` toggle.
-- Enter toggles only the switch.
-- Radio: one tab stop (the checked item, else the first enabled one, with `data-composite-item-active`); arrows move and check, wrap, skip disabled items, and follow RTL; Home and End do nothing.
-
-```html
-<button type="button" data-slot="switch" id="airplane" data-size="sm"></button>
-```
 
 #### Slider (`slider`)
 
@@ -1902,21 +1765,9 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | Part | Write | State |
 | --- | --- | --- |
 | `slider` (root) | `data-large-step` number; `data-orientation` `horizontal`, `vertical` |  |
-| `slider-range` (kit adds) | `data-orientation` `horizontal`, `vertical` |  |
-| `slider-thumb` (kit adds) | `data-index` any |  |
-| `slider-track` (kit adds) | `data-orientation` `horizontal`, `vertical` |  |
-
-Keyboard and focus:
-
-- Keys: arrows (RTL aware), Shift+arrow and Page Up/Down by `data-large-step` (default 10, in value units), Home, End.
-- Keys stop at the next thumb.
-
-```html
-<div data-slot="slider" data-orientation="horizontal" data-large-step="10">
-  <input type="range" min="0" max="100" step="5" value="25" name="min" aria-label="Minimum">
-  <input type="range" min="0" max="100" step="5" value="75" name="max" aria-label="Maximum">
-</div>
-```
+| `slider-range` (kit adds) |  | `data-orientation` |
+| `slider-thumb` (kit adds) |  | `data-index` |
+| `slider-track` (kit adds) |  | `data-orientation` |
 
 #### Select (`select`)
 
@@ -1941,26 +1792,6 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 Events: `select:open`; `select:close`; `select:change` `{ value }`.
 
-Keyboard and focus:
-
-- The trigger has `tabindex="0"` like Base UI, so Tab reaches it also in Safari.
-- Keyboard: Enter, Space, Up, Down open on the selected item; typing on the closed trigger selects the next match (750 ms buffer) without opening.
-- In the list: arrows (no wrap), Home, End, typeahead (a space within 750 ms of a typed letter is part of the search), Enter or Space to select, Escape to close, Tab closes without a change and moves on.
-
-```html
-<div data-slot="select" data-name="fruit" data-value="apple" data-required>
-  <button data-slot="select-trigger" data-size="sm"><span data-slot="select-value">Select a fruit</span></button>
-  <div data-slot="select-content" data-align-trigger="true">
-    <div data-slot="select-group">
-      <div data-slot="select-label">Fruits</div>
-      <div data-slot="select-item" data-value="apple" data-label="Apple">Apple</div>
-      <div data-slot="select-item" data-value="banana" data-disabled>Banana</div>
-    </div>
-    <div data-slot="select-separator"></div>
-  </div>
-</div>
-```
-
 #### Native Select (`native-select`)
 
 Group `forms`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/native-select/. Full text: https://github.com/bl4ko/clanker-ui#native-select
@@ -1972,15 +1803,6 @@ Group `forms`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/
 | `native-select-optgroup` |  |  |
 | `native-select-option` |  |  |
 | `native-select-wrapper` |  |  |
-
-```html
-<div data-slot="native-select-wrapper">
-  <select data-slot="native-select" data-size="sm">
-    <option data-slot="native-select-option" value="todo">Todo</option>
-  </select>
-  <svg data-lucide="chevron-down" data-slot="native-select-icon"></svg>
-</div>
-```
 
 #### Combobox (`combobox`)
 
@@ -2009,35 +1831,6 @@ Part attributes: `data-combobox-trigger` boolean.
 
 Events: `combobox:open`; `combobox:close`; `combobox:change` `{ value }`.
 
-Keyboard and focus:
-
-- Keyboard: Down and Up (also with Alt) open and move; after the last item (or before the first) the highlight goes back to the input, like Base UI `loopFocus`.
-- Alt+Up closes, Enter selects (or closes when no item is highlighted), Escape closes; Escape on a closed combobox clears the value (all chips in multiple).
-- Home and End move the caret and never scroll the page.
-- Chips (`role="toolbar"`): Backspace in an empty input removes the last chip, Left moves into the chips, Backspace and Delete remove a chip.
-
-```html
-<div data-slot="combobox" data-name="framework" data-value="next" data-auto-highlight>
-  <div data-slot="input-group">
-    <input data-slot="input-group-control" placeholder="Select a framework" aria-label="Framework">
-    <div data-slot="input-group-addon" data-align="inline-end">
-      <button type="button" data-slot="input-group-button" data-combobox-trigger></button>
-      <button type="button" data-slot="combobox-clear"></button>
-    </div>
-  </div>
-  <div data-slot="combobox-content">
-    <div data-slot="combobox-empty">No items found.</div>
-    <div data-slot="combobox-list">
-      <div data-slot="combobox-group">
-        <div data-slot="combobox-label">Frameworks</div>
-        <div data-slot="combobox-item" data-value="next">Next.js</div>
-      </div>
-      <div data-slot="combobox-separator"></div>
-    </div>
-  </div>
-</div>
-```
-
 #### Toggle (`toggle`)
 
 Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/toggle/. Full text: https://github.com/bl4ko/clanker-ui#toggle-and-toggle-group
@@ -2047,14 +1840,6 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | `toggle` (root) | `data-size` `default`, `lg`, `sm`; `data-variant` `default`, `outline` | `data-state` |
 
 Events: `toggle:change` `{ pressed, value }`.
-
-Keyboard and focus:
-
-- One tab stop, arrows (RTL aware), Home, End.
-
-```html
-<button type="button" data-slot="toggle" data-variant="outline" data-size="sm" aria-pressed="false">Bold</button>
-```
 
 #### Toggle Group (`toggle-group`)
 
@@ -2067,12 +1852,6 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 Events: `toggle-group:change` `{ value }`.
 
-```html
-<div data-slot="toggle-group" data-type="single" data-variant="outline" data-size="sm" data-spacing="2" data-orientation="horizontal" data-value="bold,italic" data-disabled>
-  <button type="button" data-slot="toggle-group-item" data-value="bold" aria-label="Bold"><svg data-lucide="bold"></svg></button>
-</div>
-```
-
 #### Dialog (`dialog`)
 
 Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/dialog/. Full text: https://github.com/bl4ko/clanker-ui#dialog-alert-dialog-sheet-drawer
@@ -2081,7 +1860,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | --- | --- | --- |
 | `dialog` (root) |  |  |
 | `dialog-close` |  |  |
-| `dialog-content` |  | `data-closed`, `data-command-dialog`, `data-open`, `data-state` |
+| `dialog-content` |  | `data-closed`, `data-open`, `data-state` |
 | `dialog-description` |  |  |
 | `dialog-footer` | `data-show-close-button` boolean |  |
 | `dialog-header` |  |  |
@@ -2095,21 +1874,6 @@ Exports (import from the module that the page loads):
 
 - `dialogOpen(target, { trigger }?) → boolean`: Works for `dialog`, `alert-dialog`, `sheet`, and `drawer`.
 - `dialogClose(target, reason = "api") → boolean`: `reason` goes to the `:close` event.
-
-```html
-<div data-slot="dialog">
-  <button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>Open</button>
-  <dialog data-slot="dialog-content">
-    <div data-slot="dialog-header">
-      <h2 data-slot="dialog-title">Edit profile</h2>
-      <p data-slot="dialog-description">Make changes here.</p>
-    </div>
-    <div data-slot="dialog-footer">
-      <button type="button" data-slot="button" data-variant="outline" data-dialog-close>Cancel</button>
-    </div>
-  </dialog>
-</div>
-```
 
 #### Alert Dialog (`alert-dialog`)
 
@@ -2130,10 +1894,6 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 Part attributes: `data-alert-dialog-action` boolean; `data-alert-dialog-cancel` boolean; `data-alert-dialog-trigger` boolean.
 
 Events: `alert-dialog:open` `{ trigger }`; `alert-dialog:close` `{ reason }` (cancelable).
-
-Keyboard and focus:
-
-- A native `<dialog>` opened with `showModal()`: focus trap, Escape, scroll lock, inert page, focus returns to the trigger.
 
 ```html
 <div data-slot="alert-dialog">
@@ -2199,7 +1959,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | `drawer-footer` |  |  |
 | `drawer-header` |  |  |
 | `drawer-popup` |  | `data-ending-style`, `data-nested-drawer-open`, `data-nested-drawer-swiping`, `data-snap-points`, `data-starting-style`, `data-swipe-axis`, `data-swipe-direction`, `data-swiping` |
-| `drawer-swipe-handle` (kit adds) | `data-show-swipe-handle` any |  |
+| `drawer-swipe-handle` (kit adds) |  | `data-show-swipe-handle` |
 | `drawer-title` |  |  |
 | `drawer-viewport` |  | `data-ending-style`, `data-modal`, `data-snap-points`, `data-starting-style`, `data-swiping` |
 
@@ -2208,29 +1968,6 @@ Part attributes: `data-drawer-close` boolean; `data-drawer-trigger` boolean.
 Other options named in the docs: `data-base-ui-swipe-ignore` any; `data-disable-pointer-dismissal` any; `data-modal` `false`, `true`; `data-snap-point` any; `data-snap-points` string; `data-snap-to-sequential-points` any; `data-swipe-axis` `x`, `y`.
 
 Events: `drawer:open` `{ trigger }`; `drawer:close` `{ reason }` (cancelable); `drawer:release` `{ delta }`; `drawer:snap-point-change` `{ snapPoint }`.
-
-Keyboard and focus:
-
-- While a modal dialog is open, the `toast-portal` element moves into the topmost open modal dialog (a modal makes everything else inert) and moves back when it closes, so toasts stay usable and Tab reaches them.
-
-```html
-<div data-slot="drawer" data-swipe-direction="down" data-show-swipe-handle>
-  <button type="button" data-slot="button" data-variant="outline" data-drawer-trigger>Open</button>
-  <dialog data-slot="drawer-viewport">
-    <div data-slot="drawer-popup">
-      <div data-slot="drawer-content">
-        <div data-slot="drawer-header">
-          <h2 data-slot="drawer-title">Move Goal</h2>
-          <p data-slot="drawer-description">Set your daily activity goal.</p>
-        </div>
-        <div data-slot="drawer-footer">
-          <button type="button" data-slot="button" data-drawer-close>Submit</button>
-        </div>
-      </div>
-    </div>
-  </dialog>
-</div>
-```
 
 #### Popover (`popover`)
 
@@ -2254,10 +1991,6 @@ Exports (import from the module that the page loads):
 - `popoverOpen(target, { trigger, anchor }?) → boolean`
 - `popoverClose(target, reason = "api") → boolean`
 
-Keyboard and focus:
-
-- Non-modal: focus moves into the content; Escape, outside click, and focus leaving close it.
-
 ```html
 <div data-slot="popover">
   <button type="button" data-slot="button" data-variant="outline" data-popover-trigger>Open Popover</button>
@@ -2277,7 +2010,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | Part | Write | State |
 | --- | --- | --- |
 | `tooltip` (root) |  |  |
-| `tooltip-arrow` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` |  |
+| `tooltip-arrow` (kit adds) |  | `data-side` |
 | `tooltip-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
 | `tooltip-provider` | `data-delay-duration` any; `data-skip-delay-duration` any |  |
 
@@ -2286,12 +2019,6 @@ Part attributes: `data-tooltip-trigger` boolean.
 Other options named in the docs: `data-close-delay` any; `data-delay` any; `data-timeout` any.
 
 Events: `tooltip:open`; `tooltip:close`.
-
-Keyboard and focus:
-
-- It opens on keyboard focus too; it closes on leave, Escape, press, and blur.
-- Default side `top`, 4 px; the kit adds the arrow (`<div data-slot="tooltip-arrow">`), which points at the trigger center.
-- Like Base UI, the content and the arrow get `data-instant`: `delay` (opened at once because another tooltip was open or closed less than `data-timeout` ago), `focus` (opened by keyboard focus), `dismiss` (closed by Escape or a press).
 
 ```html
 <div data-slot="tooltip">
@@ -2330,12 +2057,14 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | --- | --- | --- |
 | `dropdown-menu` (root) |  |  |
 | `dropdown-menu-checkbox-item` | `data-checked` boolean | `data-disabled`, `data-inset` |
+| `dropdown-menu-checkbox-item-indicator` (kit adds) |  |  |
 | `dropdown-menu-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
 | `dropdown-menu-group` |  |  |
 | `dropdown-menu-item` | `data-variant` `destructive` | `data-disabled`, `data-inset` |
 | `dropdown-menu-label` |  | `data-inset` |
 | `dropdown-menu-radio-group` | `data-value` string |  |
 | `dropdown-menu-radio-item` | `data-checked` boolean; `data-value` string | `data-disabled`, `data-inset` |
+| `dropdown-menu-radio-item-indicator` (kit adds) |  |  |
 | `dropdown-menu-separator` |  |  |
 | `dropdown-menu-shortcut` |  |  |
 | `dropdown-menu-sub` |  |  |
@@ -2348,33 +2077,6 @@ Part attributes: `data-dropdown-menu-trigger` boolean.
 Other options named in the docs: `data-close-on-click` any; `data-disabled` any; `data-inset` any; `data-state` string; `data-text-value` any.
 
 Events: `dropdown-menu:open` `{ trigger }`; `dropdown-menu:close` `{ reason }`; `dropdown-menu:select` `{ value, item, checked }` (cancelable); `dropdown-menu:change` `{ value, checked, item, group }`.
-
-Keyboard and focus:
-
-- The content has `data-open` or `data-closed`, `data-side`, `data-align`, and `data-instant` (`click` when a keyboard key or a right click opened it, `group` when a menubar switched menus, `dismiss` after Escape); the trigger has `data-popup-open` and `data-pressed` while open.
-- Keyboard per WAI-ARIA APG with Base UI focus looping: Enter, Space, and ArrowDown open at the first item, ArrowUp at the last; arrows wrap from the last item to the first and back, Home, End, typeahead; arrows also stop on disabled items (highlighted, `aria-disabled`, they do not run), as in Base UI; ArrowRight opens a sub menu, ArrowLeft closes it (mirrored in RTL); Escape closes the innermost menu; Tab closes all.
-- Typeahead continues across a space (`New W` reaches "New Window"); Space activates the item only when no typeahead is in progress.
-
-```html
-<div data-slot="dropdown-menu">
-  <button type="button" data-slot="button" data-variant="outline" data-dropdown-menu-trigger>Open</button>
-  <div data-slot="dropdown-menu-content">
-    <div data-slot="dropdown-menu-group">
-      <div data-slot="dropdown-menu-label">My Account</div>
-      <div data-slot="dropdown-menu-item">Profile<span data-slot="dropdown-menu-shortcut">⇧⌘P</span></div>
-      <div data-slot="dropdown-menu-checkbox-item" data-checked>Status Bar</div>
-    </div>
-    <div data-slot="dropdown-menu-radio-group" data-value="top">
-      <div data-slot="dropdown-menu-radio-item" data-value="top" data-checked>Top</div>
-    </div>
-    <div data-slot="dropdown-menu-separator"></div>
-    <div data-slot="dropdown-menu-sub">
-      <div data-slot="dropdown-menu-sub-trigger">Invite users</div>
-      <div data-slot="dropdown-menu-sub-content">...</div>
-    </div>
-  </div>
-</div>
-```
 
 #### Context Menu (`context-menu`)
 
@@ -2400,13 +2102,6 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 Other options named in the docs: `data-close-on-click` any; `data-disabled` any; `data-inset` any; `data-state` string; `data-text-value` any.
 
 Events: `context-menu:open` `{ trigger }`; `context-menu:close` `{ reason }`; `context-menu:select` `{ value, item, checked }` (cancelable); `context-menu:change` `{ value, checked, item, group }`.
-
-Keyboard and focus:
-
-- The content has `data-open` or `data-closed`, `data-side`, `data-align`, and `data-instant` (`click` when a keyboard key or a right click opened it, `group` when a menubar switched menus, `dismiss` after Escape); the trigger has `data-popup-open` and `data-pressed` while open.
-- Keyboard per WAI-ARIA APG with Base UI focus looping: Enter, Space, and ArrowDown open at the first item, ArrowUp at the last; arrows wrap from the last item to the first and back, Home, End, typeahead; arrows also stop on disabled items (highlighted, `aria-disabled`, they do not run), as in Base UI; ArrowRight opens a sub menu, ArrowLeft closes it (mirrored in RTL); Escape closes the innermost menu; Tab closes all.
-- Typeahead continues across a space (`New W` reaches "New Window"); Space activates the item only when no typeahead is in progress.
-- Right click, long press (700 ms), Shift+F10, or the ContextMenu key open it.
 
 ```html
 <div data-slot="context-menu">
@@ -2459,13 +2154,6 @@ Other options named in the docs: `data-close-on-click` any; `data-disabled` any;
 
 Events: `menubar:open` `{ trigger }`; `menubar:close` `{ reason }`; `menubar:select` `{ value, item, checked }` (cancelable); `menubar:change` `{ value, checked, item, group }`.
 
-Keyboard and focus:
-
-- The content has `data-open` or `data-closed`, `data-side`, `data-align`, and `data-instant` (`click` when a keyboard key or a right click opened it, `group` when a menubar switched menus, `dismiss` after Escape); the trigger has `data-popup-open` and `data-pressed` while open.
-- Keyboard per WAI-ARIA APG with Base UI focus looping: Enter, Space, and ArrowDown open at the first item, ArrowUp at the last; arrows wrap from the last item to the first and back, Home, End, typeahead; arrows also stop on disabled items (highlighted, `aria-disabled`, they do not run), as in Base UI; ArrowRight opens a sub menu, ArrowLeft closes it (mirrored in RTL); Escape closes the innermost menu; Tab closes all.
-- Typeahead continues across a space (`New W` reaches "New Window"); Space activates the item only when no typeahead is in progress.
-- Roving focus; ArrowLeft and ArrowRight in an open menu open the next menu and focus its popup (no item highlighted; ArrowDown goes to the first item); while a menu is open, hover switches menus and moves focus to the new menu; a click on another trigger while a menu is open, or on the open trigger, closes the menus and focuses that trigger.
-
 ```html
 <div data-slot="menubar">
   <div data-slot="menubar-menu">
@@ -2509,17 +2197,13 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | `navigation-menu-link` | `data-active` any; `data-close-on-click` any; `data-variant` `trigger` | `data-open`, `data-popup-open`, `data-state` |
 | `navigation-menu-list` |  |  |
 | `navigation-menu-popup` (kit adds) |  | `data-ending-style`, `data-starting-style` |
-| `navigation-menu-positioner` (kit adds) | `data-align` any; `data-side` `bottom` | `data-instant` |
+| `navigation-menu-positioner` (kit adds) |  | `data-align`, `data-instant`, `data-side` |
 | `navigation-menu-trigger` |  | `data-open`, `data-popup-open`, `data-state` |
 | `navigation-menu-viewport` (kit adds) |  |  |
 
 Other options named in the docs: `data-close-delay` any; `data-delay` any; `data-viewport` `false`, `true`.
 
 Events: `navigation-menu:change` `{ value }`; `navigation-menu:select` `{ link, href }`.
-
-Keyboard and focus:
-
-- Enter, Space, or ArrowDown on a closed trigger opens it and focuses the first link in the panel; ArrowDown or Tab on an open trigger enters the panel; Home and End do nothing (the page scrolls), as in Base UI; Tab after its last link goes to the next trigger, Shift+Tab from its first link goes back and Shift+Tab from the next trigger goes to its last link (focus guards at both ends of the popup and after the open trigger, as in Base UI, so this also works in Safari, where Tab skips links; Tab from the last trigger leaves the menu); arrows move between links; Escape closes and focuses the open trigger, also when a hover switch moved the open panel.
 
 ```html
 <nav data-slot="navigation-menu" aria-label="Main">
@@ -2561,10 +2245,6 @@ Other options named in the docs: `data-should-filter` `false`, `true`.
 
 Events: `command:select` `{ value, item }`.
 
-Keyboard and focus:
-
-- Typing filters, scores, and sorts; ArrowUp/Down, Home, End, Ctrl+N/J/P/K, Alt+arrows (next group), Meta+arrows (first/last), Enter.
-
 ```html
 <div data-slot="command">
   <input data-slot="command-input" placeholder="Type a command or search...">
@@ -2605,23 +2285,9 @@ Exports (import from the module that the page loads):
 
 - `toast(message, options?) → id`: Sonner-style calls and the Base UI manager (`toast.add`, `toast.update`, `toast.close`), see [Toast and Sonner](https://github.com/bl4ko/clanker-ui#toast-and-sonner).
 
-Keyboard and focus:
-
-- F6 moves focus to the viewport; Tab and Shift+Tab past the toasts return focus to where it was.
-- Escape closes the focused toast (not an open dialog), and focus moves to the next toast.
-
 ```html
 <div data-slot="toast-portal" data-limit="3" data-timeout="5000"></div>
 <button type="button" data-slot="button" data-variant="outline" id="show-toast">Show Toast</button>
-```
-
-```js
-toast.add({ title: "Event created", description: "Sunday at 9:00", type: "success", timeout: 5000, priority: "low", actionProps: { children: "Undo", onClick() {} } })
-toast.update(id, { description: "Saved" }); toast.update(id, prev => ({ title: `${prev.title}!` })); toast.close(id); toast.close()
-toast("Event created", { description: "Sunday at 9:00", action: { label: "Undo", onClick() {} } })
-toast.success(title, opts); toast.info(); toast.warning(); toast.error(); toast.loading(); toast.message()
-toast.promise(promiseOrFn, { loading: "Creating event…", success: data => `${data.name} created.`, error: "Could not create event.", finally })
-toast.dismiss(id); toast.dismiss(); toast.getToasts()
 ```
 
 #### Sonner (`sonner`)
@@ -2645,15 +2311,6 @@ Exports (import from the module that the page loads):
 <button type="button" data-slot="button" data-variant="outline" id="show-toast">Show Toast</button>
 ```
 
-```js
-toast.add({ title: "Event created", description: "Sunday at 9:00", type: "success", timeout: 5000, priority: "low", actionProps: { children: "Undo", onClick() {} } })
-toast.update(id, { description: "Saved" }); toast.update(id, prev => ({ title: `${prev.title}!` })); toast.close(id); toast.close()
-toast("Event created", { description: "Sunday at 9:00", action: { label: "Undo", onClick() {} } })
-toast.success(title, opts); toast.info(); toast.warning(); toast.error(); toast.loading(); toast.message()
-toast.promise(promiseOrFn, { loading: "Creating event…", success: data => `${data.name} created.`, error: "Could not create event.", finally })
-toast.dismiss(id); toast.dismiss(); toast.getToasts()
-```
-
 #### Avatar (`avatar`)
 
 Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/avatar/. Full text: https://github.com/bl4ko/clanker-ui#avatar
@@ -2671,45 +2328,19 @@ Other options named in the docs: `data-status` `error`, `loaded`, `loading`.
 
 Events: `avatar:change` `{ value }`.
 
-```html
-<span data-slot="avatar" data-size="sm">
-  <img data-slot="avatar-image" src="..." alt="">
-  <span data-slot="avatar-fallback">CN</span>
-  <span data-slot="avatar-badge"></span>
-</span>
-```
-
 #### Accordion (`accordion`)
 
 Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/accordion/. Full text: https://github.com/bl4ko/clanker-ui#accordion
 
 | Part | Write | State |
 | --- | --- | --- |
-| `accordion` (root) | `data-type` string |  |
+| `accordion` (root) | `data-type` `multiple`, `single` |  |
 | `accordion-content` |  | `data-closed`, `data-open`, `data-state` |
 | `accordion-item` | `data-state` string; `data-value` string |  |
 | `accordion-trigger` |  |  |
 | `accordion-trigger-icon` (kit adds) |  |  |
 
 Events: `accordion:change` `{ value }`.
-
-Keyboard and focus:
-
-- Keys: Enter and Space toggle; as in Base UI, the arrow keys do not move focus.
-- Like Base UI, the trigger of a disabled item stays in the Tab order (`aria-disabled="true"`), and Enter, Space, or a click does not open it.
-
-```html
-<div data-slot="accordion" data-type="single">
-  <div data-slot="accordion-item" data-value="shipping" data-state="open">
-    <h3><button type="button" data-slot="accordion-trigger">What are your shipping options?</button></h3>
-    <div data-slot="accordion-content"><div>Standard, express, and overnight.</div></div>
-  </div>
-  <div data-slot="accordion-item" data-value="returns">
-    <h3><button type="button" data-slot="accordion-trigger">What is your return policy?</button></h3>
-    <div data-slot="accordion-content" hidden="until-found"><div>Returns within 30 days.</div></div>
-  </div>
-</div>
-```
 
 #### Collapsible (`collapsible`)
 
@@ -2724,18 +2355,6 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 Part attributes: `data-collapsible-trigger` boolean.
 
 Events: `collapsible:open`; `collapsible:close`.
-
-```html
-<details data-slot="collapsible">
-  <summary data-slot="collapsible-trigger">Advanced settings</summary>
-  <div data-slot="collapsible-content">...</div>
-</details>
-<div data-slot="collapsible" data-state="closed">
-  <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-collapsible-trigger>...</button>
-  <div>Always visible</div>
-  <div data-slot="collapsible-content" hidden>...</div>
-</div>
-```
 
 #### Tabs (`tabs`)
 
@@ -2752,22 +2371,6 @@ Other options named in the docs: `data-activation` string.
 
 Events: `tabs:change` `{ value }`.
 
-Keyboard and focus:
-
-- Manual activation as in Base UI: the arrow keys move focus, Enter, Space, or a click selects (`data-activation="automatic"` selects on focus), roving tabindex, arrows (RTL aware), Home, End; disabled tabs are skipped.
-- Tab panels are focusable (`tabindex="0"`) and show the standard focus ring.
-- A trigger that gets keyboard focus (arrow keys, Home, End, Tab) or a click also scrolls fully into view.
-- The kit sets `tabindex="-1"` on a horizontal list that has no `tabindex`, so the list is not a Tab stop (Firefox stops on a scroll container).
-
-```html
-<div data-slot="tabs" data-default-value="account" data-orientation="horizontal">
-  <div data-slot="tabs-list" data-variant="line">
-    <button data-slot="tabs-trigger" data-value="account">Account</button>
-  </div>
-  <div data-slot="tabs-content" data-value="account">...</div>
-</div>
-```
-
 #### Breadcrumb (`breadcrumb`)
 
 Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/breadcrumb/. Full text: https://github.com/bl4ko/clanker-ui#breadcrumb
@@ -2782,17 +2385,6 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 | `breadcrumb-page` |  |  |
 | `breadcrumb-separator` |  |  |
 
-```html
-<nav data-slot="breadcrumb">
-  <ol data-slot="breadcrumb-list">
-    <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="/">Home</a></li>
-    <li data-slot="breadcrumb-separator"></li>
-    <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-ellipsis"></span></li>
-    <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">Breadcrumb</span></li>
-  </ol>
-</nav>
-```
-
 #### Pagination (`pagination`)
 
 Group `layout`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/pagination/. Full text: https://github.com/bl4ko/clanker-ui#pagination
@@ -2805,18 +2397,6 @@ Group `layout`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui
 | `pagination-item` |  |  |
 | `pagination-link` | `data-active` boolean; `data-pagination-next` boolean; `data-pagination-previous` boolean; `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 
-```html
-<nav data-slot="pagination" aria-label="pagination">
-  <ul data-slot="pagination-content">
-    <li data-slot="pagination-item"><a data-slot="pagination-link" data-pagination-previous data-size="default" href="?p=1" aria-label="Go to previous page"><svg data-lucide="chevron-left" data-icon="inline-start"></svg><span>Previous</span></a></li>
-    <li data-slot="pagination-item"><a data-slot="pagination-link" href="?p=1">1</a></li>
-    <li data-slot="pagination-item"><a data-slot="pagination-link" data-variant="outline" href="?p=2" data-active aria-current="page">2</a></li>
-    <li data-slot="pagination-item"><span data-slot="pagination-ellipsis" aria-hidden="true"><svg data-lucide="ellipsis"></svg><span class="sr-only">More pages</span></span></li>
-    <li data-slot="pagination-item"><a data-slot="pagination-link" data-pagination-next data-size="default" href="?p=3" aria-label="Go to next page"><span>Next</span><svg data-lucide="chevron-right" data-icon="inline-end"></svg></a></li>
-  </ul>
-</nav>
-```
-
 #### Scroll Area (`scroll-area`)
 
 Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/scroll-area/. Full text: https://github.com/bl4ko/clanker-ui#scroll-area
@@ -2827,13 +2407,6 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 | `scroll-area-scrollbar` | `data-orientation` `horizontal`, `vertical` | `data-overflow` |
 | `scroll-area-thumb` (kit adds) |  |  |
 | `scroll-area-viewport` |  |  |
-
-```html
-<div data-slot="scroll-area">
-  <div data-slot="scroll-area-viewport" aria-label="Tags">...</div>
-  <div data-slot="scroll-area-scrollbar" data-orientation="horizontal"></div>
-</div>
-```
 
 #### Resizable (`resizable`)
 
@@ -2848,18 +2421,6 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 Other options named in the docs: `data-keyboard-step` any.
 
 Events: `resizable:change` `{ value }`.
-
-Keyboard and focus:
-
-- The handle is a WAI-ARIA window splitter: drag it or use the arrow keys (`data-keyboard-step`, default 5), Home, and End.
-
-```html
-<div data-slot="resizable-panel-group" data-orientation="horizontal">
-  <div data-slot="resizable-panel" data-default-size="25" data-min-size="15" data-max-size="60">...</div>
-  <div data-slot="resizable-handle" data-with-handle></div>
-  <div data-slot="resizable-panel">...</div>
-</div>
-```
 
 #### Sidebar (`sidebar`)
 
@@ -2898,38 +2459,6 @@ Other options named in the docs: `data-mobile` string.
 
 Events: `sidebar:open` `{ mobile }`; `sidebar:close` `{ mobile }`.
 
-Keyboard and focus:
-
-- Ctrl/⌘+B toggles the sidebar of the focused wrapper, else the first one.
-- When Escape, a trigger, or Ctrl/⌘+B closes the sheet, focus goes back to the element that had focus when it opened (the trigger, when the trigger opened it).
-
-```html
-<div data-slot="sidebar-wrapper" id="app">
-  <div data-slot="sidebar" data-side="left" data-variant="sidebar" data-collapsible="offcanvas">
-    <div data-slot="sidebar-gap"></div>
-    <div data-slot="sidebar-container">
-      <div data-slot="sidebar-inner">
-        <div data-slot="sidebar-header">...</div>
-        <div data-slot="sidebar-content">
-          <div data-slot="sidebar-group">
-            <div data-slot="sidebar-group-label">Platform</div>
-            <ul data-slot="sidebar-menu">
-              <li data-slot="sidebar-menu-item">
-                <a data-slot="sidebar-menu-button" data-active="true" data-tooltip="Home" href="/"><svg data-lucide="house"></svg><span>Home</span></a>
-                <div data-slot="sidebar-menu-badge">24</div>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div data-slot="sidebar-footer">...</div>
-      </div>
-      <button data-slot="sidebar-rail"></button>
-    </div>
-  </div>
-  <main data-slot="sidebar-inset"><button data-slot="sidebar-trigger"></button>...</main>
-</div>
-```
-
 #### Carousel (`carousel`)
 
 Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/carousel/. Full text: https://github.com/bl4ko/clanker-ui#carousel
@@ -2943,23 +2472,6 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 | `carousel-previous` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 
 Events: `carousel:change` `{ value, count }`.
-
-Keyboard and focus:
-
-- The kit adds the carousel and slide roles, slide labels, the arrow icons, and disables a button at the end (`disabled`, `data-disabled`).
-- Like shadcn, focus does not move when the focused button becomes disabled, so Tab continues to the other button.
-- The buttons and the arrow keys (RTL aware) move one slide with duration 25 and friction 0.68 (about 750 ms; at once with reduced motion); a press during the motion changes its target.
-- Tab into a slide jumps to it at once.
-
-```html
-<div data-slot="carousel" data-orientation="horizontal" data-align="start" data-loop aria-label="Featured">
-  <div data-slot="carousel-content"><div>
-    <div data-slot="carousel-item">...</div>
-  </div></div>
-  <button data-slot="carousel-previous"></button>
-  <button data-slot="carousel-next"></button>
-</div>
-```
 
 #### Item (`item`)
 
@@ -3008,17 +2520,6 @@ Group `chat`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/d
 | `message-group` |  |  |
 | `message-header` |  |  |
 
-```html
-<div data-slot="message" data-align="end">
-  <div data-slot="message-avatar"><span data-slot="avatar"><img data-slot="avatar-image" src="me.png" alt="@me"><span data-slot="avatar-fallback">ME</span></span></div>
-  <div data-slot="message-content">
-    <div data-slot="message-header">Olivia</div>
-    <div data-slot="bubble" data-variant="muted"><div data-slot="bubble-content">Deploying to prod.</div></div>
-    <div data-slot="message-footer">Delivered</div>
-  </div>
-</div>
-```
-
 #### Bubble (`bubble`)
 
 Group `chat`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/bubble/. Full text: https://github.com/bl4ko/clanker-ui#message-bubble-marker
@@ -3029,17 +2530,6 @@ Group `chat`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/d
 | `bubble-content` |  |  |
 | `bubble-group` |  |  |
 | `bubble-reactions` | `data-align` `end`, `start`; `data-side` `bottom`, `top` |  |
-
-```html
-<div data-slot="message" data-align="end">
-  <div data-slot="message-avatar"><span data-slot="avatar"><img data-slot="avatar-image" src="me.png" alt="@me"><span data-slot="avatar-fallback">ME</span></span></div>
-  <div data-slot="message-content">
-    <div data-slot="message-header">Olivia</div>
-    <div data-slot="bubble" data-variant="muted"><div data-slot="bubble-content">Deploying to prod.</div></div>
-    <div data-slot="message-footer">Delivered</div>
-  </div>
-</div>
-```
 
 #### Attachment (`attachment`)
 
@@ -3056,18 +2546,6 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 | `attachment-media` | `data-variant` `image` |  |
 | `attachment-title` |  |  |
 | `attachment-trigger` |  |  |
-
-```html
-<div data-slot="attachment" data-state="uploading" data-size="sm" data-orientation="vertical">
-  <div data-slot="attachment-media" data-variant="image"><img src="a.png" alt="A"></div>
-  <div data-slot="attachment-content">
-    <span data-slot="attachment-title">a.png</span>
-    <span data-slot="attachment-description">PNG · 820 KB</span>
-  </div>
-  <div data-slot="attachment-actions"><button data-slot="attachment-action" aria-label="Remove a.png"><svg data-lucide="x"></svg></button></div>
-  <a data-slot="attachment-trigger" href="a.png" aria-label="Open a.png"></a>
-</div>
-```
 
 #### Message Scroller (`message-scroller`)
 
@@ -3095,21 +2573,6 @@ Exports (import from the module that the page loads):
 - `messageScrollerScrollable(el) → { start, end }`
 - `messageScrollerVisibility(el) → { currentAnchorId, visibleMessageIds }`
 
-Keyboard and focus:
-
-- Only upward intent releases following: wheel up, a touch drag down, and ArrowUp, PageUp, Home, or Shift+Space on the viewport itself (keys in an input inside the log never release it); downward input keeps following.
-
-```html
-<div data-slot="message-scroller" data-auto-scroll data-default-scroll-position="end">
-  <div data-slot="message-scroller-viewport">
-    <div data-slot="message-scroller-content">
-      <div data-slot="message-scroller-item" data-message-id="u1" data-scroll-anchor="true">…</div>
-    </div>
-  </div>
-  <button data-slot="message-scroller-button" data-direction="end"></button>
-</div>
-```
-
 #### Trace (`trace`)
 
 Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/trace/. Full text: https://github.com/bl4ko/clanker-ui#trace
@@ -3132,20 +2595,6 @@ Exports (import from the module that the page loads):
 
 - `traceOpen(target, { animate = true }?) → boolean`: `target` is a `trace-collapsible` or an element in it.
 - `traceClose(target, { animate = true }?) → boolean`
-
-```html
-<div data-slot="trace">
-  <span data-slot="trace-line" data-status="running">
-    <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
-    <span data-slot="trace-title">Running pnpm build</span>
-    <span data-slot="trace-description">14s</span>
-  </span>
-  <div data-slot="trace-collapsible" data-default-open>
-    <button data-slot="trace-collapsible-trigger"><span data-slot="trace-line">…</span></button>
-    <div data-slot="trace-collapsible-content">Detail</div>
-  </div>
-</div>
-```
 
 #### Marker (`marker`)
 
@@ -3203,30 +2652,6 @@ Exports (import from the module that the page loads):
 - `questionnaireGoTo(el, name) → boolean`
 - `questionnaireRefresh(el)`: Call after you enable or disable an item.
 
-Keyboard and focus:
-
-- Keys: letters or numbers pick, Up and Down move, Left and Right change the item, Enter continues, Ctrl or Cmd+Enter continues from anywhere.
-- A text answer can be `<input data-slot="questionnaire-input">` or `<textarea data-slot="questionnaire-input">` (Enter inserts a newline; Ctrl or Cmd+Enter continues).
-
-```html
-<form data-slot="questionnaire" data-shortcuts="letters" data-default-item="direction">
-  <div data-slot="questionnaire-progress" data-template="Step {current} of {total}"></div>
-  <fieldset data-slot="questionnaire-item" name="direction" data-required data-multiple>
-    <legend data-slot="questionnaire-title">Question</legend>
-    <p data-slot="questionnaire-description">Help text</p>
-    <div data-slot="questionnaire-choices">
-      <label data-slot="questionnaire-choice" data-value="a" data-default-checked>Label<span data-slot="questionnaire-choice-description">More</span></label>
-      <input data-slot="questionnaire-input" aria-label="Other answer">
-    </div>
-    <p data-slot="questionnaire-error"></p>
-  </fieldset>
-  <div data-slot="questionnaire-actions">
-    <button data-slot="questionnaire-previous"></button><button data-slot="questionnaire-skip"></button>
-    <button data-slot="questionnaire-next"></button><button data-slot="questionnaire-submit"></button>
-  </div>
-</form>
-```
-
 #### Code Block (`code-block`)
 
 Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/code-block/. Full text: https://github.com/bl4ko/clanker-ui#code-block
@@ -3249,19 +2674,6 @@ Other options named in the docs: `data-timeout` any.
 
 Events: `code-block:copy` `{ value }`; `code-block:wrap` `{ value }`.
 
-```html
-<div data-slot="code-block" data-size="sm" data-variant="destructive">
-  <div data-slot="code-block-header">
-    <div data-slot="code-block-title"><svg data-lucide="file-text"></svg>app.ts</div>
-    <div data-slot="code-block-actions">
-      <button data-slot="code-block-wrap-button" aria-label="Wrap lines"><svg data-lucide="text-wrap"></svg></button>
-      <button data-slot="code-block-copy-button"></button>
-    </div>
-  </div>
-  <pre data-slot="code-block-content" data-numbered="true" data-start-line="14" data-wrap="true"><code data-slot="code-block-code">code</code></pre>
-</div>
-```
-
 #### Calendar (`calendar`)
 
 Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/calendar/. Full text: https://github.com/bl4ko/clanker-ui#calendar
@@ -3272,7 +2684,7 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 | `calendar-button-next` (kit adds) |  |  |
 | `calendar-button-previous` (kit adds) |  |  |
 | `calendar-caption-label` (kit adds) |  |  |
-| `calendar-day` |  | `data-disabled`, `data-hidden`, `data-outside`, `data-range-end`, `data-range-middle`, `data-range-start`, `data-selected`, `data-today` |
+| `calendar-day` (kit adds) |  | `data-disabled`, `data-hidden`, `data-outside`, `data-range-end`, `data-range-middle`, `data-range-start`, `data-selected`, `data-today` |
 | `calendar-dropdown` (kit adds) |  |  |
 | `calendar-dropdown-root` (kit adds) |  |  |
 | `calendar-dropdowns` (kit adds) |  |  |
@@ -3298,10 +2710,6 @@ Exports (import from the module that the page loads):
 - `calendarSetValue(el, value, { emit = false, month = true }?) → boolean`: `month` shows the month of the first selected date.
 - `calendarSetMonth(el, "2026-10") → boolean`
 
-Keyboard and focus:
-
-- Keyboard (APG date grid): arrows by day or week, Home and End to the week ends, PageUp and PageDown by month, Shift+PageUp and Shift+PageDown by year.
-
 ```html
 <div data-slot="calendar" data-mode="single" data-value="2026-10-28" data-month="2026-10" data-name="date" data-min="2026-10-01" data-disabled-weekdays="0 6"></div>
 ```
@@ -3326,25 +2734,6 @@ Exports (import from the module that the page loads):
 - `datePickerOpen(target) → boolean`
 - `datePickerClose(target, { restoreFocus = true }?) → boolean`
 
-Keyboard and focus:
-
-- Focus moves to the first part in the popup that can take focus (the previous-month button, or the next-month button when the previous one is disabled), as the Base UI popover does; Tab moves to the next-month button, then to the selected day or today.
-- Escape, an outside click, or focus leaving closes it; a single date selection closes it unless `data-keep-open`.
-- `data-date-picker-input` on an input (for example in an `input-group`, with an icon button as the trigger) shows the date, parses typed dates on `change`, and opens the popup on ArrowDown.
-
-```html
-<div data-slot="date-picker" data-placeholder="Pick a date" data-format="long">
-  <button type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><svg data-lucide="calendar"></svg><span data-slot="date-picker-value"></span></button>
-  <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose date">
-    <div data-slot="native-select-wrapper">
-      <select data-slot="native-select" data-date-picker-preset aria-label="Presets"><option value="">Select</option><option value="1">Tomorrow</option></select>
-      <svg data-lucide="chevron-down" data-slot="native-select-icon"></svg>
-    </div>
-    <div data-slot="calendar" data-name="due"></div>
-  </div>
-</div>
-```
-
 #### Chart (`chart`)
 
 Group `chart`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/chart/. Full text: https://github.com/bl4ko/clanker-ui#chart
@@ -3362,7 +2751,7 @@ Group `chart`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | `chart-probe` (kit adds) |  |  |
 | `chart-stat` |  |  |
 | `chart-stat-change` (kit adds) |  |  |
-| `chart-stat-delta` (kit adds) | `data-direction` any; `data-tone` any |  |
+| `chart-stat-delta` (kit adds) |  | `data-direction`, `data-tone` |
 | `chart-stat-description` (kit adds) |  |  |
 | `chart-stat-header` (kit adds) |  |  |
 | `chart-stat-label` (kit adds) |  |  |
@@ -3391,27 +2780,7 @@ Exports (import from the module that the page loads):
 - `sparkline(element, values, options?) → { update, destroy }`
 - `statTile(element, options) → { update(options), destroy() }`
 
-Keyboard and focus:
-
-- Keys that are not in `config` follow in data order.
-- The SVG is `role="application"` with `tabindex="0"`, so screen readers pass the arrow keys to it.
-- Keyboard: arrows move between points, Home, End, Escape.
-
 ```html
 <div id="visitors"></div>
 <div id="revenue-tile"></div>
-```
-
-```js
-import { chart, sparkline, statTile } from "./clanker-ui-chart.js"
-
-const view = chart(document.getElementById("visitors"), {
-  rows: [{ month: "January", desktop: 186, mobile: 80 }, { month: "February", desktop: 305, mobile: 200 }],
-  config: { desktop: { label: "Desktop", icon: "monitor" }, mobile: { label: "Mobile" } },
-}, { type: "bar", x: "month", label: "Visitors, 2024" })
-view.update({ rows: next }, { stack: true })
-view.destroy()
-
-statTile(el, { label: "Total revenue", value: 1250, format: { style: "currency", currency: "USD" }, delta: 0.125, period: "vs last month", trend: [820, 940, 1250] })
-sparkline(el, [980, 1020, 1284], { area: true, label: "Requests per minute" })
 ```

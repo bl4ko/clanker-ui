@@ -27,7 +27,7 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 | Part | Write | State |
 | --- | --- | --- |
-| `button` (root) | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` | `data-calendar-day-button`, `data-range-end`, `data-range-middle`, `data-range-start`, `data-selected-single` |
+| `button` (root) | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 
 Keyboard and focus:
 
@@ -350,7 +350,7 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 | Part | Write | State |
 | --- | --- | --- |
-| `input-group` (root) |  | `data-combobox-input` |
+| `input-group` (root) |  |  |
 | `input-group-addon` | `data-align` `block-end`, `block-start`, `inline-end`, `inline-start` |  |
 | `input-group-button` |  | `data-pressed` |
 | `input-group-control` |  |  |
@@ -467,11 +467,13 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | --- | --- | --- |
 | `checkbox` (root) | `data-checked` boolean; `data-indeterminate` boolean; `data-name` string | `data-state` |
 | `checkbox-group` |  |  |
-| `checkbox-indicator` |  |  |
-
-Other options named in the docs: `data-value` any.
+| `checkbox-indicator` (kit adds) |  |  |
 
 Events: `checkbox:change` `{ checked, value }`.
+
+Keyboard and focus:
+
+- Click, Space, and a `<label for>` or wrapping `<label>` toggle; Enter does nothing.
 
 ```html
 <button type="button" data-slot="checkbox" id="terms" data-name="terms" value="yes" data-checked data-required></button>
@@ -485,12 +487,17 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | Part | Write | State |
 | --- | --- | --- |
 | `radio-group` (root) | `data-name` string; `data-value` string |  |
-| `radio-group-indicator` |  |  |
+| `radio-group-indicator` (kit adds) |  |  |
 | `radio-group-item` |  | `data-checked`, `data-state` |
 
-Other options named in the docs: `data-checked` any; `data-indeterminate` any.
+Other options named in the docs: `data-checked` any.
 
 Events: `radio-group:change` `{ value }`.
+
+Keyboard and focus:
+
+- One tab stop (the checked item, else the first enabled one, with `data-composite-item-active`); arrows move and check, wrap, skip disabled items, and follow RTL; Home and End do nothing.
+- Click, Space, and a `<label for>` check an item; Enter does nothing.
 
 ```html
 <div data-slot="radio-group" data-name="plan" data-value="free" data-required>
@@ -504,21 +511,19 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 | Part | Write | State |
 | --- | --- | --- |
-| `switch` (root) | `data-size` `default`, `sm` | `data-checked`, `data-disabled`, `data-state`, `data-unchecked` |
+| `switch` (root) | `data-name` string; `data-size` `default`, `sm` | `data-checked`, `data-disabled`, `data-state`, `data-unchecked` |
 | `switch-thumb` (kit adds) |  | `data-checked`, `data-state`, `data-unchecked` |
 
-Other options named in the docs: `data-checked` any; `data-indeterminate` any; `data-value` any.
+Other options named in the docs: `data-checked` any; `data-readonly` any.
 
 Events: `switch:change` `{ checked, value }`.
 
 Keyboard and focus:
 
-- Click, Space, and a `<label for>` or wrapping `<label>` toggle.
-- Enter toggles only the switch.
-- Radio: one tab stop (the checked item, else the first enabled one, with `data-composite-item-active`); arrows move and check, wrap, skip disabled items, and follow RTL; Home and End do nothing.
+- Click, Space, Enter, and a `<label for>` or wrapping `<label>` toggle.
 
 ```html
-<button type="button" data-slot="switch" id="airplane" data-size="sm"></button>
+<button type="button" data-slot="switch" id="airplane" data-name="airplane" data-size="sm"></button>
 ```
 
 ### Slider (`slider`)
@@ -528,9 +533,9 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | Part | Write | State |
 | --- | --- | --- |
 | `slider` (root) | `data-large-step` number; `data-orientation` `horizontal`, `vertical` |  |
-| `slider-range` (kit adds) | `data-orientation` `horizontal`, `vertical` |  |
-| `slider-thumb` (kit adds) | `data-index` any |  |
-| `slider-track` (kit adds) | `data-orientation` `horizontal`, `vertical` |  |
+| `slider-range` (kit adds) |  | `data-orientation` |
+| `slider-thumb` (kit adds) |  | `data-index` |
+| `slider-track` (kit adds) |  | `data-orientation` |
 
 Keyboard and focus:
 
@@ -674,10 +679,6 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 Events: `toggle:change` `{ pressed, value }`.
 
-Keyboard and focus:
-
-- One tab stop, arrows (RTL aware), Home, End.
-
 ```html
 <button type="button" data-slot="toggle" data-variant="outline" data-size="sm" aria-pressed="false">Bold</button>
 ```
@@ -693,6 +694,10 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 Events: `toggle-group:change` `{ value }`.
 
+Keyboard and focus:
+
+- Toggle group: one tab stop, arrows (RTL aware), Home, End.
+
 ```html
 <div data-slot="toggle-group" data-type="single" data-variant="outline" data-size="sm" data-spacing="2" data-orientation="horizontal" data-value="bold,italic" data-disabled>
   <button type="button" data-slot="toggle-group-item" data-value="bold" aria-label="Bold"><svg data-lucide="bold"></svg></button>
@@ -707,7 +712,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | --- | --- | --- |
 | `dialog` (root) |  |  |
 | `dialog-close` |  |  |
-| `dialog-content` |  | `data-closed`, `data-command-dialog`, `data-open`, `data-state` |
+| `dialog-content` |  | `data-closed`, `data-open`, `data-state` |
 | `dialog-description` |  |  |
 | `dialog-footer` | `data-show-close-button` boolean |  |
 | `dialog-header` |  |  |
@@ -721,6 +726,10 @@ Exports (import from the module that the page loads):
 
 - `dialogOpen(target, { trigger }?) → boolean`: Works for `dialog`, `alert-dialog`, `sheet`, and `drawer`.
 - `dialogClose(target, reason = "api") → boolean`: `reason` goes to the `:close` event.
+
+Keyboard and focus:
+
+- A dialog, alert dialog, or sheet is a native `<dialog>` opened with `showModal()`: focus trap, Escape, scroll lock, inert page, focus returns to the trigger.
 
 ```html
 <div data-slot="dialog">
@@ -759,7 +768,7 @@ Events: `alert-dialog:open` `{ trigger }`; `alert-dialog:close` `{ reason }` (ca
 
 Keyboard and focus:
 
-- A native `<dialog>` opened with `showModal()`: focus trap, Escape, scroll lock, inert page, focus returns to the trigger.
+- A dialog, alert dialog, or sheet is a native `<dialog>` opened with `showModal()`: focus trap, Escape, scroll lock, inert page, focus returns to the trigger.
 
 ```html
 <div data-slot="alert-dialog">
@@ -798,6 +807,10 @@ Other options named in the docs: `data-show-close-button` `false`, `true`.
 
 Events: `sheet:open` `{ trigger }`; `sheet:close` `{ reason }` (cancelable).
 
+Keyboard and focus:
+
+- A dialog, alert dialog, or sheet is a native `<dialog>` opened with `showModal()`: focus trap, Escape, scroll lock, inert page, focus returns to the trigger.
+
 ```html
 <div data-slot="sheet">
   <button type="button" data-slot="button" data-variant="outline" data-sheet-trigger>Open</button>
@@ -825,7 +838,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | `drawer-footer` |  |  |
 | `drawer-header` |  |  |
 | `drawer-popup` |  | `data-ending-style`, `data-nested-drawer-open`, `data-nested-drawer-swiping`, `data-snap-points`, `data-starting-style`, `data-swipe-axis`, `data-swipe-direction`, `data-swiping` |
-| `drawer-swipe-handle` (kit adds) | `data-show-swipe-handle` any |  |
+| `drawer-swipe-handle` (kit adds) |  | `data-show-swipe-handle` |
 | `drawer-title` |  |  |
 | `drawer-viewport` |  | `data-ending-style`, `data-modal`, `data-snap-points`, `data-starting-style`, `data-swiping` |
 
@@ -903,7 +916,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | Part | Write | State |
 | --- | --- | --- |
 | `tooltip` (root) |  |  |
-| `tooltip-arrow` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` |  |
+| `tooltip-arrow` (kit adds) |  | `data-side` |
 | `tooltip-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
 | `tooltip-provider` | `data-delay-duration` any; `data-skip-delay-duration` any |  |
 
@@ -956,12 +969,14 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | --- | --- | --- |
 | `dropdown-menu` (root) |  |  |
 | `dropdown-menu-checkbox-item` | `data-checked` boolean | `data-disabled`, `data-inset` |
+| `dropdown-menu-checkbox-item-indicator` (kit adds) |  |  |
 | `dropdown-menu-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
 | `dropdown-menu-group` |  |  |
 | `dropdown-menu-item` | `data-variant` `destructive` | `data-disabled`, `data-inset` |
 | `dropdown-menu-label` |  | `data-inset` |
 | `dropdown-menu-radio-group` | `data-value` string |  |
 | `dropdown-menu-radio-item` | `data-checked` boolean; `data-value` string | `data-disabled`, `data-inset` |
+| `dropdown-menu-radio-item-indicator` (kit adds) |  |  |
 | `dropdown-menu-separator` |  |  |
 | `dropdown-menu-shortcut` |  |  |
 | `dropdown-menu-sub` |  |  |
@@ -1135,7 +1150,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | `navigation-menu-link` | `data-active` any; `data-close-on-click` any; `data-variant` `trigger` | `data-open`, `data-popup-open`, `data-state` |
 | `navigation-menu-list` |  |  |
 | `navigation-menu-popup` (kit adds) |  | `data-ending-style`, `data-starting-style` |
-| `navigation-menu-positioner` (kit adds) | `data-align` any; `data-side` `bottom` | `data-instant` |
+| `navigation-menu-positioner` (kit adds) |  | `data-align`, `data-instant`, `data-side` |
 | `navigation-menu-trigger` |  | `data-open`, `data-popup-open`, `data-state` |
 | `navigation-menu-viewport` (kit adds) |  |  |
 
@@ -1311,7 +1326,7 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 
 | Part | Write | State |
 | --- | --- | --- |
-| `accordion` (root) | `data-type` string |  |
+| `accordion` (root) | `data-type` `multiple`, `single` |  |
 | `accordion-content` |  | `data-closed`, `data-open`, `data-state` |
 | `accordion-item` | `data-state` string; `data-value` string |  |
 | `accordion-trigger` |  |  |
@@ -1898,7 +1913,7 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 | `calendar-button-next` (kit adds) |  |  |
 | `calendar-button-previous` (kit adds) |  |  |
 | `calendar-caption-label` (kit adds) |  |  |
-| `calendar-day` |  | `data-disabled`, `data-hidden`, `data-outside`, `data-range-end`, `data-range-middle`, `data-range-start`, `data-selected`, `data-today` |
+| `calendar-day` (kit adds) |  | `data-disabled`, `data-hidden`, `data-outside`, `data-range-end`, `data-range-middle`, `data-range-start`, `data-selected`, `data-today` |
 | `calendar-dropdown` (kit adds) |  |  |
 | `calendar-dropdown-root` (kit adds) |  |  |
 | `calendar-dropdowns` (kit adds) |  |  |
@@ -1988,7 +2003,7 @@ Group `chart`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | `chart-probe` (kit adds) |  |  |
 | `chart-stat` |  |  |
 | `chart-stat-change` (kit adds) |  |  |
-| `chart-stat-delta` (kit adds) | `data-direction` any; `data-tone` any |  |
+| `chart-stat-delta` (kit adds) |  | `data-direction`, `data-tone` |
 | `chart-stat-description` (kit adds) |  |  |
 | `chart-stat-header` (kit adds) |  |  |
 | `chart-stat-label` (kit adds) |  |  |

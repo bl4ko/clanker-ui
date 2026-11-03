@@ -47,7 +47,6 @@
   ],
   "allowed": [
     {"key": "menubar.demo-checked-state", "match": "^fullurls (checked state \\| checked \\| none|aria-checked \\| true \\| false) \\|", "steps": [23, 24, 25, 26, 27, 28], "reason": "the live demo item is fixed demo state (checked without onCheckedChange), so a click does not change it; the kit item changes its state as in an app"},
-    {"key": "menubar.demo-checked-tree", "match": "^ARIA tree \\(menu\\) \\| (\\d+) nodes \\| \\1 nodes \\| shadcn only: menuitemcheckbox \"Full URLs\" \\[checked\\]; ours only: menuitemcheckbox \"Full URLs\"$", "steps": [23, 24, 25, 26, 27, 28], "reason": "the live demo item is fixed demo state (checked without onCheckedChange), so a click does not change it; the kit item changes its state as in an app"},
-    {"key": "menubar.hover-switch-close-delay", "match": "^menu close delay \\| ", "steps": [21, 22], "engines": ["chromium"], "reason": "known defect, not accepted: https://github.com/bl4ko/clanker-ui/issues/1"}
+    {"key": "menubar.demo-checked-tree", "match": "^ARIA tree \\(menu\\) \\| (\\d+) nodes \\| \\1 nodes \\| shadcn only: menuitemcheckbox \"Full URLs\" \\[checked\\]; ours only: menuitemcheckbox \"Full URLs\"$", "steps": [23, 24, 25, 26, 27, 28], "reason": "the live demo item is fixed demo state (checked without onCheckedChange), so a click does not change it; the kit item changes its state as in an app"}
   ]
 }

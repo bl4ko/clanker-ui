@@ -4720,7 +4720,7 @@ function dropdownMenuShow(kind, content, { trigger = null, anchor, focus = "cont
     onDismiss: (reason, event) => {
       if (reason === "outside" && kind === "menubar" && event?.target instanceof Node && dropdownMenuRoot(content, kind).contains(event.target)) return
       if (reason === "outside" && modal && event) dropdownMenuSwallow = { at: event.timeStamp, target: event.target }
-      dropdownMenuHide(kind, content, { restoreFocus: reason !== "outside" || (modal && kind !== "menubar"), reason, instant: reason === "escape" ? "dismiss" : null })
+      dropdownMenuHide(kind, content, { restoreFocus: reason !== "outside" || modal, reason, instant: reason === "escape" ? "dismiss" : null })
     },
   })
   opener?.setAttribute("data-pressed", "")
@@ -5073,6 +5073,7 @@ document.addEventListener(
     const content = menubar ? menubarContentOf(trigger) : dialogFromTrigger(trigger, "dropdown-menu")?.content
     if (!content) return
     buttonType(trigger)
+    if (menubar) menubarLeave(trigger.closest('[data-slot="menubar"]'))
     dropdownMenuPress = { trigger, content, x: event.clientX, y: event.clientY }
     if (dropdownMenuSwallow?.target === event.target && event.timeStamp - dropdownMenuSwallow.at < 100) dropdownMenuPress.closed = true
     else if (isOpen(content)) {
@@ -5211,6 +5212,8 @@ define("context-menu-trigger", {
   },
 })
 
+const menubarLeaving = new WeakMap()
+
 function menubarTriggers(bar) {
   return own(bar, '[data-slot="menubar-trigger"]')
 }
@@ -5221,21 +5224,32 @@ function menubarContentOf(trigger) {
 }
 
 function menubarOpenContent(bar) {
+  const leaving = menubarLeaving.get(bar)?.content
   for (const trigger of menubarTriggers(bar)) {
     const content = menubarContentOf(trigger)
-    if (content && isOpen(content)) return content
+    if (content && content !== leaving && isOpen(content)) return content
   }
   return null
 }
 
-function menubarOpen(trigger, focus, instant = null) {
+function menubarLeave(bar) {
+  const leaving = menubarLeaving.get(bar)
+  if (!leaving) return
+  menubarLeaving.delete(bar)
+  clearTimeout(leaving.timer)
+  dropdownMenuHide("menubar", leaving.content, { restoreFocus: false, reason: "switch" })
+}
+
+function menubarOpen(trigger, focus, instant = null, delay = 0) {
   const bar = trigger.closest('[data-slot="menubar"]')
   const content = menubarContentOf(trigger)
   if (!bar || !content) return
+  menubarLeave(bar)
   const current = menubarOpenContent(bar)
   if (current && current !== content) {
     instant ??= "group"
-    dropdownMenuHide("menubar", current, { restoreFocus: false, reason: "switch" })
+    if (delay) menubarLeaving.set(bar, { content: current, timer: setTimeout(() => menubarLeave(bar), delay) })
+    else dropdownMenuHide("menubar", current, { restoreFocus: false, reason: "switch" })
   }
   setRoving(menubarTriggers(bar), trigger)
   dropdownMenuShow("menubar", content, { trigger, focus, instant })
@@ -5301,6 +5315,7 @@ define("menubar-trigger", {
   click(event, trigger) {
     const content = menubarContentOf(trigger)
     if (!content || disabled(trigger) || dropdownMenuHandled.has(event)) return
+    menubarLeave(trigger.closest('[data-slot="menubar"]'))
     if (isOpen(content)) dropdownMenuHide("menubar", content, { reason: "trigger" })
     else if (event.detail > 0 && menubarOpenContent(trigger.closest('[data-slot="menubar"]'))) menubarDismiss(trigger)
     else menubarOpen(trigger, event.detail === 0 ? "first" : "content", event.detail === 0 ? "click" : null)
@@ -5310,7 +5325,7 @@ define("menubar-trigger", {
     const bar = trigger.closest('[data-slot="menubar"]')
     const current = bar && menubarOpenContent(bar)
     if (!current || current === menubarContentOf(trigger)) return
-    menubarOpen(trigger, "content")
+    menubarOpen(trigger, "content", null, 45)
   },
 })
 

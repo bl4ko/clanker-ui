@@ -184,11 +184,10 @@ Put overrides in `app.css` after the kit files, without a layer.
 4. Charts: `clanker-ui-chart.min.js`, and `clanker-ui-chart.min.css` with group files (`clanker-ui.min.css` has the chart CSS).
 
 - Use the `.min` files together or the readable files together, never both: two cores attach every listener two times. Two group files never define the same slot; `clanker-ui.min.js` together with a group file stops with "already defined".
-- In the readable set, `clanker-ui.js` exports everything except the chart API (`clanker-ui-chart.js`). In the `.min` set, import the core API (`h`, `svg`, `icon`, `define`, `strings`, `theme`, `direction`, and the other core exports) from `./clanker-ui-core.min.js`. Import a component API (`toast`, `dialogOpen`, `calendarSetValue`, ...) from the file that the page loads: `clanker-ui.min.js` or the group file. `clanker-ui.min.js` and the group files do not export the core API again:
+- In the readable set, `clanker-ui.js` exports everything except the chart API (`clanker-ui-chart.js`). In the one-file `.min` set, `clanker-ui.min.js` exports the same names as `clanker-ui.js`: the core API (`h`, `svg`, `icon`, `define`, `strings`, `theme`, `direction`, and the other core exports) and the component API (`toast`, `dialogOpen`, `calendarSetValue`, ...). In the group set, import the core API from `./clanker-ui-core.min.js` and a component API from its group file. The group files do not export the core API again:
 
    ```js
-   import { h, icon, theme } from "./clanker-ui-core.min.js"
-   import { toast, dialogOpen } from "./clanker-ui.min.js"
+   import { h, icon, theme, toast, dialogOpen } from "./clanker-ui.min.js"
    ```
 - All files are external modules from `'self'` with static relative imports, so the strict CSP and Trusted Types need no change.
 

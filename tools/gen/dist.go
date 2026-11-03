@@ -1069,7 +1069,14 @@ func (t *groupTable) distJS(res *distResult, src string) error {
 			return err
 		}
 	}
-	return emit(distAll, importLine(slices.Sorted(maps.Keys(all)))+body(distJSGroups[1:]...))
+	var public []string
+	for _, st := range stmts {
+		if st.group == "core" && st.exported {
+			public = append(public, st.name)
+			all[st.name] = true
+		}
+	}
+	return emit(distAll, importLine(slices.Sorted(maps.Keys(all)))+"export { "+strings.Join(public, ", ")+" }\n"+body(distJSGroups[1:]...))
 }
 
 func label(st jsStmt) string {

@@ -1,3 +1,5 @@
+START = "/demo?only=forms,command"
+
 RECORD = """names => {
   window.__g1 = []
   const plain = (k, v) => v instanceof Element ? (v.id || v.localName) : v instanceof FormData ? undefined : v
@@ -610,13 +612,14 @@ def check_form(t):
     page.keyboard.type("123456")
     section.locator("label[for=form-terms]").click()
     assert section.locator("[aria-invalid=true]").count() == 0
+    url = page.url
     form.locator("button[type=submit]").click()
     submitted = recorded(page, "form:submit")
     assert len(submitted) == 1
     values = submitted[0]["values"]
     assert values == {"username": "shadcn", "email": "m@example.com", "plan": "pro", "stack": "next", "bio": "", "notify": "mentions", "code": "123456", "terms": "on"}, values
     assert page.locator("#form-result").inner_text().startswith("Submitted: ")
-    assert page.url.endswith("/demo")
+    assert page.url == url
     assert page.locator("#form-terms").get_attribute("aria-checked") == "true"
     form.locator("button[type=reset]").click()
     page.wait_for_function("() => document.querySelector('#form-plan').hasAttribute('data-placeholder')")

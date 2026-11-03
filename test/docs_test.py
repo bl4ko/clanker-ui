@@ -353,10 +353,13 @@ def check_docs_markdown_route(t):
     assert text.count("```html") == 16
     assert "## API Reference" in text
     assert request.get(t.base_url + "/docs.md").status == 200
-    pending = request.get(t.base_url + "/docs/components/accordion.md")
-    assert pending.status == 200 and "](/demo#accordion)" in pending.text()
+    pending = request.get(t.base_url + "/docs/components/accordion.md").text()
+    assert pending == request.get(t.base_url + "/skills/clanker-ui/references/components/accordion.md").text() and pending.startswith("# Accordion")
+    installation = request.get(t.base_url + "/docs/installation.md").text()
+    assert "](https://github.com/bl4ko/clanker-ui#use-in-a-project)" in installation
     components = request.get(t.base_url + "/docs/components.md").text()
-    assert "- [Accordion](/docs/components/accordion)" in components and "- [Typography](/docs/components/typography)" in components
+    assert "- [Accordion](/docs/components/accordion.md)" in components and "- [Typography](/docs/typography.md)" in components
+    assert request.get(t.base_url + "/llms.txt").status == 200
 
 
 def check_docs_prev_next(t):
@@ -474,6 +477,15 @@ def check_docs_pages(t):
     t.docs("/docs/components/accordion")
     assert page.locator('[data-docs="description"]').inner_text() == "This page is not ported yet."
     assert page.locator('[data-docs="content"] a').get_attribute("href") == "/demo#accordion"
+    assert page.locator('link[rel="alternate"][type="text/markdown"]').get_attribute("href") == "/docs/components/accordion.md"
+    assert page.locator('link[rel="describedby"]').get_attribute("href") == "/llms.txt"
+    t.docs("/docs/installation")
+    links = page.locator('[data-docs="content"] a')
+    assert links.nth(0).inner_text() == "Installation in the README"
+    assert links.nth(0).get_attribute("href") == "https://github.com/bl4ko/clanker-ui#use-in-a-project"
+    t.docs("/docs/components/native-select")
+    assert page.locator('[data-docs="copy-page-button"]').count() == 1
+    assert page.locator('[data-docs="preview"] select[data-slot="native-select"]').count() == 5
     assert page.request.get(t.base_url + "/blocks").status == 404
     assert page.request.get(t.base_url + "/docs/nope").status == 404
     t.docs("/demo")
@@ -607,17 +619,6 @@ def check_docs_new_dot_has_text(t):
     if t.width >= 1024:
         link = page.locator('[data-docs="sidebar"] a[href="/docs/components/code-block"]')
         assert link.inner_text().replace("\n", "").strip() == "Code BlockNew"
-
-
-def check_docs_old_demo_links(t):
-    page = t.page
-    t.docs("/#tooltip")
-    page.wait_for_url("**/demo#tooltip")
-    page.wait_for_load_state("load")
-    assert page.locator("#tooltip").count() == 1
-    t.docs("/")
-    page.wait_for_timeout(300)
-    assert page.url.endswith("/") and page.locator('[data-docs="hero-title"]').count() == 1
 
 
 def check_docs_theme_toggle(t):

@@ -1,3 +1,4 @@
+import re
 from urllib.parse import urlsplit
 
 START = "/"
@@ -111,6 +112,24 @@ def check_pages_demo(t):
     page.wait_for_function("() => document.querySelector('#dialog dialog[data-slot=\"dialog-content\"]').open")
     page.keyboard.press("Escape")
     page.wait_for_function("() => !document.querySelector('#dialog dialog[data-slot=\"dialog-content\"]').open")
+
+
+def check_pages_markdown(t):
+    export_only(t)
+    page = t.page
+    request = page.request
+    for name in COMPONENTS:
+        open_link(t, f"{base_path(t)}/docs/components/{name}/")
+        md = page.locator('link[rel="alternate"][type="text/markdown"]').get_attribute("href")
+        assert md == f"{base_path(t)}/docs/components/{name}.md", md
+        r = request.get(origin(t) + md)
+        assert r.status == 200 and "not ported yet" not in r.text(), md
+        llms = page.locator('link[rel="describedby"]').get_attribute("href")
+        assert llms == base_path(t) + "/llms.txt" and request.get(origin(t) + llms).status == 200
+    sitemap = request.get(t.base_url + "/sitemap.xml").text()
+    locs = re.findall(r"<loc>([^<]*)</loc>", sitemap)
+    assert len(locs) >= 5 and all(not loc.rstrip("/").endswith(("/accordion", "/installation")) for loc in locs), locs
+    assert request.get(t.base_url + "/robots.txt").status == 404
 
 
 def check_pages_not_found(t):

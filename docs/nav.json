@@ -96,30 +96,30 @@
       "title": "Get Started",
       "items": [
         {"title": "Introduction", "href": "/docs", "mobileOnly": true},
-        {"title": "Installation", "href": "/docs/installation"},
+        {"title": "Installation", "href": "/docs/installation", "readme": "use-in-a-project"},
         {"title": "Theming", "href": "/docs/theming"},
         {"title": "Typography", "href": "/docs/typography"},
-        {"title": "Dark Mode", "href": "/docs/dark-mode"},
-        {"title": "JavaScript", "href": "/docs/javascript"},
-        {"title": "Markup Conventions", "href": "/docs/markup"},
-        {"title": "Localization", "href": "/docs/localization"},
-        {"title": "Security", "href": "/docs/security"},
-        {"title": "RTL", "href": "/docs/rtl"}
+        {"title": "Dark Mode", "href": "/docs/dark-mode", "readme": "theme-toggle-and-switch"},
+        {"title": "JavaScript", "href": "/docs/javascript", "readme": "core-exports"},
+        {"title": "Markup Conventions", "href": "/docs/markup", "readme": "markup-conventions"},
+        {"title": "Localization", "href": "/docs/localization", "readme": "localization"},
+        {"title": "Security", "href": "/docs/security", "readme": "security-rules"},
+        {"title": "RTL", "href": "/docs/rtl", "readme": "direction"}
       ]
     },
     {
       "title": "Utilities",
       "items": [
-        {"title": "scroll-fade", "href": "/docs/utils/scroll-fade"},
-        {"title": "shimmer", "href": "/docs/utils/shimmer"}
+        {"title": "scroll-fade", "href": "/docs/utils/scroll-fade", "readme": "css-rules-for-components"},
+        {"title": "shimmer", "href": "/docs/utils/shimmer", "readme": "css-rules-for-components"}
       ]
     },
     {
       "title": "clanker-ui",
       "items": [
-        {"title": "Theme Switch", "href": "/docs/components/theme-switch"},
+        {"title": "Theme Switch", "href": "/docs/components/theme-switch", "readme": "theme-toggle-and-switch"},
         {"title": "Icons", "href": "/docs/components/icons"},
-        {"title": "Stat Tile and Sparkline", "href": "/docs/components/stat-tile"}
+        {"title": "Stat Tile and Sparkline", "href": "/docs/components/stat-tile", "readme": "stat-tile-and-sparkline"}
       ]
     }
   ]

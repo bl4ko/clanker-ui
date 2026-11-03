@@ -141,23 +141,17 @@ jobs:
           exit 1
       - name: Run checks
         if: matrix.only
+        env:
+          EXITFIRST: ${{ github.event_name == 'pull_request' }}
         run: |
           set +e
           OUT="$RUNNER_TEMP/out"
-          py=(uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I -u test/run.py --base-url http://127.0.0.1:8110 --engines "$ENGINE" --only "$ONLY" --themes "$THEMES")
+          py=(uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I -u test/run.py --base-url http://127.0.0.1:8110 --engines "$ENGINE" --only "$ONLY" --themes "$THEMES" --retry)
           if [ -n "$MODE" ]; then py+=("--$MODE"); fi
+          if [ "$EXITFIRST" = true ]; then py+=(--exitfirst); fi
           "${py[@]}" ${K:+-k "$K"} --out "$OUT/run" 2>&1 | tee "$OUT/run.log"
           code=${PIPESTATUS[0]}
-          [ "$code" -eq 0 ] && exit 0
-          failed=$(sed -nE 's/^FAIL \[[^]]+\] ([a-z0-9_]+\.[a-z0-9_]+)$/\1/p' "$OUT/run.log" | sort -u | paste -sd'|' -)
-          [ -n "$failed" ] || exit "$code"
-          echo "::warning::rerun of failed checks: $failed"
-          "${py[@]}" -k "^($failed)$" --out "$OUT/rerun" 2>&1 | tee "$OUT/rerun.log"
-          code=${PIPESTATUS[0]}
-          if [ "$code" -eq 0 ]; then
-            echo "::warning::rerun passed: $failed"
-            echo "Passed on rerun: \`${failed//|/\`, \`}\`" >> "$GITHUB_STEP_SUMMARY"
-          fi
+          sed -nE 's/^flaky (\[[^]]+\] [a-z0-9_]+\.[a-z0-9_]+).*/- Passed on retry: \1/p' "$OUT/run.log" >> "$GITHUB_STEP_SUMMARY"
           exit "$code"
       - name: Check exported pages
         if: matrix.pages && !cancelled()

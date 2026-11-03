@@ -9,6 +9,7 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -597,5 +598,92 @@ func TestOneActiveSection(t *testing.T) {
 		if len(active) > 1 {
 			t.Errorf("%s: Sections items %v are active", href, active)
 		}
+	}
+}
+
+func readmeAnchors(t *testing.T) map[string]bool {
+	t.Helper()
+	raw, err := os.ReadFile("README.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	out, fence := map[string]bool{}, false
+	for _, line := range strings.Split(string(raw), "\n") {
+		if strings.HasPrefix(line, "```") {
+			fence = !fence
+		}
+		if !fence && strings.HasPrefix(line, "#") {
+			out[slug(strings.TrimLeft(line, "#"))] = true
+		}
+	}
+	return out
+}
+
+func TestPendingPagesLinkTheReadme(t *testing.T) {
+	d := docsOf(t)
+	anchors := readmeAnchors(t)
+	h := newSite("").routes()
+	checked := 0
+	for _, href := range sortedKeys(d.titles) {
+		if !strings.HasPrefix(href, "/docs/") || d.pages[href] != nil || docRedirects[href] != "" || d.demoIDs[path.Base(href)] {
+			continue
+		}
+		checked++
+		u := d.readme[href]
+		anchor, ok := strings.CutPrefix(u, githubURL+"#")
+		if !ok || !anchors[anchor] {
+			t.Errorf("%s: no demo section and no README anchor (readme %q)", href, u)
+			continue
+		}
+		if body := request(t, h, http.MethodGet, href).Body.String(); !strings.Contains(body, `<a href="`+u+`">`+d.titles[href]+` in the README</a>`) {
+			t.Errorf("%s: page has no README link", href)
+		}
+		if md := request(t, h, http.MethodGet, href+".md").Body.String(); !strings.Contains(md, "]("+u+")") && d.refs[href] == nil {
+			t.Errorf("%s.md has no README link", href)
+		}
+	}
+	if checked < 11 {
+		t.Errorf("%d pending pages without a demo section, want at least 11", checked)
+	}
+	for href, u := range d.readme {
+		if anchor := strings.TrimPrefix(u, githubURL+"#"); !anchors[anchor] {
+			t.Errorf("%s: README has no heading for #%s", href, anchor)
+		}
+	}
+}
+
+var discoveryLink = regexp.MustCompile(`<link rel="(alternate" type="text/markdown|describedby)" href="([^"]+)">`)
+
+func TestDocsPagesLinkMarkdownAndLLMs(t *testing.T) {
+	d := docsOf(t)
+	h := newSite("").routes()
+	for _, href := range sortedKeys(d.titles) {
+		if !strings.HasPrefix(href, "/docs") || docRedirects[href] != "" {
+			continue
+		}
+		got := map[string]string{}
+		for _, m := range discoveryLink.FindAllStringSubmatch(request(t, h, http.MethodGet, href).Body.String(), -1) {
+			got[m[1]] = m[2]
+		}
+		if got["describedby"] != "/llms.txt" || got[`alternate" type="text/markdown`] != href+".md" {
+			t.Errorf("%s: discovery links %v", href, got)
+		}
+		md := request(t, h, http.MethodGet, href+".md")
+		if md.Code != http.StatusOK {
+			t.Errorf("%s.md: status %d", href, md.Code)
+		}
+		if ref, ok := d.refs[href]; ok && d.pages[href] == nil && md.Body.String() != string(ref) {
+			t.Errorf("%s.md is not the component reference", href)
+		}
+	}
+	if rec := request(t, h, http.MethodGet, "/llms.txt"); rec.Code != http.StatusOK || rec.Header().Get("Content-Type") != contentTypes[".txt"] {
+		t.Errorf("/llms.txt: status %d, Content-Type %q", rec.Code, rec.Header().Get("Content-Type"))
+	}
+	components := request(t, h, http.MethodGet, "/docs/components.md").Body.String()
+	if n, want := strings.Count(components, ".md)\n"), len(d.componentLinks(""))+len(d.componentLinks("new")); n != want {
+		t.Errorf("components.md has %d .md links, want %d", n, want)
+	}
+	if !strings.Contains(components, "- [Typography](/docs/typography.md)") {
+		t.Error("components.md does not follow the typography redirect")
 	}
 }

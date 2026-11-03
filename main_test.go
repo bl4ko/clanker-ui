@@ -59,7 +59,7 @@ func TestServesEmbeddedFiles(t *testing.T) {
 		t.Fatal(err)
 	}
 	var disk []string
-	for _, root := range []string{".", "demo", "dist", "docs"} {
+	for _, root := range []string{".", "demo", "dist", "docs", "skills/clanker-ui"} {
 		err := filepath.WalkDir(root, func(name string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
@@ -84,7 +84,7 @@ func TestServesEmbeddedFiles(t *testing.T) {
 	slices.Sort(names)
 	slices.Sort(disk)
 	if !slices.Equal(names, disk) {
-		t.Errorf("embedded files %v, want the kit, demo, and docs files %v", names, disk)
+		t.Errorf("embedded files %v, want the kit, demo, docs, and skill files %v", names, disk)
 	}
 	for _, want := range []string{"clanker-ui.css", "clanker-ui-a11y.css", "clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-theme.js", "clanker-ui-themes.css", "demo/index.html", "demo/demo.css", "demo/demo.js", "docs/nav.json", "docs/assets/docs.css", "docs/assets/docs.js", "docs/assets/docs-sidebar.js"} {
 		if !slices.Contains(names, want) {

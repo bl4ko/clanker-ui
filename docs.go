@@ -33,6 +33,7 @@ type navItem struct {
 	New        bool   `json:"new,omitempty"`
 	Hidden     bool   `json:"hidden,omitempty"`
 	MobileOnly bool   `json:"mobileOnly,omitempty"`
+	Readme     string `json:"readme,omitempty"`
 }
 
 type navGroup struct {
@@ -73,6 +74,8 @@ type docsSite struct {
 	hash     string
 	tmpl     *template.Template
 	demoIDs  map[string]bool
+	readme   map[string]string
+	refs     map[string][]byte
 	urls     siteURLs
 }
 
@@ -112,7 +115,7 @@ func loadDocs(fsys fs.FS) (*docsSite, error) {
 }
 
 func loadDocsAt(fsys fs.FS, urls siteURLs) (*docsSite, error) {
-	d := &docsSite{urls: urls, pages: map[string]*docPage{}, examples: map[string]*example{}, assets: map[string][]byte{}, titles: map[string]string{}, demoIDs: map[string]bool{}}
+	d := &docsSite{urls: urls, pages: map[string]*docPage{}, examples: map[string]*example{}, assets: map[string][]byte{}, titles: map[string]string{}, demoIDs: map[string]bool{}, readme: map[string]string{}, refs: map[string][]byte{}}
 	raw, err := fs.ReadFile(fsys, "docs/nav.json")
 	if err != nil {
 		return nil, err
@@ -138,6 +141,9 @@ func loadDocsAt(fsys fs.FS, urls siteURLs) (*docsSite, error) {
 		}
 	}
 	if err := d.loadContent(fsys); err != nil {
+		return nil, err
+	}
+	if err := d.loadRefs(fsys); err != nil {
 		return nil, err
 	}
 	d.hash = assetHash(d.assets)
@@ -218,6 +224,32 @@ func (d *docsSite) loadContent(fsys fs.FS) error {
 		}
 		return fmt.Errorf("%s: unexpected file in %s", name, contentRoot)
 	})
+}
+
+func (d *docsSite) loadRefs(fsys fs.FS) error {
+	raw, err := fs.ReadFile(fsys, exportExtras["clanker-ui.json"])
+	if errors.Is(err, fs.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	var cat struct {
+		Components []struct{ Docs, Readme string }
+	}
+	if err := json.Unmarshal(raw, &cat); err != nil {
+		return fmt.Errorf("catalog: %w", err)
+	}
+	for _, c := range cat.Components {
+		i := strings.Index(c.Docs, "/docs/")
+		if i < 0 {
+			return fmt.Errorf("catalog: docs URL %q has no /docs/", c.Docs)
+		}
+		if d.refs[strings.TrimSuffix(c.Docs[i:], "/")], err = fs.ReadFile(fsys, c.Readme); err != nil {
+			return fmt.Errorf("catalog: %w", err)
+		}
+	}
+	return nil
 }
 
 func (d *docsSite) loadPage(fsys fs.FS, name, href string) error {
@@ -310,6 +342,9 @@ func (d *docsSite) buildOrder() error {
 		}
 		if _, ok := d.titles[item.Href]; !ok || d.titles[item.Href] == "" {
 			d.titles[item.Href] = item.Title
+		}
+		if item.Readme != "" {
+			d.readme[item.Href] = githubURL + "#" + item.Readme
 		}
 	}
 	for href := range d.pages {
@@ -436,7 +471,11 @@ func (d *docsSite) markdown(p *docPage) string {
 		if tag.Name == "components" {
 			var list strings.Builder
 			for _, l := range d.componentLinks(tag.Arg) {
-				fmt.Fprintf(&list, "- [%s](%s)\n", l.Title, d.urls.abs(l.Href))
+				href := l.Href
+				if to, ok := docRedirects[href]; ok {
+					href = to
+				}
+				fmt.Fprintf(&list, "- [%s](%s)\n", l.Title, d.urls.abs(href+".md"))
 			}
 			return strings.TrimSuffix(list.String(), "\n")
 		}
@@ -458,11 +497,18 @@ func (d *docsSite) markdownFor(href string) ([]byte, bool) {
 	if !ok || !strings.HasPrefix(href, "/docs/") {
 		return nil, false
 	}
+	if ref, ok := d.refs[href]; ok {
+		return ref, true
+	}
 	demo := d.urls.abs("/demo")
 	if id := path.Base(href); d.demoIDs[id] {
 		demo += "#" + id
 	}
-	return fmt.Appendf(nil, "---\ntitle: %s\ndescription: This page is not ported yet.\n---\n\nThis page is not ported yet. See [%s in the component demo](%s).\n", title, title, demo), true
+	readme := ""
+	if u := d.readme[href]; u != "" {
+		readme = fmt.Sprintf(" Read [%s in the README](%s).", title, u)
+	}
+	return fmt.Appendf(nil, "---\ntitle: %s\ndescription: This page is not ported yet.\n---\n\nThis page is not ported yet.%s See [%s in the component demo](%s).\n", title, readme, title, demo), true
 }
 
 type pageView struct {
@@ -477,6 +523,8 @@ type pageView struct {
 	Prev, Next  *link
 	Modules     []string
 	Markdown    string
+	Alternate   string
+	Readme      string
 	DemoHref    string
 	GitHub      string
 	Status      int
@@ -561,14 +609,18 @@ func (d *docsSite) docView(href string) (*pageView, bool) {
 		v.Title = title
 		v.Description = "This page is not ported yet."
 		v.DemoHref = d.demoHref(href)
+		v.Readme = d.readme[href]
 		if !strings.HasPrefix(href, "/docs") {
 			v.Kind = "pending-area"
 			v.Prev, v.Next = nil, nil
+		} else {
+			v.Alternate = d.urls.url(href + ".md")
 		}
 		return v, true
 	}
 	v.Title, v.Description, v.Page = p.Title, p.Description, p
 	v.Markdown = d.urls.url(href + ".md")
+	v.Alternate = v.Markdown
 	seen := map[string]bool{}
 	for _, name := range p.Examples {
 		if d.examples[name].JS != "" && !seen[name] {

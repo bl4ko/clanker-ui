@@ -16,10 +16,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
+      actions: read
       contents: write
       id-token: write
       attestations: write
     steps:
+      - name: Require a green full CI run on main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          green=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$GITHUB_SHA&status=success&per_page=100" -q '[.workflow_runs[] | select(.event == "schedule" or .event == "workflow_dispatch")] | length')
+          [ "$green" -ge 1 ] || { echo "::error::$GITHUB_SHA has no successful full CI run (nightly or workflow_dispatch of ci.yml)"; exit 1; }
+          status=$(gh api "repos/$GITHUB_REPOSITORY/compare/main...$GITHUB_SHA" -q .status)
+          [[ "$status" =~ ^(identical|behind)$ ]] || { echo "::error::$GITHUB_SHA is not on main ($status)"; exit 1; }
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -33,7 +43,17 @@ jobs:
           set -euo pipefail
           shopt -s failglob
           [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]
-          name="clanker-ui-${GITHUB_REF_NAME#v}"
+          version="${GITHUB_REF_NAME#v}"
+          name="clanker-ui-$version"
+          skill=$(sed -nE 's/^  version: "([^"]+)"$/\1/p' skills/clanker-ui/SKILL.md)
+          catalog=$(sed -nE 's/^[[:space:]]*catalogVersion[[:space:]]*=[[:space:]]*"([^"]+)"$/\1/p' tools/gen/catalog.go)
+          links=$(grep -oE '(download/v|download v|clanker-ui-)[0-9]+\.[0-9]+\.[0-9]+[0-9A-Za-z.-]*' skills/clanker-ui/SKILL.md | sed -E 's/^(download\/v|download v|clanker-ui-)//; s/\.zip$//' | sort -u)
+          [ "$skill" = "$version" ] || { echo "::error::skills/clanker-ui/SKILL.md version is $skill, the tag is $GITHUB_REF_NAME"; exit 1; }
+          [ "$catalog" = "$version" ] || { echo "::error::catalogVersion in tools/gen/catalog.go is $catalog, the tag is $GITHUB_REF_NAME"; exit 1; }
+          [ "$links" = "$version" ] || { echo "::error::skills/clanker-ui/SKILL.md downloads ${links//$'\n'/ }, the tag is $GITHUB_REF_NAME"; exit 1; }
+          notes="$RUNNER_TEMP/notes.md"
+          awk -v v="$version" '/^## / { on = ($2 == v) ; next } on' CHANGELOG.md > "$notes"
+          grep -q '[^[:space:]]' "$notes" || { echo "::error::CHANGELOG.md has no section ## $version"; exit 1; }
           out="$RUNNER_TEMP/release"
           stage="$RUNNER_TEMP/stage/$name"
           mkdir -p "$out" "$stage/skills"
@@ -42,7 +62,10 @@ jobs:
           cp -R dist "$stage/"
           cp -R skills/clanker-ui "$stage/skills/"
           cp "${kit[@]}" dist/* "$out/"
-          (cd "$RUNNER_TEMP/stage" && zip -qrX "$out/$name.zip" "$name")
+          epoch=$(git log -1 --format=%ct)
+          chmod -R u=rwX,go=rX "$stage"
+          find "$stage" -exec touch -h -d "@$epoch" {} +
+          (cd "$RUNNER_TEMP/stage" && find "$name" -print | LC_ALL=C sort | TZ=UTC zip -qX -@ "$out/$name.zip")
           (cd "$out" && sha256sum -- * > SHA256SUMS && cat SHA256SUMS)
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
@@ -50,7 +73,7 @@ jobs:
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" "$RUNNER_TEMP"/release/* --repo "$GITHUB_REPOSITORY" --verify-tag --generate-notes --title "$GITHUB_REF_NAME"
+        run: gh release create "$GITHUB_REF_NAME" "$RUNNER_TEMP"/release/* --repo "$GITHUB_REPOSITORY" --verify-tag --notes-file "$RUNNER_TEMP/notes.md" --title "$GITHUB_REF_NAME"
 
   pages:
     needs: release

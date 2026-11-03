@@ -240,3 +240,11 @@ def check_select(t):
 | `t.engine`, `t.theme`, `t.width`, `t.mobile`, `t.reduced_motion`, `t.rtl` | Current run. |
 
 A `<dialog>` keeps `open` during its exit animation. To find if a popup is visible, use `data-state` or its geometry.
+
+## Release
+
+1. In one pull request: move the `Unreleased` entries of `CHANGELOG.md` to a new section `## X.Y.Z - YYYY-MM-DD`, set `catalogVersion` in `tools/gen/catalog.go` and `version` and the download links in `skills/clanker-ui/SKILL.md` to `X.Y.Z`, and run `go run ./tools/gen dist`.
+2. Merge it. Run the full matrix on that commit (`gh workflow run ci.yml --ref main`) and wait until it is green, or use a commit with a green nightly run.
+3. Push a signed tag on that commit: `git tag -s vX.Y.Z -m vX.Y.Z && git push origin vX.Y.Z`.
+
+`release.yml` stops before it packs when the tagged commit has no successful full run of `ci.yml` (event `schedule` or `workflow_dispatch`) or is not on `main`, when the tag does not agree with `catalogVersion`, the skill version, or the skill download links, or when `CHANGELOG.md` has no section for the version. That section becomes the release notes. The zip is reproducible: all files get the commit time, a sorted file list, and fixed modes, so a second pack of the tag gives the same `SHA256SUMS`. The release then starts `pages.yml` on the tag. `pages.yml` builds only on a `v*` tag, so the docs site always shows a release.

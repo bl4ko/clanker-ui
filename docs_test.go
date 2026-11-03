@@ -9,7 +9,6 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -352,7 +351,7 @@ func TestMarkdownRenderer(t *testing.T) {
 	if !strings.Contains(html, `<h2 id="with-icon"><a href="#with-icon"><span>With <code>Icon</code></span><span aria-hidden="true">#</span></a></h2>`) {
 		t.Errorf("heading markup: %s", html)
 	}
-	for _, bad := range []string{"[x](javascript:alert(1))", "[x](data:text/html,x)", "{{example}}", "{{components \"old\"}}", "```js\nx", "| a | b |\n| --- | --- |\n| 1 |", "   indented"} {
+	for _, bad := range []string{"[x](javascript:alert(1))", "[x](data:text/html,x)", "{{example}}", "{{components \"old\"}}", "```js\nx", "| a | b |\n| --- | --- |\n| 1 |", "    indented"} {
 		if _, _, err := renderMarkdown(bad, mdHooks{example: func(string, map[string]string) (string, error) { return "", nil }, components: func(string) (string, error) { return "", nil }, code: func(string, string, string) (string, error) { return "", nil }}); err == nil {
 			t.Errorf("accepted %q", bad)
 		}
@@ -619,36 +618,49 @@ func readmeAnchors(t *testing.T) map[string]bool {
 	return out
 }
 
-func TestPendingPagesLinkTheReadme(t *testing.T) {
+func TestEveryDocsPageIsReal(t *testing.T) {
 	d := docsOf(t)
 	anchors := readmeAnchors(t)
 	h := newSite("").routes()
-	checked := 0
+	generated := 0
 	for _, href := range sortedKeys(d.titles) {
-		if !strings.HasPrefix(href, "/docs/") || d.pages[href] != nil || docRedirects[href] != "" || d.demoIDs[path.Base(href)] {
+		if !strings.HasPrefix(href, "/docs") || docRedirects[href] != "" {
 			continue
 		}
-		checked++
-		u := d.readme[href]
-		anchor, ok := strings.CutPrefix(u, githubURL+"#")
-		if !ok || !anchors[anchor] {
-			t.Errorf("%s: no demo section and no README anchor (readme %q)", href, u)
+		p := d.pages[href]
+		if p == nil {
+			t.Errorf("%s: no page", href)
 			continue
 		}
-		if body := request(t, h, http.MethodGet, href).Body.String(); !strings.Contains(body, `<a href="`+u+`">`+d.titles[href]+` in the README</a>`) {
-			t.Errorf("%s: page has no README link", href)
+		body := request(t, h, http.MethodGet, href).Body.String()
+		md := request(t, h, http.MethodGet, href+".md").Body.String()
+		if strings.Contains(body, "not ported yet") || strings.Contains(md, "not ported yet") {
+			t.Errorf("%s: page is a stub", href)
 		}
-		if md := request(t, h, http.MethodGet, href+".md").Body.String(); !strings.Contains(md, "]("+u+")") && d.refs[href] == nil {
-			t.Errorf("%s.md has no README link", href)
+		if c := d.components[href]; c != nil && p.Section != "" {
+			generated++
+			for _, want := range []string{"## Installation", "## Usage", "## API Reference", "{{example "} {
+				if !strings.Contains(p.Source, want) {
+					t.Errorf("%s: generated page has no %q", href, want)
+				}
+			}
+			if !strings.Contains(body, `<div data-docs="content" id="`+p.Section+`">`) || !strings.Contains(body, "/demo.js\"></script>") {
+				t.Errorf("%s: page does not host the demo section %s", href, p.Section)
+			}
 		}
 	}
-	if checked < 11 {
-		t.Errorf("%d pending pages without a demo section, want at least 11", checked)
+	if generated < 60 {
+		t.Errorf("%d generated component pages with a demo, want at least 60", generated)
 	}
 	for href, u := range d.readme {
-		if anchor := strings.TrimPrefix(u, githubURL+"#"); !anchors[anchor] {
+		anchor := strings.TrimPrefix(u, githubURL+"#")
+		if !anchors[anchor] {
 			t.Errorf("%s: README has no heading for #%s", href, anchor)
 		}
+	}
+	install := d.pages["/docs/installation"]
+	if install == nil || !strings.Contains(install.Source, "## Override the kit") || strings.Contains(install.Source, "## Markup conventions") {
+		t.Error("/docs/installation does not have the README section and its subsections")
 	}
 }
 

@@ -180,7 +180,7 @@ func sourceSignature(fsys fs.FS) (string, error) {
 	add := func(name string, info fs.FileInfo) {
 		fmt.Fprintf(h, "%s\x00%d\x00%d\n", name, info.Size(), info.ModTime().UnixNano())
 	}
-	names := []string{"demo/index.html"}
+	names := []string{"demo/index.html", "demo/demo.css", "demo/demo.js", exportExtras["clanker-ui.json"]}
 	for name := range kitFiles {
 		names = append(names, name)
 	}
@@ -338,7 +338,7 @@ func (s *site) serve(w http.ResponseWriter, r *http.Request) {
 		s.file(w, r, from)
 		return
 	}
-	s.pending(w, r)
+	s.notFound(w, r)
 }
 
 func (s *site) file(w http.ResponseWriter, r *http.Request, name string) {

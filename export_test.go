@@ -90,6 +90,9 @@ func TestExportSite(t *testing.T) {
 				if err != nil {
 					return err
 				}
+				if strings.Contains(string(b), "not ported yet") {
+					t.Errorf("%s is a stub page", rel)
+				}
 				switch path.Ext(rel) {
 				case ".html":
 					pages++

@@ -28,12 +28,13 @@ var (
 )
 
 type navItem struct {
-	Title      string `json:"title"`
-	Href       string `json:"href"`
-	New        bool   `json:"new,omitempty"`
-	Hidden     bool   `json:"hidden,omitempty"`
-	MobileOnly bool   `json:"mobileOnly,omitempty"`
-	Readme     string `json:"readme,omitempty"`
+	Title       string `json:"title"`
+	Href        string `json:"href"`
+	New         bool   `json:"new,omitempty"`
+	Hidden      bool   `json:"hidden,omitempty"`
+	MobileOnly  bool   `json:"mobileOnly,omitempty"`
+	Readme      string `json:"readme,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 type navGroup struct {
@@ -51,7 +52,9 @@ type navConfig struct {
 type example struct {
 	Name string
 	HTML string
+	Code string
 	JS   string
+	Demo bool
 }
 
 type docPage struct {
@@ -62,21 +65,30 @@ type docPage struct {
 	HTML        template.HTML
 	TOC         []tocEntry
 	Examples    []string
+	Section     string
+	Styles      []string
+	Scripts     []string
+	reserved    []string
 }
 
 type docsSite struct {
-	nav      navConfig
-	pages    map[string]*docPage
-	examples map[string]*example
-	order    []navItem
-	titles   map[string]string
-	assets   map[string][]byte
-	hash     string
-	tmpl     *template.Template
-	demoIDs  map[string]bool
-	readme   map[string]string
-	refs     map[string][]byte
-	urls     siteURLs
+	nav          navConfig
+	pages        map[string]*docPage
+	examples     map[string]*example
+	order        []navItem
+	titles       map[string]string
+	assets       map[string][]byte
+	hash         string
+	tmpl         *template.Template
+	readme       map[string]string
+	descriptions map[string]string
+	refs         map[string][]byte
+	urls         siteURLs
+	catalog      catalogData
+	components   map[string]*catalogComponent
+	demo         map[string]*demoSection
+	anchors      map[string]string
+	sectionPage  map[string]string
 }
 
 type siteURLs struct {
@@ -115,7 +127,7 @@ func loadDocs(fsys fs.FS) (*docsSite, error) {
 }
 
 func loadDocsAt(fsys fs.FS, urls siteURLs) (*docsSite, error) {
-	d := &docsSite{urls: urls, pages: map[string]*docPage{}, examples: map[string]*example{}, assets: map[string][]byte{}, titles: map[string]string{}, demoIDs: map[string]bool{}, readme: map[string]string{}, refs: map[string][]byte{}}
+	d := &docsSite{urls: urls, pages: map[string]*docPage{}, examples: map[string]*example{}, assets: map[string][]byte{}, titles: map[string]string{}, readme: map[string]string{}, descriptions: map[string]string{}, refs: map[string][]byte{}}
 	raw, err := fs.ReadFile(fsys, "docs/nav.json")
 	if err != nil {
 		return nil, err
@@ -143,20 +155,21 @@ func loadDocsAt(fsys fs.FS, urls siteURLs) (*docsSite, error) {
 	if err := d.loadContent(fsys); err != nil {
 		return nil, err
 	}
-	if err := d.loadRefs(fsys); err != nil {
+	if err := d.loadCatalog(fsys); err != nil {
+		return nil, err
+	}
+	if err := d.loadDemoAssets(fsys); err != nil {
 		return nil, err
 	}
 	d.hash = assetHash(d.assets)
-	if demo, err := fs.ReadFile(fsys, "demo/index.html"); err == nil {
-		for _, m := range regexp.MustCompile(`<section id="([a-z0-9-]+)"`).FindAllSubmatch(demo, -1) {
-			d.demoIDs[string(m[1])] = true
-		}
-	}
 	d.tmpl, err = template.New("").Funcs(template.FuncMap{"asset": d.assetURL, "url": d.urls.url, "csp": func() string { return cspMeta }}).ParseFS(fsys, "docs/templates/*.html")
 	if err != nil {
 		return nil, err
 	}
 	if err := d.buildOrder(); err != nil {
+		return nil, err
+	}
+	if err := d.generatePages(fsys); err != nil {
 		return nil, err
 	}
 	for _, href := range sortedKeys(d.pages) {
@@ -226,28 +239,19 @@ func (d *docsSite) loadContent(fsys fs.FS) error {
 	})
 }
 
-func (d *docsSite) loadRefs(fsys fs.FS) error {
-	raw, err := fs.ReadFile(fsys, exportExtras["clanker-ui.json"])
-	if errors.Is(err, fs.ErrNotExist) {
-		return nil
-	}
-	if err != nil {
-		return err
-	}
-	var cat struct {
-		Components []struct{ Docs, Readme string }
-	}
-	if err := json.Unmarshal(raw, &cat); err != nil {
-		return fmt.Errorf("catalog: %w", err)
-	}
-	for _, c := range cat.Components {
-		i := strings.Index(c.Docs, "/docs/")
-		if i < 0 {
-			return fmt.Errorf("catalog: docs URL %q has no /docs/", c.Docs)
+func (d *docsSite) loadDemoAssets(fsys fs.FS) error {
+	for name, rewrite := range map[string]bool{"demo.css": false, "demo.js": true} {
+		b, err := fs.ReadFile(fsys, "demo/"+name)
+		if errors.Is(err, fs.ErrNotExist) {
+			continue
 		}
-		if d.refs[strings.TrimSuffix(c.Docs[i:], "/")], err = fs.ReadFile(fsys, c.Readme); err != nil {
-			return fmt.Errorf("catalog: %w", err)
+		if err != nil {
+			return err
 		}
+		if rewrite {
+			b = bytes.ReplaceAll(b, []byte(`from "../clanker-ui`), []byte(`from "./clanker-ui`))
+		}
+		d.assets[name] = b
 	}
 	return nil
 }
@@ -346,6 +350,9 @@ func (d *docsSite) buildOrder() error {
 		if item.Readme != "" {
 			d.readme[item.Href] = githubURL + "#" + item.Readme
 		}
+		if item.Description != "" {
+			d.descriptions[item.Href] = item.Description
+		}
 	}
 	for href := range d.pages {
 		if _, ok := d.titles[href]; !ok {
@@ -371,6 +378,7 @@ func (d *docsSite) renderPage(p *docPage) error {
 			p.Examples = append(p.Examples, name)
 			return d.exec("example", exampleView(ex, attrs))
 		},
+		reserved: p.reserved,
 		components: func(variant string) (string, error) {
 			links := d.componentLinks(variant)
 			for i := range links {
@@ -416,7 +424,7 @@ type exampleData struct {
 }
 
 func exampleView(ex *example, attrs map[string]string) exampleData {
-	lines := highlightHTML("html", ex.HTML)
+	lines := highlightHTML("html", ex.source())
 	v := exampleData{
 		Name:    ex.Name,
 		Align:   attrs["align"],
@@ -425,11 +433,21 @@ func exampleView(ex *example, attrs map[string]string) exampleData {
 		Teaser:  lines[:min(3, len(lines))],
 		Code:    codeView{Lang: "html", Lines: lines},
 	}
+	if ex.Demo && v.Height == "" {
+		v.Height = "demo"
+	}
 	if ex.JS != "" {
 		v.Code.Title = ex.Name + ".html"
 		v.Script = &codeView{Lang: "js", Title: ex.Name + ".js", Lines: highlightHTML("js", ex.JS)}
 	}
 	return v
+}
+
+func (ex *example) source() string {
+	if ex.Code != "" {
+		return ex.Code
+	}
+	return ex.HTML
 }
 
 type link struct {
@@ -480,7 +498,7 @@ func (d *docsSite) markdown(p *docPage) string {
 			return strings.TrimSuffix(list.String(), "\n")
 		}
 		ex := d.examples[tag.Arg]
-		out := "```html\n" + ex.HTML + "\n```"
+		out := "```html\n" + ex.source() + "\n```"
 		if ex.JS != "" {
 			out += "\n\n```js\n" + ex.JS + "\n```"
 		}
@@ -493,22 +511,7 @@ func (d *docsSite) markdownFor(href string) ([]byte, bool) {
 	if p := d.pages[href]; p != nil {
 		return []byte(d.markdown(p)), true
 	}
-	title, ok := d.titles[href]
-	if !ok || !strings.HasPrefix(href, "/docs/") {
-		return nil, false
-	}
-	if ref, ok := d.refs[href]; ok {
-		return ref, true
-	}
-	demo := d.urls.abs("/demo")
-	if id := path.Base(href); d.demoIDs[id] {
-		demo += "#" + id
-	}
-	readme := ""
-	if u := d.readme[href]; u != "" {
-		readme = fmt.Sprintf(" Read [%s in the README](%s).", title, u)
-	}
-	return fmt.Appendf(nil, "---\ntitle: %s\ndescription: This page is not ported yet.\n---\n\nThis page is not ported yet.%s See [%s in the component demo](%s).\n", title, readme, title, demo), true
+	return nil, false
 }
 
 type pageView struct {
@@ -522,10 +525,9 @@ type pageView struct {
 	Page        *docPage
 	Prev, Next  *link
 	Modules     []string
+	Styles      []string
 	Markdown    string
 	Alternate   string
-	Readme      string
-	DemoHref    string
 	GitHub      string
 	Status      int
 }
@@ -590,37 +592,16 @@ func (d *docsSite) view(kind, current string) *pageView {
 	return v
 }
 
-func (d *docsSite) demoHref(href string) string {
-	if id := path.Base(href); d.demoIDs[id] {
-		return d.urls.url("/demo") + "#" + id
-	}
-	return d.urls.url("/demo")
-}
-
 func (d *docsSite) docView(href string) (*pageView, bool) {
 	p := d.pages[href]
-	title, inNav := d.titles[href]
-	if p == nil && !inNav {
+	if p == nil {
 		return nil, false
 	}
 	v := d.view("docs", href)
-	if p == nil {
-		v.Kind = "pending"
-		v.Title = title
-		v.Description = "This page is not ported yet."
-		v.DemoHref = d.demoHref(href)
-		v.Readme = d.readme[href]
-		if !strings.HasPrefix(href, "/docs") {
-			v.Kind = "pending-area"
-			v.Prev, v.Next = nil, nil
-		} else {
-			v.Alternate = d.urls.url(href + ".md")
-		}
-		return v, true
-	}
 	v.Title, v.Description, v.Page = p.Title, p.Description, p
 	v.Markdown = d.urls.url(href + ".md")
 	v.Alternate = v.Markdown
+	v.Styles = p.Styles
 	seen := map[string]bool{}
 	for _, name := range p.Examples {
 		if d.examples[name].JS != "" && !seen[name] {
@@ -628,6 +609,7 @@ func (d *docsSite) docView(href string) (*pageView, bool) {
 			v.Modules = append(v.Modules, name+".js")
 		}
 	}
+	v.Modules = append(v.Modules, p.Scripts...)
 	return v, true
 }
 
@@ -693,17 +675,10 @@ func (s *site) doc(w http.ResponseWriter, r *http.Request) {
 	d.render(w, r, v)
 }
 
-func (s *site) pending(w http.ResponseWriter, r *http.Request) {
-	d := s.docsOr500(w)
-	if d == nil {
-		return
-	}
-	v, ok := d.docView(r.URL.Path)
-	if !ok {
+func (s *site) notFound(w http.ResponseWriter, r *http.Request) {
+	if d := s.docsOr500(w); d != nil {
 		d.notFound(w, r)
-		return
 	}
-	d.render(w, r, v)
 }
 
 func (d *docsSite) notFound(w http.ResponseWriter, r *http.Request) {

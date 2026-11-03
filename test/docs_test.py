@@ -353,10 +353,10 @@ def check_docs_markdown_route(t):
     assert text.count("```html") == 16
     assert "## API Reference" in text
     assert request.get(t.base_url + "/docs.md").status == 200
-    pending = request.get(t.base_url + "/docs/components/accordion.md").text()
-    assert pending == request.get(t.base_url + "/skills/clanker-ui/references/components/accordion.md").text() and pending.startswith("# Accordion")
+    accordion = request.get(t.base_url + "/docs/components/accordion.md").text()
+    assert accordion.startswith("---\ntitle: Accordion\n") and "## API Reference" in accordion and "```html\n" in accordion and "not ported yet" not in accordion
     installation = request.get(t.base_url + "/docs/installation.md").text()
-    assert "](https://github.com/bl4ko/clanker-ui#use-in-a-project)" in installation
+    assert "## Override the kit" in installation and "not ported yet" not in installation
     components = request.get(t.base_url + "/docs/components.md").text()
     assert "- [Accordion](/docs/components/accordion.md)" in components and "- [Typography](/docs/typography.md)" in components
     assert request.get(t.base_url + "/llms.txt").status == 200
@@ -475,14 +475,12 @@ def check_docs_pages(t):
     assert lists.nth(1).locator("a").count() == 67
     t.shot("components", page)
     t.docs("/docs/components/accordion")
-    assert page.locator('[data-docs="description"]').inner_text() == "This page is not ported yet."
-    assert page.locator('[data-docs="content"] a').get_attribute("href") == "/demo#accordion"
+    assert "not ported yet" not in page.locator('[data-docs="article"]').inner_text()
+    assert page.locator('#accordion [data-docs="preview"] [data-slot="accordion"]').count() > 0
     assert page.locator('link[rel="alternate"][type="text/markdown"]').get_attribute("href") == "/docs/components/accordion.md"
     assert page.locator('link[rel="describedby"]').get_attribute("href") == "/llms.txt"
     t.docs("/docs/installation")
-    links = page.locator('[data-docs="content"] a')
-    assert links.nth(0).inner_text() == "Installation in the README"
-    assert links.nth(0).get_attribute("href") == "https://github.com/bl4ko/clanker-ui#use-in-a-project"
+    assert page.locator('[data-docs="content"] h2', has_text="Override the kit").count() == 1
     t.docs("/docs/components/native-select")
     assert page.locator('[data-docs="copy-page-button"]').count() == 1
     assert page.locator('[data-docs="preview"] select[data-slot="native-select"]').count() == 5
@@ -641,3 +639,25 @@ def check_docs_theme_toggle(t):
     assert page.evaluate(is_dark) == dark and page.evaluate("localStorage.getItem('clanker-ui-theme')") == ("dark" if dark else "light")
     page.reload(wait_until="load")
     assert page.evaluate(is_dark) == dark and page.evaluate(meta)
+
+
+def check_docs_component_demos(t):
+    page = t.page
+    t.docs("/docs/components/dialog")
+    trigger = page.locator('#dialog [data-docs="preview"] [data-dialog-trigger]').first
+    trigger.scroll_into_view_if_needed()
+    trigger.click()
+    page.wait_for_function("""() => document.querySelector('#dialog-demo dialog').open""")
+    page.keyboard.press("Escape")
+    page.wait_for_function("""() => !document.querySelector('#dialog-demo dialog').open""")
+    t.docs("/docs/components/chart")
+    page.wait_for_function("""() => document.querySelectorAll('#chart [data-docs="preview"] [data-slot="chart"] svg').length >= 10""")
+    t.docs("/docs/components/table")
+    page.wait_for_function("""() => document.querySelectorAll('#table-data tbody tr[data-id]').length === 5""")
+    t.docs("/docs/components/stat-tile")
+    page.wait_for_function("""() => document.querySelectorAll('#chart-stat [data-slot="chart-stat"]').length >= 7""")
+    t.docs("/docs/components/sidebar")
+    assert page.locator("#sidebar-main").count() == 1
+    assert page.evaluate("""() => getComputedStyle(document.querySelector('[data-docs="sidebar-wrapper"]')).backgroundColor""") == "rgba(0, 0, 0, 0)"
+    t.docs("/docs/components/icons")
+    page.wait_for_function("""() => document.querySelectorAll('#icon-grid svg').length > 100""")

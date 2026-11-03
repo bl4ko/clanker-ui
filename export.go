@@ -128,6 +128,9 @@ func (e *exporter) docPages() error {
 		if _, ok := docRedirects[href]; ok {
 			continue
 		}
+		if href != "/" && e.d.pages[href] == nil {
+			continue
+		}
 		if err := e.copy(href, pageFile(href)); err != nil {
 			return err
 		}

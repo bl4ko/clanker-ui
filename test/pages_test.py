@@ -128,8 +128,24 @@ def check_pages_markdown(t):
         assert llms == base_path(t) + "/llms.txt" and request.get(origin(t) + llms).status == 200
     sitemap = request.get(t.base_url + "/sitemap.xml").text()
     locs = re.findall(r"<loc>([^<]*)</loc>", sitemap)
-    assert len(locs) >= 5 and all(not loc.rstrip("/").endswith(("/accordion", "/installation")) for loc in locs), locs
+    assert len(locs) >= 80 and all(any(loc.rstrip("/").endswith(end) for loc in locs) for end in ("/accordion", "/installation", "/chart", "/icons", "/stat-tile")), locs
     assert request.get(t.base_url + "/robots.txt").status == 404
+
+
+def check_pages_every_page(t):
+    export_only(t)
+    if t.width != 1280:
+        t.skip("one width visits every page")
+    page = t.page
+    sitemap = page.request.get(t.base_url + "/sitemap.xml").text()
+    locs = [urlsplit(loc).path for loc in re.findall(r"<loc>([^<]*)</loc>", sitemap) if "/docs" in loc]
+    assert len(locs) >= 80, locs
+    for href in locs:
+        open_link(t, href)
+        assert page.locator('[data-docs="title"]').count() == 1, href
+        assert "not ported yet" not in page.locator('[data-docs="main"]').inner_text(), href
+        assert page.locator('link[rel="alternate"][type="text/markdown"]').count() == 1, href
+        assert page.locator('link[rel="describedby"]').count() == 1, href
 
 
 def check_pages_not_found(t):

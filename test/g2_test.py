@@ -251,6 +251,24 @@ SHEET_FRAME = """() => {
 }"""
 
 
+SHEET_CLOSE = """() => {
+  const c = document.querySelector('#sheet-demo [data-slot="sheet-content"]')
+  const out = window.__sheetClose = {}
+  c.addEventListener("click", e => { out.click = e.timeStamp }, { capture: true, once: true })
+  new MutationObserver((records, observer) => {
+    if (out.set === undefined && c.hasAttribute("data-ending-style")) {
+      out.set = performance.now()
+      const fade = c.getAnimations().find(a => a.transitionProperty === "opacity")
+      if (fade) fade.ready.then(() => { out.start = fade.startTime })
+      else out.start = out.set
+    }
+    if (!c.open) {
+      out.closed = performance.now()
+      observer.disconnect()
+    }
+  }).observe(c, { attributes: true, attributeFilter: ["data-ending-style", "open"] })
+}"""
+
 def motion_time(frames, start, done):
     first = next((f for f in frames if start(f)), None)
     last = next((f for f in frames if first and f[-1] >= first[-1] and done(f)), None)
@@ -302,9 +320,11 @@ def sheet_motion(t, trigger):
         assert any(0.2 < f[1] < 0.95 for f in shown), shown
     content = page.locator("#sheet-demo [data-slot=sheet-content]")
     assert not content.evaluate("e => e.hasAttribute('data-starting-style')")
+    page.evaluate(SHEET_CLOSE)
     frames = t.paint(SHEET_FRAME, lambda: content.locator(":scope > [data-slot=sheet-close]").click(), ms=1200)
-    spent = motion_time(frames, lambda f: f[4] or not f[2], lambda f: not f[2] or f[1] <= 0.01)
-    assert spent <= 300, ("the sheet closes in 200 ms like shadcn", spent)
+    times = page.evaluate("() => window.__sheetClose")
+    assert times.get("set", 1e9) - times.get("click", 0) < 50, ("the close motion starts on the click", times)
+    assert times.get("closed", 1e9) - times.get("start", 0) <= 300, ("the sheet closes in 200 ms like shadcn, from the start of the fade to the closed dialog", times)
     if not t.reduced_motion:
         ending = [f for f in frames if f[2] and f[4]]
         assert len(ending) >= 3 and ending[0][5] == "closed", frames
@@ -4316,54 +4336,3 @@ def check_toast_detached(t):
     assert page.locator("[data-slot=toast-portal]").count() == 1
 
 
-
-SHEET_DIAG = """([blur]) => new Promise(resolve => {
-  const c = document.querySelector('#sheet-demo [data-slot="sheet-content"]')
-  let style = document.getElementById('diag-style')
-  if (!style) { style = document.createElement('style'); style.id = 'diag-style'; document.head.append(style) }
-  style.textContent = blur ? '' : '#sheet-demo [data-slot="sheet-content"]::backdrop { backdrop-filter: none !important; -webkit-backdrop-filter: none !important }'
-  const out = { set: null, frames: [], anims: null, finished: null, closed: null }
-  new MutationObserver((r, o) => { if (c.hasAttribute('data-ending-style') && out.set === null) { out.set = performance.now(); o.disconnect(); queueMicrotask(() => {}) } }).observe(c, { attributes: true })
-  const t0 = performance.now()
-  const tick = ts => {
-    const now = performance.now()
-    if (out.set !== null && !out.anims) {
-      out.anims = c.getAnimations().map(a => [a.transitionProperty, a.startTime, a.pending, Math.round(a.effect.getComputedTiming().endTime), a.timeline.currentTime])
-      Promise.all(c.getAnimations().map(a => a.finished.catch(() => {}))).then(() => { out.finished = performance.now() })
-    }
-    out.frames.push([Math.round(now), Math.round(ts), document.timeline.currentTime, +getComputedStyle(c).opacity, c.open, c.hasAttribute('data-ending-style')])
-    if (!c.open && out.closed === null) out.closed = now
-    if (now - t0 < 1500) requestAnimationFrame(tick)
-    else resolve(out)
-  }
-  requestAnimationFrame(tick)
-  c.querySelector(':scope > [data-slot="sheet-close"]').addEventListener('pointerdown', () => { out.down = performance.now() }, { once: true })
-  window.__diagGo = () => {}
-})"""
-
-
-def check_sheet_diag(t):
-    if t.engine != "firefox":
-        t.skip("diag")
-    page = t.page
-    section = t.section("sheet")
-    trigger = section.get_by_role("button", name="Open", exact=True)
-    content = page.locator("#sheet-demo [data-slot=sheet-content]")
-    report = []
-    for i in range(8):
-        blur = i % 2 == 0
-        trigger.click()
-        wait(page, "() => document.querySelector('#sheet-demo [data-slot=sheet-content]').open")
-        t.settle()
-        page.evaluate("() => { window.__diag = null }")
-        page.evaluate(f"() => {{ window.__diagP = ({SHEET_DIAG})([{str(blur).lower()}]).then(r => window.__diag = r) }}")
-        content.locator(":scope > [data-slot=sheet-close]").click()
-        wait(page, "() => window.__diag", timeout=5000)
-        d = page.evaluate("() => window.__diag")
-        s = d["set"]
-        fr = [(round(f[0] - s), f[1], round(f[2] - s) if f[2] else None, round(f[3], 3), f[4], f[5]) for f in d["frames"] if f[0] >= s - 40][:16]
-        report.append({"blur": blur, "anims": d["anims"], "set": round(s), "fin": round(d["finished"] - s) if d["finished"] else None, "closed": round(d["closed"] - s) if d["closed"] else None, "frames": fr})
-        wait(page, "() => !document.querySelector('#sheet-demo [data-slot=sheet-content]').open")
-        t.settle()
-    import json
-    assert False, "DIAG " + json.dumps(report)

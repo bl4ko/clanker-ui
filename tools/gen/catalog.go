@@ -24,6 +24,7 @@ const (
 	catalogFile    = "skills/clanker-ui/references/clanker-ui.json"
 	catalogSchema  = "skills/clanker-ui/references/clanker-ui.schema.json"
 	catalogComps   = "skills/clanker-ui/references/components.md"
+	catalogCompDir = "skills/clanker-ui/references/components"
 	catalogEvents  = "skills/clanker-ui/references/events.md"
 	catalogLLMs    = "docs/llms-full.txt"
 	catalogExDir   = "tools/gen/examples"
@@ -147,10 +148,29 @@ func catalogMain(args []string) error {
 		}
 		fmt.Println(path)
 	}
+	for _, name := range extraCompFiles(*root, files) {
+		if *check {
+			stale = append(stale, name)
+		} else if err := os.Remove(filepath.Join(*root, name)); err != nil {
+			return err
+		}
+	}
 	if len(stale) > 0 {
 		return fmt.Errorf("stale: %s (run go run ./tools/gen catalog)", strings.Join(stale, ", "))
 	}
 	return nil
+}
+
+func extraCompFiles(root string, files map[string][]byte) []string {
+	found, _ := filepath.Glob(filepath.Join(root, catalogCompDir, "*.md"))
+	var out []string
+	for _, f := range found {
+		name := catalogCompDir + "/" + filepath.Base(f)
+		if files[name] == nil {
+			out = append(out, name)
+		}
+	}
+	return out
 }
 
 type mdSection struct {
@@ -637,7 +657,14 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 		return nil, nil, err
 	}
 	files := map[string][]byte{catalogFile: jsonOut}
-	files[catalogComps] = []byte(catalogMarkdown(cat, 1))
+	files[catalogComps] = []byte(catalogIndex(cat))
+	for _, c := range cat.Components {
+		full := b.fullText(c.Name, sections)
+		if full == "" {
+			return nil, nil, fmt.Errorf("%s: no README section", c.Name)
+		}
+		files[c.Readme] = []byte(componentFile(cat, c, full))
+	}
 	files[catalogEvents] = []byte(eventsMarkdown(cat))
 	files[catalogLLMs] = []byte(llmsFull(cat, sections))
 	return files, cat, nil
@@ -1329,7 +1356,8 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 		Parts:          []catPart{},
 		PartAttributes: d.partAttr.idJSON(),
 		Docs:           catalogSite + "/docs/components/" + page + "/",
-		DocsMarkdown:   catalogSite + "/docs/components/" + page + ".md",
+		DocsMarkdown:   catalogSite + "/" + catalogCompDir + "/" + c + ".md",
+		Readme:         catalogCompDir + "/" + c + ".md",
 	}
 	if comp.Events == nil {
 		comp.Events = []catEvent{}
@@ -1338,9 +1366,6 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 		comp.Needs = append(comp.Needs, "core")
 	}
 	comp.Needs = append(comp.Needs, b.t.needs[c]...)
-	if len(d.sections) > 0 {
-		comp.Readme = catalogRepo + "#" + d.sections[0].slug
-	}
 	for _, e := range exports {
 		if e.Component == c {
 			comp.Exports = append(comp.Exports, e.Name)
@@ -1497,114 +1522,217 @@ func attrsText(a catAttrs) string {
 	return strings.Join(out, "; ")
 }
 
+func codeList(s []string) string {
+	if len(s) == 0 {
+		return ""
+	}
+	return "`" + strings.Join(s, "`, `") + "`"
+}
+
 func cell(s string) string {
 	return strings.ReplaceAll(s, "|", `\|`)
 }
 
-func catalogMarkdown(cat *catalog, level int) string {
-	h := func(n int) string { return strings.Repeat("#", level+n-1) + " " }
+const catalogLegend = "**Parts** lists each `data-slot`. **Write** = attributes you may author. **State** = attributes the kit sets; style on them, never write them. **Kit adds** = parts the kit creates; do not write them. **Part attributes** go on an element of another component (for example a `button`) to give it this component's behavior."
+
+func globalsMarkdown(cat *catalog) string {
+	return "Global attributes (any element): " + attrsText(cat.Global) + "; `data-string-<key>` (localized label override).\n\n"
+}
+
+func catalogIndex(cat *catalog) string {
 	var b strings.Builder
-	if level == 1 {
-		fmt.Fprintf(&b, "%sclanker-ui components\n\n", h(1))
-		fmt.Fprintf(&b, "Generated from `%s` (same directory) by `go run ./tools/gen catalog`. Version %s, shadcn `%s`, Base UI %s.\n\n", filepath.Base(catalogFile), cat.Version, cat.Shadcn[:7], cat.BaseUI)
-		fmt.Fprintf(&b, "%sGroups\n\n", h(2))
-		b.WriteString("Each group has `clanker-ui-<group>.min.css` and (except core CSS-only parts) `clanker-ui-<group>.min.js`. Load `core` always, then the group of each component and the groups in its **Needs**.\n\n")
-		b.WriteString("| Group | CSS | JS | Components |\n| --- | --- | --- | --- |\n")
-		for _, g := range cat.Groups {
-			js := g.JS
-			if g.Name == "core" {
-				js = "clanker-ui-core.min.js"
-			}
-			fmt.Fprintf(&b, "| `%s` | `%s` | `%s` | %s |\n", g.Name, g.CSS, js, strings.Join(g.Components, ", "))
+	b.WriteString("# clanker-ui components\n\n")
+	fmt.Fprintf(&b, "Generated from `%s` (same directory) by `go run ./tools/gen catalog`. Version %s, shadcn `%s`, Base UI %s.\n\n", filepath.Base(catalogFile), cat.Version, cat.Shadcn[:7], cat.BaseUI)
+	b.WriteString("## Groups\n\n")
+	b.WriteString("Each group has `clanker-ui-<group>.min.css` and (except core CSS-only parts) `clanker-ui-<group>.min.js`. Load `core` always, then the group of each component and the groups in its **Needs**.\n\n")
+	b.WriteString("| Group | Components |\n| --- | --- |\n")
+	for _, g := range cat.Groups {
+		var links []string
+		for _, c := range g.Components {
+			links = append(links, "["+c+"](components/"+c+".md)")
 		}
-		b.WriteString("\n")
+		fmt.Fprintf(&b, "| `%s` | %s |\n", g.Name, strings.Join(links, ", "))
 	}
-	b.WriteString("Global attributes (any element): ")
-	b.WriteString(attrsText(cat.Global))
-	b.WriteString("; `data-string-<key>` (localized label override).\n\n")
-	fmt.Fprintf(&b, "%sComponents\n\n", h(2))
-	b.WriteString("Per component: **Parts** lists each `data-slot`. **Write** = attributes you may author. **State** = attributes the kit sets; style on them, never write them. **Kit adds** = parts the kit creates; do not write them. **Part attributes** go on an element of another component (for example a `button`) to give it this component's behavior.\n\n")
+	b.WriteString("\n")
+	b.WriteString(globalsMarkdown(cat))
+	b.WriteString("## Component files\n\n")
+	b.WriteString("Each component has one file, `components/<name>.md`: group, needs, parts, attributes, events, exports, and the full text from the README. " + catalogLegend + "\n")
+	return b.String()
+}
+
+func catalogMarkdown(cat *catalog) string {
+	var b strings.Builder
+	b.WriteString(globalsMarkdown(cat))
+	b.WriteString("### Components\n\nPer component: " + catalogLegend + "\n\n")
 	for _, c := range cat.Components {
-		fmt.Fprintf(&b, "%s%s (`%s`)\n\n", h(3), c.Title, c.Name)
-		needs := "none"
-		if len(c.Needs) > 0 {
-			needs = "`" + strings.Join(c.Needs, "`, `") + "`"
+		componentMarkdown(&b, cat, c, "####")
+	}
+	return strings.TrimRight(b.String(), "\n") + "\n"
+}
+
+func componentFile(cat *catalog, c catComponent, full string) string {
+	var b strings.Builder
+	c.Keyboard, c.Script, c.Docs = nil, "", ""
+	componentMarkdown(&b, cat, c, "#")
+	b.WriteString("## Full text\n\n")
+	b.WriteString(full)
+	return strings.TrimRight(b.String(), "\n") + "\n"
+}
+
+func componentMarkdown(b *strings.Builder, cat *catalog, c catComponent, heading string) {
+	fmt.Fprintf(b, "%s %s (`%s`)\n\n", heading, c.Title, c.Name)
+	needs := "none"
+	if len(c.Needs) > 0 {
+		needs = "`" + strings.Join(c.Needs, "`, `") + "`"
+	}
+	js := "CSS only"
+	if c.JS {
+		js = "CSS and JS"
+	}
+	fmt.Fprintf(b, "Group `%s`. Needs %s. %s.", c.Group, needs, js)
+	if c.Docs != "" {
+		fmt.Fprintf(b, " Docs: %s.", c.Docs)
+	}
+	b.WriteString("\n\n")
+	if c.SameAs != "" {
+		fmt.Fprintf(b, "Same component as `%s`: use its markup, events, and API.\n\n", c.SameAs)
+	}
+	var rows, other, kit []string
+	for _, p := range c.Parts {
+		name := "`" + p.Slot + "`"
+		if p.Root {
+			name += " (root)"
 		}
-		js := "CSS only"
-		if c.JS {
-			js = "CSS and JS"
-		}
-		fmt.Fprintf(&b, "Group `%s`. Needs %s. %s. Docs: %s. Full text: %s\n\n", c.Group, needs, js, c.Docs, c.Readme)
-		if c.SameAs != "" {
-			fmt.Fprintf(&b, "Same component as `%s`: use its markup, events, and API.\n\n", c.SameAs)
-		}
-		b.WriteString("| Part | Write | State |\n| --- | --- | --- |\n")
-		for _, p := range c.Parts {
-			name := "`" + p.Slot + "`"
-			if p.Root {
-				name += " (root)"
-			}
+		switch {
+		case len(p.Attributes) > 0 || len(p.State) > 0:
 			if p.KitAdds {
 				name += " (kit adds)"
 			}
-			st := ""
-			if len(p.State) > 0 {
-				st = "`" + strings.Join(p.State, "`, `") + "`"
-			}
-			fmt.Fprintf(&b, "| %s | %s | %s |\n", name, cell(attrsText(p.Attributes)), st)
-		}
-		b.WriteString("\n")
-		if len(c.PartAttributes) > 0 {
-			fmt.Fprintf(&b, "Part attributes: %s.\n\n", attrsText(c.PartAttributes))
-		}
-		if len(c.Options) > 0 {
-			fmt.Fprintf(&b, "Other options named in the docs: %s.\n\n", attrsText(c.Options))
-		}
-		if len(c.Events) > 0 {
-			var ev []string
-			for _, e := range c.Events {
-				s := "`" + e.Name + "`"
-				if len(e.Detail) > 0 {
-					s += " `{ " + strings.Join(e.Detail, ", ") + " }`"
-				}
-				if e.Cancelable {
-					s += " (cancelable)"
-				}
-				ev = append(ev, s)
-			}
-			fmt.Fprintf(&b, "Events: %s.\n\n", strings.Join(ev, "; "))
-		}
-		if len(c.Exports) > 0 {
-			fmt.Fprintf(&b, "Exports (readable set: `%s`; `.min` set: %s):\n\n", readableModule(c.Group), minModules(c.Group))
-			for _, name := range c.Exports {
-				for _, e := range cat.Exports {
-					if e.Name == name {
-						fmt.Fprintf(&b, "- `%s`", e.Signature)
-						if e.Notes != "" {
-							fmt.Fprintf(&b, ": %s", e.Notes)
-						}
-						b.WriteString("\n")
-					}
-				}
-			}
-			b.WriteString("\n")
-		}
-		if len(c.Keyboard) > 0 {
-			b.WriteString("Keyboard and focus:\n\n")
-			for _, k := range c.Keyboard {
-				fmt.Fprintf(&b, "- %s\n", k)
-			}
-			b.WriteString("\n")
-		}
-		if level == 2 && strings.HasPrefix(c.ExampleSource, "README.md#") {
-			continue
-		}
-		fmt.Fprintf(&b, "```html\n%s\n```\n\n", c.Example)
-		if c.Script != "" {
-			fmt.Fprintf(&b, "```js\n%s\n```\n\n", c.Script)
+			rows = append(rows, fmt.Sprintf("| %s | %s | %s |\n", name, cell(attrsText(p.Attributes)), codeList(p.State)))
+		case p.KitAdds:
+			kit = append(kit, name)
+		default:
+			other = append(other, name)
 		}
 	}
-	return strings.TrimRight(b.String(), "\n") + "\n"
+	if len(rows) > 0 {
+		b.WriteString("| Part | Write | State |\n| --- | --- | --- |\n" + strings.Join(rows, "") + "\n")
+	}
+	if len(other) > 0 {
+		fmt.Fprintf(b, "Other parts: %s.\n\n", strings.Join(other, ", "))
+	}
+	if len(kit) > 0 {
+		fmt.Fprintf(b, "Kit adds: %s.\n\n", strings.Join(kit, ", "))
+	}
+	if len(c.PartAttributes) > 0 {
+		fmt.Fprintf(b, "Part attributes: %s.\n\n", attrsText(c.PartAttributes))
+	}
+	if len(c.Options) > 0 {
+		fmt.Fprintf(b, "Other options named in the docs: %s.\n\n", attrsText(c.Options))
+	}
+	if len(c.Events) > 0 {
+		var ev []string
+		for _, e := range c.Events {
+			s := "`" + e.Name + "`"
+			if len(e.Detail) > 0 {
+				s += " `{ " + strings.Join(e.Detail, ", ") + " }`"
+			}
+			if e.Cancelable {
+				s += " (cancelable)"
+			}
+			ev = append(ev, s)
+		}
+		fmt.Fprintf(b, "Events: %s.\n\n", strings.Join(ev, "; "))
+	}
+	if len(c.Exports) > 0 {
+		fmt.Fprintf(b, "Exports (readable set: `%s`; `.min` set: %s):\n\n", readableModule(c.Group), minModules(c.Group))
+		for _, name := range c.Exports {
+			for _, e := range cat.Exports {
+				if e.Name == name {
+					fmt.Fprintf(b, "- `%s`", e.Signature)
+					if e.Notes != "" {
+						fmt.Fprintf(b, ": %s", e.Notes)
+					}
+					b.WriteString("\n")
+				}
+			}
+		}
+		b.WriteString("\n")
+	}
+	if len(c.Keyboard) > 0 {
+		b.WriteString("Keyboard and focus:\n\n")
+		for _, k := range c.Keyboard {
+			fmt.Fprintf(b, "- %s\n", k)
+		}
+		b.WriteString("\n")
+	}
+	if !strings.HasPrefix(c.ExampleSource, "README.md#") {
+		fmt.Fprintf(b, "```html\n%s\n```\n\n", c.Example)
+	}
+	if c.Script != "" {
+		fmt.Fprintf(b, "```js\n%s\n```\n\n", c.Script)
+	}
+}
+
+var mdLocalLink = regexp.MustCompile(`\]\(#([^)\s]+)\)`)
+
+func (b *catalogBuild) componentText(s mdSection, c string) string {
+	var blocks []string
+	fence := false
+	for _, line := range strings.SplitAfter(s.body, "\n") {
+		trim := strings.TrimSpace(line)
+		if len(blocks) == 0 || !fence && trim != "" && line[0] != ' ' && line[0] != '\t' {
+			blocks = append(blocks, "")
+		}
+		blocks[len(blocks)-1] += line
+		if strings.HasPrefix(trim, "```") {
+			fence = !fence
+		}
+	}
+	var out strings.Builder
+	for _, blk := range blocks {
+		first, _, _ := strings.Cut(blk, "\n")
+		switch {
+		case strings.HasPrefix(first, "```html"):
+			if len(s.comps) > 1 && !strings.Contains(blk, `data-slot="`+c) {
+				continue
+			}
+		case strings.HasPrefix(first, "```"):
+		case strings.HasPrefix(first, "- Changed with the move to Base UI"), !slices.Contains(b.lineComps(s, first), c):
+			continue
+		}
+		out.WriteString(blk)
+	}
+	return out.String()
+}
+
+func (b *catalogBuild) fullText(c string, sections []mdSection) string {
+	files := map[string]string{}
+	for _, s := range sections {
+		if len(s.comps) > 0 {
+			files[s.slug] = s.comps[0]
+		}
+	}
+	link := func(m string) string {
+		slug := mdLocalLink.FindStringSubmatch(m)[1]
+		if f, ok := files[slug]; ok {
+			return "](" + f + ".md)"
+		}
+		return "](" + catalogRepo + "#" + slug + ")"
+	}
+	var out strings.Builder
+	for i := 0; i < len(sections); i++ {
+		if !slices.Contains(sections[i].comps, c) {
+			continue
+		}
+		top := sections[i].level
+		for j := i; j < len(sections) && (j == i || sections[j].level > top); j++ {
+			s := sections[j]
+			fmt.Fprintf(&out, "%s %s\n%s", strings.Repeat("#", 3+s.level-top), s.title, mdLocalLink.ReplaceAllStringFunc(b.componentText(s, c), link))
+			i = j
+		}
+	}
+	return out.String()
 }
 
 func eventsMarkdown(cat *catalog) string {
@@ -1653,7 +1781,7 @@ func llmsFull(cat *catalog, sections []mdSection) string {
 		c.Keyboard, c.Exports, c.Script = nil, nil, ""
 		short.Components = append(short.Components, c)
 	}
-	b.WriteString(catalogMarkdown(&short, 2))
+	b.WriteString(catalogMarkdown(&short))
 	return b.String()
 }
 

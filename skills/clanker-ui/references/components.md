@@ -1090,7 +1090,6 @@ Keyboard and focus:
 - The content has `data-open` or `data-closed`, `data-side`, `data-align`, and `data-instant` (`click` when a keyboard key or a right click opened it, `group` when a menubar switched menus, `dismiss` after Escape); the trigger has `data-popup-open` and `data-pressed` while open.
 - Keyboard per WAI-ARIA APG with Base UI focus looping: Enter, Space, and ArrowDown open at the first item, ArrowUp at the last; arrows wrap from the last item to the first and back, Home, End, typeahead; arrows also stop on disabled items (highlighted, `aria-disabled`, they do not run), as in Base UI; ArrowRight opens a sub menu, ArrowLeft closes it (mirrored in RTL); Escape closes the innermost menu; Tab closes all.
 - Typeahead continues across a space (`New W` reaches "New Window"); Space activates the item only when no typeahead is in progress.
-- Roving focus; ArrowLeft and ArrowRight in an open menu open the next menu and focus its popup (no item highlighted; ArrowDown goes to the first item); while a menu is open, hover switches menus and moves focus to the new menu; a click on another trigger while a menu is open, or on the open trigger, closes the menus and focuses that trigger.
 
 ```html
 <div data-slot="menubar">

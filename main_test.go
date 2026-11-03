@@ -415,6 +415,52 @@ func TestDemoNavTargetsExist(t *testing.T) {
 	}
 }
 
+func TestDemoOnly(t *testing.T) {
+	page, err := os.ReadFile("demo/index.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	html := string(page)
+	h := newSite("").routes()
+	if got, want := len(demoBlock.FindAllString(html, -1)), strings.Count(html, "\n      <section ")+strings.Count(html, `data-demo="category"`); got != want {
+		t.Fatalf("the filter finds %d sections and categories, want %d", got, want)
+	}
+	rec := request(t, h, http.MethodGet, "/demo?only=forms,dialog")
+	body := rec.Body.String()
+	if rec.Code != http.StatusOK || rec.Header().Get("Content-Type") != contentTypes[".html"] {
+		t.Fatalf("status %d, Content-Type %q", rec.Code, rec.Header().Get("Content-Type"))
+	}
+	checkSecurityHeaders(t, rec, "/demo?only=forms,dialog")
+	if regexp.MustCompile(`(data-demo="(?:section|hero)") hidden>`).ReplaceAllString(body, "$1>") != html {
+		t.Error("the filtered demo differs from demo/index.html in more than hidden attributes")
+	}
+	for id, hidden := range map[string]bool{"introduction": true, "button": false, "native-select": false, "dialog": false, "drawer": true, "chart-stat": true} {
+		if got := strings.Contains(body, `<section id="`+id+`" data-demo="section" hidden>`) || strings.Contains(body, `<section id="`+id+`" data-demo="hero" hidden>`); got != hidden {
+			t.Errorf("section %s hidden: %v, want %v", id, got, hidden)
+		}
+	}
+	if strings.Contains(body, `data-demo="category" hidden`) {
+		t.Error("a category heading is hidden")
+	}
+	for _, path := range []string{"/demo?only=nope", "/demo?only=forms,"} {
+		if rec := request(t, h, http.MethodGet, path); rec.Code != http.StatusBadRequest {
+			t.Errorf("%s: status %d, want 400", path, rec.Code)
+		}
+	}
+	files, _ := filepath.Glob("test/*_test.py")
+	for _, f := range files {
+		src, err := os.ReadFile(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, m := range regexp.MustCompile(`(?m)^START = "(/demo\?[^"]*)"`).FindAllStringSubmatch(string(src), -1) {
+			if rec := request(t, h, http.MethodGet, m[1]); rec.Code != http.StatusOK {
+				t.Errorf("%s START %s: status %d", f, m[1], rec.Code)
+			}
+		}
+	}
+}
+
 func TestAccordionClosedPanelsHidden(t *testing.T) {
 	page, err := os.ReadFile("demo/index.html")
 	if err != nil {

@@ -683,7 +683,8 @@ function chartCartesian(c) {
       for (let k = 0; k < vals.length; k++) {
         let v = vals[k][i] ?? 0
         if (stack === "expand") v = total ? v / total : 0
-        if (v >= 0) {
+        if (!Number.isFinite(v >= 0 ? pos + v : neg + v)) spans[k][i] = null
+        else if (v >= 0) {
           spans[k][i] = [pos, pos + v]
           pos += v
         } else {
@@ -767,7 +768,8 @@ function chartCartesian(c) {
   const pt = top
   const pw = Math.max(1, W - left - right)
   const ph = Math.max(1, H - top - bottom)
-  const v2p = horizontal ? v => pl + ((v - scale.lo) / (scale.hi - scale.lo)) * pw : v => pt + ph - ((v - scale.lo) / (scale.hi - scale.lo)) * ph
+  const span = scale.hi / 2 - scale.lo / 2
+  const v2p = horizontal ? v => pl + ((v / 2 - scale.lo / 2) / span) * pw : v => pt + ph - ((v / 2 - scale.lo / 2) / span) * ph
   const clen = horizontal ? ph : pw
   const cstart = horizontal ? pt : pl
   const band = clen / Math.max(1, n)

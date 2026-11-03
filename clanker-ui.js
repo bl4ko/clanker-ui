@@ -105,7 +105,9 @@ const ICONS = {
   "panel-left": [["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2"}], "M9 3v18"],
   "panel-right": [["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2"}], "M15 3v18"],
   "paperclip": ["m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"],
+  "pause": [["rect", {x: "14", y: "3", width: "5", height: "18", rx: "1"}], ["rect", {x: "5", y: "3", width: "5", height: "18", rx: "1"}]],
   "pencil": ["M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z", "m15 5 4 4"],
+  "play": ["M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"],
   "plus": ["M5 12h14", "M12 5v14"],
   "refresh-cw": ["M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", "M21 3v5h-5", "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", "M8 16H3v5"],
   "rotate-ccw": ["M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", "M3 3v5h5"],
@@ -2602,7 +2604,7 @@ define("select-trigger", {
     const st = selectStates.get(root)
     if (!st) return
     if (st.press) event.preventDefault()
-    if (st.press ? st.press.opened : !isOpen(st.content)) setTimeout(() => document.addEventListener("mouseup", up => selectMouseUp(root, up), { once: true }))
+    if (st.press?.opened) setTimeout(() => selectPressing === root && document.addEventListener("mouseup", up => selectMouseUp(root, up), { once: true }))
   },
   click(event, trigger) {
     const root = trigger.closest('[data-slot="select"]')
@@ -8609,9 +8611,11 @@ function messageScrollerBottom(s) {
   const pad = messageScrollerPadding(s.content)
   const top = s.viewport.getBoundingClientRect().top
   const scrollTop = s.viewport.scrollTop
-  let bottom = pad.start + pad.end
-  for (const item of messageScrollerItems(s)) bottom = Math.max(bottom, item.getBoundingClientRect().bottom - top + scrollTop + pad.end)
-  return bottom
+  for (let item = s.content.lastElementChild; item; item = item.previousElementSibling) {
+    if (!(item instanceof HTMLElement) || item.hasAttribute("data-message-scroller-spacer") || !item.getClientRects().length) continue
+    return Math.max(pad.start + pad.end, item.getBoundingClientRect().bottom - top + scrollTop + pad.end)
+  }
+  return pad.start + pad.end
 }
 
 function messageScrollerTop(el, viewport) {
@@ -8755,10 +8759,23 @@ function messageScrollerElement(s, el, { align = "start", behavior = "auto", scr
 
 function messageScrollerCapture(s) {
   const rect = s.viewport.getBoundingClientRect()
-  for (const item of messageScrollerItems(s)) {
-    if (!item.dataset.messageId) continue
+  const items = s.items
+  let lo = 0
+  let hi = items.length
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1
+    let i = mid
+    while (i < hi && !items[i].getClientRects().length) i++
+    if (i === hi) hi = mid
+    else if (items[i].getBoundingClientRect().bottom > rect.top) hi = mid
+    else lo = i + 1
+  }
+  for (let i = lo; i < items.length; i++) {
+    const item = items[i]
+    if (!item.getClientRects().length) continue
     const r = item.getBoundingClientRect()
-    if (r.bottom > rect.top && r.top < rect.bottom) {
+    if (r.top >= rect.bottom) break
+    if (item.dataset.messageId && r.bottom > rect.top) {
       s.prepend = { el: item, top: r.top - rect.top }
       return
     }
@@ -8873,6 +8890,7 @@ function messageScrollerChange(s) {
   const items = messageScrollerItems(s)
   const previousCount = s.count
   const previousFirst = s.first
+  s.items = items
   s.count = items.length
   s.first = items[0] ?? null
   messageScrollerReconcile(s, items, previousCount, previousFirst)
@@ -8929,6 +8947,7 @@ function messageScrollerSetup(root) {
     mode: "free-scrolling",
     anchored: null,
     handled: new WeakSet(),
+    items: [],
     count: 0,
     first: null,
     lastTop: 0,

@@ -1589,7 +1589,7 @@ func catalogMarkdown(cat *catalog, level int) string {
 			}
 			b.WriteString("\n")
 		}
-		if len(c.Keyboard) > 0 && level == 1 {
+		if len(c.Keyboard) > 0 {
 			b.WriteString("Keyboard and focus:\n\n")
 			for _, k := range c.Keyboard {
 				fmt.Fprintf(&b, "- %s\n", k)
@@ -1600,7 +1600,7 @@ func catalogMarkdown(cat *catalog, level int) string {
 			continue
 		}
 		fmt.Fprintf(&b, "```html\n%s\n```\n\n", c.Example)
-		if c.Script != "" && level == 1 {
+		if c.Script != "" {
 			fmt.Fprintf(&b, "```js\n%s\n```\n\n", c.Script)
 		}
 	}
@@ -1647,6 +1647,12 @@ func llmsFull(cat *catalog, sections []mdSection) string {
 		fmt.Fprintf(&b, "%s %s\n%s", strings.Repeat("#", s.level), s.title, s.body)
 	}
 	b.WriteString("\n## Component reference\n\n")
-	b.WriteString(catalogMarkdown(cat, 2))
+	short := *cat
+	short.Components = nil
+	for _, c := range cat.Components {
+		c.Keyboard, c.Exports, c.Script = nil, nil, ""
+		short.Components = append(short.Components, c)
+	}
+	b.WriteString(catalogMarkdown(&short, 2))
 	return b.String()
 }

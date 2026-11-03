@@ -1393,10 +1393,6 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 | Part | Write | State |
 | --- | --- | --- |
 
-Exports (import from the module that the page loads):
-
-- `direction(el = <html>) → "ltr" | "rtl"`
-
 ```html
 <div dir="rtl" lang="ar">
   <button type="button" data-slot="button" data-variant="outline"><svg data-lucide="arrow-right"></svg>التالي</button>
@@ -1412,10 +1408,6 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 | `theme-switch` |  |  |
 
 Events: `theme:change` `{ mode, resolved, scheme }`.
-
-Exports (import from the module that the page loads):
-
-- `theme.get(), theme.set("light"|"dark"|"system"), theme.resolved(), theme.toggle(), theme.scheme(), theme.setScheme(value), theme.schemes`: The mode is stored in `localStorage["clanker-ui-theme"]` and applied as `data-theme` on `<html>`. `resolved()` returns the mode that shows (`dark` for a dark-only scheme). `toggle()` does what the toggle button does. `scheme()` returns `data-scheme` (`""` when there is none). `setScheme` takes names separated by spaces (`a-z`, `0-9`, `-`, at most 200 characters, else a `TypeError`) and stores them in `localStorage["clanker-ui-scheme"]`; `""` removes the scheme. `schemes` is the frozen list `{ value, label, group }` (`group`: `shadcn`, `editor`, or `accent`). See [Color schemes](https://github.com/bl4ko/clanker-ui#color-schemes).
 
 #### Input (`input`)
 
@@ -1870,11 +1862,6 @@ Part attributes: `data-dialog-close` boolean; `data-dialog-trigger` id.
 
 Events: `dialog:open` `{ trigger }`; `dialog:close` `{ reason }` (cancelable).
 
-Exports (import from the module that the page loads):
-
-- `dialogOpen(target, { trigger }?) → boolean`: Works for `dialog`, `alert-dialog`, `sheet`, and `drawer`.
-- `dialogClose(target, reason = "api") → boolean`: `reason` goes to the `:close` event.
-
 #### Alert Dialog (`alert-dialog`)
 
 Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/alert-dialog/. Full text: https://github.com/bl4ko/clanker-ui#dialog-alert-dialog-sheet-drawer
@@ -1985,11 +1972,6 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 Part attributes: `data-popover-trigger` boolean.
 
 Events: `popover:open` `{ trigger }`; `popover:close` `{ reason }`.
-
-Exports (import from the module that the page loads):
-
-- `popoverOpen(target, { trigger, anchor }?) → boolean`
-- `popoverClose(target, reason = "api") → boolean`
 
 ```html
 <div data-slot="popover">
@@ -2281,10 +2263,6 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 Events: `toast:open` `{ id }`; `toast:close` `{ id, reason }`; `toast:action` `{ id }`.
 
-Exports (import from the module that the page loads):
-
-- `toast(message, options?) → id`: Sonner-style calls and the Base UI manager (`toast.add`, `toast.update`, `toast.close`), see [Toast and Sonner](https://github.com/bl4ko/clanker-ui#toast-and-sonner).
-
 ```html
 <div data-slot="toast-portal" data-limit="3" data-timeout="5000"></div>
 <button type="button" data-slot="button" data-variant="outline" id="show-toast">Show Toast</button>
@@ -2301,10 +2279,6 @@ Same component as `toast`: use its markup, events, and API.
 | `sonner` (root) |  |  |
 
 Other options named in the docs: `data-limit` any; `data-timeout` any.
-
-Exports (import from the module that the page loads):
-
-- `toast(message, options?) → id`: Sonner-style calls and the Base UI manager (`toast.add`, `toast.update`, `toast.close`), see [Toast and Sonner](https://github.com/bl4ko/clanker-ui#toast-and-sonner).
 
 ```html
 <div data-slot="toast-portal" data-limit="3" data-timeout="5000"></div>
@@ -2565,14 +2539,6 @@ Other options named in the docs: `data-active` `false`, `true`; `data-scroll-edg
 
 Events: `message-scroller:scrollable` `{ start, end }`.
 
-Exports (import from the module that the page loads):
-
-- `messageScrollerScrollToEnd(el, { behavior }?) → boolean`
-- `messageScrollerScrollToStart(el, { behavior }?) → boolean`
-- `messageScrollerScrollToMessage(el, id, { align, behavior, scrollMargin }?) → boolean`: Waits for the row if the list is still empty.
-- `messageScrollerScrollable(el) → { start, end }`
-- `messageScrollerVisibility(el) → { currentAnchorId, visibleMessageIds }`
-
 #### Trace (`trace`)
 
 Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/trace/. Full text: https://github.com/bl4ko/clanker-ui#trace
@@ -2590,11 +2556,6 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 | `trace-title` |  |  |
 
 Events: `trace:open`; `trace:close`.
-
-Exports (import from the module that the page loads):
-
-- `traceOpen(target, { animate = true }?) → boolean`: `target` is a `trace-collapsible` or an element in it.
-- `traceClose(target, { animate = true }?) → boolean`
 
 #### Marker (`marker`)
 
@@ -2646,11 +2607,6 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 | `questionnaire-title` |  |  |
 
 Events: `questionnaire:change` `{ value, index, total }`; `questionnaire:status` `{ item, value }`; `questionnaire:submit` `{ value, status }`.
-
-Exports (import from the module that the page loads):
-
-- `questionnaireGoTo(el, name) → boolean`
-- `questionnaireRefresh(el)`: Call after you enable or disable an item.
 
 #### Code Block (`code-block`)
 
@@ -2704,12 +2660,6 @@ Other options named in the docs: `data-day` any; `data-hidden` `false`, `true`.
 
 Events: `calendar:change` `{ value, mode, source }`; `calendar:navigate` `{ value }`.
 
-Exports (import from the module that the page loads):
-
-- `calendarGetValue(el) → value`: `"2026-10-28"`, an array (`multiple`), `{ from, to }` (`range`), or `null`.
-- `calendarSetValue(el, value, { emit = false, month = true }?) → boolean`: `month` shows the month of the first selected date.
-- `calendarSetMonth(el, "2026-10") → boolean`
-
 ```html
 <div data-slot="calendar" data-mode="single" data-value="2026-10-28" data-month="2026-10" data-name="date" data-min="2026-10-01" data-disabled-weekdays="0 6"></div>
 ```
@@ -2728,11 +2678,6 @@ Part attributes: `data-date-picker-content` boolean; `data-date-picker-input` bo
 Other options named in the docs: `data-keep-open` any.
 
 Events: `date-picker:open`; `date-picker:close`.
-
-Exports (import from the module that the page loads):
-
-- `datePickerOpen(target) → boolean`
-- `datePickerClose(target, { restoreFocus = true }?) → boolean`
 
 #### Chart (`chart`)
 
@@ -2773,12 +2718,6 @@ Group `chart`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 Other options named in the docs: `data-part` any.
 
 Events: `chart:active` `{ index, key, row }`; `chart:legend` `{ key, visible, hidden }`; `chart:view` `{ view }`.
-
-Exports (import from the module that the page loads):
-
-- `chart(element, data, options) → { update(data, options), destroy() }`: In `clanker-ui-chart.js`, see [Chart](https://github.com/bl4ko/clanker-ui#chart).
-- `sparkline(element, values, options?) → { update, destroy }`
-- `statTile(element, options) → { update(options), destroy() }`
 
 ```html
 <div id="visitors"></div>

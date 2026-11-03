@@ -10,6 +10,12 @@
   <meta name="description" content="{{.Description}}">
   <title>{{if eq .Kind "home"}}clanker-ui{{else}}{{.Title}} - clanker-ui{{end}}</title>
   <link rel="icon" href="data:,">
+{{- with .Alternate}}
+  <link rel="alternate" type="text/markdown" href="{{.}}">
+{{- end}}
+{{- if ne .Kind "view"}}
+  <link rel="describedby" href="{{url "/llms.txt"}}">
+{{- end}}
   <link rel="stylesheet" href="{{asset "clanker-ui.css"}}">
   <link rel="stylesheet" href="{{asset "docs.css"}}">
   <script src="{{asset "clanker-ui-theme.js"}}"></script>
@@ -127,6 +133,9 @@
                     {{- if .Page}}
                     {{.Page.HTML}}
                     {{- else if eq .Kind "pending"}}
+                    {{- with .Readme}}
+                    <p>Read <a href="{{.}}">{{$.Title}} in the README</a>.</p>
+                    {{- end}}
                     <p>See <a href="{{.DemoHref}}">{{.Title}} in the component demo</a>.</p>
                     {{- else}}
                     <p>Go to the <a href="{{url "/docs"}}">Introduction</a> or <a href="{{url "/docs/components"}}">Components</a>.</p>

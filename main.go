@@ -23,7 +23,7 @@ import (
 	"time"
 )
 
-//go:embed clanker-ui* demo docs dist
+//go:embed clanker-ui* demo docs dist skills/clanker-ui
 var embedded embed.FS
 
 const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; require-trusted-types-for 'script'"
@@ -42,6 +42,8 @@ var minShims = map[string][]string{"clanker-ui.js": {"clanker-ui-core.min.js", "
 
 var demoAsset = regexp.MustCompile(`^demo/(assets/)?[a-z0-9][a-z0-9-]*(\.[a-z0-9-]+)*\.(css|js|svg|png|jpg|webp|avif)$`)
 
+var skillFile = regexp.MustCompile(`^skills/clanker-ui/(SKILL\.md|references/(components/)?[a-z0-9-]+(\.[a-z]+)?\.(md|json))$`)
+
 var devFile = regexp.MustCompile(`^(test/spike/[a-z0-9-]+\.(html|css)|test/behavior/fixtures/[a-z0-9-]+\.(html|css|js)|test/split/[a-z0-9-]+\.(html|js))$`)
 
 var contentTypes = map[string]string{
@@ -49,6 +51,8 @@ var contentTypes = map[string]string{
 	".js":   "text/javascript; charset=utf-8",
 	".html": "text/html; charset=utf-8",
 	".md":   "text/markdown; charset=utf-8",
+	".txt":  "text/plain; charset=utf-8",
+	".json": "application/json",
 	".svg":  "image/svg+xml",
 	".png":  "image/png",
 	".jpg":  "image/jpeg",
@@ -324,6 +328,14 @@ func (s *site) serve(w http.ResponseWriter, r *http.Request) {
 	}
 	if distFile.MatchString(name) {
 		s.file(w, r, "dist/"+name)
+		return
+	}
+	if skillFile.MatchString(name) {
+		s.file(w, r, name)
+		return
+	}
+	if from, ok := exportExtras[name]; ok {
+		s.file(w, r, from)
 		return
 	}
 	s.pending(w, r)

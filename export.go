@@ -131,7 +131,9 @@ func (e *exporter) docPages() error {
 		if err := e.copy(href, pageFile(href)); err != nil {
 			return err
 		}
-		e.pages = append(e.pages, href)
+		if href == "/" || e.d.pages[href] != nil {
+			e.pages = append(e.pages, href)
+		}
 		if href == "/docs" || strings.HasPrefix(href, "/docs/") {
 			if err := e.copy(href+".md", strings.TrimPrefix(href, "/")+".md"); err != nil {
 				return err
@@ -266,8 +268,5 @@ func (e *exporter) sitemap() error {
 		b.WriteString("</loc></url>\n")
 	}
 	b.WriteString("</urlset>\n")
-	if err := e.write("sitemap.xml", b.Bytes()); err != nil {
-		return err
-	}
-	return e.write("robots.txt", fmt.Appendf(nil, "User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n", e.urls.site))
+	return e.write("sitemap.xml", b.Bytes())
 }

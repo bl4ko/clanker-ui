@@ -1,13 +1,5 @@
 import { dialogClose, dialogOpen, h, popoverClose } from "./clanker-ui.js"
 
-if (location.pathname === "/" && location.hash.length > 1) {
-  let id = location.hash.slice(1)
-  try {
-    id = decodeURIComponent(id)
-  } catch {}
-  if (!document.getElementById(id)) location.replace(`/demo${location.hash}`)
-}
-
 const field = target => target instanceof HTMLElement && (target.isContentEditable || target.matches("input, textarea, select"))
 
 document.addEventListener("keydown", event => {

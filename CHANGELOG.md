@@ -13,6 +13,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 ### Added
 
 - The `play` and `pause` icons. (#34)
+- Docs site: a Native Select page. Every docs page links its Markdown (`<link rel="alternate" type="text/markdown">`) and `llms.txt` (`rel="describedby"`). The Markdown of a component page that is not ported yet is the component file of the skill, and a guide page that is not ported yet links its README section. `sitemap.xml` lists only real pages, and the site has no `robots.txt`. (#43)
 
 ### Changed
 

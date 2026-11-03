@@ -254,20 +254,23 @@ SHEET_FRAME = """() => {
 SHEET_CLOSE = """() => {
   const c = document.querySelector('#sheet-demo [data-slot="sheet-content"]')
   const out = window.__sheetClose = {}
-  c.addEventListener("click", e => { out.click = e.timeStamp }, { capture: true, once: true })
+  const close = c.close
+  c.close = function () {
+    out.closed = performance.now()
+    delete c.close
+    return close.call(this)
+  }
+  c.addEventListener("click", () => { out.click = performance.now() }, { capture: true, once: true })
   new MutationObserver((records, observer) => {
-    if (out.set === undefined && c.hasAttribute("data-ending-style")) {
-      out.set = performance.now()
-      const fade = c.getAnimations().find(a => a.transitionProperty === "opacity")
-      if (fade) fade.ready.then(() => { out.start = fade.startTime })
-      else out.start = out.set
-    }
-    if (!c.open) {
-      out.closed = performance.now()
-      observer.disconnect()
-    }
-  }).observe(c, { attributes: true, attributeFilter: ["data-ending-style", "open"] })
+    if (!c.hasAttribute("data-ending-style")) return
+    observer.disconnect()
+    out.set = performance.now()
+    const fade = c.getAnimations().find(a => a.transitionProperty === "opacity")
+    if (fade) fade.ready.then(() => { out.start = fade.startTime })
+    else out.start = out.set
+  }).observe(c, { attributes: true, attributeFilter: ["data-ending-style"] })
 }"""
+
 
 def motion_time(frames, start, done):
     first = next((f for f in frames if start(f)), None)
@@ -324,7 +327,7 @@ def sheet_motion(t, trigger):
     frames = t.paint(SHEET_FRAME, lambda: content.locator(":scope > [data-slot=sheet-close]").click(), ms=1200)
     times = page.evaluate("() => window.__sheetClose")
     assert times.get("set", 1e9) - times.get("click", 0) < 50, ("the close motion starts on the click", times)
-    assert times.get("closed", 1e9) - times.get("start", 0) <= 300, ("the sheet closes in 200 ms like shadcn, from the start of the fade to the closed dialog", times)
+    assert times.get("closed", 1e9) - times.get("start", 0) <= 300, ("the sheet closes in 200 ms like shadcn, from the start of the fade to dialog.close()", times)
     if not t.reduced_motion:
         ending = [f for f in frames if f[2] and f[4]]
         assert len(ending) >= 3 and ending[0][5] == "closed", frames

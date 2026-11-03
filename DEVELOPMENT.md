@@ -100,6 +100,8 @@ Behavior:
 | Only Markdown, `docs/*.txt`, `skills/`, licenses, issue templates, `release.yml`, `pages.yml`, or `renovate.json` | Only the exported pages in Chromium. |
 | Only Go test files (`*_test.go`) | None. |
 
+Browser jobs run `test/run.py --retry`, and on a pull request also `--exitfirst`: the job stops at the first check that fails twice. The step summary lists the checks that passed on retry.
+
 `python3 -I tools/ci/plan.py --self-test` checks that each check runs once in each tier. The `go` job runs it.
 
 ## Demo and tests

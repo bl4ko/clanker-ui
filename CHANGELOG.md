@@ -10,6 +10,10 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 - A boolean option with the value `"false"` is now off, like an absent option, everywhere (for example `data-disabled="false"` on select and combobox items, `data-multiple="false"`, `data-loop="false"`). Before, some options read any value as on. To upgrade: remove `data-x="false"` where you want the option on. (#16)
 
+### Added
+
+- The `play` and `pause` icons. (#34)
+
 ### Changed
 
 - `clanker-ui.css` is readable, not minified. Use `dist/clanker-ui.min.css` for the minified file. Every rule is in a `clanker.*` layer; a reduced-motion `.shimmer` rule outside all layers is gone. (#12)
@@ -24,6 +28,9 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Select and combobox keep the authored `data-value` when the items arrive later, and follow a later `data-value` change. (#16)
 - The slider shows a `value` change from code after an `input` or `change` event, and `disabled`, `min`, `max`, and `step` changes on its inputs. (#16)
 - `el.disabled = false` enables a checkbox, switch, or radio item again. (#16)
+- A fast click on a select trigger no longer leaves a `mouseup` listener on the document that keeps the removed select in memory. (#34)
+- The chart draws values near ±1e308 without NaN coordinates and console errors; a stacked total that is not a finite number is left out, like a value that is not a finite number. (#34)
+- The message scroller no longer reads the layout of every message on each scroll event (8000 messages: 6.3 ms to 0.07 ms per event). (#34)
 - A `<select>` made with `h()` no longer reports a `style-src-attr` CSP violation in Safari 27.2 (WebKit bug 327212). (#36)
 
 ## 0.1.0 - 2026-11-02

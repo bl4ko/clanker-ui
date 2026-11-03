@@ -665,7 +665,7 @@ def check_icons_added(t):
           const { icon, iconNames } = await import("/clanker-ui.js")
           const host = document.createElement("div")
           document.body.append(host)
-          const out = ["message-square", "message-circle", "camera", "skip-forward", "book-open", "graduation-cap", "hammer"].map(name => {
+          const out = ["message-square", "message-circle", "camera", "skip-forward", "book-open", "graduation-cap", "hammer", "play", "pause"].map(name => {
             const el = icon(name)
             host.append(el)
             const b = el.getBBox()
@@ -683,6 +683,8 @@ def check_icons_added(t):
         ["book-open", True, "path path", True],
         ["graduation-cap", True, "path path path", True],
         ["hammer", True, "path path path", True],
+        ["play", True, "path", True],
+        ["pause", True, "rect rect", True],
     ], found
 
 

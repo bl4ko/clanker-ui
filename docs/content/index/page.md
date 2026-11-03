@@ -15,30 +15,54 @@ The markup mirrors the DOM that shadcn/ui renders. If you know the shadcn JSX, y
 
 ## Files
 
-A project copies three files, plus one optional file:
+Get the files from a [release](https://github.com/bl4ko/clanker-ui/releases) (zip and `SHA256SUMS`) or from the [repository](https://github.com/bl4ko/clanker-ui). A project needs `clanker-ui.css` and `clanker-ui.js`. The other files are optional:
 
 | File | Contents |
 | --- | --- |
 | `clanker-ui.css` | Tokens, reset, typography, all component styles |
 | `clanker-ui.js` | ES module: core helpers and all component behavior |
-| `clanker-ui-chart.js` | ES module: SVG charts, stat tiles, sparklines. Imports `./clanker-ui.js` |
+| `clanker-ui-chart.js` | Optional ES module: SVG charts, stat tiles, sparklines. Imports `./clanker-ui.js` |
 | `clanker-ui-theme.js` | Optional classic script for apps with a theme switch. It copies the stored theme to `data-theme` on `<html>` before the first paint. |
+| `clanker-ui-themes.css` | Optional color schemes: the shadcn base colors and accent themes, and editor palettes. Set `data-scheme` on `<html>`. |
+| `clanker-ui-a11y.css` | Optional accessibility layer: stronger form-control edges, focus outline, and status colors for WCAG 2.2 AA |
 
 Never edit a copy. Fix bugs in the kit first, then copy the files again. Find outdated copies with `shasum`.
 
 ## Load order
 
-Load the kit first, then the app:
+Load the kit first, then the optional files, then the app:
 
 ```html
 <meta name="color-scheme" content="light dark">
 <link rel="stylesheet" href="clanker-ui.css">
+<link rel="stylesheet" href="clanker-ui-themes.css">
+<link rel="stylesheet" href="clanker-ui-a11y.css">
 <link rel="stylesheet" href="app.css">
 <script src="clanker-ui-theme.js"></script>
 <script type="module" src="clanker-ui.js"></script>
 ```
 
-Put app styles in `app.css`. The kit CSS is in cascade layers, so every unlayered rule in `app.css` wins without specificity fights.
+Put app styles in `app.css`. The kit CSS is in cascade layers, so every unlayered rule in `app.css` wins without specificity fights. Recipes for tokens, fonts, dialog width, Tailwind, and `!important` rules: [Override the kit](https://github.com/bl4ko/clanker-ui#override-the-kit).
+
+## Content Security Policy
+
+The kit needs no more than this policy. Send it as a header on every HTML response:
+
+```text
+default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; require-trusted-types-for 'script'
+```
+
+A static host that cannot send headers uses a meta tag as the first element of `<head>`, without `frame-ancestors` (browsers ignore it in a meta tag):
+
+```html
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
+```
+
+Do not use inline `<script>`, inline `<style>`, `style=""`, or `on*=""` attributes. [csp.md](https://github.com/bl4ko/clanker-ui/blob/main/skills/clanker-ui/references/csp.md) has the Caddy and nginx lines and a small Go test server.
+
+## Local test
+
+Open the page through a web server, for example `python3 -m http.server -b 127.0.0.1 8000`, not as a file: browsers do not load module scripts from `file://`. The [README](https://github.com/bl4ko/clanker-ui#quick-start) has a quick start page.
 
 ## Minified and group files
 

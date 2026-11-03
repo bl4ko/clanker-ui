@@ -92,7 +92,7 @@ Put `data-slot="button"` on an `<a>` element to make a link look like a button. 
 
 ## RTL
 
-The button uses logical properties. Set `dir="rtl"` on `<html>` or on a container. See [Direction](/docs/components/direction).
+The button uses logical properties. Set `dir="rtl"` on `<html>` or on a container. See [Direction](/docs/components/direction). The arrow icon has the shadcn class `rtl:rotate-180`, which is not in the kit. Add the flip rule to `app.css`: `.rtl\:rotate-180:dir(rtl) { rotate: 180deg; }`.
 
 {{example "button-rtl"}}
 

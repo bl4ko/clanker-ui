@@ -107,18 +107,17 @@ Which file exports which names:
 
 | Names | Readable set | `.min` set |
 | --- | --- | --- |
-| Core API (`h`, `svg`, `icon`, `define`, `emit`, `strings`, `theme`, `direction`, `isOpen`, ...) | `clanker-ui.js` | `clanker-ui-core.min.js` |
+| Core API (`h`, `svg`, `icon`, `define`, `emit`, `strings`, `theme`, `direction`, `isOpen`, ...) | `clanker-ui.js` | `clanker-ui.min.js` or `clanker-ui-core.min.js` |
 | Component API (`toast`, `dialogOpen`, `calendarSetValue`, ...) | `clanker-ui.js` | `clanker-ui.min.js` or the group file |
 | Charts (`chart`, `sparkline`, `statTile`) | `clanker-ui-chart.js` | `clanker-ui-chart.min.js` |
 
 One-file `.min` set:
 
 ```js
-import { h, icon, theme } from "/vendor/clanker-ui/clanker-ui-core.min.js"
-import { toast, dialogOpen } from "/vendor/clanker-ui/clanker-ui.min.js"
+import { h, icon, theme, isOpen, toast, dialogOpen } from "/vendor/clanker-ui/clanker-ui.min.js"
 ```
 
-- `clanker-ui.min.js` and the group files do not export the core API again. Each component section in [references/components.md](references/components.md) names the file of its exports.
+- `clanker-ui.min.js` exports the core API too. The group files do not export the core API again. Each component section in [references/components.md](references/components.md) names the file of its exports.
 - Events: `<component>:<action>` on the component root; they bubble to `document`. Read `event.detail`. Call `event.preventDefault()` on a cancelable event (for example `dialog:close`) to stop the action. Full list: [references/events.md](references/events.md).
 - Build DOM with `h(tag, attrs, ...children)`, `svg()`, and `icon()`. Never use `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, `eval`, or `new Function`. Trusted Types blocks them.
 - Toast and chart are created from JavaScript only. Their sections in [references/components.md](references/components.md) have the full call examples (`toast.success(title, options)`, `toast.promise(...)`, `chart(element, data, options)`). Toasts need no markup; an optional `<div data-slot="toast-portal" data-limit="3" data-timeout="5000"></div>` sets the limit and the default timeout.

@@ -497,7 +497,7 @@ func TestDistJSLinks(t *testing.T) {
 		groups = append(groups, "clanker-ui-"+g+".min.js")
 	}
 	os.WriteFile(filepath.Join(dir, "groups.js"), []byte(line(groups...)), 0o644)
-	os.WriteFile(filepath.Join(dir, "all.js"), []byte(line(distCore, distAll, "clanker-ui-chart.min.js")), 0o644)
+	os.WriteFile(filepath.Join(dir, "all.js"), []byte(line(distAll, "clanker-ui-chart.min.js")), 0o644)
 	for _, entry := range []string{"groups.js", "all.js"} {
 		if got := esbuildBundle(t, dir, entry); !slices.Equal(got, public) {
 			t.Errorf("%s exports\n got %v\nwant %v", entry, got, public)
@@ -596,6 +596,7 @@ func TestDocsImportNames(t *testing.T) {
 		return err
 	})
 	n := 0
+	oneFile := map[string]bool{}
 	for _, f := range docs {
 		b, err := os.ReadFile(f)
 		if err != nil {
@@ -611,6 +612,9 @@ func TestDocsImportNames(t *testing.T) {
 			for _, name := range strings.Split(m[1], ",") {
 				name, _, _ = strings.Cut(strings.TrimSpace(name), " ")
 				n++
+				if file == distAll {
+					oneFile[f+" "+name] = true
+				}
 				if !slices.Contains(names, name) {
 					t.Errorf("%s: %s does not export %s", f, file, name)
 				}
@@ -619,6 +623,13 @@ func TestDocsImportNames(t *testing.T) {
 	}
 	if n < 10 {
 		t.Errorf("found %d imported names in the docs", n)
+	}
+	for _, f := range docs[:2] {
+		for _, name := range []string{"h", "icon", "theme", "toast"} {
+			if !oneFile[f+" "+name] {
+				t.Errorf("%s: no import of %s from %s", f, name, distAll)
+			}
+		}
 	}
 	cat := testCatalog(t)
 	for _, c := range cat.Components {

@@ -494,3 +494,41 @@ func TestRulesOrder(t *testing.T) {
 		t.Errorf("a later variant class wins where it applies: %+v", got)
 	}
 }
+
+func TestStaleSourceFixes(t *testing.T) {
+	gen := func(classes string) *gen {
+		s, err := parseSource("x", "function X({ className, ...props }: Props) {\n  return <div data-slot=\"x\" className={cn(\""+classes+"\", className)} {...props} />\n}\n")
+		if err != nil {
+			t.Fatal(err)
+		}
+		return newGen(map[string]*source{"x": s}, map[string]string{}, nil, map[string]string{"cn-x-ignored": ""})
+	}
+	all := "flex data-activation-direction=left:translate-x-1 [&_svg:not([class*='size-'])]:size-4 cn-x-ignored"
+	if err := gen(all).generate([]string{"x"}, true); err != nil {
+		t.Errorf("every source fix and ignored marker matches: %v", err)
+	}
+	if err := gen("flex").generate([]string{"x"}, false); err != nil {
+		t.Errorf("a run of some components does not check the fixes: %v", err)
+	}
+	err := gen("flex").generate([]string{"x"}, true)
+	for _, want := range []string{"source fix 1 ", "source fix 2 ", "ignored marker cn-x-ignored matched nothing", "remove it from tools/gen/main.go"} {
+		if err == nil || !strings.Contains(err.Error(), want) {
+			t.Errorf("a fix or marker that matches nothing must stop the run with %q: %v", want, err)
+		}
+	}
+}
+
+func TestPortedComponents(t *testing.T) {
+	groups, err := readGroups("groups.tsv")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ui := append(slices.Clone(groups.order), "fake-upstream")
+	ported, notPorted := portedComponents(ui, groups)
+	if !slices.Equal(ported, groups.order) || !slices.Equal(notPorted, []string{"fake-upstream"}) {
+		t.Errorf("only the components in groups.tsv are generated: ported %v, not ported %v", ported, notPorted)
+	}
+	if _, err := groups.slotGroup("fake-upstream-item"); err == nil || !strings.Contains(err.Error(), "add a line <component><TAB><group> to tools/gen/groups.tsv") {
+		t.Errorf("the dist error names the groups.tsv fix: %v", err)
+	}
+}

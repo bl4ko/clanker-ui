@@ -182,7 +182,12 @@ Put overrides in `app.css` after the kit files, without a layer.
 4. Charts: `clanker-ui-chart.min.js`, and `clanker-ui-chart.min.css` with group files (`clanker-ui.min.css` has the chart CSS).
 
 - Use the `.min` files together or the readable files together, never both: two cores attach every listener two times. Two group files never define the same slot; `clanker-ui.min.js` together with a group file stops with "already defined".
-- In the `.min` set, import the core API (`h`, `svg`, `icon`, `define`, `strings`, `theme`, `direction`, and the other core exports) from `./clanker-ui-core.min.js`. Import a component API (`toast`, `dialogOpen`, `calendarSetValue`, ...) from the file that the page loads: `clanker-ui.min.js` or the group file. `clanker-ui.min.js` and the group files do not export the core API again.
+- In the readable set, `clanker-ui.js` exports everything except the chart API (`clanker-ui-chart.js`). In the `.min` set, import the core API (`h`, `svg`, `icon`, `define`, `strings`, `theme`, `direction`, and the other core exports) from `./clanker-ui-core.min.js`. Import a component API (`toast`, `dialogOpen`, `calendarSetValue`, ...) from the file that the page loads: `clanker-ui.min.js` or the group file. `clanker-ui.min.js` and the group files do not export the core API again:
+
+   ```js
+   import { h, icon, theme } from "./clanker-ui-core.min.js"
+   import { toast, dialogOpen } from "./clanker-ui.min.js"
+   ```
 - All files are external modules from `'self'` with static relative imports, so the strict CSP and Trusted Types need no change.
 
 ## Markup conventions
@@ -1135,7 +1140,7 @@ The viewport is the real scroll container; the kit makes it focusable, hides the
 
 Manual activation as in Base UI: the arrow keys move focus, Enter, Space, or a click selects (`data-activation="automatic"` selects on focus), roving tabindex, arrows (RTL aware), Home, End; disabled tabs are skipped. Tab panels are focusable (`tabindex="0"`) and show the standard focus ring.
 
-A horizontal `tabs-list` is never wider than the root: when the triggers do not fit, the list scrolls horizontally without a scrollbar, and the triggers keep their width. The selected trigger scrolls fully into view at load, when the list becomes visible, and when the list changes size. A trigger that gets keyboard focus (arrow keys, Home, End, Tab) or a click also scrolls fully into view. Only the list scrolls, also in a scaled container. The kit measures the list before it changes the tab and reads no layout after `tabs:change`, so an app can fill the new panel in the same task (for example in a microtask) and the page does not jump. A fill in a later task (fetch, timer) can still change the page height. App CSS that makes the selected trigger wider than the others can leave part of it hidden, because the kit measures before the change. The kit sets `tabindex="-1"` on a horizontal list that has no `tabindex`, so the list is not a Tab stop (Firefox stops on a scroll container). The horizontal root has `min-width: 0`, so a long list does not widen a grid or flex parent. Vertical tabs do not scroll.
+A horizontal `tabs-list` is never wider than the root: when the triggers do not fit, the list scrolls horizontally without a scrollbar, and the triggers keep their width. The selected trigger scrolls fully into view at load, when the list becomes visible, and when the list changes size. A trigger that gets keyboard focus (arrow keys, Home, End, Tab) or a click also scrolls fully into view. Only the list scrolls, also in a scaled container. The kit hides the old panel before `tabs:change`. In the handler, render only the new panel, not the whole tabs root: a new root makes the page jump. The kit measures the list before it changes the tab and reads no layout after `tabs:change`, so an app can fill the new panel in the same task (for example in a microtask) and the page does not jump. A fill in a later task (fetch, timer) can still change the page height. App CSS that makes the selected trigger wider than the others can leave part of it hidden, because the kit measures before the change. The kit sets `tabindex="-1"` on a horizontal list that has no `tabindex`, so the list is not a Tab stop (Firefox stops on a scroll container). The horizontal root has `min-width: 0`, so a long list does not widen a grid or flex parent. Vertical tabs do not scroll.
 
 ### Chat and calendar
 
@@ -1433,7 +1438,7 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 | Part | Write | State |
 | --- | --- | --- |
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui-core.min.js`):
 
 - `direction(el = <html>) → "ltr" | "rtl"`
 
@@ -1459,7 +1464,7 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 Events: `theme:change` `{ mode, resolved, scheme }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui-core.min.js`):
 
 - `theme.get(), theme.set("light"|"dark"|"system"), theme.resolved(), theme.toggle(), theme.scheme(), theme.setScheme(value), theme.schemes`: The mode is stored in `localStorage["clanker-ui-theme"]` and applied as `data-theme` on `<html>`. `resolved()` returns the mode that shows (`dark` for a dark-only scheme). `toggle()` does what the toggle button does. `scheme()` returns `data-scheme` (`""` when there is none). `setScheme` takes names separated by spaces (`a-z`, `0-9`, `-`, at most 200 characters, else a `TypeError`) and stores them in `localStorage["clanker-ui-scheme"]`; `""` removes the scheme. `schemes` is the frozen list `{ value, label, group }` (`group`: `shadcn`, `editor`, or `accent`). See [Color schemes](https://github.com/bl4ko/clanker-ui#color-schemes).
 
@@ -2091,7 +2096,7 @@ Part attributes: `data-dialog-close` boolean; `data-dialog-trigger` id.
 
 Events: `dialog:open` `{ trigger }`; `dialog:close` `{ reason }` (cancelable).
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
 
 - `dialogOpen(target, { trigger }?) → boolean`: Works for `dialog`, `alert-dialog`, `sheet`, and `drawer`.
 - `dialogClose(target, reason = "api") → boolean`: `reason` goes to the `:close` event.
@@ -2249,7 +2254,7 @@ Part attributes: `data-popover-trigger` boolean.
 
 Events: `popover:open` `{ trigger }`; `popover:close` `{ reason }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
 
 - `popoverOpen(target, { trigger, anchor }?) → boolean`
 - `popoverClose(target, reason = "api") → boolean`
@@ -2601,7 +2606,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 Events: `toast:open` `{ id }`; `toast:close` `{ id, reason }`; `toast:action` `{ id }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
 
 - `toast(message, options?) → id`: Sonner-style calls and the Base UI manager (`toast.add`, `toast.update`, `toast.close`), see [Toast and Sonner](https://github.com/bl4ko/clanker-ui#toast-and-sonner).
 
@@ -2636,7 +2641,7 @@ Same component as `toast`: use its markup, events, and API.
 
 Other options named in the docs: `data-limit` any; `data-timeout` any.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
 
 - `toast(message, options?) → id`: Sonner-style calls and the Base UI manager (`toast.add`, `toast.update`, `toast.close`), see [Toast and Sonner](https://github.com/bl4ko/clanker-ui#toast-and-sonner).
 
@@ -3087,7 +3092,7 @@ Other options named in the docs: `data-active` `false`, `true`; `data-scroll-edg
 
 Events: `message-scroller:scrollable` `{ start, end }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-chat.min.js`):
 
 - `messageScrollerScrollToEnd(el, { behavior }?) → boolean`
 - `messageScrollerScrollToStart(el, { behavior }?) → boolean`
@@ -3128,7 +3133,7 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 
 Events: `trace:open`; `trace:close`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-chat.min.js`):
 
 - `traceOpen(target, { animate = true }?) → boolean`: `target` is a `trace-collapsible` or an element in it.
 - `traceClose(target, { animate = true }?) → boolean`
@@ -3198,7 +3203,7 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 
 Events: `questionnaire:change` `{ value, index, total }`; `questionnaire:status` `{ item, value }`; `questionnaire:submit` `{ value, status }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-chat.min.js`):
 
 - `questionnaireGoTo(el, name) → boolean`
 - `questionnaireRefresh(el)`: Call after you enable or disable an item.
@@ -3292,7 +3297,7 @@ Other options named in the docs: `data-day` any; `data-hidden` `false`, `true`.
 
 Events: `calendar:change` `{ value, mode, source }`; `calendar:navigate` `{ value }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-chat.min.js`):
 
 - `calendarGetValue(el) → value`: `"2026-10-28"`, an array (`multiple`), `{ from, to }` (`range`), or `null`.
 - `calendarSetValue(el, value, { emit = false, month = true }?) → boolean`: `month` shows the month of the first selected date.
@@ -3321,7 +3326,7 @@ Other options named in the docs: `data-keep-open` any.
 
 Events: `date-picker:open`; `date-picker:close`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-chat.min.js`):
 
 - `datePickerOpen(target) → boolean`
 - `datePickerClose(target, { restoreFocus = true }?) → boolean`
@@ -3385,7 +3390,7 @@ Other options named in the docs: `data-part` any.
 
 Events: `chart:active` `{ index, key, row }`; `chart:legend` `{ key, visible, hidden }`; `chart:view` `{ view }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui-chart.js`; `.min` set: `clanker-ui-chart.min.js`):
 
 - `chart(element, data, options) → { update(data, options), destroy() }`: In `clanker-ui-chart.js`, see [Chart](https://github.com/bl4ko/clanker-ui#chart).
 - `sparkline(element, values, options?) → { update, destroy }`

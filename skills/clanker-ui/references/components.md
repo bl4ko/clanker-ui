@@ -59,7 +59,7 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 | Part | Write | State |
 | --- | --- | --- |
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui-core.min.js`):
 
 - `direction(el = <html>) → "ltr" | "rtl"`
 
@@ -85,7 +85,7 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 Events: `theme:change` `{ mode, resolved, scheme }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui-core.min.js`):
 
 - `theme.get(), theme.set("light"|"dark"|"system"), theme.resolved(), theme.toggle(), theme.scheme(), theme.setScheme(value), theme.schemes`: The mode is stored in `localStorage["clanker-ui-theme"]` and applied as `data-theme` on `<html>`. `resolved()` returns the mode that shows (`dark` for a dark-only scheme). `toggle()` does what the toggle button does. `scheme()` returns `data-scheme` (`""` when there is none). `setScheme` takes names separated by spaces (`a-z`, `0-9`, `-`, at most 200 characters, else a `TypeError`) and stores them in `localStorage["clanker-ui-scheme"]`; `""` removes the scheme. `schemes` is the frozen list `{ value, label, group }` (`group`: `shadcn`, `editor`, or `accent`). See [Color schemes](https://github.com/bl4ko/clanker-ui#color-schemes).
 
@@ -717,7 +717,7 @@ Part attributes: `data-dialog-close` boolean; `data-dialog-trigger` id.
 
 Events: `dialog:open` `{ trigger }`; `dialog:close` `{ reason }` (cancelable).
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
 
 - `dialogOpen(target, { trigger }?) → boolean`: Works for `dialog`, `alert-dialog`, `sheet`, and `drawer`.
 - `dialogClose(target, reason = "api") → boolean`: `reason` goes to the `:close` event.
@@ -875,7 +875,7 @@ Part attributes: `data-popover-trigger` boolean.
 
 Events: `popover:open` `{ trigger }`; `popover:close` `{ reason }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
 
 - `popoverOpen(target, { trigger, anchor }?) → boolean`
 - `popoverClose(target, reason = "api") → boolean`
@@ -1227,7 +1227,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 Events: `toast:open` `{ id }`; `toast:close` `{ id, reason }`; `toast:action` `{ id }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
 
 - `toast(message, options?) → id`: Sonner-style calls and the Base UI manager (`toast.add`, `toast.update`, `toast.close`), see [Toast and Sonner](https://github.com/bl4ko/clanker-ui#toast-and-sonner).
 
@@ -1262,7 +1262,7 @@ Same component as `toast`: use its markup, events, and API.
 
 Other options named in the docs: `data-limit` any; `data-timeout` any.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
 
 - `toast(message, options?) → id`: Sonner-style calls and the Base UI manager (`toast.add`, `toast.update`, `toast.close`), see [Toast and Sonner](https://github.com/bl4ko/clanker-ui#toast-and-sonner).
 
@@ -1713,7 +1713,7 @@ Other options named in the docs: `data-active` `false`, `true`; `data-scroll-edg
 
 Events: `message-scroller:scrollable` `{ start, end }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-chat.min.js`):
 
 - `messageScrollerScrollToEnd(el, { behavior }?) → boolean`
 - `messageScrollerScrollToStart(el, { behavior }?) → boolean`
@@ -1754,7 +1754,7 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 
 Events: `trace:open`; `trace:close`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-chat.min.js`):
 
 - `traceOpen(target, { animate = true }?) → boolean`: `target` is a `trace-collapsible` or an element in it.
 - `traceClose(target, { animate = true }?) → boolean`
@@ -1824,7 +1824,7 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 
 Events: `questionnaire:change` `{ value, index, total }`; `questionnaire:status` `{ item, value }`; `questionnaire:submit` `{ value, status }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-chat.min.js`):
 
 - `questionnaireGoTo(el, name) → boolean`
 - `questionnaireRefresh(el)`: Call after you enable or disable an item.
@@ -1918,7 +1918,7 @@ Other options named in the docs: `data-day` any; `data-hidden` `false`, `true`.
 
 Events: `calendar:change` `{ value, mode, source }`; `calendar:navigate` `{ value }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-chat.min.js`):
 
 - `calendarGetValue(el) → value`: `"2026-10-28"`, an array (`multiple`), `{ from, to }` (`range`), or `null`.
 - `calendarSetValue(el, value, { emit = false, month = true }?) → boolean`: `month` shows the month of the first selected date.
@@ -1947,7 +1947,7 @@ Other options named in the docs: `data-keep-open` any.
 
 Events: `date-picker:open`; `date-picker:close`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-chat.min.js`):
 
 - `datePickerOpen(target) → boolean`
 - `datePickerClose(target, { restoreFocus = true }?) → boolean`
@@ -2011,7 +2011,7 @@ Other options named in the docs: `data-part` any.
 
 Events: `chart:active` `{ index, key, row }`; `chart:legend` `{ key, visible, hidden }`; `chart:view` `{ view }`.
 
-Exports (import from the module that the page loads):
+Exports (readable set: `clanker-ui-chart.js`; `.min` set: `clanker-ui-chart.min.js`):
 
 - `chart(element, data, options) → { update(data, options), destroy() }`: In `clanker-ui-chart.js`, see [Chart](https://github.com/bl4ko/clanker-ui#chart).
 - `sparkline(element, values, options?) → { update, destroy }`

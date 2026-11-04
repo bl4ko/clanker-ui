@@ -2,6 +2,7 @@
   "button-size-mismatch": {
     "#button": "Button sizes showcase",
     "#toggle": "Toggle sizes showcase",
+    "#toggle-group": "Toggle group sizes and spacing showcase",
     "#spinner": "Spinner in buttons of two sizes showcase",
     "[data-docs=\"hero-actions\"]": "Docs home hero copies the shadcn site: a 35 px Get Started link next to a 32 px button"
   },

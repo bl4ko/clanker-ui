@@ -12,6 +12,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - `registerIcons({ name: nodes })` adds app icons from Lucide icon nodes, under the strict CSP.
 - Agent skill: `references/icons.md` lists every icon name and alias and shows how to add an icon. It is made from the kit by `go run ./tools/gen catalog`.
 - `dist/clanker-ui-theme.min.js`, so every kit file has a `.min` version.
+- Chart `timeZone` option: the time axis places its ticks, and every date and time shows, in that IANA zone (default: the browser zone). An ISO date (`2026-10-01`) is that day in the zone.
+- Docs: chart `locale`, the stat tile compact default (`€30.5K` from 10,000) and `notation: "standard"`, and the stat tile in a card.
 - Date picker: `data-required` on the root. In a `data-slot="form"` an empty picker gets the `field-error`, `aria-invalid` on the trigger, and focus on submit.
 - Toggle group: `data-required` (the last pressed item stays pressed, and a form needs a value), `data-name` (submits the value), `form.reset()`, and `data-value` changes from code.
 - Tabs: a `tabs-content` without `data-value` is a shared panel for every tab (a tab bar that filters one table).
@@ -21,9 +23,12 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 ### Changed
 
 - An unknown icon name no longer throws. `icon()` and `<svg data-lucide>` log one `console.warn` per name and render an empty icon, as Lucide `createIcons` does.
+- Chart colors: the kit `--chart-1`…`--chart-5` are the validated categorical hues of the accessibility layer, not the shadcn gray ramp, so a chart with several series is readable without app tokens. The shadcn base schemes of `clanker-ui-themes.css` still set the exact shadcn values.
 
 ### Fixed
 
+- Stat tile: `deltaFormat: { minimumFractionDigits: 2 }` no longer throws "maximumFractionDigits value is out of range"; the default maximum rises to the minimum.
+- Stat tile: inside a `card` the tile drops its own border, background, shadow, and padding, so there is one border.
 - Form reset: a value that the app sets right after `form.reset()` or in its `reset` listener (select, combobox, toggle group `data-value`, `calendarSetValue`) is no longer overwritten by the kit restore one task later.
 - Date picker: `calendarSetValue()` without `{ emit: true }` and a `data-value` change on the calendar update the trigger text.
 - Field: `field-separator` draws its line; the kit adds the `separator` child and `data-content`, as shadcn renders them.

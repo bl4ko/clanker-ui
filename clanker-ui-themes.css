@@ -350,14 +350,16 @@
     --error-bg: light-dark(#e1d0d3, #36252d);
     --error-border: light-dark(#c64343, #db4b4b);
     --error-text: light-dark(#c64343, #db4b4b);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#2e7de9, #7aa2f7);
+    --chart-2: light-dark(#b15c00, #ff9e64);
+    --chart-3: light-dark(#007197, #7dcfff);
+    --chart-4: light-dark(#a6771e, #ecbb73);
+    --chart-5: light-dark(#9939a0, #e271b5);
+    --chart-6: light-dark(#118c74, #69dcca);
+    --chart-7: light-dark(#7847bd, #9d7cd8);
+    --chart-8: light-dark(#ab2368, #ef6f87);
+    --chart-other: light-dark(#848cb5, #737aa2);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="tokyonight-storm"] {
     --background: light-dark(#e1e2e7, #24283b);
@@ -398,14 +400,16 @@
     --error-bg: light-dark(#e1d0d3, #403040);
     --error-border: light-dark(#c64343, #db4b4b);
     --error-text: light-dark(#c64343, #db4b4b);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#2e7de9, #7aa2f7);
+    --chart-2: light-dark(#b15c00, #ff9e64);
+    --chart-3: light-dark(#007197, #7dcfff);
+    --chart-4: light-dark(#a6771e, #ecbb73);
+    --chart-5: light-dark(#9939a0, #e271b5);
+    --chart-6: light-dark(#118c74, #69dcca);
+    --chart-7: light-dark(#7847bd, #9d7cd8);
+    --chart-8: light-dark(#ab2368, #ef6f87);
+    --chart-other: light-dark(#848cb5, #737aa2);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="tokyonight-moon"] {
     --background: light-dark(#e1e2e7, #222436);
@@ -446,14 +450,16 @@
     --error-bg: light-dark(#e1d0d3, #3b2b3b);
     --error-border: light-dark(#c64343, #c53b53);
     --error-text: light-dark(#c64343, #c53b53);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#2e7de9, #82aaff);
+    --chart-2: light-dark(#a6771e, #ffc777);
+    --chart-3: light-dark(#9939a0, #d76cb7);
+    --chart-4: light-dark(#b15c00, #ff966c);
+    --chart-5: light-dark(#007197, #7ce0ff);
+    --chart-6: light-dark(#ab2368, #ff757f);
+    --chart-7: light-dark(#7847bd, #c099ff);
+    --chart-8: light-dark(#118c74, #4fd6be);
+    --chart-other: light-dark(#848cb5, #737aa2);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="catppuccin-mocha"] {
     --background: light-dark(#eff1f5, #1e1e2e);
@@ -494,14 +500,16 @@
     --error-bg: light-dark(#f0dbdd, #3c2e40);
     --error-border: light-dark(#d20f39, #f38ba8);
     --error-text: light-dark(#d20f39, #f38ba8);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#1e66f5, #89b4fa);
+    --chart-2: light-dark(#f05600, #fab387);
+    --chart-3: light-dark(#179299, #94e2d5);
+    --chart-4: light-dark(#8839ef, #cba6f7);
+    --chart-5: light-dark(#3d9d27, #a6e3a1);
+    --chart-6: light-dark(#0896ac, #74c7ec);
+    --chart-7: light-dark(#c47500, #f9e2af);
+    --chart-8: light-dark(#6a7ef3, #b4befe);
+    --chart-other: light-dark(#8c8fa1, #7f849c);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="catppuccin-macchiato"] {
     --background: light-dark(#eff1f5, #24273a);
@@ -542,14 +550,16 @@
     --error-bg: light-dark(#f0dbdd, #413648);
     --error-border: light-dark(#d20f39, #ed8796);
     --error-text: light-dark(#d20f39, #ed8796);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#1e66f5, #8aadf4);
+    --chart-2: light-dark(#f05600, #f5a97f);
+    --chart-3: light-dark(#179299, #8bd5ca);
+    --chart-4: light-dark(#8839ef, #c6a0f6);
+    --chart-5: light-dark(#3d9d27, #a6da95);
+    --chart-6: light-dark(#6a7ef3, #b7bdf8);
+    --chart-7: light-dark(#d20f39, #ed8796);
+    --chart-8: light-dark(#0896ac, #7dc4e4);
+    --chart-other: light-dark(#8c8fa1, #8087a2);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="catppuccin-frappe"] {
     --background: light-dark(#eff1f5, #303446);
@@ -590,14 +600,16 @@
     --error-bg: light-dark(#f0dbdd, #4c4150);
     --error-border: light-dark(#d20f39, #e78284);
     --error-text: light-dark(#d20f39, #e78284);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#1e66f5, #8caaee);
+    --chart-2: light-dark(#3d9d27, #a6d189);
+    --chart-3: light-dark(#d260b4, #f4b8e4);
+    --chart-4: light-dark(#d20f39, #e78284);
+    --chart-5: light-dark(#0896ac, #85c1dc);
+    --chart-6: light-dark(#f05600, #ef9f76);
+    --chart-7: light-dark(#8839ef, #ca9ee6);
+    --chart-8: light-dark(#c47500, #e5c890);
+    --chart-other: light-dark(#8c8fa1, #838ba7);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="gruvbox"] {
     --background: light-dark(#fbf1c7, #282828);
@@ -638,14 +650,16 @@
     --error-bg: light-dark(#f3d7b0, #48312d);
     --error-border: light-dark(#9d0006, #fb4934);
     --error-text: light-dark(#9d0006, #fb4934);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#076678, #83a598);
+    --chart-2: light-dark(#af3a03, #fe8019);
+    --chart-3: light-dark(#458588, #458588);
+    --chart-4: light-dark(#b57614, #fabd2f);
+    --chart-5: light-dark(#8f3f71, #d3869b);
+    --chart-6: light-dark(#79740e, #b8bb26);
+    --chart-7: light-dark(#b16286, #b16286);
+    --chart-8: light-dark(#9d0006, #fb4934);
+    --chart-other: light-dark(#928374, #928374);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="nord"] {
     color-scheme: dark;
@@ -687,14 +701,16 @@
     --error-bg: #453c47;
     --error-border: #bf616a;
     --error-text: #bf616a;
-    --chart-1: #3987e5;
-    --chart-2: #d95926;
-    --chart-3: #199e70;
-    --chart-4: #c98500;
-    --chart-5: #d55181;
-    --chart-6: #008300;
-    --chart-7: #9085e9;
-    --chart-8: #e66767;
+    --chart-1: #88c0d0;
+    --chart-2: #bf616a;
+    --chart-3: #a3be8c;
+    --chart-4: #5e81ac;
+    --chart-5: #8fbcbb;
+    --chart-6: #d08770;
+    --chart-7: #81a1c1;
+    --chart-8: #ebcb8b;
+    --chart-other: #7b88a1;
+    --chart-good: var(--success-text);
   }
   [data-scheme~="dracula"] {
     --background: light-dark(#fffbeb, #282a36);
@@ -735,14 +751,16 @@
     --error-bg: light-dark(#fce5d3, #49343d);
     --error-border: light-dark(#cb3a2a, #ff5555);
     --error-text: light-dark(#cb3a2a, #ff5555);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#6735e6, #c389ff);
+    --chart-2: light-dark(#b23f00, #ffb455);
+    --chart-3: light-dark(#006ba3, #68edff);
+    --chart-4: light-dark(#ac004b, #ff71c8);
+    --chart-5: light-dark(#8a6c00, #f2fc61);
+    --chart-6: light-dark(#1859d0, #84a1ff);
+    --chart-7: light-dark(#007500, #00ff53);
+    --chart-8: light-dark(#e00000, #ff4e50);
+    --chart-other: light-dark(#6c664b, #6272a4);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="rose-pine"] {
     --background: light-dark(#faf4ed, #191724);
@@ -783,14 +801,16 @@
     --error-bg: light-dark(#f3e2de, #362534);
     --error-border: light-dark(#b4637a, #eb6f92);
     --error-text: light-dark(#b4637a, #eb6f92);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#9376b3, #c8a2f5);
+    --chart-2: light-dark(#538d64, #9acca1);
+    --chart-3: light-dark(#006b8d, #007699);
+    --chart-4: light-dark(#dc6e6b, #f4b8b5);
+    --chart-5: light-dark(#446cb8, #81a4f1);
+    --chart-6: light-dark(#c15778, #fe598f);
+    --chart-7: light-dark(#d87500, #ffbd54);
+    --chart-8: light-dark(#3f97a6, #8dd2de);
+    --chart-other: light-dark(#9893a5, #6e6a86);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="rose-pine-moon"] {
     --background: light-dark(#faf4ed, #232136);
@@ -831,14 +851,16 @@
     --error-bg: light-dark(#f3e2de, #402e44);
     --error-border: light-dark(#b4637a, #eb6f92);
     --error-text: light-dark(#b4637a, #eb6f92);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#9376b3, #c8a2f5);
+    --chart-2: light-dark(#dc6e6b, #f8918e);
+    --chart-3: light-dark(#006b8d, #0091bd);
+    --chart-4: light-dark(#538d64, #9acca1);
+    --chart-5: light-dark(#446cb8, #81a4f1);
+    --chart-6: light-dark(#c15778, #fe598f);
+    --chart-7: light-dark(#d87500, #ffbd54);
+    --chart-8: light-dark(#3f97a6, #8dd2de);
+    --chart-other: light-dark(#9893a5, #6e6a86);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="solarized"] {
     --background: light-dark(#fdf6e3, #002b36);
@@ -879,14 +901,16 @@
     --error-bg: light-dark(#fde1cd, #2f3338);
     --error-border: #dc322f;
     --error-text: #dc322f;
-    --chart-1: #268bd2;
-    --chart-2: #cb4b16;
-    --chart-3: #2aa198;
-    --chart-4: #b58900;
-    --chart-5: #d33682;
-    --chart-6: #859900;
-    --chart-7: #6c71c4;
-    --chart-8: #dc322f;
+    --chart-1: light-dark(#268bd2, #268bd2);
+    --chart-2: light-dark(#cb4b16, #cb4b16);
+    --chart-3: light-dark(#209b92, #2aa198);
+    --chart-4: light-dark(#b28600, #b58900);
+    --chart-5: light-dark(#d33682, #d33682);
+    --chart-6: light-dark(#829600, #859900);
+    --chart-7: light-dark(#6c71c4, #6c71c4);
+    --chart-8: light-dark(#dc322f, #dc322f);
+    --chart-other: light-dark(#93a1a1, #839496);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="one"] {
     --background: light-dark(#fafafa, #282c34);
@@ -927,14 +951,16 @@
     --error-bg: light-dark(#fbe7e4, #44373e);
     --error-border: light-dark(#e45649, #e06c75);
     --error-text: light-dark(#e45649, #e06c75);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#4078f2, #61afef);
+    --chart-2: light-dark(#50a14f, #98c379);
+    --chart-3: light-dark(#ca1243, #c15349);
+    --chart-4: light-dark(#c18401, #e5c07b);
+    --chart-5: light-dark(#a626a4, #c678dd);
+    --chart-6: light-dark(#986801, #d19a66);
+    --chart-7: light-dark(#0184bc, #56b6c2);
+    --chart-8: light-dark(#e45649, #e06c75);
+    --chart-other: light-dark(#a0a1a7, #7f848e);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="kanagawa-wave"] {
     --background: light-dark(#f2ecbc, #1f1f28);
@@ -975,14 +1001,16 @@
     --error-bg: light-dark(#f5d8aa, #3d262b);
     --error-border: #e82424;
     --error-text: #e82424;
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#4868a2, #799be1);
+    --chart-2: light-dark(#d56600, #ff9c5a);
+    --chart-3: light-dark(#547c75, #74aa9f);
+    --chart-4: light-dark(#644989, #977dbe);
+    --chart-5: light-dark(#d22f4d, #ee5e71);
+    --chart-6: light-dark(#438da7, #77b5cf);
+    --chart-7: light-dark(#787136, #eac278);
+    --chart-8: light-dark(#ba5479, #d97999);
+    --chart-other: light-dark(#8a8980, #727169);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="kanagawa-dragon"] {
     --background: light-dark(#f2ecbc, #181616);
@@ -1023,14 +1051,16 @@
     --error-bg: light-dark(#f5d8aa, #361e1b);
     --error-border: #e82424;
     --error-text: #e82424;
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#2b62cb, #73a8c0);
+    --chart-2: light-dark(#ff1900, #cf8757);
+    --chart-3: light-dark(#6d34ab, #8091bb);
+    --chart-4: light-dark(#807100, #d4af56);
+    --chart-5: light-dark(#de0176, #ac8cae);
+    --chart-6: light-dark(#5e9100, #6bb26d);
+    --chart-7: light-dark(#e30042, #f0494a);
+    --chart-8: light-dark(#328277, #7ba9a5);
+    --chart-other: light-dark(#8a8980, #737c73);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="everforest"] {
     --background: light-dark(#fdf6e3, #2d353b);
@@ -1071,14 +1101,16 @@
     --error-bg: light-dark(#ffe4d1, #494146);
     --error-border: light-dark(#f85552, #e67e80);
     --error-text: light-dark(#f85552, #e67e80);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#0093dd, #4dc4b7);
+    --chart-2: light-dark(#ff4346, #ff616d);
+    --chart-3: light-dark(#365cf5, #7ea3fb);
+    --chart-4: light-dark(#7e9800, #9dc64f);
+    --chart-5: light-dark(#ff12ce, #ee87bc);
+    --chart-6: light-dark(#ed5c00, #ff8443);
+    --chart-7: light-dark(#00a168, #56ca7b);
+    --chart-8: light-dark(#dc6f00, #edb73c);
+    --chart-other: light-dark(#a6b0a0, #859289);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="github"] {
     --background: light-dark(#ffffff, #0d1117);
@@ -1119,14 +1151,16 @@
     --error-bg: light-dark(#ffebe9, #2c1d20);
     --error-border: light-dark(#cf222e, #da3633);
     --error-text: light-dark(#d1242f, #f85149);
-    --chart-1: light-dark(#2a78d6, #3987e5);
-    --chart-2: light-dark(#eb6834, #d95926);
-    --chart-3: light-dark(#1baf7a, #199e70);
-    --chart-4: light-dark(#eda100, #c98500);
-    --chart-5: light-dark(#e87ba4, #d55181);
-    --chart-6: #008300;
-    --chart-7: light-dark(#6250d6, #9085e9);
-    --chart-8: light-dark(#e34948, #e66767);
+    --chart-1: light-dark(#0969da, #4493f8);
+    --chart-2: light-dark(#cf222e, #f85149);
+    --chart-3: light-dark(#1b7c83, #39c5cf);
+    --chart-4: light-dark(#bc4c00, #db6d28);
+    --chart-5: light-dark(#bf3989, #db61a2);
+    --chart-6: light-dark(#9a6700, #d29922);
+    --chart-7: light-dark(#8250df, #ab7df8);
+    --chart-8: light-dark(#1a7f37, #3fb950);
+    --chart-other: light-dark(#818b98, #656c76);
+    --chart-good: var(--success-text);
   }
   [data-scheme~="amber"] {
     --primary: light-dark(oklch(0.555 0.163 48.998), oklch(0.473 0.137 46.201));

@@ -225,7 +225,7 @@
 
     run("low-contrast", () => {
       for (const el of texts) {
-        if (disabled(el) || el.closest("svg")) continue
+        if (disabled(el) || el.closest("svg") || rgba(cs(el).color)[3] < 0.1) continue
         let bg = [255, 255, 255, 1]
         const layers = []
         let unknown = false

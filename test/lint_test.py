@@ -82,3 +82,11 @@ def check_lint_demo(t):
     inject(t)
     errors = [f for f in lint(t, {"ignore": KNOWN}) if f["severity"] == "error"]
     assert errors == [], short(errors)
+
+
+def check_lint_blocks(t):
+    for name in sorted(p.stem for p in (HERE.parent / "skills/clanker-ui/references/blocks").glob("*.html")):
+        t.docs(f"/blocks/{name}")
+        inject(t)
+        errors = [f for f in lint(t) if f["severity"] == "error"]
+        assert errors == [], (name, short(errors))

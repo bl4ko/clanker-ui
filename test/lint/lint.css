@@ -13,6 +13,7 @@ section { display: flex; flex-direction: column; gap: 0.75rem; }
 .spaced > button { width: 16px; height: 16px; min-width: 0; padding: 0; }
 .faint { background: light-dark(#fff, #000); color: light-dark(oklch(0.85 0 0), oklch(0.3 0 0)); padding: 0.5rem; }
 .dim { background: light-dark(#fff, #000); color: light-dark(#888, #666); padding: 0.5rem; }
+.ghost { color: transparent; background: var(--muted); }
 .pink { background: #ff00aa; color: #fff; padding: 0.5rem; }
 .muted-box { background: var(--muted); color: var(--foreground); padding: 0.5rem; border: 1px solid var(--border); }
 .nudge { margin-inline-start: 4px; }

@@ -81,7 +81,7 @@ def check_docs_sidebar(t):
     assert [s.strip() for s in sidebar.locator('[data-active="true"]').all_inner_texts()] == ["Components", "Button"]
     assert [s.strip() for s in sidebar.locator('[aria-current="page"]').all_inner_texts()] == ["Button"]
     labels = [s.strip() for s in sidebar.locator('[data-slot="sidebar-group-label"]').all_inner_texts()]
-    assert labels == ["Sections", "Components", "Get Started", "Utilities", "clanker-ui"]
+    assert labels == ["Sections", "Components", "Blocks", "Get Started", "Utilities", "clanker-ui"]
     assert sidebar.locator('a[href="/docs"]').count() == 1
     styles = page.evaluate("""() => {
       const a = document.querySelector('[data-docs="sidebar"] [aria-current="page"]')
@@ -661,3 +661,143 @@ def check_docs_component_demos(t):
     assert page.evaluate("""() => getComputedStyle(document.querySelector('[data-docs="sidebar-wrapper"]')).backgroundColor""") == "rgba(0, 0, 0, 0)"
     t.docs("/docs/components/icons")
     page.wait_for_function("""() => document.querySelectorAll('#icon-grid svg').length > 100""")
+
+
+BLOCKS = ["dashboard", "data-table", "settings", "form", "detail", "login", "states"]
+
+BLOCK_LAYOUT = """() => {
+  const box = el => { const r = el.getBoundingClientRect(); return { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height), b: Math.round(r.bottom) } }
+  const shown = el => el.getClientRects().length > 0
+  return {
+    scrollWidth: document.documentElement.scrollWidth,
+    cards: [...document.querySelectorAll('[data-slot="section-cards"] > [data-slot="card"]')].map(card => ({
+      card: box(card),
+      footer: box(card.querySelector('[data-slot="card-footer"]')),
+      title: parseFloat(getComputedStyle(card.querySelector('[data-slot="card-title"]')).fontSize),
+    })),
+    stats: [...document.querySelectorAll('[data-slot="stat-grid"] > *')].map(box),
+    nav: [...document.querySelectorAll('[data-slot="page-nav"] > a')].filter(shown).map(box),
+    hidden: [...document.querySelectorAll("[data-show-from], [data-hide-from]")].filter(shown).map(el => (el.dataset.showFrom ? "show-" + el.dataset.showFrom : "hide-" + el.dataset.hideFrom)),
+  }
+}"""
+
+
+def check_blocks_render(t):
+    page = t.page
+    breakpoints = {"sm": 640, "md": 768, "lg": 1024, "xl": 1280}
+    for name in BLOCKS:
+        t.docs("/blocks/" + name)
+        page.wait_for_function("() => document.querySelectorAll('[data-slot]').length > 20")
+        t.settle()
+        m = page.evaluate(BLOCK_LAYOUT)
+        assert m["scrollWidth"] == t.width, (name, m["scrollWidth"])
+        for key in m["hidden"]:
+            kind, size = key.split("-")
+            assert (t.width >= breakpoints[size]) == (kind == "show"), (name, key)
+        t.shot(name, page)
+    t.docs("/blocks/dashboard")
+    m = page.evaluate(BLOCK_LAYOUT)
+    cards = m["cards"]
+    assert len(cards) == 4
+    columns = len({c["card"]["x"] for c in cards})
+    assert columns == (1 if t.mobile else 2), columns
+    rows = {}
+    for c in cards:
+        rows.setdefault(c["card"]["y"], []).append(c)
+    for row in rows.values():
+        assert len({c["footer"]["y"] for c in row}) == 1 and len({c["card"]["h"] for c in row}) == 1, row
+    assert all(c["title"] == (30 if c["card"]["w"] >= 250 else 24) for c in cards), cards
+    t.docs("/blocks/detail")
+    stats = page.evaluate(BLOCK_LAYOUT)["stats"][:4]
+    assert len({s["y"] for s in stats}) == (2 if t.mobile else 1), stats
+    t.docs("/blocks/settings")
+    nav = page.evaluate(BLOCK_LAYOUT)["nav"]
+    assert len({n["y"] for n in nav}) == (1 if t.mobile else len(nav)), nav
+
+
+def check_blocks_section_cards_align(t):
+    page = t.page
+    t.docs("/blocks/dashboard")
+    page.evaluate("""() => { const d = document.querySelector('[data-slot="section-cards"] [data-slot="card-description"]'); d.textContent = "A long label that wraps to a second line in a narrow card" }""")
+    cards = page.evaluate(BLOCK_LAYOUT)["cards"]
+    first_row = [c for c in cards if c["card"]["y"] == cards[0]["card"]["y"]]
+    assert len({c["footer"]["y"] for c in first_row}) == 1, first_row
+    assert len({c["footer"]["h"] for c in first_row}) == 1, first_row
+    page.evaluate("""() => { document.querySelector('[data-slot="section-cards"] [data-slot="card-title"]').textContent = "$1,234,567,890.00 per quarter" }""")
+    title = page.locator('[data-slot="section-cards"] [data-slot="card-title"]').first
+    assert title.evaluate("el => el.scrollWidth <= el.clientWidth + 1 && el.getBoundingClientRect().right <= el.closest('[data-slot=card]').getBoundingClientRect().right")
+
+
+def check_blocks_data_table(t):
+    page = t.page
+    t.docs("/blocks/data-table")
+    rows = page.locator('#tasks tbody tr[data-status]:not([hidden])')
+    assert rows.count() == 10
+    assert page.locator("#task-page").inner_text() == "Page 1 of 2"
+    page.locator("#task-filter").fill("zzz-no-task")
+    page.locator("#task-empty").wait_for(state="visible")
+    assert rows.count() == 0 and page.locator("#task-reset").is_visible()
+    page.locator("#task-clear").click()
+    page.locator("#task-empty").wait_for(state="hidden")
+    assert rows.count() == 10 and page.locator("#task-filter").input_value() == ""
+    page.locator('#tasks thead [data-slot="checkbox"]').click()
+    assert page.locator('[data-slot="data-table-selection"]').inner_text() == "10 of 16 row(s) selected."
+    if not t.mobile:
+        page.locator('[data-sort="title"]').click()
+        assert page.locator('th:has([data-sort="title"])').get_attribute("aria-sort") == "ascending"
+        titles = rows.evaluate_all("rows => rows.map(r => r.cells[2].textContent.trim())")
+        assert titles == sorted(titles, key=str.lower) or titles == sorted(titles), titles
+    page.locator('[data-page="next"]').click()
+    assert page.locator("#task-page").inner_text() == "Page 2 of 2" and rows.count() == 6
+
+
+def check_blocks_login_validation(t):
+    page = t.page
+    t.docs("/blocks/login")
+    button = page.get_by_role("button", name="Log in", exact=True)
+    before = button.bounding_box()
+    button.click()
+    email = page.locator("#email")
+    page.wait_for_function("() => document.querySelector('#email').getAttribute('aria-invalid') === 'true'")
+    assert page.evaluate("() => document.activeElement.id") == "email"
+    assert page.locator('[data-slot="field-error"]').first.inner_text() == "Enter your email address."
+    email.fill("m@example.com")
+    page.locator("#password").fill("correct horse")
+    after = button.bounding_box()
+    assert abs(after["x"] - before["x"]) < 1 and abs(after["width"] - before["width"]) < 1
+
+
+def check_blocks_viewer(t):
+    page = t.page
+    if t.engine == "firefox":
+        t.expect_console(r"Layout was forced before the page was fully loaded")
+    t.docs("/docs/blocks/dashboard")
+    frame = page.locator('[data-docs="block-frame"] iframe')
+    assert frame.get_attribute("src").endswith("/blocks/dashboard")
+    page.wait_for_function("""() => document.querySelector('[data-docs="block-frame"] iframe').contentDocument?.readyState === "complete" """)
+    inner = page.frame_locator('[data-docs="block-frame"] iframe')
+    inner.locator('[data-slot="section-cards"]').wait_for()
+    if t.width >= 1024:
+        page.get_by_role("radio", name="Mobile").or_(page.get_by_role("button", name="Mobile")).first.click()
+        page.wait_for_function("""() => document.querySelector('[data-docs="block-frame"] iframe').getBoundingClientRect().width === 390""")
+    page.get_by_role("tab", name="Code").click()
+    titles = page.locator('[data-docs="block-tabs"] [data-slot="code-block-title"]').all_inner_texts()
+    assert titles == ["dashboard.html", "dashboard.js"], titles
+    md = page.request.get(t.base_url + "/docs/blocks/dashboard.md").text()
+    assert '```html title="dashboard.html"' in md and '```js title="dashboard.js"' in md
+    run_csp = page.request.get(t.base_url + "/blocks/dashboard").headers["content-security-policy"]
+    assert "frame-ancestors 'self'" in run_csp.split("; ")
+
+
+def check_blocks_form_fields(t):
+    page = t.page
+    t.docs("/blocks/form")
+    status = page.locator("#project-status").bounding_box()
+    field = page.locator("#project-status").locator("xpath=ancestor::*[@data-slot='field'][1]").bounding_box()
+    budget = page.locator("#project-budget").locator("xpath=ancestor::*[@data-slot='field'][1]").bounding_box()
+    assert abs(status["width"] - field["width"]) < 1, (status, field)
+    assert (abs(field["y"] - budget["y"]) < 1) == (not t.mobile), (field, budget)
+    page.get_by_role("button", name="Create project").click()
+    page.wait_for_function("() => document.querySelector('#project-name').getAttribute('aria-invalid') === 'true'")
+    after = page.locator("#project-budget").locator("xpath=ancestor::*[@data-slot='field'][1]").bounding_box()
+    assert abs(after["x"] - budget["x"]) < 1 and abs(after["width"] - budget["width"]) < 1, (budget, after)

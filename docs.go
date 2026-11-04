@@ -68,6 +68,7 @@ type docPage struct {
 	Section     string
 	Styles      []string
 	Scripts     []string
+	Wide        bool
 	reserved    []string
 }
 
@@ -89,6 +90,7 @@ type docsSite struct {
 	demo         map[string]*demoSection
 	anchors      map[string]string
 	sectionPage  map[string]string
+	blocks       map[string]*block
 }
 
 type siteURLs struct {
@@ -159,6 +161,9 @@ func loadDocsAt(fsys fs.FS, urls siteURLs) (*docsSite, error) {
 		return nil, err
 	}
 	if err := d.loadDemoAssets(fsys); err != nil {
+		return nil, err
+	}
+	if err := d.loadBlocks(fsys); err != nil {
 		return nil, err
 	}
 	d.hash = assetHash(d.assets)
@@ -378,6 +383,14 @@ func (d *docsSite) renderPage(p *docPage) error {
 			p.Examples = append(p.Examples, name)
 			return d.exec("example", exampleView(ex, attrs))
 		},
+		block: func(name string) (string, error) {
+			v, err := d.blockView(name)
+			if err != nil {
+				return "", err
+			}
+			p.Wide = true
+			return d.exec("block", v)
+		},
 		reserved: p.reserved,
 		components: func(variant string) (string, error) {
 			links := d.componentLinks(variant)
@@ -496,6 +509,14 @@ func (d *docsSite) markdown(p *docPage) string {
 				fmt.Fprintf(&list, "- [%s](%s)\n", l.Title, d.urls.abs(href+".md"))
 			}
 			return strings.TrimSuffix(list.String(), "\n")
+		}
+		if tag.Name == "block" {
+			b := d.blocks[tag.Arg]
+			out := "```html title=\"" + b.Name + ".html\"\n" + strings.TrimRight(b.HTML, "\n") + "\n```"
+			if b.JS != "" {
+				out += "\n\n```js title=\"" + b.Name + ".js\"\n" + strings.TrimRight(b.JS, "\n") + "\n```"
+			}
+			return out
 		}
 		ex := d.examples[tag.Arg]
 		out := "```html\n" + ex.source() + "\n```"

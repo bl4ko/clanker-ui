@@ -411,6 +411,10 @@ func (d *docsSite) generatePages(fsys fs.FS) error {
 		if !strings.HasPrefix(href, "/docs/") || d.pages[href] != nil || docRedirects[href] != "" {
 			continue
 		}
+		if name, ok := strings.CutPrefix(href, "/docs/blocks/"); ok && d.blocks[name] != nil {
+			d.pages[href] = d.blockDocPage(href, name)
+			continue
+		}
 		if p := d.generatePage(href, readme, stops); p != nil {
 			d.pages[href] = p
 		}

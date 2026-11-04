@@ -75,7 +75,7 @@ func exportSite(fsys fs.FS, out, base, siteURL string) error {
 		return err
 	}
 	e := &exporter{fsys: fsys, root: root, h: (&site{fsys: fsys, docs: d}).routes(), d: d, urls: urls}
-	for _, step := range []func() error{e.docPages, e.files, e.demo, e.notFound, e.extras, e.sitemap} {
+	for _, step := range []func() error{e.docPages, e.files, e.demo, e.blocks, e.notFound, e.extras, e.sitemap} {
 		if err := step(); err != nil {
 			return err
 		}

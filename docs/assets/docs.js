@@ -107,3 +107,11 @@ const prefetch = event => {
 document.addEventListener("pointermove", prefetch, { passive: true })
 document.addEventListener("pointerdown", prefetch, { passive: true })
 document.addEventListener("focusin", prefetch)
+
+document.addEventListener("toggle-group:change", event => {
+  const group = event.target instanceof Element ? event.target : null
+  if (!group?.matches('[data-docs="block-width"]')) return
+  const frame = group.closest('[data-docs="block"]').querySelector('[data-docs="block-frame"]')
+  if (event.detail.value) frame.dataset.width = event.detail.value
+  else group.dataset.value = frame.dataset.width
+})

@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Settings - Acme Inc.</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
+  <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
+  <script type="module" src="/settings.js"></script>
+</head>
+<body>
+  <header data-slot="site-header" data-size="lg">
+    <div data-slot="dropdown-menu" data-hide-from="md">
+      <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-dropdown-menu-trigger aria-label="Menu"><svg data-lucide="menu"></svg></button>
+      <div data-slot="dropdown-menu-content" data-align="start">
+              <a data-slot="dropdown-menu-item" href="#overview">Overview</a>
+              <a data-slot="dropdown-menu-item" href="#tasks">Tasks</a>
+              <a data-slot="dropdown-menu-item" href="#invoices">Invoices</a>
+              <a data-slot="dropdown-menu-item" href="#settings">Settings</a>
+      </div>
+    </div>
+    <a data-slot="brand" href="#"><span data-slot="brand-mark" data-size="sm"><svg data-lucide="layout-dashboard"></svg></span>Acme Inc.</a>
+    <nav data-slot="site-header-nav" aria-label="Main" data-show-from="md">
+          <a href="#overview">Overview</a>
+          <a href="#tasks">Tasks</a>
+          <a href="#invoices">Invoices</a>
+          <a href="#settings" aria-current="page">Settings</a>
+    </nav>
+    <div data-slot="site-header-actions">
+      <div data-slot="input-group" data-show-from="lg">
+        <div data-slot="input-group-addon"><svg data-lucide="search"></svg></div>
+        <input data-slot="input-group-control" type="search" placeholder="Search..." aria-label="Search">
+      </div>
+      <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+      <div data-slot="dropdown-menu">
+        <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-dropdown-menu-trigger aria-label="Account"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">CN</span></span></button>
+        <div data-slot="dropdown-menu-content" data-align="end">
+          <div data-slot="dropdown-menu-label">
+            <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
+          </div>
+          <div data-slot="dropdown-menu-separator"></div>
+          <div data-slot="dropdown-menu-group">
+            <a data-slot="dropdown-menu-item" href="#profile"><svg data-lucide="user"></svg>Profile</a>
+            <a data-slot="dropdown-menu-item" href="#billing"><svg data-lucide="credit-card"></svg>Billing</a>
+            <a data-slot="dropdown-menu-item" href="#settings"><svg data-lucide="settings"></svg>Settings</a>
+          </div>
+          <div data-slot="dropdown-menu-separator"></div>
+          <a data-slot="dropdown-menu-item" href="#logout"><svg data-lucide="log-out"></svg>Log out</a>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main data-slot="page">
+    <div data-slot="page-header">
+      <h1 data-slot="page-title">Settings</h1>
+      <p data-slot="page-description">Manage your account settings and set email preferences.</p>
+    </div>
+    <div data-slot="separator"></div>
+    <div data-slot="page-body">
+      <aside data-slot="page-aside">
+        <nav data-slot="page-nav" class="scroll-fade-x" aria-label="Settings">
+          <a data-slot="button" data-variant="ghost" href="#profile" aria-current="page">Profile</a>
+          <a data-slot="button" data-variant="ghost" href="#notifications">Notifications</a>
+          <a data-slot="button" data-variant="ghost" href="#appearance">Appearance</a>
+          <a data-slot="button" data-variant="ghost" href="#danger">Danger zone</a>
+        </nav>
+      </aside>
+      <div>
+        <form data-slot="form" id="profile">
+          <div data-slot="card">
+            <div data-slot="card-header">
+              <h2 data-slot="card-title">Profile</h2>
+              <p data-slot="card-description">This is how others see you on the site.</p>
+            </div>
+            <div data-slot="card-content">
+              <div data-slot="field-group">
+                <div data-slot="field-group" data-columns="2">
+                  <div data-slot="field" role="group">
+                    <label data-slot="field-label" for="name">Name</label>
+                    <input data-slot="input" id="name" name="name" value="shadcn" autocomplete="name" required data-error-value-missing="Enter your name.">
+                  </div>
+                  <div data-slot="field" role="group">
+                    <label data-slot="field-label" for="username">Username</label>
+                    <div data-slot="input-group" role="group">
+                      <div data-slot="input-group-addon"><span data-slot="input-group-text">acme.com/</span></div>
+                      <input data-slot="input-group-control" id="username" name="username" value="shadcn" required minlength="2" pattern="[a-z0-9]+(-[a-z0-9]+)*" data-error-value-missing="Enter a username." data-error-pattern-mismatch="Use lower case letters, digits, and dashes." data-error-too-short="Use at least 2 characters.">
+                    </div>
+                  </div>
+                </div>
+                <div data-slot="field" role="group">
+                  <label data-slot="field-label" for="email">Email</label>
+                  <div data-slot="select" data-name="email" data-value="m@example.com">
+                    <button data-slot="select-trigger" id="email"><span data-slot="select-value">Select a verified email</span></button>
+                    <div data-slot="select-content">
+                      <div data-slot="select-item" data-value="m@example.com">m@example.com</div>
+                      <div data-slot="select-item" data-value="m@google.com">m@google.com</div>
+                      <div data-slot="select-item" data-value="m@support.com">m@support.com</div>
+                    </div>
+                  </div>
+                  <p data-slot="field-description">You can manage verified email addresses in your email settings.</p>
+                </div>
+                <div data-slot="field" role="group">
+                  <label data-slot="field-label" for="bio">Bio</label>
+                  <textarea data-slot="textarea" id="bio" name="bio" rows="3" maxlength="160">I own a computer.</textarea>
+                  <p data-slot="field-description">At most 160 characters. You can @mention other users and organizations.</p>
+                </div>
+              </div>
+            </div>
+            <div data-slot="card-footer">
+              <p data-slot="card-description">Changes show on your profile at once.</p>
+              <button type="submit" data-slot="button">Save changes</button>
+            </div>
+          </div>
+        </form>
+        <div data-slot="card" id="notifications">
+          <div data-slot="card-header">
+            <h2 data-slot="card-title">Notifications</h2>
+            <p data-slot="card-description">Choose what we send to you. Changes save at once.</p>
+          </div>
+          <div data-slot="card-content">
+            <div data-slot="field-group">
+              <div data-slot="field" role="group">
+                <div data-slot="field-label" id="notify-label">Notify me about</div>
+                <div data-slot="radio-group" data-name="notify" data-value="mentions" aria-labelledby="notify-label">
+                  <div data-slot="field" data-orientation="horizontal">
+                    <button type="button" data-slot="radio-group-item" id="notify-all" value="all"></button>
+                    <label data-slot="field-label" for="notify-all">All new messages</label>
+                  </div>
+                  <div data-slot="field" data-orientation="horizontal">
+                    <button type="button" data-slot="radio-group-item" id="notify-mentions" value="mentions"></button>
+                    <label data-slot="field-label" for="notify-mentions">Direct messages and mentions</label>
+                  </div>
+                  <div data-slot="field" data-orientation="horizontal">
+                    <button type="button" data-slot="radio-group-item" id="notify-none" value="none"></button>
+                    <label data-slot="field-label" for="notify-none">Nothing</label>
+                  </div>
+                </div>
+              </div>
+              <div data-slot="field" role="group">
+                <div data-slot="field-label">Email</div>
+                  <label data-slot="field-label" for="email-activity">
+                    <div data-slot="field" data-orientation="horizontal">
+                      <div data-slot="field-content">
+                        <div data-slot="field-label">Account activity</div>
+                        <p data-slot="field-description">Emails about sign-ins, security, and billing.</p>
+                      </div>
+                      <button type="button" data-slot="switch" id="email-activity" data-name="email-activity" data-checked></button>
+                    </div>
+                  </label>
+                  <label data-slot="field-label" for="email-product">
+                    <div data-slot="field" data-orientation="horizontal">
+                      <div data-slot="field-content">
+                        <div data-slot="field-label">Product updates</div>
+                        <p data-slot="field-description">Emails about new features and changes.</p>
+                      </div>
+                      <button type="button" data-slot="switch" id="email-product" data-name="email-product"></button>
+                    </div>
+                  </label>
+                  <label data-slot="field-label" for="email-marketing">
+                    <div data-slot="field" data-orientation="horizontal">
+                      <div data-slot="field-content">
+                        <div data-slot="field-label">Marketing</div>
+                        <p data-slot="field-description">Emails about offers and events.</p>
+                      </div>
+                      <button type="button" data-slot="switch" id="email-marketing" data-name="email-marketing"></button>
+                    </div>
+                  </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-slot="card" id="appearance">
+          <div data-slot="card-header">
+            <h2 data-slot="card-title">Appearance</h2>
+            <p data-slot="card-description">The theme applies on this device at once.</p>
+          </div>
+          <div data-slot="card-content">
+            <div data-slot="field" data-orientation="horizontal">
+              <div data-slot="field-content">
+                <div data-slot="field-label" id="theme-label">Theme</div>
+                <p data-slot="field-description">Light, dark, or the system setting.</p>
+              </div>
+              <div data-slot="theme-switch" role="group" aria-labelledby="theme-label">
+                <button type="button" data-theme-set="light" aria-label="Light theme"><svg data-lucide="sun"></svg></button>
+                <button type="button" data-theme-set="dark" aria-label="Dark theme"><svg data-lucide="moon"></svg></button>
+                <button type="button" data-theme-set="system" aria-label="System theme"><svg data-lucide="monitor"></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-slot="card" id="danger">
+          <div data-slot="card-header">
+            <h2 data-slot="card-title">Danger zone</h2>
+            <p data-slot="card-description">Delete the account and all of its data. You cannot undo this.</p>
+          </div>
+          <div data-slot="card-footer">
+            <p data-slot="card-description">Download your data first if you need it.</p>
+            <div data-slot="alert-dialog">
+              <button type="button" data-slot="button" data-variant="destructive" data-alert-dialog-trigger>Delete account</button>
+              <dialog data-slot="alert-dialog-content" data-size="sm">
+                <div data-slot="alert-dialog-header">
+                  <h2 data-slot="alert-dialog-title">Delete your account?</h2>
+                  <p data-slot="alert-dialog-description">This deletes your profile, projects, and files. You cannot undo this.</p>
+                </div>
+                <div data-slot="alert-dialog-footer">
+                  <button type="button" data-slot="alert-dialog-cancel" data-variant="outline">Cancel</button>
+                  <button type="button" data-slot="alert-dialog-action" data-variant="destructive" id="delete-account">Delete account</button>
+                </div>
+              </dialog>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

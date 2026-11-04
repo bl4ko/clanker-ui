@@ -1415,7 +1415,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 - `data-layout="center"` on `page` is the sign-in layout of shadcn `login-03`: a muted full-height page with its children centered at most 24rem wide. In it, card headers are centered, the card title is 20 px, a `field-description` child of the page is centered, and so is one in the field of the submit button.
 - `page` is the content column: gutters of 1rem (1.5rem from 64rem), a 1rem gap between its children (1.5rem from 48rem), and `container: page`. Put it in `sidebar-inset` or `<body>`. `data-size="sm|md|lg"` limits the content to 42rem, 56rem, or 72rem and centers it; no size fills the width (dashboards, tables).
 - `page-header` is a grid: `page-title` (24 px, weight 600) and `page-description` (muted) on the start side, `page-actions` (a row of buttons, `gap` 0.5rem) on the end side. Below 32rem of header width, the actions move under the text.
-- `page-body` puts its children in one column. With a `page-aside` first, it is a 12rem navigation column (sticky) and a content column of at most 42rem from 64rem; with a `page-aside` last, a 20rem side column. Each child is a flex column with a 1.5rem gap.
+- `page-body` puts its children in one column. With a `page-aside` first, it is a 12rem navigation column (sticky below a header of `--header-height`, default 3.5rem) and a content column of at most 42rem from 64rem; with a `page-aside` last, a 20rem side column. Each child is a flex column with a 1.5rem gap.
 - `page-nav` holds ghost buttons (`aria-current="page"` on the current one gets the muted background). It is a row that scrolls below 64rem and a column from 64rem.
 
 #### Site Header
@@ -1488,7 +1488,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
       <input data-slot="input" type="search" placeholder="Filter tasks..." aria-label="Filter tasks">
     </div>
     <div>
-      <button type="button" data-slot="button" data-size="sm">Add Task</button>
+      <button type="button" data-slot="button" data-size="sm">Add task</button>
     </div>
   </div>
   <div data-slot="table-container">
@@ -1509,7 +1509,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 ```
 
 - The frame of the shadcn data table (tasks example and `dashboard-01`): a toolbar, the table in a bordered, rounded `table-container` with a muted header, and the pagination row. Sorting, filtering, and paging are app code.
-- `data-table-toolbar` has two `div` groups: filters at the start (the first grows; a text input in it is 150 to 250 px) and actions at the end. Both wrap.
+- `data-table-toolbar` has two `div` groups: filters at the start (the first grows; a text input in it is 150 to 250 px) and actions at the end. Both wrap. Small buttons in it are 32 px high, as high as the input (shadcn `h-8`).
 - `data-table-pagination` is a row of `div` groups at the end, 14 px, weight 500. `data-table-selection` is the muted selection text that fills the start.
 - `data-table-text` is the text of a cell: one line, cut with an ellipsis at 32rem (or 60 % of the table width). With an icon first it is an icon and label row (the icon is muted). A sort button: a ghost `button` alone in the `table-head`, with `aria-sort` on the head.
 - `data-align="end"` on a `table-head` or `table-cell` aligns numbers to the end with tabular figures; `data-align="center"` centers. A cell with only a `checkbox` is 2rem wide. A cell with an `empty` has no padding: use it with `colspan` for the empty state.

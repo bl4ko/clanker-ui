@@ -14,7 +14,7 @@
 <body>
   <header data-slot="site-header" data-size="lg">
     <div data-slot="dropdown-menu" data-hide-from="md">
-      <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Menu"><svg data-lucide="menu"></svg></button>
+      <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-dropdown-menu-trigger aria-label="Menu"><svg data-lucide="menu"></svg></button>
       <div data-slot="dropdown-menu-content" data-align="start">
               <a data-slot="dropdown-menu-item" href="#overview">Overview</a>
               <a data-slot="dropdown-menu-item" href="#tasks">Tasks</a>
@@ -34,9 +34,9 @@
         <div data-slot="input-group-addon"><svg data-lucide="search"></svg></div>
         <input data-slot="input-group-control" type="search" placeholder="Search..." aria-label="Search">
       </div>
-      <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+      <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
       <div data-slot="dropdown-menu">
-        <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Account"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">CN</span></span></button>
+        <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-dropdown-menu-trigger aria-label="Account"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">CN</span></span></button>
         <div data-slot="dropdown-menu-content" data-align="end">
           <div data-slot="dropdown-menu-label">
             <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
@@ -55,7 +55,7 @@
   </header>
   <main data-slot="page">
     <div data-slot="page-header">
-      <h1 data-slot="page-title">Welcome back!</h1>
+      <h1 data-slot="page-title">Tasks</h1>
       <p data-slot="page-description">Here's a list of your tasks for this month.</p>
     </div>
     <div data-slot="data-table" id="tasks">
@@ -69,7 +69,7 @@
                   <div data-slot="dropdown-menu-label">Status</div>
                 <div data-slot="dropdown-menu-checkbox-item" data-value="backlog"><svg data-lucide="circle-question-mark"></svg>Backlog<span data-slot="dropdown-menu-shortcut">4</span></div>
                 <div data-slot="dropdown-menu-checkbox-item" data-value="todo"><svg data-lucide="circle"></svg>Todo<span data-slot="dropdown-menu-shortcut">2</span></div>
-                <div data-slot="dropdown-menu-checkbox-item" data-value="in progress"><svg data-lucide="clock"></svg>In Progress<span data-slot="dropdown-menu-shortcut">5</span></div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="in progress"><svg data-lucide="clock"></svg>In progress<span data-slot="dropdown-menu-shortcut">5</span></div>
                 <div data-slot="dropdown-menu-checkbox-item" data-value="done"><svg data-lucide="circle-check"></svg>Done<span data-slot="dropdown-menu-shortcut">4</span></div>
                 <div data-slot="dropdown-menu-checkbox-item" data-value="canceled"><svg data-lucide="circle-x"></svg>Canceled<span data-slot="dropdown-menu-shortcut">1</span></div>
                 </div>
@@ -89,7 +89,7 @@
           <button type="button" data-slot="button" data-variant="ghost" data-size="sm" id="task-reset" hidden>Reset<svg data-lucide="x"></svg></button>
         </div>
         <div>
-          <div data-slot="dropdown-menu" id="task-view">
+          <div data-slot="dropdown-menu" id="task-view" data-show-from="lg">
             <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="list-filter"></svg>View</button>
             <div data-slot="dropdown-menu-content" data-align="end">
               <div data-slot="dropdown-menu-group">
@@ -101,7 +101,7 @@
               </div>
             </div>
           </div>
-          <button type="button" data-slot="button" data-size="sm"><svg data-lucide="plus"></svg>Add Task</button>
+          <button type="button" data-slot="button" data-size="sm"><svg data-lucide="plus"></svg>Add task</button>
         </div>
       </div>
       <div data-slot="table-container">
@@ -110,9 +110,9 @@
             <tr data-slot="table-row">
               <th data-slot="table-head" scope="col"><button type="button" data-slot="checkbox" aria-label="Select all"></button></th>
               <th data-slot="table-head" scope="col" data-column="task" data-show-from="md">Task</th>
-                <th data-slot="table-head" scope="col" data-column="title" aria-sort="none"><button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-sort="title">Title<svg data-lucide="arrow-up-down"></svg></button></th>
-                <th data-slot="table-head" scope="col" data-column="status" data-show-from="sm" aria-sort="none"><button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-sort="status">Status<svg data-lucide="arrow-up-down"></svg></button></th>
-                <th data-slot="table-head" scope="col" data-column="priority" data-show-from="lg" aria-sort="none"><button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-sort="priority">Priority<svg data-lucide="arrow-up-down"></svg></button></th>
+                <th data-slot="table-head" scope="col" data-column="title" aria-sort="none"><button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-sort="title">Title<svg data-lucide="chevrons-up-down"></svg></button></th>
+                <th data-slot="table-head" scope="col" data-column="status" data-show-from="sm" aria-sort="none"><button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-sort="status">Status<svg data-lucide="chevrons-up-down"></svg></button></th>
+                <th data-slot="table-head" scope="col" data-column="priority" data-show-from="lg" aria-sort="none"><button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-sort="priority">Priority<svg data-lucide="chevrons-up-down"></svg></button></th>
               <th data-slot="table-head" scope="col"><span class="sr-only">Actions</span></th>
             </tr>
           </thead>
@@ -121,7 +121,7 @@
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-8782"></button></td>
                 <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-8782</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="You can&#39;t compress the program without quantifying the open-source SSD pixel!">You can&#39;t compress the program without quantifying the open-source SSD pixel!</span></td>
-                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In Progress</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
                 <td data-slot="table-cell" data-align="end">
                   <div data-slot="dropdown-menu">
@@ -254,7 +254,7 @@
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-1138"></button></td>
                 <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-1138</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Feature</span> <span data-slot="data-table-text" title="Generating the driver won&#39;t do anything, we need to quantify the 1080p SMTP bandwidth!">Generating the driver won&#39;t do anything, we need to quantify the 1080p SMTP bandwidth!</span></td>
-                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In Progress</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
                 <td data-slot="table-cell" data-align="end">
                   <div data-slot="dropdown-menu">
@@ -292,7 +292,7 @@
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-5160"></button></td>
                 <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-5160</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="Calculating the bus won&#39;t do anything, we need to navigate the back-end JSON protocol!">Calculating the bus won&#39;t do anything, we need to navigate the back-end JSON protocol!</span></td>
-                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In Progress</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-up"></svg>High</span></td>
                 <td data-slot="table-cell" data-align="end">
                   <div data-slot="dropdown-menu">
@@ -387,7 +387,7 @@
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-8404"></button></td>
                 <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-8404</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Bug</span> <span data-slot="data-table-text" title="We need to generate the virtual HEX alarm!">We need to generate the virtual HEX alarm!</span></td>
-                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In Progress</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-down"></svg>Low</span></td>
                 <td data-slot="table-cell" data-align="end">
                   <div data-slot="dropdown-menu">
@@ -406,7 +406,7 @@
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-5365"></button></td>
                 <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-5365</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="Backing up the pixel won&#39;t do anything, we need to transmit the primary IB array!">Backing up the pixel won&#39;t do anything, we need to transmit the primary IB array!</span></td>
-                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In Progress</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-down"></svg>Low</span></td>
                 <td data-slot="table-cell" data-align="end">
                   <div data-slot="dropdown-menu">

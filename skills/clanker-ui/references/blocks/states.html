@@ -14,7 +14,7 @@
 <body>
   <header data-slot="site-header" data-size="lg">
     <div data-slot="dropdown-menu" data-hide-from="md">
-      <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Menu"><svg data-lucide="menu"></svg></button>
+      <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-dropdown-menu-trigger aria-label="Menu"><svg data-lucide="menu"></svg></button>
       <div data-slot="dropdown-menu-content" data-align="start">
               <a data-slot="dropdown-menu-item" href="#overview">Overview</a>
               <a data-slot="dropdown-menu-item" href="#tasks">Tasks</a>
@@ -34,9 +34,9 @@
         <div data-slot="input-group-addon"><svg data-lucide="search"></svg></div>
         <input data-slot="input-group-control" type="search" placeholder="Search..." aria-label="Search">
       </div>
-      <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+      <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
       <div data-slot="dropdown-menu">
-        <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Account"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">CN</span></span></button>
+        <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-dropdown-menu-trigger aria-label="Account"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">CN</span></span></button>
         <div data-slot="dropdown-menu-content" data-align="end">
           <div data-slot="dropdown-menu-label">
             <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
@@ -59,7 +59,7 @@
       <p data-slot="page-description">Each list and card has four states: loading, empty, error, and loaded.</p>
       <div data-slot="page-actions">
         <button type="button" data-slot="button" data-variant="outline" id="toast-error">Show error toast</button>
-        <button type="button" data-slot="button" id="toast-success">Show success toast</button>
+        <button type="button" data-slot="button" data-variant="outline" id="toast-success">Show success toast</button>
       </div>
     </div>
     <section data-slot="card" aria-labelledby="loading-title" aria-busy="true">
@@ -118,7 +118,6 @@
           </div>
           <div data-slot="empty-content">
             <button type="button" data-slot="button" data-size="sm"><svg data-lucide="plus"></svg>Create invoice</button>
-            <a data-slot="button" data-variant="link" data-size="sm" href="#import">Import from CSV</a>
           </div>
         </div>
       </div>
@@ -129,35 +128,30 @@
         <p data-slot="card-description">Filters hide every row: name the filter and offer to clear it.</p>
       </div>
       <div data-slot="card-content">
-        <div data-slot="data-table">
-          <div data-slot="data-table-toolbar">
-            <div><input data-slot="input" type="search" value="Umbrella" aria-label="Filter invoices"></div>
-          </div>
-          <div data-slot="table-container">
-            <table data-slot="table">
-              <thead data-slot="table-header">
-                <tr data-slot="table-row">
-                  <th data-slot="table-head" scope="col">Invoice</th>
-                  <th data-slot="table-head" scope="col">Customer</th>
-                  <th data-slot="table-head" scope="col" data-align="end">Amount</th>
-                </tr>
-              </thead>
-              <tbody data-slot="table-body">
-                <tr data-slot="table-row">
-                  <td data-slot="table-cell" colspan="3">
-                    <div data-slot="empty">
-                      <div data-slot="empty-header">
-                        <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="search"></svg></div>
-                        <div data-slot="empty-title">No invoices match “Umbrella”</div>
-                        <div data-slot="empty-description">Check the spelling or clear the filter.</div>
-                      </div>
-                      <div data-slot="empty-content"><button type="button" data-slot="button" data-variant="outline" data-size="sm">Clear filter</button></div>
+        <div data-slot="table-container">
+          <table data-slot="table">
+            <thead data-slot="table-header">
+              <tr data-slot="table-row">
+                <th data-slot="table-head" scope="col">Invoice</th>
+                <th data-slot="table-head" scope="col">Customer</th>
+                <th data-slot="table-head" scope="col" data-align="end">Amount</th>
+              </tr>
+            </thead>
+            <tbody data-slot="table-body">
+              <tr data-slot="table-row">
+                <td data-slot="table-cell" colspan="3">
+                  <div data-slot="empty">
+                    <div data-slot="empty-header">
+                      <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="search"></svg></div>
+                      <div data-slot="empty-title">No invoices match “Umbrella”</div>
+                      <div data-slot="empty-description">Check the spelling or clear the filter.</div>
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                    <div data-slot="empty-content"><button type="button" data-slot="button" data-variant="outline" data-size="sm">Clear filter</button></div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>

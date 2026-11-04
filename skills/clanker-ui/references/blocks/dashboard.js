@@ -10,7 +10,7 @@ const visitors = chart(document.getElementById("visitors-chart"), {
   rows,
   config: { desktop: { label: "Desktop", color: "chart-1" }, mobile: { label: "Mobile", color: "chart-2" } },
 }, {
-  type: "area", x: "date", scale: "time", stack: true, gradient: true, height: 250, valueAxis: false, legend: false,
+  type: "area", x: "date", scale: "time", stack: true, gradient: true, height: 250, valueAxis: false,
   xFormat: { month: "short", day: "numeric", timeZone: "UTC" }, locale: "en-US", label: "Total visitors",
 })
 
@@ -44,7 +44,7 @@ function sync() {
   const count = boxes.filter(box => box.hasAttribute("data-checked")).length
   all.toggleAttribute("data-checked", count === boxes.length)
   all.toggleAttribute("data-indeterminate", count > 0 && count < boxes.length)
-  status.textContent = `${count} of 68 row(s) selected.`
+  status.textContent = `${count} of ${boxes.length} row(s) selected.`
   for (const box of boxes) box.closest("tr").dataset.state = box.hasAttribute("data-checked") ? "selected" : ""
 }
 

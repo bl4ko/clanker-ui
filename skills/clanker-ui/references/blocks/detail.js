@@ -9,8 +9,15 @@ document.getElementById("share").addEventListener("click", async () => {
   }
 })
 
-document.getElementById("invite").addEventListener("click", () => toast("Invite sent", { description: "We sent an email to the new member." }))
+document.getElementById("invite").addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(`${location.origin}/invite/web`)
+    toast.success("Invite link copied", { description: "Anyone with the link can ask to join." })
+  } catch {
+    toast.error("Could not copy the invite link")
+  }
+})
 
 document.getElementById("delete-project").addEventListener("click", () => {
-  toast("Project moved to the trash", { description: "It is deleted after 30 days.", action: { label: "Undo", onClick() {} } })
+  toast("Project moved to the trash", { description: "Restore it from the trash in the next 30 days." })
 })

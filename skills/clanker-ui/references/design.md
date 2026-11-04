@@ -1,16 +1,16 @@
 # Design rules
 
-Rules for pages that look like an official shadcn block. Each rule names the kit part, attribute, or token that does the work, and the design lint rule (`clankerDesignLint()`, see [testing.md](testing.md)) that finds a break. Start every page from the closest block in [blocks/](blocks/); the blocks follow all of these rules. Component choice: [choosing.md](choosing.md).
+Rules for pages that look like an official shadcn block. Each rule names the kit part, attribute, or token that does the work, and the design lint rule (`clankerDesignLint()`, see [testing.md](testing.md)) that finds a break. Start every page from the closest block in [blocks/](blocks/); the blocks follow all of these rules. Take the shell from `dashboard` (sidebar) or `data-table` (top header) and keep it on every page; take the page content from any block. `states` is a catalog of patterns, not a page. Component choice: [choosing.md](choosing.md).
 
 ## 1. Page structure
 
 - Pick one shell per app and keep it on every page:
-  - Sidebar app, 5 or more sections or tools: `sidebar-wrapper` > `sidebar` (`data-variant="inset"`, `data-collapsible="offcanvas"`) + `sidebar-inset` > `site-header` + `page`. Block: `dashboard`, `form`, `detail`.
-  - Top header, up to 5 sections: `site-header data-size="lg"` with `brand`, `site-header-nav`, and `site-header-actions`, then `<main data-slot="page">`. Below 48rem the nav goes into a `dropdown-menu` behind a `menu` icon button. Block: `data-table`, `settings`, `states`.
+  - Sidebar app, 6 or more sections or tools: `sidebar-wrapper` > `sidebar` (`data-variant="inset"`, `data-collapsible="offcanvas"`) + `sidebar-inset` > `site-header` + `page`. Block: `dashboard`, `form`, `detail`.
+  - Top header, up to 5 sections: `site-header data-size="lg"` with `brand`, `site-header-nav`, and `site-header-actions`, then `<main data-slot="page">`. In a sidebar app the same content goes in `sidebar-inset` > `site-header` + `<div data-slot="page">`. Below 48rem the nav goes into a `dropdown-menu` behind a `menu` icon button. Block: `data-table`, `settings`, `states`.
   - One task without navigation (sign in, invite, error page): `<main data-slot="page" data-layout="center">`. Block: `login`.
 - One `page` per view. It sets the gutters (16 px, 24 px from 64rem) and the gaps between its children (16 px, 24 px from 48rem). Do not add margins or padding around kit parts.
 - Width: tables, dashboards, and lists fill the page (no `data-size`). Forms: `data-size="sm"` (42rem). Detail and settings: full width with `page-body`, or `data-size="md"`. Never a fixed pixel width.
-- The first child of `page` is `page-header`: one `<h1 data-slot="page-title">` (the noun of the view: "Invoices", "New project"), one `page-description` sentence, and the view actions in `page-actions` at the end. In a sidebar app the `site-header` holds the breadcrumb, not the title. Lint: `heading-order`.
+- The first child of `page` is `page-header`: one `<h1 data-slot="page-title">` (the noun of the view: "Invoices", "New project"), one `page-description` sentence, and the view actions in `page-actions` at the end. In a sidebar app the `site-header` holds the breadcrumb, not the title. Exception: a dashboard home with no `page-header` (as in shadcn dashboard-01); then `site-header-title` is the `h1` and names the active nav item. Lint: `heading-order`.
 - Order of a data page: header, key numbers (`section-cards` or `stat-grid`), the main chart, the main table or list. The most important content is first on a phone too.
 - Two columns only with `page-body`: a `page-aside` first is the 12rem section nav (settings), a `page-aside` last is the 20rem side column (detail). Below 64rem they stack. No app grids.
 - Edges align: every card, table, and header starts at the page gutter. No card in a card; a table in a card has no `data-table` border. Lint: `misaligned`.
@@ -20,11 +20,11 @@ Rules for pages that look like an official shadcn block. Each rule names the kit
 
 - Spacing comes from the parts: `page` 16/24 px, `card` 16 px, `field-group` 20 px, `field` 8 px, toolbars and button rows 8 px. If an app part needs space, use `calc(var(--spacing) * N)` with N = 1, 2, 3, 4, 6, 8, or 12. No other px or rem values.
 - Corners come from the `--radius` scale of the parts; do not set a radius. Shadows: only the kit ones. Borders: `--border`, 1 px.
-- All controls in one row have one height. Default controls are 32 px (`h-8`); `data-size="sm"` is 28 px, for dense toolbars only.
+- All controls in one row have one height. Default controls are 32 px (`h-8`); `data-size="sm"` is 28 px. Inputs, input groups, and select triggers are 32 px, so a button next to one is default size (or `icon`), except in `data-table-toolbar`, where `sm` buttons are 32 px high like shadcn.
 
 ## 3. Typography
 
-- Sizes: `page-title` 24 px/600; `card-title` and `site-header-title` 16 px/500; body and controls 14 px; `page-description` 16 px muted; descriptions and help 14 px muted; detail lines and badges 12 px; KPI values in `section-cards` 24 to 30 px/600 and in `stat-grid` 24 px/600. Do not add other sizes.
+- Sizes: `page-title` 24 px/600; `card-title` and `site-header-title` 16 px/500 (20 px card title in `data-layout="center"`); body text and `page-description` 16 px; controls, tables, and card text 14 px; descriptions and help 14 px muted; detail lines and badges 12 px; KPI values in `section-cards` 24 to 30 px/600 and in `stat-grid` 24 px/600. Do not add other sizes.
 - Weights 400, 500, and 600 only. Muted text (`--muted-foreground`) is for secondary text, never for values or labels of controls.
 - Use one case style in the app: sentence case for titles, buttons, and labels.
 - Numbers: tabular figures, end-aligned in tables (`data-align="end"`), units after the number, formatted with `Intl.NumberFormat` and `Intl.DateTimeFormat` in the page language.
@@ -32,7 +32,7 @@ Rules for pages that look like an official shadcn block. Each rule names the kit
 
 ## 4. Buttons
 
-- One primary button (default variant) per region: the page header, a toolbar, a card footer, or a dialog footer. On a page, at most one primary is visible above the fold. Other actions are `outline`; icon and menu triggers are `ghost`; `link` is for navigation inside text. Lint: `multiple-primary`.
+- One primary button (default variant) per region: the page header, a toolbar, a card footer, or a dialog footer. On a page, at most one primary is visible above the fold. Other actions are `outline`. Icon and menu triggers in headers and table rows are `ghost`; in a row of outline buttons they are `outline` too. `link` is for navigation inside text. Lint: `multiple-primary`.
 - One size per row or group: all buttons in a row have the same `data-size`, and icon buttons use the matching icon size (`sm` with `icon-sm`, default with `icon`). Lint: `button-size-mismatch`.
 - `destructive` only for actions that destroy data (delete, revoke, cancel a subscription). Confirm them with `alert-dialog` (action `data-variant="destructive"`) or offer Undo in a toast.
 - Order: dialog and card footers put Cancel (`outline`) first and the primary last, at the end. A page form puts the primary first at the start and Cancel after it, as in the shadcn field demo.
@@ -43,7 +43,7 @@ Rules for pages that look like an official shadcn block. Each rule names the kit
 
 - Surfaces are `--background`, `--card`, and `--muted` only. Do not color whole regions.
 - `--primary` is for the primary button, the selected item, focus, and links. Not for icons, headings, or decoration.
-- Status uses the `success`, `info`, and `warning` variants and `destructive` of `badge` and `alert`, always with an icon and a word ("Done", "Failed"). Color alone never carries meaning. Status colors are not chart series colors.
+- Status uses the `success`, `info`, and `warning` variants and `destructive` of `badge` and `alert`, always with an icon and a word ("Done", "Failed"); in a dense table an icon and a word in `data-table-text` is enough. Keep badges out of headings. Color alone never carries meaning. Status colors are not chart series colors.
 - No hex, rgb, or named colors in app CSS: override the tokens in `app.css` ([theming.md](theming.md)). Lint: `non-token-color`.
 - Contrast: text 4.5:1, icons and control borders 3:1. Load `clanker-ui-a11y.css` when the app must meet WCAG 2.2 AA everywhere. Lint: `low-contrast`.
 - Charts (the dataviz method):
@@ -60,7 +60,7 @@ Rules for pages that look like an official shadcn block. Each rule names the kit
 - Validation follows shadcn with React Hook Form: the kit shows an error after the user changed a field and left it, and on submit; after that, errors update as the user types. Submit with errors focuses the first invalid field. Write each message with `data-error-<flag>`: what is wrong and how to fix it ("Use 2 to 5 capital letters.").
 - The layout never moves sideways: put fields side by side only in `field-group data-columns="2|3"` (they align at the top, so an error under one field does not move the other). An error pushes the content below it down; that is expected.
 - Inputs fill their column; selects in a vertical `field` are full width. Group related fields in `field-set` with a `field-legend` and a `field-separator` between sets.
-- Switches apply at once and save without a button; checkboxes, radios, and inputs wait for submit. Choice cards (a `field-label` that wraps a `field`) for 2 to 4 options that need a description.
+- Switches apply at once and save without a button. In a form with a submit button, checkboxes, radios, and inputs wait for submit; a card without a submit button applies every change at once and says so in its description. Choice cards (a `field-label` that wraps a `field`) for 2 to 4 options that need a description.
 - Keep the submit button enabled and show the errors on submit. Mark optional fields in the help text ("Optional."), not required ones.
 
 ## 7. Tables and lists
@@ -68,7 +68,7 @@ Rules for pages that look like an official shadcn block. Each rule names the kit
 - Every list and table has four states: loading (`skeleton` with the same shape, `aria-busy`), empty (`empty` with one action), no results (`empty` with "Clear filters"), and error (`alert` `destructive` with "Try again"). Block: `states`.
 - Use the `data-table` frame: `data-table-toolbar` (filters at the start, actions at the end), the bordered `table-container`, and `data-table-pagination`. Block: `data-table`.
 - Columns: identity first, then status (`badge` with icon), then numbers (`data-align="end"`), then the row action (`ellipsis` ghost `icon-sm` with a `dropdown-menu`, destructive item last after a separator).
-- At 390 px show at most 3 data columns and the action; hide the others with `data-show-from="sm|md|lg"`. A table scrolls inside `table-container`, never the page. Lint: `horizontal-scroll`.
+- At 390 px show at most 3 data columns and the action; hide the others with `data-show-from` (and show phone-only parts with `data-hide-from`): `sm` 40rem, `md` 48rem, `lg` 64rem, `xl` 80rem of the viewport, so in a sidebar app the content is 16rem narrower than the breakpoint. A table scrolls inside `table-container`, never the page. Lint: `horizontal-scroll`.
 - Selection: a checkbox column first and the count in `data-table-selection`.
 - People, events, and settings rows are lists, not tables: `item-group` with `item`.
 
@@ -94,12 +94,12 @@ Rules for pages that look like an official shadcn block. Each rule names the kit
 ## 10. Dark mode and theme control
 
 - Check every page in light and dark. Use tokens only, so both modes come from the same CSS.
-- Theme control as on shadcn sites: one ghost `icon-sm` toggle (`data-theme-set="toggle"`, `contrast` icon) in `site-header-actions`, before the user menu. An app with settings also offers light, dark, and system with `theme-switch` in Settings, Appearance. Never two theme controls in one header, never in page content. Load `clanker-ui-theme.js` ([theming.md](theming.md)).
+- Theme control as on shadcn sites: one ghost `icon-sm` toggle (`data-theme-set="toggle"`, `contrast` icon) in `site-header-actions`, before the user menu. An app with settings also offers light, dark, and system with `theme-switch` in Settings, Appearance. Never two theme controls in one header, and never in page content except Settings, Appearance. Load `clanker-ui-theme.js` ([theming.md](theming.md)).
 - Color schemes (`data-scheme`) are an app choice for the whole app, not per page.
 
 ## 11. Icons
 
-- Lucide icons through `data-lucide`, 16 px. One icon in a button, before the label (chevrons and arrows after it). The same icon means the same thing on every page.
+- Lucide icons through `data-lucide`, 16 px. One icon in a button, before the label (chevrons, arrows, and the X of Reset after it). One icon per meaning: row actions are `ellipsis`. The same icon means the same thing on every page.
 - Icons are decoration unless they are the only content: then the control has an `aria-label`.
 
 ## 12. Motion
@@ -109,5 +109,5 @@ Rules for pages that look like an official shadcn block. Each rule names the kit
 
 ## Check
 
-1. Run `clankerDesignLint()` at 1280 and 390 px, in light and dark: 0 errors; look at each warning.
+1. Run `clankerDesignLint()` from `design-lint.js` at 1280 and 390 px, in light and dark: 0 errors; look at each warning. Load it from the test as [testing.md](testing.md) shows, never with a `<script>` in the page (the CSP blocks it).
 2. Take the four screenshots and compare them with the block you started from: same gutters, same header, same button sizes, no empty boxes, no cut text.

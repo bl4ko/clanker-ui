@@ -66,7 +66,7 @@ Find the group of each component in [references/components.md](references/compon
 
 ## 4. Build a page
 
-1. Start from the closest block in `references/blocks/`: copy `<name>.html` and `<name>.js`, keep the shell, the `page-header`, and the order of the sections, and replace the sample content.
+1. Start from the closest block in `references/blocks/`: copy `<name>.html` and `<name>.js`, keep the shell, the `page-header`, and the order of the sections, and replace the sample content. One shell per app: the sidebar of `dashboard` or the top header of `data-table`.
 
    | Block | For |
    | --- | --- |
@@ -76,10 +76,10 @@ Find the group of each component in [references/components.md](references/compon
    | `form` | Create or edit one record |
    | `detail` | One record with facts and activity |
    | `login` | Sign in |
-   | `states` | Empty, loading, and error states |
+   | `states` | Empty, loading, and error states (a catalog: copy single cards) |
 
 2. Follow [references/design.md](references/design.md) and [references/choosing.md](references/choosing.md). The page parts (`page`, `site-header`, `section-cards`, `stat-grid`, `data-table`) do the layout: `app.css` holds token overrides and real app parts only.
-3. Run `clankerDesignLint()` from `references/design-lint.js` at 1280 and 390 px, in light and dark ([references/testing.md](references/testing.md)), fix every error, and look at the screenshots.
+3. Run `clankerDesignLint()` from `references/design-lint.js` in the test, not in the page, at 1280 and 390 px, in light and dark ([references/testing.md](references/testing.md)); fix every error and look at the screenshots.
 
 ## 5. Write the markup
 

@@ -754,7 +754,7 @@ def check_blocks_data_table(t):
 def check_blocks_login_validation(t):
     page = t.page
     t.docs("/blocks/login")
-    button = page.get_by_role("button", name="Login", exact=True)
+    button = page.get_by_role("button", name="Log in", exact=True)
     before = button.bounding_box()
     button.click()
     email = page.locator("#email")

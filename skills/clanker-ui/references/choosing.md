@@ -60,6 +60,6 @@ Pick by the job, not by the look. Each row names the kit part; its file is `comp
 | --- | --- |
 | Many records with the same fields, to compare, sort, or select | `table` in the `data-table` frame |
 | Few records, or records with different content (people, events, notifications) | `item-group` with `item` |
-| Records with an image or a large preview | a grid of `card` (`section-cards` for 2 to 4 numbers only) |
+| Records with an image or a large preview | a grid of `card` (`section-cards` only for 2, 3, 4, or 8 key numbers) |
 | Values over time or by category | `chart()`; one number with its trend: `section-cards` or `statTile()` |
 | Many small marks with their own hover (90-day uptime bars) | one shared `tooltip` placed with `position()`, not one tooltip per mark |

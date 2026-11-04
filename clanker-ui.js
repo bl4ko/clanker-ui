@@ -1680,13 +1680,42 @@ define("toggle", {
   },
 })
 
+const formResetPending = new WeakSet()
+const formProxyRoots = '[data-slot="select"], [data-slot="combobox"], [data-slot="toggle-group"], [data-slot="date-picker"]'
+const formProxyOwner = new WeakMap()
+
+function formRootOf(control) {
+  return formProxyOwner.get(control) ?? control.parentElement?.closest(formProxyRoots) ?? null
+}
+
+const toggleGroupStates = new WeakMap()
+
+function toggleGroupWatched(records) {
+  for (const root of new Set(records.map(r => r.target))) {
+    const reset = formResetPending.delete(root)
+    const list = toggleGroupParse(root, root.dataset.value ?? "")
+    if (toggleGroupStates.has(root) && (reset || list.join(",") !== toggleGroupList(root).join(","))) toggleGroupApply(root, list)
+  }
+}
+
+const toggleGroupWatch = new MutationObserver(toggleGroupWatched)
+
 function toggleGroupItems(root) {
   return own(root, '[data-slot="toggle-group-item"]')
 }
 
+function toggleGroupList(root) {
+  return toggleGroupItems(root).filter(item => item.dataset.state === "on").map(item => item.dataset.value ?? "")
+}
+
 function toggleGroupValue(root) {
-  const on = toggleGroupItems(root).filter(item => item.dataset.state === "on").map(item => item.dataset.value ?? "")
+  const on = toggleGroupList(root)
   return root.dataset.type === "multiple" ? on : (on[0] ?? "")
+}
+
+function toggleGroupParse(root, raw) {
+  const list = raw.split(",").map(v => v.trim()).filter(Boolean)
+  return root.dataset.type === "multiple" ? list : list.slice(0, 1)
 }
 
 function toggleGroupSet(root, values) {
@@ -1701,6 +1730,23 @@ function toggleGroupSet(root, values) {
       item.removeAttribute("aria-pressed")
     } else item.setAttribute("aria-pressed", String(on))
   }
+}
+
+function toggleGroupApply(root, values, user = false) {
+  toggleGroupSet(root, root.dataset.type === "multiple" ? values : values.slice(0, 1))
+  const list = toggleGroupList(root)
+  const text = list.join(",")
+  const st = toggleGroupStates.get(root)
+  if (!st?.native) return
+  st.native.value = text
+  if (st.hidden) {
+    for (const input of st.hidden) input.remove()
+    st.hidden = list.map(value => h("input", { type: "hidden", name: st.name, value, form: root.dataset.form, disabled: st.native.disabled }))
+    st.native.after(...st.hidden)
+  }
+  if (!user) return
+  st.native.dispatchEvent(new Event("input", { bubbles: true }))
+  st.native.dispatchEvent(new Event("change", { bubbles: true }))
 }
 
 function toggleGroupContext(root, item) {
@@ -1721,23 +1767,43 @@ define("toggle-group", {
       toggleGroupContext(root, item)
       if (disabled) item.disabled = true
     }
-    const initial = root.dataset.value != null
-      ? root.dataset.value.split(",").map(v => v.trim()).filter(Boolean)
-      : items.filter(item => item.dataset.state === "on" || item.getAttribute("aria-pressed") === "true" || item.getAttribute("aria-checked") === "true").map(item => item.dataset.value ?? "")
-    toggleGroupSet(root, root.dataset.type === "multiple" ? initial : initial.slice(0, 1))
+    const prev = toggleGroupStates.get(root)
+    const initial = prev?.initial ?? (root.dataset.value != null
+      ? toggleGroupParse(root, root.dataset.value)
+      : toggleGroupParse(root, items.filter(item => item.dataset.state === "on" || item.getAttribute("aria-pressed") === "true" || item.getAttribute("aria-checked") === "true").map(item => item.dataset.value ?? "").join(",")))
+    const multiple = root.dataset.type === "multiple"
+    const name = root.dataset.name || null
+    const required = flag(root, "data-required")
+    let native = null
+    if (name || required) {
+      native = h("input", { "aria-hidden": "true", tabindex: "-1", autocomplete: "off", name: multiple ? null : name, form: root.dataset.form, required, disabled })
+      visuallyHidden(native)
+      root.after(native)
+      formProxyOwner.set(native, root)
+    }
+    const st = { initial, name, native, hidden: native && multiple && name ? [] : null }
+    toggleGroupStates.set(root, st)
+    toggleGroupApply(root, prev ? toggleGroupList(root) : initial)
     setRoving(items, items.find(item => item.dataset.state === "on" && !item.disabled))
+    toggleGroupWatch.observe(root, { attributes: true, attributeFilter: ["data-value"] })
+    return () => {
+      st.native?.remove()
+      for (const input of st.hidden ?? []) input.remove()
+    }
   },
   click(event, root) {
     const item = event.target.closest('[data-slot="toggle-group-item"]')
     if (!item || item.disabled || item.closest('[data-slot="toggle-group"]') !== root) return
     const items = toggleGroupItems(root)
     const value = item.dataset.value ?? ""
-    let next
-    if (root.dataset.type === "multiple") {
-      const current = toggleGroupValue(root)
-      next = current.includes(value) ? current.filter(v => v !== value) : items.map(i => i.dataset.value ?? "").filter(v => v === value || current.includes(v))
-    } else next = item.dataset.state === "on" ? [] : [value]
-    toggleGroupSet(root, next)
+    const current = toggleGroupList(root)
+    const on = item.dataset.state === "on"
+    if (on && flag(root, "data-required") && current.length === 1) {
+      setRoving(items, item)
+      return
+    }
+    const next = root.dataset.type === "multiple" ? (on ? current.filter(v => v !== value) : items.map(i => i.dataset.value ?? "").filter(v => v === value || current.includes(v))) : on ? [] : [value]
+    toggleGroupApply(root, next, true)
     setRoving(items, item)
     emit(root, "toggle-group:change", { value: toggleGroupValue(root) })
   },
@@ -1759,6 +1825,13 @@ define("toggle-group-item", {
 define("field-legend", {
   init(el) {
     el.dataset.variant ??= "legend"
+  },
+})
+
+define("field-separator", {
+  init(el) {
+    if (!el.querySelector(':scope > [data-slot="separator"]')) el.prepend(h("div", { "data-slot": "separator", "data-orientation": "horizontal" }))
+    el.dataset.content ??= String(!!el.querySelector(':scope > [data-slot="field-separator-content"]'))
   },
 })
 
@@ -2266,7 +2339,7 @@ document.addEventListener(
   "focusin",
   event => {
     const input = event.target
-    if (!(input instanceof HTMLInputElement) || !input.matches(':is([data-slot="select"], [data-slot="combobox"]) > input[aria-hidden="true"]')) return
+    if (!(input instanceof HTMLInputElement) || !(formProxyOwner.has(input) || input.matches(':is([data-slot="select"], [data-slot="combobox"], [data-slot="date-picker"]) > input[aria-hidden="true"]'))) return
     const control = formVisibleControl(input)
     if (control !== input) control.focus()
   },
@@ -2326,13 +2399,16 @@ function selectReveal(container, item) {
   else if (r.bottom > c.bottom - pad) container.scrollTop += r.bottom - (c.bottom - pad)
 }
 
-const selectWatch = new MutationObserver(records => {
+function selectWatched(records) {
   for (const root of new Set(records.map(r => r.target))) {
     const st = selectStates.get(root)
     const value = root.dataset.value ?? ""
-    if (st && value !== (st.want ?? st.value)) selectSetValue(root, value, false)
+    const reset = formResetPending.delete(root)
+    if (st && (reset || value !== (st.want ?? st.value))) selectSetValue(root, value, false)
   }
-})
+}
+
+const selectWatch = new MutationObserver(selectWatched)
 
 function selectSetValue(root, value, user) {
   const st = selectStates.get(root)
@@ -2781,12 +2857,15 @@ function comboboxApply(st, next) {
   if (st.input && !st.popup && !st.multiple) st.input.value = comboboxSelectedLabel(st)
 }
 
-const comboboxWatch = new MutationObserver(records => {
+function comboboxWatched(records) {
   for (const root of new Set(records.map(r => r.target))) {
+    formResetPending.delete(root)
     const st = comboboxStates.get(root)
     if (st) comboboxApply(st, comboboxValues(st, root.dataset.value ?? ""))
   }
-})
+}
+
+const comboboxWatch = new MutationObserver(comboboxWatched)
 
 function comboboxChip(st, value, label) {
   return h(
@@ -3216,22 +3295,28 @@ const formErrorKeys = ["valueMissing", "typeMismatch", "patternMismatch", "tooLo
 
 function formVisibleControl(control) {
   if (choiceButtons.has(control)) return choiceButtons.get(control)
-  const root = control.parentElement?.closest('[data-slot="select"], [data-slot="combobox"]')
+  const root = formRootOf(control)
   if (!root || control.getAttribute("aria-hidden") !== "true") return control
   if (root.dataset.slot === "select") return selectStates.get(root)?.trigger ?? control
+  if (root.dataset.slot === "toggle-group") {
+    const items = toggleGroupItems(root).filter(item => !item.disabled)
+    return items.find(item => item.dataset.state === "on") ?? items[0] ?? control
+  }
+  if (root.dataset.slot === "date-picker") return root.querySelector("[data-date-picker-input]") ?? root.querySelector("[data-date-picker-trigger]") ?? control
   const st = comboboxStates.get(root)
   return (st?.popup ? st.trigger : st?.input) ?? control
 }
 
 function formNativeFor(el) {
   if (choiceInputs.has(el)) return choiceInputs.get(el)
-  const root = el.closest('[data-slot="select"], [data-slot="combobox"]')
-  if (root) return root.querySelector(':scope > input[aria-hidden="true"]')
+  const root = el.closest(formProxyRoots)
+  const proxy = root?.dataset.slot === "toggle-group" ? toggleGroupStates.get(root)?.native : root?.querySelector(':scope > input[aria-hidden="true"]')
+  if (proxy || (root && root.dataset.slot !== "date-picker")) return proxy ?? null
   return el.willValidate ? el : null
 }
 
 function formMessage(control) {
-  const sources = [control, formVisibleControl(control), control.closest('[data-slot="radio-group"], [data-slot="select"], [data-slot="combobox"], [data-slot="input-otp"], [data-slot="slider"]')].filter(Boolean)
+  const sources = [control, formVisibleControl(control), formProxyOwner.get(control) ?? control.closest('[data-slot="radio-group"], [data-slot="select"], [data-slot="combobox"], [data-slot="date-picker"], [data-slot="input-otp"], [data-slot="slider"]')].filter(Boolean)
   for (const key of formErrorKeys) {
     if (!control.validity[key]) continue
     const attr = `error${key[0].toUpperCase()}${key.slice(1)}`
@@ -3255,8 +3340,8 @@ function formDescribe(el, id, on) {
 
 function formMark(control, message) {
   const visible = formVisibleControl(control)
-  const group = control.closest('[data-slot="radio-group"]')
-  const targets = group ? [group, ...radioGroupItems(group)] : [visible]
+  const group = formProxyOwner.get(control) ?? control.closest('[data-slot="radio-group"]')
+  const targets = !group ? [visible] : group.dataset.slot === "toggle-group" ? toggleGroupItems(group) : [group, ...radioGroupItems(group)]
   const field = (group ?? visible).closest('[data-slot="field"], [data-slot="form-item"], [data-slot="field-set"]')
   let error = field ? formErrorOf(field) : null
   if (message && field && !error) {
@@ -3299,13 +3384,17 @@ function formAfterReset(form) {
   if (!(form instanceof HTMLFormElement)) return
   for (const root of form.querySelectorAll('[data-slot="select"]')) {
     const st = selectStates.get(root)
-    if (st) selectSetValue(root, st.initial, false)
+    if (st) selectSetValue(root, formResetPending.delete(root) ? st.initial : (st.want ?? st.value), false)
   }
   for (const root of form.querySelectorAll('[data-slot="combobox"]')) {
     const st = comboboxStates.get(root)
     if (!st) continue
-    comboboxApply(st, st.initial)
+    comboboxApply(st, formResetPending.delete(root) ? st.initial : [].concat(st.value, st.want).filter(Boolean))
     if (st.input && !st.popup && st.multiple) st.input.value = ""
+  }
+  for (const root of form.querySelectorAll('[data-slot="toggle-group"]')) {
+    const st = toggleGroupStates.get(root)
+    if (st) toggleGroupApply(root, formResetPending.delete(root) ? st.initial : toggleGroupList(root))
   }
   for (const root of form.querySelectorAll('[data-slot="slider"]')) sliderRender(root)
   for (const root of form.querySelectorAll('[data-slot="input-otp"]')) inputOtpRender(root)
@@ -3327,7 +3416,15 @@ function formAfterReset(form) {
   }
 }
 
-document.addEventListener("reset", event => setTimeout(() => event.defaultPrevented || formAfterReset(event.target)))
+document.addEventListener("reset", event => {
+  const form = event.target
+  if (!(form instanceof HTMLFormElement)) return
+  selectWatched(selectWatch.takeRecords())
+  comboboxWatched(comboboxWatch.takeRecords())
+  toggleGroupWatched(toggleGroupWatch.takeRecords())
+  for (const root of form.querySelectorAll('[data-slot="select"], [data-slot="combobox"], [data-slot="toggle-group"]')) formResetPending.add(root)
+  setTimeout(() => event.defaultPrevented || formAfterReset(form))
+}, true)
 
 define("form", {
   init(form) {
@@ -3350,7 +3447,8 @@ define("form", {
       if (seen.has(key)) continue
       seen.add(key)
       const element = formVisibleControl(control)
-      errors.push({ name: control.name || control.parentElement?.closest('[data-slot="select"], [data-slot="combobox"]')?.dataset.name || "", message, element })
+      const root = formRootOf(control)
+      errors.push({ name: control.name || root?.dataset.name || root?.querySelector('[data-slot="calendar"][data-name]')?.dataset.name || "", message, element })
       first ??= element
     }
     if (errors.length) {
@@ -6980,9 +7078,12 @@ function tabsSelect(root, value) {
     trigger.tabIndex = active ? 0 : -1
   }
   for (const panel of panels) {
-    const active = panel.dataset.value === value
+    const shared = panel.dataset.value == null
+    const active = shared || panel.dataset.value === value
     panel.dataset.state = active ? "active" : "inactive"
     panel.hidden = !active
+    const trigger = shared && triggers.find(t => tabsValue(t) === value)
+    if (trigger) panel.setAttribute("aria-labelledby", ensureId(trigger, "tabs-trigger"))
   }
   return !previous || tabsValue(previous) !== value
 }
@@ -7024,11 +7125,11 @@ define("tabs", {
       trigger.dataset.orientation = orientation
       buttonType(trigger)
       ensureId(trigger, "tabs-trigger")
-      const panel = panels.find(p => p.dataset.value === tabsValue(trigger))
+      const panel = panels.find(p => p.dataset.value === tabsValue(trigger)) ?? panels.find(p => p.dataset.value == null)
       if (panel) {
         ensureId(panel, "tabs-content")
         trigger.setAttribute("aria-controls", panel.id)
-        panel.setAttribute("aria-labelledby", trigger.id)
+        if (panel.dataset.value != null) panel.setAttribute("aria-labelledby", trigger.id)
       }
     }
     for (const panel of panels) {
@@ -7078,6 +7179,12 @@ function avatarStatus(img, status) {
   const root = img.closest('[data-slot="avatar"]')
   if (root && status !== "loading") emit(root, "avatar:change", { value: status })
 }
+
+define("pagination-link", {
+  click(event, el) {
+    if (el.getAttribute("aria-disabled") === "true") event.preventDefault()
+  },
+})
 
 define("avatar-image", {
   init(img) {
@@ -9879,20 +9986,33 @@ function calendarCreate(el) {
 }
 
 function calendarConnect(s) {
-  const observer = new MutationObserver(() => calendarReconfigure(s))
+  const changed = records => {
+    if (records.some(r => r.attributeName === "data-value")) {
+      s.resetPending = false
+      s.rawValue = undefined
+    }
+    calendarReconfigure(s)
+  }
+  const observer = new MutationObserver(changed)
   observer.observe(s.el, { attributes: true, attributeFilter: calendarObserved })
   const form = s.el.closest("form")
-  const reset = event => setTimeout(() => {
-    if (event.defaultPrevented) return
-    s.value = calendarCopy({ mode: s.mode, value: s.initial })
-    s.focus = null
-    calendarRender(s)
-    calendarChanged(s, "reset")
-  })
-  form?.addEventListener("reset", reset)
+  const reset = event => {
+    const early = observer.takeRecords()
+    if (early.length) changed(early)
+    s.resetPending = true
+    setTimeout(() => {
+      if (event.defaultPrevented || !s.resetPending) return
+      s.resetPending = false
+      s.value = calendarCopy({ mode: s.mode, value: s.initial })
+      s.focus = null
+      calendarRender(s)
+      calendarChanged(s, "reset")
+    })
+  }
+  form?.addEventListener("reset", reset, true)
   return () => {
     observer.disconnect()
-    form?.removeEventListener("reset", reset)
+    form?.removeEventListener("reset", reset, true)
   }
 }
 
@@ -9907,6 +10027,12 @@ function calendarReconfigure(s) {
   s.authoredMonth = month
   s.month = calendarClampMonth(s, s.month)
   calendarRender(s)
+  calendarPicker(s)
+}
+
+function calendarPicker(s) {
+  const picker = s.el.closest('[data-slot="date-picker"]')
+  if (picker) datePickerLabel(picker)
 }
 
 function calendarOf(el) {
@@ -10256,8 +10382,10 @@ export function calendarSetValue(el, value, { emit: notify = false, month = true
   const first = calendarSelected(s)[0]
   if (month && first) calendarSetMonthState(s, calendarParse(first))
   s.focus = first ?? s.focus
+  s.resetPending = false
   calendarRender(s)
   if (notify) calendarChanged(s, "api")
+  else calendarPicker(s)
   return true
 }
 
@@ -10420,10 +10548,36 @@ function datePickerParse(s, text) {
   return date.getMonth() === Number(parts.month) - 1 && date.getDate() === Number(parts.day) ? date : null
 }
 
-function datePickerLabel(root) {
+function datePickerProxy(root) {
+  let proxy = root.querySelector(':scope > input[aria-hidden="true"]')
+  if (!flag(root, "data-required")) {
+    proxy?.remove()
+    return null
+  }
+  if (!proxy) {
+    proxy = h("input", { "aria-hidden": "true", tabindex: "-1", autocomplete: "off", style: { position: "fixed", top: "0", left: "0", width: "1px", height: "1px", margin: "-1px", padding: "0", border: "0", overflow: "hidden", clipPath: "inset(50%)", whiteSpace: "nowrap" } })
+    root.append(proxy)
+  }
+  proxy.required = true
+  return proxy
+}
+
+function datePickerLabel(root, user = false) {
   const { trigger, input, calendar } = datePickerParts(root)
+  const s = calendarOf(calendar)
+  const proxy = datePickerProxy(root)
+  if (proxy) {
+    const value = s ? calendarSelected(s).join(" ") : ""
+    const changed = proxy.value !== value
+    proxy.value = value
+    proxy.disabled = !!trigger?.matches(":disabled")
+    if (user && changed) {
+      proxy.dispatchEvent(new Event("input", { bubbles: true }))
+      proxy.dispatchEvent(new Event("change", { bubbles: true }))
+    }
+  }
   if (!trigger) return
-  const text = datePickerText(root, calendarOf(calendar))
+  const text = datePickerText(root, s)
   trigger.dataset.empty = String(!text)
   if (input) {
     input.value = text
@@ -10518,7 +10672,7 @@ define("date-picker", {
     datePickerOpen(root)
   },
   "calendar:change"(event, root) {
-    datePickerLabel(root)
+    datePickerLabel(root, event.detail?.source !== "reset")
     const { content } = datePickerParts(root)
     if (event.detail?.source === "day" && event.detail.mode === "single" && event.detail.value && content && isOpen(content) && !flag(root, "data-keep-open")) datePickerClose(root)
   },

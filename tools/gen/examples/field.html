@@ -15,5 +15,24 @@
         <label data-slot="field-label" for="same-address">Same as shipping address</label>
       </div>
     </div>
+    <div data-slot="field" role="group" data-orientation="horizontal">
+      <div data-slot="field-content">
+        <label data-slot="field-label" for="save-card">Save card</label>
+        <p data-slot="field-description">Use this card for later payments.</p>
+      </div>
+      <button type="button" data-slot="switch" id="save-card"></button>
+    </div>
+    <div data-slot="field-separator"><span data-slot="field-separator-content">Or pay with</span></div>
+    <div data-slot="radio-group" data-name="method">
+      <label data-slot="field-label" for="method-bank">
+        <span data-slot="field" role="group" data-orientation="horizontal">
+          <span data-slot="field-content">
+            <span data-slot="field-label">Bank transfer</span>
+            <span data-slot="field-description">Pay within 14 days.</span>
+          </span>
+          <button type="button" data-slot="radio-group-item" id="method-bank" value="bank"></button>
+        </span>
+      </label>
+    </div>
   </div>
 </fieldset>

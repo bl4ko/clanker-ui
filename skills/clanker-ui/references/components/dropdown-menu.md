@@ -30,7 +30,7 @@ Events: `dropdown-menu:open` `{ trigger }`; `dropdown-menu:close` `{ reason }`; 
 ```html
 <div data-slot="dropdown-menu">
   <button type="button" data-slot="button" data-variant="outline" data-dropdown-menu-trigger>Open</button>
-  <div data-slot="dropdown-menu-content">
+  <div data-slot="dropdown-menu-content" data-side="bottom" data-align="end">
     <div data-slot="dropdown-menu-group">
       <div data-slot="dropdown-menu-label">My Account</div>
       <div data-slot="dropdown-menu-item">Profile<span data-slot="dropdown-menu-shortcut">⇧⌘P</span></div>

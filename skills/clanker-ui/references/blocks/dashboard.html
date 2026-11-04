@@ -208,10 +208,19 @@
           </div>
           <div data-slot="card-content"><div id="visitors-chart"></div></div>
         </div>
-        <div data-slot="tabs" data-default-value="outline">
+        <div data-slot="tabs" data-default-value="outline" id="sections">
           <div data-slot="data-table-toolbar">
             <div>
-              <div data-slot="tabs-list">
+              <div data-slot="select" id="view-select" data-value="outline" data-hide-from="lg">
+                <button data-slot="select-trigger" data-size="sm" aria-label="View"><span data-slot="select-value">Outline</span></button>
+                <div data-slot="select-content">
+                  <div data-slot="select-item" data-value="outline">Outline</div>
+                  <div data-slot="select-item" data-value="performance">Past Performance</div>
+                  <div data-slot="select-item" data-value="personnel">Key Personnel</div>
+                  <div data-slot="select-item" data-value="focus">Focus Documents</div>
+                </div>
+              </div>
+              <div data-slot="tabs-list" data-show-from="lg">
                 <button data-slot="tabs-trigger" data-value="outline">Outline</button>
                 <button data-slot="tabs-trigger" data-value="performance">Past Performance <span data-slot="badge" data-variant="secondary">3</span></button>
                 <button data-slot="tabs-trigger" data-value="personnel">Key Personnel <span data-slot="badge" data-variant="secondary">2</span></button>

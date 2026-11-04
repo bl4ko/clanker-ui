@@ -6,8 +6,21 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ## Unreleased
 
+### Added
+
+- Blocks: seven whole pages built only from kit parts, in the skill (`references/blocks/<name>.html` and `.js`) and on the docs site under Blocks with a live preview, a phone width toggle, and the code: `dashboard` (shadcn dashboard-01), `data-table` (shadcn tasks example), `settings`, `form`, `detail`, `login` (shadcn login-03), and `states` (empty, loading, and error). Each works under the strict CSP in light and dark at 1280 and 390 px.
+- Page parts (core group, CSS only): `page` (gutters, gaps, `data-size="sm|md|lg"`, `data-layout="center"`), `page-header` with `page-title`, `page-description`, and `page-actions`, `page-body` with `page-aside` and `page-nav`, `site-header` (`site-header-title`, `site-header-nav`, `site-header-actions`, `data-size="lg"`), `section-cards` (the dashboard-01 KPI cards; a subgrid keeps the headers and footers of a row aligned, and values wrap instead of being cut), `stat-grid` (static numbers from a `dl`, `data-size="sm"` for facts), the `data-table` frame (`data-table-toolbar`, `data-table-pagination`, `data-table-selection`, `data-table-text`), `brand` with `brand-mark`, and `text-stack`.
+- `data-show-from="sm|md|lg|xl"` and `data-hide-from="sm|md|lg|xl"` hide an element below or from a viewport width, like `hidden lg:flex` in the shadcn blocks.
+- `data-align="end|center"` on `table-head` and `table-cell`; `data-columns="2|3"` and `data-span="2"` on `field-group` fields (aligned at the top, so an error does not move the next field); `field-label-row` for a label with a link at the end; a count `badge` in a `tabs-trigger` gets the dashboard-01 look; a `skeleton` with text takes the size of that text.
+- Skill: `references/design.md` (design rules with the kit part and the lint rule of each), `references/choosing.md` (which component for which job), and a "Build a page" step in `SKILL.md`.
+
+### Changed
+
+- Color schemes: each editor scheme (Tokyo Night, Catppuccin, Gruvbox, Nord, Dracula, Rosé Pine, Solarized, One, Kanagawa, Everforest, GitHub) has chart colors from its own accents, ordered and checked for color-vision deficiency, normal vision, and 3:1 contrast against the card in light and dark. They set `--chart-other` and `--chart-good` too. Before, all editor schemes used one generic palette that looked muddy on their surfaces, and `--chart-6` had no dark value.
+
 ### Fixed
 
+- A `select` in a vertical `field` is full width, as the shadcn field makes every child full width.
 - Form: after a submit, leaving a control does not validate it; only a change does, as in React Hook Form. Before, a field that the app cleared after a valid send showed its error on blur, and the layout shift could move the next click target.
 
 ## 0.2.1 - 2026-11-04

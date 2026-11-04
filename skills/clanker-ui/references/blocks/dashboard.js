@@ -59,3 +59,8 @@ document.getElementById("columns-menu").closest('[data-slot="dropdown-menu"]').a
   const index = [...head.parentElement.children].indexOf(head)
   for (const tr of table.querySelectorAll("tr")) tr.children[index].hidden = !event.detail.checked
 })
+
+const sections = document.getElementById("sections")
+const view = document.getElementById("view-select")
+view.addEventListener("select:change", event => sections.querySelector(`[data-slot="tabs-trigger"][data-value="${event.detail.value}"]`).click())
+sections.addEventListener("tabs:change", event => { view.dataset.value = event.detail.value })

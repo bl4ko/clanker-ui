@@ -11,7 +11,7 @@ Rules for pages that look like an official shadcn block. Each rule names the kit
 - One `page` per view. It sets the gutters (16 px, 24 px from 64rem) and the gaps between its children (16 px, 24 px from 48rem). Do not add margins or padding around kit parts.
 - Width: tables, dashboards, and lists fill the page (no `data-size`). Forms: `data-size="sm"` (42rem). Detail and settings: full width with `page-body`, or `data-size="md"`. Never a fixed pixel width.
 - The first child of `page` is `page-header`: one `<h1 data-slot="page-title">` (the noun of the view: "Invoices", "New project"), one `page-description` sentence, and the view actions in `page-actions` at the end. In a sidebar app the `site-header` holds the breadcrumb, not the title. Exception: a dashboard home with no `page-header` (as in shadcn dashboard-01); then `site-header-title` is the `h1` and names the active nav item. Lint: `heading-order`.
-- Order of a data page: header, key numbers (`section-cards` or `stat-grid`), the main chart, the main table or list. The most important content is first on a phone too.
+- Order of a data page: header, key numbers (`section-cards`, `stat-grid`, or `statTile()` tiles on plain `div`s in a `section-cards` grid; in a `card` a tile has no frame; `notation: "standard"` shows full values), the main chart, the main table or list. The most important content is first on a phone too.
 - Two columns only with `page-body`: a `page-aside` first is the 12rem section nav (settings), a `page-aside` last is the 20rem side column (detail). Below 64rem they stack. No app grids.
 - Edges align: every card, table, and header starts at the page gutter. No card in a card; a table in a card has no `data-table` border. Lint: `misaligned`.
 - A region with little content does not get a large box: do not stretch cards to fill height. Lint: `empty-region`.
@@ -51,7 +51,8 @@ Rules for pages that look like an official shadcn block. Each rule names the kit
   - "Other" is `--chart-other`. Good and bad values are `--chart-good` and `--chart-bad`; a single series is `--chart-1`.
   - At most 5 series in a line or area chart, 8 in a bar chart. More: fold the rest into "Other" or use small multiples.
   - One value axis, a quiet grid (`--chart-grid`), a legend from 2 series, the table view on. The `chart()` defaults do this.
-  - Every shipped scheme (default and the editor schemes in `clanker-ui-themes.css`) has validated chart tokens: 3:1 against the card, adjacent colors apart for color-blind and normal vision. A brand palette must pass the same validator before it replaces them.
+  - The kit default and the editor schemes in `clanker-ui-themes.css` (for example `tokyonight-storm`) have validated colored chart tokens: 3:1 against the card, adjacent colors apart for color-blind and normal vision. The shadcn base schemes (`neutral`, `zinc`, ...) keep the shadcn gray ramp, so they give gray charts. A brand palette must pass the same validator before it replaces them.
+  - Set the chart `locale` and, for times, `timeZone`. Many small marks with their own readout (uptime bars): one shared popup placed with `position()`, not one tooltip per mark.
 
 ## 6. Forms
 
@@ -61,10 +62,11 @@ Rules for pages that look like an official shadcn block. Each rule names the kit
 - The layout never moves sideways: put fields side by side only in `field-group data-columns="2|3"` (they align at the top, so an error under one field does not move the other). An error pushes the content below it down; that is expected.
 - Inputs fill their column; selects in a vertical `field` are full width. Group related fields in `field-set` with a `field-legend` and a `field-separator` between sets.
 - Switches apply at once and save without a button. In a form with a submit button, checkboxes, radios, and inputs wait for submit; a card without a submit button applies every change at once and says so in its description. Choice cards (a `field-label` that wraps a `field`) for 2 to 4 options that need a description.
-- Keep the submit button enabled and show the errors on submit. Mark optional fields in the help text ("Optional."), not required ones.
+- Keep the submit button enabled and show the errors on submit. Mark optional fields in the help text ("Optional."), not required ones. A required date: `data-required` on the `date-picker` root.
 
 ## 7. Tables and lists
 
+- A filter bar over one list: `tabs` with one `tabs-content` without `data-value` (a shared panel), or `toggle-group data-type="single" data-required` (one value always selected).
 - Every list and table has four states: loading (`skeleton` with the same shape, `aria-busy`), empty (`empty` with one action), no results (`empty` with "Clear filters"), and error (`alert` `destructive` with "Try again"). Block: `states`.
 - Use the `data-table` frame: `data-table-toolbar` (filters at the start, actions at the end), the bordered `table-container`, and `data-table-pagination`. Block: `data-table`.
 - Columns: identity first, then status (`badge` with icon), then numbers (`data-align="end"`), then the row action (`ellipsis` ghost `icon-sm` with a `dropdown-menu`, destructive item last after a separator).

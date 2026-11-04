@@ -26,6 +26,7 @@ const (
 	catalogComps   = "skills/clanker-ui/references/components.md"
 	catalogCompDir = "skills/clanker-ui/references/components"
 	catalogEvents  = "skills/clanker-ui/references/events.md"
+	catalogIcons   = "skills/clanker-ui/references/icons.md"
 	catalogLLMs    = "docs/llms-full.txt"
 	catalogExDir   = "tools/gen/examples"
 )
@@ -617,7 +618,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 		Readable: catFileSet{CSS: []string{"clanker-ui.css"}, JS: []string{"clanker-ui.js"}},
 		Bundle:   catFileSet{CSS: []string{"clanker-ui.min.css"}, JS: []string{"clanker-ui-core.min.js", "clanker-ui.min.js"}},
 		Optional: []catFile{
-			{"clanker-ui-theme.js", "classic script before the module, for apps with a theme toggle, switch, or scheme picker (no flash of the wrong theme)"},
+			{"clanker-ui-theme.js", "classic script before the module, for apps with a theme toggle, switch, or scheme picker (no flash of the wrong theme; min: clanker-ui-theme.min.js)"},
 			{"clanker-ui-themes.css", "color schemes; after clanker-ui.css (min: clanker-ui-themes.min.css)"},
 			{"clanker-ui-a11y.css", "accessibility layer; after the themes file (min: clanker-ui-a11y.min.css)"},
 			{"clanker-ui-chart.js", "chart, sparkline, and stat tile module (min: clanker-ui-chart.min.js with clanker-ui-chart.min.css)"},
@@ -667,8 +668,63 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 		files[c.Readme] = []byte(componentFile(cat, c, full))
 	}
 	files[catalogEvents] = []byte(eventsMarkdown(cat))
+	kit, err := read("clanker-ui.js")
+	if err != nil {
+		return nil, nil, err
+	}
+	notices, err := read("THIRD_PARTY_NOTICES")
+	if err != nil {
+		return nil, nil, err
+	}
+	icons, err := iconsMarkdown(kit, notices)
+	if err != nil {
+		return nil, nil, err
+	}
+	files[catalogIcons] = []byte(icons)
 	files[catalogLLMs] = []byte(llmsFull(cat, sections))
 	return files, cat, nil
+}
+
+var (
+	iconEntry   = regexp.MustCompile(`(?m)^  "([a-z0-9-]+)": \[`)
+	iconAliases = regexp.MustCompile(`(?m)^const ICON_ALIASES = \{(.*)\}$`)
+	iconAlias   = regexp.MustCompile(`"?([a-z0-9-]+)"?: "([a-z0-9-]+)"`)
+	lucideVer   = regexp.MustCompile(`icon paths from Lucide ([0-9.]+)`)
+)
+
+func iconsMarkdown(js, notices string) (string, error) {
+	start := strings.Index(js, "const ICONS = {\n")
+	end := strings.Index(js[max(start, 0):], "\n}\n")
+	if start < 0 || end < 0 {
+		return "", fmt.Errorf("clanker-ui.js: no ICONS table")
+	}
+	var names []string
+	for _, m := range iconEntry.FindAllStringSubmatch(js[start:start+end], -1) {
+		names = append(names, m[1])
+	}
+	am := iconAliases.FindStringSubmatch(js)
+	ver := lucideVer.FindStringSubmatch(notices)
+	if len(names) == 0 || am == nil || ver == nil {
+		return "", fmt.Errorf("clanker-ui.js: icon names, aliases, or the Lucide version not found")
+	}
+	var b strings.Builder
+	fmt.Fprintf(&b, "# Icons\n\nThe kit has %d [Lucide](https://lucide.dev/icons/) %s icons. Write `<svg data-lucide=\"<name>\"></svg>` or call `icon(\"<name>\")`; the names are also in the `iconNames` export. An unknown name logs one `console.warn` per name and renders an empty `<svg>`; it does not throw.\n\n", len(names), ver[1])
+	b.WriteString("## Names\n\n")
+	for i, n := range names {
+		if i > 0 {
+			b.WriteString(", ")
+		}
+		fmt.Fprintf(&b, "`%s`", n)
+	}
+	b.WriteString("\n\n## Aliases\n\nOld Lucide names that show the icon on the right:\n\n")
+	for i, m := range iconAlias.FindAllStringSubmatch(am[1], -1) {
+		if i > 0 {
+			b.WriteString(", ")
+		}
+		fmt.Fprintf(&b, "`%s` → `%s`", m[1], m[2])
+	}
+	b.WriteString("\n\n## Add an icon\n\nCopy the icon node of a Lucide icon (lucide.dev: the icon page, or `lucide-static/icon-nodes.json`) and register it once, before or after the markup that uses it:\n\n```js\nimport { registerIcons } from \"/vendor/clanker-ui/clanker-ui.min.js\"\n\nregisterIcons({\n  \"ship\": [\n    [\"path\", { d: \"M12 2v2\" }],\n    [\"path\", { d: \"M12 9.189V13\" }],\n    [\"path\", { d: \"M19 12V6a2 2 0 00-2-2H7a2 2 0 00-2 2v6\" }],\n    [\"path\", { d: \"M19.38 19A11.6 11.6 0 0021 13l-8.188-3.639a2 2 0 00-1.624 0L3 13.001a11.6 11.6 0 002.81 7.76\" }],\n    [\"path\", { d: \"M2 20c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1\" }],\n  ],\n})\n```\n\n- Each node is a path `d` string or a `[tag, attrs]` pair. Tags: `path`, `circle`, `rect`, `line`, `polyline`, `polygon`, `ellipse`. Attributes: geometry, `fill`, `stroke*`, `fill-rule`, `clip-rule`, `opacity`, `transform`. Other tags or attributes throw a `TypeError`. The icon uses the Lucide frame: `viewBox=\"0 0 24 24\"`, `stroke=\"currentColor\"`, stroke width 2, `fill=\"none\"`.\n- Names are lowercase words joined by `-`. A name that the kit already has (or an alias) throws.\n- The kit fills `<svg data-lucide>` elements with the new names that are already in the page. `iconNames` includes the new names.\n- The kit builds the SVG with DOM calls, so this works under the strict CSP and Trusted Types. Do not inline SVG markup with `innerHTML`.\n")
+	return b.String(), nil
 }
 
 func catalogJSON(cat *catalog) ([]byte, error) {

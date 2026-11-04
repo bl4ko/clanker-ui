@@ -2979,10 +2979,13 @@ def check_toast_options(t):
     result = page.evaluate(
         """async () => {
           const { toast } = await import("/clanker-ui.js")
-          const thrown = []
-          for (const options of [{ icon: "no-such-icon" }]) {
-            try { toast("bad", options); thrown.push(false) } catch (e) { thrown.push(e.message) }
-          }
+          const warn = console.warn
+          const warned = []
+          console.warn = (...args) => warned.push(String(args[0]))
+          let thrown = null
+          try { toast.close(toast("bad", { icon: "no-such-icon", duration: Infinity })) } catch (e) { thrown = e.message } finally { console.warn = warn }
+          await new Promise(r => setTimeout(r, 700))
+          thrown = [thrown, warned]
           const records = toast.getToasts().length
           let hides = 0
           const original = HTMLElement.prototype.hidePopover
@@ -3010,7 +3013,7 @@ def check_toast_options(t):
           return { thrown, records, hides, dir: viewport.hasAttribute("dir"), open: viewport.matches(":popover-open"), updated, upserted, limited }
         }"""
     )
-    assert all(result["thrown"]) and "icon" in result["thrown"][0], result["thrown"]
+    assert result["thrown"] == [None, ['clanker-ui: unknown icon "no-such-icon"; see iconNames, or add it with registerIcons()']], result["thrown"]
     assert result["records"] == 0, result
     assert result["hides"] == 0, "a new toast must not hide and re-show the live region"
     assert not result["dir"] and not result["open"], ("the viewport hides when no toast shows", result)

@@ -18,6 +18,20 @@ const ISO_STAMP = /^\d{4}-\d{2}-\d{2}T/
 const IDENT = /^[a-z][\w-]*$/i
 const PROP_CHAR = /[^\p{L}\p{N}_-]/gu
 const UNSAFE_COLOR = /[\\"']|(url|src)\(/i
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+const LOCAL_CLOCK = {
+  zone: undefined,
+  parts(t) {
+    const d = new Date(t)
+    return { y: d.getFullYear(), mo: d.getMonth(), d: d.getDate(), h: d.getHours(), mi: d.getMinutes(), s: d.getSeconds(), ms: d.getMilliseconds(), wd: d.getDay() }
+  },
+  make(y, mo, d, h = 0, mi = 0) {
+    const date = new Date(y, mo, d, h, mi)
+    if (y >= 0 && y < 100) date.setFullYear(y)
+    return date.getTime()
+  },
+}
+const clocks = new Map()
 const instances = new WeakMap()
 const formats = new Map()
 const mounted = new Set()
@@ -335,10 +349,11 @@ function chartModel(s) {
     entities = keys.map(entity)
     series = wanted.length ? wanted.filter(k => keys.includes(k)) : keys
   }
-  const isDate = x != null && rows.length > 0 && rows.every(r => chartDate(r?.[x]) !== null)
+  const clock = chartClock(o.timeZone)
+  const isDate = x != null && rows.length > 0 && rows.every(r => chartDate(r?.[x], clock) !== null)
   const time = o.scale === "time"
   if (time && !isDate && rows.length) throw new TypeError('clanker-ui chart: scale "time" needs an ISO date or a Date in every x value')
-  const times = time ? rows.map(r => chartDate(r[x]).getTime()) : null
+  const times = time ? rows.map(r => chartDate(r[x], clock).getTime()) : null
   return {
     type,
     rows,
@@ -352,9 +367,10 @@ function chartModel(s) {
     isDate,
     time,
     times,
+    clock,
     dateOnly: !times || times.every(t => {
-      const d = new Date(t)
-      return !d.getHours() && !d.getMinutes() && !d.getSeconds() && !d.getMilliseconds()
+      const p = clock.parts(t)
+      return !p.h && !p.mi && !p.s && !p.ms
     }),
     references: (o.references ?? []).map(r => ({ ...r, band: !Number.isFinite(r.value), label: r.label == null ? "" : String(r.label), color: r.tone == null ? null : chartColorValue(r.tone) })),
     sparkline: !!o.sparkline,
@@ -405,13 +421,45 @@ function chartNum(v) {
   return Number.isFinite(n) ? n : null
 }
 
-function chartDate(v) {
+function chartClock(zone) {
+  if (zone == null) return LOCAL_CLOCK
+  let clock = clocks.get(zone)
+  if (clock) return clock
+  let fmt
+  try {
+    fmt = new Intl.DateTimeFormat("en-US", { timeZone: zone, hourCycle: "h23", weekday: "short", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
+  } catch {
+    throw new RangeError(`clanker-ui chart: unknown timeZone ${JSON.stringify(zone)}`)
+  }
+  const parts = t => {
+    const o = {}
+    for (const p of fmt.formatToParts(t)) o[p.type] = p.value
+    return { y: Number(o.year), mo: Number(o.month) - 1, d: Number(o.day), h: Number(o.hour) % 24, mi: Number(o.minute), s: Number(o.second), ms: ((t % 1000) + 1000) % 1000, wd: WEEKDAYS.indexOf(o.weekday) }
+  }
+  const make = (y, mo, d, h = 0, mi = 0) => {
+    const want = Date.UTC(y, mo, d, h, mi)
+    let t = want
+    for (let i = 0; i < 3; i++) {
+      const p = parts(t)
+      const diff = want - Date.UTC(p.y, p.mo, p.d, p.h, p.mi)
+      if (!diff) break
+      t += diff
+    }
+    return t
+  }
+  clock = { zone, parts, make }
+  clocks.set(zone, clock)
+  return clock
+}
+
+function chartDate(v, clock = LOCAL_CLOCK) {
   if (v instanceof Date) return Number.isNaN(v.getTime()) ? null : v
   if (typeof v !== "string") return null
   const m = ISO_DATE.exec(v)
   if (m) {
-    const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
-    return d.getMonth() === Number(m[2]) - 1 && d.getDate() === Number(m[3]) ? d : null
+    const t = clock.make(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+    const p = clock.parts(t)
+    return p.mo === Number(m[2]) - 1 && p.d === Number(m[3]) ? new Date(t) : null
   }
   if (!ISO_STAMP.test(v)) return null
   const d = new Date(v)
@@ -447,6 +495,14 @@ function chartLocale(o) {
   }
 }
 
+function chartDigits(base, extra) {
+  const own = extra && typeof extra === "object" ? extra : {}
+  const out = { ...base, ...own }
+  if (!Object.hasOwn(own, "maximumFractionDigits") && out.minimumFractionDigits > out.maximumFractionDigits) out.maximumFractionDigits = out.minimumFractionDigits
+  if (!Object.hasOwn(own, "minimumFractionDigits") && out.maximumFractionDigits < out.minimumFractionDigits) out.minimumFractionDigits = out.maximumFractionDigits
+  return out
+}
+
 function chartCompact(base) {
   const out = { ...base, notation: "compact", maximumFractionDigits: 1 }
   delete out.minimumFractionDigits
@@ -456,6 +512,7 @@ function chartCompact(base) {
 function chartFormats(s, m) {
   const o = s.opts
   const locale = chartLocale(o)
+  const zone = o.timeZone == null ? {} : { timeZone: o.timeZone }
   const base = o.format && typeof o.format === "object" ? o.format : {}
   const compact = chartCompact(base)
   const value = typeof o.format === "function" ? v => String(o.format(v)) : v => chartNumber(locale, base).format(v)
@@ -470,7 +527,7 @@ function chartFormats(s, m) {
     const key = chartCategory(m.rows[i], m.x, i)
     return m.byKey.get(key)?.label ?? chartLabel(m.config, key, key)
   }
-  const date = (i, options) => chartDateFormat(locale, options).format(chartDate(raw(i)))
+  const date = (i, options) => chartDateFormat(locale, { ...zone, ...options }).format(chartDate(raw(i), m.clock))
   const pick = (f, fallback) => (f && typeof f === "object" ? f : fallback)
   const xTick = i => {
     if (typeof o.xFormat === "function") return String(o.xFormat(raw(i), i))
@@ -483,17 +540,18 @@ function chartFormats(s, m) {
   const timeTick = (t, unit) => {
     const d = new Date(t)
     if (typeof o.xFormat === "function") return String(o.xFormat(d))
-    if (o.xFormat && typeof o.xFormat === "object") return chartDateFormat(locale, o.xFormat).format(d)
-    const midnight = !d.getHours() && !d.getMinutes()
+    if (o.xFormat && typeof o.xFormat === "object") return chartDateFormat(locale, { ...zone, ...o.xFormat }).format(d)
+    const p = m.clock.parts(t)
+    const midnight = !p.h && !p.mi
     const options =
-      unit === "year" || (unit === "month" && !d.getMonth())
+      unit === "year" || (unit === "month" && !p.mo)
         ? { year: "numeric" }
         : unit === "month"
           ? { month: "short" }
           : (unit === "minute" || unit === "hour") && !midnight
             ? { hour: "numeric", minute: "2-digit" }
             : { month: "short", day: "numeric" }
-    return chartDateFormat(locale, options).format(d)
+    return chartDateFormat(locale, { ...zone, ...options }).format(d)
   }
   return { locale, value, percent, tick, xTick, xLabel, timeTick }
 }
@@ -563,27 +621,25 @@ function chartTicks(lo, hi, count) {
   return { lo: ticks[0], hi: ticks.at(-1), ticks }
 }
 
-function chartTimeFloor(t, unit, step) {
-  const d = new Date(t)
-  const y = d.getFullYear()
-  const mo = d.getMonth()
-  const day = d.getDate()
-  if (unit === "minute") return new Date(y, mo, day, d.getHours(), Math.floor(d.getMinutes() / step) * step)
-  if (unit === "hour") return new Date(y, mo, day, Math.floor(d.getHours() / step) * step)
-  if (unit === "day") return new Date(y, mo, day)
-  if (unit === "week") return new Date(y, mo, day - ((d.getDay() + 6) % 7))
-  if (unit === "month") return new Date(y, Math.floor(mo / step) * step, 1)
-  return new Date(Math.floor(y / step) * step, 0, 1)
+function chartTimeFloor(t, unit, step, clock) {
+  const p = clock.parts(t)
+  if (unit === "minute") return clock.make(p.y, p.mo, p.d, p.h, Math.floor(p.mi / step) * step)
+  if (unit === "hour") return clock.make(p.y, p.mo, p.d, Math.floor(p.h / step) * step)
+  if (unit === "day") return clock.make(p.y, p.mo, p.d)
+  if (unit === "week") return clock.make(p.y, p.mo, p.d - ((p.wd + 6) % 7))
+  if (unit === "month") return clock.make(p.y, Math.floor(p.mo / step) * step, 1)
+  return clock.make(Math.floor(p.y / step) * step, 0, 1)
 }
 
-function chartTimeTicks(t0, t1, unit, step) {
+function chartTimeTicks(t0, t1, unit, step, clock) {
   const out = []
   const by = unit === "day" ? 1 : unit === "week" ? 7 : step
-  let d = chartTimeFloor(t0, unit, step)
-  while (d.getTime() <= t1 && out.length <= MAX_TICKS) {
-    if (d.getTime() >= t0 && (unit !== "day" || (d.getDate() - 1) % step === 0)) out.push(d.getTime())
-    const [y, mo, day, hr, min] = [d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes()]
-    d = unit === "minute" ? new Date(y, mo, day, hr, min + by) : unit === "hour" ? new Date(y, mo, day, hr + by) : unit === "month" ? new Date(y, mo + by, 1) : unit === "year" ? new Date(y + by, 0, 1) : new Date(y, mo, day + by)
+  let t = chartTimeFloor(t0, unit, step, clock)
+  while (t <= t1 && out.length <= MAX_TICKS) {
+    const p = clock.parts(t)
+    if (t >= t0 && (unit !== "day" || (p.d - 1) % step === 0)) out.push(t)
+    const next = unit === "minute" ? clock.make(p.y, p.mo, p.d, p.h, p.mi + by) : unit === "hour" ? clock.make(p.y, p.mo, p.d, p.h + by) : unit === "month" ? clock.make(p.y, p.mo + by, 1) : unit === "year" ? clock.make(p.y + by, 0, 1) : clock.make(p.y, p.mo, p.d + by)
+    t = next > t ? next : t + 36e5
   }
   return out
 }
@@ -1234,7 +1290,7 @@ function chartTimeAxis(c, t0, t1, tpos, clen) {
   const { m, f, W, font } = c
   for (const [unit, step, ms] of TIME_STEPS) {
     if ((m.dateOnly && ms < DAY) || (t1 - t0) / ms > clen / 16) continue
-    const ticks = chartTimeTicks(t0, t1, unit, step).map(t => {
+    const ticks = chartTimeTicks(t0, t1, unit, step, m.clock).map(t => {
       const text = f.timeTick(t, unit)
       const w = chartWidth(text, font.tick)
       return { t, text, w, x: Math.min(Math.max(tpos(t), w / 2), W - w / 2) }
@@ -1945,7 +2001,7 @@ function chartStatRender(t) {
     const direction = delta > 0 ? "up" : delta < 0 ? "down" : "flat"
     const good = o.goodWhen === "down" ? direction === "down" : direction === "up"
     const tone = direction === "flat" ? "neutral" : good ? "good" : "bad"
-    const dText = typeof o.deltaFormat === "function" ? String(o.deltaFormat(delta)) : chartNumber(locale, { style: "percent", maximumFractionDigits: 1, signDisplay: "exceptZero", ...(o.deltaFormat && typeof o.deltaFormat === "object" ? o.deltaFormat : {}) }).format(delta)
+    const dText = typeof o.deltaFormat === "function" ? String(o.deltaFormat(delta)) : chartNumber(locale, chartDigits({ style: "percent", maximumFractionDigits: 1, signDisplay: "exceptZero" }, o.deltaFormat)).format(delta)
     kids.push(
       h(
         "p",

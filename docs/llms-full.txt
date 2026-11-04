@@ -83,7 +83,7 @@ A smaller page can load only the component groups that it uses: see [Minified an
 | `clanker-ui-chart.js` | ES module: SVG charts, stat tiles, sparklines. Imports `./clanker-ui.js` |
 | `clanker-ui-theme.js` | Optional classic script for apps with a [theme toggle or switch](#theme-toggle-and-switch). Before the first paint it copies the stored theme (`light` or `dark`) to `data-theme` and the stored [color scheme](#color-schemes) to `data-scheme` on `<html>`, sets `data-system-theme`, and sets `<meta name="theme-color">` (without `media`) to `--background`. The module still owns all theme behavior. |
 | `clanker-ui-themes.css` | Optional [color schemes](#color-schemes): the shadcn base colors and accent themes, and editor palettes (Tokyo Night, Catppuccin, Gruvbox, Nord, Dracula, Rosé Pine, Solarized, One, Kanagawa, Everforest, GitHub). Load it after `clanker-ui.css`. Apps without schemes do not need it. |
-| `dist/` | Minified copies and one file for each component group. See [Minified and group files](#minified-and-group-files). |
+| `dist/` | Minified copies of every file and one file for each component group. See [Minified and group files](#minified-and-group-files). |
 
 ## Use in a project
 
@@ -145,7 +145,7 @@ Put overrides in `app.css` after the kit files, without a layer.
 | --- | --- |
 | `clanker-ui.min.css` | All CSS: the group files below in group order |
 | `clanker-ui-<group>.min.css` | The CSS of one group. Each file starts with the layer order. |
-| `clanker-ui-themes.min.css`, `clanker-ui-a11y.min.css` | Minified copies of the optional files |
+| `clanker-ui-themes.min.css`, `clanker-ui-a11y.min.css`, `clanker-ui-theme.min.js` | Minified copies of the optional files (`clanker-ui-theme.min.js` is a classic script, like `clanker-ui-theme.js`) |
 | `clanker-ui-core.min.js` | Core helpers, icons, strings, theme, and the behavior of the core components |
 | `clanker-ui.min.js` | The behavior of all other components. Imports `./clanker-ui-core.min.js` |
 | `clanker-ui-<group>.min.js` | The behavior of one group (`forms`, `overlays`, `layout`, `chat`). Imports `./clanker-ui-core.min.js` |
@@ -391,8 +391,9 @@ An app with a theme toggle or switch also loads `clanker-ui-theme.js` in `<head>
 | --- | --- | --- |
 | `h` | `h(tag, attrs?, ...children) → Element` | Safe DOM builder. Strings and numbers become text nodes. Attributes use `setAttribute`. `on*` props must be functions (`onclick`, `"ontabs:change"`). `style` must be an object (`{ marginTop: "1px", "--x": "2px" }`). `null`, `undefined`, `false` are skipped; `true` sets an empty attribute. Arrays and iterables are flattened. Refuses `<script>`, `<style>`, `<link>`, `<meta>`, `<object>`, `<embed>`, `<base>`, `<frame>`, `<frameset>`, the SVG animation elements `<set>`, `<animate>`, `<animateMotion>`, `<animateTransform>` (they can write a `javascript:` URL into `href`), `srcdoc`, string handlers, and string `style`. `<iframe>` is allowed (`src` is filtered). Drops `javascript:` and `vbscript:` URLs in `href`, `src`, `action`, `formaction`, `xlink:href`, `poster`, `ping`, `cite`, and `background`. If `attrs` is a string, node, or array, it is a child. |
 | `svg` | `svg(tag, attrs?, ...children) → SVGElement` | Same as `h` in the SVG namespace. |
-| `icon` | `icon(name, attrs?) → SVGSVGElement` | Lucide icon with `class="lucide lucide-<name>"`. It gets `aria-hidden="true"` unless `attrs` has `role`, `aria-label`, or `aria-labelledby`. `attrs` override the defaults. Unknown names throw. `<svg data-lucide>` follows the same rule. |
-| `iconNames` | `string[]` | All icon names (127). Aliases: `loader-2`, `more-horizontal`, `more-vertical`, `home`, `trash-2`, `filter`, `circle-help`, `smile`. |
+| `icon` | `icon(name, attrs?) → SVGSVGElement` | Lucide icon with `class="lucide lucide-<name>"`. It gets `aria-hidden="true"` unless `attrs` has `role`, `aria-label`, or `aria-labelledby`. `attrs` override the defaults. An unknown name logs one `console.warn` per name and gives an empty `<svg>` (as Lucide `createIcons` does); it does not throw. `<svg data-lucide>` follows the same rule. All names and aliases: `skills/clanker-ui/references/icons.md`. |
+| `iconNames` | `string[]` | All icon names (236 Lucide icons, without the old Lucide names that are aliases, for example `alert-triangle`, `home`, `filter`, `unlock`). Frozen; `registerIcons` replaces it with a list that has the new names. |
+| `registerIcons` | `registerIcons({ name: nodes })` | Adds icons. `nodes` is a Lucide icon node: a list of path `d` strings or `[tag, attrs]` pairs (`path`, `circle`, `rect`, `line`, `polyline`, `polygon`, `ellipse`; geometry, `fill`, `stroke*`, `fill-rule`, `clip-rule`, `opacity`, `transform`). Other tags or attributes, a name that is not lowercase words joined by `-`, or a name that exists throw. `<svg data-lucide>` elements in the page with a new name are filled. |
 | `define` | `define(slot, spec)` | Behavior registry, see below. Throws if the slot is already defined. |
 | `emit` | `emit(target, name, detail?, { cancelable }?) → boolean` | Dispatches a bubbling, composed `CustomEvent`. Returns `false` if a listener called `preventDefault()`. |
 | `uid` | `uid(prefix = "clanker") → string` | Unique id that is not in the document. |
@@ -610,7 +611,7 @@ show(content, { trigger, anchor = trigger, side, align, sideOffset = 4, alignOff
 - Keyboard highlight in item lists (select, combobox, and command items, dropdown, context, and menubar items, menubar triggers, and links in navigation menu content): a 2 px `--focus-ring` outline inside the item (`outline-offset: -2px`), only while `<html>` has `data-keyboard` (the kit sets it during keyboard use). Pointer hover shows only the `--accent` background, like shadcn.
 - Status tokens: borders reach 3:1 on `--background` (in dark also on `--card`) and light text reaches 4.5:1 on its background (success `hsl(140 100% 25%)`, info `hsl(210 92% 43%)`, warning `hsl(31 92% 35%)`, error `hsl(360 100% 43%)`).
 - Light `--muted-foreground` is `oklch(0.54 0 0)` (shadcn 0.556), so it has 4.6:1 on `--muted`.
-- `--chart-1`…`--chart-8` is the categorical palette validated with the dataviz `validate_palette.js` in light and dark: all checks pass. In light, slots 3, 4, and 5 are below 3:1 contrast; every chart and sparkline has a tooltip and a table view as relief, and charts with two or more series also have a legend. Without the layer, charts use the shadcn `--chart-1`…`--chart-5` and the kit `--chart-6`…`--chart-8`.
+- `--chart-1`…`--chart-8` is the categorical palette validated with the dataviz `validate_palette.js` in light and dark: all checks pass. In light, slots 3, 4, and 5 are below 3:1 contrast; every chart and sparkline has a tooltip and a table view as relief, and charts with two or more series also have a legend. The kit tokens have the same palette; the layer also gives it to the shadcn base schemes, which set a gray ramp.
 - Shimmer text (`.shimmer`, running trace titles, uploading or processing attachment titles): when the shimmer color cannot be computed (an invalid `--shimmer-color`, or a browser without relative color syntax), the text stays plain and visible. Without the layer, the text is transparent then, as in shadcn.
 - Forced colors: one `@media (forced-colors: active)` block keeps checkbox ticks, radio dots, switch thumbs, the slider track, range, and thumb, focused menu, select, and navigation items, and highlighted combobox and command items visible with the system colors.
 
@@ -1396,7 +1397,7 @@ view.destroy()
 | `type` | `bar` (default), `area`, `line`, `pie`, `donut`, `radar`, `radial` |
 | `x`, `y` | Category key (default: the first non-numeric column). `y`: one key or a list. |
 | `label`, `summary` | Name for the `aria-label`, table caption, and table region. `summary` replaces the automatic `aria-label`. |
-| `format`, `tickFormat`, `xFormat`, `labelFormat`, `locale` | `Intl` options or a function. Axis ticks are compact from 1,000. `locale` defaults to `<html lang>` when it is a valid language tag, else to the browser language. |
+| `format`, `tickFormat`, `xFormat`, `labelFormat`, `locale`, `timeZone` | `Intl` options or a function. Axis ticks are compact from 1,000. `locale` sets the language of numbers and dates (`"de-DE"`); it defaults to `<html lang>` when it is a valid language tag, else to the browser language. `timeZone` (an IANA name such as `"UTC"` or `"Europe/Ljubljana"`) places the time axis ticks and shows every date and time in that zone; the default is the browser time zone. An unknown zone throws a `RangeError`. |
 | `stack` | `true` or `"expand"` for `bar` and `area` |
 | `horizontal`, `labels`, `diverging`, `highlight`, `barSize` | Bar options |
 | `curve`, `dots`, `gradient`, `zero`, `domain` | `monotone` (default), `linear`, `step`; dots; gradient fill; `zero: false`; fixed `[min, max]` (finite numbers or `null`; else a `TypeError`) |
@@ -1410,6 +1411,7 @@ view.destroy()
 | `view`, `animate` | `"chart"` or `"table"`; `animate: false` skips the entrance animation |
 
 - The SVG is `role="application"` with `tabindex="0"`, so screen readers pass the arrow keys to it. Its accessible name is an automatic summary; the marks inside are hidden from assistive technology, and the table view has every value. Pointer: crosshair for line and area, per-mark tooltip otherwise. Keyboard: arrows move between points, Home, End, Escape. A polite live region reads the readout. The legend is a toolbar of toggle buttons with one tab stop. The table button switches to an accessible `<table>`.
+- Colors: `--chart-1`…`--chart-8` is a categorical palette with 8 distinct hues, validated with the dataviz `validate_palette.js` in light and dark. shadcn's own `--chart-1`…`--chart-5` are a gray ramp (the base color), which does not separate series; the kit uses the validated hues by default. The shadcn base schemes of `clanker-ui-themes.css` (`data-scheme="neutral"`, `zinc`, ...) set the exact shadcn gray ramp; the accessibility layer and the editor schemes keep hues. Brand colors: override `--chart-1`… in `app.css` (light and dark), or give a series `color` in `config`.
 - `--chart-surface` is the gap and dot ring color (default `--card`); set it to the background the chart sits on.
 - A label inside a fill uses `--chart-ink-light` (`#fff`) or `--chart-ink-dark` (`#0b0b0b`), whichever has the higher WCAG contrast against the fill. Override both on `[data-slot="chart"]`.
 - Charts redraw on `theme:change` while they are in the document. A removed chart closes its tooltip, is not tracked, and redraws when it is inserted again. A destroyed chart never redraws.
@@ -1445,7 +1447,9 @@ statTile(el, { label: "Total revenue", value: 1250, format: { style: "currency",
 sparkline(el, [980, 1020, 1284], { area: true, label: "Requests per minute" })
 ```
 
-- `statTile` renders `data-slot="chart-stat"` (`role="group"`) with `chart-stat-label`, `chart-stat-value` (compact from 10,000), `chart-stat-delta` (`data-direction`, `data-tone`, icon, signed percent, `chart-stat-period`), and an optional `chart-stat-trend` sparkline. `goodWhen: "down"` when a fall is good. Options: `label`, `value`, `format`, `delta`, `deltaFormat`, `period`, `goodWhen`, `trend`, `trendOptions`, `icon`, `description`, `locale`. `locale` sets the number locale (default as for charts). A failed `update()` throws and keeps the last good options; a `statTile()` call that throws leaves the element as it was.
+- `statTile` renders `data-slot="chart-stat"` (`role="group"`) with `chart-stat-label`, `chart-stat-value`, `chart-stat-delta` (`data-direction`, `data-tone`, icon, signed percent, `chart-stat-period`), and an optional `chart-stat-trend` sparkline.
+- The tile draws its own card (border, radius, background, shadow, 24 px padding): call it on a plain `<div>` in a grid of tiles. Inside a `card` (any depth) it drops that frame, so a tile in a card has one border.
+- Value: from 10,000 the value is compact (`notation: "compact"`, at most 1 decimal: `€30.5K`). Pass `format: { style: "currency", currency: "EUR", notation: "standard" }` for the full amount, or a function. `deltaFormat` defaults to `{ style: "percent", maximumFractionDigits: 1, signDisplay: "exceptZero" }`; your options are merged over it, and a `minimumFractionDigits` above the default maximum raises the maximum (`{ minimumFractionDigits: 2 }` gives `+12.50%`). `goodWhen: "down"` when a fall is good. Options: `label`, `value`, `format`, `delta`, `deltaFormat`, `period`, `goodWhen`, `trend`, `trendOptions`, `icon`, `description`, `locale`. `locale` sets the number locale (default as for charts). A failed `update()` throws and keeps the last good options; a `statTile()` call that throws leaves the element as it was.
 - `sparkline` is a line (or `area: true`) without axes or legend, in `--chart-other` with the latest point in the accent. It keeps the tooltip, the keyboard readout, and the table view: a toggle next to the line shows a transposed table (one row per series, one column per point). Pass `table: false` only when the same values are visible next to it.
 
 ### Page patterns

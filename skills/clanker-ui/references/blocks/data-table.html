@@ -7,7 +7,7 @@
   <title>Tasks - Acme Inc.</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
-  <script src="/vendor/clanker-ui/clanker-ui-theme.js"></script>
+  <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
   <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
   <script type="module" src="/data-table.js"></script>
 </head>
@@ -63,20 +63,20 @@
         <div>
           <input data-slot="input" type="search" id="task-filter" placeholder="Filter tasks..." aria-label="Filter tasks">
             <div data-slot="dropdown-menu" data-filter="status">
-              <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="circle-fading-plus"></svg>Status<span data-slot="badge" data-variant="secondary" hidden></span></button>
+              <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="circle-plus"></svg>Status<span data-slot="badge" data-variant="secondary" hidden></span></button>
               <div data-slot="dropdown-menu-content" data-align="start">
                 <div data-slot="dropdown-menu-group">
                   <div data-slot="dropdown-menu-label">Status</div>
                 <div data-slot="dropdown-menu-checkbox-item" data-value="backlog"><svg data-lucide="circle-question-mark"></svg>Backlog<span data-slot="dropdown-menu-shortcut">4</span></div>
                 <div data-slot="dropdown-menu-checkbox-item" data-value="todo"><svg data-lucide="circle"></svg>Todo<span data-slot="dropdown-menu-shortcut">2</span></div>
-                <div data-slot="dropdown-menu-checkbox-item" data-value="in progress"><svg data-lucide="clock"></svg>In progress<span data-slot="dropdown-menu-shortcut">5</span></div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="in progress"><svg data-lucide="timer"></svg>In progress<span data-slot="dropdown-menu-shortcut">5</span></div>
                 <div data-slot="dropdown-menu-checkbox-item" data-value="done"><svg data-lucide="circle-check"></svg>Done<span data-slot="dropdown-menu-shortcut">4</span></div>
                 <div data-slot="dropdown-menu-checkbox-item" data-value="canceled"><svg data-lucide="circle-x"></svg>Canceled<span data-slot="dropdown-menu-shortcut">1</span></div>
                 </div>
               </div>
             </div>
             <div data-slot="dropdown-menu" data-filter="priority">
-              <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="circle-fading-plus"></svg>Priority<span data-slot="badge" data-variant="secondary" hidden></span></button>
+              <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="circle-plus"></svg>Priority<span data-slot="badge" data-variant="secondary" hidden></span></button>
               <div data-slot="dropdown-menu-content" data-align="start">
                 <div data-slot="dropdown-menu-group">
                   <div data-slot="dropdown-menu-label">Priority</div>
@@ -90,7 +90,7 @@
         </div>
         <div>
           <div data-slot="dropdown-menu" id="task-view" data-show-from="lg">
-            <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="list-filter"></svg>View</button>
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="sliders-horizontal"></svg>View</button>
             <div data-slot="dropdown-menu-content" data-align="end">
               <div data-slot="dropdown-menu-group">
                 <div data-slot="dropdown-menu-label">Toggle columns</div>
@@ -121,7 +121,7 @@
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-8782"></button></td>
                 <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-8782</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="You can&#39;t compress the program without quantifying the open-source SSD pixel!">You can&#39;t compress the program without quantifying the open-source SSD pixel!</span></td>
-                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In progress</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="timer"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
                 <td data-slot="table-cell" data-align="end">
                   <div data-slot="dropdown-menu">
@@ -254,7 +254,7 @@
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-1138"></button></td>
                 <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-1138</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Feature</span> <span data-slot="data-table-text" title="Generating the driver won&#39;t do anything, we need to quantify the 1080p SMTP bandwidth!">Generating the driver won&#39;t do anything, we need to quantify the 1080p SMTP bandwidth!</span></td>
-                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In progress</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="timer"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
                 <td data-slot="table-cell" data-align="end">
                   <div data-slot="dropdown-menu">
@@ -292,7 +292,7 @@
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-5160"></button></td>
                 <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-5160</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="Calculating the bus won&#39;t do anything, we need to navigate the back-end JSON protocol!">Calculating the bus won&#39;t do anything, we need to navigate the back-end JSON protocol!</span></td>
-                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In progress</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="timer"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-up"></svg>High</span></td>
                 <td data-slot="table-cell" data-align="end">
                   <div data-slot="dropdown-menu">
@@ -387,7 +387,7 @@
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-8404"></button></td>
                 <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-8404</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Bug</span> <span data-slot="data-table-text" title="We need to generate the virtual HEX alarm!">We need to generate the virtual HEX alarm!</span></td>
-                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In progress</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="timer"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-down"></svg>Low</span></td>
                 <td data-slot="table-cell" data-align="end">
                   <div data-slot="dropdown-menu">
@@ -406,7 +406,7 @@
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-5365"></button></td>
                 <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-5365</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="Backing up the pixel won&#39;t do anything, we need to transmit the primary IB array!">Backing up the pixel won&#39;t do anything, we need to transmit the primary IB array!</span></td>
-                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In progress</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="timer"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-down"></svg>Low</span></td>
                 <td data-slot="table-cell" data-align="end">
                   <div data-slot="dropdown-menu">

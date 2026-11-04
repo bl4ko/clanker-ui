@@ -21,7 +21,7 @@ Pick by the job, not by the look. Each row names the kit part; its file is `comp
 | Need | Use |
 | --- | --- |
 | 2 to 5 options, all visible, one at a time, in a form | `radio-group` (choice cards when each option needs a description) |
-| 2 to 5 options that change a view at once (range, mode, layout) | `toggle-group` `data-type="single"` (`outline`) |
+| 2 to 5 options that change a view at once (range, mode, layout) | `toggle-group` `data-type="single" data-required` (`outline`; one value always selected) |
 | Turn one setting on or off, applies at once | `switch` |
 | Agree, select, or several options that wait for submit | `checkbox` |
 | 6 to about 15 options, one at a time | `select` (`native-select` on very simple or long system lists) |
@@ -48,7 +48,7 @@ Pick by the job, not by the look. Each row names the kit part; its file is `comp
 | The main content of the page, alone | no card: put it in `page` with a `page-header` |
 | Key numbers | `section-cards` (with a trend and a note each), or `stat-grid` (many small numbers, facts on a detail page) |
 | Views of the same object (Overview, Activity, Settings of one project) | `tabs` |
-| A filter of one list (All, Active, Archived) | `toggle-group` `data-type="single"` above the list (not `tabs`: tabs switch panels) |
+| A filter of one list (All, Active, Archived) | `tabs` with one shared `tabs-content` without `data-value`, or `toggle-group` `data-type="single" data-required` |
 | Different areas of the app | separate pages in the sidebar or the top nav |
 | Steps of a long form | one page with `field-set` sections; a wizard only when a step needs the answer of the one before |
 | Show and hide extra content in place | `collapsible`; many sections: `accordion` |

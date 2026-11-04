@@ -7,7 +7,7 @@
   <title>Dashboard - Acme Inc.</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
-  <script src="/vendor/clanker-ui/clanker-ui-theme.js"></script>
+  <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
   <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
   <script type="module" src="/dashboard.js"></script>
 </head>
@@ -38,7 +38,7 @@
                     <a data-slot="sidebar-menu-button" href="#lifecycle"><svg data-lucide="list"></svg><span>Lifecycle</span></a>
                   </li>
                   <li data-slot="sidebar-menu-item">
-                    <a data-slot="sidebar-menu-button" href="#analytics"><svg data-lucide="trending-up"></svg><span>Analytics</span></a>
+                    <a data-slot="sidebar-menu-button" href="#analytics"><svg data-lucide="chart-column"></svg><span>Analytics</span></a>
                   </li>
                   <li data-slot="sidebar-menu-item">
                     <a data-slot="sidebar-menu-button" href="#projects"><svg data-lucide="folder"></svg><span>Projects</span></a>
@@ -54,7 +54,7 @@
               <div data-slot="sidebar-group-content">
                 <ul data-slot="sidebar-menu">
                   <li data-slot="sidebar-menu-item">
-                    <a data-slot="sidebar-menu-button" href="#library"><svg data-lucide="archive"></svg><span>Data library</span></a>
+                    <a data-slot="sidebar-menu-button" href="#library"><svg data-lucide="database"></svg><span>Data library</span></a>
                     <div data-slot="dropdown-menu">
                       <button type="button" data-slot="sidebar-menu-action" data-show-on-hover data-dropdown-menu-trigger aria-label="More for Data library"><svg data-lucide="ellipsis"></svg></button>
                       <div data-slot="dropdown-menu-content" data-side="right" data-align="start">
@@ -229,7 +229,7 @@
             </div>
             <div>
               <div data-slot="dropdown-menu">
-                <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="table"></svg><span data-show-from="lg">Customize columns</span><span data-hide-from="lg">Columns</span><svg data-lucide="chevron-down"></svg></button>
+                <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="sliders-horizontal"></svg><span data-show-from="lg">Customize columns</span><span data-hide-from="lg">Columns</span><svg data-lucide="chevron-down"></svg></button>
                 <div data-slot="dropdown-menu-content" data-align="end" id="columns-menu">
                   <div data-slot="dropdown-menu-checkbox-item" data-value="type" data-checked>Section type</div>
                   <div data-slot="dropdown-menu-checkbox-item" data-value="status" data-checked>Status</div>

@@ -85,7 +85,7 @@ func TestNavCoversGroupsAndOrder(t *testing.T) {
 	for _, g := range d.nav.Groups {
 		groups = append(groups, g.Title)
 	}
-	if want := []string{"Components", "Get Started", "Utilities", "clanker-ui"}; !slices.Equal(groups, want) {
+	if want := []string{"Components", "Blocks", "Get Started", "Utilities", "clanker-ui"}; !slices.Equal(groups, want) {
 		t.Errorf("groups %v, want %v", groups, want)
 	}
 	components := d.componentLinks("")

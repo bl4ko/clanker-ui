@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Dashboard - Acme Inc.</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
+  <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
+  <script type="module" src="/dashboard.js"></script>
+</head>
+<body>
+  <div data-slot="sidebar-wrapper" id="app">
+    <div data-slot="sidebar" data-variant="inset" data-collapsible="offcanvas">
+      <div data-slot="sidebar-gap"></div>
+      <div data-slot="sidebar-container">
+        <div data-slot="sidebar-inner">
+          <div data-slot="sidebar-header">
+            <ul data-slot="sidebar-menu">
+              <li data-slot="sidebar-menu-item">
+                <a data-slot="sidebar-menu-button" data-size="lg" href="#">
+                  <span data-slot="brand-mark"><svg data-lucide="layout-dashboard"></svg></span>
+                  <span data-slot="text-stack"><span>Acme Inc.</span><span>Enterprise</span></span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div data-slot="sidebar-content">
+            <div data-slot="sidebar-group">
+              <div data-slot="sidebar-group-content">
+                <ul data-slot="sidebar-menu">
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#" data-active="true" aria-current="page"><svg data-lucide="layout-dashboard"></svg><span>Dashboard</span></a>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#lifecycle"><svg data-lucide="list"></svg><span>Lifecycle</span></a>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#analytics"><svg data-lucide="chart-column"></svg><span>Analytics</span></a>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#projects"><svg data-lucide="folder"></svg><span>Projects</span></a>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#team"><svg data-lucide="users"></svg><span>Team</span></a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div data-slot="sidebar-group">
+              <div data-slot="sidebar-group-label">Documents</div>
+              <div data-slot="sidebar-group-content">
+                <ul data-slot="sidebar-menu">
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#library"><svg data-lucide="database"></svg><span>Data library</span></a>
+                    <div data-slot="dropdown-menu">
+                      <button type="button" data-slot="sidebar-menu-action" data-show-on-hover data-dropdown-menu-trigger aria-label="More for Data library"><svg data-lucide="ellipsis"></svg></button>
+                      <div data-slot="dropdown-menu-content" data-side="right" data-align="start">
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="folder"></svg>Open</div>
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="share"></svg>Share</div>
+                        <div data-slot="dropdown-menu-separator"></div>
+                        <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete</div>
+                      </div>
+                    </div>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#reports"><svg data-lucide="file-text"></svg><span>Reports</span></a>
+                    <div data-slot="dropdown-menu">
+                      <button type="button" data-slot="sidebar-menu-action" data-show-on-hover data-dropdown-menu-trigger aria-label="More for Reports"><svg data-lucide="ellipsis"></svg></button>
+                      <div data-slot="dropdown-menu-content" data-side="right" data-align="start">
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="folder"></svg>Open</div>
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="share"></svg>Share</div>
+                        <div data-slot="dropdown-menu-separator"></div>
+                        <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete</div>
+                      </div>
+                    </div>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#assistant"><svg data-lucide="file-pen"></svg><span>Word assistant</span></a>
+                    <div data-slot="dropdown-menu">
+                      <button type="button" data-slot="sidebar-menu-action" data-show-on-hover data-dropdown-menu-trigger aria-label="More for Word assistant"><svg data-lucide="ellipsis"></svg></button>
+                      <div data-slot="dropdown-menu-content" data-side="right" data-align="start">
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="folder"></svg>Open</div>
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="share"></svg>Share</div>
+                        <div data-slot="dropdown-menu-separator"></div>
+                        <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete</div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div data-slot="sidebar-footer">
+            <ul data-slot="sidebar-menu">
+              <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#settings"><svg data-lucide="settings"></svg><span>Settings</span></a></li>
+              <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#help"><svg data-lucide="circle-question-mark"></svg><span>Get help</span></a></li>
+              <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#search"><svg data-lucide="search"></svg><span>Search</span></a></li>
+            </ul>
+            <ul data-slot="sidebar-menu">
+              <li data-slot="sidebar-menu-item">
+                <div data-slot="dropdown-menu">
+                  <button type="button" data-slot="sidebar-menu-button" data-size="lg" data-dropdown-menu-trigger>
+                    <span data-slot="avatar"><span data-slot="avatar-fallback">CN</span></span>
+                    <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
+                    <svg data-lucide="ellipsis-vertical"></svg>
+                  </button>
+                  <div data-slot="dropdown-menu-content" data-side="right" data-align="end">
+                    <div data-slot="dropdown-menu-label">
+                      <span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">CN</span></span>
+                      <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
+                    </div>
+                    <div data-slot="dropdown-menu-separator"></div>
+                    <div data-slot="dropdown-menu-group">
+                      <a data-slot="dropdown-menu-item" href="#account"><svg data-lucide="user"></svg>Account</a>
+                      <a data-slot="dropdown-menu-item" href="#billing"><svg data-lucide="credit-card"></svg>Billing</a>
+                      <a data-slot="dropdown-menu-item" href="#notifications"><svg data-lucide="bell"></svg>Notifications</a>
+                    </div>
+                    <div data-slot="dropdown-menu-separator"></div>
+                    <a data-slot="dropdown-menu-item" href="#logout"><svg data-lucide="log-out"></svg>Log out</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <button data-slot="sidebar-rail"></button>
+      </div>
+    </div>
+    <main data-slot="sidebar-inset">
+      <header data-slot="site-header">
+        <button data-slot="sidebar-trigger"></button>
+        <div data-slot="separator" data-orientation="vertical"></div>
+        <h1 data-slot="site-header-title">Dashboard</h1>
+        <div data-slot="site-header-actions">
+          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+          <button type="button" data-slot="button" data-size="sm"><svg data-lucide="plus"></svg>Quick create</button>
+        </div>
+      </header>
+      <div data-slot="page">
+        <div data-slot="section-cards">
+          <div data-slot="card">
+            <div data-slot="card-header">
+              <div data-slot="card-description">Total revenue</div>
+              <div data-slot="card-title">$1,250.00</div>
+              <div data-slot="card-action"><span data-slot="badge" data-variant="outline"><svg data-lucide="trending-up"></svg>+12.5%</span></div>
+            </div>
+            <div data-slot="card-footer">
+              <div>Trending up this month <svg data-lucide="trending-up"></svg></div>
+              <div data-slot="card-description">Visitors for the last 6 months</div>
+            </div>
+          </div>
+          <div data-slot="card">
+            <div data-slot="card-header">
+              <div data-slot="card-description">New customers</div>
+              <div data-slot="card-title">1,234</div>
+              <div data-slot="card-action"><span data-slot="badge" data-variant="outline"><svg data-lucide="trending-down"></svg>-20%</span></div>
+            </div>
+            <div data-slot="card-footer">
+              <div>Down 20% this period <svg data-lucide="trending-down"></svg></div>
+              <div data-slot="card-description">Acquisition needs attention</div>
+            </div>
+          </div>
+          <div data-slot="card">
+            <div data-slot="card-header">
+              <div data-slot="card-description">Active accounts</div>
+              <div data-slot="card-title">45,678</div>
+              <div data-slot="card-action"><span data-slot="badge" data-variant="outline"><svg data-lucide="trending-up"></svg>+12.5%</span></div>
+            </div>
+            <div data-slot="card-footer">
+              <div>Strong user retention <svg data-lucide="trending-up"></svg></div>
+              <div data-slot="card-description">Engagement exceeds targets</div>
+            </div>
+          </div>
+          <div data-slot="card">
+            <div data-slot="card-header">
+              <div data-slot="card-description">Growth rate</div>
+              <div data-slot="card-title">4.5%</div>
+              <div data-slot="card-action"><span data-slot="badge" data-variant="outline"><svg data-lucide="trending-up"></svg>+4.5%</span></div>
+            </div>
+            <div data-slot="card-footer">
+              <div>Steady performance increase <svg data-lucide="trending-up"></svg></div>
+              <div data-slot="card-description">Meets growth projections</div>
+            </div>
+          </div>
+        </div>
+        <div data-slot="card">
+          <div data-slot="card-header">
+            <h2 data-slot="card-title">Total visitors</h2>
+            <p data-slot="card-description"><span data-show-from="sm">Total for the <span data-range-label>last 3 months</span></span><span data-hide-from="sm" data-range-label>Last 3 months</span></p>
+            <div data-slot="card-action">
+              <div data-slot="toggle-group" id="visitors-range" data-type="single" data-variant="outline" data-value="90d" aria-label="Time range" data-show-from="lg">
+                <button type="button" data-slot="toggle-group-item" data-value="90d">Last 3 months</button>
+                <button type="button" data-slot="toggle-group-item" data-value="30d">Last 30 days</button>
+                <button type="button" data-slot="toggle-group-item" data-value="7d">Last 7 days</button>
+              </div>
+              <div data-slot="select" id="visitors-range-select" data-value="90d" data-hide-from="lg">
+                <button data-slot="select-trigger" data-size="sm" aria-label="Time range"><span data-slot="select-value">Last 3 months</span></button>
+                <div data-slot="select-content" data-align="end">
+                  <div data-slot="select-item" data-value="90d">Last 3 months</div>
+                  <div data-slot="select-item" data-value="30d">Last 30 days</div>
+                  <div data-slot="select-item" data-value="7d">Last 7 days</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-slot="card-content"><div id="visitors-chart"></div></div>
+        </div>
+        <div data-slot="tabs" data-default-value="outline" id="sections">
+          <div data-slot="data-table-toolbar">
+            <div>
+              <div data-slot="select" id="view-select" data-value="outline" data-hide-from="lg">
+                <button data-slot="select-trigger" data-size="sm" aria-label="View"><span data-slot="select-value">Outline</span></button>
+                <div data-slot="select-content">
+                  <div data-slot="select-item" data-value="outline">Outline</div>
+                  <div data-slot="select-item" data-value="performance">Past performance</div>
+                  <div data-slot="select-item" data-value="personnel">Key personnel</div>
+                  <div data-slot="select-item" data-value="focus">Focus documents</div>
+                </div>
+              </div>
+              <div data-slot="tabs-list" data-show-from="lg">
+                <button data-slot="tabs-trigger" data-value="outline">Outline</button>
+                <button data-slot="tabs-trigger" data-value="performance">Past performance</button>
+                <button data-slot="tabs-trigger" data-value="personnel">Key personnel</button>
+                <button data-slot="tabs-trigger" data-value="focus">Focus documents</button>
+              </div>
+            </div>
+            <div>
+              <div data-slot="dropdown-menu">
+                <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="sliders-horizontal"></svg><span data-show-from="lg">Customize columns</span><span data-hide-from="lg">Columns</span><svg data-lucide="chevron-down"></svg></button>
+                <div data-slot="dropdown-menu-content" data-align="end" id="columns-menu">
+                  <div data-slot="dropdown-menu-checkbox-item" data-value="type" data-checked>Section type</div>
+                  <div data-slot="dropdown-menu-checkbox-item" data-value="status" data-checked>Status</div>
+                  <div data-slot="dropdown-menu-checkbox-item" data-value="target" data-checked>Target</div>
+                  <div data-slot="dropdown-menu-checkbox-item" data-value="limit" data-checked>Limit</div>
+                  <div data-slot="dropdown-menu-checkbox-item" data-value="reviewer" data-checked>Reviewer</div>
+                </div>
+              </div>
+              <button type="button" data-slot="button" data-variant="outline" data-size="sm"><svg data-lucide="plus"></svg><span data-show-from="lg">Add section</span><span data-hide-from="lg" class="sr-only">Add section</span></button>
+            </div>
+          </div>
+          <div data-slot="tabs-content" data-value="outline">
+            <div data-slot="data-table" id="outline-table">
+              <div data-slot="table-container">
+                <table data-slot="table">
+                  <thead data-slot="table-header">
+                    <tr data-slot="table-row">
+                      <th data-slot="table-head" scope="col"><button type="button" data-slot="checkbox" aria-label="Select all"></button></th>
+                      <th data-slot="table-head" scope="col">Header</th>
+                      <th data-slot="table-head" scope="col" data-column="type" data-show-from="md">Section type</th>
+                      <th data-slot="table-head" scope="col" data-column="status" data-show-from="sm">Status</th>
+                      <th data-slot="table-head" scope="col" data-align="end" data-column="target" data-show-from="lg">Target</th>
+                      <th data-slot="table-head" scope="col" data-align="end" data-column="limit" data-show-from="lg">Limit</th>
+                      <th data-slot="table-head" scope="col" data-column="reviewer" data-show-from="md">Reviewer</th>
+                      <th data-slot="table-head" scope="col"><span class="sr-only">Actions</span></th>
+                    </tr>
+                  </thead>
+                  <tbody data-slot="table-body">
+                    <tr data-slot="table-row">
+                      <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select Cover page"></button></td>
+                      <td data-slot="table-cell">Cover page</td>
+                      <td data-slot="table-cell" data-show-from="md"><span data-slot="badge" data-variant="outline">Cover page</span></td>
+                      <td data-slot="table-cell" data-show-from="sm"><span data-slot="badge" data-variant="outline"><svg data-lucide="loader-circle"></svg>In progress</span></td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">18</td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">5</td>
+                      <td data-slot="table-cell" data-show-from="md">Eddie Lake</td>
+                      <td data-slot="table-cell" data-align="end">
+                        <div data-slot="dropdown-menu">
+                          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for Cover page"><svg data-lucide="ellipsis"></svg></button>
+                          <div data-slot="dropdown-menu-content" data-align="end">
+                            <div data-slot="dropdown-menu-item">Edit</div>
+                            <div data-slot="dropdown-menu-item">Make a copy</div>
+                            <div data-slot="dropdown-menu-item">Favorite</div>
+                            <div data-slot="dropdown-menu-separator"></div>
+                            <div data-slot="dropdown-menu-item" data-variant="destructive">Delete</div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr data-slot="table-row">
+                      <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select Table of contents"></button></td>
+                      <td data-slot="table-cell">Table of contents</td>
+                      <td data-slot="table-cell" data-show-from="md"><span data-slot="badge" data-variant="outline">Table of contents</span></td>
+                      <td data-slot="table-cell" data-show-from="sm"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Done</span></td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">29</td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">24</td>
+                      <td data-slot="table-cell" data-show-from="md">Eddie Lake</td>
+                      <td data-slot="table-cell" data-align="end">
+                        <div data-slot="dropdown-menu">
+                          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for Table of contents"><svg data-lucide="ellipsis"></svg></button>
+                          <div data-slot="dropdown-menu-content" data-align="end">
+                            <div data-slot="dropdown-menu-item">Edit</div>
+                            <div data-slot="dropdown-menu-item">Make a copy</div>
+                            <div data-slot="dropdown-menu-item">Favorite</div>
+                            <div data-slot="dropdown-menu-separator"></div>
+                            <div data-slot="dropdown-menu-item" data-variant="destructive">Delete</div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr data-slot="table-row">
+                      <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select Executive summary"></button></td>
+                      <td data-slot="table-cell">Executive summary</td>
+                      <td data-slot="table-cell" data-show-from="md"><span data-slot="badge" data-variant="outline">Narrative</span></td>
+                      <td data-slot="table-cell" data-show-from="sm"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Done</span></td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">10</td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">13</td>
+                      <td data-slot="table-cell" data-show-from="md">Eddie Lake</td>
+                      <td data-slot="table-cell" data-align="end">
+                        <div data-slot="dropdown-menu">
+                          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for Executive summary"><svg data-lucide="ellipsis"></svg></button>
+                          <div data-slot="dropdown-menu-content" data-align="end">
+                            <div data-slot="dropdown-menu-item">Edit</div>
+                            <div data-slot="dropdown-menu-item">Make a copy</div>
+                            <div data-slot="dropdown-menu-item">Favorite</div>
+                            <div data-slot="dropdown-menu-separator"></div>
+                            <div data-slot="dropdown-menu-item" data-variant="destructive">Delete</div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr data-slot="table-row">
+                      <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select Technical approach"></button></td>
+                      <td data-slot="table-cell">Technical approach</td>
+                      <td data-slot="table-cell" data-show-from="md"><span data-slot="badge" data-variant="outline">Narrative</span></td>
+                      <td data-slot="table-cell" data-show-from="sm"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Done</span></td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">27</td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">23</td>
+                      <td data-slot="table-cell" data-show-from="md">Jamik Tashpulatov</td>
+                      <td data-slot="table-cell" data-align="end">
+                        <div data-slot="dropdown-menu">
+                          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for Technical approach"><svg data-lucide="ellipsis"></svg></button>
+                          <div data-slot="dropdown-menu-content" data-align="end">
+                            <div data-slot="dropdown-menu-item">Edit</div>
+                            <div data-slot="dropdown-menu-item">Make a copy</div>
+                            <div data-slot="dropdown-menu-item">Favorite</div>
+                            <div data-slot="dropdown-menu-separator"></div>
+                            <div data-slot="dropdown-menu-item" data-variant="destructive">Delete</div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr data-slot="table-row">
+                      <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select Design"></button></td>
+                      <td data-slot="table-cell">Design</td>
+                      <td data-slot="table-cell" data-show-from="md"><span data-slot="badge" data-variant="outline">Narrative</span></td>
+                      <td data-slot="table-cell" data-show-from="sm"><span data-slot="badge" data-variant="outline"><svg data-lucide="loader-circle"></svg>In progress</span></td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">2</td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">16</td>
+                      <td data-slot="table-cell" data-show-from="md">Jamik Tashpulatov</td>
+                      <td data-slot="table-cell" data-align="end">
+                        <div data-slot="dropdown-menu">
+                          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for Design"><svg data-lucide="ellipsis"></svg></button>
+                          <div data-slot="dropdown-menu-content" data-align="end">
+                            <div data-slot="dropdown-menu-item">Edit</div>
+                            <div data-slot="dropdown-menu-item">Make a copy</div>
+                            <div data-slot="dropdown-menu-item">Favorite</div>
+                            <div data-slot="dropdown-menu-separator"></div>
+                            <div data-slot="dropdown-menu-item" data-variant="destructive">Delete</div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr data-slot="table-row">
+                      <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select Integration with existing systems"></button></td>
+                      <td data-slot="table-cell">Integration with existing systems</td>
+                      <td data-slot="table-cell" data-show-from="md"><span data-slot="badge" data-variant="outline">Narrative</span></td>
+                      <td data-slot="table-cell" data-show-from="sm"><span data-slot="badge" data-variant="outline"><svg data-lucide="loader-circle"></svg>In progress</span></td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">19</td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">21</td>
+                      <td data-slot="table-cell" data-show-from="md">Jamik Tashpulatov</td>
+                      <td data-slot="table-cell" data-align="end">
+                        <div data-slot="dropdown-menu">
+                          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for Integration with existing systems"><svg data-lucide="ellipsis"></svg></button>
+                          <div data-slot="dropdown-menu-content" data-align="end">
+                            <div data-slot="dropdown-menu-item">Edit</div>
+                            <div data-slot="dropdown-menu-item">Make a copy</div>
+                            <div data-slot="dropdown-menu-item">Favorite</div>
+                            <div data-slot="dropdown-menu-separator"></div>
+                            <div data-slot="dropdown-menu-item" data-variant="destructive">Delete</div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr data-slot="table-row">
+                      <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select Innovation and advantages"></button></td>
+                      <td data-slot="table-cell">Innovation and advantages</td>
+                      <td data-slot="table-cell" data-show-from="md"><span data-slot="badge" data-variant="outline">Narrative</span></td>
+                      <td data-slot="table-cell" data-show-from="sm"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Done</span></td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">25</td>
+                      <td data-slot="table-cell" data-align="end" data-show-from="lg">26</td>
+                      <td data-slot="table-cell" data-show-from="md"><div data-slot="select" data-name="reviewer-6">
+                          <button data-slot="select-trigger" data-size="sm" aria-label="Reviewer of Innovation and advantages"><span data-slot="select-value">Assign reviewer</span></button>
+                          <div data-slot="select-content" data-align="end">
+                            <div data-slot="select-item" data-value="eddie">Eddie Lake</div>
+                            <div data-slot="select-item" data-value="jamik">Jamik Tashpulatov</div>
+                          </div>
+                        </div></td>
+                      <td data-slot="table-cell" data-align="end">
+                        <div data-slot="dropdown-menu">
+                          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for Innovation and advantages"><svg data-lucide="ellipsis"></svg></button>
+                          <div data-slot="dropdown-menu-content" data-align="end">
+                            <div data-slot="dropdown-menu-item">Edit</div>
+                            <div data-slot="dropdown-menu-item">Make a copy</div>
+                            <div data-slot="dropdown-menu-item">Favorite</div>
+                            <div data-slot="dropdown-menu-separator"></div>
+                            <div data-slot="dropdown-menu-item" data-variant="destructive">Delete</div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div data-slot="data-table-pagination">
+                <div data-slot="data-table-selection" data-show-from="lg" aria-live="polite">0 of 7 row(s) selected.</div>
+                <div data-show-from="lg">
+                  <label data-slot="label" for="rows-per-page">Rows per page</label>
+                  <div data-slot="select" data-value="10">
+                    <button data-slot="select-trigger" data-size="sm" id="rows-per-page"><span data-slot="select-value">10</span></button>
+                    <div data-slot="select-content" data-side="top">
+                      <div data-slot="select-item" data-value="10">10</div>
+                      <div data-slot="select-item" data-value="20">20</div>
+                      <div data-slot="select-item" data-value="30">30</div>
+                      <div data-slot="select-item" data-value="50">50</div>
+                    </div>
+                  </div>
+                </div>
+                <div>Page 1 of 1</div>
+                <div>
+                  <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Go to first page" data-show-from="lg" disabled><svg data-lucide="chevrons-left"></svg></button>
+                  <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Go to previous page" disabled><svg data-lucide="chevron-left"></svg></button>
+                  <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Go to next page" disabled><svg data-lucide="chevron-right"></svg></button>
+                  <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Go to last page" data-show-from="lg" disabled><svg data-lucide="chevrons-right"></svg></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-slot="tabs-content" data-value="performance">
+            <div data-slot="empty" data-variant="outline">
+              <div data-slot="empty-header">
+                <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="trending-up"></svg></div>
+                <div data-slot="empty-title">No past performance yet</div>
+                <div data-slot="empty-description">Add a past project to show your track record.</div>
+              </div>
+              <div data-slot="empty-content"><button type="button" data-slot="button" data-variant="outline" data-size="sm"><svg data-lucide="plus"></svg>Add project</button></div>
+            </div>
+          </div>
+          <div data-slot="tabs-content" data-value="personnel">
+            <div data-slot="empty" data-variant="outline">
+              <div data-slot="empty-header">
+                <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="users"></svg></div>
+                <div data-slot="empty-title">No key personnel yet</div>
+                <div data-slot="empty-description">Add the people who lead the work.</div>
+              </div>
+              <div data-slot="empty-content"><button type="button" data-slot="button" data-variant="outline" data-size="sm"><svg data-lucide="plus"></svg>Add person</button></div>
+            </div>
+          </div>
+          <div data-slot="tabs-content" data-value="focus">
+            <div data-slot="empty" data-variant="outline">
+              <div data-slot="empty-header">
+                <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="file-text"></svg></div>
+                <div data-slot="empty-title">No focus documents</div>
+                <div data-slot="empty-description">Pin the documents that need attention.</div>
+              </div>
+              <div data-slot="empty-content"><button type="button" data-slot="button" data-variant="outline" data-size="sm"><svg data-lucide="plus"></svg>Add document</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

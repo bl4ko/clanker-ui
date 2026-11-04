@@ -100,7 +100,7 @@
             </div>
           </nav>
           <div data-docs="page">
-            <div data-docs="docs">
+            <div data-docs="docs"{{with .Page}}{{if .Wide}} data-wide{{end}}{{end}}>
               <div data-docs="column">
                 <div data-docs="top-spacing"></div>
                 <article data-docs="article">

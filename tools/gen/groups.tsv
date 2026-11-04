@@ -15,6 +15,13 @@ spinner	core
 empty	core
 progress	core
 aspect-ratio	core
+page	core
+site-header	core
+section-cards	core
+stat-grid	core
+data-table	core
+brand	core
+text-stack	core
 button-group	forms
 input-group	forms
 input-otp	forms

@@ -690,8 +690,8 @@ func TestDialogFormGlue(t *testing.T) {
 	if glueDecls(t, "clanker.components", `[data-slot="dialog-content"] > form`) != nil {
 		t.Error("the form glue also matches a form part (questionnaire)")
 	}
-	if got := glueDecls(t, "clanker.components", `[data-slot="dialog-content"] > form:not([data-slot])`); !slices.Equal(got, []string{"display: contents"}) {
-		t.Errorf("the form glue for a plain wrapper form: %v", got)
+	if got := glueDecls(t, "clanker.components", `:is([data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"], [data-slot="drawer-content"]) > form:is(:not([data-slot]), [data-slot="form"])`); !slices.Equal(got, []string{"display: contents"}) {
+		t.Errorf("the form glue for a plain form or a form part in overlay content: %v", got)
 	}
 }
 

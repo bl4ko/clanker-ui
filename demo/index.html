@@ -157,6 +157,9 @@
             <li><a href="#data-table">Data Table</a></li>
             <li><a href="#brand">Brand</a></li>
             <li><a href="#text-stack">Text Stack</a></li>
+            <li><a href="#card-grid">Card Grid</a></li>
+            <li><a href="#cover">Cover</a></li>
+            <li><a href="#rating">Rating</a></li>
           </ul>
         </div>
       </div>
@@ -6639,6 +6642,54 @@ view.destroy()</code></pre>
           <div data-slot="item" data-variant="outline" data-size="sm">
             <div data-slot="item-media"><span data-slot="avatar"><span data-slot="avatar-fallback">CN</span></span></div>
             <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
+          </div>
+        </div>
+      </section>
+
+      <section id="card-grid" data-demo="section">
+        <h3 data-demo="title">Card Grid</h3>
+        <p data-demo="description">A grid of records with a preview: as many columns as fit, cards aligned at the top.</p>
+        <div data-demo="preview full">
+          <div data-slot="card-grid">
+            <div data-slot="card" data-size="sm">
+              <div data-slot="card-content"><div data-slot="cover" data-tone="2"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="0" width="8" height="150" fill="currentColor" opacity="0.5"></rect><circle cx="78" cy="118" r="34" fill="currentColor" opacity="0.35"></circle></svg><span>Piranesi</span><span>Susanna Clarke</span></div></div>
+              <div data-slot="card-header"><h4 data-slot="card-title">Piranesi</h4><p data-slot="card-description">Susanna Clarke</p></div>
+            </div>
+            <div data-slot="card" data-size="sm">
+              <div data-slot="card-content"><div data-slot="cover" data-tone="3"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="0" width="8" height="150" fill="currentColor" opacity="0.5"></rect><circle cx="78" cy="118" r="34" fill="currentColor" opacity="0.35"></circle></svg><span>Project Hail Mary</span><span>Andy Weir</span></div></div>
+              <div data-slot="card-header"><h4 data-slot="card-title">Project Hail Mary</h4><p data-slot="card-description">Andy Weir</p></div>
+            </div>
+            <div data-slot="card" data-size="sm">
+              <div data-slot="card-content"><div data-slot="cover" data-tone="4"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="0" width="8" height="150" fill="currentColor" opacity="0.5"></rect><circle cx="78" cy="118" r="34" fill="currentColor" opacity="0.35"></circle></svg><span>The Left Hand of Darkness</span><span>Ursula K. Le Guin</span></div></div>
+              <div data-slot="card-header"><h4 data-slot="card-title">The Left Hand of Darkness</h4><p data-slot="card-description">Ursula K. Le Guin</p></div>
+            </div>
+            <div data-slot="card" data-size="sm">
+              <div data-slot="card-content"><div data-slot="cover" data-tone="5"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="0" width="8" height="150" fill="currentColor" opacity="0.5"></rect><circle cx="78" cy="118" r="34" fill="currentColor" opacity="0.35"></circle></svg><span>Klara and the Sun</span><span>Kazuo Ishiguro</span></div></div>
+              <div data-slot="card-header"><h4 data-slot="card-title">Klara and the Sun</h4><p data-slot="card-description">Kazuo Ishiguro</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="cover" data-demo="section">
+        <h3 data-demo="title">Cover</h3>
+        <p data-demo="description">Placeholder art from tokens for a record without an image. The text wraps and is never cut.</p>
+        <div data-demo="preview">
+          <div data-slot="card-grid" data-size="sm">
+            <div data-slot="cover"><span>A very long title that needs to wrap over several lines</span><span>Tone 1</span></div>
+            <div data-slot="cover" data-tone="2" data-ratio="square"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><circle cx="80" cy="20" r="30" fill="currentColor" opacity="0.4"></circle></svg><span>Field notes</span><span>Square</span></div>
+            <div data-slot="cover" data-tone="3" data-ratio="video"><span>Release 2.0</span><span>Video</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="rating" data-demo="section">
+        <h3 data-demo="title">Rating</h3>
+        <p data-demo="description">A read-only star rating with an accessible label.</p>
+        <div data-demo="preview">
+          <div data-demo="stack">
+            <span data-slot="rating" role="img" aria-label="4 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg></span>
+            <span data-slot="rating" data-size="sm" role="img" aria-label="3 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg><svg data-lucide="star"></svg></span>
           </div>
         </div>
       </section>

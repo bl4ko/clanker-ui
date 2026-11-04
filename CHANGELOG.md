@@ -6,8 +6,15 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ## Unreleased
 
+### Breaking
+
+- `calendar` and `date-picker` move from the `chat` group to the `overlays` group, so a form with a date picker needs only `forms` and `overlays`. The one-file set does not change. To upgrade with group files: load `clanker-ui-overlays.min.css` and `.js` (and `forms` for the date picker) instead of `chat` for these components.
+
 ### Added
 
+- Kit parts (core, CSS only): `card-grid` (a grid of record cards, `data-size="sm|lg"`), `cover` (placeholder art from tokens, `data-tone="1"`…`"5"`, `data-ratio="square|video"`), `rating` (read-only stars), and `data-layout="split"` on `page` (shadcn login-02: a form column and a `page-aside` art panel from 64rem).
+- `sheet-body` and `drawer-body`: the scrolling middle of a sheet or drawer between a fixed header and footer.
+- Status fill tokens `--success-fill`, `--warning-fill`, `--error-fill`, and `--info-fill` for bars, dots, and meters: 3:1 or more on the card and the same hue in light and dark.
 - Blocks: ten whole pages built only from kit parts, in the skill (`references/blocks/<name>.html` and `.js`) and on the docs site under Blocks with a live preview, a phone width toggle, and the code: `dashboard` (shadcn dashboard-01), `data-table` (shadcn tasks example), `settings`, `form`, `detail`, `login` (shadcn login-03), `login-split` (shadcn login-02, a brand panel of token art and a quote), `card-grid` (books with token covers, filter tabs with counts, sort, and the no-results state), `overlay-form` (a validated review form with a star rating in a dialog, and a long form in a sheet with a scrolling body), and `states` (empty, loading, and error).
 - Blocks carry the static-host CSP meta tag of `references/csp.md` as the second element of `<head>`; the docs server and the export no longer add one, and a block without it does not load. The `form` block has a date range, a live summary and project rules in a side column, and an edit mode (`?id=web`) that fills the fields from code and offers Delete with an `alert-dialog`. The `data-table` block shows the status under the title on phones, and the unsorted header icon is always `chevrons-up-down`. The `detail` block confirms Delete with an `alert-dialog` and shows more activity. Each works under the strict CSP in light and dark at 1280 and 390 px.
 - Page parts (core group, CSS only): `page` (gutters, gaps, `data-size="sm|md|lg"`, `data-layout="center"`), `page-header` with `page-title`, `page-description`, and `page-actions`, `page-body` with `page-aside` and `page-nav`, `site-header` (`site-header-title`, `site-header-nav`, `site-header-actions`, `data-size="lg"`), `section-cards` (the dashboard-01 KPI cards; a subgrid keeps the headers and footers of a row aligned, and values wrap instead of being cut), `stat-grid` (static numbers from a `dl`, `data-size="sm"` for facts), the `data-table` frame (`data-table-toolbar`, `data-table-pagination`, `data-table-selection`, `data-table-text`), `brand` with `brand-mark`, and `text-stack`.
@@ -35,6 +42,10 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Fixed
 
+- A `<form data-slot="form">` that is the direct child of a dialog, alert dialog, sheet, or drawer content is `display: contents`, like a plain form, so the header, fields, and footer keep the content gap and the sheet footer stays at the bottom.
+- Dropdown menu, context menu, and menubar: `data-value` on a radio group selects its item at load, and a later change of the group `data-value` or of an item `data-checked` from code updates the items.
+- Date picker: in a vertical `field` the picker fills the width like an input; with `clanker-ui-a11y.css` the trigger has the same border as the inputs.
+- Design lint: `button-size-mismatch` compares the outer height of a horizontal `toggle-group` with the other controls in its row, so a 28 px `sm` toggle group next to a 32 px input in a toolbar is an error. The items inside the group are still not compared. The docs block page width toggle is `sm`, like the Open in New Tab button next to it.
 - A `select` in a vertical `field` is full width, as the shadcn field makes every child full width.
 - Stat tile: `deltaFormat: { minimumFractionDigits: 2 }` no longer throws "maximumFractionDigits value is out of range"; the default maximum rises to the minimum.
 - Stat tile: inside a `card` the tile drops its own border, background, shadow, and padding, so there is one border.

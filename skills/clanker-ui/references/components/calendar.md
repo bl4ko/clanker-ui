@@ -1,6 +1,6 @@
 # Calendar (`calendar`)
 
-Group `chat`. Needs `core`. CSS and JS.
+Group `overlays`. Needs `core`. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -13,7 +13,7 @@ Other options named in the docs: `data-day` any; `data-hidden` `false`, `true`.
 
 Events: `calendar:change` `{ value, mode, source }`; `calendar:navigate` `{ value }`.
 
-Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-chat.min.js`):
+Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
 
 - `calendarGetValue(el) → value`: `"2026-10-28"`, an array (`multiple`), `{ from, to }` (`range`), or `null`.
 - `calendarSetValue(el, value, { emit = false, month = true }?) → boolean`: `month` shows the month of the first selected date.

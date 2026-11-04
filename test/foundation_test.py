@@ -1551,3 +1551,49 @@ def check_runner(t):
       return window.__clankerWatch.errors.splice(0)
     }""")
     assert caught == ["runner probe"], f"window error events must be recorded: {caught}"
+
+
+FILL_COLORS = """() => {
+  const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true })
+  const rgb = name => {
+    const p = document.createElement("p")
+    p.style.color = `var(--${name})`
+    document.body.append(p)
+    const c = getComputedStyle(p).color
+    p.remove()
+    ctx.clearRect(0, 0, 1, 1)
+    ctx.fillStyle = c
+    ctx.fillRect(0, 0, 1, 1)
+    return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3)
+  }
+  return Object.fromEntries(["success-fill", "warning-fill", "error-fill", "info-fill", "card"].map(n => [n, rgb(n)]))
+}"""
+
+
+def fill_luminance(rgb):
+    c = [v / 255 for v in rgb]
+    c = [v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in c]
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+
+
+def fill_hue(rgb):
+    r, g, b = (v / 255 for v in rgb)
+    hi, lo = max(r, g, b), min(r, g, b)
+    if hi == lo:
+        return None
+    d = hi - lo
+    h = (g - b) / d % 6 if hi == r else (b - r) / d + 2 if hi == g else (r - g) / d + 4
+    return h * 60
+
+
+def check_status_fill_tokens(t):
+    colors = t.page.evaluate(FILL_COLORS)
+    card = fill_luminance(colors["card"])
+    bands = {"success-fill": (120, 160), "warning-fill": (28, 48), "error-fill": (350, 375), "info-fill": (200, 225)}
+    for name, (lo, hi) in bands.items():
+        lum = fill_luminance(colors[name])
+        ratio = (max(lum, card) + 0.05) / (min(lum, card) + 0.05)
+        assert ratio >= 3, (name, colors[name], round(ratio, 2))
+        hue = fill_hue(colors[name])
+        hue = hue + 360 if hue is not None and hue < lo - 180 else hue
+        assert hue is not None and lo <= hue <= hi, (name, colors[name], hue, "a status fill keeps its hue in light and dark")

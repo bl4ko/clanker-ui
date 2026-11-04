@@ -143,7 +143,10 @@
         {"title": "Stat Grid", "href": "/docs/components/stat-grid"},
         {"title": "Data Table", "href": "/docs/components/data-table"},
         {"title": "Brand", "href": "/docs/components/brand"},
-        {"title": "Text Stack", "href": "/docs/components/text-stack"}
+        {"title": "Text Stack", "href": "/docs/components/text-stack"},
+        {"title": "Card Grid", "href": "/docs/components/card-grid"},
+        {"title": "Cover", "href": "/docs/components/cover"},
+        {"title": "Rating", "href": "/docs/components/rating"}
       ]
     }
   ]

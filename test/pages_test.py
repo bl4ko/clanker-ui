@@ -149,6 +149,8 @@ def check_pages_every_page(t):
     assert len(locs) >= 80, locs
     if (t.engine, t.theme) != ("chromium", "light"):
         page.set_viewport_size({"width": 390, "height": 844})
+    if t.engine == "firefox":
+        t.expect_console(r"Layout was forced before the page was fully loaded")
     errors = []
     for href in locs:
         open_link(t, href)
@@ -161,6 +163,7 @@ def check_pages_every_page(t):
 
 
 def design_lint(t, href):
+    t.settle()
     t.page.evaluate(LINT)
     findings = t.page.evaluate("o => clankerDesignLint(o).findings", {"ignore": KNOWN})
     return [(href, t.page.viewport_size["width"], f["rule"], f["selector"], f["message"]) for f in findings if f["severity"] == "error"]

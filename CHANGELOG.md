@@ -8,11 +8,19 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Added
 
+- 109 more Lucide icons that apps often need (for example `layout-grid`, `receipt`, `wallet`, `euro`, `server`, `database`, `map-pin`, `phone`, `chart-bar`, `chart-pie`, `loader`), 236 in total. The old Lucide names (`alert-triangle`, `help-circle`, `check-circle`, `unlock`, `bar-chart`, ...) work as aliases. The core module grows by 19.6 KB (5.7 KB gzip).
+- `registerIcons({ name: nodes })` adds app icons from Lucide icon nodes, under the strict CSP.
+- Agent skill: `references/icons.md` lists every icon name and alias and shows how to add an icon. It is made from the kit by `go run ./tools/gen catalog`.
+- `dist/clanker-ui-theme.min.js`, so every kit file has a `.min` version.
 - Date picker: `data-required` on the root. In a `data-slot="form"` an empty picker gets the `field-error`, `aria-invalid` on the trigger, and focus on submit.
 - Toggle group: `data-required` (the last pressed item stays pressed, and a form needs a value), `data-name` (submits the value), `form.reset()`, and `data-value` changes from code.
 - Tabs: a `tabs-content` without `data-value` is a shared panel for every tab (a tab bar that filters one table).
 - Pagination: `aria-disabled="true"` on Previous or Next dims the link and blocks the click.
 - Docs: the `form:submit` default action (a native submit), all `data-error-<flag>` names, the date picker language and labels, a file input and dropzone recipe, `position()` for custom floating content, a dropdown `data-align="end"` example, and the favicon 404 in the test steps.
+
+### Changed
+
+- An unknown icon name no longer throws. `icon()` and `<svg data-lucide>` log one `console.warn` per name and render an empty icon, as Lucide `createIcons` does.
 
 ### Fixed
 

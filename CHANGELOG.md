@@ -12,6 +12,11 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - `registerIcons({ name: nodes })` adds app icons from Lucide icon nodes, under the strict CSP.
 - Agent skill: `references/icons.md` lists every icon name and alias and shows how to add an icon. It is made from the kit by `go run ./tools/gen catalog`.
 - `dist/clanker-ui-theme.min.js`, so every kit file has a `.min` version.
+- Date picker: `data-required` on the root. In a `data-slot="form"` an empty picker gets the `field-error`, `aria-invalid` on the trigger, and focus on submit.
+- Toggle group: `data-required` (the last pressed item stays pressed, and a form needs a value), `data-name` (submits the value), `form.reset()`, and `data-value` changes from code.
+- Tabs: a `tabs-content` without `data-value` is a shared panel for every tab (a tab bar that filters one table).
+- Pagination: `aria-disabled="true"` on Previous or Next dims the link and blocks the click.
+- Docs: the `form:submit` default action (a native submit), all `data-error-<flag>` names, the date picker language and labels, a file input and dropzone recipe, `position()` for custom floating content, a dropdown `data-align="end"` example, and the favicon 404 in the test steps.
 
 ### Changed
 
@@ -19,6 +24,9 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Fixed
 
+- Form reset: a value that the app sets right after `form.reset()` or in its `reset` listener (select, combobox, toggle group `data-value`, `calendarSetValue`) is no longer overwritten by the kit restore one task later.
+- Date picker: `calendarSetValue()` without `{ emit: true }` and a `data-value` change on the calendar update the trigger text.
+- Field: `field-separator` draws its line; the kit adds the `separator` child and `data-content`, as shadcn renders them.
 - Form: after a submit, leaving a control does not validate it; only a change does, as in React Hook Form. Before, a field that the app cleared after a valid send showed its error on blur, and the layout shift could move the next click target.
 
 ## 0.2.1 - 2026-11-04

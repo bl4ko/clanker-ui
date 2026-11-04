@@ -13,7 +13,7 @@ document.addEventListener("select:change", event => console.log(event.target, ev
 | `theme:change` | `theme` | `<html>` | `mode`, `resolved`, `scheme` | `{ mode, resolved, scheme }`, after a mode or scheme change |
 | `input-otp:complete` | `input-otp` | `input-otp` | `value` |  |
 | `form:invalid` | `form` | `form` | `errors` |  |
-| `form:submit` | `form` | `form` | `formData`, `values`, `submitter` | `{ formData, values, submitter }`, cancelable |
+| `form:submit` | `form` | `form` | `formData`, `values`, `submitter` | `{ formData, values, submitter }`, cancelable. Default action: the native submit (the page navigates to `action`); call `preventDefault()` to send with `fetch` |
 | `checkbox:change` | `checkbox` | `checkbox` | `checked`, `value` | `{ checked, value }` (`value` is `checked`) |
 | `radio-group:change` | `radio-group` | `radio-group` | `value` |  |
 | `switch:change` | `switch` | `switch` | `checked`, `value` | `{ checked, value }` (`value` is `checked`) |

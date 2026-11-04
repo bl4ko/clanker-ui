@@ -464,7 +464,7 @@ Components dispatch bubbling, composed `CustomEvent`s named `<component>:<action
 | `combobox:change` | `combobox` | `{ value }` (array for `multiple`) |
 | `input-otp:complete` | `input-otp` | `{ value }` |
 | `form:invalid` | `form` | `{ errors: [{ name, message, element }] }` |
-| `form:submit` | `form` | `{ formData, values, submitter }`, cancelable |
+| `form:submit` | `form` | `{ formData, values, submitter }`, cancelable. Default action: the native submit (the page navigates to `action`); call `preventDefault()` to send with `fetch` |
 | `dialog:open`, `alert-dialog:open`, `sheet:open`, `drawer:open` | root | `{ trigger }` |
 | `dialog:close`, `alert-dialog:close`, `sheet:close`, `drawer:close` | root | `{ reason }`, cancelable. `reason`: `escape`, `outside`, `close`, `action`, `cancel`, `submit`, `swipe`, `api` |
 | `drawer:release` | `drawer` | `{ delta }` when a swipe springs back |
@@ -647,6 +647,34 @@ Nest groups for spacing. A `select`, `dropdown-menu`, `popover`, `tooltip`, or `
 
 `aria-invalid="true"` shows the error border. A label after a `:disabled` control is dimmed. A `kbd` inside `tooltip-content` uses the inverted tooltip colors. CSS only.
 
+File upload: `<input data-slot="input" type="file" accept="image/*,application/pdf" name="receipt">` is the shadcn file input (the button is plain `text-sm` text with no border). shadcn has no dropzone component. A dropzone is a `<label>` with the outline `empty` style around a visually hidden file input, and a few lines of app code for drag and drop; show the chosen file with an `attachment` (it works outside a chat):
+
+```html
+<label data-slot="empty" data-variant="outline" class="dropzone">
+  <input type="file" name="receipt" accept="image/*,application/pdf" class="sr-only">
+  <div data-slot="empty-header">
+    <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="cloud-upload"></svg></div>
+    <div data-slot="empty-title">Upload a receipt</div>
+    <div data-slot="empty-description">Drop a file here, or click to choose one. PNG, JPG, or PDF.</div>
+  </div>
+</label>
+```
+
+```js
+const zone = document.querySelector(".dropzone")
+const input = zone.querySelector("input")
+zone.addEventListener("dragover", event => { event.preventDefault(); zone.dataset.dragging = "" })
+zone.addEventListener("dragleave", () => delete zone.dataset.dragging)
+zone.addEventListener("drop", event => {
+  event.preventDefault()
+  delete zone.dataset.dragging
+  input.files = event.dataTransfer.files
+  input.dispatchEvent(new Event("change", { bubbles: true }))
+})
+```
+
+App CSS: `.dropzone { cursor: pointer }`, a focus ring with `.dropzone:has(input:focus-visible) { outline: 2px solid var(--ring); outline-offset: 2px }`, and `.dropzone[data-dragging] { border-color: var(--primary) }`. A `required` file input in a `data-slot="form"` gets the `field-error` of its field.
+
 #### Input Group
 
 ```html
@@ -664,7 +692,7 @@ The control can be a `textarea`. A click on an addon (not on a button) focuses t
 
 #### Field
 
-`field-set` (a `fieldset`), `field-legend` (`data-variant="legend|label"`; the kit sets `legend` when it is missing, as shadcn renders it), `field-group`, `field` (`data-orientation="vertical|horizontal|responsive"`, `data-invalid="true"`, `data-disabled="true"`), `field-content`, `field-label`, `field-description`, `field-separator` (optional `field-separator-content` child), `field-error`. A `field-label` that wraps a `field` is a choice card. `responsive` switches to a row when the closest `field-group` is at least 28rem wide. `data-slot="checkbox-group"` gives the tight checkbox list spacing.
+`field-set` (a `fieldset`), `field-legend` (`data-variant="legend|label"`; the kit sets `legend` when it is missing, as shadcn renders it), `field-group`, `field` (`data-orientation="vertical|horizontal|responsive"`, `data-invalid="true"`, `data-disabled="true"`), `field-content`, `field-label`, `field-description`, `field-separator` (optional `field-separator-content` child; the kit adds the `separator` line and `data-content`, as shadcn renders them), `field-error`. A `field-label` that wraps a `field` (with `field-content` and a radio, checkbox, or switch) is a choice card. A row with a switch or checkbox next to its label is a `field` with `data-orientation="horizontal"`. `responsive` switches to a row when the closest `field-group` is at least 28rem wide. `data-slot="checkbox-group"` gives the tight checkbox list spacing.
 
 #### Form
 
@@ -679,9 +707,12 @@ The control can be a `textarea`. A click on an addon (not on a button) focuses t
 
 - Native constraint validation. The kit sets `novalidate` and shows its own errors: after the user changed a control and left it, and on submit, then live. After a submit, leaving a control does not validate it, as in React Hook Form (`reValidateMode: "onChange"`): a control that the app clears after a send shows no error on blur.
 - An invalid control gets `aria-invalid="true"` and `aria-describedby` to a `field-error` (`role="alert"`), created if missing. The field gets `data-invalid="true"`. Legacy `form-item`, `form-label` (`data-error`), `form-description`, and `form-message` work the same way.
-- Message: `data-error-<validity-flag>` (`data-error-value-missing`, `data-error-type-mismatch`, ...), then `data-error`, then the browser message, read from the control, the visible control, or the component root (`radio-group`, `select`, `combobox`, `input-otp`, `slider`).
+- Message: `data-error-<validity-flag>`, then `data-error`, then the browser message, read from the control, the visible control, or the component root (`radio-group`, `select`, `combobox`, `toggle-group`, `date-picker`, `input-otp`, `slider`). The flags, in the order the kit checks them: `data-error-value-missing`, `data-error-type-mismatch`, `data-error-pattern-mismatch`, `data-error-too-long`, `data-error-too-short`, `data-error-range-underflow`, `data-error-range-overflow`, `data-error-step-mismatch`, `data-error-bad-input`, `data-error-custom-error` (for `setCustomValidity()`).
 - Checkbox, switch, and radio validate through their hidden native input; `aria-invalid` (and so `data-invalid`) goes on the button, and submit focuses the button.
-- Submit with errors focuses the first invalid control and emits `form:invalid`. A valid submit emits cancelable `form:submit` (`values` has an array for repeated names). Form `reset` clears errors and resets all components.
+- Submit with errors focuses the first invalid control and emits `form:invalid`; the browser does not submit. A valid submit emits cancelable `form:submit` (`values` has an array for repeated names). If no listener calls `event.preventDefault()`, the browser submits the form natively (to `action`, or to the page URL with `method="get"` when there is no `action`), so the page navigates. A static page or an app that sends with `fetch` must call `preventDefault()` in its `form:submit` listener.
+- Form `reset` clears errors and resets all components to their authored values after the reset event. A value that the app sets right after `form.reset()` (`data-value` on a select, combobox, or toggle group, or `calendarSetValue`) stays; the kit does not overwrite it.
+- A form that is also a card: `data-slot` takes one value, so put the card inside the form (`<form data-slot="form"><div data-slot="card">...</div></form>`).
+- Date picker and toggle group: see their sections for `data-required` and `data-name`.
 
 #### Checkbox, Switch, Radio Group
 
@@ -802,14 +833,18 @@ One real input lies over the slots (autofill, form value, `required`, `minlength
 
 ```html
 <button type="button" data-slot="toggle" data-variant="outline" data-size="sm|lg" aria-pressed="false">Bold</button>
-<div data-slot="toggle-group" data-type="single|multiple" data-variant="outline" data-size="sm" data-spacing="2|0|1|3|4|6|8" data-orientation="horizontal|vertical" data-value="bold,italic" data-disabled>
+<div data-slot="toggle-group" data-type="single|multiple" data-variant="outline" data-size="sm" data-spacing="2|0|1|3|4|6|8" data-orientation="horizontal|vertical" data-value="bold,italic" data-name="format" data-required data-disabled>
   <button type="button" data-slot="toggle-group-item" data-value="bold" aria-label="Bold"><svg data-lucide="bold"></svg></button>
 </div>
 ```
 
 A `toggle` gets `tabindex="0"` like the Base UI toggle.
 
-Toggle group: one tab stop, arrows (RTL aware), Home, End. Single items use `role="radio"` and `aria-checked`, multiple items `aria-pressed`. A pressed single item can be unpressed. Like shadcn, the group gets `data-spacing` (default `2`, an 8 px gap with separate rounded items; `0` joins them) and `data-orientation` (default `horizontal`), and `--gap` from `data-spacing`. Items get the group `data-variant` and `data-size` (the group wins over the item; `default` when neither has one), its `data-spacing`, and `data-pressed` while pressed.
+Toggle group: one tab stop, arrows (RTL aware), Home, End. Single items use `role="radio"` and `aria-checked`, multiple items `aria-pressed`. A pressed single item can be unpressed, as in shadcn.
+
+- `data-required`: the last pressed item cannot be unpressed (a view switch, a filter, or a rating that always has one value), and in a form the group needs a value: without one, a `data-slot="form"` shows the `field-error` (`data-error-value-missing` on the group) and focuses the first item.
+- `data-name` submits the value: a visually hidden input after the group (single), or one hidden input per value (multiple). `form.reset()` restores the authored value.
+- `data-value` is the value (comma-separated for multiple). A later change from code presses those items without a `toggle-group:change` event. The kit does not write `data-value`; read the value from `toggle-group:change`. Like shadcn, the group gets `data-spacing` (default `2`, an 8 px gap with separate rounded items; `0` joins them) and `data-orientation` (default `horizontal`), and `--gap` from `data-spacing`. Items get the group `data-variant` and `data-size` (the group wins over the item; `default` when neither has one), its `data-spacing`, and `data-pressed` while pressed.
 
 ### Overlays and menus
 
@@ -877,6 +912,28 @@ The kit sets `type="button"` on dialog, alert dialog, sheet, drawer, popover, dr
 
 `popover` > `popover-trigger` (or `data-popover-trigger`), optional `popover-anchor`, `popover-content` with `popover-header`, `popover-title`, `popover-description`. Non-modal: focus moves into the content; Escape, outside click, and focus leaving close it. As in Base UI, a mouse press outside closes it on the click (a held press, a right or middle click, or a press that ends in the popup keep it open); a touch outside closes it at the end of the tap. `data-modal` on the root traps focus and locks scroll. Default placement: bottom, center, 4 px; the trigger has `data-pressed` while it is open.
 
+Custom floating content, for example one readout for many small hover targets (a bar per day in an uptime row, where one tooltip per bar is too heavy): use the core `position()` with your own `popover="manual"` element. It places the element next to an anchor element or a virtual anchor (`{ getBoundingClientRect() }`), flips at the viewport edge, follows scroll and resize, and returns `stop()`. It sets `data-side`, `data-align`, and the `--anchor-*`, `--available-*`, and `--transform-origin` variables, as for kit popups ([Popups](#popups)). Dismissal and focus stay app code; for an interactive popup use `popover`.
+
+```js
+import { position } from "/vendor/clanker-ui/clanker-ui.min.js"
+
+const tip = document.getElementById("day-tip")
+let stop = null
+grid.addEventListener("pointerover", event => {
+  const bar = event.target.closest("[data-day]")
+  if (!bar) return
+  tip.textContent = bar.dataset.label
+  if (!tip.matches(":popover-open")) tip.showPopover()
+  stop?.()
+  stop = position(tip, bar, { side: "top", sideOffset: 6 })
+})
+grid.addEventListener("pointerleave", () => {
+  stop?.()
+  stop = null
+  tip.hidePopover()
+})
+```
+
 #### Tooltip and Hover Card
 
 `tooltip` > trigger (`tooltip-trigger` or `data-tooltip-trigger`) + `tooltip-content`. Timing is the shadcn setup (a `TooltipProvider` with `delay` 0 at the app root): `data-delay` (open, default 0), `data-close-delay` (default 0), and `data-timeout` (default 400) on the trigger, the root, or a `tooltip-provider` (`data-delay-duration` and `data-skip-delay-duration` also work). When a tooltip is open, or closed less than `data-timeout` ago, the next one opens at once. It opens on keyboard focus too; it closes on leave, Escape, press, and blur. Like Base UI, it stays open when the page scrolls and follows the trigger. A grace area lets the pointer move into the content. Touch never opens it. Default side `top`, 4 px; the kit adds the arrow (`<div data-slot="tooltip-arrow">`), which points at the trigger center. Like Base UI, the content and the arrow get `data-instant`: `delay` (opened at once because another tooltip was open or closed less than `data-timeout` ago), `focus` (opened by keyboard focus), `dismiss` (closed by Escape or a press).
@@ -888,7 +945,7 @@ The kit sets `type="button"` on dialog, alert dialog, sheet, drawer, popover, dr
 ```html
 <div data-slot="dropdown-menu">
   <button type="button" data-slot="button" data-variant="outline" data-dropdown-menu-trigger>Open</button>
-  <div data-slot="dropdown-menu-content">
+  <div data-slot="dropdown-menu-content" data-side="bottom" data-align="end">
     <div data-slot="dropdown-menu-group">
       <div data-slot="dropdown-menu-label">My Account</div>
       <div data-slot="dropdown-menu-item">Profile<span data-slot="dropdown-menu-shortcut">⇧⌘P</span></div>
@@ -1068,6 +1125,8 @@ Set `dir="rtl"` on `<html>` or a container. Kit styles use logical properties (`
 
 The markup is the shadcn DOM: a link is a `ghost` button of size `icon` (32 px); the current page is `data-variant="outline"` with `aria-current="page"`. `data-pagination-previous` and `data-pagination-next` with `data-size="default"` mark Previous and Next; their text hides below 640 px and their chevrons turn in RTL.
 
+Disabled Previous or Next (first or last page): `aria-disabled="true"` on the link, and remove its `href` so it is not a Tab stop. The link is dimmed (opacity 0.5) and takes no pointer events, like a disabled button; the kit also cancels a click on it, so a link that keeps its `href` does not navigate.
+
 #### Progress, Spinner
 
 - `<div data-slot="progress" data-value="60" data-max="100" aria-label="Upload"></div>`: the kit adds the Base UI parts `progress-track` > `progress-indicator` (width in percent), `role="progressbar"`, `aria-valuenow`, `aria-valuetext`, `data-state="loading|complete|indeterminate"`, and `data-progressing`, `data-complete`, or `data-indeterminate` on every part. Optional `progress-label` (it labels the bar) and `progress-value` (the kit writes the percent) go before the track. Change `data-value` to update it. At 0 and when indeterminate, the indicator has no width.
@@ -1145,6 +1204,8 @@ The viewport is the real scroll container; the kit makes it focusable, hides the
   <div data-slot="tabs-content" data-value="account">...</div>
 </div>
 ```
+
+A `tabs-content` without `data-value` is a shared panel: it shows for every tab and is labelled by the selected tab. Use it for a tab bar that filters one list or table: render the rows on `tabs:change`. A filter with no panel at all is a toggle group (`data-type="single" data-required`), not tabs.
 
 Manual activation as in Base UI: the arrow keys move focus, Enter, Space, or a click selects (`data-activation="automatic"` selects on focus), roving tabindex, arrows (RTL aware), Home, End; disabled tabs are skipped. Tab panels are focusable (`tabindex="0"`) and show the standard focus ring.
 
@@ -1289,8 +1350,8 @@ Keyboard (APG date grid): arrows by day or week, Home and End to the week ends, 
 A composition, as in shadcn: a `button` trigger, a `popover-content` popup, and a `calendar`, joined by the `date-picker` root.
 
 ```html
-<div data-slot="date-picker" data-placeholder="Pick a date" data-format="long">
-  <button type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><svg data-lucide="calendar"></svg><span data-slot="date-picker-value"></span></button>
+<div data-slot="date-picker" data-placeholder="Pick a date" data-format="long" data-required>
+  <button type="button" id="due-trigger" data-slot="button" data-variant="outline" data-date-picker-trigger><svg data-lucide="calendar"></svg><span data-slot="date-picker-value"></span></button>
   <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose date">
     <div data-slot="native-select-wrapper">
       <select data-slot="native-select" data-date-picker-preset aria-label="Presets"><option value="">Select</option><option value="1">Tomorrow</option></select>
@@ -1302,7 +1363,10 @@ A composition, as in shadcn: a `button` trigger, a `popover-content` popup, and 
 ```
 
 - Focus moves to the first part in the popup that can take focus (the previous-month button, or the next-month button when the previous one is disabled), as the Base UI popover does; Tab moves to the next-month button, then to the selected day or today. Escape, an outside click, or focus leaving closes it; a single date selection closes it unless `data-keep-open`. Focus returns to the trigger.
-- The trigger shows the formatted date (`data-format`: `long|medium|short|full|numeric`; ranges show `from - to`).
+- The trigger shows the formatted date (`data-format`: `long|medium|short|full|numeric`; ranges show `from - to`). The language is the calendar language: `data-lang` on the calendar, else the nearest `lang` attribute, else the browser language. `lang="en"` gives US English (`October 29, 2026`); set `lang="en-GB"` on the `date-picker` root or on `<html>` for `29 October 2026`, or `data-lang="de"` on the calendar for `29. Oktober 2026`. Month and day names in the popup use the same language.
+- Value from code: `data-value` on the calendar in the markup, or `calendarSetValue(calendar, "2026-10-29")` later. Both update the trigger text and the form value at once, without a `calendar:change` event (pass `{ emit: true }` for the event).
+- Label the trigger with `<label for="due-trigger">` (a button is a labelable element) or `aria-labelledby`.
+- `data-required` on the root: in a form the picker needs a date. The kit adds a visually hidden `required` input to the root; a `data-slot="form"` shows the `field-error` of the field around the trigger (`data-error-value-missing` on the root), sets `aria-invalid` on the trigger (or the `data-date-picker-input`), and focuses it on submit. The calendar `data-name` still submits the value. `data-required` on the calendar is a different option: a click on the selected day does not clear it.
 - `data-date-picker-input` on an input (for example in an `input-group`, with an icon button as the trigger) shows the date, parses typed dates on `change`, and opens the popup on ArrowDown. Typed text is read as ISO `yyyy-m-d`, as a numeric date in the order of the calendar language (en-US `m/d/yyyy`, de `d.m.yyyy`, ja `yyyy/m/d`), or as day, month name, and year in the language's long date order (`June 4, 2025`, `1. Juni 2025`). The year needs 4 digits; localized digits are accepted. Empty text clears the date. Text that does not parse keeps the old date and sets `aria-invalid="true"` on the input until the next valid change.
 - A preset value is a day offset or an ISO date. The demo also shows date of birth, time, dialog, and RTL compositions. Not built: the natural language picker (needs chrono-node).
 
@@ -1442,7 +1506,7 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 | Part | Write | State |
 | --- | --- | --- |
-| `input` (root) | `data-error-value-missing` string |  |
+| `input` (root) | `accept` string; `data-error-value-missing` string |  |
 
 #### Textarea (`textarea`)
 
@@ -1671,8 +1735,9 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | --- | --- | --- |
 | `field` (root) | `data-disabled` `false`, `true`; `data-invalid` `false`, `true`; `data-orientation` `horizontal`, `responsive`, `vertical` |  |
 | `field-legend` | `data-variant` `label`, `legend` |  |
+| `field-separator` | `data-content` any |  |
 
-Other parts: `field-content`, `field-description`, `field-error`, `field-group`, `field-label`, `field-separator`, `field-separator-content`, `field-set`.
+Other parts: `field-content`, `field-description`, `field-error`, `field-group`, `field-label`, `field-separator-content`, `field-set`.
 
 ```html
 <fieldset data-slot="field-set">
@@ -1692,6 +1757,25 @@ Other parts: `field-content`, `field-description`, `field-error`, `field-group`,
         <label data-slot="field-label" for="same-address">Same as shipping address</label>
       </div>
     </div>
+    <div data-slot="field" role="group" data-orientation="horizontal">
+      <div data-slot="field-content">
+        <label data-slot="field-label" for="save-card">Save card</label>
+        <p data-slot="field-description">Use this card for later payments.</p>
+      </div>
+      <button type="button" data-slot="switch" id="save-card"></button>
+    </div>
+    <div data-slot="field-separator"><span data-slot="field-separator-content">Or pay with</span></div>
+    <div data-slot="radio-group" data-name="method">
+      <label data-slot="field-label" for="method-bank">
+        <span data-slot="field" role="group" data-orientation="horizontal">
+          <span data-slot="field-content">
+            <span data-slot="field-label">Bank transfer</span>
+            <span data-slot="field-description">Pay within 14 days.</span>
+          </span>
+          <button type="button" data-slot="radio-group-item" id="method-bank" value="bank"></button>
+        </span>
+      </label>
+    </div>
   </div>
 </fieldset>
 ```
@@ -1706,7 +1790,7 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 Other parts: `form` (root), `form-description`, `form-item`, `form-message`.
 
-Other options named in the docs: `data-error-type-mismatch` any; `data-error-value-missing` any.
+Other options named in the docs: `data-error-bad-input` any; `data-error-custom-error` any; `data-error-pattern-mismatch` any; `data-error-range-overflow` any; `data-error-range-underflow` any; `data-error-step-mismatch` any; `data-error-too-long` any; `data-error-too-short` any; `data-error-type-mismatch` any; `data-error-value-missing` any; `data-name` any.
 
 Events: `form:invalid` `{ errors }`; `form:submit` `{ formData, values, submitter }` (cancelable).
 
@@ -1817,6 +1901,8 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | --- | --- | --- |
 | `toggle` (root) | `data-size` `default`, `lg`, `sm`; `data-variant` `default`, `outline` | `data-state` |
 
+Other options named in the docs: `data-name` any.
+
 Events: `toggle:change` `{ pressed, value }`.
 
 #### Toggle Group (`toggle-group`)
@@ -1825,7 +1911,7 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 | Part | Write | State |
 | --- | --- | --- |
-| `toggle-group` (root) | `data-disabled` boolean; `data-orientation` `horizontal`, `vertical`; `data-size` `sm`; `data-spacing` `0`, `1`, `2`, `3`, `4`, `6`, `8`; `data-type` `multiple`, `single`; `data-value` string; `data-variant` `outline` |  |
+| `toggle-group` (root) | `data-disabled` boolean; `data-name` string; `data-orientation` `horizontal`, `vertical`; `data-size` `sm`; `data-spacing` `0`, `1`, `2`, `3`, `4`, `6`, `8`; `data-type` `multiple`, `single`; `data-value` string; `data-variant` `outline` |  |
 | `toggle-group-item` | `data-size` `default`, `lg`, `sm`; `data-spacing` `0`; `data-value` string; `data-variant` `default`, `outline` | `data-state` |
 
 Events: `toggle-group:change` `{ value }`.
@@ -2301,7 +2387,7 @@ Other parts: `breadcrumb` (root), `breadcrumb-ellipsis`, `breadcrumb-item`, `bre
 
 #### Pagination (`pagination`)
 
-Group `layout`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/pagination/.
+Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/pagination/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -2556,7 +2642,7 @@ Other parts: `date-picker-value`.
 
 Part attributes: `data-date-picker-content` boolean; `data-date-picker-input` boolean; `data-date-picker-preset` boolean; `data-date-picker-trigger` boolean.
 
-Other options named in the docs: `data-keep-open` any.
+Other options named in the docs: `data-keep-open` any; `data-lang` string; `data-name` any; `data-value` any.
 
 Events: `date-picker:open`; `date-picker:close`.
 

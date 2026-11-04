@@ -787,3 +787,17 @@ def check_blocks_viewer(t):
     assert '```html title="dashboard.html"' in md and '```js title="dashboard.js"' in md
     run_csp = page.request.get(t.base_url + "/blocks/dashboard").headers["content-security-policy"]
     assert "frame-ancestors 'self'" in run_csp.split("; ")
+
+
+def check_blocks_form_fields(t):
+    page = t.page
+    t.docs("/blocks/form")
+    status = page.locator("#project-status").bounding_box()
+    field = page.locator("#project-status").locator("xpath=ancestor::*[@data-slot='field'][1]").bounding_box()
+    budget = page.locator("#project-budget").locator("xpath=ancestor::*[@data-slot='field'][1]").bounding_box()
+    assert abs(status["width"] - field["width"]) < 1, (status, field)
+    assert (abs(field["y"] - budget["y"]) < 1) == (not t.mobile), (field, budget)
+    page.get_by_role("button", name="Create project").click()
+    page.wait_for_function("() => document.querySelector('#project-name').getAttribute('aria-invalid') === 'true'")
+    after = page.locator("#project-budget").locator("xpath=ancestor::*[@data-slot='field'][1]").bounding_box()
+    assert abs(after["x"] - budget["x"]) < 1 and abs(after["width"] - budget["width"]) < 1, (budget, after)

@@ -272,6 +272,16 @@ func buildDist(root string) (*distResult, error) {
 		return nil, fmt.Errorf("clanker-ui-chart.js: %w", err)
 	}
 	res.files["clanker-ui-chart.min.js"] = []byte(lic + "\n" + min + "\n")
+	boot, err := read("clanker-ui-theme.js")
+	if err != nil {
+		return nil, err
+	}
+	lic, body, _ = strings.Cut(boot, "\n")
+	r := api.Transform(body, api.TransformOptions{Loader: api.LoaderJS, MinifyWhitespace: true, MinifyIdentifiers: true, MinifySyntax: true, Charset: api.CharsetUTF8, LegalComments: api.LegalCommentsNone, LogLevel: api.LogLevelSilent})
+	if err := esbuildErr(r.Errors); err != nil {
+		return nil, fmt.Errorf("clanker-ui-theme.js: %w", err)
+	}
+	res.files["clanker-ui-theme.min.js"] = []byte(lic + "\n" + string(r.Code))
 	return res, nil
 }
 

@@ -15,7 +15,7 @@ document.getElementById("theme-radius")?.replaceChildren(
 )
 
 document.getElementById("icon-grid")?.replaceChildren(...ui.iconNames.map(name => ui.h("div", { "data-demo": "icon-tile", title: name }, ui.icon(name), name)))
-document.getElementById("icon-grid")?.after(ui.h("p", { "data-demo": "icon-count" }, `${ui.iconNames.length} icons. Aliases: loader-2, more-horizontal, more-vertical, home, trash-2, filter, circle-help.`))
+document.getElementById("icon-grid")?.after(ui.h("p", { "data-demo": "icon-count" }, `${ui.iconNames.length} icons. Old Lucide names (alert-triangle, home, filter, unlock, ...) work as aliases.`))
 
 const demoSchemeGrid = document.getElementById("scheme-grid")
 const demoBaseSchemes = ui.theme.schemes.filter(s => s.group !== "accent")

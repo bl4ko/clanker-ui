@@ -83,7 +83,7 @@ A smaller page can load only the component groups that it uses: see [Minified an
 | `clanker-ui-chart.js` | ES module: SVG charts, stat tiles, sparklines. Imports `./clanker-ui.js` |
 | `clanker-ui-theme.js` | Optional classic script for apps with a [theme toggle or switch](#theme-toggle-and-switch). Before the first paint it copies the stored theme (`light` or `dark`) to `data-theme` and the stored [color scheme](#color-schemes) to `data-scheme` on `<html>`, sets `data-system-theme`, and sets `<meta name="theme-color">` (without `media`) to `--background`. The module still owns all theme behavior. |
 | `clanker-ui-themes.css` | Optional [color schemes](#color-schemes): the shadcn base colors and accent themes, and editor palettes (Tokyo Night, Catppuccin, Gruvbox, Nord, Dracula, Rosé Pine, Solarized, One, Kanagawa, Everforest, GitHub). Load it after `clanker-ui.css`. Apps without schemes do not need it. |
-| `dist/` | Minified copies and one file for each component group. See [Minified and group files](#minified-and-group-files). |
+| `dist/` | Minified copies of every file and one file for each component group. See [Minified and group files](#minified-and-group-files). |
 
 ## Use in a project
 
@@ -145,7 +145,7 @@ Put overrides in `app.css` after the kit files, without a layer.
 | --- | --- |
 | `clanker-ui.min.css` | All CSS: the group files below in group order |
 | `clanker-ui-<group>.min.css` | The CSS of one group. Each file starts with the layer order. |
-| `clanker-ui-themes.min.css`, `clanker-ui-a11y.min.css` | Minified copies of the optional files |
+| `clanker-ui-themes.min.css`, `clanker-ui-a11y.min.css`, `clanker-ui-theme.min.js` | Minified copies of the optional files (`clanker-ui-theme.min.js` is a classic script, like `clanker-ui-theme.js`) |
 | `clanker-ui-core.min.js` | Core helpers, icons, strings, theme, and the behavior of the core components |
 | `clanker-ui.min.js` | The behavior of all other components. Imports `./clanker-ui-core.min.js` |
 | `clanker-ui-<group>.min.js` | The behavior of one group (`forms`, `overlays`, `layout`, `chat`). Imports `./clanker-ui-core.min.js` |
@@ -390,8 +390,9 @@ An app with a theme toggle or switch also loads `clanker-ui-theme.js` in `<head>
 | --- | --- | --- |
 | `h` | `h(tag, attrs?, ...children) → Element` | Safe DOM builder. Strings and numbers become text nodes. Attributes use `setAttribute`. `on*` props must be functions (`onclick`, `"ontabs:change"`). `style` must be an object (`{ marginTop: "1px", "--x": "2px" }`). `null`, `undefined`, `false` are skipped; `true` sets an empty attribute. Arrays and iterables are flattened. Refuses `<script>`, `<style>`, `<link>`, `<meta>`, `<object>`, `<embed>`, `<base>`, `<frame>`, `<frameset>`, the SVG animation elements `<set>`, `<animate>`, `<animateMotion>`, `<animateTransform>` (they can write a `javascript:` URL into `href`), `srcdoc`, string handlers, and string `style`. `<iframe>` is allowed (`src` is filtered). Drops `javascript:` and `vbscript:` URLs in `href`, `src`, `action`, `formaction`, `xlink:href`, `poster`, `ping`, `cite`, and `background`. If `attrs` is a string, node, or array, it is a child. |
 | `svg` | `svg(tag, attrs?, ...children) → SVGElement` | Same as `h` in the SVG namespace. |
-| `icon` | `icon(name, attrs?) → SVGSVGElement` | Lucide icon with `class="lucide lucide-<name>"`. It gets `aria-hidden="true"` unless `attrs` has `role`, `aria-label`, or `aria-labelledby`. `attrs` override the defaults. Unknown names throw. `<svg data-lucide>` follows the same rule. |
-| `iconNames` | `string[]` | All icon names (127). Aliases: `loader-2`, `more-horizontal`, `more-vertical`, `home`, `trash-2`, `filter`, `circle-help`, `smile`. |
+| `icon` | `icon(name, attrs?) → SVGSVGElement` | Lucide icon with `class="lucide lucide-<name>"`. It gets `aria-hidden="true"` unless `attrs` has `role`, `aria-label`, or `aria-labelledby`. `attrs` override the defaults. An unknown name logs one `console.warn` per name and gives an empty `<svg>` (as Lucide `createIcons` does); it does not throw. `<svg data-lucide>` follows the same rule. All names and aliases: `skills/clanker-ui/references/icons.md`. |
+| `iconNames` | `string[]` | All icon names (236 Lucide icons, without the old Lucide names that are aliases, for example `alert-triangle`, `home`, `filter`, `unlock`). Frozen; `registerIcons` replaces it with a list that has the new names. |
+| `registerIcons` | `registerIcons({ name: nodes })` | Adds icons. `nodes` is a Lucide icon node: a list of path `d` strings or `[tag, attrs]` pairs (`path`, `circle`, `rect`, `line`, `polyline`, `polygon`, `ellipse`; geometry, `fill`, `stroke*`, `fill-rule`, `clip-rule`, `opacity`, `transform`). Other tags or attributes, a name that is not lowercase words joined by `-`, or a name that exists throw. `<svg data-lucide>` elements in the page with a new name are filled. |
 | `define` | `define(slot, spec)` | Behavior registry, see below. Throws if the slot is already defined. |
 | `emit` | `emit(target, name, detail?, { cancelable }?) → boolean` | Dispatches a bubbling, composed `CustomEvent`. Returns `false` if a listener called `preventDefault()`. |
 | `uid` | `uid(prefix = "clanker") → string` | Unique id that is not in the document. |

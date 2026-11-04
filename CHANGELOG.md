@@ -6,6 +6,17 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ## Unreleased
 
+### Added
+
+- 109 more Lucide icons that apps often need (for example `layout-grid`, `receipt`, `wallet`, `euro`, `server`, `database`, `map-pin`, `phone`, `chart-bar`, `chart-pie`, `loader`), 236 in total. The old Lucide names (`alert-triangle`, `help-circle`, `check-circle`, `unlock`, `bar-chart`, ...) work as aliases. The core module grows by 19.6 KB (5.7 KB gzip).
+- `registerIcons({ name: nodes })` adds app icons from Lucide icon nodes, under the strict CSP.
+- Agent skill: `references/icons.md` lists every icon name and alias and shows how to add an icon. It is made from the kit by `go run ./tools/gen catalog`.
+- `dist/clanker-ui-theme.min.js`, so every kit file has a `.min` version.
+
+### Changed
+
+- An unknown icon name no longer throws. `icon()` and `<svg data-lucide>` log one `console.warn` per name and render an empty icon, as Lucide `createIcons` does.
+
 ### Fixed
 
 - Form: after a submit, leaving a control does not validate it; only a change does, as in React Hook Form. Before, a field that the app cleared after a valid send showed its error on blur, and the layout shift could move the next click target.

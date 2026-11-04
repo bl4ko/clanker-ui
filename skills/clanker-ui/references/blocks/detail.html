@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
+  <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <title>Website redesign - Acme Inc.</title>
@@ -157,7 +159,7 @@
                 <div data-slot="dropdown-menu-item"><svg data-lucide="copy"></svg>Duplicate</div>
                 <div data-slot="dropdown-menu-item"><svg data-lucide="archive"></svg>Archive</div>
                 <div data-slot="dropdown-menu-separator"></div>
-                <div data-slot="dropdown-menu-item" data-variant="destructive" id="delete-project"><svg data-lucide="trash"></svg>Delete project</div>
+                <div data-slot="dropdown-menu-item" data-variant="destructive" data-alert-dialog-trigger="delete-dialog"><svg data-lucide="trash"></svg>Delete project</div>
               </div>
             </div>
           </div>
@@ -226,7 +228,8 @@
             <div data-slot="card">
               <div data-slot="card-header">
                 <h2 data-slot="card-title">Activity</h2>
-                <p data-slot="card-description">Changes in the last 7 days.</p>
+                <p data-slot="card-description">6 of 24 changes in the last 7 days.</p>
+                <div data-slot="card-action"><a data-slot="button" data-variant="outline" data-size="sm" href="#activity">View all</a></div>
               </div>
               <div data-slot="card-content">
                 <div data-slot="item-group" role="list">
@@ -261,6 +264,22 @@
                     <p data-slot="item-description">changed the due date to Dec 12</p>
                   </div>
                   <div data-slot="item-actions"><time data-slot="item-description">Oct 30</time></div>
+                </div>
+                <div data-slot="item" data-size="sm" role="listitem">
+                  <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">WK</span></span></div>
+                  <div data-slot="item-content">
+                    <div data-slot="item-title">William Kim</div>
+                    <p data-slot="item-description">raised the budget from $42,000 to $48,000</p>
+                  </div>
+                  <div data-slot="item-actions"><time data-slot="item-description">Oct 29</time></div>
+                </div>
+                <div data-slot="item" data-size="sm" role="listitem">
+                  <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">JL</span></span></div>
+                  <div data-slot="item-content">
+                    <div data-slot="item-title">Jackson Lee</div>
+                    <p data-slot="item-description">reopened WEB-9: “Checkout fails on Safari 17.”</p>
+                  </div>
+                  <div data-slot="item-actions"><time data-slot="item-description">Oct 28</time></div>
                 </div>
                 </div>
               </div>
@@ -310,6 +329,18 @@
         </div>
       </div>
     </main>
+  </div>
+  <div data-slot="alert-dialog" id="delete-dialog">
+    <dialog data-slot="alert-dialog-content">
+      <div data-slot="alert-dialog-header">
+        <h2 data-slot="alert-dialog-title">Delete Website redesign?</h2>
+        <p data-slot="alert-dialog-description">This deletes 68 tasks and 214 files for everyone. You cannot undo this.</p>
+      </div>
+      <div data-slot="alert-dialog-footer">
+        <button type="button" data-slot="alert-dialog-cancel" data-variant="outline">Cancel</button>
+        <button type="button" data-slot="alert-dialog-action" data-variant="destructive" id="delete-project">Delete project</button>
+      </div>
+    </dialog>
   </div>
 </body>
 </html>

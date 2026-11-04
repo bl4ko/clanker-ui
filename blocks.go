@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"html"
 	"io/fs"
 	"net/http"
 	"path"
@@ -23,7 +21,8 @@ type block struct {
 var (
 	blockName    = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 	blockVendor  = regexp.MustCompile(`"/vendor/clanker-ui/([a-z0-9.-]+)"`)
-	blockCharset = []byte(`<meta charset="utf-8">`)
+	blockHead    = "<head>\n  <meta charset=\"utf-8\">\n  " + blockCSPMeta + "\n  <meta name=\"referrer\" content=\"no-referrer\">\n"
+	blockCSPMeta = `<meta http-equiv="Content-Security-Policy" content="` + cspMeta + `">`
 )
 
 func (d *docsSite) loadBlocks(fsys fs.FS) error {
@@ -66,6 +65,9 @@ func (d *docsSite) loadBlocks(fsys fs.FS) error {
 				return fmt.Errorf("block %s: /vendor/clanker-ui/%s is not a kit file", name, m[1])
 			}
 		}
+		if !strings.Contains(b.HTML, blockHead) || strings.Count(b.HTML, "Content-Security-Policy") != 1 {
+			return fmt.Errorf("block %s: <head> must start with <meta charset=\"utf-8\">, the CSP meta tag of references/csp.md, and the referrer meta tag, once", name)
+		}
 		script := `src="/` + name + `.js"`
 		if (b.JS != "") != strings.Contains(b.HTML, script) {
 			return fmt.Errorf("block %s: the page must load its module with %s exactly when %s.js exists", name, script, name)
@@ -90,9 +92,7 @@ func (d *docsSite) blockSource(b *block, src string) []byte {
 }
 
 func (d *docsSite) blockPage(b *block) []byte {
-	body := d.blockSource(b, b.HTML)
-	meta := fmt.Appendf(nil, "%s\n  <meta http-equiv=\"Content-Security-Policy\" content=\"%s\">\n  <meta name=\"referrer\" content=\"no-referrer\">", blockCharset, html.EscapeString(cspMeta))
-	return bytes.Replace(body, blockCharset, meta, 1)
+	return d.blockSource(b, b.HTML)
 }
 
 type blockView struct {

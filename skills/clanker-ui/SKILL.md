@@ -74,9 +74,11 @@ Find the group of each component in [references/components.md](references/compon
    | `dashboard` | A sidebar app: key numbers, a chart, a table |
    | `data-table` | A top-header app: a list with filters, sorting, and paging |
    | `settings` | Settings in sections with their own save actions |
-   | `form` | Create or edit one record |
+   | `form` | Create or edit one record, with a live summary and Delete in edit mode |
    | `detail` | One record with facts and activity |
-   | `login` | Sign in |
+   | `login`, `login-split` | Sign in: centered card, or a form next to a brand panel |
+   | `card-grid` | Records with a preview (books, products): filters, sort, a grid of cards |
+   | `overlay-form` | A form in a dialog and a long form in a sheet with a scrolling body |
    | `states` | Empty, loading, and error states (a catalog: copy single cards) |
 
 2. Follow [references/design.md](references/design.md) and [references/choosing.md](references/choosing.md). The page parts (`page`, `site-header`, `section-cards`, `stat-grid`, `data-table`) do the layout: `app.css` holds token overrides and real app parts only.

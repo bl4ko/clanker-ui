@@ -19,15 +19,15 @@ const licenseLine = "/*! clanker-ui | MIT | includes shadcn/ui (MIT, shadcn) and
 const generatedLicenseLine = "/*! clanker-ui | MIT | includes shadcn/ui (MIT, shadcn), Tailwind CSS (MIT, Tailwind Labs), tw-animate-css (MIT, Luca Bosin), and Lucide icons (ISC); see THIRD_PARTY_NOTICES */"
 
 func htmlScanFiles(t *testing.T) []string {
-	return slices.Concat(repoFiles(t, "demo/*.html", "test/spike/*.html", "test/behavior/fixtures/*.html", "test/split/*.html"), walkFiles(t, "docs", ".html"))
+	return slices.Concat(repoFiles(t, "demo/*.html", "test/spike/*.html", "test/behavior/fixtures/*.html", "test/split/*.html", "test/lint/*.html"), walkFiles(t, "docs", ".html"))
 }
 
 func cssScanFiles(t *testing.T) []string {
-	return slices.Concat(repoFiles(t, "clanker-ui*.css", "dist/clanker-ui*.css", "demo/*.css", "test/spike/*.css", "tools/gen/*.css", "test/behavior/fixtures/*.css"), walkFiles(t, "docs", ".css"))
+	return slices.Concat(repoFiles(t, "clanker-ui*.css", "dist/clanker-ui*.css", "demo/*.css", "test/spike/*.css", "tools/gen/*.css", "test/behavior/fixtures/*.css", "test/lint/*.css"), walkFiles(t, "docs", ".css"))
 }
 
 func plainCommentFiles(t *testing.T) []string {
-	return slices.Concat(repoFiles(t, "demo/*.js", "demo/*.css", "test/*.py", "test/spike/*.css", "tools/gen/*.css", "tools/parity/*.py", "tools/parity/*.js", "tools/behavior/*.py", "test/behavior/fixtures/*.css", "test/behavior/fixtures/*.js", "test/split/*.js"), walkFiles(t, "docs", ".js", ".css"))
+	return slices.Concat(repoFiles(t, "demo/*.js", "demo/*.css", "test/*.py", "test/spike/*.css", "tools/gen/*.css", "tools/parity/*.py", "tools/parity/*.js", "tools/behavior/*.py", "test/behavior/fixtures/*.css", "test/behavior/fixtures/*.js", "test/split/*.js", "test/lint/*.css", "skills/clanker-ui/references/*.js"), walkFiles(t, "docs", ".js", ".css"))
 }
 
 func TestScannedFiles(t *testing.T) {
@@ -39,7 +39,7 @@ func TestScannedFiles(t *testing.T) {
 		want := map[string][]string{
 			"html security": {"test/spike/index.html"},
 			"remote css":    {"test/spike/page.css", "clanker-ui.css"},
-			"no comments":   {"test/spike/page.css", "tools/parity/parity.py", "tools/parity/parity.js"},
+			"no comments":   {"test/spike/page.css", "tools/parity/parity.py", "tools/parity/parity.js", "skills/clanker-ui/references/design-lint.js"},
 		}[name]
 		for _, f := range want {
 			if !slices.Contains(files, f) {
@@ -201,7 +201,7 @@ func timerTakesFunction(src, arg string) bool {
 }
 
 func TestNoBannedAPIs(t *testing.T) {
-	files := slices.Concat(repoFiles(t, "clanker-ui*.js", "dist/clanker-ui*.js", "demo/*.js", "test/behavior/fixtures/*.js", "test/split/*.js"), walkFiles(t, "docs", ".js"))
+	files := slices.Concat(repoFiles(t, "clanker-ui*.js", "dist/clanker-ui*.js", "demo/*.js", "test/behavior/fixtures/*.js", "test/split/*.js", "skills/clanker-ui/references/*.js"), walkFiles(t, "docs", ".js"))
 	if !slices.Contains(files, filepath.Join("docs", "assets", "docs.js")) || !slices.Contains(files, filepath.Join("test", "behavior", "fixtures", "toast.js")) {
 		t.Fatal("docs JavaScript is not scanned")
 	}

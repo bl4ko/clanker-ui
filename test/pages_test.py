@@ -1,7 +1,13 @@
+import json
+import pathlib
 import re
 from urllib.parse import urlsplit
 
 START = "/"
+
+HERE = pathlib.Path(__file__).resolve().parent
+LINT = (HERE.parent / "skills/clanker-ui/references/design-lint.js").read_text()
+KNOWN = {rule: list(selectors) for rule, selectors in json.loads((HERE / "lint/known.json").read_text()).items()}
 
 COMPONENTS = ["button", "button-group", "accordion", "dialog", "tabs"]
 
@@ -50,6 +56,7 @@ def check_pages_home(t):
     export_only(t)
     page_ok(t)
     assert t.page.locator('[data-docs="hero-title"]').count() == 1
+    assert design_lint(t, "/") == []
 
 
 def check_pages_components(t):
@@ -140,12 +147,23 @@ def check_pages_every_page(t):
     sitemap = page.request.get(t.base_url + "/sitemap.xml").text()
     locs = [urlsplit(loc).path for loc in re.findall(r"<loc>([^<]*)</loc>", sitemap) if "/docs" in loc]
     assert len(locs) >= 80, locs
+    if (t.engine, t.theme) != ("chromium", "light"):
+        page.set_viewport_size({"width": 390, "height": 844})
+    errors = []
     for href in locs:
         open_link(t, href)
         assert page.locator('[data-docs="title"]').count() == 1, href
         assert "not ported yet" not in page.locator('[data-docs="main"]').inner_text(), href
         assert page.locator('link[rel="alternate"][type="text/markdown"]').count() == 1, href
         assert page.locator('link[rel="describedby"]').count() == 1, href
+        errors += design_lint(t, href)
+    assert errors == [], errors
+
+
+def design_lint(t, href):
+    t.page.evaluate(LINT)
+    findings = t.page.evaluate("o => clankerDesignLint(o).findings", {"ignore": KNOWN})
+    return [(href, t.page.viewport_size["width"], f["rule"], f["selector"], f["message"]) for f in findings if f["severity"] == "error"]
 
 
 def check_pages_not_found(t):

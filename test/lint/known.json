@@ -1,0 +1,15 @@
+{
+  "button-size-mismatch": {
+    "#button": "Button sizes showcase",
+    "#toggle": "Toggle sizes showcase",
+    "#spinner": "Spinner in buttons of two sizes showcase",
+    "[data-docs=\"hero-actions\"]": "Docs home hero copies the shadcn site: a 35 px Get Started link next to a 32 px button"
+  },
+  "small-target": {
+    "[data-slot=\"sidebar-menu-action\"]": "shadcn sidebar menu action is 20 px from the md breakpoint, next to its 32 px menu button"
+  },
+  "low-contrast": {
+    "[data-slot=\"trace-description\"]": "shadcn trace description is --muted-foreground at 70 %: 2.71:1 on --background",
+    "#scheme-grid": "Theme previews: the muted-foreground of Nord, Solarized, Kanagawa, and Everforest is under 3:1"
+  }
+}

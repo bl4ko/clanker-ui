@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	catalogVersion = "0.2.0"
+	catalogVersion = "0.2.1"
 	catalogBaseUI  = "1.6.0"
 	catalogSite    = "https://bl4ko.github.io/clanker-ui"
 	catalogRepo    = "https://github.com/bl4ko/clanker-ui"

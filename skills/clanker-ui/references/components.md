@@ -1,6 +1,6 @@
 # clanker-ui components
 
-Generated from `clanker-ui.json` (same directory) by `go run ./tools/gen catalog`. Version 0.2.0, shadcn `b8d7baa`, Base UI 1.6.0.
+Generated from `clanker-ui.json` (same directory) by `go run ./tools/gen catalog`. Version 0.2.1, shadcn `b8d7baa`, Base UI 1.6.0.
 
 Read the file of each component: `components/<name>.md`, for example [components/button.md](components/button.md).
 

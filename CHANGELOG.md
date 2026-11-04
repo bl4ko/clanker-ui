@@ -4,11 +4,13 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
-## Unreleased
+## 0.2.1 - 2026-11-04
+
+The kit files do not change. This release updates only the docs site.
 
 ### Fixed
 
-- Docs site: no page shows "This page is not ported yet." Every component and guide page is a real page made from the catalog, the README, and the live demo section: preview, installation, usage, examples, API reference, and keyboard notes. (#47)
+- Docs site: no page shows "This page is not ported yet." Every component and guide page is a real page made from the catalog, the README, and the live demo section: preview, installation, usage, examples, API reference, and keyboard notes. The `.md` alternate of each page is the page Markdown, and `sitemap.xml` lists every page. (#47)
 
 ## 0.2.0 - 2026-11-03
 

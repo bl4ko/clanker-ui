@@ -676,7 +676,7 @@ The control can be a `textarea`. A click on an addon (not on a button) focuses t
 </form>
 ```
 
-- Native constraint validation. The kit sets `novalidate` and shows its own errors: after the user changed a control and left it, and on submit, then live.
+- Native constraint validation. The kit sets `novalidate` and shows its own errors: after the user changed a control and left it, and on submit, then live. After a submit, leaving a control does not validate it, as in React Hook Form (`reValidateMode: "onChange"`): a control that the app clears after a send shows no error on blur.
 - An invalid control gets `aria-invalid="true"` and `aria-describedby` to a `field-error` (`role="alert"`), created if missing. The field gets `data-invalid="true"`. Legacy `form-item`, `form-label` (`data-error`), `form-description`, and `form-message` work the same way.
 - Message: `data-error-<validity-flag>` (`data-error-value-missing`, `data-error-type-mismatch`, ...), then `data-error`, then the browser message, read from the control, the visible control, or the component root (`radio-group`, `select`, `combobox`, `input-otp`, `slider`).
 - Checkbox, switch, and radio validate through their hidden native input; `aria-invalid` (and so `data-invalid`) goes on the button, and submit focuses the button.

@@ -661,6 +661,38 @@ def check_form_blur(t):
     t.shot(target=section.locator("#form-items"))
 
 
+def check_form_blur_after_submit(t):
+    page = t.page
+    t.section("form")
+    page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const input = h("textarea", { id: "fx-sent", name: "message", required: true, "aria-label": "Message", "data-error-value-missing": "Write a message first." })
+          const form = h("form", { "data-slot": "form", id: "fx-sent-form" }, h("div", { "data-slot": "field" }, input), h("button", { type: "submit" }, "Send"), h("button", { type: "button", id: "fx-sent-other" }, "Other"))
+          form.addEventListener("form:submit", event => {
+            event.preventDefault()
+            input.value = ""
+            input.focus()
+          })
+          document.body.append(form)
+          await new Promise(r => setTimeout(r, 30))
+        }"""
+    )
+    sent = page.locator("#fx-sent")
+    sent.fill("Hello")
+    page.locator("#fx-sent-form button[type=submit]").click()
+    assert sent.input_value() == ""
+    sent.focus()
+    page.locator("#fx-sent-other").click()
+    assert sent.get_attribute("aria-invalid") is None, "blur after a valid submit must not validate a cleared control"
+    assert page.locator("#fx-sent-form [data-slot=field-error]:visible").count() == 0
+    sent.fill("x")
+    sent.fill("")
+    assert sent.get_attribute("aria-invalid") == "true"
+    assert page.locator("#fx-sent-form [data-slot=field-error]").inner_text() == "Write a message first."
+    page.evaluate("() => document.getElementById('fx-sent-form').remove()")
+
+
 def check_input(t):
     page = t.page
     section = t.section("input")

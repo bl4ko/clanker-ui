@@ -3369,7 +3369,7 @@ define("form", {
     if (!native || native.form !== form) return
     const root = event.target.closest('[data-slot="select"], [data-slot="combobox"]')
     if (root && event.relatedTarget && root.contains(event.relatedTarget)) return
-    if (formTouched.has(native) || formSubmitted.has(form)) formValidate(native)
+    if (formTouched.has(native) && !formSubmitted.has(form)) formValidate(native)
   },
   input: formLive,
   change: formLive,

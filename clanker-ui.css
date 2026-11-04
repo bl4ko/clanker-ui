@@ -16108,6 +16108,11 @@
     --error-bg: hsl(359 100% 97%);
     --error-border: hsl(359 100% 94%);
     --error-text: hsl(360 100% 45%);
+    --chart-1: #2a78d6;
+    --chart-2: #eb6834;
+    --chart-3: #1baf7a;
+    --chart-4: #eda100;
+    --chart-5: #e87ba4;
     --chart-6: #008300;
     --chart-7: #6250d6;
     --chart-8: #e34948;
@@ -16133,6 +16138,11 @@
     --error-bg: hsl(358 76% 10%);
     --error-border: hsl(357 89% 16%);
     --error-text: hsl(358 100% 81%);
+    --chart-1: #3987e5;
+    --chart-2: #d95926;
+    --chart-3: #199e70;
+    --chart-4: #c98500;
+    --chart-5: #d55181;
     --chart-7: #9085e9;
     --chart-8: #e66767;
     --chart-other: #71717b;
@@ -16154,6 +16164,11 @@
       --error-bg: hsl(358 76% 10%);
       --error-border: hsl(357 89% 16%);
       --error-text: hsl(358 100% 81%);
+      --chart-1: #3987e5;
+      --chart-2: #d95926;
+      --chart-3: #199e70;
+      --chart-4: #c98500;
+      --chart-5: #d55181;
       --chart-7: #9085e9;
       --chart-8: #e66767;
       --chart-other: #71717b;
@@ -16823,6 +16838,13 @@
     background-color: var(--card);
     color: var(--card-foreground);
     box-shadow: var(--shadow-xs);
+  }
+  :where([data-slot="card"]) [data-slot="chart-stat"] {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
   }
   [data-slot="chart-stat-header"] {
     display: flex;

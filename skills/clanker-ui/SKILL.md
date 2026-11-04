@@ -17,7 +17,9 @@ References in this skill:
 - `references/components/<name>.md`: one component: group, needs, parts, attributes, state, events, exports, and the full text with the examples and keys.
 - [references/csp.md](references/csp.md): the CSP header, the meta tag for static hosts, a small Go server, and the code rules.
 - [references/setup.md](references/setup.md): file checks, other ways to get the files, the group command for existing HTML, and which file exports which names.
-- [references/events.md](references/events.md), [references/theming.md](references/theming.md), [references/testing.md](references/testing.md) (Playwright check), [references/clanker-ui.json](references/clanker-ui.json) (all component data as JSON).
+- [references/design.md](references/design.md): design rules for layout, spacing, type, buttons, color, forms, states, and phones. [references/choosing.md](references/choosing.md): which component for which job.
+- `references/blocks/<name>.html` (and `.js`): whole pages to start from.
+- [references/events.md](references/events.md), [references/theming.md](references/theming.md), [references/testing.md](references/testing.md) (Playwright check and design lint), [references/clanker-ui.json](references/clanker-ui.json) (all component data as JSON).
 
 ## 1. Get the files
 
@@ -62,7 +64,24 @@ Find the group of each component in [references/components.md](references/compon
 - All scripts are external files from the same origin. No inline `<script>` or `<style>`, no `style=""`, no `onclick=""`.
 - A theme toggle or theme switch (not the switch component): see [references/theming.md](references/theming.md).
 
-## 4. Write the markup
+## 4. Build a page
+
+1. Start from the closest block in `references/blocks/`: copy `<name>.html` and `<name>.js`, keep the shell, the `page-header`, and the order of the sections, and replace the sample content.
+
+   | Block | For |
+   | --- | --- |
+   | `dashboard` | A sidebar app: key numbers, a chart, a table |
+   | `data-table` | A top-header app: a list with filters, sorting, and paging |
+   | `settings` | Settings in sections with their own save actions |
+   | `form` | Create or edit one record |
+   | `detail` | One record with facts and activity |
+   | `login` | Sign in |
+   | `states` | Empty, loading, and error states |
+
+2. Follow [references/design.md](references/design.md) and [references/choosing.md](references/choosing.md). The page parts (`page`, `site-header`, `section-cards`, `stat-grid`, `data-table`) do the layout: `app.css` holds token overrides and real app parts only.
+3. Run `clankerDesignLint()` from `references/design-lint.js` at 1280 and 390 px, in light and dark ([references/testing.md](references/testing.md)), fix every error, and look at the screenshots.
+
+## 5. Write the markup
 
 1. Open `references/components/<name>.md` for each component. Start from its example.
 2. Keep every `data-slot` and the order of the parts. The root part holds the other parts.
@@ -72,7 +91,7 @@ Find the group of each component in [references/components.md](references/compon
 6. Icons: `<svg data-lucide="search"></svg>`. Markup added later gets its behavior automatically.
 7. Form controls: a `<label for>` names the `id` of a `select-trigger`, a combobox input, or a switch, checkbox, or radio item button. `data-name` on the select, combobox, switch, checkbox, or radio group root submits the value. `form.reset()` restores the initial values. Kit trigger buttons do not submit the form.
 
-## 5. JavaScript
+## 6. JavaScript
 
 Most components need no code. Import from the files that the page loads (group files: core API from `clanker-ui-core.min.js`, component API from its group file):
 
@@ -84,14 +103,14 @@ import { h, icon, theme, toast } from "/vendor/clanker-ui/clanker-ui.min.js"
 - Build DOM with `h(tag, attrs, ...children)`, `svg()`, and `icon()`. Never use `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, `eval`, or `new Function`.
 - Toast and chart have no markup; see their component files.
 
-## 6. Accessibility
+## 7. Accessibility
 
 - Give each icon-only button an `aria-label` and each form control a label.
 - Give each dialog, alert dialog, sheet, and drawer a title part.
 - `<button type="button">` for actions, `<a href>` for navigation. Keep the native elements of the examples. Do not add `role` or `aria-*` that the kit sets, and do not remove focus rings.
 - `dir="rtl"` on `<html>` or a container mirrors keys and layout. Give a chart a `label` option.
 
-## 7. Check the result
+## 8. Check the result
 
 Serve the page with the CSP header from [references/csp.md](references/csp.md). In a browser: 0 console errors and 0 CSP violations; each component works with the mouse and the keys in its full text; focus goes back to the trigger when a dialog or menu closes. If a component does not work, check the file set, the slot names, and the module loads (no 404).
 

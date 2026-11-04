@@ -147,6 +147,18 @@
             <li><a href="#chart-stat">Stat &amp; Sparkline</a></li>
           </ul>
         </div>
+        <div data-demo="nav-group">
+          <h2 data-demo="nav-heading"><a href="#page-patterns">Page Patterns</a></h2>
+          <ul>
+            <li><a href="#page">Page</a></li>
+            <li><a href="#site-header">Site Header</a></li>
+            <li><a href="#section-cards">Section Cards</a></li>
+            <li><a href="#stat-grid">Stat Grid</a></li>
+            <li><a href="#data-table">Data Table</a></li>
+            <li><a href="#brand">Brand</a></li>
+            <li><a href="#text-stack">Text Stack</a></li>
+          </ul>
+        </div>
       </div>
     </nav>
     <main id="main" data-demo="main" tabindex="-1">
@@ -6437,6 +6449,198 @@ view.destroy()</code></pre>
           <li><span data-demo="chart-spark-label">Memory</span><div id="chart-stat-spark-area" data-demo="chart-spark"></div><strong data-demo="chart-spark-value">62%</strong></li>
           <li><span data-demo="chart-spark-label">Error rate</span><div id="chart-stat-spark-flat" data-demo="chart-spark"></div><strong data-demo="chart-spark-value">0.2%</strong></li>
         </ul>
+      </section>
+
+      <h2 id="page-patterns" data-demo="category">Page Patterns</h2>
+
+      <section id="page" data-demo="section">
+        <h3 data-demo="title">Page</h3>
+        <p data-demo="description">The content column of a view: gutters, the gap between sections, a page header with actions, and optional side columns.</p>
+        <div data-demo="preview full">
+          <div data-slot="page">
+            <div data-slot="page-header">
+              <h4 data-slot="page-title">Projects</h4>
+              <p data-slot="page-description">All projects of your team.</p>
+              <div data-slot="page-actions">
+                <button type="button" data-slot="button" data-variant="outline">Export</button>
+                <button type="button" data-slot="button"><svg data-lucide="plus"></svg>New project</button>
+              </div>
+            </div>
+            <div data-slot="page-body">
+              <aside data-slot="page-aside">
+                <nav data-slot="page-nav" aria-label="Project sections">
+                  <a data-slot="button" data-variant="ghost" href="#page" aria-current="page">Overview</a>
+                  <a data-slot="button" data-variant="ghost" href="#page">Members</a>
+                  <a data-slot="button" data-variant="ghost" href="#page">Billing</a>
+                </nav>
+              </aside>
+              <div>
+                <div data-slot="card">
+                  <div data-slot="card-header"><div data-slot="card-title">Overview</div><div data-slot="card-description">The content column is at most 42rem wide next to a section nav.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="site-header" data-demo="section">
+        <h3 data-demo="title">Site Header</h3>
+        <p data-demo="description">The top bar of a page: the title or a breadcrumb in a sidebar app, or the brand, the main links, and the actions in a top-header app.</p>
+        <div data-demo="preview full">
+          <header data-slot="site-header" data-size="lg">
+            <a data-slot="brand" href="#site-header"><span data-slot="brand-mark" data-size="sm"><svg data-lucide="layout-dashboard"></svg></span>Acme Inc.</a>
+            <nav data-slot="site-header-nav" aria-label="Main" data-show-from="md">
+              <a href="#site-header" aria-current="page">Overview</a>
+              <a href="#site-header">Customers</a>
+              <a href="#site-header">Settings</a>
+            </nav>
+            <div data-slot="site-header-actions">
+              <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" aria-label="Notifications"><svg data-lucide="bell"></svg></button>
+              <span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">CN</span></span>
+            </div>
+          </header>
+        </div>
+        <h4 data-demo="subtitle">With a breadcrumb</h4>
+        <div data-demo="preview full">
+          <header data-slot="site-header">
+            <nav data-slot="breadcrumb">
+              <ol data-slot="breadcrumb-list">
+                <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="#site-header">Projects</a></li>
+                <li data-slot="breadcrumb-separator"></li>
+                <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">Website redesign</span></li>
+              </ol>
+            </nav>
+            <div data-slot="site-header-actions"><button type="button" data-slot="button" data-variant="outline" data-size="sm">Share</button></div>
+          </header>
+        </div>
+      </section>
+
+      <section id="section-cards" data-demo="section">
+        <h3 data-demo="title">Section Cards</h3>
+        <p data-demo="description">Key numbers as cards, as in the shadcn dashboard-01 block. The columns follow the width of the grid, and the footers of one row line up.</p>
+        <div data-demo="preview full">
+          <div data-slot="section-cards">
+              <div data-slot="card">
+                <div data-slot="card-header">
+                  <div data-slot="card-description">Total Revenue</div>
+                  <div data-slot="card-title">$1,250.00</div>
+                  <div data-slot="card-action"><span data-slot="badge" data-variant="outline"><svg data-lucide="trending-up"></svg>+12.5%</span></div>
+                </div>
+                <div data-slot="card-footer">
+                  <div>Trending up this month <svg data-lucide="trending-up"></svg></div>
+                  <div data-slot="card-description">Visitors for the last 6 months</div>
+                </div>
+              </div>
+              <div data-slot="card">
+                <div data-slot="card-header">
+                  <div data-slot="card-description">New Customers</div>
+                  <div data-slot="card-title">1,234</div>
+                  <div data-slot="card-action"><span data-slot="badge" data-variant="outline"><svg data-lucide="trending-down"></svg>-20%</span></div>
+                </div>
+                <div data-slot="card-footer">
+                  <div>Down 20% this period <svg data-lucide="trending-down"></svg></div>
+                  <div data-slot="card-description">Acquisition needs attention</div>
+                </div>
+              </div>
+              <div data-slot="card">
+                <div data-slot="card-header">
+                  <div data-slot="card-description">Active Accounts</div>
+                  <div data-slot="card-title">45,678</div>
+                  <div data-slot="card-action"><span data-slot="badge" data-variant="outline"><svg data-lucide="trending-up"></svg>+12.5%</span></div>
+                </div>
+                <div data-slot="card-footer">
+                  <div>Strong user retention <svg data-lucide="trending-up"></svg></div>
+                  <div data-slot="card-description">Engagement exceeds targets</div>
+                </div>
+              </div>
+              <div data-slot="card">
+                <div data-slot="card-header">
+                  <div data-slot="card-description">Growth Rate</div>
+                  <div data-slot="card-title">4.5%</div>
+                  <div data-slot="card-action"><span data-slot="badge" data-variant="outline"><svg data-lucide="trending-up"></svg>+4.5%</span></div>
+                </div>
+                <div data-slot="card-footer">
+                  <div>Steady performance increase <svg data-lucide="trending-up"></svg></div>
+                  <div data-slot="card-description">Meets growth projections</div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="stat-grid" data-demo="section">
+        <h3 data-demo="title">Stat Grid</h3>
+        <p data-demo="description">Static numbers in one surface with dividers, from a description list. The small size shows the facts of a record.</p>
+        <div data-demo="preview full">
+          <dl data-slot="stat-grid">
+            <div><dt>Uptime</dt><dd>99.98%</dd><dd>Last 30 days</dd></div>
+            <div><dt>Requests</dt><dd>1.2M <span data-slot="badge" data-variant="success">+4%</span></dd><dd>Last 30 days</dd></div>
+            <div><dt>P95 latency</dt><dd>182 ms</dd><dd>Target 250 ms</dd></div>
+            <div><dt>Errors</dt><dd>0.02%</dd><dd>12 in total</dd></div>
+          </dl>
+        </div>
+        <h4 data-demo="subtitle">Facts</h4>
+        <div data-demo="preview full">
+          <dl data-slot="stat-grid" data-size="sm">
+            <div><dt>Owner</dt><dd>Olivia Martin</dd></div>
+            <div><dt>Status</dt><dd>Active</dd></div>
+            <div><dt>Created</dt><dd>Oct 2, 2026</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section id="data-table" data-demo="section">
+        <h3 data-demo="title">Data Table</h3>
+        <p data-demo="description">The frame of a data table: a toolbar with filters and actions, the bordered table, and the pagination row.</p>
+        <div data-demo="preview full">
+          <div data-slot="data-table">
+            <div data-slot="data-table-toolbar">
+              <div><input data-slot="input" type="search" placeholder="Filter invoices..." aria-label="Filter invoices"></div>
+              <div><button type="button" data-slot="button" data-size="sm"><svg data-lucide="plus"></svg>New invoice</button></div>
+            </div>
+            <div data-slot="table-container">
+              <table data-slot="table">
+                <thead data-slot="table-header">
+                  <tr data-slot="table-row"><th data-slot="table-head" scope="col">Invoice</th><th data-slot="table-head" scope="col">Status</th><th data-slot="table-head" scope="col" data-align="end">Amount</th></tr>
+                </thead>
+                <tbody data-slot="table-body">
+                  <tr data-slot="table-row"><td data-slot="table-cell">INV-001</td><td data-slot="table-cell"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Paid</span></td><td data-slot="table-cell" data-align="end">$250.00</td></tr>
+                  <tr data-slot="table-row"><td data-slot="table-cell">INV-002</td><td data-slot="table-cell"><span data-slot="badge" data-variant="outline"><svg data-lucide="clock"></svg>Pending</span></td><td data-slot="table-cell" data-align="end">$1,150.00</td></tr>
+                  <tr data-slot="table-row"><td data-slot="table-cell">INV-003</td><td data-slot="table-cell"><span data-slot="badge" data-variant="warning"><svg data-lucide="triangle-alert"></svg>Overdue</span></td><td data-slot="table-cell" data-align="end">$90.00</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div data-slot="data-table-pagination">
+              <div data-slot="data-table-selection">3 invoices</div>
+              <div>Page 1 of 1</div>
+              <div>
+                <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Go to previous page" disabled><svg data-lucide="chevron-left"></svg></button>
+                <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Go to next page" disabled><svg data-lucide="chevron-right"></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="brand" data-demo="section">
+        <h3 data-demo="title">Brand</h3>
+        <p data-demo="description">The logo link of the app: a primary mark and the name.</p>
+        <div data-demo="preview">
+          <a data-slot="brand" href="#brand"><span data-slot="brand-mark" data-size="sm"><svg data-lucide="layout-dashboard"></svg></span>Acme Inc.</a>
+          <a data-slot="brand" href="#brand"><span data-slot="brand-mark"><svg data-lucide="package"></svg></span>Acme Inc.</a>
+        </div>
+      </section>
+
+      <section id="text-stack" data-demo="section">
+        <h3 data-demo="title">Text Stack</h3>
+        <p data-demo="description">A name and a detail line after an avatar or a brand mark, each cut with an ellipsis.</p>
+        <div data-demo="preview">
+          <div data-slot="item" data-variant="outline" data-size="sm">
+            <div data-slot="item-media"><span data-slot="avatar"><span data-slot="avatar-fallback">CN</span></span></div>
+            <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
+          </div>
+        </div>
       </section>
 
       <footer data-demo="footer">

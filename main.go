@@ -44,7 +44,7 @@ var demoAsset = regexp.MustCompile(`^demo/(assets/)?[a-z0-9][a-z0-9-]*(\.[a-z0-9
 
 var skillFile = regexp.MustCompile(`^skills/clanker-ui/(SKILL\.md|references/(components/)?[a-z0-9-]+(\.[a-z]+)?\.(md|json|js)|references/blocks/[a-z0-9-]+\.(html|js))$`)
 
-var devFile = regexp.MustCompile(`^(test/spike/[a-z0-9-]+\.(html|css)|test/behavior/fixtures/[a-z0-9-]+\.(html|css|js)|test/split/[a-z0-9-]+\.(html|js))$`)
+var devFile = regexp.MustCompile(`^(test/spike/[a-z0-9-]+\.(html|css)|test/behavior/fixtures/[a-z0-9-]+\.(html|css|js)|test/split/[a-z0-9-]+\.(html|js)|test/lint/[a-z0-9-]+\.(html|css))$`)
 
 var contentTypes = map[string]string{
 	".css":  "text/css; charset=utf-8",

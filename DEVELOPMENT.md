@@ -96,7 +96,7 @@ Behavior:
 | --- | --- |
 | Nightly run, `workflow_dispatch` (release check), or label `full-ci` | All: Chromium, Firefox, and WebKit in light and dark, `--rtl`, `--reduced-motion`, the minified kit, and the exported pages. |
 | Kit, generator, server, `test/run.py`, `ci.yml`, `tools/ci/plan.py`, or any other file | Pull request tier: Chromium and Firefox in light and dark, WebKit light (5 macOS jobs), a minified-kit smoke set, and the exported pages. |
-| Only `test/<module>_test.py`, `test/behavior/`, `test/split/`, or `test/spike/` (Go test files and docs can be in the same change) | The pull request tier, only for the changed modules. |
+| Only `test/<module>_test.py`, `test/behavior/`, `test/split/`, `test/spike/`, `test/lint/`, or `skills/clanker-ui/references/design-lint.js` (Go test files and docs can be in the same change) | The pull request tier, only for the changed modules. `test/lint/` and `design-lint.js` run the `lint` and `pages` modules. |
 | Only Markdown, `docs/*.txt`, `skills/`, licenses, issue templates, `release.yml`, `pages.yml`, or `renovate.json` | Only the exported pages in Chromium. |
 | Only Go test files (`*_test.go`) | None. |
 

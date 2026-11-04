@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui design lint: good cases</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/lint/lint.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Good cases</h1>
+    <section id="good-button-size-mismatch">
+      <h2>Buttons</h2>
+      <div class="row">
+        <button type="button" data-slot="button">Save</button>
+        <button type="button" data-slot="button" data-variant="outline">Cancel</button>
+        <button type="button" data-slot="button" data-variant="ghost" data-size="icon" aria-label="More"><svg data-lucide="ellipsis"></svg></button>
+      </div>
+      <div class="row">
+        <input data-slot="input" aria-label="Search" placeholder="Search">
+        <button type="button" data-slot="button" data-variant="outline">Search</button>
+      </div>
+    </section>
+    <section id="good-multiple-primary">
+      <h2>Card</h2>
+      <div data-slot="card" class="narrow">
+        <div data-slot="card-header"><div data-slot="card-title">Delete project</div><div data-slot="card-description">This cannot be undone.</div></div>
+        <div data-slot="card-footer">
+          <button type="button" data-slot="button" data-variant="outline">Keep</button>
+          <button type="button" data-slot="button">Delete</button>
+        </div>
+      </div>
+    </section>
+    <section id="good-text-clipped">
+      <h2>Text</h2>
+      <div class="truncate" title="A long project name that does not fit">A long project name that does not fit</div>
+      <div class="wrap">A long project name that wraps</div>
+    </section>
+    <section id="good-small-target">
+      <h2>Targets</h2>
+      <div class="spaced">
+        <button type="button" data-slot="button" data-variant="outline" aria-label="Previous"><svg data-lucide="chevron-left"></svg></button>
+        <button type="button" data-slot="button" data-variant="outline" aria-label="Next"><svg data-lucide="chevron-right"></svg></button>
+      </div>
+      <p>Read the <a href="#good-small-target">target size rule</a> in a sentence.</p>
+    </section>
+    <section id="good-low-contrast">
+      <h2>Contrast</h2>
+      <p class="muted-box">Muted box with foreground text</p>
+      <p data-slot="field-description">Muted description text</p>
+      <p class="ghost">Hidden placeholder text</p>
+    </section>
+    <section id="good-missing-label">
+      <h2>Labels</h2>
+      <div data-slot="field" role="group" class="narrow">
+        <label data-slot="field-label" for="good-name">Name</label>
+        <input id="good-name" data-slot="input" name="name">
+      </div>
+      <div class="row">
+        <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" width="24" height="24" alt="">
+        <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Add"><svg data-lucide="plus"></svg></button>
+      </div>
+    </section>
+    <section id="good-misaligned">
+      <h2>Stack</h2>
+      <p>First line</p>
+      <p>Second line</p>
+    </section>
+    <section id="printhub-empty-region">
+      <h2>Rack and parts</h2>
+      <div class="cards">
+        <div data-slot="card">
+          <div data-slot="card-header"><div data-slot="card-title">Rack</div></div>
+          <div data-slot="card-content"><div class="rack"></div></div>
+        </div>
+        <div class="stack">
+          <div data-slot="card">
+            <div data-slot="card-header"><div data-slot="card-title">Parts</div><div data-slot="card-description">12 of 20 printed</div></div>
+            <div data-slot="card-content"><p>Next: front panel</p></div>
+          </div>
+          <div data-slot="card">
+            <div data-slot="card-header"><div data-slot="card-title">Filament</div></div>
+            <div data-slot="card-content"><div class="side-chart"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="hw-central-layout-shift">
+      <h2>Form</h2>
+      <form data-slot="form" class="inline-form narrow">
+        <div data-slot="field" role="group">
+          <label data-slot="field-label" for="good-email">Email</label>
+          <input id="good-email" data-slot="input" type="email" name="email" data-error-type-mismatch="Enter a valid email.">
+        </div>
+        <button type="submit" data-slot="button" id="good-shift-save">Save</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

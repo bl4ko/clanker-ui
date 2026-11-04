@@ -16,26 +16,26 @@ PR = [
     job("chromium", "behavior-a-d-g3-g5-split-spike-light", "behavior,g3,g5,split,spike", r"^(behavior\.[a-d]|g3\.|g5\.|split\.|spike\.)", "light"),
     job("chromium", "behavior-e-z-docs-g4-light", "behavior,docs,g4", r"^(behavior\.[e-z]|docs\.|g4\.)", "light"),
     job("chromium", "docs-g3-g4-g5-split-spike-dark", "docs,g3,g4,g5,split,spike", themes="dark"),
-    job("chromium", "foundation-g1-g2a-pages", "foundation,g1,g2", r"^(foundation\.|g1\.|g2\.[ab])", pages=True),
+    job("chromium", "foundation-g1-g2a-lint-pages", "foundation,g1,g2,lint", r"^(foundation\.|g1\.|g2\.[ab]|lint\.)", pages=True),
     job("chromium", "g2b", "g2", r"^g2\.[c-n]"),
     job("chromium", "g2c", "g2", r"^g2\.[o-z]"),
     job("firefox", "behavior-a-c-g3-g5-light", "behavior,g3,g5", r"^(behavior\.[a-c]|g3\.|g5\.)", "light"),
     job("firefox", "behavior-d-m-g1-g4-light", "behavior,g1,g4", r"^(behavior\.[d-m]|g1\.|g4\.)", "light"),
-    job("firefox", "behavior-n-z-docs-foundation-spike-split-light", "behavior,docs,foundation,spike,split", r"^(behavior\.[n-z]|docs\.|foundation\.|spike\.|split\.)", "light"),
+    job("firefox", "behavior-n-z-docs-foundation-lint-spike-split-light", "behavior,docs,foundation,lint,spike,split", r"^(behavior\.[n-z]|docs\.|foundation\.|lint\.|spike\.|split\.)", "light"),
     job("firefox", "g3-g4-g5-dark", "g3,g4,g5", themes="dark"),
-    job("firefox", "docs-foundation-g1-spike-split-dark", "docs,foundation,g1,spike,split", themes="dark"),
+    job("firefox", "docs-foundation-g1-lint-spike-split-dark", "docs,foundation,g1,lint,spike,split", themes="dark"),
     job("firefox", "g2a", "g2", r"^g2\.[a-m]"),
     job("firefox", "g2b", "g2", r"^g2\.[n-z]"),
     job("webkit", "behavior-a-d-g1-g4b-light", "behavior,g1,g4", r"^(behavior\.[a-d]|g1\.|g4\.[d-l])", "light"),
     job("webkit", "behavior-e-z-docs-g3b-spike-split-pages-light", "behavior,docs,g3,spike,split", r"^(behavior\.[e-z]|docs\.|g3\.[d-o]|spike\.|split\.)", "light", pages=True),
-    job("webkit", "foundation-g4c-g5-light", "foundation,g4,g5", r"^(foundation\.|g4\.[m-z]|g5\.)", "light"),
+    job("webkit", "foundation-g4c-g5-lint-light", "foundation,g4,g5,lint", r"^(foundation\.|g4\.[m-z]|g5\.|lint\.)", "light"),
     job("webkit", "g2a-g3a-light", "g2,g3", r"^(g2\.[a-gk-m]|g3\.[a-c])", "light"),
     job("webkit", "g2b-g3c-g4a-light", "g2,g3,g4", r"^(g2\.[h-jn-z]|g3\.[p-z]|g4\.[a-c])", "light"),
     job("chromium", "min-smoke", "foundation,g5,g1,g2,g3,g4", r"^(foundation\.|g5\.|g1\.select$|g2\.dialog$|g3\.carousel$|g4\.calendar$)", "light", kit="min"),
 ]
 
 FULL = [
-    job("webkit", "foundation-docs-spike-split-pages-dark", "foundation,docs,spike,split", themes="dark", pages=True),
+    job("webkit", "foundation-docs-lint-spike-split-pages-dark", "foundation,docs,lint,spike,split", themes="dark", pages=True),
     job("webkit", "g2a-g5-dark", "g2,g5", r"^(g2\.[a-d]|g5\.)", "dark"),
     job("webkit", "g2b-dark", "g2", r"^g2\.[e-z]", "dark"),
     job("webkit", "g1-g3a-dark", "g1,g3", r"^(g1\.|g3\.[a-c])", "dark"),
@@ -46,14 +46,14 @@ FULL = [
         for id, only, k in [
             ("g2a-spike", "g2,spike", r"^(g2\.[a-n]|spike\.)"),
             ("g2b-g5", "g2,g5", r"^(g2\.[o-z]|g5\.)"),
-            ("foundation-g1-docs", "foundation,g1,docs", ""),
+            ("foundation-g1-docs-lint", "foundation,g1,docs,lint", ""),
             ("g3-g4", "g3,g4", ""),
         ]
     ],
     *[
         job("chromium", f"min-{id}", only, k, kit="min")
         for id, only, k in [
-            ("foundation-docs", "foundation,docs", ""),
+            ("foundation-docs-lint", "foundation,docs,lint", ""),
             ("g1", "g1", ""),
             ("g2a", "g2", r"^g2\.[a-d]"),
             ("g2b-g5", "g2,g5", r"^(g2\.[e-n]|g5\.)"),
@@ -69,7 +69,7 @@ FULL = [
 PAGES = [job("chromium", "pages", "", pages=True), job("webkit", "pages-light", "", themes="light", pages=True)]
 
 DOCS = ["*.md", "docs/*.md", "docs/*.txt", "skills/*", "LICENSE*", "THIRD_PARTY_NOTICES", ".github/ISSUE_TEMPLATE/*", ".github/workflows/release.yml", ".github/workflows/pages.yml", "renovate.json"]
-TEST_DIRS = {"test/behavior/": "behavior", "test/split/": "split", "test/spike/": "spike"}
+TEST_DIRS = {"test/behavior/": "behavior", "test/split/": "split", "test/spike/": "spike", "test/lint/": "lint,pages", "skills/clanker-ui/references/design-lint.js": "lint,pages"}
 
 
 def classify(files):
@@ -81,7 +81,7 @@ def classify(files):
         if m:
             modules.add(m.group(1))
         elif any(f.startswith(d) for d in TEST_DIRS):
-            modules.add(next(v for d, v in TEST_DIRS.items() if f.startswith(d)))
+            modules.update(next(v for d, v in TEST_DIRS.items() if f.startswith(d)).split(","))
         elif any(fnmatch.fnmatch(f, p) for p in DOCS) and not f.startswith("test/"):
             docs = True
         else:
@@ -173,6 +173,7 @@ def self_test():
     check("g3 test change runs g3 in 3 engines only", tier == "tests" and {j["only"] for j in jobs} == {"g3"} and {j["engine"] for j in jobs} == {"chromium", "firefox", "webkit"} and not any(j["pages"] for j in jobs))
     check("docs change runs Chromium pages only", plan("pull_request", False, ["README.md"]) == ("docs", [PAGES[0]]) and PAGES[0]["engine"] == "chromium")
     check("pages test change runs pages in 2 engines", plan("pull_request", False, ["test/pages_test.py"]) == ("tests", PAGES))
+    check("design lint change runs lint and pages", classify(["skills/clanker-ui/references/design-lint.js", "test/lint/bad.html"]) == ("tests", {"lint", "pages"}))
     check("label runs all", plan("pull_request", True, ["README.md"])[1] == PR + FULL)
     check("schedule and dispatch run all", all(plan(e, False, [])[1] == PR + FULL for e in ("schedule", "workflow_dispatch")))
     return 0 if ok else 1

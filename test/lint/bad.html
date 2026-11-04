@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui design lint: bad cases</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/lint/lint.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Bad cases</h1>
+    <section id="bad-button-size-mismatch">
+      <div class="row">
+        <button type="button" data-slot="button">Save</button>
+        <button type="button" data-slot="button" data-variant="outline" data-size="sm" id="bad-size-sm">Cancel</button>
+      </div>
+    </section>
+    <section id="bad-multiple-primary">
+      <div data-slot="card" class="narrow">
+        <div data-slot="card-header"><div data-slot="card-title">Delete project</div></div>
+        <div data-slot="card-footer">
+          <button type="button" data-slot="button">Keep</button>
+          <button type="button" data-slot="button" id="bad-second-primary">Delete</button>
+        </div>
+      </div>
+    </section>
+    <section id="bad-text-clipped">
+      <div class="clip" id="bad-clip">A long project name that does not fit</div>
+      <div class="truncate" id="bad-ellipsis">A long project name that does not fit</div>
+    </section>
+    <section id="bad-horizontal-scroll">
+      <div class="wide" id="bad-wide"></div>
+    </section>
+    <section id="bad-small-target">
+      <div class="tight">
+        <button type="button" data-slot="button" data-variant="outline" aria-label="Previous" id="bad-tiny"><svg data-lucide="chevron-left"></svg></button>
+        <button type="button" data-slot="button" data-variant="outline" aria-label="Next" id="bad-tiny-next"><svg data-lucide="chevron-right"></svg></button>
+      </div>
+      <div class="row"><button type="button" data-slot="button" id="bad-touch">Open</button></div>
+    </section>
+    <section id="bad-low-contrast">
+      <p class="faint" id="bad-faint">Faint text</p>
+      <p class="dim" id="bad-dim">Dim text</p>
+    </section>
+    <section id="bad-non-token-color">
+      <p class="pink" id="bad-pink">Pink banner</p>
+    </section>
+    <section id="bad-missing-label">
+      <button type="button" data-slot="button" data-size="icon" id="bad-icon-button"><svg data-lucide="plus"></svg></button>
+      <input data-slot="input" id="bad-input">
+      <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" width="24" height="24" id="bad-image">
+    </section>
+    <section id="bad-heading-order">
+      <h2>Settings</h2>
+      <h4 id="bad-h4">Profile</h4>
+      <h1 id="bad-h1">Second title</h1>
+    </section>
+    <section id="bad-misaligned">
+      <p>First line</p>
+      <p class="nudge" id="bad-nudge">Second line, 4 px in</p>
+    </section>
+    <section id="printhub-empty-region">
+      <div class="cards">
+        <div data-slot="card">
+          <div data-slot="card-header"><div data-slot="card-title">Rack</div></div>
+          <div data-slot="card-content"><div class="rack"></div></div>
+        </div>
+        <div data-slot="card" id="printhub-side">
+          <div data-slot="card-header"><div data-slot="card-title">Parts</div><div data-slot="card-description">12 of 20 printed</div></div>
+          <div data-slot="card-content"><p>Next: front panel</p></div>
+        </div>
+      </div>
+      <div class="cards stretch">
+        <div data-slot="card">
+          <div data-slot="card-header"><div data-slot="card-title">Rack</div></div>
+          <div data-slot="card-content"><div class="rack"></div></div>
+        </div>
+        <div data-slot="card" id="printhub-stretched">
+          <div data-slot="card-header"><div data-slot="card-title">Parts</div><div data-slot="card-description">12 of 20 printed</div></div>
+          <div data-slot="card-content"><p>Next: front panel</p></div>
+        </div>
+      </div>
+    </section>
+    <section id="hw-central-layout-shift">
+      <form data-slot="form" class="narrow">
+        <div data-slot="field-group">
+          <div data-slot="field" role="group">
+            <label data-slot="field-label" for="bad-email">Email</label>
+            <input id="bad-email" data-slot="input" type="email" name="email" data-error-type-mismatch="Enter a valid email.">
+          </div>
+          <div class="row">
+            <button type="submit" data-slot="button" id="bad-shift-save">Save</button>
+            <button type="reset" data-slot="button" data-variant="outline">Reset</button>
+          </div>
+        </div>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

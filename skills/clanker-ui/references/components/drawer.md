@@ -28,7 +28,8 @@ Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clan
 ### Dialog, Alert Dialog, Sheet, Drawer
 
 - A main-button click on `::backdrop` closes a dialog, sheet, or drawer, as Base UI (an alert dialog stays open): a held press closes after the release; a right or middle click, a press that starts or ends in the popup, and a touch drag do not close.
-- Long sheet and drawer content does not scroll by itself, as in shadcn: put it in a flex item with `overflow-y: auto` (the shadcn examples use `flex-1 overflow-y-auto`).
+- Long sheet and drawer content does not scroll by itself, as in shadcn: put it in a `sheet-body` or `drawer-body` (kit parts, like the shadcn `flex-1 overflow-y-auto px-4` wrapper): it fills the space between the header and the footer, scrolls, and holds its children in a column with a 1.5rem gap.
+- A form in a dialog, alert dialog, sheet, or drawer: put `<form data-slot="form">` (or a plain `<form>`) as the direct child of the content around the header, the body, and the footer. It is `display: contents`, so the parts keep the content layout (gap, sticky footer).
 
 ### Drawer
 

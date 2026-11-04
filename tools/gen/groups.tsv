@@ -22,6 +22,9 @@ stat-grid	core
 data-table	core
 brand	core
 text-stack	core
+card-grid	core
+cover	core
+rating	core
 button-group	forms
 input-group	forms
 input-otp	forms
@@ -50,6 +53,8 @@ navigation-menu	overlays
 command	overlays	forms
 toast	overlays
 sonner	overlays
+calendar	overlays
+date-picker	overlays	forms
 avatar	layout
 accordion	layout
 collapsible	layout
@@ -69,8 +74,6 @@ trace	chat
 marker	chat
 questionnaire	chat
 code-block	chat
-calendar	chat
-date-picker	chat	overlays,forms
 chart	chart
 js:choice	forms
 js:proxy	forms

@@ -1984,3 +1984,28 @@ def check_date_picker_form(t):
     assert result["gb"] == "29 October 2026", result
     assert result["log"] == [[["due", "Pick a due date."]], {"due": "2026-10-30", "start": "2026-10-29"}], result
     assert result["proxies"] == 1, result
+
+
+G4_PICKER_FIELD = """async () => {
+  const { h } = await import("/clanker-ui.js")
+  const picker = id => h("div", { "data-slot": "date-picker" },
+    h("button", { type: "button", id, "data-slot": "button", "data-variant": "outline", "data-date-picker-trigger": "" }, h("svg", { "data-lucide": "calendar" }), h("span", { "data-slot": "date-picker-value" })),
+    h("div", { "data-slot": "popover-content", "data-date-picker-content": "" }, h("div", { "data-slot": "calendar" })))
+  const host = h("div", { id: "fx-picker-field", style: { width: "320px" } },
+    h("div", { "data-slot": "field", role: "group" }, h("label", { "data-slot": "field-label", for: "fx-picker-name" }, "Name"), h("input", { "data-slot": "input", id: "fx-picker-name" })),
+    h("div", { "data-slot": "field", role: "group" }, h("label", { "data-slot": "field-label", for: "fx-picker-due" }, "Due"), picker("fx-picker-due")),
+    h("div", { "data-slot": "field", role: "group", "data-orientation": "horizontal" }, h("label", { "data-slot": "field-label", for: "fx-picker-row" }, "Row"), picker("fx-picker-row")))
+  document.body.prepend(host)
+  await new Promise(r => setTimeout(r, 30))
+}"""
+
+
+def check_date_picker_field_width(t):
+    page = t.page
+    page.evaluate(G4_PICKER_FIELD)
+    width = lambda s: page.locator(s).bounding_box()["width"]
+    assert abs(width("#fx-picker-due") - width("#fx-picker-name")) < 0.5, (width("#fx-picker-due"), width("#fx-picker-name"))
+    assert width("#fx-picker-row") < width("#fx-picker-name") - 40, "a horizontal field keeps the content width"
+    t.a11y()
+    assert style(page, "#fx-picker-due", "borderTopColor") == style(page, "#fx-picker-name", "borderTopColor"), "the a11y layer gives the trigger the input border"
+    page.evaluate("() => document.getElementById('fx-picker-field').remove()")

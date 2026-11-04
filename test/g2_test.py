@@ -4437,3 +4437,95 @@ def check_toast_detached(t):
     assert page.locator("[data-slot=toast-portal]").count() == 1
 
 
+
+
+G2_OVERLAY_FORMS = """async () => {
+  const { h } = await import("/clanker-ui.js")
+  const field = id => h("div", { "data-slot": "field", role: "group" }, h("label", { "data-slot": "field-label", for: id }, "Name"), h("input", { "data-slot": "input", id, name: id, required: true }))
+  const dialog = h("div", { "data-slot": "dialog", id: "fx-form-dialog" },
+    h("dialog", { "data-slot": "dialog-content" },
+      h("form", { "data-slot": "form" },
+        h("div", { "data-slot": "dialog-header" }, h("h2", { "data-slot": "dialog-title" }, "New project")),
+        field("fx-form-dialog-name"),
+        h("div", { "data-slot": "dialog-footer" }, h("button", { type: "submit", "data-slot": "button" }, "Create")))))
+  const rows = Array.from({ length: 40 }, (_, i) => h("p", `Row ${i}`))
+  const sheet = h("div", { "data-slot": "sheet", id: "fx-form-sheet" },
+    h("dialog", { "data-slot": "sheet-content", "data-side": "right" },
+      h("form", { "data-slot": "form" },
+        h("div", { "data-slot": "sheet-header" }, h("h2", { "data-slot": "sheet-title" }, "Edit project")),
+        h("div", { "data-fx-body": "", style: { flex: "1", overflowY: "auto", minHeight: "0" } }, field("fx-form-sheet-name"), rows),
+        h("div", { "data-slot": "sheet-footer" }, h("button", { type: "submit", "data-slot": "button" }, "Save")))))
+  const alert = h("div", { "data-slot": "alert-dialog", id: "fx-form-alert" },
+    h("dialog", { "data-slot": "alert-dialog-content" },
+      h("form", { "data-slot": "form" },
+        h("div", { "data-slot": "alert-dialog-header" }, h("h2", { "data-slot": "alert-dialog-title" }, "Delete project?")),
+        h("div", { "data-slot": "alert-dialog-footer" }, h("button", { type: "submit", "data-slot": "alert-dialog-action" }, "Delete")))))
+  document.body.append(dialog, sheet, alert)
+  await new Promise(r => setTimeout(r, 30))
+}"""
+
+
+def check_overlay_form_layout(t):
+    page = t.page
+    page.evaluate(G2_OVERLAY_FORMS)
+    for id in ("fx-form-dialog", "fx-form-sheet", "fx-form-alert"):
+        form = page.locator(f"#{id} form")
+        assert form.evaluate("e => getComputedStyle(e).display") == "contents", (id, "a form part in overlay content keeps the content layout")
+    page.evaluate("async () => { const { dialogOpen } = await import('/clanker-ui.js'); dialogOpen('fx-form-dialog') }")
+    wait(page, "() => document.querySelector('#fx-form-dialog dialog').open")
+    t.settle()
+    header = box(page.locator("#fx-form-dialog [data-slot=dialog-header]"))
+    field = box(page.locator("#fx-form-dialog [data-slot=field]"))
+    assert abs(field["y"] - header["y"] - header["height"] - 16) < 1, (header, field)
+    page.keyboard.press("Escape")
+    wait(page, "() => !document.querySelector('#fx-form-dialog dialog').open")
+    page.evaluate("async () => { const { dialogOpen } = await import('/clanker-ui.js'); dialogOpen('fx-form-sheet') }")
+    wait(page, "() => document.querySelector('#fx-form-sheet dialog').open")
+    t.settle()
+    content = box(page.locator("#fx-form-sheet dialog"))
+    footer = box(page.locator("#fx-form-sheet [data-slot=sheet-footer]"))
+    assert abs(footer["y"] + footer["height"] - content["y"] - content["height"]) < 1.5, (footer, content)
+    body = page.locator("#fx-form-sheet [data-fx-body]")
+    assert body.evaluate("e => e.scrollHeight > e.clientHeight + 100"), "the sheet body scrolls between a fixed header and footer"
+    page.keyboard.press("Escape")
+    wait(page, "() => !document.querySelector('#fx-form-sheet dialog').open")
+    page.evaluate("() => ['fx-form-dialog', 'fx-form-sheet', 'fx-form-alert'].forEach(id => document.getElementById(id).remove())")
+
+
+G2_MENU_CODE = """async () => {
+  const { h } = await import("/clanker-ui.js")
+  const tick = () => new Promise(r => setTimeout(r, 0))
+  const radio = v => h("div", { "data-slot": "dropdown-menu-radio-item", "data-value": v }, v)
+  const group = h("div", { "data-slot": "dropdown-menu-radio-group", "data-value": "b" }, radio("a"), radio("b"), radio("c"))
+  const box = h("div", { "data-slot": "dropdown-menu-checkbox-item" }, "Status bar")
+  const menu = h("div", { "data-slot": "dropdown-menu", id: "fx-menu-code" },
+    h("button", { type: "button", "data-slot": "button", "data-dropdown-menu-trigger": "" }, "Open"),
+    h("div", { "data-slot": "dropdown-menu-content" }, group, box))
+  document.body.append(menu)
+  await tick()
+  const state = () => [...group.children].map(i => [i.dataset.value, i.getAttribute("aria-checked"), i.hasAttribute("data-checked")]).concat([[box.getAttribute("aria-checked"), box.dataset.state]])
+  const log = []
+  menu.addEventListener("dropdown-menu:change", () => log.push("change"))
+  const init = state()
+  group.dataset.value = "c"
+  await tick()
+  const byValue = state()
+  group.children[0].setAttribute("data-checked", "")
+  box.setAttribute("data-checked", "")
+  await tick()
+  const byItem = [state(), group.dataset.value]
+  box.removeAttribute("data-checked")
+  await tick()
+  const cleared = state()
+  menu.remove()
+  return { init, byValue, byItem, cleared, log }
+}"""
+
+
+def check_dropdown_menu_code_values(t):
+    r = t.page.evaluate(G2_MENU_CODE)
+    assert r["init"] == [["a", "false", False], ["b", "true", True], ["c", "false", False], ["false", "unchecked"]], r
+    assert r["byValue"][:3] == [["a", "false", False], ["b", "false", False], ["c", "true", True]], r
+    assert r["byItem"] == [[["a", "true", True], ["b", "false", False], ["c", "false", False], ["true", "checked"]], "a"], r
+    assert r["cleared"][3] == ["false", "unchecked"], r
+    assert r["log"] == [], "a change from code fires no event"

@@ -14,6 +14,42 @@
 </head>
 <body>
   <main data-split="overlays">
+<section id="calendar" data-demo="section">
+        <h3 data-demo="title">Calendar</h3>
+        <p data-demo="description">A date field component that allows users to enter and edit a date. Month and day names come from <code>Intl</code> in the document language, the week starts on Monday, and the grid follows the WAI-ARIA date grid keyboard model.</p>
+        <div data-demo="preview column">
+          <div id="calendar-demo" data-slot="calendar" data-caption-layout="dropdown" data-name="date" aria-label="Pick a date"></div>
+          <p id="calendar-demo-value" data-demo="caption" aria-live="polite">No date selected.</p>
+        </div>
+        <h4 data-demo="subtitle">Range and two months</h4>
+        <p data-demo="caption">Future dates are disabled with <code>data-max</code>. On narrow screens the months stack.</p>
+        <div data-demo="preview column">
+          <div id="calendar-range" data-slot="calendar" data-mode="range" data-months="2" data-value="2026-01-12/2026-02-11" data-max="2026-12-31"></div>
+          <p id="calendar-range-value" data-demo="caption" aria-live="polite">Range: 2026-01-12 to 2026-02-11</p>
+        </div>
+        <h4 data-demo="subtitle">Multiple, min and max, disabled dates</h4>
+        <div data-demo="preview">
+          <div id="calendar-multiple" data-slot="calendar" data-mode="multiple" data-month="2026-03" data-value="2026-03-03 2026-03-10 2026-03-17" data-min="2026-03-02" data-max="2026-04-30" data-disabled-weekdays="0 6"></div>
+          <div id="calendar-booked" data-slot="calendar" data-month="2026-02" data-value="2026-02-03" data-disabled-dates="2026-02-12/2026-02-26"></div>
+        </div>
+        <h4 data-demo="subtitle">Week numbers, Sunday start, and German</h4>
+        <div data-demo="preview">
+          <div id="calendar-weeks" data-slot="calendar" data-month="2026-02" data-value="2026-02-03" data-show-week-number></div>
+          <div id="calendar-sunday" data-slot="calendar" data-button-variant="outline" data-month="2026-10" data-week-start="0" data-outside-days="false" data-fixed-weeks></div>
+          <div id="calendar-german" data-slot="calendar" lang="de" data-month="2026-12" data-caption-layout="dropdown-months" data-value="2026-12-24"></div>
+        </div>
+        <h4 data-demo="subtitle">Custom cell size and form value</h4>
+        <div data-demo="preview">
+          <form id="calendar-form" action="#calendar" data-demo="column">
+            <div id="calendar-large" data-slot="calendar" data-month="2026-12" data-mode="range" data-value="2026-12-08/2026-12-18" data-name="stay"></div>
+            <div data-demo="row">
+              <button type="submit" data-slot="button" data-size="sm">Submit</button>
+              <button type="reset" data-slot="button" data-variant="outline" data-size="sm">Reset</button>
+            </div>
+            <p id="calendar-form-value" data-demo="caption" aria-live="polite">The form sends <code>stay=2026-12-08/2026-12-18</code>.</p>
+          </form>
+        </div>
+      </section>
 <section id="alert-dialog" data-demo="section">
         <h3 data-demo="title">Alert Dialog</h3>
         <p data-demo="description">A modal dialog that interrupts the user with important content and expects a response.</p>

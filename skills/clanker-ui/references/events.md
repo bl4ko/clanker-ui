@@ -59,6 +59,10 @@ document.addEventListener("select:change", event => console.log(event.target, ev
 | `toast:open` | `toast` | `toast` | `id` |  |
 | `toast:close` | `toast` | `toast` | `id`, `reason` | `{ id, reason }`: `timeout`, `close`, `action`, `swipe`, `escape`, `dismiss` |
 | `toast:action` | `toast` | `toast` | `id` |  |
+| `calendar:change` | `calendar` | `calendar` | `value`, `mode`, `source` | `{ value, mode, source }`: `day`, `api`, `reset` |
+| `calendar:navigate` | `calendar` | `calendar` | `value` |  |
+| `date-picker:open` | `date-picker` | `date-picker` | none |  |
+| `date-picker:close` | `date-picker` | `date-picker` | none |  |
 | `avatar:change` | `avatar` | `avatar` | `value` | `{ value }`: `loaded` or `error` |
 | `accordion:change` | `accordion` | `accordion` | `value` | `{ value }` (string, or array for `multiple`) |
 | `collapsible:open` | `collapsible` | `collapsible` | none |  |
@@ -76,10 +80,6 @@ document.addEventListener("select:change", event => console.log(event.target, ev
 | `questionnaire:submit` | `questionnaire` | `questionnaire` | `value`, `status` | `{ value, status }`, before the native `submit` |
 | `code-block:copy` | `code-block` | `code-block` | `value` |  |
 | `code-block:wrap` | `code-block` | `code-block` | `value` |  |
-| `calendar:change` | `calendar` | `calendar` | `value`, `mode`, `source` | `{ value, mode, source }`: `day`, `api`, `reset` |
-| `calendar:navigate` | `calendar` | `calendar` | `value` |  |
-| `date-picker:open` | `date-picker` | `date-picker` | none |  |
-| `date-picker:close` | `date-picker` | `date-picker` | none |  |
 | `chart:active` | `chart` | `chart element` | `index`, `key`, `row` | `{ index, key, row }`, or `null` when the tooltip closes |
 | `chart:legend` | `chart` | `chart element` | `key`, `visible`, `hidden` |  |
 | `chart:view` | `chart` | `chart element` | `view` | `{ view }`: `chart` or `table` |

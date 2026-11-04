@@ -319,7 +319,7 @@ const glue = `@layer clanker.base {
   dialog { inset: auto; width: auto; height: auto; max-width: none; max-height: none; overflow: visible; background-color: transparent; color: inherit; }
 }
 @layer clanker.components {
-  [data-slot="dialog-content"] > form:not([data-slot]) { display: contents; }
+  :is([data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"], [data-slot="drawer-content"]) > form:is(:not([data-slot]), [data-slot="form"]) { display: contents; }
   [data-state="unchecked"] > [data-slot="dropdown-menu-item-indicator"] > svg { display: none; }
 }
 @layer clanker.utilities {

@@ -42,7 +42,7 @@ var minShims = map[string][]string{"clanker-ui.js": {"clanker-ui-core.min.js", "
 
 var demoAsset = regexp.MustCompile(`^demo/(assets/)?[a-z0-9][a-z0-9-]*(\.[a-z0-9-]+)*\.(css|js|svg|png|jpg|webp|avif)$`)
 
-var skillFile = regexp.MustCompile(`^skills/clanker-ui/(SKILL\.md|references/(components/)?[a-z0-9-]+(\.[a-z]+)?\.(md|json))$`)
+var skillFile = regexp.MustCompile(`^skills/clanker-ui/(SKILL\.md|references/(components/)?[a-z0-9-]+(\.[a-z]+)?\.(md|json|js)|references/blocks/[a-z0-9-]+\.(html|js))$`)
 
 var devFile = regexp.MustCompile(`^(test/spike/[a-z0-9-]+\.(html|css)|test/behavior/fixtures/[a-z0-9-]+\.(html|css|js)|test/split/[a-z0-9-]+\.(html|js))$`)
 
@@ -191,18 +191,23 @@ func sourceSignature(fsys fs.FS) (string, error) {
 			add(name, info)
 		}
 	}
-	err := fs.WalkDir(fsys, "docs", func(name string, entry fs.DirEntry, err error) error {
-		if err != nil || entry.IsDir() {
-			return err
+	for _, root := range []string{"docs", blocksDir} {
+		err := fs.WalkDir(fsys, root, func(name string, entry fs.DirEntry, err error) error {
+			if err != nil || entry.IsDir() {
+				return err
+			}
+			info, err := entry.Info()
+			if err != nil {
+				return err
+			}
+			add(name, info)
+			return nil
+		})
+		if err != nil && !errors.Is(err, fs.ErrNotExist) {
+			return "", err
 		}
-		info, err := entry.Info()
-		if err != nil {
-			return err
-		}
-		add(name, info)
-		return nil
-	})
-	return hex.EncodeToString(h.Sum(nil)), err
+	}
+	return hex.EncodeToString(h.Sum(nil)), nil
 }
 
 func main() {
@@ -269,6 +274,7 @@ func (s *site) routes() http.Handler {
 	mux.HandleFunc("GET /docs/{path...}", s.doc)
 	mux.HandleFunc("GET /assets/{hash}/{file}", s.asset)
 	mux.HandleFunc("GET /view/{name}", s.view)
+	mux.HandleFunc("GET /blocks/{file}", s.block)
 	mux.HandleFunc("GET /", s.serve)
 	return secure(mux)
 }

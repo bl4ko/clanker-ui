@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Website redesign - Acme Inc.</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <script src="/vendor/clanker-ui/clanker-ui-theme.js"></script>
+  <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
+  <script type="module" src="/detail.js"></script>
+</head>
+<body>
+  <div data-slot="sidebar-wrapper" id="app">
+    <div data-slot="sidebar" data-variant="inset" data-collapsible="offcanvas">
+      <div data-slot="sidebar-gap"></div>
+      <div data-slot="sidebar-container">
+        <div data-slot="sidebar-inner">
+          <div data-slot="sidebar-header">
+            <ul data-slot="sidebar-menu">
+              <li data-slot="sidebar-menu-item">
+                <a data-slot="sidebar-menu-button" data-size="lg" href="#">
+                  <span data-slot="brand-mark"><svg data-lucide="layout-dashboard"></svg></span>
+                  <span data-slot="text-stack"><span>Acme Inc.</span><span>Enterprise</span></span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div data-slot="sidebar-content">
+            <div data-slot="sidebar-group">
+              <div data-slot="sidebar-group-content">
+                <ul data-slot="sidebar-menu">
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#"><svg data-lucide="layout-dashboard"></svg><span>Dashboard</span></a>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#lifecycle"><svg data-lucide="list"></svg><span>Lifecycle</span></a>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#analytics"><svg data-lucide="trending-up"></svg><span>Analytics</span></a>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#projects" data-active="true" aria-current="page"><svg data-lucide="folder"></svg><span>Projects</span></a>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#team"><svg data-lucide="users"></svg><span>Team</span></a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div data-slot="sidebar-group">
+              <div data-slot="sidebar-group-label">Documents</div>
+              <div data-slot="sidebar-group-content">
+                <ul data-slot="sidebar-menu">
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#library"><svg data-lucide="archive"></svg><span>Data Library</span></a>
+                    <div data-slot="dropdown-menu">
+                      <button type="button" data-slot="sidebar-menu-action" data-show-on-hover data-dropdown-menu-trigger aria-label="More for Data Library"><svg data-lucide="ellipsis"></svg></button>
+                      <div data-slot="dropdown-menu-content" data-side="right" data-align="start">
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="folder"></svg>Open</div>
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="share"></svg>Share</div>
+                        <div data-slot="dropdown-menu-separator"></div>
+                        <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete</div>
+                      </div>
+                    </div>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#reports"><svg data-lucide="file-text"></svg><span>Reports</span></a>
+                    <div data-slot="dropdown-menu">
+                      <button type="button" data-slot="sidebar-menu-action" data-show-on-hover data-dropdown-menu-trigger aria-label="More for Reports"><svg data-lucide="ellipsis"></svg></button>
+                      <div data-slot="dropdown-menu-content" data-side="right" data-align="start">
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="folder"></svg>Open</div>
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="share"></svg>Share</div>
+                        <div data-slot="dropdown-menu-separator"></div>
+                        <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete</div>
+                      </div>
+                    </div>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#assistant"><svg data-lucide="file-pen"></svg><span>Word Assistant</span></a>
+                    <div data-slot="dropdown-menu">
+                      <button type="button" data-slot="sidebar-menu-action" data-show-on-hover data-dropdown-menu-trigger aria-label="More for Word Assistant"><svg data-lucide="ellipsis"></svg></button>
+                      <div data-slot="dropdown-menu-content" data-side="right" data-align="start">
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="folder"></svg>Open</div>
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="share"></svg>Share</div>
+                        <div data-slot="dropdown-menu-separator"></div>
+                        <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete</div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div data-slot="sidebar-footer">
+            <ul data-slot="sidebar-menu">
+              <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#settings"><svg data-lucide="settings"></svg><span>Settings</span></a></li>
+              <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#help"><svg data-lucide="circle-question-mark"></svg><span>Get Help</span></a></li>
+              <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#search"><svg data-lucide="search"></svg><span>Search</span></a></li>
+            </ul>
+            <ul data-slot="sidebar-menu">
+              <li data-slot="sidebar-menu-item">
+                <div data-slot="dropdown-menu">
+                  <button type="button" data-slot="sidebar-menu-button" data-size="lg" data-dropdown-menu-trigger>
+                    <span data-slot="avatar"><span data-slot="avatar-fallback">CN</span></span>
+                    <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
+                    <svg data-lucide="ellipsis-vertical"></svg>
+                  </button>
+                  <div data-slot="dropdown-menu-content" data-side="right" data-align="end">
+                    <div data-slot="dropdown-menu-label">
+                      <span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">CN</span></span>
+                      <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
+                    </div>
+                    <div data-slot="dropdown-menu-separator"></div>
+                    <div data-slot="dropdown-menu-group">
+                      <a data-slot="dropdown-menu-item" href="#account"><svg data-lucide="user"></svg>Account</a>
+                      <a data-slot="dropdown-menu-item" href="#billing"><svg data-lucide="credit-card"></svg>Billing</a>
+                      <a data-slot="dropdown-menu-item" href="#notifications"><svg data-lucide="bell"></svg>Notifications</a>
+                    </div>
+                    <div data-slot="dropdown-menu-separator"></div>
+                    <a data-slot="dropdown-menu-item" href="#logout"><svg data-lucide="log-out"></svg>Log out</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <button data-slot="sidebar-rail"></button>
+      </div>
+    </div>
+    <main data-slot="sidebar-inset">
+      <header data-slot="site-header">
+        <button data-slot="sidebar-trigger"></button>
+        <div data-slot="separator" data-orientation="vertical"></div>
+        <nav data-slot="breadcrumb">
+          <ol data-slot="breadcrumb-list">
+            <li data-slot="breadcrumb-item" data-show-from="md"><a data-slot="breadcrumb-link" href="#projects">Projects</a></li>
+            <li data-slot="breadcrumb-separator" data-show-from="md"></li>
+            <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">Website redesign</span></li>
+          </ol>
+        </nav>
+        <div data-slot="site-header-actions">
+          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+        </div>
+      </header>
+      <div data-slot="page">
+        <div data-slot="page-header">
+          <h1 data-slot="page-title">Website redesign <span data-slot="badge" data-variant="info">Active</span></h1>
+          <p data-slot="page-description">New marketing site with a faster checkout. Due December 12.</p>
+          <div data-slot="page-actions">
+            <button type="button" data-slot="button" data-variant="outline" id="share"><svg data-lucide="share"></svg>Share</button>
+            <a data-slot="button" href="#edit"><svg data-lucide="pencil"></svg>Edit project</a>
+            <div data-slot="dropdown-menu">
+              <button type="button" data-slot="button" data-variant="outline" data-size="icon" data-dropdown-menu-trigger aria-label="More actions"><svg data-lucide="ellipsis"></svg></button>
+              <div data-slot="dropdown-menu-content" data-align="end">
+                <div data-slot="dropdown-menu-item"><svg data-lucide="copy"></svg>Duplicate</div>
+                <div data-slot="dropdown-menu-item"><svg data-lucide="archive"></svg>Archive</div>
+                <div data-slot="dropdown-menu-separator"></div>
+                <div data-slot="dropdown-menu-item" data-variant="destructive" id="delete-project"><svg data-lucide="trash"></svg>Delete project</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-slot="page-body">
+          <div>
+            <dl data-slot="stat-grid">
+              <div><dt>Budget</dt><dd>$48,000</dd><dd>$16,750 left</dd></div>
+              <div><dt>Spent</dt><dd>$31,250</dd><dd>65% of the budget</dd></div>
+              <div><dt>Tasks done</dt><dd>42 <span data-slot="badge" data-variant="outline">of 68</span></dd><dd>8 this week</dd></div>
+              <div><dt>Days left</dt><dd>38</dd><dd>Due Dec 12</dd></div>
+            </dl>
+            <div data-slot="card">
+              <div data-slot="card-header">
+                <h2 data-slot="card-title">Open tasks</h2>
+                <p data-slot="card-description">The next tasks by due date.</p>
+                <div data-slot="card-action"><a data-slot="button" data-variant="outline" data-size="sm" href="#tasks">View all</a></div>
+              </div>
+              <div data-slot="card-content">
+                <div data-slot="table-container">
+                  <table data-slot="table">
+                    <thead data-slot="table-header">
+                      <tr data-slot="table-row">
+                        <th data-slot="table-head" scope="col">Title</th>
+                        <th data-slot="table-head" scope="col" data-show-from="md">Assignee</th>
+                        <th data-slot="table-head" scope="col">Status</th>
+                        <th data-slot="table-head" scope="col" data-align="end" data-show-from="sm">Due</th>
+                      </tr>
+                    </thead>
+                    <tbody data-slot="table-body">
+                      <tr data-slot="table-row">
+                        <td data-slot="table-cell"><span data-slot="data-table-text">Homepage hero and navigation</span></td>
+                        <td data-slot="table-cell" data-show-from="md"><span data-slot="data-table-text"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">OM</span></span>Olivia Martin</span></td>
+                        <td data-slot="table-cell"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Done</span></td>
+                        <td data-slot="table-cell" data-align="end" data-show-from="sm">Oct 18</td>
+                      </tr>
+                      <tr data-slot="table-row">
+                        <td data-slot="table-cell"><span data-slot="data-table-text">Pricing page layout</span></td>
+                        <td data-slot="table-cell" data-show-from="md"><span data-slot="data-table-text"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">JL</span></span>Jackson Lee</span></td>
+                        <td data-slot="table-cell"><span data-slot="badge" data-variant="info"><svg data-lucide="clock"></svg>In progress</span></td>
+                        <td data-slot="table-cell" data-align="end" data-show-from="sm">Nov 8</td>
+                      </tr>
+                      <tr data-slot="table-row">
+                        <td data-slot="table-cell"><span data-slot="data-table-text">Accessibility audit</span></td>
+                        <td data-slot="table-cell" data-show-from="md"><span data-slot="data-table-text"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">IN</span></span>Isabella Nguyen</span></td>
+                        <td data-slot="table-cell"><span data-slot="badge" data-variant="info"><svg data-lucide="clock"></svg>In progress</span></td>
+                        <td data-slot="table-cell" data-align="end" data-show-from="sm">Nov 12</td>
+                      </tr>
+                      <tr data-slot="table-row">
+                        <td data-slot="table-cell"><span data-slot="data-table-text">Blog templates</span></td>
+                        <td data-slot="table-cell" data-show-from="md"><span data-slot="data-table-text"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">WK</span></span>William Kim</span></td>
+                        <td data-slot="table-cell"><span data-slot="badge" data-variant="outline"><svg data-lucide="circle"></svg>Todo</span></td>
+                        <td data-slot="table-cell" data-align="end" data-show-from="sm">Nov 20</td>
+                      </tr>
+                      <tr data-slot="table-row">
+                        <td data-slot="table-cell"><span data-slot="data-table-text">Analytics events</span></td>
+                        <td data-slot="table-cell" data-show-from="md"><span data-slot="data-table-text"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">SD</span></span>Sofia Davis</span></td>
+                        <td data-slot="table-cell"><span data-slot="badge" data-variant="outline"><svg data-lucide="circle"></svg>Todo</span></td>
+                        <td data-slot="table-cell" data-align="end" data-show-from="sm">Nov 22</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div data-slot="card">
+              <div data-slot="card-header">
+                <h2 data-slot="card-title">Activity</h2>
+                <p data-slot="card-description">Changes in the last 7 days.</p>
+              </div>
+              <div data-slot="card-content">
+                <div data-slot="item-group" role="list">
+                <div data-slot="item" data-size="sm" role="listitem">
+                  <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">OM</span></span></div>
+                  <div data-slot="item-content">
+                    <div data-slot="item-title">Olivia Martin</div>
+                    <p data-slot="item-description">moved WEB-12 to Done</p>
+                  </div>
+                  <div data-slot="item-actions"><time data-slot="item-description">2 hours ago</time></div>
+                </div>
+                <div data-slot="item" data-size="sm" role="listitem">
+                  <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">JL</span></span></div>
+                  <div data-slot="item-content">
+                    <div data-slot="item-title">Jackson Lee</div>
+                    <p data-slot="item-description">commented on WEB-15: “The mobile layout is ready for review.”</p>
+                  </div>
+                  <div data-slot="item-actions"><time data-slot="item-description">5 hours ago</time></div>
+                </div>
+                <div data-slot="item" data-size="sm" role="listitem">
+                  <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">IN</span></span></div>
+                  <div data-slot="item-content">
+                    <div data-slot="item-title">Isabella Nguyen</div>
+                    <p data-slot="item-description">added 3 files to Accessibility audit</p>
+                  </div>
+                  <div data-slot="item-actions"><time data-slot="item-description">Yesterday</time></div>
+                </div>
+                <div data-slot="item" data-size="sm" role="listitem">
+                  <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">SD</span></span></div>
+                  <div data-slot="item-content">
+                    <div data-slot="item-title">Sofia Davis</div>
+                    <p data-slot="item-description">changed the due date to Dec 12</p>
+                  </div>
+                  <div data-slot="item-actions"><time data-slot="item-description">Oct 30</time></div>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <aside data-slot="page-aside">
+            <dl data-slot="stat-grid" data-size="sm">
+              <div><dt>Owner</dt><dd>Olivia Martin</dd></div>
+              <div><dt>Priority</dt><dd>High</dd></div>
+              <div><dt>Start</dt><dd>Oct 2, 2026</dd></div>
+              <div><dt>Due</dt><dd>Dec 12, 2026</dd></div>
+              <div><dt>Key</dt><dd>WEB</dd></div>
+              <div><dt>Visibility</dt><dd>Team</dd></div>
+            </dl>
+            <div data-slot="card">
+              <div data-slot="card-header">
+                <h2 data-slot="card-title">Team</h2>
+                <p data-slot="card-description">4 people</p>
+                <div data-slot="card-action"><button type="button" data-slot="button" data-variant="outline" data-size="sm" id="invite"><svg data-lucide="plus"></svg>Invite</button></div>
+              </div>
+              <div data-slot="card-content">
+                <div data-slot="item-group" role="list">
+              <div data-slot="item" data-size="xs" role="listitem">
+                <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">OM</span></span></div>
+                <div data-slot="item-content"><div data-slot="item-title">Olivia Martin</div></div>
+                <div data-slot="item-actions"><span data-slot="badge" data-variant="secondary">Owner</span></div>
+              </div>
+              <div data-slot="item" data-size="xs" role="listitem">
+                <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">JL</span></span></div>
+                <div data-slot="item-content"><div data-slot="item-title">Jackson Lee</div></div>
+                <div data-slot="item-actions"><span data-slot="badge" data-variant="secondary">Design</span></div>
+              </div>
+              <div data-slot="item" data-size="xs" role="listitem">
+                <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">IN</span></span></div>
+                <div data-slot="item-content"><div data-slot="item-title">Isabella Nguyen</div></div>
+                <div data-slot="item-actions"><span data-slot="badge" data-variant="secondary">Engineering</span></div>
+              </div>
+              <div data-slot="item" data-size="xs" role="listitem">
+                <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">WK</span></span></div>
+                <div data-slot="item-content"><div data-slot="item-title">William Kim</div></div>
+                <div data-slot="item-actions"><span data-slot="badge" data-variant="secondary">Content</span></div>
+              </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

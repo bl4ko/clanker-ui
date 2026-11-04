@@ -93,6 +93,13 @@ func TestExportSite(t *testing.T) {
 				if strings.Contains(string(b), "not ported yet") {
 					t.Errorf("%s is a stub page", rel)
 				}
+				if strings.HasPrefix(rel, blocksDir+"/") {
+					src, err := os.ReadFile(rel)
+					if err != nil || string(src) != string(b) {
+						t.Errorf("%s: exported block source differs from the repository file", rel)
+					}
+					return nil
+				}
 				switch path.Ext(rel) {
 				case ".html":
 					pages++

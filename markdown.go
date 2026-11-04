@@ -18,6 +18,7 @@ type tocEntry struct {
 type mdHooks struct {
 	example    func(name string, attrs map[string]string) (string, error)
 	components func(variant string) (string, error)
+	block      func(name string) (string, error)
 	code       func(lang, title, src string) (string, error)
 	link       func(url string) string
 	reserved   []string
@@ -33,7 +34,7 @@ var (
 	mdHeading   = regexp.MustCompile(`^(#{1,4})[ \t]+(.+?)[ \t]*$`)
 	mdListItem  = regexp.MustCompile(`^([-*]|\d{1,9}[.)])( +|$)`)
 	mdTableSep  = regexp.MustCompile(`^\|?[ \t]*:?-{3,}:?[ \t]*(\|[ \t]*:?-{3,}:?[ \t]*)*\|?[ \t]*$`)
-	mdTagLine   = regexp.MustCompile(`^\{\{(example|components)((?:[ \t]+(?:"[^"]*"|[a-z]+="[^"]*"))*)[ \t]*\}\}$`)
+	mdTagLine   = regexp.MustCompile(`^\{\{(example|components|block)((?:[ \t]+(?:"[^"]*"|[a-z]+="[^"]*"))*)[ \t]*\}\}$`)
 	mdTagArg    = regexp.MustCompile(`"([^"]*)"|([a-z]+)="([^"]*)"`)
 	mdFenceInfo = regexp.MustCompile(`^([a-z0-9+-]*)((?:[ \t]+[a-z]+="[^"]*")*)[ \t]*$`)
 	mdSafeURL   = regexp.MustCompile(`^(https?://[^\s"'<>]+|mailto:[^\s"'<>]+|[A-Za-z0-9._~%/#?=&+-]+)$`)
@@ -60,8 +61,10 @@ func parseTag(line string) (mdTag, bool, error) {
 		args++
 	}
 	switch {
-	case tag.Name == "example" && (args != 1 || tag.Arg == ""):
-		return tag, true, fmt.Errorf("example tag needs one name: %q", line)
+	case (tag.Name == "example" || tag.Name == "block") && (args != 1 || tag.Arg == ""):
+		return tag, true, fmt.Errorf("%s tag needs one name: %q", tag.Name, line)
+	case tag.Name == "block" && len(tag.Attrs) > 0:
+		return tag, true, fmt.Errorf("block tag takes no options: %q", line)
 	case tag.Name == "components" && (args > 1 || len(tag.Attrs) > 0 || args == 1 && tag.Arg != "new"):
 		return tag, true, fmt.Errorf(`components tag takes only "new": %q`, line)
 	}
@@ -197,9 +200,14 @@ func (r *mdRenderer) blocks(b *strings.Builder, lines []string, tight bool) erro
 				return err
 			}
 			var out string
-			if tag.Name == "example" {
+			switch {
+			case tag.Name == "example":
 				out, err = r.hooks.example(tag.Arg, tag.Attrs)
-			} else {
+			case tag.Name == "block" && r.hooks.block != nil:
+				out, err = r.hooks.block(tag.Arg)
+			case tag.Name == "block":
+				err = fmt.Errorf("block tag %q is not allowed here", tag.Arg)
+			default:
 				out, err = r.hooks.components(tag.Arg)
 			}
 			if err != nil {

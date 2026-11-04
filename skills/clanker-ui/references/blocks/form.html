@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>New project - Acme Inc.</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <script src="/vendor/clanker-ui/clanker-ui-theme.js"></script>
+  <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
+  <script type="module" src="/form.js"></script>
+</head>
+<body>
+  <div data-slot="sidebar-wrapper" id="app">
+    <div data-slot="sidebar" data-variant="inset" data-collapsible="offcanvas">
+      <div data-slot="sidebar-gap"></div>
+      <div data-slot="sidebar-container">
+        <div data-slot="sidebar-inner">
+          <div data-slot="sidebar-header">
+            <ul data-slot="sidebar-menu">
+              <li data-slot="sidebar-menu-item">
+                <a data-slot="sidebar-menu-button" data-size="lg" href="#">
+                  <span data-slot="brand-mark"><svg data-lucide="layout-dashboard"></svg></span>
+                  <span data-slot="text-stack"><span>Acme Inc.</span><span>Enterprise</span></span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div data-slot="sidebar-content">
+            <div data-slot="sidebar-group">
+              <div data-slot="sidebar-group-content">
+                <ul data-slot="sidebar-menu">
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#"><svg data-lucide="layout-dashboard"></svg><span>Dashboard</span></a>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#lifecycle"><svg data-lucide="list"></svg><span>Lifecycle</span></a>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#analytics"><svg data-lucide="trending-up"></svg><span>Analytics</span></a>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#projects" data-active="true" aria-current="page"><svg data-lucide="folder"></svg><span>Projects</span></a>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#team"><svg data-lucide="users"></svg><span>Team</span></a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div data-slot="sidebar-group">
+              <div data-slot="sidebar-group-label">Documents</div>
+              <div data-slot="sidebar-group-content">
+                <ul data-slot="sidebar-menu">
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#library"><svg data-lucide="archive"></svg><span>Data Library</span></a>
+                    <div data-slot="dropdown-menu">
+                      <button type="button" data-slot="sidebar-menu-action" data-show-on-hover data-dropdown-menu-trigger aria-label="More for Data Library"><svg data-lucide="ellipsis"></svg></button>
+                      <div data-slot="dropdown-menu-content" data-side="right" data-align="start">
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="folder"></svg>Open</div>
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="share"></svg>Share</div>
+                        <div data-slot="dropdown-menu-separator"></div>
+                        <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete</div>
+                      </div>
+                    </div>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#reports"><svg data-lucide="file-text"></svg><span>Reports</span></a>
+                    <div data-slot="dropdown-menu">
+                      <button type="button" data-slot="sidebar-menu-action" data-show-on-hover data-dropdown-menu-trigger aria-label="More for Reports"><svg data-lucide="ellipsis"></svg></button>
+                      <div data-slot="dropdown-menu-content" data-side="right" data-align="start">
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="folder"></svg>Open</div>
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="share"></svg>Share</div>
+                        <div data-slot="dropdown-menu-separator"></div>
+                        <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete</div>
+                      </div>
+                    </div>
+                  </li>
+                  <li data-slot="sidebar-menu-item">
+                    <a data-slot="sidebar-menu-button" href="#assistant"><svg data-lucide="file-pen"></svg><span>Word Assistant</span></a>
+                    <div data-slot="dropdown-menu">
+                      <button type="button" data-slot="sidebar-menu-action" data-show-on-hover data-dropdown-menu-trigger aria-label="More for Word Assistant"><svg data-lucide="ellipsis"></svg></button>
+                      <div data-slot="dropdown-menu-content" data-side="right" data-align="start">
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="folder"></svg>Open</div>
+                        <div data-slot="dropdown-menu-item"><svg data-lucide="share"></svg>Share</div>
+                        <div data-slot="dropdown-menu-separator"></div>
+                        <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete</div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div data-slot="sidebar-footer">
+            <ul data-slot="sidebar-menu">
+              <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#settings"><svg data-lucide="settings"></svg><span>Settings</span></a></li>
+              <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#help"><svg data-lucide="circle-question-mark"></svg><span>Get Help</span></a></li>
+              <li data-slot="sidebar-menu-item"><a data-slot="sidebar-menu-button" href="#search"><svg data-lucide="search"></svg><span>Search</span></a></li>
+            </ul>
+            <ul data-slot="sidebar-menu">
+              <li data-slot="sidebar-menu-item">
+                <div data-slot="dropdown-menu">
+                  <button type="button" data-slot="sidebar-menu-button" data-size="lg" data-dropdown-menu-trigger>
+                    <span data-slot="avatar"><span data-slot="avatar-fallback">CN</span></span>
+                    <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
+                    <svg data-lucide="ellipsis-vertical"></svg>
+                  </button>
+                  <div data-slot="dropdown-menu-content" data-side="right" data-align="end">
+                    <div data-slot="dropdown-menu-label">
+                      <span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">CN</span></span>
+                      <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
+                    </div>
+                    <div data-slot="dropdown-menu-separator"></div>
+                    <div data-slot="dropdown-menu-group">
+                      <a data-slot="dropdown-menu-item" href="#account"><svg data-lucide="user"></svg>Account</a>
+                      <a data-slot="dropdown-menu-item" href="#billing"><svg data-lucide="credit-card"></svg>Billing</a>
+                      <a data-slot="dropdown-menu-item" href="#notifications"><svg data-lucide="bell"></svg>Notifications</a>
+                    </div>
+                    <div data-slot="dropdown-menu-separator"></div>
+                    <a data-slot="dropdown-menu-item" href="#logout"><svg data-lucide="log-out"></svg>Log out</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <button data-slot="sidebar-rail"></button>
+      </div>
+    </div>
+    <main data-slot="sidebar-inset">
+      <header data-slot="site-header">
+        <button data-slot="sidebar-trigger"></button>
+        <div data-slot="separator" data-orientation="vertical"></div>
+        <nav data-slot="breadcrumb">
+          <ol data-slot="breadcrumb-list">
+            <li data-slot="breadcrumb-item" data-show-from="md"><a data-slot="breadcrumb-link" href="#projects">Projects</a></li>
+            <li data-slot="breadcrumb-separator" data-show-from="md"></li>
+            <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">New project</span></li>
+          </ol>
+        </nav>
+        <div data-slot="site-header-actions">
+          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+        </div>
+      </header>
+      <div data-slot="page" data-size="sm">
+        <div data-slot="page-header">
+          <h1 data-slot="page-title">New project</h1>
+          <p data-slot="page-description">A project groups tasks, files, and people. You can change all of this later.</p>
+        </div>
+        <form data-slot="form" id="project-form">
+          <div data-slot="field-group">
+            <fieldset data-slot="field-set">
+              <legend data-slot="field-legend">Details</legend>
+              <p data-slot="field-description">The name and key show in the sidebar, in links, and in task IDs.</p>
+              <div data-slot="field-group">
+                <div data-slot="field-group" data-columns="3">
+                  <div data-slot="field" role="group" data-span="2">
+                    <label data-slot="field-label" for="project-name">Name</label>
+                    <input data-slot="input" id="project-name" name="name" placeholder="Website redesign" required maxlength="60" data-error-value-missing="Enter a project name.">
+                  </div>
+                  <div data-slot="field" role="group">
+                    <label data-slot="field-label" for="project-key">Key</label>
+                    <input data-slot="input" id="project-key" name="key" placeholder="WEB" required pattern="[A-Z]{2,5}" data-error-value-missing="Enter a key." data-error-pattern-mismatch="Use 2 to 5 capital letters.">
+                  </div>
+                </div>
+                <div data-slot="field" role="group">
+                  <label data-slot="field-label" for="project-description">Description</label>
+                  <textarea data-slot="textarea" id="project-description" name="description" rows="3" maxlength="280" placeholder="What is the goal of this project?"></textarea>
+                  <p data-slot="field-description">Optional. At most 280 characters.</p>
+                </div>
+              </div>
+            </fieldset>
+            <div data-slot="field-separator"><div data-slot="separator"></div></div>
+            <fieldset data-slot="field-set">
+              <legend data-slot="field-legend">Planning</legend>
+              <p data-slot="field-description">The dates and the budget set the numbers on the project page.</p>
+              <div data-slot="field-group" data-columns="2">
+                <div data-slot="field" role="group">
+                  <label data-slot="field-label" for="project-status">Status</label>
+                  <div data-slot="select" data-name="status" data-required data-error-value-missing="Select a status.">
+                    <button data-slot="select-trigger" id="project-status"><span data-slot="select-value">Select a status</span></button>
+                    <div data-slot="select-content">
+                      <div data-slot="select-item" data-value="planned">Planned</div>
+                      <div data-slot="select-item" data-value="active">Active</div>
+                      <div data-slot="select-item" data-value="paused">Paused</div>
+                    </div>
+                  </div>
+                </div>
+                <div data-slot="field" role="group">
+                  <label data-slot="field-label" for="project-budget">Budget</label>
+                  <div data-slot="input-group" role="group">
+                    <div data-slot="input-group-addon"><span data-slot="input-group-text">$</span></div>
+                    <input data-slot="input-group-control" id="project-budget" name="budget" type="number" inputmode="decimal" min="0" step="100" placeholder="0" data-error-range-underflow="The budget cannot be negative.">
+                    <div data-slot="input-group-addon" data-align="inline-end"><span data-slot="input-group-text">USD</span></div>
+                  </div>
+                </div>
+                <div data-slot="field" role="group">
+                  <label data-slot="field-label" for="project-start">Start date</label>
+                  <input data-slot="input" id="project-start" name="start" type="date" required data-error-value-missing="Select a start date.">
+                </div>
+                <div data-slot="field" role="group">
+                  <label data-slot="field-label" for="project-due">Due date</label>
+                  <input data-slot="input" id="project-due" name="due" type="date" required data-error-value-missing="Select a due date.">
+                  <p data-slot="field-description">After the start date.</p>
+                </div>
+              </div>
+            </fieldset>
+            <div data-slot="field-separator"><div data-slot="separator"></div></div>
+            <fieldset data-slot="field-set">
+              <legend data-slot="field-legend">Visibility</legend>
+              <p data-slot="field-description">Who can see the project and its tasks.</p>
+              <div data-slot="radio-group" data-name="visibility" data-value="team">
+                  <label data-slot="field-label" for="visibility-private">
+                    <div data-slot="field" data-orientation="horizontal">
+                      <div data-slot="field-content">
+                        <div data-slot="field-label">Private</div>
+                        <p data-slot="field-description">Only you and the people you invite.</p>
+                      </div>
+                      <button type="button" data-slot="radio-group-item" id="visibility-private" value="private"></button>
+                    </div>
+                  </label>
+                  <label data-slot="field-label" for="visibility-team">
+                    <div data-slot="field" data-orientation="horizontal">
+                      <div data-slot="field-content">
+                        <div data-slot="field-label">Team</div>
+                        <p data-slot="field-description">Everyone in Acme Inc.</p>
+                      </div>
+                      <button type="button" data-slot="radio-group-item" id="visibility-team" value="team"></button>
+                    </div>
+                  </label>
+                  <label data-slot="field-label" for="visibility-public">
+                    <div data-slot="field" data-orientation="horizontal">
+                      <div data-slot="field-content">
+                        <div data-slot="field-label">Public</div>
+                        <p data-slot="field-description">Anyone with the link can view.</p>
+                      </div>
+                      <button type="button" data-slot="radio-group-item" id="visibility-public" value="public"></button>
+                    </div>
+                  </label>
+              </div>
+            </fieldset>
+            <div data-slot="field-separator"><div data-slot="separator"></div></div>
+            <div data-slot="field" data-orientation="horizontal">
+              <button type="button" data-slot="checkbox" id="project-notify" data-name="notify" data-checked></button>
+              <div data-slot="field-content">
+                <label data-slot="field-label" for="project-notify">Email the team when the project starts</label>
+                <p data-slot="field-description">Everyone with access gets one email on the start date.</p>
+              </div>
+            </div>
+            <div data-slot="field" data-orientation="horizontal">
+              <button type="submit" data-slot="button">Create project</button>
+              <a data-slot="button" data-variant="outline" href="#projects">Cancel</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -34,3 +34,31 @@
 {{- end}}
 </div>
 {{end}}
+
+{{define "block"}}<div data-docs="block" data-block="{{.Name}}">
+<div data-slot="tabs" data-default-value="preview" data-docs="block-tabs">
+<div data-docs="block-toolbar">
+<div data-slot="tabs-list">
+<button data-slot="tabs-trigger" data-value="preview">Preview</button>
+<button data-slot="tabs-trigger" data-value="code">Code</button>
+</div>
+<div data-docs="block-actions">
+<div data-slot="toggle-group" data-type="single" data-value="desktop" data-docs="block-width" aria-label="Preview width">
+<button type="button" data-slot="toggle-group-item" data-value="desktop" aria-label="Desktop"><svg data-lucide="monitor"></svg></button>
+<button type="button" data-slot="toggle-group-item" data-value="mobile" aria-label="Mobile"><svg data-lucide="smartphone"></svg></button>
+</div>
+<a data-slot="button" data-variant="outline" data-size="sm" href="{{.URL}}" target="_blank" rel="noreferrer"><svg data-lucide="external-link"></svg>Open in New Tab</a>
+</div>
+</div>
+<div data-slot="tabs-content" data-value="preview">
+<div data-docs="block-frame" data-width="desktop"><iframe src="{{.URL}}" title="{{.Title}} block" loading="lazy"></iframe></div>
+</div>
+<div data-slot="tabs-content" data-value="code">
+{{template "code" .HTML}}
+{{- with .JS}}
+{{template "code" .}}
+{{- end}}
+</div>
+</div>
+</div>
+{{end}}

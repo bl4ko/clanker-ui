@@ -153,7 +153,7 @@ Put overrides in `app.css` after the kit files, without a layer.
 
 | Group | Components | Needs |
 | --- | --- | --- |
-| `core` | button, separator, direction, theme, input, textarea, label, kbd, card, badge, alert, table, skeleton, spinner, empty, progress, aspect-ratio |  |
+| `core` | button, separator, direction, theme, input, textarea, label, kbd, card, badge, alert, table, skeleton, spinner, empty, progress, aspect-ratio, page, site-header, section-cards, stat-grid, data-table, brand, text-stack |  |
 | `forms` | button-group, input-group, input-otp, field, form, checkbox, radio-group, switch, slider, select, native-select, combobox, toggle, toggle-group |  |
 | `overlays` | dialog, alert-dialog, sheet, drawer, popover, tooltip, hover-card, dropdown-menu, context-menu, menubar, navigation-menu, command, toast, sonner | command: `forms` |
 | `layout` | avatar, accordion, collapsible, tabs, breadcrumb, pagination, scroll-area, resizable, sidebar, carousel, item | sidebar: `overlays` |
@@ -213,6 +213,7 @@ Markup mirrors the DOM that shadcn v4 renders. If you know the shadcn JSX, you c
 | `data-theme-picker`, `data-theme-picker="accent\|<name>"` | A `<select>` that changes one part of `data-scheme`. See [Color schemes](#color-schemes). |
 | `data-system-theme="light\|dark"` on `<html>` | Set by the kit: the system mode that shows in `system` mode. See [Theme toggle and switch](#theme-toggle-and-switch). |
 | `data-keyboard` on `<html>` | Set by the kit. Present after a trusted key press without Ctrl, Meta, or Alt, like `:focus-visible` (a lone modifier and the key `Unidentified` do not count). Removed when the pointer moves to new coordinates or presses; a move with the same coordinates (WebKit sends one when content scrolls under the cursor) does not count. While it is present, select, combobox, command, and menu items ignore pointer hover and leave events, so the keyboard item keeps the highlight. CSS for keyboard-only indicators keys off it. |
+| `data-show-from="sm\|md\|lg\|xl"`, `data-hide-from="sm\|md\|lg\|xl"` | Responsive visibility: `display: none` below (`show-from`) or from (`hide-from`) the viewport width 40rem, 48rem, 64rem, or 80rem, like the Tailwind `hidden lg:flex` and `lg:hidden` of the shadcn blocks. |
 | `class="sr-only"` | Visually hidden text. |
 
 Add ARIA per the WAI-ARIA APG. The kit adds the ARIA it can (`role`, `aria-expanded`, `aria-controls`, `aria-labelledby`, ...).
@@ -664,6 +665,8 @@ The control can be a `textarea`. A click on an addon (not on a button) focuses t
 #### Field
 
 `field-set` (a `fieldset`), `field-legend` (`data-variant="legend|label"`; the kit sets `legend` when it is missing, as shadcn renders it), `field-group`, `field` (`data-orientation="vertical|horizontal|responsive"`, `data-invalid="true"`, `data-disabled="true"`), `field-content`, `field-label`, `field-description`, `field-separator` (optional `field-separator-content` child), `field-error`. A `field-label` that wraps a `field` is a choice card. `responsive` switches to a row when the closest `field-group` is at least 28rem wide. `data-slot="checkbox-group"` gives the tight checkbox list spacing.
+
+Kit extensions: `field-label-row` holds a `field-label` and a link that goes to the end ("Forgot your password?"). `data-columns="2|3"` on a `field-group` puts its fields in 2 or 3 columns when the group is at least 28rem wide; the fields align at the top, so an error message under one field does not move the others. `data-span="2"` on a field in a 3-column group takes two columns.
 
 #### Form
 
@@ -1381,6 +1384,152 @@ sparkline(el, [980, 1020, 1284], { area: true, label: "Requests per minute" })
 - `statTile` renders `data-slot="chart-stat"` (`role="group"`) with `chart-stat-label`, `chart-stat-value` (compact from 10,000), `chart-stat-delta` (`data-direction`, `data-tone`, icon, signed percent, `chart-stat-period`), and an optional `chart-stat-trend` sparkline. `goodWhen: "down"` when a fall is good. Options: `label`, `value`, `format`, `delta`, `deltaFormat`, `period`, `goodWhen`, `trend`, `trendOptions`, `icon`, `description`, `locale`. `locale` sets the number locale (default as for charts). A failed `update()` throws and keeps the last good options; a `statTile()` call that throws leaves the element as it was.
 - `sparkline` is a line (or `area: true`) without axes or legend, in `--chart-other` with the latest point in the accent. It keeps the tooltip, the keyboard readout, and the table view: a toggle next to the line shows a transposed table (one row per series, one column per point). Pass `table: false` only when the same values are visible next to it.
 
+### Page patterns
+
+Kit parts for page structure, ported from the layout of the shadcn blocks (`dashboard-01`, `login-03`, `sidebar-07`, and the tasks example) so that an app needs no layout CSS. All are CSS only and in the core group. Full pages that use them: [Blocks](https://bl4ko.github.io/clanker-ui/docs/blocks/).
+
+#### Page
+
+```html
+<main data-slot="page" data-size="sm">
+  <div data-slot="page-header">
+    <h1 data-slot="page-title">Projects</h1>
+    <p data-slot="page-description">All projects of your team.</p>
+    <div data-slot="page-actions">
+      <button type="button" data-slot="button" data-variant="outline">Export</button>
+      <button type="button" data-slot="button">New project</button>
+    </div>
+  </div>
+  <div data-slot="page-body">
+    <aside data-slot="page-aside">
+      <nav data-slot="page-nav" aria-label="Settings">
+        <a data-slot="button" data-variant="ghost" href="#profile" aria-current="page">Profile</a>
+        <a data-slot="button" data-variant="ghost" href="#account">Account</a>
+      </nav>
+    </aside>
+    <div>Content</div>
+  </div>
+</main>
+```
+
+- `data-layout="center"` on `page` is the sign-in layout of shadcn `login-03`: a muted full-height page with its children centered at most 24rem wide. In it, card headers are centered, the card title is 20 px, a `field-description` child of the page is centered, and so is one in the field of the submit button.
+- `page` is the content column: gutters of 1rem (1.5rem from 64rem), a 1rem gap between its children (1.5rem from 48rem), and `container: page`. Put it in `sidebar-inset` or `<body>`. `data-size="sm|md|lg"` limits the content to 42rem, 56rem, or 72rem and centers it; no size fills the width (dashboards, tables).
+- `page-header` is a grid: `page-title` (24 px, weight 600) and `page-description` (muted) on the start side, `page-actions` (a row of buttons, `gap` 0.5rem) on the end side. Below 32rem of header width, the actions move under the text.
+- `page-body` puts its children in one column. With a `page-aside` first, it is a 12rem navigation column (sticky) and a content column of at most 42rem from 64rem; with a `page-aside` last, a 20rem side column. Each child is a flex column with a 1.5rem gap.
+- `page-nav` holds ghost buttons (`aria-current="page"` on the current one gets the muted background). It is a row that scrolls below 64rem and a column from 64rem.
+
+#### Site Header
+
+```html
+<header data-slot="site-header">
+  <button data-slot="sidebar-trigger"></button>
+  <div data-slot="separator" data-orientation="vertical"></div>
+  <h1 data-slot="site-header-title">Documents</h1>
+  <div data-slot="site-header-actions">
+    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+  </div>
+</header>
+```
+
+- The top bar of a page, as in shadcn `dashboard-01`: `--header-height` high (default 3rem), a bottom border, sticky at the top, 1rem gutters (1.5rem from 64rem). A `sidebar-trigger` first and a vertical `separator` get the shadcn spacing. `site-header-title` is 16 px, weight 500, on one line. `site-header-actions` goes to the end.
+- Without a sidebar it is the app header: a `brand` link, then `site-header-nav` with links (muted, `aria-current="page"` in the foreground), then `site-header-actions`. `data-size="lg"` makes the bar 3.5rem high.
+- A `breadcrumb` can stand in place of the title.
+
+#### Section Cards
+
+```html
+<div data-slot="section-cards">
+  <div data-slot="card">
+    <div data-slot="card-header">
+      <div data-slot="card-description">Total Revenue</div>
+      <div data-slot="card-title">$1,250.00</div>
+      <div data-slot="card-action"><span data-slot="badge" data-variant="outline"><svg data-lucide="trending-up"></svg>+12.5%</span></div>
+    </div>
+    <div data-slot="card-footer">
+      <div>Trending up this month <svg data-lucide="trending-up"></svg></div>
+      <div data-slot="card-description">Visitors for the last 6 months</div>
+    </div>
+  </div>
+</div>
+```
+
+- The KPI cards of shadcn `dashboard-01`. Columns follow the width of the grid itself: 1, then 2 from 34rem, then 4 from 61rem; exactly 3 cards go to 3 columns from 44rem. Use 2, 3, 4, or 8 cards.
+- Each card is a subgrid row of the grid, so the headers and the footers of one row line up when a label wraps. A card with a `card-content` takes three rows.
+- `card-title` is the value: 24 px (30 px when the card is at least 250 px wide), weight 600, tabular numbers. It wraps instead of being cut. The footer holds a medium trend line with an icon and a `card-description`.
+- `statTile()` elements can be the children too.
+
+#### Stat Grid
+
+```html
+<dl data-slot="stat-grid">
+  <div>
+    <dt>Uptime</dt>
+    <dd>99.98%</dd>
+    <dd>Last 30 days</dd>
+  </div>
+  <div>
+    <dt>Requests</dt>
+    <dd>1.2M <span data-slot="badge" data-variant="success">+4%</span></dd>
+    <dd>Last 30 days</dd>
+  </div>
+</dl>
+```
+
+- Static numbers without JavaScript in one card surface with 1 px dividers. Each child `div` holds a `dt` (label), a `dd` (value: 24 px, weight 600, tabular numbers, wraps instead of being cut), and an optional second `dd` (muted note).
+- Columns follow the width of the list: 1, 2 from 20rem, and from 36rem 3 (3, 5, 6, or 9 items) or 4 (4, 7, 8 items).
+- `data-size="sm"` shows the values in 14 px, weight 500: the facts of a detail page (owner, created, status).
+
+#### Data Table
+
+```html
+<div data-slot="data-table">
+  <div data-slot="data-table-toolbar">
+    <div>
+      <input data-slot="input" type="search" placeholder="Filter tasks..." aria-label="Filter tasks">
+    </div>
+    <div>
+      <button type="button" data-slot="button" data-size="sm">Add Task</button>
+    </div>
+  </div>
+  <div data-slot="table-container">
+    <table data-slot="table">
+      <thead data-slot="table-header"><tr data-slot="table-row"><th data-slot="table-head" scope="col">Task</th><th data-slot="table-head" scope="col" data-align="end">Hours</th></tr></thead>
+      <tbody data-slot="table-body"><tr data-slot="table-row"><td data-slot="table-cell">TASK-8782</td><td data-slot="table-cell" data-align="end">12</td></tr></tbody>
+    </table>
+  </div>
+  <div data-slot="data-table-pagination">
+    <div data-slot="data-table-selection">0 of 68 row(s) selected.</div>
+    <div>Page 1 of 7</div>
+    <div>
+      <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Go to previous page" disabled><svg data-lucide="chevron-left"></svg></button>
+      <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Go to next page"><svg data-lucide="chevron-right"></svg></button>
+    </div>
+  </div>
+</div>
+```
+
+- The frame of the shadcn data table (tasks example and `dashboard-01`): a toolbar, the table in a bordered, rounded `table-container` with a muted header, and the pagination row. Sorting, filtering, and paging are app code.
+- `data-table-toolbar` has two `div` groups: filters at the start (the first grows; a text input in it is 150 to 250 px) and actions at the end. Both wrap.
+- `data-table-pagination` is a row of `div` groups at the end, 14 px, weight 500. `data-table-selection` is the muted selection text that fills the start.
+- `data-table-text` is the text of a cell: one line, cut with an ellipsis at 32rem (or 60 % of the table width). With an icon first it is an icon and label row (the icon is muted). A sort button: a ghost `button` alone in the `table-head`, with `aria-sort` on the head.
+- `data-align="end"` on a `table-head` or `table-cell` aligns numbers to the end with tabular figures; `data-align="center"` centers. A cell with only a `checkbox` is 2rem wide. A cell with an `empty` has no padding: use it with `colspan` for the empty state.
+
+#### Brand
+
+```html
+<a data-slot="brand" href="/"><span data-slot="brand-mark" data-size="sm"><svg data-lucide="layout-dashboard"></svg></span>Acme Inc.</a>
+```
+
+- The logo link of the app: `brand-mark` (a primary square, 32 px; `data-size="sm"` 24 px) and the name, weight 500. In a `sidebar`, the mark uses `--sidebar-primary`. `brand-mark` also stands alone in a large `sidebar-menu-button`, before a `text-stack`.
+
+#### Text Stack
+
+```html
+<span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
+```
+
+- A name and a detail line, as in the shadcn team switcher and user menu: the first line is 14 px, weight 500; the next lines are 12 px at 70 % of the text color. Each line is cut with an ellipsis. Use it after an `avatar` or a `brand-mark` in a `sidebar-menu-button`, a `dropdown-menu-label`, or a table cell.
+
 
 ## License
 
@@ -1389,7 +1538,7 @@ MIT, see [LICENSE](LICENSE). The notices and licenses of the third-party parts a
 
 ## Component reference
 
-Global attributes (any element): `data-align` `center`, `end`, `start`; `data-align-offset` number; `data-icon` `inline-end`, `inline-start`; `data-loop` boolean; `data-lucide` string; `data-multiple` boolean; `data-required` boolean; `data-scheme` string; `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top`; `data-side-offset` number; `data-theme-picker` string; `data-theme-set` `dark`, `light`, `system`, `toggle`; `data-typography` (empty), `blockquote`, `h1`, `h2`, `h3`, `h4`, `inline-code`, `large`, `lead`, `list`, `muted`, `p`, `small`, `table`; `data-string-<key>` (localized label override).
+Global attributes (any element): `data-align` `center`, `end`, `start`; `data-align-offset` number; `data-hide-from` `lg`, `md`, `sm`, `xl`; `data-icon` `inline-end`, `inline-start`; `data-loop` boolean; `data-lucide` string; `data-multiple` boolean; `data-required` boolean; `data-scheme` string; `data-show-from` `lg`, `md`, `sm`, `xl`; `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top`; `data-side-offset` number; `data-theme-picker` string; `data-theme-set` `dark`, `light`, `system`, `toggle`; `data-typography` (empty), `blockquote`, `h1`, `h2`, `h3`, `h4`, `inline-code`, `large`, `lead`, `list`, `muted`, `p`, `small`, `table`; `data-string-<key>` (localized label override).
 
 ### Components
 
@@ -1623,6 +1772,66 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 </div>
 ```
 
+#### Page (`page`)
+
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/page/.
+
+| Part | Write | State |
+| --- | --- | --- |
+| `page` (root) | `data-size` `lg`, `md`, `sm` | `data-layout` |
+
+Other parts: `page-actions`, `page-aside`, `page-body`, `page-description`, `page-header`, `page-nav`, `page-title`.
+
+Other options named in the docs: `data-layout` string.
+
+#### Site Header (`site-header`)
+
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/site-header/.
+
+| Part | Write | State |
+| --- | --- | --- |
+| `site-header` (root) | `data-size` `lg` |  |
+
+Other parts: `site-header-actions`, `site-header-nav`, `site-header-title`.
+
+#### Section Cards (`section-cards`)
+
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/section-cards/.
+
+Other parts: `section-cards` (root).
+
+#### Stat Grid (`stat-grid`)
+
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/stat-grid/.
+
+Other parts: `stat-grid` (root).
+
+Other options named in the docs: `data-size` `sm`.
+
+#### Data Table (`data-table`)
+
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/data-table/.
+
+Other parts: `data-table` (root), `data-table-pagination`, `data-table-selection`, `data-table-text`, `data-table-toolbar`.
+
+Other options named in the docs: `data-table-pagination` any; `data-table-selection` any; `data-table-text` any.
+
+#### Brand (`brand`)
+
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/brand/.
+
+| Part | Write | State |
+| --- | --- | --- |
+| `brand-mark` | `data-size` `sm` |  |
+
+Other parts: `brand` (root).
+
+#### Text Stack (`text-stack`)
+
+Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/text-stack/.
+
+Other parts: `text-stack` (root).
+
 #### Button Group (`button-group`)
 
 Group `forms`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/button-group/.
@@ -1669,9 +1878,12 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | Part | Write | State |
 | --- | --- | --- |
 | `field` (root) | `data-disabled` `false`, `true`; `data-invalid` `false`, `true`; `data-orientation` `horizontal`, `responsive`, `vertical` |  |
+| `field-group` |  | `data-columns` |
 | `field-legend` | `data-variant` `label`, `legend` |  |
 
-Other parts: `field-content`, `field-description`, `field-error`, `field-group`, `field-label`, `field-separator`, `field-separator-content`, `field-set`.
+Other parts: `field-content`, `field-description`, `field-error`, `field-label`, `field-label-row`, `field-separator`, `field-separator-content`, `field-set`.
+
+Other options named in the docs: `data-columns` `2`, `3`; `data-span` number.
 
 ```html
 <fieldset data-slot="field-set">

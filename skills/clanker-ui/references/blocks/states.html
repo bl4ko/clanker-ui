@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>States - Acme Inc.</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <script src="/vendor/clanker-ui/clanker-ui-theme.js"></script>
+  <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
+  <script type="module" src="/states.js"></script>
+</head>
+<body>
+  <header data-slot="site-header" data-size="lg">
+    <div data-slot="dropdown-menu" data-hide-from="md">
+      <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Menu"><svg data-lucide="menu"></svg></button>
+      <div data-slot="dropdown-menu-content" data-align="start">
+              <a data-slot="dropdown-menu-item" href="#overview">Overview</a>
+              <a data-slot="dropdown-menu-item" href="#tasks">Tasks</a>
+              <a data-slot="dropdown-menu-item" href="#invoices">Invoices</a>
+              <a data-slot="dropdown-menu-item" href="#settings">Settings</a>
+      </div>
+    </div>
+    <a data-slot="brand" href="#"><span data-slot="brand-mark" data-size="sm"><svg data-lucide="layout-dashboard"></svg></span>Acme Inc.</a>
+    <nav data-slot="site-header-nav" aria-label="Main" data-show-from="md">
+          <a href="#overview">Overview</a>
+          <a href="#tasks">Tasks</a>
+          <a href="#invoices" aria-current="page">Invoices</a>
+          <a href="#settings">Settings</a>
+    </nav>
+    <div data-slot="site-header-actions">
+      <div data-slot="input-group" data-show-from="lg">
+        <div data-slot="input-group-addon"><svg data-lucide="search"></svg></div>
+        <input data-slot="input-group-control" type="search" placeholder="Search..." aria-label="Search">
+      </div>
+      <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+      <div data-slot="dropdown-menu">
+        <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Account"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">CN</span></span></button>
+        <div data-slot="dropdown-menu-content" data-align="end">
+          <div data-slot="dropdown-menu-label">
+            <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
+          </div>
+          <div data-slot="dropdown-menu-separator"></div>
+          <div data-slot="dropdown-menu-group">
+            <a data-slot="dropdown-menu-item" href="#profile"><svg data-lucide="user"></svg>Profile</a>
+            <a data-slot="dropdown-menu-item" href="#billing"><svg data-lucide="credit-card"></svg>Billing</a>
+            <a data-slot="dropdown-menu-item" href="#settings"><svg data-lucide="settings"></svg>Settings</a>
+          </div>
+          <div data-slot="dropdown-menu-separator"></div>
+          <a data-slot="dropdown-menu-item" href="#logout"><svg data-lucide="log-out"></svg>Log out</a>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main data-slot="page" data-size="md">
+    <div data-slot="page-header">
+      <h1 data-slot="page-title">Invoices</h1>
+      <p data-slot="page-description">Each list and card has four states: loading, empty, error, and loaded.</p>
+      <div data-slot="page-actions">
+        <button type="button" data-slot="button" data-variant="outline" id="toast-error">Show error toast</button>
+        <button type="button" data-slot="button" id="toast-success">Show success toast</button>
+      </div>
+    </div>
+    <section data-slot="card" aria-labelledby="loading-title" aria-busy="true">
+      <div data-slot="card-header">
+        <h2 data-slot="card-title" id="loading-title">Loading</h2>
+        <p data-slot="card-description">Skeletons keep the shape of the content, so nothing jumps when the data arrives.</p>
+        <div data-slot="card-action"><button type="button" data-slot="button" data-variant="outline" data-size="sm" disabled><svg data-slot="spinner" data-size="sm" role="none"></svg>Refreshing</button></div>
+      </div>
+      <div data-slot="card-content">
+        <span class="sr-only" role="status">Loading invoices</span>
+        <div data-slot="table-container" aria-hidden="true">
+          <table data-slot="table">
+            <thead data-slot="table-header">
+              <tr data-slot="table-row">
+                <th data-slot="table-head" scope="col">Invoice</th>
+                <th data-slot="table-head" scope="col">Customer</th>
+                <th data-slot="table-head" scope="col" data-show-from="sm">Status</th>
+                <th data-slot="table-head" scope="col" data-align="end">Amount</th>
+              </tr>
+            </thead>
+            <tbody data-slot="table-body">
+                <tr data-slot="table-row">
+                  <td data-slot="table-cell"><span data-slot="skeleton">INV-0000</span></td>
+                  <td data-slot="table-cell"><span data-slot="skeleton">Acme Corporation</span></td>
+                  <td data-slot="table-cell" data-show-from="sm"><span data-slot="skeleton">Pending</span></td>
+                  <td data-slot="table-cell" data-align="end"><span data-slot="skeleton">$000.00</span></td>
+                </tr>
+                <tr data-slot="table-row">
+                  <td data-slot="table-cell"><span data-slot="skeleton">INV-0000</span></td>
+                  <td data-slot="table-cell"><span data-slot="skeleton">Globex</span></td>
+                  <td data-slot="table-cell" data-show-from="sm"><span data-slot="skeleton">Pending</span></td>
+                  <td data-slot="table-cell" data-align="end"><span data-slot="skeleton">$000.00</span></td>
+                </tr>
+                <tr data-slot="table-row">
+                  <td data-slot="table-cell"><span data-slot="skeleton">INV-0000</span></td>
+                  <td data-slot="table-cell"><span data-slot="skeleton">Initech Systems</span></td>
+                  <td data-slot="table-cell" data-show-from="sm"><span data-slot="skeleton">Pending</span></td>
+                  <td data-slot="table-cell" data-align="end"><span data-slot="skeleton">$000.00</span></td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <section data-slot="card" aria-labelledby="empty-title">
+      <div data-slot="card-header">
+        <h2 data-slot="card-title" id="empty-title">Empty</h2>
+        <p data-slot="card-description">The first visit: say what goes here and give the one action that fills it.</p>
+      </div>
+      <div data-slot="card-content">
+        <div data-slot="empty" data-variant="outline">
+          <div data-slot="empty-header">
+            <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="file-text"></svg></div>
+            <div data-slot="empty-title">No invoices yet</div>
+            <div data-slot="empty-description">Invoices that you send show here with their status.</div>
+          </div>
+          <div data-slot="empty-content">
+            <button type="button" data-slot="button" data-size="sm"><svg data-lucide="plus"></svg>Create invoice</button>
+            <a data-slot="button" data-variant="link" data-size="sm" href="#import">Import from CSV</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section data-slot="card" aria-labelledby="results-title">
+      <div data-slot="card-header">
+        <h2 data-slot="card-title" id="results-title">No results</h2>
+        <p data-slot="card-description">Filters hide every row: name the filter and offer to clear it.</p>
+      </div>
+      <div data-slot="card-content">
+        <div data-slot="data-table">
+          <div data-slot="data-table-toolbar">
+            <div><input data-slot="input" type="search" value="Umbrella" aria-label="Filter invoices"></div>
+          </div>
+          <div data-slot="table-container">
+            <table data-slot="table">
+              <thead data-slot="table-header">
+                <tr data-slot="table-row">
+                  <th data-slot="table-head" scope="col">Invoice</th>
+                  <th data-slot="table-head" scope="col">Customer</th>
+                  <th data-slot="table-head" scope="col" data-align="end">Amount</th>
+                </tr>
+              </thead>
+              <tbody data-slot="table-body">
+                <tr data-slot="table-row">
+                  <td data-slot="table-cell" colspan="3">
+                    <div data-slot="empty">
+                      <div data-slot="empty-header">
+                        <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="search"></svg></div>
+                        <div data-slot="empty-title">No invoices match “Umbrella”</div>
+                        <div data-slot="empty-description">Check the spelling or clear the filter.</div>
+                      </div>
+                      <div data-slot="empty-content"><button type="button" data-slot="button" data-variant="outline" data-size="sm">Clear filter</button></div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section data-slot="card" aria-labelledby="error-title">
+      <div data-slot="card-header">
+        <h2 data-slot="card-title" id="error-title">Error</h2>
+        <p data-slot="card-description">Say what failed, keep what still works, and give a way to try again.</p>
+      </div>
+      <div data-slot="card-content">
+        <div data-slot="alert" data-variant="destructive" role="alert">
+          <svg data-lucide="circle-alert"></svg>
+          <div data-slot="alert-title">Could not load invoices</div>
+          <div data-slot="alert-description">The server did not answer in 10 seconds. Your data is safe.</div>
+          <div data-slot="alert-action"><button type="button" data-slot="button" data-variant="outline" data-size="sm" id="retry"><svg data-lucide="refresh-cw"></svg>Try again</button></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

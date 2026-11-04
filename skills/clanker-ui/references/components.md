@@ -10,14 +10,14 @@ Each group has `clanker-ui-<group>.min.css` and (except core CSS-only parts) `cl
 
 | Group | Components |
 | --- | --- |
-| `core` | button, separator, direction, theme, input, textarea, label, kbd, card, badge, alert, table, skeleton, spinner, empty, progress, aspect-ratio |
+| `core` | button, separator, direction, theme, input, textarea, label, kbd, card, badge, alert, table, skeleton, spinner, empty, progress, aspect-ratio, page, site-header, section-cards, stat-grid, data-table, brand, text-stack |
 | `forms` | button-group, input-group, input-otp, field, form, checkbox, radio-group, switch, slider, select, native-select, combobox, toggle, toggle-group |
 | `overlays` | dialog, alert-dialog, sheet, drawer, popover, tooltip, hover-card, dropdown-menu, context-menu, menubar, navigation-menu, command, toast, sonner |
 | `layout` | avatar, accordion, collapsible, tabs, breadcrumb, pagination, scroll-area, resizable, sidebar, carousel, item |
 | `chat` | message, bubble, attachment, message-scroller, trace, marker, questionnaire, code-block, calendar, date-picker |
 | `chart` | chart |
 
-Global attributes (any element): `data-align` `center`, `end`, `start`; `data-align-offset` number; `data-icon` `inline-end`, `inline-start`; `data-loop` boolean; `data-lucide` string; `data-multiple` boolean; `data-required` boolean; `data-scheme` string; `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top`; `data-side-offset` number; `data-theme-picker` string; `data-theme-set` `dark`, `light`, `system`, `toggle`; `data-typography` (empty), `blockquote`, `h1`, `h2`, `h3`, `h4`, `inline-code`, `large`, `lead`, `list`, `muted`, `p`, `small`, `table`; `data-string-<key>` (localized label override).
+Global attributes (any element): `data-align` `center`, `end`, `start`; `data-align-offset` number; `data-hide-from` `lg`, `md`, `sm`, `xl`; `data-icon` `inline-end`, `inline-start`; `data-loop` boolean; `data-lucide` string; `data-multiple` boolean; `data-required` boolean; `data-scheme` string; `data-show-from` `lg`, `md`, `sm`, `xl`; `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top`; `data-side-offset` number; `data-theme-picker` string; `data-theme-set` `dark`, `light`, `system`, `toggle`; `data-typography` (empty), `blockquote`, `h1`, `h2`, `h3`, `h4`, `inline-code`, `large`, `lead`, `list`, `muted`, `p`, `small`, `table`; `data-string-<key>` (localized label override).
 
 ## Component files
 

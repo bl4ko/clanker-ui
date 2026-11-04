@@ -2,7 +2,8 @@
   "header": [
     {"title": "Home", "href": "/"},
     {"title": "Docs", "href": "/docs"},
-    {"title": "Components", "href": "/docs/components"}
+    {"title": "Components", "href": "/docs/components"},
+    {"title": "Blocks", "href": "/docs/blocks"}
   ],
   "sections": [
     {"title": "Introduction", "href": "/docs"},
@@ -93,6 +94,19 @@
       ]
     },
     {
+      "title": "Blocks",
+      "items": [
+        {"title": "Blocks", "href": "/docs/blocks", "hidden": true},
+        {"title": "Dashboard", "href": "/docs/blocks/dashboard", "description": "An app dashboard with a sidebar: section cards, an interactive area chart, and a data table with tabs (shadcn dashboard-01)."},
+        {"title": "Data Table", "href": "/docs/blocks/data-table", "description": "A task list with a top header: filter, faceted filters, column visibility, sorting, selection, row actions, pagination, and the empty state (shadcn tasks example)."},
+        {"title": "Settings", "href": "/docs/blocks/settings", "description": "A settings page with section navigation and one form card per section: profile, notifications, appearance, and a danger zone."},
+        {"title": "Form", "href": "/docs/blocks/form", "description": "A create and edit page with field sets, validation, help text, and one primary action."},
+        {"title": "Detail", "href": "/docs/blocks/detail", "description": "A record page with a breadcrumb, a header with actions, key numbers, a facts list, and activity."},
+        {"title": "Login", "href": "/docs/blocks/login", "description": "A sign-in page with a brand mark, social buttons, and a validated email and password form (shadcn login-03)."},
+        {"title": "States", "href": "/docs/blocks/states", "description": "Empty, loading, and error states for cards, lists, and tables."}
+      ]
+    },
+    {
       "title": "Get Started",
       "items": [
         {"title": "Introduction", "href": "/docs", "mobileOnly": true},
@@ -119,7 +133,14 @@
       "items": [
         {"title": "Theme Switch", "href": "/docs/components/theme-switch", "readme": "theme-toggle-and-switch"},
         {"title": "Icons", "href": "/docs/components/icons"},
-        {"title": "Stat Tile and Sparkline", "href": "/docs/components/stat-tile", "readme": "stat-tile-and-sparkline"}
+        {"title": "Stat Tile and Sparkline", "href": "/docs/components/stat-tile", "readme": "stat-tile-and-sparkline"},
+        {"title": "Page", "href": "/docs/components/page"},
+        {"title": "Site Header", "href": "/docs/components/site-header"},
+        {"title": "Section Cards", "href": "/docs/components/section-cards"},
+        {"title": "Stat Grid", "href": "/docs/components/stat-grid"},
+        {"title": "Data Table", "href": "/docs/components/data-table"},
+        {"title": "Brand", "href": "/docs/components/brand"},
+        {"title": "Text Stack", "href": "/docs/components/text-stack"}
       ]
     }
   ]

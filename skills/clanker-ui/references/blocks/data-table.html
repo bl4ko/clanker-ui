@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Tasks - Acme Inc.</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <script src="/vendor/clanker-ui/clanker-ui-theme.js"></script>
+  <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
+  <script type="module" src="/data-table.js"></script>
+</head>
+<body>
+  <header data-slot="site-header" data-size="lg">
+    <div data-slot="dropdown-menu" data-hide-from="md">
+      <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Menu"><svg data-lucide="menu"></svg></button>
+      <div data-slot="dropdown-menu-content" data-align="start">
+              <a data-slot="dropdown-menu-item" href="#overview">Overview</a>
+              <a data-slot="dropdown-menu-item" href="#tasks">Tasks</a>
+              <a data-slot="dropdown-menu-item" href="#invoices">Invoices</a>
+              <a data-slot="dropdown-menu-item" href="#settings">Settings</a>
+      </div>
+    </div>
+    <a data-slot="brand" href="#"><span data-slot="brand-mark" data-size="sm"><svg data-lucide="layout-dashboard"></svg></span>Acme Inc.</a>
+    <nav data-slot="site-header-nav" aria-label="Main" data-show-from="md">
+          <a href="#overview">Overview</a>
+          <a href="#tasks" aria-current="page">Tasks</a>
+          <a href="#invoices">Invoices</a>
+          <a href="#settings">Settings</a>
+    </nav>
+    <div data-slot="site-header-actions">
+      <div data-slot="input-group" data-show-from="lg">
+        <div data-slot="input-group-addon"><svg data-lucide="search"></svg></div>
+        <input data-slot="input-group-control" type="search" placeholder="Search..." aria-label="Search">
+      </div>
+      <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+      <div data-slot="dropdown-menu">
+        <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Account"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">CN</span></span></button>
+        <div data-slot="dropdown-menu-content" data-align="end">
+          <div data-slot="dropdown-menu-label">
+            <span data-slot="text-stack"><span>shadcn</span><span>m@example.com</span></span>
+          </div>
+          <div data-slot="dropdown-menu-separator"></div>
+          <div data-slot="dropdown-menu-group">
+            <a data-slot="dropdown-menu-item" href="#profile"><svg data-lucide="user"></svg>Profile</a>
+            <a data-slot="dropdown-menu-item" href="#billing"><svg data-lucide="credit-card"></svg>Billing</a>
+            <a data-slot="dropdown-menu-item" href="#settings"><svg data-lucide="settings"></svg>Settings</a>
+          </div>
+          <div data-slot="dropdown-menu-separator"></div>
+          <a data-slot="dropdown-menu-item" href="#logout"><svg data-lucide="log-out"></svg>Log out</a>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main data-slot="page">
+    <div data-slot="page-header">
+      <h1 data-slot="page-title">Welcome back!</h1>
+      <p data-slot="page-description">Here's a list of your tasks for this month.</p>
+    </div>
+    <div data-slot="data-table" id="tasks">
+      <div data-slot="data-table-toolbar">
+        <div>
+          <input data-slot="input" type="search" id="task-filter" placeholder="Filter tasks..." aria-label="Filter tasks">
+            <div data-slot="dropdown-menu" data-filter="status">
+              <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="circle-fading-plus"></svg>Status<span data-slot="badge" data-variant="secondary" hidden></span></button>
+              <div data-slot="dropdown-menu-content" data-align="start">
+                <div data-slot="dropdown-menu-group">
+                  <div data-slot="dropdown-menu-label">Status</div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="backlog"><svg data-lucide="circle-question-mark"></svg>Backlog<span data-slot="dropdown-menu-shortcut">4</span></div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="todo"><svg data-lucide="circle"></svg>Todo<span data-slot="dropdown-menu-shortcut">2</span></div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="in progress"><svg data-lucide="clock"></svg>In Progress<span data-slot="dropdown-menu-shortcut">5</span></div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="done"><svg data-lucide="circle-check"></svg>Done<span data-slot="dropdown-menu-shortcut">4</span></div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="canceled"><svg data-lucide="circle-x"></svg>Canceled<span data-slot="dropdown-menu-shortcut">1</span></div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="dropdown-menu" data-filter="priority">
+              <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="circle-fading-plus"></svg>Priority<span data-slot="badge" data-variant="secondary" hidden></span></button>
+              <div data-slot="dropdown-menu-content" data-align="start">
+                <div data-slot="dropdown-menu-group">
+                  <div data-slot="dropdown-menu-label">Priority</div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="low"><svg data-lucide="arrow-down"></svg>Low<span data-slot="dropdown-menu-shortcut">3</span></div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="medium"><svg data-lucide="arrow-right"></svg>Medium<span data-slot="dropdown-menu-shortcut">8</span></div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="high"><svg data-lucide="arrow-up"></svg>High<span data-slot="dropdown-menu-shortcut">5</span></div>
+                </div>
+              </div>
+            </div>
+          <button type="button" data-slot="button" data-variant="ghost" data-size="sm" id="task-reset" hidden>Reset<svg data-lucide="x"></svg></button>
+        </div>
+        <div>
+          <div data-slot="dropdown-menu" id="task-view">
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-dropdown-menu-trigger><svg data-lucide="list-filter"></svg>View</button>
+            <div data-slot="dropdown-menu-content" data-align="end">
+              <div data-slot="dropdown-menu-group">
+                <div data-slot="dropdown-menu-label">Toggle columns</div>
+                <div data-slot="dropdown-menu-separator"></div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="title" data-checked>Title</div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="status" data-checked>Status</div>
+                <div data-slot="dropdown-menu-checkbox-item" data-value="priority" data-checked>Priority</div>
+              </div>
+            </div>
+          </div>
+          <button type="button" data-slot="button" data-size="sm"><svg data-lucide="plus"></svg>Add Task</button>
+        </div>
+      </div>
+      <div data-slot="table-container">
+        <table data-slot="table">
+          <thead data-slot="table-header">
+            <tr data-slot="table-row">
+              <th data-slot="table-head" scope="col"><button type="button" data-slot="checkbox" aria-label="Select all"></button></th>
+              <th data-slot="table-head" scope="col" data-column="task" data-show-from="md">Task</th>
+                <th data-slot="table-head" scope="col" data-column="title" aria-sort="none"><button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-sort="title">Title<svg data-lucide="arrow-up-down"></svg></button></th>
+                <th data-slot="table-head" scope="col" data-column="status" data-show-from="sm" aria-sort="none"><button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-sort="status">Status<svg data-lucide="arrow-up-down"></svg></button></th>
+                <th data-slot="table-head" scope="col" data-column="priority" data-show-from="lg" aria-sort="none"><button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-sort="priority">Priority<svg data-lucide="arrow-up-down"></svg></button></th>
+              <th data-slot="table-head" scope="col"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody data-slot="table-body">
+              <tr data-slot="table-row" data-status="in progress" data-priority="medium">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-8782"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-8782</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="You can&#39;t compress the program without quantifying the open-source SSD pixel!">You can&#39;t compress the program without quantifying the open-source SSD pixel!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In Progress</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-8782"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="backlog" data-priority="medium">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-7878"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-7878</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="Try to calculate the EXE feed, maybe it will index the multi-byte pixel!">Try to calculate the EXE feed, maybe it will index the multi-byte pixel!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-question-mark"></svg>Backlog</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-7878"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="todo" data-priority="high">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-7839"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-7839</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Bug</span> <span data-slot="data-table-text" title="We need to bypass the neural TCP card!">We need to bypass the neural TCP card!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle"></svg>Todo</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-up"></svg>High</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-7839"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="backlog" data-priority="medium">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-5562"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-5562</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Feature</span> <span data-slot="data-table-text" title="The SAS interface is down, bypass the open-source pixel so we can back up the PNG bandwidth!">The SAS interface is down, bypass the open-source pixel so we can back up the PNG bandwidth!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-question-mark"></svg>Backlog</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-5562"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="canceled" data-priority="medium">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-8686"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-8686</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Feature</span> <span data-slot="data-table-text" title="I&#39;ll parse the wireless SSL protocol, that should driver the API panel!">I&#39;ll parse the wireless SSL protocol, that should driver the API panel!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-x"></svg>Canceled</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-8686"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="done" data-priority="high">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-1280"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-1280</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Bug</span> <span data-slot="data-table-text" title="Use the digital TLS panel, then you can transmit the haptic system!">Use the digital TLS panel, then you can transmit the haptic system!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-check"></svg>Done</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-up"></svg>High</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-1280"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="done" data-priority="high">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-7262"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-7262</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Feature</span> <span data-slot="data-table-text" title="The UTF8 application is down, parse the neural bandwidth so we can back up the PNG firewall!">The UTF8 application is down, parse the neural bandwidth so we can back up the PNG firewall!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-check"></svg>Done</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-up"></svg>High</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-7262"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="in progress" data-priority="medium">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-1138"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-1138</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Feature</span> <span data-slot="data-table-text" title="Generating the driver won&#39;t do anything, we need to quantify the 1080p SMTP bandwidth!">Generating the driver won&#39;t do anything, we need to quantify the 1080p SMTP bandwidth!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In Progress</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-1138"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="todo" data-priority="low">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-7184"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-7184</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Feature</span> <span data-slot="data-table-text" title="We need to program the back-end THX pixel!">We need to program the back-end THX pixel!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle"></svg>Todo</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-down"></svg>Low</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-7184"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="in progress" data-priority="high">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-5160"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-5160</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="Calculating the bus won&#39;t do anything, we need to navigate the back-end JSON protocol!">Calculating the bus won&#39;t do anything, we need to navigate the back-end JSON protocol!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In Progress</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-up"></svg>High</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-5160"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="done" data-priority="medium">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-5618"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-5618</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="Generating the driver won&#39;t do anything, we need to index the online SSL application!">Generating the driver won&#39;t do anything, we need to index the online SSL application!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-check"></svg>Done</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-5618"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="backlog" data-priority="medium">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-6699"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-6699</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="I&#39;ll transmit the wireless JBOD capacitor, that should hard drive the SSD feed!">I&#39;ll transmit the wireless JBOD capacitor, that should hard drive the SSD feed!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-question-mark"></svg>Backlog</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-6699"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="backlog" data-priority="medium">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-2858"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-2858</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Bug</span> <span data-slot="data-table-text" title="We need to override the online UDP bus!">We need to override the online UDP bus!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-question-mark"></svg>Backlog</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-2858"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="done" data-priority="high">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-9864"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-9864</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Bug</span> <span data-slot="data-table-text" title="I&#39;ll reboot the 1080p FTP panel, that should matrix the HEX hard drive!">I&#39;ll reboot the 1080p FTP panel, that should matrix the HEX hard drive!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-check"></svg>Done</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-up"></svg>High</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-9864"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="in progress" data-priority="low">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-8404"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-8404</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Bug</span> <span data-slot="data-table-text" title="We need to generate the virtual HEX alarm!">We need to generate the virtual HEX alarm!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In Progress</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-down"></svg>Low</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-8404"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr data-slot="table-row" data-status="in progress" data-priority="low">
+                <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-5365"></button></td>
+                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-5365</td>
+                <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="Backing up the pixel won&#39;t do anything, we need to transmit the primary IB array!">Backing up the pixel won&#39;t do anything, we need to transmit the primary IB array!</span></td>
+                <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="clock"></svg>In Progress</span></td>
+                <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-down"></svg>Low</span></td>
+                <td data-slot="table-cell" data-align="end">
+                  <div data-slot="dropdown-menu">
+                    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-dropdown-menu-trigger aria-label="Actions for TASK-5365"><svg data-lucide="ellipsis"></svg></button>
+                    <div data-slot="dropdown-menu-content" data-align="end">
+                      <div data-slot="dropdown-menu-item" data-action="edit">Edit</div>
+                      <div data-slot="dropdown-menu-item" data-action="copy">Make a copy</div>
+                      <div data-slot="dropdown-menu-item" data-action="favorite">Favorite</div>
+                      <div data-slot="dropdown-menu-separator"></div>
+                      <div data-slot="dropdown-menu-item" data-variant="destructive" data-action="delete">Delete</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            <tr data-slot="table-row" id="task-empty" hidden>
+              <td data-slot="table-cell" colspan="6">
+                <div data-slot="empty">
+                  <div data-slot="empty-header">
+                    <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="search"></svg></div>
+                    <div data-slot="empty-title">No tasks found</div>
+                    <div data-slot="empty-description">No task matches the filters. Change the filters or clear them.</div>
+                  </div>
+                  <div data-slot="empty-content"><button type="button" data-slot="button" data-variant="outline" data-size="sm" id="task-clear">Clear filters</button></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div data-slot="data-table-pagination">
+        <div data-slot="data-table-selection" aria-live="polite">0 of 16 row(s) selected.</div>
+        <div data-show-from="md">
+          <label data-slot="label" for="task-page-size">Rows per page</label>
+          <div data-slot="select" data-value="10" id="task-page-size-select">
+            <button data-slot="select-trigger" data-size="sm" id="task-page-size"><span data-slot="select-value">10</span></button>
+            <div data-slot="select-content" data-side="top">
+              <div data-slot="select-item" data-value="10">10</div>
+              <div data-slot="select-item" data-value="20">20</div>
+              <div data-slot="select-item" data-value="30">30</div>
+            </div>
+          </div>
+        </div>
+        <div id="task-page" aria-live="polite">Page 1 of 2</div>
+        <div>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" data-page="first" aria-label="Go to first page" data-show-from="lg"><svg data-lucide="chevrons-left"></svg></button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" data-page="previous" aria-label="Go to previous page"><svg data-lucide="chevron-left"></svg></button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" data-page="next" aria-label="Go to next page"><svg data-lucide="chevron-right"></svg></button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" data-page="last" aria-label="Go to last page" data-show-from="lg"><svg data-lucide="chevrons-right"></svg></button>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

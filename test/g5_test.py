@@ -1215,3 +1215,78 @@ def check_chart_reference_demo(t):
         t.shot(cid, card_of(page, cid))
     t.section("chart-bar")
     t.shot("chart-bar-reference", card_of(page, "chart-bar-reference"))
+
+
+def check_chart_time_zone(t):
+    page = t.page
+    result = page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const rows = [1, 2, 3, 4, 5, 6, 7].map(d => ({ d: `2026-10-0${d}T00:00:00Z`, v: d }))
+          const run = zone => {
+            const c = make(rows, { type: "line", x: "d", scale: "time", timeZone: zone })
+            const out = { ticks: ticks(c.svg, "category").map(e => e.textContent), cells: [...c.box.querySelectorAll('[data-slot="chart-table"] tbody th')].slice(0, 2).map(e => e.textContent.replace(" at ", ", ")) }
+            c.box.remove()
+            return out
+          }
+          const out = { utc: run("UTC"), tokyo: run("Asia/Tokyo"), ny: run("America/New_York") }
+          const dates = make([{ d: "2026-10-01", v: 1 }, { d: "2026-10-02", v: 2 }], { type: "line", x: "d", timeZone: "Pacific/Kiritimati" })
+          out.iso = [...dates.box.querySelectorAll('[data-slot="chart-table"] tbody th')].map(e => e.textContent)
+          dates.box.remove()
+          try { make(rows, { type: "line", x: "d", scale: "time", timeZone: "Mars/Olympus" }); out.bad = "no error" } catch (e) { out.bad = e.constructor.name }
+          document.querySelectorAll("body > div:empty").forEach(e => e.remove())
+          return out
+        }"""
+    )
+    assert result["utc"]["ticks"][0] == "Oct 1" and not any(":" in x for x in result["utc"]["ticks"]), result
+    assert result["utc"]["cells"] == ["Oct 1, 2026", "Oct 2, 2026"], result
+    assert result["tokyo"]["cells"] == ["Oct 1, 2026, 9:00 AM", "Oct 2, 2026, 9:00 AM"], result
+    assert result["ny"]["cells"] == ["Sep 30, 2026, 8:00 PM", "Oct 1, 2026, 8:00 PM"], result
+    assert all(":" not in x or "PM" in x or "AM" in x for x in result["ny"]["ticks"]), result
+    assert result["iso"] == ["Oct 1, 2026", "Oct 2, 2026"], "an ISO date is a day in the chart time zone"
+    assert result["bad"] == "RangeError", result
+
+
+def check_chart_stat_tile_format(t):
+    page = t.page
+    result = page.evaluate(
+        """async () => {
+          const { statTile } = await import("/clanker-ui-chart.js")
+          const { h } = await import("/clanker-ui.js")
+          const plain = h("div")
+          const inner = h("div")
+          const card = h("div", { "data-slot": "card" }, h("div", { "data-slot": "card-content" }, inner))
+          document.body.append(plain, card)
+          const out = {}
+          try {
+            statTile(plain, { label: "Uptime", value: 30512, format: { style: "currency", currency: "EUR" }, delta: 0.125, deltaFormat: { minimumFractionDigits: 2 }, locale: "en-US" })
+            out.texts = [plain.querySelector('[data-slot="chart-stat-value"]').textContent, plain.querySelector('[data-slot="chart-stat-change"]').textContent]
+          } catch (e) { out.texts = e.message }
+          statTile(inner, { label: "Total", value: 30512, format: { style: "currency", currency: "EUR", notation: "standard" }, locale: "en-US" })
+          out.standard = inner.querySelector('[data-slot="chart-stat-value"]').textContent
+          const frame = el => { const s = getComputedStyle(el); return [s.borderTopWidth, s.paddingTop, s.boxShadow === "none"] }
+          out.frames = [frame(plain), frame(inner)]
+          plain.remove()
+          card.remove()
+          return out
+        }"""
+    )
+    assert result["texts"] == ["€30.5K", "+12.50%"], result
+    assert result["standard"] == "€30,512.00", result
+    assert result["frames"] == [["1px", "24px", False], ["0px", "0px", True]], ("a stat tile in a card has no second border", result)
+
+
+def check_chart_default_colors(t):
+    colors = t.page.evaluate(
+        """() => {
+          const p = document.createElement("p")
+          document.body.append(p)
+          const out = [1, 2, 3, 4, 5].map(n => { p.style.color = `var(--chart-${n})`; return getComputedStyle(p).color })
+          p.remove()
+          return out
+        }"""
+    )
+    rgb = [tuple(int(float(v)) for v in c[c.index("(") + 1 : c.index(")")].replace(",", " ").split()[:3]) for c in colors]
+    assert all(max(c) - min(c) > 60 for c in rgb), ("--chart-1 to --chart-5 are colored hues, not a gray ramp", colors)
+    assert len(set(rgb)) == 5, colors

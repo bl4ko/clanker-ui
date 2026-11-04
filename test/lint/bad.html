@@ -18,6 +18,15 @@
         <button type="button" data-slot="button">Save</button>
         <button type="button" data-slot="button" data-variant="outline" data-size="sm" id="bad-size-sm">Cancel</button>
       </div>
+      <div data-slot="data-table-toolbar">
+        <div>
+          <input data-slot="input" aria-label="Filter" placeholder="Filter">
+          <div data-slot="toggle-group" data-type="single" data-variant="outline" data-size="sm" aria-label="Status" id="bad-toggle-sm">
+            <button type="button" data-slot="toggle-group-item" data-value="all">All</button>
+            <button type="button" data-slot="toggle-group-item" data-value="open">Open</button>
+          </div>
+        </div>
+      </div>
     </section>
     <section id="bad-multiple-primary">
       <div data-slot="card" class="narrow">

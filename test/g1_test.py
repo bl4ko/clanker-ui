@@ -2148,3 +2148,109 @@ def check_slider_programmatic(t):
         }"""
     )
     assert result == {"value": ["80", True, True], "disabled": [True, True], "after": [False, True]}, ("code changes update the slider", result)
+
+
+def check_form_reset_then_set(t):
+    page = t.page
+    page.evaluate(FIXTURE)
+    result = page.evaluate(
+        """async () => {
+          const { h, calendarSetValue, calendarGetValue } = await import("/clanker-ui.js")
+          const wait = () => new Promise(r => setTimeout(r, 30))
+          const form = document.getElementById("fx-form")
+          const sizes = (name, value) => h("div", { "data-slot": "toggle-group", "data-name": name, "data-value": value }, ["s", "m", "l"].map(v => h("button", { "data-slot": "toggle-group-item", "data-value": v }, v)))
+          const day = h("div", { "data-slot": "calendar", "data-month": "2026-01", "data-value": "2026-01-10", "data-name": "day" })
+          form.append(day, sizes("size", "m"), sizes("fit", "s"))
+          await wait()
+          const plan = form.querySelector('[data-name="plan"]')
+          const tier = form.querySelector('[data-name="tier"]')
+          const color = form.querySelector('[data-name="color"]')
+          const size = form.querySelector('[data-name="size"]')
+          plan.querySelector('[data-value="free"]').click()
+          tier.querySelector('[data-value="team"]').click()
+          color.querySelector('[data-value="red"]').click()
+          size.querySelector('[data-value="l"]').click()
+          form.querySelector('[data-name="fit"] [data-value="l"]').click()
+          calendarSetValue(day, "2026-01-20")
+          await wait()
+          form.addEventListener("reset", () => { color.dataset.value = "green" }, { once: true })
+          form.querySelector('[data-name="fit"]').dataset.value = "m"
+          form.reset()
+          plan.dataset.value = "team"
+          tier.dataset.value = "team"
+          size.dataset.value = "s"
+          calendarSetValue(day, "2026-01-22")
+          await wait()
+          const data = new FormData(form)
+          return {
+            values: ["plan", "tier", "color", "day", "size", "fit"].map(n => data.getAll(n)),
+            shown: [plan.querySelector('[data-slot="select-value"]').textContent.trim(), tier.querySelector('[data-slot="select-value"]').textContent.trim(), calendarGetValue(day)],
+          }
+        }"""
+    )
+    assert result["values"] == [["team"], ["team"], ["green"], ["2026-01-22"], ["s"], ["s"]], ("values set in a reset listener or right after form.reset() stay; a value set before it is reset", result)
+    assert result["shown"] == ["TEAM", "TEAM", "2026-01-22"], result
+
+
+def check_toggle_group_form(t):
+    page = t.page
+    result = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const tick = () => new Promise(r => setTimeout(r, 0))
+          const item = v => h("button", { "data-slot": "toggle-group-item", "data-value": v, "aria-label": `${v} stars` }, v)
+          const rating = h("div", { "data-slot": "toggle-group", "data-type": "single", "data-variant": "outline", "data-spacing": "0", "data-name": "rating", "data-required": "", "data-error-value-missing": "Pick a rating." }, ["1", "2", "3"].map(item))
+          const tags = h("div", { "data-slot": "toggle-group", "data-type": "multiple", "data-name": "tags", "data-value": "a" }, ["a", "b", "c"].map(item))
+          const log = []
+          const form = h("form", { "data-slot": "form", id: "tg-form", "onform:invalid": e => log.push(e.detail.errors.map(x => [x.name, x.message])), "onform:submit": e => { e.preventDefault(); log.push(e.detail.values) } },
+            h("div", { "data-slot": "field", role: "group" }, h("span", { "data-slot": "field-label" }, "Rating"), rating, h("div", { "data-slot": "field-error" })),
+            tags, h("button", { id: "tg-send" }, "Send"))
+          document.body.prepend(form)
+          await tick()
+          const items = [...rating.querySelectorAll('[data-slot="toggle-group-item"]')]
+          const error = form.querySelector('[data-slot="field-error"]')
+          form.requestSubmit()
+          const invalid = [document.activeElement === items[0], items.map(i => i.getAttribute("aria-invalid")), error.hidden, error.textContent, rating.closest('[data-slot="field"]').dataset.invalid]
+          items[1].click()
+          const fixed = [items.map(i => i.getAttribute("aria-invalid")), error.hidden]
+          items[1].click()
+          const kept = items.map(i => i.dataset.state)
+          tags.querySelector('[data-value="c"]').click()
+          form.requestSubmit()
+          tags.dataset.value = "b"
+          await tick()
+          const set = new FormData(form).getAll("tags")
+          form.reset()
+          await new Promise(r => setTimeout(r, 30))
+          const reset = [new FormData(form).getAll("rating"), new FormData(form).getAll("tags"), items.map(i => i.dataset.state)]
+          const ends = [rating.firstElementChild === items[0], rating.lastElementChild === items[2]]
+          form.remove()
+          return { invalid, fixed, kept, log, set, reset, ends }
+        }"""
+    )
+    assert result["invalid"] == [True, ["true", "true", "true"], False, "Pick a rating.", "true"], result
+    assert result["fixed"] == [[None, None, None], True], result
+    assert result["kept"] == ["off", "on", "off"], ("data-required: the pressed item stays pressed", result)
+    assert result["log"] == [[["rating", "Pick a rating."]], {"rating": "2", "tags": ["a", "c"]}], result
+    assert result["set"] == ["b"], result
+    assert result["reset"] == [[""], ["a"], ["off", "off", "off"]], result
+    assert result["ends"] == [True, True], "the form inputs are outside the group, so the joined item corners stay"
+
+
+def check_field_separator_line(t):
+    page = t.page
+    result = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const plain = h("div", { "data-slot": "field-separator" })
+          const text = h("div", { "data-slot": "field-separator" }, h("span", { "data-slot": "field-separator-content" }, "Or"))
+          const group = h("div", { "data-slot": "field-group" }, plain, text)
+          document.body.prepend(group)
+          await new Promise(r => setTimeout(r, 0))
+          const line = plain.querySelector(':scope > [data-slot="separator"]')
+          const out = [!!line, line && Math.round(line.getBoundingClientRect().height), line && getComputedStyle(line).position, plain.dataset.content, text.dataset.content, text.querySelectorAll('[data-slot="separator"]').length]
+          group.remove()
+          return out
+        }"""
+    )
+    assert result == [True, 1, "absolute", "false", "true", 1], result

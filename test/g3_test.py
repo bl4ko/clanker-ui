@@ -2056,3 +2056,48 @@ def check_carousel_loop_false(t):
       return out
     }""")
     assert disabled == [True, False], ('data-loop="false" does not loop', disabled)
+
+
+def check_tabs_shared_panel(t):
+    page = t.page
+    result = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const tabs = h("div", { "data-slot": "tabs", "data-default-value": "all" },
+            h("div", { "data-slot": "tabs-list" }, ["all", "paid", "overdue"].map(v => h("button", { "data-slot": "tabs-trigger", "data-value": v }, v))),
+            h("div", { "data-slot": "tabs-content", id: "shared-panel" }, "rows"))
+          document.body.prepend(tabs)
+          await new Promise(r => setTimeout(r, 0))
+          const panel = tabs.querySelector('[data-slot="tabs-content"]')
+          const triggers = [...tabs.querySelectorAll('[data-slot="tabs-trigger"]')]
+          const state = () => [panel.hidden, panel.getAttribute("role"), panel.getAttribute("aria-labelledby") === tabs.querySelector('[aria-selected="true"]').id]
+          const before = [...state(), triggers.map(b => b.getAttribute("aria-controls"))]
+          triggers[2].click()
+          const after = [...state(), tabs.querySelector('[aria-selected="true"]').dataset.value]
+          tabs.remove()
+          return { before, after }
+        }"""
+    )
+    assert result["before"] == [False, "tabpanel", True, ["shared-panel"] * 3], result
+    assert result["after"] == [False, "tabpanel", True, "overdue"], result
+
+
+def check_pagination_disabled(t):
+    page = t.page
+    result = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const nav = h("nav", { "data-slot": "pagination", "aria-label": "pagination" }, h("ul", { "data-slot": "pagination-content" },
+            h("li", { "data-slot": "pagination-item" }, h("a", { "data-slot": "pagination-link", "data-pagination-previous": "", "data-size": "default", href: "#page-0", "aria-disabled": "true" }, "Previous")),
+            h("li", { "data-slot": "pagination-item" }, h("a", { "data-slot": "pagination-link", href: "#page-2" }, "2"))))
+          document.body.prepend(nav)
+          await new Promise(r => setTimeout(r, 0))
+          const [prev, next] = nav.querySelectorAll("a")
+          const hash = location.hash
+          prev.click()
+          const out = [getComputedStyle(prev).opacity, getComputedStyle(prev).pointerEvents, location.hash === hash, getComputedStyle(next).opacity]
+          nav.remove()
+          return out
+        }"""
+    )
+    assert result == ["0.5", "none", True, "1"], result

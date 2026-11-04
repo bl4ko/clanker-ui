@@ -98,11 +98,14 @@
       "items": [
         {"title": "Blocks", "href": "/docs/blocks", "hidden": true},
         {"title": "Dashboard", "href": "/docs/blocks/dashboard", "description": "An app dashboard with a sidebar: section cards, an interactive area chart, and a data table with tabs (shadcn dashboard-01)."},
-        {"title": "Data Table", "href": "/docs/blocks/data-table", "description": "A task list with a top header: filter, faceted filters, column visibility, sorting, selection, row actions, pagination, and the empty state (shadcn tasks example)."},
+        {"title": "Data Table", "href": "/docs/blocks/data-table", "description": "A task list with a top header: filter, faceted filters, column visibility, sorting, selection, row actions, pagination, the empty state, and status under the title on phones (shadcn tasks example)."},
         {"title": "Settings", "href": "/docs/blocks/settings", "description": "A settings page with section navigation and one form card per section: profile, notifications, appearance, and a danger zone."},
-        {"title": "Form", "href": "/docs/blocks/form", "description": "A create and edit page with field sets, validation, help text, and one primary action."},
-        {"title": "Detail", "href": "/docs/blocks/detail", "description": "A record page with a breadcrumb, a header with actions, key numbers, a facts list, and activity."},
+        {"title": "Form", "href": "/docs/blocks/form", "description": "A create and edit page with field sets, a date range, validation, a live summary and rules in a side column, and Delete in edit mode (?id=web)."},
+        {"title": "Detail", "href": "/docs/blocks/detail", "description": "A record page with a breadcrumb, a header with actions, key numbers, a facts list, activity, and a confirmed delete."},
         {"title": "Login", "href": "/docs/blocks/login", "description": "A sign-in page with a brand mark, social buttons, and a validated email and password form (shadcn login-03)."},
+        {"title": "Login Split", "href": "/docs/blocks/login-split", "description": "A two-column sign-in page with a brand panel of token art and a quote, and a validated form (shadcn login-02)."},
+        {"title": "Card Grid", "href": "/docs/blocks/card-grid", "description": "A library of records with cover art from tokens: search, filter tabs with counts, sort, a responsive card grid, and the no-results state."},
+        {"title": "Overlay Form", "href": "/docs/blocks/overlay-form", "description": "A record page with a validated form in a dialog (star rating), a long form in a sheet with a scrolling body, reviews, and a ratings breakdown."},
         {"title": "States", "href": "/docs/blocks/states", "description": "Empty, loading, and error states for cards, lists, and tables."}
       ]
     },

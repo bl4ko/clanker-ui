@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Sign in - Marginalia</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
+  <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
+  <script type="module" src="/login-split.js"></script>
+</head>
+<body>
+  <main data-slot="page" data-layout="split">
+    <div>
+      <div>
+        <a data-slot="brand" href="#"><span data-slot="brand-mark" data-size="sm"><svg data-lucide="book-open"></svg></span>Marginalia</a>
+        <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+      </div>
+      <form data-slot="form" id="login-form">
+        <div data-slot="field-group">
+          <div data-slot="page-header">
+            <h1 data-slot="page-title">Sign in to your club</h1>
+            <p data-slot="page-description">Pick up where you left off: this month's book, your notes, and the next meeting.</p>
+          </div>
+          <div data-slot="field" role="group">
+            <label data-slot="field-label" for="email">Email</label>
+            <input data-slot="input" id="email" name="email" type="email" placeholder="ana@example.com" autocomplete="email" required data-error-value-missing="Enter your email address." data-error-type-mismatch="Enter an email address like ana@example.com.">
+          </div>
+          <div data-slot="field" role="group">
+            <div data-slot="field-label-row">
+              <label data-slot="field-label" for="password">Password</label>
+              <p data-slot="field-description"><a href="#forgot">Forgot your password?</a></p>
+            </div>
+            <input data-slot="input" id="password" name="password" type="password" autocomplete="current-password" required minlength="8" data-error-value-missing="Enter your password." data-error-too-short="Your password has at least 8 characters.">
+          </div>
+          <div data-slot="field" data-orientation="horizontal">
+            <button type="button" data-slot="checkbox" id="remember" data-name="remember" data-checked></button>
+            <label data-slot="field-label" for="remember">Keep me signed in on this device</label>
+          </div>
+          <div data-slot="field" role="group">
+            <button type="submit" data-slot="button">Sign in</button>
+          </div>
+          <div data-slot="field-separator"><span data-slot="field-separator-content">Or</span></div>
+          <div data-slot="field" role="group">
+            <button type="button" data-slot="button" data-variant="outline" id="magic-link"><svg data-lucide="mail"></svg>Email me a sign-in link</button>
+            <p data-slot="field-description">New to the club? <a href="#join">Ask for an invite</a></p>
+          </div>
+        </div>
+      </form>
+    </div>
+    <aside data-slot="page-aside">
+      <svg viewBox="0 0 600 560" preserveAspectRatio="xMidYMin meet" aria-hidden="true"><rect x="0" y="250" width="600" height="6" fill="currentColor" opacity="0.5"/><rect x="28" y="50" width="22" height="200" rx="3" fill="currentColor" opacity="0.35"/><rect x="55" y="228" width="87" height="20" rx="3" fill="currentColor" opacity="0.65"/><rect x="54" y="206" width="88" height="20" rx="3" fill="currentColor" opacity="0.85"/><rect x="54" y="184" width="76" height="20" rx="3" fill="currentColor" opacity="0.45"/><rect x="166" y="70" width="18" height="180" rx="3" fill="currentColor" opacity="0.35"/><rect x="188" y="85" width="18" height="165" rx="3" fill="currentColor" opacity="0.5"/><rect x="210" y="93" width="38" height="157" rx="3" fill="currentColor" opacity="1"/><rect x="216" y="111" width="26" height="3" fill="currentColor" opacity="0.4"/><rect x="252" y="72" width="18" height="178" rx="3" fill="currentColor" opacity="0.35"/><rect x="274" y="63" width="22" height="187" rx="3" fill="currentColor" opacity="0.8"/><rect x="300" y="61" width="18" height="189" rx="3" fill="currentColor" opacity="1"/><rect x="322" y="87" width="22" height="163" rx="3" fill="currentColor" opacity="1"/><rect x="348" y="53" width="22" height="197" rx="3" fill="currentColor" opacity="0.35"/><rect x="374" y="93" width="18" height="157" rx="3" fill="currentColor" opacity="1"/><rect x="396" y="46" width="38" height="204" rx="3" fill="currentColor" opacity="0.65"/><rect x="402" y="64" width="26" height="3" fill="currentColor" opacity="0.4"/><rect x="438" y="54" width="30" height="196" rx="3" fill="currentColor" opacity="0.65"/><rect x="444" y="72" width="18" height="3" fill="currentColor" opacity="0.4"/><rect x="472" y="69" width="22" height="181" rx="3" fill="currentColor" opacity="0.35"/><rect x="498" y="37" width="38" height="213" rx="3" fill="currentColor" opacity="0.65"/><rect x="504" y="55" width="26" height="3" fill="currentColor" opacity="0.4"/><rect x="540" y="91" width="26" height="159" rx="3" fill="currentColor" opacity="0.35"/><rect x="546" y="109" width="14" height="3" fill="currentColor" opacity="0.4"/><rect x="0" y="520" width="600" height="6" fill="currentColor" opacity="0.5"/><rect x="28" y="327" width="22" height="193" rx="3" fill="currentColor" opacity="0.5"/><rect x="54" y="365" width="30" height="155" rx="3" fill="currentColor" opacity="0.35"/><rect x="60" y="383" width="18" height="3" fill="currentColor" opacity="0.4"/><rect x="88" y="330" width="38" height="190" rx="3" fill="currentColor" opacity="0.65"/><rect x="94" y="348" width="26" height="3" fill="currentColor" opacity="0.4"/><rect x="130" y="307" width="38" height="213" rx="3" fill="currentColor" opacity="1"/><rect x="136" y="325" width="26" height="3" fill="currentColor" opacity="0.4"/><rect x="172" y="359" width="18" height="161" rx="3" fill="currentColor" opacity="0.65"/><rect x="194" y="363" width="18" height="157" rx="3" fill="currentColor" opacity="0.65"/><rect x="216" y="334" width="30" height="186" rx="3" fill="currentColor" opacity="0.8"/><rect x="222" y="352" width="18" height="3" fill="currentColor" opacity="0.4"/><rect x="250" y="368" width="26" height="152" rx="3" fill="currentColor" opacity="0.8"/><rect x="256" y="386" width="14" height="3" fill="currentColor" opacity="0.4"/><rect x="280" y="356" width="38" height="164" rx="3" fill="currentColor" opacity="0.8"/><rect x="286" y="374" width="26" height="3" fill="currentColor" opacity="0.4"/><rect x="326" y="498" width="94" height="20" rx="3" fill="currentColor" opacity="0.45"/><rect x="325" y="476" width="93" height="20" rx="3" fill="currentColor" opacity="0.65"/><rect x="329" y="454" width="82" height="20" rx="3" fill="currentColor" opacity="0.45"/><rect x="434" y="300" width="30" height="220" rx="3" fill="currentColor" opacity="0.65"/><rect x="440" y="318" width="18" height="3" fill="currentColor" opacity="0.4"/><rect x="468" y="300" width="30" height="220" rx="3" fill="currentColor" opacity="0.65"/><rect x="474" y="318" width="18" height="3" fill="currentColor" opacity="0.4"/><rect x="502" y="322" width="26" height="198" rx="3" fill="currentColor" opacity="0.5"/><rect x="508" y="340" width="14" height="3" fill="currentColor" opacity="0.4"/><rect x="532" y="351" width="22" height="169" rx="3" fill="currentColor" opacity="0.5"/><rect x="558" y="308" width="18" height="212" rx="3" fill="currentColor" opacity="1"/></svg>
+      <blockquote>
+        <p>“A reader lives a thousand lives before he dies. The man who never reads lives only one.”</p>
+        <footer>George R. R. Martin · our 2024 pick, A Dance with Dragons</footer>
+      </blockquote>
+    </aside>
+  </main>
+</body>
+</html>

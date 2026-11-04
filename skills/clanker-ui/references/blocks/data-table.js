@@ -15,7 +15,7 @@ let sort = { key: "", dir: 1 }
 let page = 0
 let size = 10
 
-const text = (row, key) => key === "title" ? row.cells[2].textContent.trim() : row.dataset[key]
+const text = (row, key) => key === "title" ? row.cells[2].querySelector("[title]").title : row.dataset[key]
 const compare = (a, b, key) => order[key] ? order[key].indexOf(a.dataset[key]) - order[key].indexOf(b.dataset[key]) : text(a, key).localeCompare(text(b, key))
 
 function matches(row) {
@@ -93,7 +93,7 @@ for (const button of root.querySelectorAll("[data-sort]")) {
     for (const other of root.querySelectorAll("[data-sort]")) {
       const active = other.dataset.sort === sort.key
       other.closest("th").setAttribute("aria-sort", active ? (sort.dir === 1 ? "ascending" : "descending") : "none")
-      other.lastElementChild.replaceWith(icon(active ? (sort.dir === 1 ? "arrow-up" : "arrow-down") : "arrow-up-down"))
+      other.lastElementChild.replaceWith(icon(active ? (sort.dir === 1 ? "arrow-up" : "arrow-down") : "chevrons-up-down"))
     }
     render()
   })

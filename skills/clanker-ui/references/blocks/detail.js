@@ -19,5 +19,5 @@ document.getElementById("invite").addEventListener("click", async () => {
 })
 
 document.getElementById("delete-project").addEventListener("click", () => {
-  toast("Project moved to the trash", { description: "Restore it from the trash in the next 30 days." })
+  toast("Project deleted", { description: "Website redesign is in the trash for 30 days." })
 })

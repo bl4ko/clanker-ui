@@ -1,6 +1,6 @@
 # Automated check
 
-Serve the page with the CSP from [csp.md](csp.md), then run a check with Playwright for Python:
+Serve the page with the CSP from [csp.md](csp.md): the Go server there sends the header; `python3 -m http.server 8300 --bind 127.0.0.1 --directory static` works when every page has the CSP meta tag. Then run a check with Playwright for Python:
 
 ```python
 from playwright.sync_api import sync_playwright
@@ -108,4 +108,4 @@ assert not result["findings"], result["findings"]
 | `empty-region` | warn | A card or column in a grid or flex row with 96 px or more (and 25 % or more of the row) empty below its content while a neighbor fills the row. | A short card next to a tall one leaves a hole. | Move content into it, stack two cards in the column, `align-items: start` with less height, or one column. |
 | `layout-shift` | error | From `watchShift()`: interactive elements that moved during the interaction. | Controls that jump make the user click the wrong one (for example an error message that shows on blur and pushes the Save button). | Keep the space for messages (`min-height`), or show them where they do not push controls (beside the field, a `toast`). |
 
-Known results on kit parts (shadcn values that the kit keeps for parity): `low-contrast` warnings for `kbd` and muted text on `--muted` (4.35:1), the destructive button and badge (3.99:1), and the status badges and alerts; a `low-contrast` error for `trace-description` (2.71:1); a `small-target` error for `sidebar-menu-action` (20 px) from the `md` breakpoint.
+Known results on kit parts (shadcn values that the kit keeps for parity). With `clanker-ui-a11y.css` loaded, as every app should: `low-contrast` warnings for the destructive button and badge (3.99:1) and for chat parts (`attachment-description`, `bubble-content`), a `low-contrast` error for `trace-description` (2.71:1), and a `small-target` error for `sidebar-menu-action` (20 px) from the `md` breakpoint. Without it, also warnings for `kbd`, the avatar fallback, muted text on `--muted` (4.35:1), and the status badges and alerts. Fix all other findings.

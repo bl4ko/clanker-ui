@@ -1608,7 +1608,7 @@ func globalsMarkdown(cat *catalog) string {
 func catalogIndex(cat *catalog) string {
 	var b strings.Builder
 	b.WriteString("# clanker-ui components\n\n")
-	fmt.Fprintf(&b, "Generated from `%s` (same directory) by `go run ./tools/gen catalog`. Version %s, shadcn `%s`, Base UI %s.\n\n", filepath.Base(catalogFile), cat.Version, cat.Shadcn[:7], cat.BaseUI)
+	fmt.Fprintf(&b, "Generated from `%s` (same directory) by `go run ./tools/gen catalog`. Version %s (the last release; a copy from `main` can be newer, see the Unreleased part of `CHANGELOG.md`), shadcn `%s`, Base UI %s.\n\n", filepath.Base(catalogFile), cat.Version, cat.Shadcn[:7], cat.BaseUI)
 	b.WriteString("Read the file of each component: `components/<name>.md`, for example [components/button.md](components/button.md).\n\n")
 	b.WriteString("## Groups\n\n")
 	b.WriteString("Each group has `clanker-ui-<group>.min.css` and (except core CSS-only parts) `clanker-ui-<group>.min.js`. Load `core` always, then the group of each component and the groups in its **Needs**.\n\n")
@@ -1820,7 +1820,7 @@ func eventsMarkdown(cat *catalog) string {
 func llmsFull(cat *catalog, sections []mdSection) string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "# clanker-ui\n\n> %s\n\n", cat.Description)
-	fmt.Fprintf(&b, "Version %s. Docs: %s. Source: %s. Catalog: %s/%s. Agent skill: %s/tree/main/skills/clanker-ui.\n\n", cat.Version, cat.Docs, cat.Repository, catalogRaw, catalogFile, cat.Repository)
+	fmt.Fprintf(&b, "Version %s (the last release; `main` can be newer, see the Unreleased part of `CHANGELOG.md`). Docs: %s. Source: %s. Catalog: %s/%s. Agent skill: %s/tree/main/skills/clanker-ui.\n\n", cat.Version, cat.Docs, cat.Repository, catalogRaw, catalogFile, cat.Repository)
 	skip := false
 	skipLevel := 0
 	for _, s := range sections {

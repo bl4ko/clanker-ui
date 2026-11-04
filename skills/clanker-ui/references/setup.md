@@ -21,9 +21,9 @@ grep -rhoE 'data-slot="[a-z0-9-]+"' --include='*.html' . | cut -d'"' -f2 | sort 
 ## File sets
 
 - One-file set: `clanker-ui.min.css`, module `clanker-ui.min.js`, and `clanker-ui-core.min.js` next to it (`clanker-ui.min.js` imports it; copy both). `clanker-ui.min.css` has the chart CSS too; charts add only `clanker-ui-chart.min.js`.
-- Readable set, for development: `clanker-ui.css` and module `clanker-ui.js` (charts: `clanker-ui-chart.js`).
+- Readable set, for development: `clanker-ui.css` and module `clanker-ui.js` (charts: `clanker-ui-chart.js`). Core and group files exist only in the `.min` set (`dist/`).
 - With group modules, do not add a separate `<script>` for the core; the `modulepreload` link only saves a round trip. Mixed sets throw "already defined".
-- Optional files: `clanker-ui-themes(.min).css`, then `clanker-ui-a11y(.min).css`, after the kit CSS and before `app.css`. The theme script `clanker-ui-theme(.min).js` is a classic script before the modules ([theming.md](theming.md)).
+- After the kit CSS and before `app.css`: the optional `clanker-ui-themes(.min).css`, then `clanker-ui-a11y(.min).css` (load it in every app; see the SKILL file sets). The theme script `clanker-ui-theme(.min).js` is a classic script before the modules ([theming.md](theming.md)).
 - Every kit file has a `.min` version in `dist/`. Load all files from the same set.
 
 ## Exports

@@ -19,11 +19,12 @@ References in this skill:
 - [references/setup.md](references/setup.md): file checks, other ways to get the files, the group command for existing HTML, and which file exports which names.
 - [references/design.md](references/design.md): design rules for layout, spacing, type, buttons, color, forms, states, and phones. [references/choosing.md](references/choosing.md): which component for which job.
 - `references/blocks/<name>.html` (and `.js`): whole pages to start from.
+- [references/recipes.md](references/recipes.md): set values from code, forms in overlays, several rules per field, star rating, card grid, a shared header on static pages, breadcrumbs in the top header, category bar charts, status strips, long pages.
 - [references/events.md](references/events.md), [references/theming.md](references/theming.md), [references/testing.md](references/testing.md) (Playwright check and design lint), [references/clanker-ui.json](references/clanker-ui.json) (all component data as JSON).
 
 ## 1. Get the files
 
-Use one release version for all files: `gh release download v0.2.1 -R bl4ko/clanker-ui -p 'clanker-ui-*.zip' -p SHA256SUMS`, or `curl -fLO https://github.com/bl4ko/clanker-ui/releases/download/v0.2.1/clanker-ui-0.2.1.zip`. The zip has the readable files, `dist/` (the `.min` files), and this skill.
+`version` above is the last release. A copy from `main` can be newer (the Unreleased part of `CHANGELOG.md` in the repository). When the kit files came with this skill, use those files and skip the download. Else use one release version for all files: `gh release download v0.2.1 -R bl4ko/clanker-ui -p 'clanker-ui-*.zip' -p SHA256SUMS`, or `curl -fLO https://github.com/bl4ko/clanker-ui/releases/download/v0.2.1/clanker-ui-0.2.1.zip`. The zip has the readable files, `dist/` (the `.min` files), and this skill.
 
 Copy the files that the page loads (step 2) and the files they import into one directory, for example `static/vendor/clanker-ui/` with `static/` as the web root. Put the `dist/` files in that directory, not in a subdirectory. Do not change the files. Put your styles in `app.css` and your code in a module such as `app.js`.
 
@@ -40,7 +41,7 @@ Find the group of each component in [references/components.md](references/compon
 - A group module imports `clanker-ui-core.min.js` itself. Never mix readable and `.min` files, and never load `clanker-ui.min.js` with a group file. A missing group fails without a message; if you are not sure, use the one-file set.
 - Charts: module `clanker-ui-chart.min.js`. `clanker-ui.min.css` has the chart CSS; with group files also load `clanker-ui-chart.min.css`.
 - Every kit file has a `.min` version: the theme script is `clanker-ui-theme.min.js` in the `.min` set and `clanker-ui-theme.js` in the readable set.
-- Optional, after the kit CSS: `clanker-ui-themes.min.css` (color schemes), then `clanker-ui-a11y.min.css` (WCAG 2.2 AA contrast and focus).
+- Always load `clanker-ui-a11y.min.css` after the kit CSS: the kit keeps the shadcn values, and status badges, the avatar fallback, muted text, and input borders are below WCAG 2.2 AA without it. Color schemes: `clanker-ui-themes.min.css` between the kit CSS and the a11y file.
 
 ## 3. Write the head
 
@@ -48,12 +49,14 @@ Find the group of each component in [references/components.md](references/compon
 <!doctype html>
 <html lang="en">
 <head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-core.min.css">
   <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-forms.min.css">
   <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-overlays.min.css">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-a11y.min.css">
   <link rel="stylesheet" href="/app.css">
   <link rel="modulepreload" href="/vendor/clanker-ui/clanker-ui-core.min.js">
   <script type="module" src="/vendor/clanker-ui/clanker-ui-forms.min.js"></script>
@@ -62,6 +65,7 @@ Find the group of each component in [references/components.md](references/compon
 </head>
 ```
 
+- The CSP meta tag is for static hosts (`python3 -m http.server`, GitHub Pages) and comes first in `<head>`. A server that sends the CSP header ([references/csp.md](references/csp.md)) does not need it.
 - All scripts are external files from the same origin. No inline `<script>` or `<style>`, no `style=""`, no `onclick=""`.
 - A theme toggle or theme switch (not the switch component): see [references/theming.md](references/theming.md).
 
@@ -90,7 +94,7 @@ Find the group of each component in [references/components.md](references/compon
 4. Never write the "State" attributes or the "kit adds" parts. Use state attributes only as CSS selectors.
 5. A part that is another component (shadcn `asChild`): keep its slot and add the part attribute, for example `<button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>` inside the `dialog` root. Outside the root: `data-dialog-trigger="settings"` and `id="settings"` on the root.
 6. Icons: `<svg data-lucide="search"></svg>`; all names and aliases are in [references/icons.md](references/icons.md). An unknown name gives an empty icon and a `console.warn`; add icons with `registerIcons()`. Markup added later gets its behavior automatically.
-7. Form controls: a `<label for>` names the `id` of a `select-trigger`, a combobox input, or a switch, checkbox, or radio item button. `data-name` on the select, combobox, switch, checkbox, or radio group root submits the value. `form.reset()` restores the initial values. Kit trigger buttons do not submit the form. Without `event.preventDefault()` in `form:submit` the browser submits the form; call it on static pages and when you send with `fetch`.
+7. Form controls: a `<label for>` names the `id` of a `select-trigger`, a combobox input, or a switch, checkbox, or radio item button. `data-name` on the select, combobox, switch, checkbox, or radio group root submits the value. `form.reset()` restores the initial values. Set values from code: [references/recipes.md](references/recipes.md). Kit trigger buttons do not submit the form. Without `event.preventDefault()` in `form:submit` the browser submits the form; call it on static pages and when you send with `fetch`.
 
 ## 6. JavaScript
 
@@ -113,6 +117,6 @@ import { h, icon, theme, toast } from "/vendor/clanker-ui/clanker-ui.min.js"
 
 ## 8. Check the result
 
-Serve the page with the CSP header from [references/csp.md](references/csp.md). Add `<link rel="icon" href="/favicon.svg">` (or `data:,`), so the browser does not log a favicon 404. In a browser: 0 console errors and 0 CSP violations; each component works with the mouse and the keys in its full text; focus goes back to the trigger when a dialog or menu closes. If a component does not work, check the file set, the slot names, and the module loads (no 404).
+Serve the page with the CSP header from [references/csp.md](references/csp.md), or with the meta tag on a static server. Add `<link rel="icon" href="/favicon.svg">` (or `data:,`), so the browser does not log a favicon 404. In a browser: 0 console errors and 0 CSP violations; each component works with the mouse and the keys in its full text; focus goes back to the trigger when a dialog or menu closes. If a component does not work, check the file set, the slot names, and the module loads (no 404).
 
 Docs: https://bl4ko.github.io/clanker-ui/. Full text: https://bl4ko.github.io/clanker-ui/llms-full.txt.

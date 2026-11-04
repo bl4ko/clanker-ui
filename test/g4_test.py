@@ -1942,3 +1942,45 @@ def check_calendar_year_bounds_follow_limits(t):
     out = page.evaluate(FUTURE_MIN)
     assert out["min"]["month"] == "2027-01" and out["min"]["enabled"] == 31 and out["min"]["months"] == 12 and out["min"]["years"] == ["2027", "2027"], out
     assert out["max"]["month"] == "1920-06" and out["max"]["enabled"] == 30 and out["max"]["years"] == ["1920", "1920"], out
+
+
+def check_date_picker_form(t):
+    page = t.page
+    result = page.evaluate(
+        """async () => {
+          const { h, calendarSetValue } = await import("/clanker-ui.js")
+          const tick = () => new Promise(r => setTimeout(r, 0))
+          const picker = (id, attrs = {}) => h("div", { "data-slot": "date-picker", "data-required": "", "data-error-value-missing": "Pick a due date.", ...attrs },
+            h("button", { type: "button", id, "data-slot": "button", "data-variant": "outline", "data-date-picker-trigger": "" }, h("span", { "data-slot": "date-picker-value" })),
+            h("div", { "data-slot": "popover-content", "data-date-picker-content": "" }, h("div", { "data-slot": "calendar", "data-name": id, "data-month": "2026-10" })))
+          const log = []
+          const due = picker("due")
+          const form = h("form", { "data-slot": "form", "onform:invalid": e => log.push(e.detail.errors.map(x => [x.name, x.message])), "onform:submit": e => { e.preventDefault(); log.push(e.detail.values) } },
+            h("div", { "data-slot": "field", role: "group" }, h("label", { "data-slot": "field-label", for: "due" }, "Due"), due, h("div", { "data-slot": "field-error" })),
+            h("div", { lang: "en-GB" }, picker("start", { "data-required": null })))
+          document.body.prepend(form)
+          await tick()
+          const trigger = document.getElementById("due")
+          const text = () => trigger.querySelector('[data-slot="date-picker-value"]').textContent
+          const error = form.querySelector('[data-slot="field-error"]')
+          const calendar = due.querySelector('[data-slot="calendar"]')
+          form.requestSubmit()
+          const invalid = [document.activeElement === trigger, trigger.getAttribute("aria-invalid"), error.hidden, error.textContent, trigger.labels.length]
+          calendarSetValue(calendar, "2026-10-29")
+          const quiet = [text(), new FormData(form).get("due"), error.hidden]
+          calendarSetValue(calendar, "2026-10-30", { emit: true })
+          const live = [text(), trigger.getAttribute("aria-invalid"), error.hidden]
+          calendarSetValue(form.querySelector('#start + [data-date-picker-content] [data-slot="calendar"]'), "2026-10-29")
+          const gb = document.getElementById("start").textContent
+          form.requestSubmit()
+          const proxies = form.querySelectorAll('[data-slot="date-picker"] > input[aria-hidden="true"]').length
+          form.remove()
+          return { invalid, quiet, live, gb, log, proxies }
+        }"""
+    )
+    assert result["invalid"] == [True, "true", False, "Pick a due date.", 1], result
+    assert result["quiet"] == ["October 29, 2026", "2026-10-29", False], ("calendarSetValue updates the trigger and the form value without emit", result)
+    assert result["live"] == ["October 30, 2026", None, True], result
+    assert result["gb"] == "29 October 2026", result
+    assert result["log"] == [[["due", "Pick a due date."]], {"due": "2026-10-30", "start": "2026-10-29"}], result
+    assert result["proxies"] == 1, result

@@ -1,6 +1,6 @@
 # Pagination (`pagination`)
 
-Group `layout`. Needs `core`. CSS only.
+Group `layout`. Needs `core`. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -25,3 +25,5 @@ Other parts: `pagination` (root), `pagination-content`, `pagination-ellipsis`, `
 ```
 
 The markup is the shadcn DOM: a link is a `ghost` button of size `icon` (32 px); the current page is `data-variant="outline"` with `aria-current="page"`. `data-pagination-previous` and `data-pagination-next` with `data-size="default"` mark Previous and Next; their text hides below 640 px and their chevrons turn in RTL.
+
+Disabled Previous or Next (first or last page): `aria-disabled="true"` on the link, and remove its `href` so it is not a Tab stop. The link is dimmed (opacity 0.5) and takes no pointer events, like a disabled button; the kit also cancels a click on it, so a link that keeps its `href` does not navigate.

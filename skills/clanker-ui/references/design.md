@@ -20,7 +20,7 @@ Rules for pages that look like an official shadcn block. Each rule names the kit
 
 ## Make it specific
 
-- One identity move per app, while the kit parts stay plain: a brand panel on the sign-in page (block `login-split`), a hero or feature card first on the main page, believable placeholder art built from tokens (covers, thumbnails; never flat gray boxes).
+- One identity move per app, while the kit parts stay plain: a brand panel on the sign-in page (block `login-split`), a hero or feature card first on the main page, believable placeholder art built from tokens (`cover`; never flat gray boxes).
 - Fake data looks real in volume and mix: 8 or more rows, several reviews or updates, and mixed states (empty, overdue, failed).
 - Each page does its whole job, not only the minimum fields: a form has a summary or policy card in a `page-aside`, an edit page has its destructive action, a detail page has side panels and related records.
 

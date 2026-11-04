@@ -4947,6 +4947,40 @@ function dropdownMenuSetState(item, state) {
   indicator.append(h("span", { "data-checked": "", "aria-hidden": "true" }, icon(name)))
 }
 
+function dropdownMenuItemValue(item) {
+  return item.dataset.value ?? dropdownMenuLabel(item)
+}
+
+function dropdownMenuRadioItems(group) {
+  const kind = dropdownMenuKind(group)
+  return [...group.querySelectorAll(`[data-slot="${kind}-radio-item"]`)].filter(item => item.closest(`[data-slot="${kind}-radio-group"]`) === group)
+}
+
+function dropdownMenuWatched(records) {
+  for (const { target } of records) {
+    const kind = dropdownMenuKind(target)
+    if (target.matches(`[data-slot="${kind}-radio-group"]`)) {
+      const value = target.dataset.value
+      if (value == null) continue
+      for (const item of dropdownMenuRadioItems(target)) {
+        const state = dropdownMenuItemValue(item) === value ? "checked" : "unchecked"
+        if (item.dataset.state !== state) dropdownMenuSetState(item, state)
+      }
+      continue
+    }
+    const checked = flag(target, "data-checked")
+    if (checked === (target.dataset.state === "checked") || (!checked && target.dataset.state === "indeterminate")) continue
+    const group = target.matches(`[data-slot="${kind}-radio-item"]`) ? target.closest(`[data-slot="${kind}-radio-group"]`) : null
+    if (group && checked) {
+      for (const item of dropdownMenuRadioItems(group)) if (item !== target && item.dataset.state === "checked") dropdownMenuSetState(item, "unchecked")
+      dropdownMenuSetState(target, "checked")
+      group.dataset.value = dropdownMenuItemValue(target)
+    } else dropdownMenuSetState(target, checked ? "checked" : "unchecked")
+  }
+}
+
+const dropdownMenuWatch = new MutationObserver(dropdownMenuWatched)
+
 function dropdownMenuInstant(content, value) {
   if (value) content.dataset.instant = value
   else delete content.dataset.instant
@@ -5057,7 +5091,7 @@ function dropdownMenuSelect(kind, item, menu) {
   const content = dropdownMenuTop(menu, kind) ?? menu
   const root = dropdownMenuRoot(content, kind)
   const slot = item.getAttribute("data-slot")
-  const value = item.dataset.value ?? dropdownMenuLabel(item)
+  const value = dropdownMenuItemValue(item)
   let checked
   if (slot === `${kind}-checkbox-item`) {
     checked = item.dataset.state !== "checked"
@@ -5254,13 +5288,15 @@ function dropdownMenuInitItem(item) {
   }
   if (type === "checkbox-item" || type === "radio-item") {
     const aria = item.getAttribute("aria-checked")
-    const state = aria === "mixed" || item.dataset.state === "indeterminate" ? "indeterminate" : aria === "true" || item.dataset.state === "checked" || flag(item, "data-checked") ? "checked" : "unchecked"
+    const group = type === "radio-item" ? item.closest(`[data-slot="${kind}-radio-group"]`) : null
+    const state = group?.dataset.value != null ? (dropdownMenuItemValue(item) === group.dataset.value ? "checked" : "unchecked") : aria === "mixed" || item.dataset.state === "indeterminate" ? "indeterminate" : aria === "true" || item.dataset.state === "checked" || flag(item, "data-checked") ? "checked" : "unchecked"
     let indicator = item.querySelector(`:scope > [data-slot="${kind}-${type}-indicator"], :scope > [data-slot="${kind}-item-indicator"]`)
     if (!indicator) item.prepend((indicator = h("span", kind === "dropdown-menu" ? { "data-slot": `${kind}-${type}-indicator` } : {})))
     else if (kind === "dropdown-menu") indicator.dataset.slot = `${kind}-${type}-indicator`
     indicator.setAttribute("data-menu-indicator", "")
     for (const old of indicator.querySelectorAll(":scope > svg")) old.remove()
     dropdownMenuSetState(item, state)
+    dropdownMenuWatch.observe(item, { attributes: true, attributeFilter: ["data-checked"] })
   }
   if (type === "sub-trigger") {
     item.setAttribute("aria-haspopup", "menu")
@@ -5292,7 +5328,12 @@ for (const kind of dropdownMenuKinds) {
   define(`${kind}-sub-content`, { ...contentSpec })
   for (const part of ["item", "checkbox-item", "radio-item", "sub-trigger"]) define(`${kind}-${part}`, { init: dropdownMenuInitItem })
   define(`${kind}-group`, { init: el => el.setAttribute("role", "group") })
-  define(`${kind}-radio-group`, { init: el => el.setAttribute("role", "group") })
+  define(`${kind}-radio-group`, {
+    init(el) {
+      el.setAttribute("role", "group")
+      dropdownMenuWatch.observe(el, { attributes: true, attributeFilter: ["data-value"] })
+    },
+  })
   define(`${kind}-label`, { init: dropdownMenuInitLabel })
   define(`${kind}-separator`, {
     init(el) {
@@ -10423,7 +10464,9 @@ function calendarRestore(s, key) {
 function calendarRender(s, focusDay = null) {
   const key = focusDay ? { day: focusDay } : calendarFocusKey(s)
   const focusIso = calendarFocusIso(s)
-  messageAttr(s.el, "data-multiple-months", s.months > 1 ? "true" : null)
+  if (s.months > 1) {
+    if (s.el.dataset.multipleMonths !== "true") s.el.dataset.multipleMonths = "true"
+  } else if (s.el.hasAttribute("data-multiple-months")) s.el.removeAttribute("data-multiple-months")
   const layout = `${s.months}|${s.caption}`
   if (s.view?.months.parentNode !== s.el || s.view.layout !== layout) {
     const parts = Array.from({ length: s.months }, () => calendarMonthView(s))

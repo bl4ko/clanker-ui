@@ -155,11 +155,11 @@ Put overrides in `app.css` after the kit files, without a layer.
 
 | Group | Components | Needs |
 | --- | --- | --- |
-| `core` | button, separator, direction, theme, input, textarea, label, kbd, card, badge, alert, table, skeleton, spinner, empty, progress, aspect-ratio, page, site-header, section-cards, stat-grid, data-table, brand, text-stack |  |
+| `core` | button, separator, direction, theme, input, textarea, label, kbd, card, badge, alert, table, skeleton, spinner, empty, progress, aspect-ratio, page, site-header, section-cards, stat-grid, data-table, brand, text-stack, card-grid, cover, rating |  |
 | `forms` | button-group, input-group, input-otp, field, form, checkbox, radio-group, switch, slider, select, native-select, combobox, toggle, toggle-group |  |
-| `overlays` | dialog, alert-dialog, sheet, drawer, popover, tooltip, hover-card, dropdown-menu, context-menu, menubar, navigation-menu, command, toast, sonner | command: `forms` |
+| `overlays` | dialog, alert-dialog, sheet, drawer, popover, tooltip, hover-card, dropdown-menu, context-menu, menubar, navigation-menu, command, toast, sonner, calendar, date-picker | command: `forms`; date-picker: `forms` |
 | `layout` | avatar, accordion, collapsible, tabs, breadcrumb, pagination, scroll-area, resizable, sidebar, carousel, item | sidebar: `overlays` |
-| `chat` | message, bubble, attachment, message-scroller, trace, marker, questionnaire, code-block, calendar, date-picker | date-picker: `overlays`, `forms` |
+| `chat` | message, bubble, attachment, message-scroller, trace, marker, questionnaire, code-block |  |
 | `chart` | chart |  |
 
 1. Make a list of the components that the app uses and find their groups. Add the groups in the "Needs" column: these components put parts of another group in the page. This command lists the groups, with their "Needs", of the `data-slot` parts in the HTML files of the current folder. It reads `clanker-ui.json` (in the zip at `skills/clanker-ui/references/`):
@@ -600,7 +600,7 @@ show(content, { trigger, anchor = trigger, side, align, sideOffset = 4, alignOff
 - Utilities: `.sr-only`; `.shimmer` (text shimmer, override `--shimmer-color`, `--shimmer-duration`, `--shimmer-spread`, `--shimmer-angle`); `.scroll-fade` and `.scroll-fade-x` (see below).
 - `.scroll-fade` goes on a vertical scroll container, `.scroll-fade-x` on a horizontal one. A mask fades the edge where more content is: at rest only the end edge fades, in the middle both edges fade, at the end only the start edge fades. Without overflow, nothing fades. `.scroll-fade-x` mirrors in RTL. It uses scroll-driven animations (`animation-timeline: scroll()`); browsers without them (Firefox today) show no fade. Override `--scroll-fade-size` (default `min(12%, 2.5rem)`), one edge with `--scroll-fade-t-size`, `--scroll-fade-b-size`, `--scroll-fade-s-size`, or `--scroll-fade-e-size`, the whole mask with `--scroll-fade-mask` (`none` turns it off), and `--scroll-fade-reveal` (scroll distance until the fade is full, default `6rem`; `ease-in-out`). The class sets `animation`, so put it on an inner scroller, not on an element with its own enter or exit animation. It follows the shadcn `scroll-fade` utility, with one difference: without scroll-driven animations shadcn shows a fixed fade on both edges, the kit shows none (a fixed fade covers content that does not scroll).
 - shadcn tokens: `--background`, `--foreground`, `--card`, `--card-foreground`, `--popover`, `--popover-foreground`, `--primary`, `--primary-foreground`, `--secondary`, `--secondary-foreground`, `--muted`, `--muted-foreground`, `--accent`, `--accent-foreground`, `--destructive`, `--border`, `--input`, `--ring`, `--chart-1`…`--chart-5`, `--sidebar`, `--sidebar-foreground`, `--sidebar-primary`, `--sidebar-primary-foreground`, `--sidebar-accent`, `--sidebar-accent-foreground`, `--sidebar-border`, `--sidebar-ring`, `--radius`.
-- Kit tokens: `--radius-sm`…`--radius-4xl`, `--shadow-2xs`…`--shadow-2xl`, `--ease-in`, `--ease-out`, `--ease-in-out`, `--font-sans`, `--font-mono`, `--spacing`; status tokens `--success-bg`, `--success-border`, `--success-text`, and the same for `info`, `warning`, and `error` (the `success`, `warning`, and `info` variants of `alert` and `badge` use them); chart tokens `--chart-6`…`--chart-8`, `--chart-other`, `--chart-negative`, `--chart-good`, `--chart-bad`, `--chart-surface`, `--chart-grid`, `--chart-axis`, `--chart-area-opacity`, `--chart-ink-light`, `--chart-ink-dark` (label ink inside a fill, set on `[data-slot="chart"]`).
+- Kit tokens: `--radius-sm`…`--radius-4xl`, `--shadow-2xs`…`--shadow-2xl`, `--ease-in`, `--ease-out`, `--ease-in-out`, `--font-sans`, `--font-mono`, `--spacing`; status tokens `--success-bg`, `--success-border`, `--success-text`, and the same for `info`, `warning`, and `error` (the `success`, `warning`, and `info` variants of `alert` and `badge` use them); status fills `--success-fill`, `--warning-fill`, `--error-fill`, `--info-fill` for marks such as bars, dots, and meters (3:1 or more against the card, the same hue in light and dark); chart tokens `--chart-6`…`--chart-8`, `--chart-other`, `--chart-negative`, `--chart-good`, `--chart-bad`, `--chart-surface`, `--chart-grid`, `--chart-axis`, `--chart-area-opacity`, `--chart-ink-light`, `--chart-ink-dark` (label ink inside a fill, set on `[data-slot="chart"]`).
 
 ### Accessibility layer
 
@@ -881,7 +881,8 @@ The kit sets `type="button"` on dialog, alert dialog, sheet, drawer, popover, dr
 - Dialog and sheet add a close button unless `data-show-close-button="false"`. `<div data-slot="dialog-footer" data-show-close-button>` adds an outline Close button. A `<form method="dialog">` inside closes with an exit animation.
 - Alert dialog: `data-size="sm"`, `alert-dialog-media`. The footer buttons are `<button data-slot="alert-dialog-cancel" data-variant="outline">` and `<button data-slot="alert-dialog-action">` (`data-variant="destructive"` for a red action), as in shadcn (`data-alert-dialog-cancel` and `data-alert-dialog-action` on a `button` part also work). Cancel closes it. The action is a plain button, as in shadcn: it does not close the dialog, so the app closes it with `dialogClose()` when its work is done, or the action gets `data-alert-dialog-close`. Like Base UI, the first tabbable element gets the initial focus (usually Cancel).
 - Sheet: `data-side="top|right|bottom|left"` (default `right`). It opens with `data-starting-style` (set before `showModal()`, removed after one frame) and closes with `data-ending-style` until its transition ends, as Base UI; the backdrop follows the same attributes.
-- Long sheet and drawer content does not scroll by itself, as in shadcn: put it in a flex item with `overflow-y: auto` (the shadcn examples use `flex-1 overflow-y-auto`).
+- Long sheet and drawer content does not scroll by itself, as in shadcn: put it in a `sheet-body` or `drawer-body` (kit parts, like the shadcn `flex-1 overflow-y-auto px-4` wrapper): it fills the space between the header and the footer, scrolls, and holds its children in a column with a 1.5rem gap.
+- A form in a dialog, alert dialog, sheet, or drawer: put `<form data-slot="form">` (or a plain `<form>`) as the direct child of the content around the header, the body, and the footer. It is `display: contents`, so the parts keep the content layout (gap, sticky footer).
 
 #### Drawer
 
@@ -970,7 +971,7 @@ Many small marks with their own readout (a bar per day in an uptime row): one to
 </div>
 ```
 
-- Same parts with the `context-menu-` and `menubar-` prefixes, plus `-group`, `-radio-group`, and `-label` (`menubar-label` too). Items: `data-disabled`, `data-inset`, `data-variant="destructive"` (other items get `data-variant="default"`), `data-value`, `data-text-value` (typeahead label), `data-close-on-click`. Checkbox and radio items: `data-checked` (or `data-state="checked"`). Links work as items.
+- Same parts with the `context-menu-` and `menubar-` prefixes, plus `-group`, `-radio-group`, and `-label` (`menubar-label` too). Items: `data-disabled`, `data-inset`, `data-variant="destructive"` (other items get `data-variant="default"`), `data-value`, `data-text-value` (typeahead label), `data-close-on-click`. Checkbox and radio items: `data-checked` (or `data-state="checked"`). `data-value` on a radio group selects the item with that value. A later change of `data-value` on the radio group or of `data-checked` on an item, from code, updates the items (no event). Links work as items.
 - Base UI DOM and states: a label gets `role="presentation"` and names its group (`aria-labelledby`); a separator gets `data-orientation="horizontal"`; checkbox and radio items get `data-checked` or `data-unchecked` and an indicator as the first child (`dropdown-menu-checkbox-item-indicator`, `dropdown-menu-radio-item-indicator`; a `span` without a slot in context menus and menubars) that holds `<span data-checked aria-hidden="true">` with the `check` icon only while checked. The highlighted item has `data-highlighted`; an open sub menu's trigger has `data-popup-open` and loses `data-highlighted` while focus or the pointer is in the sub menu. The content has `data-open` or `data-closed`, `data-side`, `data-align`, and `data-instant` (`click` when a keyboard key or a right click opened it, `group` when a menubar switched menus, `dismiss` after Escape); the trigger has `data-popup-open` and `data-pressed` while open.
 - `dropdown-menu:change` and `:select` are emitted on the `dropdown-menu` root (also for an item in a sub menu or a radio group) and bubble to `document`; a listener on the radio group gets nothing. `detail.group` names the radio group.
 - A plain item closes the menu; checkbox and radio items keep it open (Base UI `closeOnClick`), unless `data-close-on-click` says otherwise.
@@ -1375,7 +1376,7 @@ A composition, as in shadcn: a `button` trigger, a `popover-content` popup, and 
 - Focus moves to the first part in the popup that can take focus (the previous-month button, or the next-month button when the previous one is disabled), as the Base UI popover does; Tab moves to the next-month button, then to the selected day or today. Escape, an outside click, or focus leaving closes it; a single date selection closes it unless `data-keep-open`. Focus returns to the trigger.
 - The trigger shows the formatted date (`data-format`: `long|medium|short|full|numeric`; ranges show `from - to`). The language is the calendar language: `data-lang` on the calendar, else the nearest `lang` attribute, else the browser language. `lang="en"` gives US English (`October 29, 2026`); set `lang="en-GB"` on the `date-picker` root or on `<html>` for `29 October 2026`, or `data-lang="de"` on the calendar for `29. Oktober 2026`. Month and day names in the popup use the same language.
 - Value from code: `data-value` on the calendar in the markup, or `calendarSetValue(calendar, "2026-10-29")` later. Both update the trigger text and the form value at once, without a `calendar:change` event (pass `{ emit: true }` for the event).
-- Label the trigger with `<label for="due-trigger">` (a button is a labelable element) or `aria-labelledby`.
+- Label the trigger with `<label for="due-trigger">` (a button is a labelable element) or `aria-labelledby`. In a vertical `field` the picker and its trigger fill the width, like an input.
 - `data-required` on the root: in a form the picker needs a date. The kit adds a visually hidden `required` input to the root; a `data-slot="form"` shows the `field-error` of the field around the trigger (`data-error-value-missing` on the root), sets `aria-invalid` on the trigger (or the `data-date-picker-input`), and focuses it on submit. The calendar `data-name` still submits the value. `data-required` on the calendar is a different option: a click on the selected day does not clear it.
 - `data-date-picker-input` on an input (for example in an `input-group`, with an icon button as the trigger) shows the date, parses typed dates on `change`, and opens the popup on ArrowDown. Typed text is read as ISO `yyyy-m-d`, as a numeric date in the order of the calendar language (en-US `m/d/yyyy`, de `d.m.yyyy`, ja `yyyy/m/d`), or as day, month name, and year in the language's long date order (`June 4, 2025`, `1. Juni 2025`). The year needs 4 digits; localized digits are accepted. Empty text clears the date. Text that does not parse keeps the old date and sets `aria-invalid="true"` on the input until the next valid change.
 - A preset value is a day offset or an ISO date. The demo also shows date of birth, time, dialog, and RTL compositions. Not built: the natural language picker (needs chrono-node).
@@ -1487,6 +1488,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 </main>
 ```
 
+- `data-layout="split"` on `page` is the sign-in layout of shadcn `login-02`: two columns from 64rem. The first child is the form column: its first child is the top bar (a `brand`, or a `div` with the `brand` and a theme toggle at the ends), and the next child (the form) is centered at most 20rem wide. A `page-aside` second child is the art panel (hidden below 64rem): `--muted`, its text at the bottom, an `svg` child that fills it behind the text (`--muted-foreground` at 35 %), and a `blockquote` (18 px, weight 500, at most 28rem) with a muted `footer`.
 - `data-layout="center"` on `page` is the sign-in layout of shadcn `login-03`: a muted full-height page with its children centered at most 24rem wide. In it, card headers are centered, the card title is 20 px, a `field-description` child of the page is centered, and so is one in the field of the submit button.
 - `page` is the content column: gutters of 1rem (1.5rem from 64rem), a 1rem gap between its children (1.5rem from 48rem), and `container: page`. Put it in `sidebar-inset` or `<body>`. `data-size="sm|md|lg"` limits the content to 42rem, 56rem, or 72rem and centers it; no size fills the width (dashboards, tables).
 - `page-header` is a grid: `page-title` (24 px, weight 600) and `page-description` (muted) on the start side, `page-actions` (a row of buttons, `gap` 0.5rem) on the end side. Below 32rem of header width, the actions move under the text.
@@ -1605,6 +1607,45 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 ```
 
 - A name and a detail line, as in the shadcn team switcher and user menu: the first line is 14 px, weight 500; the next lines are 12 px at 70 % of the text color. Each line is cut with an ellipsis. Use it after an `avatar` or a `brand-mark` in a `sidebar-menu-button`, a `dropdown-menu-label`, or a table cell.
+
+
+#### Card Grid
+
+```html
+<div data-slot="card-grid">
+  <div data-slot="card">
+    <div data-slot="cover" data-tone="2"><span>Piranesi</span><span>Susanna Clarke</span></div>
+    <div data-slot="card-header"><h3 data-slot="card-title">Piranesi</h3><p data-slot="card-description">Susanna Clarke</p></div>
+  </div>
+  <div data-slot="card">
+    <div data-slot="cover" data-tone="3"><span>Project Hail Mary</span><span>Andy Weir</span></div>
+    <div data-slot="card-header"><h3 data-slot="card-title">Project Hail Mary</h3><p data-slot="card-description">Andy Weir</p></div>
+  </div>
+</div>
+```
+
+- A grid of records with a preview (books, products, projects): as many columns of at least 13rem as fit (`data-size="sm"` 10rem, `lg` 18rem), a 1rem gap, one column on a narrow screen. Cards align at the top and keep their own height.
+
+#### Cover
+
+```html
+<div data-slot="cover" data-tone="4" data-ratio="square">
+  <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><circle cx="80" cy="20" r="30" fill="currentColor" opacity="0.4"></circle></svg>
+  <span>Field notes</span>
+  <span>Volume 2</span>
+</div>
+```
+
+- Placeholder art made from tokens, for a record without an image: a 2 / 3 box (`data-ratio="square"` 1 / 1, `video` 16 / 9) with the kit radius and a tint of `--chart-N` (`data-tone="1"` to `"5"`, default 1) on the card. An `svg` child fills the box behind the text in the tone color (draw with `currentColor`). The first text child is the title (16 px, weight 600), the others are 12 px; text wraps and is never cut.
+
+
+#### Rating
+
+```html
+<span data-slot="rating" role="img" aria-label="4 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg></span>
+```
+
+- A read-only star rating: a row of 16 px icons (`data-size="sm"` 12 px) with a 2 px gap. Filled stars (`fill="currentColor"`) are `--foreground`, empty stars `--muted-foreground`. Give the root `role="img"` and an `aria-label` with the value. For a rating input, use native radio inputs with star labels (the agent skill `references/recipes.md` has the markup and CSS): the browser gives the arrow keys and the form value, and a `data-slot="form"` shows the error.
 
 
 ## How parity with shadcn is tested

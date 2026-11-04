@@ -28,7 +28,7 @@ Pick by the job, not by the look. Each row names the kit part; its file is `comp
 | Many options, or the user types to find one (people, countries, tags) | `combobox` (`data-multiple` for several) |
 | A date or a range | `date-picker` (a `calendar` in a `popover`) |
 | A number in a range where the exact value does not matter (volume, size) | `slider`; else an `input type="number"` |
-| A rating of 1 to 5 | star radios ([recipes.md](recipes.md)), not a `toggle-group` |
+| A rating of 1 to 5 | input: star radios ([recipes.md](recipes.md)), not a `toggle-group`; read-only: `rating` |
 
 ## Messages
 
@@ -63,7 +63,7 @@ Pick by the job, not by the look. Each row names the kit part; its file is `comp
 | --- | --- |
 | Many records with the same fields, to compare, sort, or select | `table` in the `data-table` frame |
 | Few records, or records with different content (people, events, notifications) | `item-group` with `item` |
-| Records with an image or a large preview | a grid of `card` (block `card-grid`; `section-cards` only for 2, 3, 4, or 8 key numbers) |
+| Records with an image or a large preview | `card-grid` of `card`, each with an image or a `cover` (block `card-grid`; `section-cards` only for 2, 3, 4, or 8 key numbers) |
 | Values over time or by category | `chart()`; one number with its trend: `section-cards` or `statTile()` |
 | Many small marks with their own hover (90-day uptime bars) | one shared readout placed with `position()` and one Tab stop with arrow keys ([recipes.md](recipes.md)), not one tooltip per mark |
 | Status of a row in a table | `badge` with icon and word; icon and word in `data-table-text` only in tables of 6 or more columns |

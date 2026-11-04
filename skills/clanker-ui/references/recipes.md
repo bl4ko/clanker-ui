@@ -21,10 +21,18 @@ Fill an edit form after `form.reset()` or in its `reset` listener; the kit keeps
 
 Block: `overlay-form`. `<form data-slot="form">` is the direct child of `dialog-content` or `sheet-content` and holds the header, the fields, and the footer; the kit makes it `display: contents`, so the content gap and the sheet column stay. The submit button is in the footer. Close on success with `dialogClose()` in `form:submit`.
 
-Sheet with a long form: header, a scrolling body, and the footer. Only the body scrolls:
+Sheet with a long form: the fields go in a `sheet-body` (drawer: `drawer-body`) between the header and the footer. Only the body scrolls; the footer stays in view:
 
-```css
-.sheet-body { flex: 1; min-height: 0; overflow-y: auto; padding-inline: calc(var(--spacing) * 4); }
+```html
+<dialog data-slot="sheet-content" data-side="right">
+  <form data-slot="form" id="customer-form">
+    <div data-slot="sheet-header"><h2 data-slot="sheet-title">Edit customer</h2><p data-slot="sheet-description">Changes apply to new invoices.</p></div>
+    <div data-slot="sheet-body">
+      <div data-slot="field" role="group"><label data-slot="field-label" for="c-name">Name</label><input data-slot="input" id="c-name" name="name" required data-error-value-missing="Enter a name."></div>
+    </div>
+    <div data-slot="sheet-footer"><button type="button" data-slot="button" data-variant="outline" data-sheet-close>Cancel</button><button type="submit" data-slot="button">Save customer</button></div>
+  </form>
+</dialog>
 ```
 
 ## Several rules on one field
@@ -62,15 +70,11 @@ Native radios, so the browser gives the keys (arrows) and the form value; the ki
 .stars label:has(+ input:focus-visible) { outline: 2px solid var(--ring); outline-offset: 2px; }
 ```
 
-A read-only score: the icons and the number as text (`4.5 of 5`), no inputs.
+A read-only score: the `rating` part with the number as text next to it (`4.5`).
 
 ## Card grid
 
-Block: `card-grid`. Records with an image or a cover: a grid of `card` with the art first, then title, a muted detail line, and a status `badge`. Placeholder art comes from tokens (a gradient of two app tokens, initials or the title in it), never flat gray boxes. Keep icons and badges outside the title box, so long titles wrap.
-
-```css
-.grid { display: grid; gap: calc(var(--spacing) * 4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr)); }
-```
+Block: `card-grid`. Records with an image or a preview: the `card-grid` part with one `card` per record, the image or a `cover` first, then the `card-header` with the title, a muted detail line, and a status `badge` in `card-action` or below the title. A `cover` is placeholder art from tokens (`data-tone`, an `svg` drawn with `currentColor`), never a flat gray box. Keep icons and badges out of the cover title and the card title, so long titles wrap.
 
 ## Shared header on static pages
 

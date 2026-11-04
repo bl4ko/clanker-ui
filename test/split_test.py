@@ -186,11 +186,22 @@ def check_layout_needs(t):
 
 def check_chat_needs(t):
     compare(t, "chat-needs")
-    assert t.page.locator('[data-slot="date-picker"]').count() > 0 and t.page.locator('[data-slot="questionnaire"]').count() > 0
+    assert t.page.locator('[data-slot="questionnaire"]').count() > 0
+
+
+def overlays_interact(t):
+    return dialog_escape(t), calendar_next(t)
 
 
 def check_overlays(t):
-    assert compare(t, "overlays", dialog_escape), "focus does not go back to the alert dialog trigger after Escape"
+    back, (before, after) = compare(t, "overlays", overlays_interact)
+    assert back, "focus does not go back to the alert dialog trigger after Escape"
+    assert before != after, f"the calendar keeps {before!r} after the next month button"
+
+
+def check_overlays_needs_date_picker(t):
+    load(t, "overlays-needs")
+    assert t.page.locator('[data-slot="date-picker"]').count() > 0
 
 
 def check_layout(t):
@@ -198,9 +209,17 @@ def check_layout(t):
     assert after != before and selected == "true", f"ArrowRight and Enter on tab {before!r} give {after!r} (aria-selected {selected})"
 
 
+def trace_toggle(t):
+    trigger = t.page.locator('[data-slot="trace-collapsible-trigger"]').first
+    before = trigger.get_attribute("aria-expanded")
+    trigger.click()
+    t.page.evaluate(SETTLE)
+    return before, trigger.get_attribute("aria-expanded")
+
+
 def check_chat(t):
-    before, after = compare(t, "chat", calendar_next)
-    assert before != after, f"the calendar keeps {before!r} after the next month button"
+    before, after = compare(t, "chat", trace_toggle)
+    assert before != after, f"the trace step keeps aria-expanded {before!r} after a click"
 
 
 def check_chart(t):

@@ -62,7 +62,7 @@ func kitLicense(name string) string {
 		case base == "clanker-ui-themes.css" || base == "clanker-ui-a11y.css":
 		case strings.HasSuffix(base, ".css"):
 			base = "clanker-ui.css"
-		case base != "clanker-ui-chart.js":
+		case base != "clanker-ui-chart.js" && base != "clanker-ui-theme.js":
 			base = "clanker-ui.js"
 		}
 	}

@@ -36,7 +36,7 @@ var kitFiles = map[string]bool{"clanker-ui.css": true, "clanker-ui-a11y.css": tr
 
 var distFile = regexp.MustCompile(`^clanker-ui[a-z0-9-]*\.min\.(css|js)$`)
 
-var minKit = map[string]string{"clanker-ui.css": "dist/clanker-ui.min.css", "clanker-ui-themes.css": "dist/clanker-ui-themes.min.css", "clanker-ui-a11y.css": "dist/clanker-ui-a11y.min.css"}
+var minKit = map[string]string{"clanker-ui.css": "dist/clanker-ui.min.css", "clanker-ui-themes.css": "dist/clanker-ui-themes.min.css", "clanker-ui-a11y.css": "dist/clanker-ui-a11y.min.css", "clanker-ui-theme.js": "dist/clanker-ui-theme.min.js"}
 
 var minShims = map[string][]string{"clanker-ui.js": {"clanker-ui-core.min.js", "clanker-ui.min.js"}, "clanker-ui-chart.js": {"clanker-ui-chart.min.js"}}
 

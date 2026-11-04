@@ -640,17 +640,34 @@ def check_button(t):
 
 def check_icons(t):
     page = t.page
+    t.expect_console(r'^console\.warning: clanker-ui: unknown icon "no-such-icon"')
     grid = t.section("icons").locator("#icon-grid")
     count = page.evaluate("async () => (await import('/clanker-ui.js')).iconNames.length")
-    assert count >= 80, count
+    assert count >= 230, count
     assert grid.locator("[data-demo='icon-tile']").count() == count
     result = page.evaluate(
         """async () => {
           const { icon } = await import("/clanker-ui.js")
           const a = icon("x", { "data-icon": "inline-start" })
           const b = icon("loader-2")
-          let unknown = false
-          try { icon("no-such-icon") } catch { unknown = true }
+          const warned = []
+          const warn = console.warn
+          console.warn = (...args) => { warned.push(String(args[0])); warn.apply(console, args) }
+          let unknown
+          try {
+            const u = icon("no-such-icon")
+            icon("no-such-icon")
+            const holder = document.createElement("div")
+            const missing = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+            missing.setAttribute("data-lucide", "no-such-icon")
+            holder.append(missing)
+            document.body.append(holder)
+            await new Promise(r => setTimeout(r, 0))
+            unknown = [u.localName, u.childElementCount, u.getAttribute("aria-hidden"), missing.childElementCount, missing.getAttribute("aria-hidden"), warned.length]
+            holder.remove()
+          } finally {
+            console.warn = warn
+          }
           const holder = document.createElement("div")
           const i = document.createElement("i")
           i.setAttribute("data-lucide", "check")
@@ -663,7 +680,66 @@ def check_icons(t):
           return [a.localName, a.getAttribute("data-icon"), a.childElementCount, b.getAttribute("data-lucide"), unknown, replaced.localName, replaced.getAttribute("aria-label"), replaced.childElementCount > 0]
         }"""
     )
-    assert result == ["svg", "inline-start", 2, "loader-circle", True, "svg", "Done", True], result
+    assert result == ["svg", "inline-start", 2, "loader-circle", ["svg", 0, "true", 0, "true", 1], "svg", "Done", True], result
+
+
+def check_icons_register(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { icon, iconNames, registerIcons } = await import("/clanker-ui.js")
+          const before = iconNames.length
+          const holder = document.createElement("div")
+          const waiting = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+          waiting.setAttribute("data-lucide", "app-ship")
+          holder.append(waiting)
+          document.body.append(holder)
+          const warn = console.warn
+          console.warn = () => {}
+          await new Promise(r => setTimeout(r, 0))
+          console.warn = warn
+          const empty = waiting.childElementCount
+          const errors = []
+          for (const bad of [{ "Bad Name": ["M1 1h2"] }, { x: ["M1 1h2"] }, { "alert-triangle": ["M1 1h2"] }, { "app-a": [] }, { "app-b": [["script", {}]] }, { "app-c": [["path", { d: "M1 1", onload: "x" }]] }, { "app-d": [["path", { href: "javascript:x" }]] }]) {
+            try { registerIcons(bad); errors.push(false) } catch (e) { errors.push(e.constructor.name) }
+          }
+          registerIcons({ "app-ship": ["M12 2v2", ["circle", { cx: 12, cy: 12, r: "3" }]] })
+          const made = icon("app-ship")
+          const live = await import("/clanker-ui.js")
+          return {
+            empty,
+            errors,
+            filled: [waiting.childElementCount, waiting.classList.contains("lucide-app-ship")],
+            made: [...made.children].map(c => c.localName + ":" + (c.getAttribute("d") ?? c.getAttribute("cx"))),
+            names: [live.iconNames.length - before, live.iconNames.includes("app-ship"), Object.isFrozen(live.iconNames)],
+          }
+        }"""
+    )
+    assert result["empty"] == 0, result
+    assert result["errors"] == ["TypeError", "Error", "Error", "TypeError", "TypeError", "TypeError", "TypeError"], result
+    assert result["filled"] == [2, True], result
+    assert result["made"] == ["path:M12 2v2", "circle:12"], result
+    assert result["names"] == [1, True, True], result
+
+
+def check_icons_common(t):
+    found = t.page.evaluate(
+        """async () => {
+          const { icon, iconNames } = await import("/clanker-ui.js")
+          const names = ["layout-grid", "bookmark", "star", "star-half", "receipt", "wallet", "plane", "euro", "filter", "server", "database", "activity", "wifi", "upload", "download", "file", "image", "calendar-days", "clock", "map-pin", "mail", "phone", "globe", "lock", "unlock", "shield", "bell", "heart", "share", "link", "external-link", "copy", "trash", "pencil", "plus", "minus", "refresh-cw", "log-out", "user-plus", "users", "building", "credit-card", "banknote", "chart-bar", "chart-line", "chart-pie", "trending-up", "trending-down", "alert-triangle", "info", "help-circle", "check-circle", "x-circle", "loader"]
+          const host = document.createElement("div")
+          document.body.append(host)
+          const bad = names.filter(name => {
+            const el = icon(name)
+            host.append(el)
+            const b = el.getBBox()
+            return !(el.childElementCount > 0 && Math.max(b.width, b.height) > 4 && b.x >= -0.5 && b.y >= -0.5 && b.x + b.width <= 24.5 && b.y + b.height <= 24.5)
+          })
+          host.remove()
+          return { bad, aliases: ["unlock", "alert-triangle", "help-circle", "check-circle", "x-circle", "filter"].map(n => [n, iconNames.includes(n), icon(n).getAttribute("data-lucide")]) }
+        }"""
+    )
+    assert found["bad"] == [], found
+    assert found["aliases"] == [["unlock", False, "lock-open"], ["alert-triangle", False, "triangle-alert"], ["help-circle", False, "circle-question-mark"], ["check-circle", False, "circle-check-big"], ["x-circle", False, "circle-x"], ["filter", False, "funnel"]], found
 
 
 def check_icons_added(t):

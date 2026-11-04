@@ -347,6 +347,7 @@ func TestKitMinServesMinifiedFiles(t *testing.T) {
 	files["dist/clanker-ui.min.css"] = "min-css\n"
 	files["dist/clanker-ui-themes.min.css"] = "min-themes\n"
 	files["dist/clanker-ui-a11y.min.css"] = "min-a11y\n"
+	files["dist/clanker-ui-theme.min.js"] = "min-theme\n"
 	files["dist/clanker-ui-core.min.js"] = "export const h=1\n"
 	dir := writeFiles(t, files)
 	license, _, _ := strings.Cut(files["clanker-ui.js"], "\n")
@@ -358,7 +359,7 @@ func TestKitMinServesMinifiedFiles(t *testing.T) {
 		"/clanker-ui-a11y.css":    "min-a11y\n",
 		"/clanker-ui.js":          license + "\nexport * from \"./clanker-ui-core.min.js\"\nexport * from \"./clanker-ui.min.js\"\n",
 		"/clanker-ui-chart.js":    chartLicense + "\nexport * from \"./clanker-ui-chart.min.js\"\n",
-		"/clanker-ui-theme.js":    files["clanker-ui-theme.js"],
+		"/clanker-ui-theme.js":    "min-theme\n",
 		"/clanker-ui-core.min.js": "export const h=1\n",
 	} {
 		rec := request(t, h, http.MethodGet, path)

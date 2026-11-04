@@ -164,14 +164,14 @@ func TestDistSelectorGroups(t *testing.T) {
 	for sel, want := range map[string]string{
 		`[data-slot=button]`: "core",
 		`[data-slot=button]:where([data-input-group-button])`:                      "forms",
-		`[data-slot=button]:where([data-calendar-day-button])`:                     "chat",
-		`[data-slot=popover-content][data-date-picker-content]`:                    "chat",
+		`[data-slot=button]:where([data-calendar-day-button])`:                     "overlays",
+		`[data-slot=popover-content][data-date-picker-content]`:                    "overlays",
 		`[data-slot="sidebar"] [data-slot="button"]`:                               "core",
 		`:where([data-slot=dialog-content]) > form:not([data-slot])`:               "overlays",
 		`:where([data-slot=accordion-content]) > div`:                              "layout",
 		`[data-backdrop-of="sheet-content"]::backdrop`:                             "overlays",
 		`:is([data-slot="field-group"], [data-slot="checkbox-group"])`:             "forms",
-		`[data-slot=calendar][data-button-variant=outline]`:                        "chat",
+		`[data-slot=calendar][data-button-variant=outline]`:                        "overlays",
 		`[data-slot=field-label]:is(:where([data-slot=sidebar])[data-disabled] *)`: "forms",
 		`*,:before`: "core",
 		`:where([data-slot="button-group"] > :is([data-slot="dropdown-menu"], [data-slot="select"], [data-slot="combobox"], [data-slot="drawer"])) > [data-slot]:not([data-slot$="-content"])`: "forms",
@@ -306,7 +306,6 @@ var distOrderAllowed = []struct {
 	{regexp.MustCompile(`^\[data-slot="button"\]:where\(\[data-calendar-day-button\]\)\t\[data-slot="button"\]:where\(\[data-input-group-button\]\)`), "a button is a calendar day or an input group button, never both"},
 	{regexp.MustCompile(`\t\[data-theme-set="toggle"\] (> svg\.lucide-contrast|\[data-lucide="sun"\])$`), "these theme toggle icons are only inside the core theme toggle button, not inside a part of another group"},
 	{regexp.MustCompile(`^\[data-slot="attachment-media"\][^\t]* svg:not\(\[class\*="size-"\], \[data-slot\]\)\t\[data-slot="avatar-group-count"\][^\t]* > svg$`), "the avatar group count icon is a child of the count, not an icon in attachment media"},
-	{regexp.MustCompile(`^\[data-slot="chart"\]\t\[data-date-picker-trigger\]$`), "the chart root is a div, the date picker trigger is a button"},
 }
 
 func mentionedSlots(sel string) []string {

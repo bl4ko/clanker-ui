@@ -70,11 +70,11 @@ Open the page through a web server, for example `python3 -m http.server -b 127.0
 
 | Group | Components | Needs |
 | --- | --- | --- |
-| `core` | button, separator, direction, theme, input, textarea, label, kbd, card, badge, alert, table, skeleton, spinner, empty, progress, aspect-ratio, page, site-header, section-cards, stat-grid, data-table, brand, text-stack |  |
+| `core` | button, separator, direction, theme, input, textarea, label, kbd, card, badge, alert, table, skeleton, spinner, empty, progress, aspect-ratio, page, site-header, section-cards, stat-grid, data-table, brand, text-stack, card-grid, cover, rating |  |
 | `forms` | button-group, input-group, input-otp, field, form, checkbox, radio-group, switch, slider, select, native-select, combobox, toggle, toggle-group |  |
-| `overlays` | dialog, alert-dialog, sheet, drawer, popover, tooltip, hover-card, dropdown-menu, context-menu, menubar, navigation-menu, command, toast, sonner | command: `forms` |
+| `overlays` | dialog, alert-dialog, sheet, drawer, popover, tooltip, hover-card, dropdown-menu, context-menu, menubar, navigation-menu, command, toast, sonner, calendar, date-picker | command: `forms`; date-picker: `forms` |
 | `layout` | avatar, accordion, collapsible, tabs, breadcrumb, pagination, scroll-area, resizable, sidebar, carousel, item | sidebar: `overlays` |
-| `chat` | message, bubble, attachment, message-scroller, trace, marker, questionnaire, code-block, calendar, date-picker | date-picker: `overlays`, `forms` |
+| `chat` | message, bubble, attachment, message-scroller, trace, marker, questionnaire, code-block |  |
 | `chart` | chart |  |
 
 Add the groups in the "Needs" column for the components you use. An app that uses 3 or more of the 4 component groups (`forms`, `overlays`, `layout`, `chat`) loads the one-file set: `clanker-ui.min.css`, `clanker-ui.min.js`, and `clanker-ui-core.min.js`. Other apps link the group CSS in the order of the table and load one module for each group with behavior; the browser loads the core through the import.

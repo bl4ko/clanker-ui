@@ -2028,6 +2028,7 @@ define("input-group-addon", {
   },
   click(event, el) {
     if (event.target.closest("button, a, input, textarea, select, label")) return
+    if (el.contains(event.target.closest("[popover], dialog"))) return
     el.parentElement?.querySelector("input, textarea")?.focus()
   },
 })

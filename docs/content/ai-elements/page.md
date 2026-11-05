@@ -13,7 +13,11 @@ The patterns follow the [shadcn/ui AI Elements](https://ui.shadcn.com/docs/ai-el
 
 | Pattern | Use |
 | --- | --- |
+| [Checkpoint](/docs/ai-elements/checkpoint) | A point in the conversation you can return to. |
+| [Confirmation](/docs/ai-elements/confirmation) | A prompt to approve or deny a tool before it runs. |
 | [Message](/docs/ai-elements/message) | One turn. The person's message, and the agent's reply with its actions. |
+| [Queue](/docs/ai-elements/queue) | The agent's todo list, split into what is left and what is done. |
+| [Subagent](/docs/ai-elements/subagent) | A subagent run, with its tool calls and result. |
 
 ## Load the files
 

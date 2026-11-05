@@ -98,7 +98,11 @@
       "title": "AI Elements",
       "items": [
         {"title": "AI Elements", "href": "/docs/ai-elements", "hidden": true},
-        {"title": "Message", "href": "/docs/ai-elements/message"}
+        {"title": "Checkpoint", "href": "/docs/ai-elements/checkpoint"},
+        {"title": "Confirmation", "href": "/docs/ai-elements/confirmation"},
+        {"title": "Message", "href": "/docs/ai-elements/message"},
+        {"title": "Queue", "href": "/docs/ai-elements/queue"},
+        {"title": "Subagent", "href": "/docs/ai-elements/subagent"}
       ]
     },
     {

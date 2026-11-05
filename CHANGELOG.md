@@ -13,6 +13,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 ### Added
 
 - AI Elements (shadcn/ui October 2026): docs pages at `/docs/ai-elements` with patterns for chat and agent pages, built only from kit components: Message. Each page has the shadcn sections, live examples, and the module that plays the demo. `clanker-ui.json` has a `patterns` list (name, title, description, the components of the examples, docs links), and the skill has `references/ai-elements.md` (which pattern for which job).
+- AI Elements: Queue (todo sections that update as the agent works), Subagent (a run with its nested tool calls, running and details examples), Confirmation (approve or deny a tool call; the answer turns into a tool line), and Checkpoint (a marker with Restore that drops the later turns). Each demo plays its steps again from plain JavaScript.
 - Lucide icons `circle-dashed`, `flask-conical`, `list-todo`, `message-circle-dashed`, `route`, and `telescope` (242 in total).
 - Kit parts (core, CSS only): `card-grid` (a grid of record cards, `data-size="sm|lg"`), `cover` (placeholder art from tokens, `data-tone="1"`…`"5"`, `data-ratio="square|video"`), `rating` (read-only stars), and `data-layout="split"` on `page` (shadcn login-02: a form column and a `page-aside` art panel from 64rem).
 - `sheet-body` and `drawer-body`: the scrolling middle of a sheet or drawer between a fixed header and footer.

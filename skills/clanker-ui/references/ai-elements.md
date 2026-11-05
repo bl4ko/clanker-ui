@@ -12,3 +12,7 @@ Rules for every pattern:
 | Need | Pattern | Built with |
 | --- | --- | --- |
 | One turn: the person's bubble, the agent's reply, copy and feedback buttons | [Message](https://bl4ko.github.io/clanker-ui/docs/ai-elements/message/) | `message`, `bubble`, `tooltip`, `code-block` |
+| The agent's todo list while it works: what is left and what is done | [Queue](https://bl4ko.github.io/clanker-ui/docs/ai-elements/queue/) | `trace` with a `trace-collapsible` per section |
+| Work handed to a subagent: the run, its tool calls, and its result | [Subagent](https://bl4ko.github.io/clanker-ui/docs/ai-elements/subagent/) | `trace`, nested `trace`, `code-block`, `badge` |
+| Ask yes or no before a tool runs; the answer turns into a tool line | [Confirmation](https://bl4ko.github.io/clanker-ui/docs/ai-elements/confirmation/) | `item`, `button`, `trace` |
+| A point in the thread to go back to (Restore drops the later turns) | [Checkpoint](https://bl4ko.github.io/clanker-ui/docs/ai-elements/checkpoint/) | `marker` (`separator`), `button` |

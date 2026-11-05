@@ -251,17 +251,17 @@ components/command#command-groups	command-groups
 components/command#command-scrollable	command-scrollable
 components/command#command-rtl	command-rtl
 components/context-menu	/docs/components/context-menu
-components/context-menu#context-menu-demo	demo-context-menu-0
-components/context-menu#context-menu-basic	-	no example yet
-components/context-menu#context-menu-submenu	-	no example yet
-components/context-menu#context-menu-shortcuts	-	no example yet
-components/context-menu#context-menu-groups	-	no example yet
-components/context-menu#context-menu-icons	demo-context-menu-1
-components/context-menu#context-menu-checkboxes	-	no example yet
-components/context-menu#context-menu-radio	-	no example yet
-components/context-menu#context-menu-destructive	demo-context-menu-1
-components/context-menu#context-menu-sides	-	no example yet
-components/context-menu#context-menu-rtl	-	no example yet
+components/context-menu#context-menu-demo	context-menu-demo
+components/context-menu#context-menu-basic	context-menu-basic
+components/context-menu#context-menu-submenu	context-menu-submenu
+components/context-menu#context-menu-shortcuts	context-menu-shortcuts
+components/context-menu#context-menu-groups	context-menu-groups
+components/context-menu#context-menu-icons	context-menu-icons
+components/context-menu#context-menu-checkboxes	context-menu-checkboxes
+components/context-menu#context-menu-radio	context-menu-radio
+components/context-menu#context-menu-destructive	context-menu-destructive
+components/context-menu#context-menu-sides	context-menu-sides
+components/context-menu#context-menu-rtl	context-menu-rtl
 components/data-table	/docs/components/data-table
 components/data-table#data-table-demo	data-table-demo
 components/data-table#data-table-rtl	data-table-rtl

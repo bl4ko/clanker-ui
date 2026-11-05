@@ -49,14 +49,14 @@ def check_ai_suggestion_send(t):
     assert send.is_disabled()
     demo.get_by_role("button", name="Fix the failing build").click()
     assert demo.locator('[data-slot="bubble-content"]').inner_text() == "Fix the failing build"
-    assert demo.locator('[data-slot="message"]:not([data-align]) p').inner_text().startswith("The build failed on a missing import")
+    assert demo.locator('[data-slot="message"]:not([data-align="end"]) p').inner_text().startswith("The build failed on a missing import")
     text = page.locator("#suggestion-demo-text")
     text.fill("Hello")
     assert not send.is_disabled()
     text.press("Enter")
     assert demo.locator('[data-slot="bubble-content"]').count() == 1
     assert demo.locator('[data-slot="bubble-content"]').inner_text() == "Hello"
-    assert demo.locator('[data-slot="message"]:not([data-align]) p').inner_text() == "This demo only knows the suggestions. Pick one."
+    assert demo.locator('[data-slot="message"]:not([data-align="end"]) p').inner_text() == "This demo only knows the suggestions. Pick one."
     assert text.input_value() == "" and send.is_disabled()
 
 
@@ -111,7 +111,7 @@ def check_ai_chat_turn(t):
     titles = demo.locator('[data-slot="trace-title"]').all_inner_texts()
     assert titles == ["Thought", "Ran rg -l ThemeProvider app"], titles
     assert demo.locator('[data-slot="trace-collapsible"]').first.get_attribute("data-state") == "closed"
-    reply = demo.locator('[data-slot="message"]:not([data-align]) [data-slot="message-content"] > div:last-child')
+    reply = demo.locator('[data-slot="message"]:not([data-align="end"]) [data-slot="message-content"] > div:last-child')
     assert reply.locator("p").first.inner_text() == "next-themes is already set up in app/layout.tsx, so the toggle only has to call setTheme."
     assert reply.locator("li").count() == 2 and reply.locator('[data-slot="code-block-code"]').inner_text() == "const { setTheme } = useTheme()"
     assert page.locator("#chat-demo-thread").get_attribute("aria-busy") == "false"

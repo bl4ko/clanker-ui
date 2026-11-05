@@ -166,12 +166,12 @@ components/calendar#calendar-custom-days	demo-calendar-4
 components/calendar#calendar-week-numbers	demo-calendar-3
 components/calendar#calendar-rtl	-	no example yet
 components/card	/docs/components/card
-components/card#card-demo	demo-card-0
-components/card#card-small	-	no example yet
-components/card#card-spacing	-	no example yet
-components/card#card-edge-to-edge	-	no example yet
-components/card#card-image	demo-card-1
-components/card#card-rtl	-	no example yet
+components/card#card-demo	card-demo
+components/card#card-small	card-small
+components/card#card-spacing	card-spacing
+components/card#card-edge-to-edge	card-edge-to-edge
+components/card#card-image	card-image
+components/card#card-rtl	card-rtl
 components/carousel	/docs/components/carousel
 components/carousel#carousel-demo	demo-carousel-0
 components/carousel#carousel-size	demo-carousel-1

@@ -24,7 +24,7 @@ const (
 
 var (
 	exampleName    = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
-	previewHeights = []string{"auto", "24rem"}
+	previewHeights = []string{"auto", "24rem", "30rem", "32rem", "34rem"}
 	docsAssets     = []string{"docs.css", "docs.js", "docs-sidebar.js", "examples.css"}
 )
 

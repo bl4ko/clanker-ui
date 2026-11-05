@@ -54,7 +54,7 @@ HTML and Markdown responses have `Cache-Control: no-cache` and an `ETag`. Text r
 The examples in `docs/content/**/examples/*.html` may use the Tailwind classes of the shadcn examples for their layout (`w-full max-w-sm`, `flex gap-2`, `rounded-lg bg-muted`). `docs/assets/examples.css` has their rules, and every docs page loads it after `docs.css`; the kit files do not have them. After a class change, run (Tailwind CLI as in Generated CSS):
 
 ```sh
-go run ./tools/gen utilities -src "$SHADCN_SRC" -content 'docs/content/**/examples/*.html' -out docs/assets/examples.css
+go run ./tools/gen utilities -src "$SHADCN_SRC" -content 'docs/content/**/examples/*.{html,js}' -out docs/assets/examples.css
 ```
 
 `go test` fails when a class of an example has no rule; CI makes the file again and fails when it differs.

@@ -1,0 +1,30 @@
+<div data-slot="card" class="w-full max-w-sm" dir="rtl" lang="ar">
+  <div data-slot="card-header">
+    <div data-slot="card-title">تسجيل الدخول إلى حسابك</div>
+    <div data-slot="card-description">أدخل بريدك الإلكتروني أدناه لتسجيل الدخول إلى حسابك</div>
+    <div data-slot="card-action">
+      <button type="button" data-slot="button" data-variant="link">إنشاء حساب</button>
+    </div>
+  </div>
+  <div data-slot="card-content">
+    <form>
+      <div class="flex flex-col gap-6">
+        <div class="grid gap-2">
+          <label data-slot="label" for="email-rtl">البريد الإلكتروني</label>
+          <input data-slot="input" id="email-rtl" type="email" placeholder="m@example.com" required>
+        </div>
+        <div class="grid gap-2">
+          <div class="flex items-center">
+            <label data-slot="label" for="password-rtl">كلمة المرور</label>
+            <a href="#" class="ms-auto inline-block text-sm underline-offset-4 hover:underline">نسيت كلمة المرور؟</a>
+          </div>
+          <input data-slot="input" id="password-rtl" type="password" required>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div data-slot="card-footer" class="flex-col gap-2">
+    <button type="submit" data-slot="button" class="w-full">تسجيل الدخول</button>
+    <button type="button" data-slot="button" data-variant="outline" class="w-full">تسجيل الدخول باستخدام Google</button>
+  </div>
+</div>

@@ -154,17 +154,17 @@ components/button-group#button-group-select	demo-button-group-5
 components/button-group#button-group-popover	demo-button-group-4
 components/button-group#button-group-rtl	-	no example yet
 components/calendar	/docs/components/calendar
-components/calendar#calendar-demo	demo-calendar-0
-components/calendar#calendar-hijri	-	no example yet
-components/calendar#calendar-basic	-	no example yet
-components/calendar#calendar-range	-	no example yet
-components/calendar#calendar-caption	-	no example yet
-components/calendar#calendar-presets	-	no example yet
-components/calendar#calendar-time	-	no example yet
-components/calendar#calendar-booked-dates	-	no example yet
-components/calendar#calendar-custom-days	demo-calendar-4
-components/calendar#calendar-week-numbers	demo-calendar-3
-components/calendar#calendar-rtl	-	no example yet
+components/calendar#calendar-demo	calendar-demo
+components/calendar#calendar-hijri	-	kit calendar is Gregorian only
+components/calendar#calendar-basic	calendar-basic
+components/calendar#calendar-range	calendar-range
+components/calendar#calendar-caption	calendar-caption
+components/calendar#calendar-presets	calendar-presets
+components/calendar#calendar-time	calendar-time
+components/calendar#calendar-booked-dates	calendar-booked-dates
+components/calendar#calendar-custom-days	calendar-custom-days
+components/calendar#calendar-week-numbers	calendar-week-numbers
+components/calendar#calendar-rtl	calendar-rtl
 components/card	/docs/components/card
 components/card#card-demo	card-demo
 components/card#card-small	card-small

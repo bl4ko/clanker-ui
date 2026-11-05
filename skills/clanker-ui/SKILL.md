@@ -19,6 +19,7 @@ References in this skill:
 - [references/setup.md](references/setup.md): file checks, other ways to get the files, the group command for existing HTML, and which file exports which names.
 - [references/design.md](references/design.md): design rules for layout, spacing, type, buttons, color, forms, states, and phones. [references/choosing.md](references/choosing.md): which component for which job.
 - `references/blocks/<name>.html` (and `.js`): whole pages to start from.
+- [references/ai-elements.md](references/ai-elements.md): chat and agent patterns (message, prompt, steps, sources, code output) and which one to use.
 - [references/recipes.md](references/recipes.md): set values from code, forms in overlays, several rules per field, star rating, card grid, a shared header on static pages, breadcrumbs in the top header, category bar charts, status strips, long pages.
 - [references/events.md](references/events.md), [references/theming.md](references/theming.md), [references/testing.md](references/testing.md) (Playwright check and design lint), [references/clanker-ui.json](references/clanker-ui.json) (all component data as JSON).
 

@@ -8,6 +8,7 @@
   "sections": [
     {"title": "Introduction", "href": "/docs"},
     {"title": "Components", "href": "/docs/components"},
+    {"title": "AI Elements", "href": "/docs/ai-elements"},
     {"title": "Installation", "href": "/docs/installation"},
     {"title": "Theming", "href": "/docs/theming"},
     {"title": "Typography", "href": "/docs/typography"}
@@ -91,6 +92,13 @@
         {"title": "Tooltip", "href": "/docs/components/tooltip"},
         {"title": "Trace", "href": "/docs/components/trace", "new": true},
         {"title": "Typography", "href": "/docs/components/typography"}
+      ]
+    },
+    {
+      "title": "AI Elements",
+      "items": [
+        {"title": "AI Elements", "href": "/docs/ai-elements", "hidden": true},
+        {"title": "Message", "href": "/docs/ai-elements/message"}
       ]
     },
     {

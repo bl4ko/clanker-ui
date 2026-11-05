@@ -57,6 +57,14 @@ Pick by the job, not by the look. Each row names the kit part; its file is `comp
 | Pages of a table | `data-table-pagination` |
 | Pages of content with their own URLs (results, articles, a gallery) | `pagination` |
 
+## Chat and agents
+
+| Need | Use |
+| --- | --- |
+| A chat page, agent steps, sources, or code output | the patterns in [ai-elements.md](ai-elements.md): `message`, `bubble`, `trace`, `message-scroller`, `input-group` |
+| A step the agent took (a command, a search, thinking) | a `trace-line` in a `trace`, not a `card` or an `alert` |
+| A question that the agent asks the person | `questionnaire`; approve or deny one action: an `item` with two buttons |
+
 ## Data
 
 | Need | Use |

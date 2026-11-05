@@ -485,9 +485,9 @@ components/resizable#resizable-vertical	demo-resizable-1
 components/resizable#resizable-handle	-	no example yet
 components/resizable#resizable-rtl	-	no example yet
 components/scroll-area	/docs/components/scroll-area
-components/scroll-area#scroll-area-demo	demo-scroll-area-0
-components/scroll-area#scroll-area-horizontal-demo	demo-scroll-area-1
-components/scroll-area#scroll-area-rtl	-	no example yet
+components/scroll-area#scroll-area-demo	scroll-area-demo
+components/scroll-area#scroll-area-horizontal-demo	scroll-area-horizontal-demo
+components/scroll-area#scroll-area-rtl	scroll-area-rtl
 components/select	/docs/components/select
 components/select#select-demo	demo-select-0
 components/select#select-align-item	demo-select-1

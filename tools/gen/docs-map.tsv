@@ -99,13 +99,13 @@ components/avatar#avatar-size	avatar-size
 components/avatar#avatar-dropdown	avatar-dropdown
 components/avatar#avatar-rtl	avatar-rtl
 components/badge	/docs/components/badge
-components/badge#badge-demo	demo-badge-0
-components/badge#badge-variants	-	no example yet
-components/badge#badge-icon	demo-badge-1
-components/badge#badge-spinner	-	no example yet
-components/badge#badge-link	demo-badge-1
-components/badge#badge-colors	-	no example yet
-components/badge#badge-rtl	-	no example yet
+components/badge#badge-demo	badge-demo
+components/badge#badge-variants	badge-variants
+components/badge#badge-icon	badge-icon
+components/badge#badge-spinner	badge-spinner
+components/badge#badge-link	badge-link
+components/badge#badge-colors	badge-colors
+components/badge#badge-rtl	badge-rtl
 components/breadcrumb	/docs/components/breadcrumb
 components/breadcrumb#breadcrumb-demo	demo-breadcrumb-0
 components/breadcrumb#breadcrumb-basic	-	no example yet

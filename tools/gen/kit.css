@@ -1332,6 +1332,17 @@
     font-size: 0.875rem;
     line-height: 1.25rem;
   }
+  [data-slot="code-block-wrap-button"][aria-pressed="true"] { color: var(--foreground); }
+  [data-slot="code-block-code"] [data-token~="comment"] { color: var(--code-comment, light-dark(#606973, #919aa4)); }
+  [data-slot="code-block-code"] [data-token~="keyword"] { color: var(--code-keyword, light-dark(#c7293c, #f97583)); }
+  [data-slot="code-block-code"] [data-token~="string"] { color: var(--code-string, light-dark(#032f62, #9ecbff)); }
+  [data-slot="code-block-code"] [data-token~="constant"] { color: var(--code-constant, light-dark(#005cc5, #79b8ff)); }
+  [data-slot="code-block-code"] [data-token~="function"] { color: var(--code-function, light-dark(#6f42c1, #b392f0)); }
+  [data-slot="code-block-code"] [data-token~="variable"] { color: var(--code-variable, light-dark(#bc3d00, #ffab70)); }
+  [data-slot="code-block-code"] [data-token~="tag"] { color: var(--code-tag, light-dark(#0c792e, #85e89d)); }
+  [data-slot="code-block-code"] [data-token~="inserted"] { color: var(--code-inserted, light-dark(#0c792e, #85e89d)); }
+  [data-slot="code-block-code"] [data-token~="deleted"] { color: var(--code-deleted, light-dark(#b31d28, #fdaeb7)); }
+  [data-slot="code-block-code"] [data-token~="bold"] { font-weight: 600; }
 }
 
 @layer clanker.utilities {

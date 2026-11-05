@@ -18,6 +18,7 @@ import (
 var (
 	distGroups   = []string{"core", "forms", "overlays", "layout", "chat", "chart"}
 	distJSGroups = []string{"core", "forms", "overlays", "layout", "chat"}
+	distModules  = []string{"clanker-ui-chart.js", "clanker-ui-code.js"}
 )
 
 const (
@@ -258,25 +259,27 @@ func buildDist(root string) (*distResult, error) {
 	if err := t.distJS(res, js); err != nil {
 		return nil, fmt.Errorf("clanker-ui.js: %w", err)
 	}
-	chart, err := read("clanker-ui-chart.js")
-	if err != nil {
-		return nil, err
+	for _, name := range distModules {
+		mod, err := read(name)
+		if err != nil {
+			return nil, err
+		}
+		if strings.Count(mod, distChartIn) != 1 {
+			return nil, fmt.Errorf("%s: want one import %s", name, distChartIn)
+		}
+		mod = strings.Replace(mod, distChartIn, `from "./`+distCore+`"`, 1)
+		lic, body, _ := strings.Cut(mod, "\n")
+		min, err := minifyJS(body)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", name, err)
+		}
+		res.files[strings.TrimSuffix(name, ".js")+".min.js"] = []byte(lic + "\n" + min + "\n")
 	}
-	if strings.Count(chart, distChartIn) != 1 {
-		return nil, fmt.Errorf("clanker-ui-chart.js: want one import %s", distChartIn)
-	}
-	chart = strings.Replace(chart, distChartIn, `from "./`+distCore+`"`, 1)
-	lic, body, _ := strings.Cut(chart, "\n")
-	min, err := minifyJS(body)
-	if err != nil {
-		return nil, fmt.Errorf("clanker-ui-chart.js: %w", err)
-	}
-	res.files["clanker-ui-chart.min.js"] = []byte(lic + "\n" + min + "\n")
 	boot, err := read("clanker-ui-theme.js")
 	if err != nil {
 		return nil, err
 	}
-	lic, body, _ = strings.Cut(boot, "\n")
+	lic, body, _ := strings.Cut(boot, "\n")
 	r := api.Transform(body, api.TransformOptions{Loader: api.LoaderJS, MinifyWhitespace: true, MinifyIdentifiers: true, MinifySyntax: true, Charset: api.CharsetUTF8, LegalComments: api.LegalCommentsNone, LogLevel: api.LogLevelSilent})
 	if err := esbuildErr(r.Errors); err != nil {
 		return nil, fmt.Errorf("clanker-ui-theme.js: %w", err)

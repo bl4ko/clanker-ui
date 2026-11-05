@@ -514,7 +514,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 		return nil, nil, err
 	}
 	var js strings.Builder
-	for _, f := range []string{"clanker-ui.js", "clanker-ui-chart.js"} {
+	for _, f := range []string{"clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-code.js"} {
 		s, err := read(f)
 		if err != nil {
 			return nil, nil, err
@@ -622,6 +622,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 			{"clanker-ui-themes.css", "color schemes; after clanker-ui.css (min: clanker-ui-themes.min.css)"},
 			{"clanker-ui-a11y.css", "accessibility layer; after the themes file (min: clanker-ui-a11y.min.css)"},
 			{"clanker-ui-chart.js", "chart, sparkline, and stat tile module (min: clanker-ui-chart.min.js with clanker-ui-chart.min.css)"},
+			{"clanker-ui-code.js", "syntax colors for code-block-content with data-language (min: clanker-ui-code.min.js)"},
 		},
 	}
 	for _, g := range distGroups {
@@ -1373,6 +1374,9 @@ func (b *catalogBuild) exports(sections []mdSection) []catExport {
 			if slices.Contains([]string{"chart", "sparkline", "statTile"}, name) {
 				e.Module = "clanker-ui-chart.js"
 				e.Component = "chart"
+			} else if name == "codeBlockHighlight" {
+				e.Module = "clanker-ui-code.js"
+				e.Component = "code-block"
 			} else {
 				for _, c := range b.t.camel {
 					if name == c || strings.HasPrefix(name, c) && len(name) > len(c) && name[len(c)] >= 'A' && name[len(c)] <= 'Z' {
@@ -1708,7 +1712,8 @@ func componentMarkdown(b *strings.Builder, cat *catalog, c catComponent, heading
 		fmt.Fprintf(b, "Events: %s.\n\n", strings.Join(ev, "; "))
 	}
 	if len(c.Exports) > 0 {
-		fmt.Fprintf(b, "Exports (readable set: `%s`; `.min` set: %s):\n\n", readableModule(c.Group), minModules(c.Group))
+		readable, min := exportModules(cat, c)
+		fmt.Fprintf(b, "Exports (readable set: `%s`; `.min` set: %s):\n\n", readable, min)
 		for _, name := range c.Exports {
 			for _, e := range cat.Exports {
 				if e.Name == name {
@@ -1846,6 +1851,15 @@ func llmsFull(cat *catalog, sections []mdSection) string {
 	}
 	b.WriteString(catalogMarkdown(&short))
 	return b.String()
+}
+
+func exportModules(cat *catalog, c catComponent) (string, string) {
+	for _, e := range cat.Exports {
+		if len(c.Exports) > 0 && e.Name == c.Exports[0] && e.Module == "clanker-ui-code.js" {
+			return e.Module, "`clanker-ui-code.min.js`"
+		}
+	}
+	return readableModule(c.Group), minModules(c.Group)
 }
 
 func readableModule(group string) string {

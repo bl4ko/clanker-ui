@@ -577,6 +577,51 @@ def check_calendar_form(t):
     page.wait_for_function("() => document.querySelector('#calendar-large input[name=stay]').value === '2026-12-08/2026-12-18'")
 
 
+CODE_BLOCK_ROUTE = """import { streamText } from "ai"
+
+export async function POST(request: Request) {
+  const { messages } = await request.json()
+
+  const result = streamText({
+    model: "anthropic/claude-sonnet-4.5",
+    system: "You are a helpful assistant. Answer in one short paragraph.",
+    messages,
+  })
+
+  return result.toUIMessageStreamResponse()
+}"""
+
+CODE_TOKENS = [
+    ("ts", 'import { streamText } from "ai"\nexport async function POST(request: Request) {\n  const { messages } = await request.json()\n  return result.toUIMessageStreamResponse()', [["import", "keyword"], ["from", "keyword"], ['"ai"', "string"], ["export", "keyword"], ["async", "keyword"], ["function", "keyword"], ["POST", "function"], ["request", "variable"], [":", "keyword"], ["Request", "function"], ["const", "keyword"], ["messages", "constant"], ["=", "keyword"], ["await", "keyword"], ["json", "function"], ["return", "keyword"], ["toUIMessageStreamResponse", "function"]]),
+    ("tsx", 'export function useDebounce<T>(value: T, delay = 300) {\n  return <Button disabled={status !== "ready"}>Send</Button>\n}', [["export", "keyword"], ["function", "keyword"], ["useDebounce", "function"], ["T", "function"], ["value", "variable"], [":", "keyword"], ["T", "function"], ["delay", "variable"], ["=", "keyword"], ["300", "constant"], ["return", "keyword"], ["Button", "constant"], ["disabled", "function"], ["=", "keyword"], ["!==", "keyword"], ['"ready"', "string"], ["Button", "constant"]]),
+    ("jsx", '<div className="flex">{items.map((item) => <p key={item.id} />)}</div>', [["div", "tag"], ["className", "function"], ["=", "keyword"], ['"flex"', "string"], ["map", "function"], ["item", "variable"], ["=>", "keyword"], ["p", "tag"], ["key", "function"], ["=", "keyword"], ["div", "tag"]]),
+    ("javascript", "// note\nconst a = [1, 2.5, null] /* end */", [["// note", "comment"], ["const", "keyword"], ["a", "constant"], ["=", "keyword"], ["1", "constant"], ["2.5", "constant"], ["null", "constant"], ["/* end */", "comment"]]),
+    ("json", '{\n  "location": "San Francisco",\n  "temperature": 18,\n  "ok": true\n}', [['"location"', "constant"], ['"San Francisco"', "string"], ['"temperature"', "constant"], ["18", "constant"], ['"ok"', "constant"], ["true", "constant"]]),
+    ("html", '<!doctype html>\n<a href="/x" class=\'b\'>Don\'t &amp; go</a><!-- c -->', [["<!doctype html>", "keyword"], ["a", "tag"], ["href", "function"], ['"/x"', "string"], ["class", "function"], ["'b'", "string"], ["&amp;", "constant"], ["a", "tag"], ["<!-- c -->", "comment"]]),
+    ("css", '@import "tailwindcss";\n:root {\n  --radius: 0.625rem;\n  color: #fff !important;\n}', [["@import", "keyword"], ['"tailwindcss"', "string"], [":root", "function"], ["--radius", "variable"], ["0.625", "constant"], ["rem", "keyword"], ["color", "constant"], ["#fff", "constant"], ["!important", "keyword"]]),
+    ("bash", "pnpm dlx shadcn@latest add code-block\nKEY=value\necho $HOME | grep -v x # done", [["pnpm", "function"], ["dlx", "string"], ["shadcn@latest", "string"], ["add", "string"], ["code-block", "string"], ["=", "keyword"], ["value", "string"], ["echo", "function"], ["$HOME", "variable"], ["|", "keyword"], ["grep", "function"], ["-v", "constant"], ["x", "string"], ["# done", "comment"]]),
+    ("yaml", "name: web\nsteps:\n  - uses: actions/checkout@v4 # c\n    count: 3\n    on: true", [["name", "tag"], ["web", "string"], ["steps", "tag"], ["uses", "tag"], ["actions/checkout@v4", "string"], ["# c", "comment"], ["count", "tag"], ["3", "constant"], ["on", "tag"], ["true", "constant"]]),
+    ("go", 'func (s *Server) Run() error {\n\tx := 1\n\treturn fmt.Errorf("x %d", x) // c\n}', [["func", "keyword"], ["*", "keyword"], ["Run", "function"], ["error", "keyword"], [":=", "keyword"], ["1", "constant"], ["return", "keyword"], ["Errorf", "function"], ['"x %d"', "string"], ["// c", "comment"]]),
+    ("python", 'def greet(name: str) -> str:\n    return f"Hello, {name}!"  # hi', [["def", "keyword"], ["greet", "function"], ["str", "constant"], ["str", "constant"], ["return", "keyword"], ["f", "keyword"], ['"Hello, ', "string"], ["{", "constant"], ["}", "constant"], ['!"', "string"], ["# hi", "comment"]]),
+    ("diff", "--- a/x.ts\n+++ b/x.ts\n@@ -1 +1 @@\n-const a = 1\n+const a = 2\n same", [["--- a/x.ts", "constant"], ["+++ b/x.ts", "constant"], ["@@ -1 +1 @@", "function"], ["-const a = 1", "deleted"], ["+const a = 2", "inserted"]]),
+    ("markdown", "# Title\n\nSome **bold** and `code` and [link](https://x).\n- item", [["# Title", "constant bold"], ["**bold**", "bold"], ["`code`", "constant"], ["[link]", "string"], ["(https://x)", "string"], ["-", "variable"]]),
+    ("sql", "SELECT id, count(*) FROM users WHERE name = 'a' -- c", [["SELECT", "keyword"], ["count", "function"], ["*", "keyword"], ["FROM", "keyword"], ["WHERE", "keyword"], ["=", "keyword"], ["'a'", "string"], ["-- c", "comment"]]),
+    ("ansi", "\x1b[32m✓\x1b[39m ok \x1b[2m(4)\x1b[22m\n\x1b[1;31m✗ fail\nnext\x1b[0m", [["✓", "inserted"], ["✗ fail", "keyword bold"]]),
+]
+
+CODE_TOKENS_JS = """async cases => {
+  const { codeBlockHighlight } = await import("/clanker-ui-code.js")
+  const out = []
+  for (const [lang, text] of cases) {
+    const lines = codeBlockHighlight(text, lang)
+    const flat = lines.flatMap((line, i) => (i ? ["\\n", ...line] : line))
+    const plain = flat.map(n => (typeof n === "string" ? n : n.textContent)).join("")
+    out.push([lang, plain, flat.filter(n => typeof n !== "string").map(n => [n.textContent, n.getAttribute("data-token")]), lines.length])
+  }
+  return [out, codeBlockHighlight("a b", "text"), codeBlockHighlight("x".repeat(200001), "ts"), codeBlockHighlight("a", "constructor")]
+}"""
+
+
 def check_code_block(t):
     page = t.page
     section = t.section("code-block")
@@ -593,7 +638,7 @@ def check_code_block(t):
     assert copy.locator("svg.lucide-check").count() == 1
     assert copy.evaluate("b => b.nextElementSibling.getAttribute('aria-live') + '|' + b.nextElementSibling.textContent") == "polite|Copied"
     text = recorded(page, "code-block:copy")[0]["detail"]["value"]
-    assert text.startswith("export function safeRedirect(next: string | undefined) {\n") and text.endswith("return next\n}"), repr(text)
+    assert text == CODE_BLOCK_ROUTE, repr(text)
     if t.engine == "chromium":
         assert page.evaluate("navigator.clipboard.readText()") == text
     page.wait_for_function("() => !document.querySelector('#code-block-header [data-slot=code-block-copy-button]').hasAttribute('data-copied')")
@@ -2009,3 +2054,64 @@ def check_date_picker_field_width(t):
     t.a11y()
     assert style(page, "#fx-picker-due", "borderTopColor") == style(page, "#fx-picker-name", "borderTopColor"), "the a11y layer gives the trigger the input border"
     page.evaluate("() => document.getElementById('fx-picker-field').remove()")
+
+
+def check_code_block_tokens(t):
+    if t.mobile or t.theme == "dark":
+        t.skip("tokens do not depend on the width or the theme")
+    result, unknown, big, proto = t.page.evaluate(CODE_TOKENS_JS, [[lang, text] for lang, text, _ in CODE_TOKENS])
+    assert unknown is None and big is None and proto is None, (unknown, big, proto)
+    for (lang, text, want), (_, plain, got, count) in zip(CODE_TOKENS, result):
+        assert plain == re.sub(r"\x1b\[[\d;]*[@-~]", "", text), (lang, plain)
+        assert count == plain.count("\n") + 1, (lang, count)
+        assert got == want, (lang, got)
+
+
+def check_code_block_demo(t):
+    page = t.page
+    section = t.section("code-block")
+    block = section.locator("#code-block-header")
+    content = block.locator("[data-slot=code-block-content]")
+    lines = content.locator("[data-slot=code-block-line]")
+    assert lines.count() == 13
+    assert [lines.nth(i).get_attribute("data-variant") for i in range(13)] == ["default"] * 5 + ["highlighted"] * 5 + ["default"] * 3
+    assert content.evaluate("e => getComputedStyle(e).paddingInlineStart") == "12px"
+    band = lines.nth(5).evaluate("e => { const r = e.getBoundingClientRect(), p = e.closest('[data-slot=code-block]').getBoundingClientRect(); return [r.left - p.left, p.right - r.right, getComputedStyle(e).backgroundColor] }")
+    assert band[0] <= 1.5 and band[2] == resolve(page, "var(--muted)"), band
+    assert lines.nth(0).evaluate("e => getComputedStyle(e, '::before').color") == resolve(page, "var(--muted-foreground)")
+    tokens = content.evaluate("e => [...e.querySelectorAll('[data-token]')].map(s => [s.textContent, s.dataset.token, getComputedStyle(s).color])")
+    assert [x[:2] for x in tokens[:3]] == [["import", "keyword"], ["from", "keyword"], ['"ai"', "string"]], tokens[:3]
+    light = t.theme == "light"
+    want = {"keyword": "rgb(199, 41, 60)" if light else "rgb(249, 117, 131)", "string": "rgb(3, 47, 98)" if light else "rgb(158, 203, 255)", "function": "rgb(111, 66, 193)" if light else "rgb(179, 146, 240)", "constant": "rgb(0, 92, 197)" if light else "rgb(121, 184, 255)", "variable": "rgb(188, 61, 0)" if light else "rgb(255, 171, 112)"}
+    assert {k: v for _, k, v in tokens} == want, tokens
+    assert block.locator("[data-slot=code-block-actions] > button").evaluate_all("bs => bs.map(b => b.dataset.slot)") == ["code-block-wrap-button", "code-block-download-button", "code-block-copy-button"]
+    wrap = block.locator("[data-slot=code-block-wrap-button]")
+    download = block.locator("[data-slot=code-block-download-button]")
+    copy = block.locator("[data-slot=code-block-copy-button]")
+    look = "b => { const s = getComputedStyle(b), i = getComputedStyle(b.querySelector('svg')); return [s.display, s.width, s.height, s.borderTopLeftRadius, s.backgroundColor, i.width] }"
+    assert wrap.evaluate(look) == copy.evaluate(look) == download.evaluate(look), (wrap.evaluate(look), copy.evaluate(look))
+    assert copy.evaluate(look)[:4] == ["flex", "24px", "24px", "8px"], copy.evaluate(look)
+    assert download.get_attribute("aria-label") == "Download"
+    muted = resolve(page, "var(--muted-foreground)")
+    assert wrap.evaluate("b => getComputedStyle(b).color") == muted
+    assert content.evaluate("e => e.scrollWidth > e.clientWidth + 1")
+    wrap.click()
+    page.mouse.move(0, 0)
+    assert content.get_attribute("data-wrap") == "true" and content.evaluate("e => e.scrollWidth <= e.clientWidth + 1")
+    page.wait_for_function("() => getComputedStyle(document.querySelector('#code-block-header [data-slot=code-block-wrap-button]')).color === getComputedStyle(document.querySelector('#code-block-header [data-slot=code-block-title]')).color")
+    wrap.click()
+    record(page, "code-block:download")
+    with page.expect_download() as info:
+        download.click()
+    file = info.value
+    assert file.suggested_filename == "route.ts", file.suggested_filename
+    assert open(file.path(), encoding="utf-8").read() == CODE_BLOCK_ROUTE
+    assert recorded(page, "code-block:download")[0]["detail"] == {"value": CODE_BLOCK_ROUTE, "filename": "route.ts"}
+    ansi = section.locator("#code-block-ansi [data-slot=code-block-content]")
+    assert ansi.locator("[data-slot=code-block-line]").count() == 8
+    assert ansi.evaluate("e => e.textContent.includes('\\x1b')") is False
+    assert ansi.locator("[data-token]").evaluate_all("s => s.map(x => [x.textContent, x.dataset.token])")[:3] == [["✓", "inserted"], ["✓", "inserted"], ["✗", "keyword"]]
+    plain = section.locator("#code-block-languages [data-language=text]")
+    assert plain.locator("[data-token]").count() == 0
+    t.shot("code-block-demo", block)
+

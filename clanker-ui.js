@@ -308,6 +308,7 @@ export const strings = {
   copy: "Copy",
   copied: "Copied",
   wrapLines: "Wrap lines",
+  download: "Download",
   messages: "Messages",
   scrollToStart: "Scroll to start",
   scrollToEnd: "Scroll to end",
@@ -8873,6 +8874,25 @@ define("code-block-wrap-button", {
     const wrap = el.getAttribute("aria-pressed") !== "true"
     codeBlockSetWrap(el, wrap)
     emit(el.closest('[data-slot="code-block"]') ?? el, "code-block:wrap", { value: wrap })
+  },
+})
+
+define("code-block-download-button", {
+  init(el) {
+    buttonType(el)
+    if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", stringFor(el, "download"))
+    if (!el.querySelector("svg")) el.append(icon("download"))
+  },
+  click(event, el) {
+    if (el.matches(":disabled, [aria-disabled='true']")) return
+    const block = el.closest('[data-slot="code-block"]')
+    const value = el.hasAttribute("data-value") ? el.getAttribute("data-value") : codeBlockText(block)
+    const title = block?.querySelector('[data-slot="code-block-title"]')?.textContent.trim().split("/").pop()
+    const filename = el.getAttribute("data-filename") || title || "code.txt"
+    const url = URL.createObjectURL(new Blob([value], { type: "text/plain" }))
+    h("a", { href: url, download: filename }).click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    emit(block ?? el, "code-block:download", { value, filename })
   },
 })
 

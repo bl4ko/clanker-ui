@@ -324,6 +324,73 @@ def check_scheme_contrast(t):
     t.section("themes")
 
 
+CODE_CONTRAST = r"""async () => {
+  const { theme, h } = await import("/clanker-ui.js")
+  const root = document.documentElement
+  const saved = ["data-scheme", "data-theme"].map(n => [n, root.getAttribute(n)])
+  const tokens = ["comment", "keyword", "string", "constant", "function", "variable", "tag", "inserted", "deleted"]
+  const host = document.body.appendChild(h("div"))
+  Object.assign(host.style, { position: "fixed", left: "-2000px", top: "0", width: "600px" })
+  const probe = host.appendChild(h("span"))
+  const parse = s => {
+    const m = s.match(/color\(srgb ([-\d.e]+) ([-\d.e]+) ([-\d.e]+)(?: \/ ([\d.]+))?\)/)
+    return [+m[1], +m[2], +m[3], m[4] === undefined ? 1 : +m[4]].map(x => Math.min(1, Math.max(0, x)))
+  }
+  const srgb = v => { probe.style.color = `color-mix(in srgb, ${v} 100%, transparent)`; return parse(getComputedStyle(probe).color) }
+  const over = (f, b) => [0, 1, 2].map(i => f[3] * f[i] + (1 - f[3]) * b[i]).concat(1)
+  const lum = c => { const [x, y, z] = c.slice(0, 3).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); return 0.2126 * x + 0.7152 * y + 0.0722 * z }
+  const ratio = (f, b) => { const p = lum(over(f, b)), q = lum(b); return (Math.max(p, q) + 0.05) / (Math.min(p, q) + 0.05) }
+  const parents = ["background", "card"].map(bg => {
+    const lines = ["default", "highlighted", "removed"].map(v => h("span", { "data-slot": "code-block-line", "data-variant": v }, tokens.map(k => h("span", { "data-token": k }, k))))
+    const parent = host.appendChild(h("div", h("div", { "data-slot": "code-block" }, h("pre", { "data-slot": "code-block-content" }, h("code", { "data-slot": "code-block-code" }, lines)))))
+    parent.style.backgroundColor = `var(--${bg})`
+    return [bg, parent, parent.firstChild, lines]
+  })
+  const bases = theme.schemes.filter(s => s.group !== "accent").map(s => s.value)
+  const failures = [], signature = {}
+  let worst = 99
+  root.setAttribute("data-theme-switching", "")
+  for (const scheme of ["", ...bases]) {
+    for (const mode of ["light", "dark"]) {
+      scheme ? root.setAttribute("data-scheme", scheme) : root.removeAttribute("data-scheme")
+      root.setAttribute("data-theme", mode)
+      for (const [bg, parent, block, lines] of parents) {
+        const fill = over(srgb(getComputedStyle(block).backgroundColor), srgb(getComputedStyle(parent).backgroundColor))
+        for (const line of lines) {
+          const band = over(srgb(getComputedStyle(line).backgroundColor), fill)
+          for (const span of line.children) {
+            const color = getComputedStyle(span).color
+            if (bg === "background" && line.dataset.variant === "default") signature[scheme] = (signature[scheme] ?? "") + color
+            const r = ratio(srgb(color), band)
+            worst = Math.min(worst, r)
+            if (r < 4.5) failures.push(`${scheme || "kit"} ${mode} ${span.dataset.token} on ${bg} ${line.dataset.variant} ${r.toFixed(2)}`)
+          }
+        }
+      }
+    }
+  }
+  for (const [n, v] of saved) v === null ? root.removeAttribute(n) : root.setAttribute(n, v)
+  void root.offsetHeight
+  root.removeAttribute("data-theme-switching")
+  host.remove()
+  const editors = theme.schemes.filter(s => s.group === "editor").map(s => s.value)
+  return { failures, worst: +worst.toFixed(2), same: editors.filter(s => signature[s] === signature[""]), editors: editors.length }
+}"""
+
+
+def check_code_token_contrast(t):
+    if t.mobile:
+        t.skip("colors do not depend on the viewport width")
+    page = t.page
+    plain = page.evaluate(CODE_CONTRAST)
+    kit = [f for f in plain["failures"] if f.startswith("kit ")]
+    assert kit == [], kit
+    t.a11y()
+    result = page.evaluate(CODE_CONTRAST)
+    assert result["editors"] == 17 and result["same"] == [], result
+    assert not result["failures"], f"{len(result['failures'])} code token contrast failures: {result['failures'][:20]}"
+
+
 def check_scheme_persist(t):
     page = t.page
     root = page.locator("html")

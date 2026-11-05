@@ -9,6 +9,8 @@
   <title>Project Hail Mary - Marginalia</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-a11y.min.css">
+  <link rel="modulepreload" href="/vendor/clanker-ui/clanker-ui-core.min.js">
   <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
   <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
   <script type="module" src="/overlay-form.js"></script>
@@ -56,9 +58,14 @@
         <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">Project Hail Mary</span></li>
       </ol>
     </nav>
-    <div data-slot="page-header">
+    <div data-slot="page-header" data-size="lg">
       <h1 data-slot="page-title">Project Hail Mary</h1>
       <p data-slot="page-description">Andy Weir · 2021 · 476 pages. Our November pick, discussed on Nov 18.</p>
+      <div data-slot="page-meta">
+        <span><span data-slot="badge" data-variant="info"><svg data-lucide="book-open"></svg>Reading</span></span>
+        <span><svg data-lucide="tag"></svg>Science fiction</span>
+        <span><svg data-lucide="calendar"></svg>Meeting Nov 18</span>
+      </div>
       <div data-slot="page-actions">
         <button type="button" data-slot="button" data-variant="outline" data-sheet-trigger="edit-book"><svg data-lucide="pencil"></svg>Edit details</button>
         <button type="button" data-slot="button" data-dialog-trigger="review-dialog"><svg data-lucide="star"></svg>Write a review</button>
@@ -66,6 +73,17 @@
     </div>
     <div data-slot="page-body">
       <div>
+        <div data-slot="card" data-orientation="horizontal">
+          <div data-slot="cover" data-tone="1" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><circle cx="40" cy="92" r="16" fill="currentColor" opacity="0.25"/><circle cx="48" cy="93" r="15" fill="currentColor" opacity="0.6"/><circle cx="62" cy="59" r="17" fill="currentColor" opacity="0.25"/><circle cx="55" cy="71" r="16" fill="currentColor" opacity="0.25"/><circle cx="37" cy="85" r="16" fill="currentColor" opacity="0.6"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
+          <div>
+            <div data-slot="card-header">
+              <h2 data-slot="card-title">About the book</h2>
+            </div>
+            <div data-slot="card-content">
+              <p id="book-about">Ryland Grace wakes up alone on a spaceship with no memory of how he got there. As his memory returns, he learns that he is humanity's last chance to stop a microbe that dims the sun.</p>
+            </div>
+          </div>
+        </div>
         <div data-slot="card">
           <div data-slot="card-header">
             <h2 data-slot="card-title">Reviews</h2>

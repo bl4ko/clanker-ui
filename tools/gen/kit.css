@@ -456,6 +456,30 @@
   @container page-header (width < 32rem) {
     [data-slot="page-actions"] { grid-column: 1 / -1; grid-row: auto; justify-content: flex-start; margin-top: calc(var(--spacing) * 2); }
   }
+  [data-slot="page-header"][data-size="lg"] { row-gap: calc(var(--spacing) * 1.5); }
+  [data-slot="page-header"][data-size="lg"] > [data-slot="page-title"] { font-size: 1.875rem; line-height: 2.25rem; }
+  [data-slot="page-meta"] {
+    grid-column: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing) calc(var(--spacing) * 4);
+    margin-top: var(--spacing);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    color: var(--muted-foreground);
+  }
+  [data-slot="page-meta"] > * { display: inline-flex; align-items: center; gap: calc(var(--spacing) * 1.5); min-width: 0; }
+  [data-slot="page-meta"] > * > svg:not([data-slot]) { flex: none; width: 1rem; height: 1rem; }
+  [data-slot="accordion-trigger"] > [data-slot="badge"] { margin-inline-start: auto; align-self: center; }
+  [data-slot="accordion-trigger"] > [data-slot="badge"] ~ [data-slot="accordion-trigger-icon"] { margin-inline-start: calc(var(--spacing) * 2); }
+  [data-slot="card"][data-orientation="horizontal"] { flex-direction: row; align-items: flex-start; column-gap: 0; padding-inline-start: var(--card-spacing); }
+  [data-slot="card"][data-orientation="horizontal"] > [data-slot="cover"] { flex: none; width: 6rem; }
+  [data-slot="card"][data-orientation="horizontal"] > :not([data-slot="cover"]) { display: flex; flex: 1 1 0; flex-direction: column; gap: var(--card-spacing); min-width: 0; }
+  [data-slot="card"][data-orientation="horizontal"] [data-slot="card-footer"] { flex-wrap: wrap; gap: calc(var(--spacing) * 2); }
+  @media (width >= 48rem) {
+    [data-slot="card"][data-orientation="horizontal"] > [data-slot="cover"] { width: 8rem; }
+  }
   [data-slot="page-body"] {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -863,7 +887,7 @@
   [data-slot="text-stack"] > :first-child { font-weight: 500; }
   [data-slot="text-stack"] > :not(:first-child) { font-size: var(--text-xs); color: color-mix(in oklab, currentColor 70%, transparent); }
 
-  :is([data-slot="sheet-body"], [data-slot="drawer-body"]) {
+  [data-slot="sheet-body"], [data-slot="drawer-body"] {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;

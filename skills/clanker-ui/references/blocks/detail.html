@@ -9,6 +9,8 @@
   <title>Website redesign - Acme Inc.</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-a11y.min.css">
+  <link rel="modulepreload" href="/vendor/clanker-ui/clanker-ui-core.min.js">
   <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
   <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
   <script type="module" src="/detail.js"></script>
@@ -143,13 +145,19 @@
           </ol>
         </nav>
         <div data-slot="site-header-actions">
-          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+          <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
         </div>
       </header>
       <div data-slot="page">
-        <div data-slot="page-header">
+        <div data-slot="page-header" data-size="lg">
           <h1 data-slot="page-title">Website redesign</h1>
-          <p data-slot="page-description"><span data-slot="badge" data-variant="info"><svg data-lucide="clock"></svg>Active</span> New marketing site with a faster checkout. Due December 12.</p>
+          <p data-slot="page-description">New marketing site with a faster checkout and a blog.</p>
+          <div data-slot="page-meta">
+            <span><span data-slot="badge" data-variant="info"><svg data-lucide="clock"></svg>Active</span></span>
+            <span><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">OM</span></span>Olivia Martin</span>
+            <span><svg data-lucide="calendar"></svg>Due Dec 12, 2026</span>
+            <span><svg data-lucide="users"></svg>4 people</span>
+          </div>
           <div data-slot="page-actions">
             <button type="button" data-slot="button" data-variant="outline" id="share"><svg data-lucide="share"></svg>Share</button>
             <a data-slot="button" href="#edit"><svg data-lucide="pencil"></svg>Edit project</a>

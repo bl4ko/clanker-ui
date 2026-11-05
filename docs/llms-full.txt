@@ -598,7 +598,7 @@ show(content, { trigger, anchor = trigger, side, align, sideOffset = 4, alignOff
 - Utilities: `.sr-only`; `.shimmer` (text shimmer, override `--shimmer-color`, `--shimmer-duration`, `--shimmer-spread`, `--shimmer-angle`); `.scroll-fade` and `.scroll-fade-x` (see below).
 - `.scroll-fade` goes on a vertical scroll container, `.scroll-fade-x` on a horizontal one. A mask fades the edge where more content is: at rest only the end edge fades, in the middle both edges fade, at the end only the start edge fades. Without overflow, nothing fades. `.scroll-fade-x` mirrors in RTL. It uses scroll-driven animations (`animation-timeline: scroll()`); browsers without them (Firefox today) show no fade. Override `--scroll-fade-size` (default `min(12%, 2.5rem)`), one edge with `--scroll-fade-t-size`, `--scroll-fade-b-size`, `--scroll-fade-s-size`, or `--scroll-fade-e-size`, the whole mask with `--scroll-fade-mask` (`none` turns it off), and `--scroll-fade-reveal` (scroll distance until the fade is full, default `6rem`; `ease-in-out`). The class sets `animation`, so put it on an inner scroller, not on an element with its own enter or exit animation. It follows the shadcn `scroll-fade` utility, with one difference: without scroll-driven animations shadcn shows a fixed fade on both edges, the kit shows none (a fixed fade covers content that does not scroll).
 - shadcn tokens: `--background`, `--foreground`, `--card`, `--card-foreground`, `--popover`, `--popover-foreground`, `--primary`, `--primary-foreground`, `--secondary`, `--secondary-foreground`, `--muted`, `--muted-foreground`, `--accent`, `--accent-foreground`, `--destructive`, `--border`, `--input`, `--ring`, `--chart-1`…`--chart-5`, `--sidebar`, `--sidebar-foreground`, `--sidebar-primary`, `--sidebar-primary-foreground`, `--sidebar-accent`, `--sidebar-accent-foreground`, `--sidebar-border`, `--sidebar-ring`, `--radius`.
-- Kit tokens: `--radius-sm`…`--radius-4xl`, `--shadow-2xs`…`--shadow-2xl`, `--ease-in`, `--ease-out`, `--ease-in-out`, `--font-sans`, `--font-mono`, `--spacing`; status tokens `--success-bg`, `--success-border`, `--success-text`, and the same for `info`, `warning`, and `error` (the `success`, `warning`, and `info` variants of `alert` and `badge` use them); status fills `--success-fill`, `--warning-fill`, `--error-fill`, `--info-fill` for marks such as bars, dots, and meters (3:1 or more against the card, the same hue in light and dark); chart tokens `--chart-6`…`--chart-8`, `--chart-other`, `--chart-negative`, `--chart-good`, `--chart-bad`, `--chart-surface`, `--chart-grid`, `--chart-axis`, `--chart-area-opacity`, `--chart-ink-light`, `--chart-ink-dark` (label ink inside a fill, set on `[data-slot="chart"]`).
+- Kit tokens: `--radius-sm`…`--radius-4xl`, `--shadow-2xs`…`--shadow-2xl`, `--ease-in`, `--ease-out`, `--ease-in-out`, `--font-sans`, `--font-mono`, `--spacing`; status tokens `--success-bg`, `--success-border`, `--success-text`, and the same for `info`, `warning`, and `error` (the `success`, `warning`, and `info` variants of `alert` and `badge` use them); status fills `--success-fill`, `--warning-fill`, `--error-fill`, `--info-fill` for marks such as bars, dots, and meters (3:1 or more against the card, the same hue in light and dark), and `--neutral-fill` (gray, 3:1 or more against the card) for "no data" marks; chart tokens `--chart-6`…`--chart-8`, `--chart-other`, `--chart-negative`, `--chart-good`, `--chart-bad`, `--chart-surface`, `--chart-grid`, `--chart-axis`, `--chart-area-opacity`, `--chart-ink-light`, `--chart-ink-dark` (label ink inside a fill, set on `[data-slot="chart"]`).
 
 ### Accessibility layer
 
@@ -1039,13 +1039,13 @@ The Base UI DOM: a heading with the trigger button, and a panel with one inner `
 
 #### Alert, Aspect Ratio, Badge, Card, Empty, Item, Separator, Skeleton
 
-- `alert` (`role="alert"`, `data-variant="destructive"`) with an optional leading `<svg>`, `alert-title`, `alert-description`, `alert-action`.
+- `alert` (`role="alert"`, `data-variant="destructive"`) with an optional leading `<svg>`, `alert-title`, `alert-description`, `alert-action`. As in shadcn, the action sits at the top end and the alert keeps 72 px free for it; a wider action ("View incident") gets its own width plus 12 px, so the title and the description never go under it.
 - Kit extension to shadcn: `data-variant="success|warning|info"` on `alert` and `badge`. CSS only. Border, background, and text use the status tokens (see [CSS rules for components](#css-rules-for-components)); the alert description uses `--foreground`. A status `<a data-slot="badge">` shows an underline on hover.
 - `<div data-slot="aspect-ratio" data-ratio="16/9">` (any ratio, `"4/3"`, `"2.4"`): the kit sets `--ratio`, like shadcn. Children are not positioned; give an image `position: absolute; inset: 0; width: 100%; height: 100%` (the shadcn examples use `fill`).
 - `badge` (`data-variant="secondary|destructive|outline|ghost|link"`, or `<a data-slot="badge">`). Icons and spinners inside are 12 px.
 - `card` with `card-header` (`card-title`, `card-description`, `card-action`), `card-content`, `card-footer`. `data-size="sm"`; override `--card-spacing`. A first-child `<img>` sits flush with the top.
 - `empty` with `empty-header` (`empty-icon` with `data-variant="icon"`, `empty-title`, `empty-description`) and `empty-content`. Kit extension: `data-variant="outline"` adds the 1 px dashed border.
-- `item` (`data-variant="outline|muted"`, `data-size="sm|xs"`, or `<a data-slot="item">`) with `item-media` (`data-variant="icon|image"`), `item-content` (`item-title`, `item-description`), `item-actions`, `item-header`, `item-footer`; `item-group` (`role="list"`) and `item-separator`. As in shadcn, `item-title` is one line and `item-description` at most two lines (`line-clamp`): give a cut text a `title`, or for long text (a timeline update) use a `p` in `item-content`, not `item-description`. `item-group` has a 16 px gap and `item-separator` adds 8 px above and below: in a list with separators set the group gap to 0 in app CSS (`.list { gap: 0 }`), so the rows are as close as without them.
+- `item` (`data-variant="outline|muted"`, `data-size="sm|xs"`, or `<a data-slot="item">`) with `item-media` (`data-variant="icon|image"`), `item-content` (`item-title`, `item-description`), `item-actions`, `item-header`, `item-footer`; `item-group` (`role="list"`) and `item-separator`. As in shadcn, `item-title` is one line and `item-description` at most two lines (`line-clamp`): give a cut text a `title`, or for long text (a timeline update) use a `p` in `item-content`, not `item-description`. A `cover` in `item-media` is 40 px wide (32 px in a `sm` item, 24 px in `xs`) with its ratio and without its text; in `data-variant="image"` it fills the square. `item-group` has a 16 px gap and `item-separator` adds 8 px above and below: in a list with separators set the group gap to 0 in app CSS (`.list { gap: 0 }`), so the rows are as close as without them.
 - `separator` (`data-orientation="vertical"`): decorative (`role="none"`) unless you add `role="separator"`.
 - `skeleton`, sized by app CSS.
 
@@ -1214,6 +1214,12 @@ The viewport is the real scroll container; the kit makes it focusable, hides the
 </div>
 ```
 
+```html
+<div data-slot="tabs" data-value="password">...</div>
+```
+
+Set the tab from code with `data-value` on the root (`tabs.dataset.value = "password"`): the kit selects that tab without a `tabs:change` event, as for a select. A root with `data-value` keeps it in sync when the user picks a tab, and `data-value` in the markup wins over `data-default-value`. A value that no trigger has changes nothing.
+
 Keep a tab bar short enough for 390 px: when it scrolls, the cut last label has no other sign. With more tabs, put a `select` with the same choices next to the list, as shadcn `dashboard-01` does: `data-hide-from="sm"` on the select and `data-show-from="sm"` on the `tabs-list`; or use fewer and shorter labels. A `tabs-content` without `data-value` is a shared panel: it shows for every tab and is labelled by the selected tab. Use it for a tab bar that filters one list or table: render the rows on `tabs:change`. A filter with no panel at all is a toggle group (`data-type="single" data-required`), not tabs.
 
 Manual activation as in Base UI: the arrow keys move focus, Enter, Space, or a click selects (`data-activation="automatic"` selects on focus), roving tabindex, arrows (RTL aware), Home, End; disabled tabs are skipped. Tab panels are focusable (`tabindex="0"`) and show the standard focus ring.
@@ -1338,7 +1344,7 @@ One item at a time. The kit builds the native radio or checkbox, the indicator, 
 | --- | --- |
 | `data-value` | `2026-10-28`; `multiple`: space-separated dates; `range`: `2026-10-01/2026-10-07` |
 | `data-month`, `data-months` | First month shown (`2026-10`), number of months side by side |
-| `data-min`, `data-max`, `data-disabled-dates`, `data-disabled-weekdays`, `data-disabled` | Limits. Ranges use `a/b`. Weekdays `0` (Sunday) to `6`. |
+| `data-min`, `data-max`, `data-disabled-dates`, `data-disabled-weekdays`, `data-disabled` | Limits. Ranges use `a/b`. Weekdays `0` (Sunday) to `6`. A change from code (for example `data-max` set to today when the page loads) renders the grid again. |
 | `data-week-start` | `0`–`6`, default `1` (Monday) |
 | `data-caption-layout` | `label`, `dropdown`, `dropdown-months`, `dropdown-years`; years from `data-start-year` to `data-end-year` (default: 100 years before today to this year, or the years of `data-min` and `data-max`). With a year dropdown, navigation stops at January of the first and December of the last year, as in react-day-picker; for future dates set `data-end-year` or `data-max`. A `data-min` in a later year extends the default end year, and a `data-max` in an earlier year extends the default start year. |
 | `data-button-variant` | Button variant of the previous and next buttons, default `ghost` |
@@ -1530,7 +1536,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 
 - The KPI cards of shadcn `dashboard-01`. Columns follow the width of the grid itself: 1, then 2 from 34rem, then 4 from 61rem; exactly 3 cards go to 3 columns from 44rem. Use 2, 3, 4, or 8 cards.
 - Each card is a subgrid row of the grid, so the headers and the footers of one row line up when a label wraps. A card with a `card-content` takes three rows.
-- `card-title` is the value: 24 px (30 px when the card is at least 250 px wide), weight 600, tabular numbers. It wraps instead of being cut. The footer holds a medium trend line with an icon and a `card-description`.
+- `card-title` is the value: 24 px (30 px when the card is at least 250 px wide), weight 600, tabular numbers. With a description first and a `badge` in `card-action`, the value takes the full width of the row under them, so a number does not break next to the badge. It wraps at spaces, and only a value wider than the card breaks inside. The footer holds a medium trend line with an icon and a `card-description`.
 - `statTile()` elements can be the children too.
 - The trend `badge` holds any short delta (`+12.5%`, `4 late`). Compute values and deltas from the data and today's date (`new Date()`), not from fixed strings.
 
@@ -1763,7 +1769,7 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 #### Alert (`alert`)
 
-Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/alert/.
+Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/alert/.
 
 | Part | Write | State |
 | --- | --- | --- |
@@ -2691,7 +2697,7 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 
 | Part | Write | State |
 | --- | --- | --- |
-| `tabs` (root) | `data-default-value` string; `data-orientation` `horizontal`, `vertical` |  |
+| `tabs` (root) | `data-default-value` string; `data-orientation` `horizontal`, `vertical`; `data-value` string |  |
 | `tabs-content` | `data-value` string |  |
 | `tabs-list` | `data-variant` `default`, `line` |  |
 | `tabs-trigger` | `data-value` string | `data-active`, `data-state` |

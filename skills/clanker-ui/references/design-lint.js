@@ -2,7 +2,8 @@
   const RULES = ["button-size-mismatch", "multiple-primary", "text-clipped", "horizontal-scroll", "small-target", "low-contrast", "non-token-color", "missing-label", "heading-order", "misaligned", "empty-region"]
   const TARGETS = 'a[href], button, input:not([type="hidden"]), select, textarea, summary, [role="button"], [role="link"], [role="checkbox"], [role="switch"], [role="radio"], [role="tab"], [role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], [role="option"], [role="slider"], [role="combobox"], [tabindex]:not([tabindex="-1"])'
   const CONTROLS = 'button, [role="button"], a[data-slot="button"], input:not([type="hidden"], [type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="color"], [type="image"]), select, [data-slot="select-trigger"]'
-  const ROW_CONTROLS = CONTROLS + ', [data-slot="toggle-group"]:not([data-orientation="vertical"])'
+  const ROW_CONTROLS = CONTROLS + ', [data-slot="toggle-group"]:not([data-orientation="vertical"]), [data-slot="input-group"]'
+  const CHOICES = '[role="switch"], [role="checkbox"], [role="radio"], [data-slot="switch"], [data-slot="checkbox"], [data-slot="radio-group-item"]'
   const NAMED = 'button, [role="button"], a[href], input:not([type="hidden"]), select, textarea, [role="checkbox"], [role="switch"], [role="radio"], [role="combobox"], [role="slider"], [role="tab"], [role="textbox"], [role="searchbox"], [role="spinbutton"], [role="menuitem"], [role="option"], img'
   const GROUPS = '[role="toolbar"], [data-slot="button-group"], [data-slot$="-footer"]'
   const REGIONS = 'dialog, [role="dialog"], [role="alertdialog"], [role="toolbar"], form, [data-slot$="-footer"], [data-slot="card"], [data-slot="button-group"], [data-slot="popover-content"]'
@@ -110,9 +111,14 @@
     run("button-size-mismatch", () => {
       const groups = new Map()
       for (const el of all) {
-        if (!el.matches(ROW_CONTROLS) || !vis(el) || /absolute|fixed/.test(cs(el).position) || el.parentElement.closest(INSIDE)) continue
+        if (!el.matches(ROW_CONTROLS) || el.matches(CHOICES) || !vis(el) || /absolute|fixed/.test(cs(el).position) || el.parentElement.closest(INSIDE)) continue
         let item = el
-        for (let i = 0; i < 3 && item.parentElement !== root && item.parentElement.childElementCount === 1 && !/flex|grid/.test(cs(item.parentElement).display); i++) item = item.parentElement
+        for (let i = 0; i < 4 && item.parentElement !== root; i++) {
+          const parent = item.parentElement
+          const display = cs(parent).display
+          if (display !== "contents" && !parent.matches('[data-slot="native-select-wrapper"]') && (parent.childElementCount !== 1 || /flex|grid/.test(display))) break
+          item = parent
+        }
         const key = el.closest(GROUPS) || item.parentElement
         groups.get(key)?.push(el) || groups.set(key, [el])
       }
@@ -421,7 +427,7 @@
 
   function watchShift(options = {}) {
     const threshold = options.threshold ?? 1
-    const els = [...document.querySelectorAll(options.selector || TARGETS)].filter(el => el.checkVisibility() && el.getBoundingClientRect().width > 0)
+    const els = [...document.querySelectorAll(options.selector || TARGETS)].filter(el => el.checkVisibility() && el.getBoundingClientRect().width > 0 && !el.closest('[aria-hidden="true"]'))
     const scroller = el => {
       for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
         const s = getComputedStyle(p)

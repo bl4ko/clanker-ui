@@ -363,16 +363,16 @@ components/input-group#input-group-textarea	input-group-textarea
 components/input-group#input-group-custom	input-group-custom
 components/input-group#input-group-rtl	input-group-rtl
 components/input-otp	/docs/components/input-otp
-components/input-otp#input-otp-demo	demo-input-otp-0
-components/input-otp#input-otp-pattern	demo-input-otp-1
-components/input-otp#input-otp-separator	demo-input-otp-1
-components/input-otp#input-otp-disabled	demo-input-otp-3
-components/input-otp#input-otp-controlled	demo-input-otp-2
-components/input-otp#input-otp-invalid	demo-input-otp-3
-components/input-otp#input-otp-four-digits	demo-input-otp-2
-components/input-otp#input-otp-alphanumeric	-	no example yet
-components/input-otp#input-otp-form	-	no example yet
-components/input-otp#input-otp-rtl	-	no example yet
+components/input-otp#input-otp-demo	input-otp-demo
+components/input-otp#input-otp-pattern	input-otp-pattern
+components/input-otp#input-otp-separator	input-otp-separator
+components/input-otp#input-otp-disabled	input-otp-disabled
+components/input-otp#input-otp-controlled	input-otp-controlled
+components/input-otp#input-otp-invalid	input-otp-invalid
+components/input-otp#input-otp-four-digits	input-otp-four-digits
+components/input-otp#input-otp-alphanumeric	input-otp-alphanumeric
+components/input-otp#input-otp-form	input-otp-form
+components/input-otp#input-otp-rtl	input-otp-rtl
 components/item	/docs/components/item
 components/item#item-demo	item-demo
 components/item#item-variant	item-variant

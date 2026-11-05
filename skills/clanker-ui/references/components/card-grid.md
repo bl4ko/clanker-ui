@@ -23,4 +23,4 @@ Group `core`. Needs none. CSS only.
 </div>
 ```
 
-- A grid of records with a preview (books, products, projects): as many columns of at least 13rem as fit (`data-size="sm"` 10rem, `lg` 18rem), a 1rem gap, one column on a narrow screen. Cards align at the top and keep their own height.
+- A grid of records with a preview (books, products, projects): as many columns of at least 13rem as fit (`data-size="sm"` 10rem, `lg` 18rem), a 1rem gap, one column on a narrow screen. The cards of one row have one height, and a `card-footer` sits at the bottom of its card.

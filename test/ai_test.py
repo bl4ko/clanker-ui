@@ -169,8 +169,8 @@ def check_ai_file_tree_select(t):
     folder = tree.locator("[data-collapsible-trigger]", has_text="app")
     folder.click()
     t.settle()
-    assert folder.get_attribute("aria-expanded") == "true"
-    assert current.count() == 1 and current.inner_text() == "page.tsx"
+    assert folder.get_attribute("aria-expanded") == "false"
+    assert current.count() == 1 and current.text_content() == "page.tsx"
 
 
 def check_ai_file_tree_folders(t):

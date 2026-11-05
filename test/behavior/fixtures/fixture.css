@@ -84,6 +84,15 @@ html {
   max-width: 12rem;
 }
 
+[data-behavior~="w-full-max-w-sm"] {
+  width: 100%;
+  max-width: 24rem;
+}
+
+[data-behavior~="pre-wrap"] {
+  white-space: pre-wrap;
+}
+
 @media (min-width: 640px) {
   [data-behavior~="max-w-sm"] {
     max-width: 24rem;

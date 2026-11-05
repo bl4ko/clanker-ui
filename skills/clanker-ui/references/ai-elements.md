@@ -11,12 +11,17 @@ Rules for every pattern:
 
 | Need | Pattern | Built with |
 | --- | --- | --- |
+| Several steps behind one summary line ("Researched in 3 steps") that opens while they run | [Chain of Thought](https://bl4ko.github.io/clanker-ui/docs/ai-elements/chain-of-thought/) | `trace` in a `trace-collapsible`, `code-block`, `badge` |
 | A chat page: the thread that keeps the reading position while a reply streams | [Chat](https://bl4ko.github.io/clanker-ui/docs/ai-elements/chat/) | `message-scroller` (anchor on the person's turn), `message`, `bubble`, `input-group` |
 | How much of the model's context window is used | [Context](https://bl4ko.github.io/clanker-ui/docs/ai-elements/context/) | `hover-card` on a `button`, `progress` |
 | The files that the agent changed, as folders that open and close; a click selects a file | [File Tree](https://bl4ko.github.io/clanker-ui/docs/ai-elements/file-tree/) | `collapsible` (div root, ghost `sm` button trigger), `button` with `aria-current` |
 | A source inside the sentence that it supports, with a card on hover and focus | [Inline Citation](https://bl4ko.github.io/clanker-ui/docs/ai-elements/inline-citation/) | `hover-card` (all `span` parts inside a `p`), `button` `secondary` `xs` |
 | One turn: the person's bubble, the agent's reply, copy and feedback buttons | [Message](https://bl4ko.github.io/clanker-ui/docs/ai-elements/message/) | `message`, `bubble`, `tooltip`, `code-block` |
 | Pick the model and the effort next to the field | [Model Selector](https://bl4ko.github.io/clanker-ui/docs/ai-elements/model-selector/) | two `dropdown-menu` radio groups (`data-close-on-click`) in the `input-group-addon` |
+| Steps known before the work starts, with done, running, and pending steps and a count | [Plan](https://bl4ko.github.io/clanker-ui/docs/ai-elements/plan/) | `trace`, `trace-description` |
 | The message field with attachments, model menus, and send | [Prompt Input](https://bl4ko.github.io/clanker-ui/docs/ai-elements/prompt-input/) | `input-group` with a `textarea`, `attachment`, `dropdown-menu` |
+| The model's thinking: "Thinking" and open while it streams, "Thought" and closed after | [Reasoning](https://bl4ko.github.io/clanker-ui/docs/ai-elements/reasoning/) | `trace-collapsible` |
 | The links that the agent used, after the reply ("Used 3 sources"); remove duplicate URLs | [Sources](https://bl4ko.github.io/clanker-ui/docs/ai-elements/sources/) | `trace-collapsible` with a nested `trace` of links |
 | Prompts that the person sends in one click | [Suggestion](https://bl4ko.github.io/clanker-ui/docs/ai-elements/suggestion/) | outline `sm` `button` row with `scroll-fade-x` |
+| Steps that appear as the agent takes them, grouped per piece of work | [Task](https://bl4ko.github.io/clanker-ui/docs/ai-elements/task/) | `trace` in a `trace-collapsible` |
+| One tool call (a command, a file read) from running to output or error; long output in a sheet | [Tool](https://bl4ko.github.io/clanker-ui/docs/ai-elements/tool/) | `trace-collapsible`, `code-block`, `sheet`, `item` |

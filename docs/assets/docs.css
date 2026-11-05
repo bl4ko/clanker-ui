@@ -1173,9 +1173,11 @@ body[data-docs="body"] {
   & .gap-3 { gap: 0.75rem; }
   & .gap-6 { gap: 1.5rem; }
   & .mx-auto { margin-inline: auto; }
+  & .mx-6 { margin-inline: 1.5rem; }
   & .ms-auto { margin-inline-start: auto; }
   & .ms-4 { margin-inline-start: 1rem; }
   & .mt-auto { margin-top: auto; }
+  & .mb-6 { margin-bottom: 1.5rem; }
   & .p-3 { padding: 0.75rem; }
   & .px-1 { padding-inline: 0.25rem; }
   & .px-0 { padding-inline: 0; }

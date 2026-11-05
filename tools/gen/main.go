@@ -43,6 +43,7 @@ var ignoredMarkers = map[string]string{
 
 var kit = kitMap{
 	alias: map[string]string{
+		"code-block-copy-button":                `:is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"])`,
 		"dropdown-menu-checkbox-item-indicator": `:is([data-slot="dropdown-menu-checkbox-item-indicator"], [data-slot="dropdown-menu-item-indicator"])`,
 		"dropdown-menu-radio-item-indicator":    `:is([data-slot="dropdown-menu-radio-item-indicator"], [data-slot="dropdown-menu-item-indicator"])`,
 	},

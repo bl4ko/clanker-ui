@@ -24,7 +24,7 @@ Parts that shadcn renders with `Button` keep their own `data-slot` and share the
 | `pagination-link` | `ghost`, `icon`; the current page has `data-variant="outline"` |
 | `carousel-previous`, `carousel-next` | `outline`, `icon-sm`, round 28 px |
 | `sidebar-trigger` | `ghost`, 28 px |
-| `attachment-action`, `code-block-copy-button`, `code-block-wrap-button` | `ghost`, `icon-xs` |
+| `attachment-action`, `code-block-copy-button`, `code-block-wrap-button`, `code-block-download-button` | `ghost`, `icon-xs` |
 | `message-scroller-button` | `secondary`, `icon-sm` |
 | `questionnaire-previous`, `questionnaire-skip` | `outline` |
 | `questionnaire-next`, `questionnaire-submit` | `default` |

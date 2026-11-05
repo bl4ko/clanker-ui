@@ -77,7 +77,7 @@ func TestCatalogComponents(t *testing.T) {
 	if !slices.Equal(names, g.order) {
 		t.Errorf("catalog components %v, want groups.tsv order %v", names, g.order)
 	}
-	js := readFile(t, "../../clanker-ui.js") + readFile(t, "../../clanker-ui-chart.js")
+	js := readFile(t, "../../clanker-ui.js") + readFile(t, "../../clanker-ui-chart.js") + readFile(t, "../../clanker-ui-code.js")
 	var events []string
 	for _, c := range cat.Components {
 		for _, e := range c.Events {
@@ -489,7 +489,7 @@ func TestLLMsTxt(t *testing.T) {
 
 func TestCatalogExports(t *testing.T) {
 	cat := testCatalog(t)
-	src := map[string]string{"clanker-ui.js": readFile(t, "../../clanker-ui.js"), "clanker-ui-chart.js": readFile(t, "../../clanker-ui-chart.js")}
+	src := map[string]string{"clanker-ui.js": readFile(t, "../../clanker-ui.js"), "clanker-ui-chart.js": readFile(t, "../../clanker-ui-chart.js"), "clanker-ui-code.js": readFile(t, "../../clanker-ui-code.js")}
 	declared := regexp.MustCompile(`(?m)^export\s+(?:async\s+)?(?:function\s*\*?\s*|const\s+|let\s+|class\s+)([A-Za-z_$][\w$]*)`)
 	public := map[string]map[string]bool{}
 	for f, s := range src {

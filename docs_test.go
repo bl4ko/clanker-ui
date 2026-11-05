@@ -711,6 +711,32 @@ func TestDocsPagesLinkMarkdownAndLLMs(t *testing.T) {
 	}
 }
 
+func TestDocsMapTargets(t *testing.T) {
+	d := docsOf(t)
+	raw, err := os.ReadFile("tools/gen/docs-map.tsv")
+	if err != nil {
+		t.Fatal(err)
+	}
+	page := map[string]string{}
+	for _, line := range strings.Split(strings.TrimSpace(string(raw)), "\n")[1:] {
+		f := strings.Split(line, "\t")
+		key, ours := f[0], f[1]
+		item, name, isExample := strings.Cut(key, "#")
+		switch {
+		case ours == "-" || ours == "?":
+		case !isExample:
+			if d.pages[ours] == nil {
+				t.Errorf("%s: %s is not a docs page", key, ours)
+			}
+			page[item] = ours
+		case d.pages[page[item]] == nil:
+			t.Errorf("%s: %s, but the page of %s has no match", key, ours, item)
+		case !strings.Contains(d.pages[page[item]].Source, `{{example "`+ours+`"`):
+			t.Errorf("%s: %s is not an example on %s (shadcn %s)", key, ours, page[item], name)
+		}
+	}
+}
+
 var (
 	docsExampleRoot = regexp.MustCompile(`\[data-docs="(?:component-preview|preview|view)"\]`)
 	docsOwnPart     = regexp.MustCompile(`\[data-docs="(?:code|code-block|code-teaser)"\]`)

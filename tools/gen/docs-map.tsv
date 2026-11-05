@@ -1,6 +1,6 @@
 shadcn	ours	reason
-ai-elements/chain-of-thought	-	AI Elements pages: #66
-ai-elements/chain-of-thought#chain-of-thought-demo	-	page has no match
+ai-elements/chain-of-thought	/docs/ai-elements/chain-of-thought
+ai-elements/chain-of-thought#chain-of-thought-demo	chain-of-thought-demo
 ai-elements/chat	/docs/ai-elements/chat
 ai-elements/chat#chat-demo	chat-demo
 ai-elements/checkpoint	-	AI Elements pages: #66
@@ -17,17 +17,17 @@ ai-elements/message	/docs/ai-elements/message
 ai-elements/message#message-pattern	message-pattern
 ai-elements/model-selector	/docs/ai-elements/model-selector
 ai-elements/model-selector#model-selector-demo	model-selector-demo
-ai-elements/plan	-	AI Elements pages: #66
-ai-elements/plan#plan-demo	-	page has no match
-ai-elements/plan#plan-description	-	page has no match
+ai-elements/plan	/docs/ai-elements/plan
+ai-elements/plan#plan-demo	plan-demo
+ai-elements/plan#plan-description	plan-description
 ai-elements/prompt-input	/docs/ai-elements/prompt-input
 ai-elements/prompt-input#prompt-input-demo	prompt-input-demo
 ai-elements/queue	-	AI Elements pages: #66
 ai-elements/queue#queue-demo	-	page has no match
 ai-elements/queue#queue-descriptions	-	page has no match
-ai-elements/reasoning	-	AI Elements pages: #66
-ai-elements/reasoning#reasoning-demo	-	page has no match
-ai-elements/reasoning#reasoning-duration	-	page has no match
+ai-elements/reasoning	/docs/ai-elements/reasoning
+ai-elements/reasoning#reasoning-demo	reasoning-demo
+ai-elements/reasoning#reasoning-duration	reasoning-duration
 ai-elements/sources	-	AI Elements pages: #66
 ai-elements/sources#sources-demo	-	page has no match
 ai-elements/stack-trace	-	AI Elements pages: #66
@@ -39,19 +39,19 @@ ai-elements/subagent#subagent-running	-	page has no match
 ai-elements/subagent#subagent-details	-	page has no match
 ai-elements/suggestion	/docs/ai-elements/suggestion
 ai-elements/suggestion#suggestion-demo	suggestion-demo
-ai-elements/task	-	AI Elements pages: #66
-ai-elements/task#task-demo	-	page has no match
+ai-elements/task	/docs/ai-elements/task
+ai-elements/task#task-demo	task-demo
 ai-elements/terminal	-	AI Elements pages: #66
 ai-elements/terminal#terminal-demo	-	page has no match
 ai-elements/terminal#terminal-error	-	page has no match
 ai-elements/test-results	-	AI Elements pages: #66
 ai-elements/test-results#test-results-demo	-	page has no match
 ai-elements/test-results#test-results-suites	-	page has no match
-ai-elements/tool	-	AI Elements pages: #66
-ai-elements/tool#tool-demo	-	page has no match
-ai-elements/tool#tool-states	-	page has no match
-ai-elements/tool#tool-sheet	-	page has no match
-ai-elements/tool#tool-approval	-	page has no match
+ai-elements/tool	/docs/ai-elements/tool
+ai-elements/tool#tool-demo	tool-demo
+ai-elements/tool#tool-states	tool-states
+ai-elements/tool#tool-sheet	tool-sheet
+ai-elements/tool#tool-approval	tool-approval
 components/accordion	/docs/components/accordion
 components/accordion#accordion-demo	demo-accordion-0
 components/accordion#accordion-basic	-	no example yet

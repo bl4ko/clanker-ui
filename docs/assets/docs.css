@@ -1133,10 +1133,10 @@ body[data-docs="body"] {
 [data-docs="code-teaser"] { position: relative; }
 [data-docs="code-teaser"] pre { min-height: calc(3lh + 1.75rem + 6px); }
 
-[data-docs="component-preview"] :is([data-docs="code-teaser"] pre, [data-slot="code-block-content"]) { padding-inline: 0; }
-[data-docs="component-preview"] pre code { counter-reset: line; }
+[data-docs="component-preview"] [data-docs="code"] :is([data-docs="code-teaser"] pre, [data-slot="code-block-content"]) { padding-inline: 0; }
+[data-docs="component-preview"] [data-docs="code"] pre code { counter-reset: line; }
 
-[data-docs="component-preview"] pre [data-line]::before {
+[data-docs="component-preview"] [data-docs="code"] pre [data-line]::before {
   position: sticky;
   inset-inline-start: 0;
   display: inline-block;

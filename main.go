@@ -32,13 +32,13 @@ var cspMeta = strings.Replace(csp, " frame-ancestors 'none';", "", 1)
 
 var cspView = strings.Replace(csp, "frame-ancestors 'none'", "frame-ancestors 'self'", 1)
 
-var kitFiles = map[string]bool{"clanker-ui.css": true, "clanker-ui-a11y.css": true, "clanker-ui.js": true, "clanker-ui-chart.js": true, "clanker-ui-theme.js": true, "clanker-ui-themes.css": true}
+var kitFiles = map[string]bool{"clanker-ui.css": true, "clanker-ui-a11y.css": true, "clanker-ui.js": true, "clanker-ui-chart.js": true, "clanker-ui-code.js": true, "clanker-ui-theme.js": true, "clanker-ui-themes.css": true}
 
 var distFile = regexp.MustCompile(`^clanker-ui[a-z0-9-]*\.min\.(css|js)$`)
 
 var minKit = map[string]string{"clanker-ui.css": "dist/clanker-ui.min.css", "clanker-ui-themes.css": "dist/clanker-ui-themes.min.css", "clanker-ui-a11y.css": "dist/clanker-ui-a11y.min.css", "clanker-ui-theme.js": "dist/clanker-ui-theme.min.js"}
 
-var minShims = map[string][]string{"clanker-ui.js": {"clanker-ui-core.min.js", "clanker-ui.min.js"}, "clanker-ui-chart.js": {"clanker-ui-chart.min.js"}}
+var minShims = map[string][]string{"clanker-ui.js": {"clanker-ui-core.min.js", "clanker-ui.min.js"}, "clanker-ui-chart.js": {"clanker-ui-chart.min.js"}, "clanker-ui-code.js": {"clanker-ui-code.min.js"}}
 
 var demoAsset = regexp.MustCompile(`^demo/(assets/)?[a-z0-9][a-z0-9-]*(\.[a-z0-9-]+)*\.(css|js|svg|png|jpg|webp|avif)$`)
 
@@ -47,17 +47,17 @@ var skillFile = regexp.MustCompile(`^skills/clanker-ui/(SKILL\.md|references/(co
 var devFile = regexp.MustCompile(`^(test/spike/[a-z0-9-]+\.(html|css)|test/behavior/fixtures/[a-z0-9-]+\.(html|css|js)|test/split/[a-z0-9-]+\.(html|js)|test/lint/[a-z0-9-]+\.(html|css))$`)
 
 var contentTypes = map[string]string{
-	".css":  "text/css; charset=utf-8",
-	".js":   "text/javascript; charset=utf-8",
-	".html": "text/html; charset=utf-8",
-	".md":   "text/markdown; charset=utf-8",
-	".txt":  "text/plain; charset=utf-8",
-	".json": "application/json",
-	".svg":  "image/svg+xml",
-	".png":  "image/png",
-	".jpg":  "image/jpeg",
-	".webp": "image/webp",
-	".avif": "image/avif",
+	".css":   "text/css; charset=utf-8",
+	".js":    "text/javascript; charset=utf-8",
+	".html":  "text/html; charset=utf-8",
+	".md":    "text/markdown; charset=utf-8",
+	".txt":   "text/plain; charset=utf-8",
+	".json":  "application/json",
+	".svg":   "image/svg+xml",
+	".png":   "image/png",
+	".jpg":   "image/jpeg",
+	".webp":  "image/webp",
+	".avif":  "image/avif",
 	".woff2": "font/woff2",
 }
 

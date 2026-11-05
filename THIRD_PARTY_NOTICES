@@ -196,8 +196,8 @@ SOFTWARE.
 
 ================================================================================
 
-clanker-ui-themes.css contains color values from these palettes. Each line gives
-the source of the values and its license.
+clanker-ui-themes.css and the code token colors of clanker-ui.css contain color
+values from these palettes. Each line gives the source of the values and its license.
 
 - shadcn/ui base colors and themes: https://github.com/shadcn-ui/ui
   (apps/v4/registry/themes.ts, apps/v4/registry/_legacy-base-colors.ts), MIT, see above.
@@ -225,6 +225,8 @@ the source of the values and its license.
   Copyright (c) 2019 sainnhe.
 - GitHub (Primer): https://github.com/primer/primitives (src/tokens), MIT,
   Copyright (c) 2018 GitHub Inc.
+- GitHub Light and GitHub Dark (code token colors): https://github.com/primer/github-vscode-theme,
+  MIT, Copyright (c) 2020 Primer.
 
 The MIT palettes above are distributed under the following license, with the
 copyright notice given for each one:

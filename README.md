@@ -39,8 +39,8 @@ pnpm dlx skills add bl4ko/clanker-ui
    <!doctype html>
    <html lang="en">
    <head>
-     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
      <meta charset="utf-8">
+     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
      <meta name="viewport" content="width=device-width, initial-scale=1">
      <meta name="color-scheme" content="light dark">
      <title>clanker-ui</title>
@@ -71,7 +71,7 @@ pnpm dlx skills add bl4ko/clanker-ui
 
    Open the page through a web server, not as a file: browsers do not load module scripts from `file://`.
 
-4. In production, send the policy as a header with `frame-ancestors 'none'` (see [Use in a project](#use-in-a-project)). The meta tag is for static hosts that cannot set headers; it must be the first element of `<head>`. [`csp.md`](skills/clanker-ui/references/csp.md) has the Caddy and nginx lines and a small Go test server.
+4. In production, send the policy as a header with `frame-ancestors 'none'` (see [Use in a project](#use-in-a-project)). The meta tag is for static hosts that cannot set headers; it comes right after `<meta charset>`, before every `<link>` and `<script>`. [`csp.md`](skills/clanker-ui/references/csp.md) has the Caddy and nginx lines and a small Go test server.
 
 A smaller page can load only the component groups that it uses: see [Minified and group files](#minified-and-group-files). To change the look, see [Override the kit](#override-the-kit).
 
@@ -83,6 +83,7 @@ A smaller page can load only the component groups that it uses: see [Minified an
 | `clanker-ui-a11y.css` | Optional accessibility layer. Load it after the kit: 3:1 form-control edges, a 3:1 focus outline and list keyboard highlight, stronger status borders and text, darker light muted text, and the dataviz-validated chart palette. See [Accessibility layer](#accessibility-layer). |
 | `clanker-ui.js` | ES module: core helpers and all component behavior |
 | `clanker-ui-chart.js` | ES module: SVG charts, stat tiles, sparklines. Imports `./clanker-ui.js` |
+| `clanker-ui-code.js` | Optional ES module: syntax colors for the [code block](#code-block). Imports `./clanker-ui.js` |
 | `clanker-ui-theme.js` | Optional classic script for apps with a [theme toggle or switch](#theme-toggle-and-switch). Before the first paint it copies the stored theme (`light` or `dark`) to `data-theme` and the stored [color scheme](#color-schemes) to `data-scheme` on `<html>`, sets `data-system-theme`, and sets `<meta name="theme-color">` (without `media`) to `--background`. The module still owns all theme behavior. |
 | `clanker-ui-themes.css` | Optional [color schemes](#color-schemes): the shadcn base colors and accent themes, and editor palettes (Tokyo Night, Catppuccin, Gruvbox, Nord, Dracula, Rosé Pine, Solarized, One, Kanagawa, Everforest, GitHub). Load it after `clanker-ui.css`. Apps without schemes do not need it. |
 | `dist/` | Minified copies of every file and one file for each component group. See [Minified and group files](#minified-and-group-files). |
@@ -121,7 +122,7 @@ A smaller page can load only the component groups that it uses: see [Minified an
    default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; require-trusted-types-for 'script'
    ```
 
-   On a static host that cannot send headers, put the same policy without `frame-ancestors 'none'` in `<meta http-equiv="Content-Security-Policy" content="...">` as the first element of `<head>` (browsers ignore `frame-ancestors` in a meta tag). To load the kit from a CDN (for example jsDelivr, `https://cdn.jsdelivr.net/gh/bl4ko/clanker-ui@vX.Y.Z/dist/clanker-ui.min.css`), add the CDN host to `script-src` and `style-src` and use `integrity` hashes; copying the files stays the default.
+   On a static host that cannot send headers, put the same policy without `frame-ancestors 'none'` in `<meta http-equiv="Content-Security-Policy" content="...">` right after `<meta charset>` and before every `<link>` and `<script>` (browsers ignore `frame-ancestors` in a meta tag). To load the kit from a CDN (for example jsDelivr, `https://cdn.jsdelivr.net/gh/bl4ko/clanker-ui@vX.Y.Z/dist/clanker-ui.min.css`), add the CDN host to `script-src` and `style-src` and use `integrity` hashes; copying the files stays the default.
 
    Do not use inline `<script>`, inline `<style>`, `style=""`, or `on*=""` attributes. Setting `element.style.x` from JavaScript is allowed. The kit needs no `data:` URLs; `img-src data:` is for app images.
 
@@ -152,6 +153,7 @@ Put overrides in `app.css` after the kit files, without a layer.
 | `clanker-ui.min.js` | The behavior of all other components. Imports `./clanker-ui-core.min.js` |
 | `clanker-ui-<group>.min.js` | The behavior of one group (`forms`, `overlays`, `layout`, `chat`). Imports `./clanker-ui-core.min.js` |
 | `clanker-ui-chart.min.js` | The chart module. Imports `./clanker-ui-core.min.js` |
+| `clanker-ui-code.min.js` | The syntax color module. Imports `./clanker-ui-core.min.js` |
 
 | Group | Components | Needs |
 | --- | --- | --- |
@@ -183,10 +185,10 @@ Put overrides in `app.css` after the kit files, without a layer.
    <script type="module" src="clanker-ui-layout.min.js"></script>
    ```
 
-4. Charts: `clanker-ui-chart.min.js`, and `clanker-ui-chart.min.css` with group files (`clanker-ui.min.css` has the chart CSS).
+4. Charts: `clanker-ui-chart.min.js`, and `clanker-ui-chart.min.css` with group files (`clanker-ui.min.css` has the chart CSS). Syntax colors: `clanker-ui-code.min.js` (its CSS is in the `chat` group).
 
 - Use the `.min` files together or the readable files together, never both: two cores attach every listener two times. Two group files never define the same slot; `clanker-ui.min.js` together with a group file stops with "already defined".
-- In the readable set, `clanker-ui.js` exports everything except the chart API (`clanker-ui-chart.js`). In the one-file `.min` set, `clanker-ui.min.js` exports the same names as `clanker-ui.js`: the core API (`h`, `svg`, `icon`, `define`, `strings`, `theme`, `direction`, and the other core exports) and the component API (`toast`, `dialogOpen`, `calendarSetValue`, ...). In the group set, import the core API from `./clanker-ui-core.min.js` and a component API from its group file. The group files do not export the core API again:
+- In the readable set, `clanker-ui.js` exports everything except the chart API (`clanker-ui-chart.js`) and `codeBlockHighlight` (`clanker-ui-code.js`). In the one-file `.min` set, `clanker-ui.min.js` exports the same names as `clanker-ui.js`: the core API (`h`, `svg`, `icon`, `define`, `strings`, `theme`, `direction`, and the other core exports) and the component API (`toast`, `dialogOpen`, `calendarSetValue`, ...). In the group set, import the core API from `./clanker-ui-core.min.js` and a component API from its group file. The group files do not export the core API again:
 
    ```js
    import { h, icon, theme, toast, dialogOpen } from "./clanker-ui.min.js"
@@ -252,7 +254,7 @@ Parts that shadcn renders with `Button` keep their own `data-slot` and share the
 | `pagination-link` | `ghost`, `icon`; the current page has `data-variant="outline"` |
 | `carousel-previous`, `carousel-next` | `outline`, `icon-sm`, round 28 px |
 | `sidebar-trigger` | `ghost`, 28 px |
-| `attachment-action`, `code-block-copy-button`, `code-block-wrap-button` | `ghost`, `icon-xs` |
+| `attachment-action`, `code-block-copy-button`, `code-block-wrap-button`, `code-block-download-button` | `ghost`, `icon-xs` |
 | `message-scroller-button` | `secondary`, `icon-sm` |
 | `questionnaire-previous`, `questionnaire-skip` | `outline` |
 | `questionnaire-next`, `questionnaire-submit` | `default` |
@@ -261,7 +263,7 @@ Parts that shadcn renders with `Button` keep their own `data-slot` and share the
 ### Theme toggle and switch
 
 ```html
-<button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode" aria-keyshortcuts="D"><svg data-lucide="contrast"></svg></button>
+<button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-theme-set="toggle" aria-label="Dark mode" aria-keyshortcuts="D"><svg data-lucide="contrast"></svg></button>
 <div data-slot="theme-switch" role="group" aria-label="Theme">
   <button type="button" data-theme-set="light" aria-label="Light theme"><svg data-lucide="sun"></svg></button>
   <button type="button" data-theme-set="dark" aria-label="Dark theme"><svg data-lucide="moon"></svg></button>
@@ -446,6 +448,7 @@ Only the components below export functions; every name starts with the component
 | `questionnaireGoTo` | `questionnaireGoTo(el, name) → boolean` | |
 | `questionnaireRefresh` | `questionnaireRefresh(el)` | Call after you enable or disable an item. |
 | `direction` | `direction(el = <html>) → "ltr" \| "rtl"` | |
+| `codeBlockHighlight` | `codeBlockHighlight(code, language) → Node[][] \| null` | In `clanker-ui-code.js`: one list of nodes per line for `code-block-line` rows, or `null` for an unknown language. See [Code Block](#code-block). |
 | `chart` | `chart(element, data, options) → { update(data, options), destroy() }` | In `clanker-ui-chart.js`, see [Chart](#chart). |
 | `sparkline` | `sparkline(element, values, options?) → { update, destroy }` | |
 | `statTile` | `statTile(element, options) → { update(options), destroy() }` | |
@@ -494,6 +497,7 @@ Components dispatch bubbling, composed `CustomEvent`s named `<component>:<action
 | `tabs:change` | `tabs` | `{ value }` |
 | `trace:open`, `trace:close` | `trace-collapsible` | — |
 | `code-block:copy`, `code-block:wrap` | `code-block` | `{ value }` |
+| `code-block:download` | `code-block` | `{ value, filename }` |
 | `message-scroller:scrollable` | `message-scroller` | `{ start, end }` |
 | `questionnaire:change` | `questionnaire` | `{ value, index, total }` (active item name) |
 | `questionnaire:status` | `questionnaire` | `{ item, value }`: `answered`, `skipped`, `unanswered` |
@@ -534,7 +538,7 @@ Object.assign(strings, { closeToast: "Zapri obvestilo", remove: "Odstrani {label
 | `carousel`, `slide`, `slideOf`, `previousSlide`, `nextSlide` | `carousel`, `slide`, `{index} of {count}`, `Previous slide`, `Next slide` | carousel |
 | `sidebar`, `toggleSidebar` | `Sidebar`, `Toggle Sidebar` | mobile sidebar, trigger, rail |
 | `editorThemes`, `baseColor` | `Editor themes`, `Base color` | scheme picker group, accent picker first option |
-| `copy`, `copied`, `wrapLines` | `Copy`, `Copied`, `Wrap lines` | code block |
+| `copy`, `copied`, `wrapLines`, `download` | `Copy`, `Copied`, `Wrap lines`, `Download` | code block |
 | `messages`, `scrollToStart`, `scrollToEnd` | `Messages`, `Scroll to start`, `Scroll to end` | message scroller |
 | `previous`, `next`, `skip`, `submit` | `Previous`, `Next`, `Skip`, `Submit` | questionnaire buttons |
 | `questionnaireProgress`, `questionOf` | `Questionnaire progress`, `Question {current} of {total}` | questionnaire progress |
@@ -973,7 +977,7 @@ Many small marks with their own readout (a bar per day in an uptime row): one to
 
 - Same parts with the `context-menu-` and `menubar-` prefixes, plus `-group`, `-radio-group`, and `-label` (`menubar-label` too). Items: `data-disabled`, `data-inset`, `data-variant="destructive"` (other items get `data-variant="default"`), `data-value`, `data-text-value` (typeahead label), `data-close-on-click`. Checkbox and radio items: `data-checked` (or `data-state="checked"`). `data-value` on a radio group selects the item with that value. A later change of `data-value` on the radio group or of `data-checked` on an item, from code, updates the items (no event). Links work as items.
 - Base UI DOM and states: a label gets `role="presentation"` and names its group (`aria-labelledby`); a separator gets `data-orientation="horizontal"`; checkbox and radio items get `data-checked` or `data-unchecked` and an indicator as the first child (`dropdown-menu-checkbox-item-indicator`, `dropdown-menu-radio-item-indicator`; a `span` without a slot in context menus and menubars) that holds `<span data-checked aria-hidden="true">` with the `check` icon only while checked. The highlighted item has `data-highlighted`; an open sub menu's trigger has `data-popup-open` and loses `data-highlighted` while focus or the pointer is in the sub menu. The content has `data-open` or `data-closed`, `data-side`, `data-align`, and `data-instant` (`click` when a keyboard key or a right click opened it, `group` when a menubar switched menus, `dismiss` after Escape); the trigger has `data-popup-open` and `data-pressed` while open.
-- `dropdown-menu:change` and `:select` are emitted on the `dropdown-menu` root (also for an item in a sub menu or a radio group) and bubble to `document`; a listener on the radio group gets nothing. `detail.group` names the radio group.
+- `dropdown-menu:change` and `:select` are emitted on the `dropdown-menu` root (also for an item in a sub menu or a radio group) and bubble to `document`; a listener on the radio group gets nothing. `detail.group` is the radio group element (`dropdown-menu-radio-group`, `null` outside a group; it is absent for a checkbox item): read `event.detail.group.id` or `.dataset` to tell two groups apart, and `detail.value` for the new value (the group `data-value` is already set).
 - A plain item closes the menu; checkbox and radio items keep it open (Base UI `closeOnClick`), unless `data-close-on-click` says otherwise.
 - Like Base UI, menus are modal (`data-modal="false"` on the root or `menubar` turns this off): page scroll is locked, and the first press outside only closes the menu (the click does not reach the element below, and focus returns to the trigger). A touch outside closes it when the tap ends, or during a drag of more than 10 px.
 - A mouse press on the trigger opens the menu; release over an item to choose it (press, drag, release). Placement: dropdown bottom, start, 4 px; context menu at the pointer, right, start, `alignOffset` 4; menubar bottom, start, 8 px, `alignOffset` -4; sub menus right, start, `alignOffset` -3 (context menu 4); 5 px from the viewport edge.
@@ -1039,15 +1043,17 @@ toast.dismiss(id); toast.dismiss(); toast.getToasts()
 
 The Base UI DOM: a heading with the trigger button, and a panel with one inner `div` (the padding is on it). `data-type="single|multiple"`, `data-state="open"` on an item that starts open, `hidden="until-found"` on the panel of an item that starts closed (so the page does not move when the module loads), `data-disabled` on an item. Like Base UI, a single accordion can close its open item, so all items can be closed. The kit adds the two chevrons (`accordion-trigger-icon`, down when closed, up when open), ids, `aria-expanded`, `aria-controls`, `role="region"`, `aria-labelledby`, `data-open`, `data-closed`, `data-state`, `data-panel-open` on the trigger, and `data-index`. A closed panel has `hidden="until-found"`, so find in page opens its item (`beforematch`). The panel animates with `--accordion-panel-height` (`auto` after the open animation). Keys: Enter and Space toggle; as in Base UI, the arrow keys do not move focus. Like Base UI, the trigger of a disabled item stays in the Tab order (`aria-disabled="true"`), and Enter, Space, or a click does not open it. Event: `accordion:change` `{ value }`.
 
+A count or status in a trigger: a `badge` after the text (`<button type="button" data-slot="accordion-trigger">Payments<span data-slot="badge" data-variant="warning"><svg data-lucide="triangle-alert"></svg>Degraded</span></button>`) sits at the end, before the chevron, centered on the text.
+
 #### Alert, Aspect Ratio, Badge, Card, Empty, Item, Separator, Skeleton
 
 - `alert` (`role="alert"`, `data-variant="destructive"`) with an optional leading `<svg>`, `alert-title`, `alert-description`, `alert-action`. As in shadcn, the action sits at the top end and the alert keeps 72 px free for it; a wider action ("View incident") gets its own width plus 12 px, so the title and the description never go under it.
 - Kit extension to shadcn: `data-variant="success|warning|info"` on `alert` and `badge`. CSS only. Border, background, and text use the status tokens (see [CSS rules for components](#css-rules-for-components)); the alert description uses `--foreground`. A status `<a data-slot="badge">` shows an underline on hover.
 - `<div data-slot="aspect-ratio" data-ratio="16/9">` (any ratio, `"4/3"`, `"2.4"`): the kit sets `--ratio`, like shadcn. Children are not positioned; give an image `position: absolute; inset: 0; width: 100%; height: 100%` (the shadcn examples use `fill`).
 - `badge` (`data-variant="secondary|destructive|outline|ghost|link"`, or `<a data-slot="badge">`). Icons and spinners inside are 12 px.
-- `card` with `card-header` (`card-title`, `card-description`, `card-action`), `card-content`, `card-footer`. `data-size="sm"`; override `--card-spacing`. A first-child `<img>` sits flush with the top.
+- `card` with `card-header` (`card-title`, `card-description`, `card-action`), `card-content`, `card-footer`. `data-size="sm"`; override `--card-spacing`. A first-child `<img>` sits flush with the top. Kit extension: `data-orientation="horizontal"` puts a first-child `cover` (6rem, 8rem from 48rem) at the start and the other parts in a `div` column next to it, with a wrapping `card-footer` (a hero or feature card: art left, text and actions right).
 - `empty` with `empty-header` (`empty-icon` with `data-variant="icon"`, `empty-title`, `empty-description`) and `empty-content`. Kit extension: `data-variant="outline"` adds the 1 px dashed border.
-- `item` (`data-variant="outline|muted"`, `data-size="sm|xs"`, or `<a data-slot="item">`) with `item-media` (`data-variant="icon|image"`), `item-content` (`item-title`, `item-description`), `item-actions`, `item-header`, `item-footer`; `item-group` (`role="list"`) and `item-separator`. As in shadcn, `item-title` is one line and `item-description` at most two lines (`line-clamp`): give a cut text a `title`, or for long text (a timeline update) use a `p` in `item-content`, not `item-description`. A `cover` in `item-media` is 40 px wide (32 px in a `sm` item, 24 px in `xs`) with its ratio and without its text; in `data-variant="image"` it fills the square. `item-group` has a 16 px gap and `item-separator` adds 8 px above and below: in a list with separators set the group gap to 0 in app CSS (`.list { gap: 0 }`), so the rows are as close as without them.
+- `item` (`data-variant="outline|muted"`, `data-size="sm|xs"`, or `<a data-slot="item">`) with `item-media` (`data-variant="icon|image"`), `item-content` (`item-title`, `item-description`), `item-actions`, `item-header`, `item-footer`; `item-group` (`role="list"`) and `item-separator`. As in shadcn, `item-title` is one line and `item-description` at most two lines (`line-clamp`): give a cut text a `title`, or for long text (a timeline update) use a `p` in `item-content`, not `item-description`. A `cover` in `item-media` is 40 px wide (32 px in a `sm` item, 24 px in `xs`) with its ratio and without its text; in `data-variant="image"` it fills the square. `item-group` has a 16 px gap and `item-separator` adds 8 px above and below: in a list with separators set the group gap to 0 in app CSS (`.list { gap: 0 }`), so the rows are as close as without them. Below 40rem, `item-actions` with a text button (not an `icon` size button, a switch, or a badge) goes to its own line under the content.
 - `separator` (`data-orientation="vertical"`): decorative (`role="none"`) unless you add `role="separator"`.
 - `skeleton`, sized by app CSS.
 
@@ -1289,14 +1295,27 @@ The kit adds the chevron and keeps `aria-expanded` and `data-state` current. It 
     <div data-slot="code-block-title"><svg data-lucide="file-text"></svg>app.ts</div>
     <div data-slot="code-block-actions">
       <button data-slot="code-block-wrap-button" aria-label="Wrap lines"><svg data-lucide="text-wrap"></svg></button>
+      <button data-slot="code-block-download-button" data-filename="app.ts"></button>
       <button data-slot="code-block-copy-button"></button>
     </div>
   </div>
-  <pre data-slot="code-block-content" data-numbered="true" data-start-line="14" data-wrap="true"><code data-slot="code-block-code">code</code></pre>
+  <pre data-slot="code-block-content" data-language="ts" data-numbered="true" data-start-line="14" data-wrap="true"><code data-slot="code-block-code">code</code></pre>
 </div>
 ```
 
-Plain monospace, no highlighter. `data-numbered` splits text into `code-block-line` rows; write `<span data-slot="code-block-line" data-variant="added|removed|highlighted">` rows for diffs. Copy uses the Clipboard API: `data-value` or the block text without line numbers; it shows a check for 2 s (`data-timeout`) and announces "Copied" (`strings.copied`). A copy button that leaves the page goes back to its copy state. The wrap button toggles `data-wrap` and `aria-pressed`.
+`data-numbered` splits text into `code-block-line` rows; write `<span data-slot="code-block-line" data-variant="added|removed|highlighted">` rows for diffs and highlighted lines. Copy uses the Clipboard API: `data-value` or the block text without line numbers; it shows a check for 2 s (`data-timeout`) and announces "Copied" (`strings.copied`). A copy button that leaves the page goes back to its copy state. The wrap button toggles `data-wrap` and `aria-pressed` (pressed text is `--foreground`). The download button saves `data-value` or the block text as `data-filename` (default: the last part of the title, else `code.txt`).
+
+Syntax colors: load `clanker-ui-code.js` and set `data-language` on `code-block-content`. Languages: `ts`, `tsx`, `js`, `jsx`, `json`, `html`, `css`, `bash`, `yaml`, `go`, `python`, `diff`, `markdown`, `sql`, `ansi` (terminal colors; the escape codes go away), and the usual aliases (`typescript`, `javascript`, `sh`, `shell`, `zsh`, `yml`, `py`, `md`, `xml`, `svg`); other languages and text over 200 000 characters stay plain, as without the module. It colors plain text and plain rows when a block starts; rows with elements stay as they are. For text that changes, build the rows again:
+
+```js
+import { h } from "./clanker-ui.js"
+import { codeBlockHighlight } from "./clanker-ui-code.js"
+
+code.replaceChildren(...codeBlockHighlight(text, "ts").map(line =>
+  h("span", { "data-slot": "code-block-line" }, h("span", { "data-slot": "code-block-line-content" }, line.length ? line : "\n"))))
+```
+
+Tokens are `<span data-token="…">` with `comment`, `keyword`, `string`, `constant`, `function`, `variable`, `tag`, `inserted`, `deleted`, or `bold`, colored by `--code-<token>` (on `:root`). The defaults are the GitHub Light and Dark colors of the shadcn highlighter, darkened or lightened to 4.5:1 on the block, its highlighted lines, and removed lines; each editor scheme sets its own (`clanker-ui-a11y.css` has the 4.5:1 changes).
 
 #### Message Scroller
 
@@ -1497,7 +1516,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 - `data-layout="split"` on `page` is the sign-in layout of shadcn `login-02`: two columns from 64rem. The first child is the form column: its first child is the top bar (a `brand`, or a `div` with the `brand` and a theme toggle at the ends), and the next child (the form) is centered at most 20rem wide. A `page-aside` second child is the art panel (hidden below 64rem): `--muted`, its text at the bottom, an `svg` child that fills it behind the text (`--muted-foreground` at 35 %), and a `blockquote` (18 px, weight 500, at most 28rem) with a muted `footer`.
 - `data-layout="center"` on `page` is the sign-in layout of shadcn `login-03`: a muted full-height page with its children centered at most 24rem wide. In it, card headers are centered, the card title is 20 px, a `field-description` child of the page is centered, and so is one in the field of the submit button.
 - `page` is the content column: gutters of 1rem (1.5rem from 64rem), a 1rem gap between its children (1.5rem from 48rem), and `container: page`. Put it in `sidebar-inset` or `<body>`. `data-size="sm|md|lg"` limits the content to 42rem, 56rem, or 72rem and centers it; no size fills the width (dashboards, tables).
-- `page-header` is a grid: `page-title` (24 px, weight 600) and `page-description` (muted) on the start side, `page-actions` (a row of buttons, `gap` 0.5rem) on the end side. Below 32rem of header width, the actions move under the text.
+- `page-header` is a grid: `page-title` (24 px, weight 600) and `page-description` (muted) on the start side, `page-actions` (a row of buttons, `gap` 0.5rem) on the end side. Below 32rem of header width, the actions move under the text. `data-size="lg"` makes the title 30 px (the header of a detail page). `page-meta` after the description is a wrapping row of facts (14 px, muted, 1rem apart; an icon or a `badge` before each word).
 - `page-body` puts its children in one column. With a `page-aside` first, it is a 12rem navigation column (sticky below a header of `--header-height`, default 3.5rem) and a content column of at most 42rem from 64rem; with a `page-aside` last, a 20rem side column. Each child is a flex column with a 1.5rem gap.
 - `page-nav` holds ghost buttons (`aria-current="page"` on the current one gets the muted background). It is a row that scrolls below 64rem and a column from 64rem.
 
@@ -1509,7 +1528,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
   <div data-slot="separator" data-orientation="vertical"></div>
   <h1 data-slot="site-header-title">Documents</h1>
   <div data-slot="site-header-actions">
-    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+    <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
   </div>
 </header>
 ```
@@ -1593,7 +1612,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 ```
 
 - The frame of the shadcn data table (tasks example and `dashboard-01`): a toolbar, the table in a bordered, rounded `table-container` with a muted header, and the pagination row. Sorting, filtering, and paging are app code.
-- `data-table-toolbar` has two `div` groups: filters at the start (the first grows; a text input in it is 150 to 250 px) and actions at the end. Both wrap. Small buttons in it are 32 px high, as high as the input (shadcn `h-8`).
+- `data-table-toolbar` has two `div` groups: filters at the start (the first grows; a text input in it is 150 to 250 px) and actions at the end. Both wrap. Small buttons in it are 32 px high, as high as the input (shadcn `h-8`). Below 40rem, when the first control of the start group is an `input` or `input-group` (the search), the search takes the whole first row, and the filters and the end group share the next row, with the end group at the end.
 - `data-table-pagination` is a row of `div` groups at the end, 14 px, weight 500. `data-table-selection` is the muted selection text that fills the start.
 - `data-table-text` is the text of a cell: one line, cut with an ellipsis at 32rem (or 60 % of the table width). With an icon first it is an icon and label row (the icon is muted). A sort button: a ghost `button` alone in the `table-head`, with `aria-sort` on the head.
 - `data-align="end"` on a `table-head` or `table-cell` aligns numbers to the end with tabular figures; `data-align="center"` centers. A cell with only a `checkbox` is 2rem wide. A cell with an `empty` has no padding: use it with `colspan` for the empty state.
@@ -1620,17 +1639,17 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 ```html
 <div data-slot="card-grid">
   <div data-slot="card">
-    <div data-slot="cover" data-tone="2"><span>Piranesi</span><span>Susanna Clarke</span></div>
+    <div data-slot="cover" data-tone="2"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><circle cx="70" cy="40" r="28" fill="currentColor" opacity="0.5"></circle></svg></div>
     <div data-slot="card-header"><h3 data-slot="card-title">Piranesi</h3><p data-slot="card-description">Susanna Clarke</p></div>
   </div>
   <div data-slot="card">
-    <div data-slot="cover" data-tone="3"><span>Project Hail Mary</span><span>Andy Weir</span></div>
+    <div data-slot="cover" data-tone="3"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect y="90" width="100" height="60" fill="currentColor" opacity="0.4"></rect></svg></div>
     <div data-slot="card-header"><h3 data-slot="card-title">Project Hail Mary</h3><p data-slot="card-description">Andy Weir</p></div>
   </div>
 </div>
 ```
 
-- A grid of records with a preview (books, products, projects): as many columns of at least 13rem as fit (`data-size="sm"` 10rem, `lg` 18rem), a 1rem gap, one column on a narrow screen. Cards align at the top and keep their own height.
+- A grid of records with a preview (books, products, projects): as many columns of at least 13rem as fit (`data-size="sm"` 10rem, `lg` 18rem), a 1rem gap, one column on a narrow screen. The cards of one row have one height, and a `card-footer` sits at the bottom of its card.
 
 #### Cover
 
@@ -1642,7 +1661,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 </div>
 ```
 
-- Placeholder art made from tokens, for a record without an image: a 2 / 3 box (`data-ratio="square"` 1 / 1, `video` 16 / 9) with the kit radius and a tint of `--chart-N` (`data-tone="1"` to `"5"`, default 1) on the card. An `svg` child fills the box behind the text in the tone color (draw with `currentColor`). The first text child is the title (16 px, weight 600), the others are 12 px; text wraps and is never cut.
+- Placeholder art made from tokens, for a record without an image: a 2 / 3 box (`data-ratio="square"` 1 / 1, `video` 16 / 9) with the kit radius and a tint of `--chart-N` (`data-tone="1"` to `"5"`, default 1) on the card. An `svg` child fills the box behind the text in the tone color (draw with `currentColor`). The first text child is the title (16 px, weight 600), the others are 12 px; text wraps and is never cut. In a card that shows the title in its `card-header`, the cover is art only: no text on the art. A word breaks only when it alone is wider than the cover (with a hyphen where the browser knows the page language).
 
 
 #### Rating

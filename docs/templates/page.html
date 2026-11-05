@@ -16,10 +16,13 @@
 {{- if ne .Kind "view"}}
   <link rel="describedby" href="{{url "/llms.txt"}}">
 {{- end}}
+  <link rel="preload" href="{{asset "geist-latin.woff2"}}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{asset "geist-mono-latin.woff2"}}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{{asset "clanker-ui.css"}}">
 {{- range .Styles}}
   <link rel="stylesheet" href="{{asset .}}">
 {{- end}}
+  <link rel="stylesheet" href="{{asset "fonts.css"}}">
   <link rel="stylesheet" href="{{asset "docs.css"}}">
   <link rel="stylesheet" href="{{asset "examples.css"}}">
   <script src="{{asset "clanker-ui-theme.js"}}"></script>

@@ -454,6 +454,9 @@ func utilities(src, pinPath, content, out, tailwind string) error {
 	if err != nil {
 		return fmt.Errorf("tailwindcss: %v\n%s", err, stderr)
 	}
+	if first, rest, ok := strings.Cut(compiled, "\n"); ok && strings.HasPrefix(first, "/*! tailwindcss ") {
+		compiled = rest
+	}
 	return os.WriteFile(out, []byte(compiled), 0o644)
 }
 

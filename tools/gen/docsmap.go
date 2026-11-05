@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cmp"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -281,17 +282,20 @@ type oursSide struct {
 	hrefs    map[string]bool
 	examples map[string]bool
 	sections map[string]bool
+	styles   map[string]string
 }
 
 func loadOurs(root string) (*oursSide, error) {
-	o := &oursSide{hrefs: map[string]bool{}, examples: map[string]bool{}, sections: map[string]bool{}}
+	o := &oursSide{hrefs: map[string]bool{}, examples: map[string]bool{}, sections: map[string]bool{}, styles: map[string]string{}}
 	raw, err := os.ReadFile(filepath.Join(root, "docs/nav.json"))
 	if err != nil {
 		return nil, err
 	}
 	var nav struct {
 		Header, Sections, MobileSections []struct{ Href string }
-		Groups                           []struct{ Items []struct{ Href string } }
+		Groups                           []struct {
+			Items []struct{ Href, Style string }
+		}
 	}
 	if err := json.Unmarshal(raw, &nav); err != nil {
 		return nil, fmt.Errorf("docs/nav.json: %w", err)
@@ -302,6 +306,9 @@ func loadOurs(root string) (*oursSide, error) {
 	for _, g := range nav.Groups {
 		for _, it := range g.Items {
 			o.hrefs[it.Href] = true
+			if it.Style != "" {
+				o.styles[it.Href] = it.Style
+			}
 		}
 	}
 	err = filepath.WalkDir(filepath.Join(root, "docs/content"), func(p string, e fs.DirEntry, err error) error {
@@ -404,7 +411,7 @@ func syncDocsMap(inv []invItem, rows []mapRow) []mapRow {
 	return out
 }
 
-func docsReport(inv []invItem, rows []mapRow, verbose bool) string {
+func docsReport(inv []invItem, rows []mapRow, styleOf map[string]string, verbose bool) string {
 	byKey := map[string]mapRow{}
 	for _, r := range rows {
 		byKey[r.key] = r
@@ -443,8 +450,8 @@ func docsReport(inv []invItem, rows []mapRow, verbose bool) string {
 					c.shared++
 				}
 			}
-			if it.style != "base-nova" {
-				styles = append(styles, fmt.Sprintf("  %s %s", it.key, it.style))
+			if ours := "base-" + cmp.Or(styleOf[byKey[it.page()].ours], "nova"); ok && it.style != ours {
+				styles = append(styles, fmt.Sprintf("  %s %s, ours %s", it.key, it.style, ours))
 			}
 		}
 		if !ok {
@@ -460,7 +467,7 @@ func docsReport(inv []invItem, rows []mapRow, verbose bool) string {
 		all.pages, all.pagesOK, all.ex, all.exOK, all.shared = all.pages+c.pages, all.pagesOK+c.pagesOK, all.ex+c.ex, all.exOK+c.exOK, all.shared+c.shared
 	}
 	fmt.Fprintf(&b, "%-12s pages %3d/%-3d examples %3d/%-3d shared %d\n", "total", all.pagesOK, all.pages, all.exOK, all.ex, all.shared)
-	fmt.Fprintf(&b, "examples with a styleName other than base-nova: %d\n%s", len(styles), strings.Join(append(styles, ""), "\n"))
+	fmt.Fprintf(&b, "examples in another style than our page: %d\n%s", len(styles), strings.Join(append(styles, ""), "\n"))
 	if verbose {
 		fmt.Fprintf(&b, "items without a match: %d\n%s", len(gaps), strings.Join(append(gaps, ""), "\n"))
 	}
@@ -515,7 +522,7 @@ func docsCoverageMain(args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Print(docsReport(inv, rows, *verbose))
+	fmt.Print(docsReport(inv, rows, o.styles, *verbose))
 	if bad := checkDocsMap(inv, rows, o); len(bad) > 0 {
 		return errors.New(strings.Join(bad, "\n"))
 	}

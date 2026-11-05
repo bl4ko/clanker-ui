@@ -97,10 +97,13 @@ func TestCheckDocsMap(t *testing.T) {
 	if len(synced) != 5 || synced[3].ours != "?" || synced[4].key != "forms/x#x-demo" {
 		t.Errorf("sync %v", synced)
 	}
-	rep := docsReport(inv, good, true)
-	for _, s := range []string{"components   pages   1/1   examples   2/2", "forms        pages   0/1   examples   0/1", "components/a#a-rtl base-rhea", "forms/x#x-demo - React only"} {
+	rep := docsReport(inv, good, nil, true)
+	for _, s := range []string{"components   pages   1/1   examples   2/2", "forms        pages   0/1   examples   0/1", "another style than our page: 1\n  components/a#a-rtl base-rhea, ours base-nova", "forms/x#x-demo - React only"} {
 		if !strings.Contains(rep, s) {
 			t.Errorf("report has no %q:\n%s", s, rep)
 		}
+	}
+	if rep := docsReport(inv, good, map[string]string{"/docs/components/a": "rhea"}, false); !strings.Contains(rep, "another style than our page: 1\n  components/a#a-demo base-nova, ours base-rhea") {
+		t.Errorf("a rhea page shows its rhea examples:\n%s", rep)
 	}
 }

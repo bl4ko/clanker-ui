@@ -112,13 +112,13 @@ def check_ai_chat_turn(t):
     assert titles == ["Thought", "Ran rg -l ThemeProvider app"], titles
     assert demo.locator('[data-slot="trace-collapsible"]').first.get_attribute("data-state") == "closed"
     reply = demo.locator('[data-slot="message"]:not([data-align="end"]) [data-slot="message-content"] > div:last-child')
-    assert reply.locator("p").first.inner_text() == "next-themes is already set up in app/layout.tsx, so the toggle only has to call setTheme."
-    assert reply.locator("li").count() == 2 and reply.locator('[data-slot="code-block-code"]').inner_text() == "const { setTheme } = useTheme()"
+    assert reply.locator("p").first.text_content() == "next-themes is already set up in app/layout.tsx, so the toggle only has to call setTheme."
+    assert reply.locator("li").count() == 2 and reply.locator('[data-slot="code-block-code"]').text_content() == "const { setTheme } = useTheme()"
     assert page.locator("#chat-demo-thread").get_attribute("aria-busy") == "false"
     text.fill("Something else")
     text.press("Enter")
     page.wait_for_function("() => document.querySelector('#chat-demo-thread').getAttribute('aria-busy') === 'false' && document.querySelectorAll('#chat-demo [data-slot=bubble-content]').length === 2", timeout=10000)
-    assert reply.last.inner_text() == "This demo only knows the scripted turns. Press reset to start over."
+    assert reply.last.text_content() == "This demo only knows the scripted turns. Press reset to start over."
     page.locator("#chat-demo-reset").click()
     assert page.locator("#chat-demo-empty").is_visible() and demo.locator('[data-slot="message-scroller-item"]').count() == 0
     assert text.input_value() == "Add a dark mode toggle to the settings page."

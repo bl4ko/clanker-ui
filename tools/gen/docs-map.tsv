@@ -452,10 +452,10 @@ components/popover#popover-alignments	demo-popover-1
 components/popover#popover-form	demo-popover-2
 components/popover#popover-rtl	-	no example yet
 components/progress	/docs/components/progress
-components/progress#progress-demo	demo-progress-0
-components/progress#progress-label	-	no example yet
-components/progress#progress-controlled	-	no example yet
-components/progress#progress-rtl	-	no example yet
+components/progress#progress-demo	progress-demo
+components/progress#progress-label	progress-label
+components/progress#progress-controlled	progress-controlled
+components/progress#progress-rtl	progress-rtl
 components/questionnaire	/docs/components/questionnaire
 components/questionnaire#questionnaire-demo	demo-questionnaire-0
 components/questionnaire#questionnaire-multiple	-	no example yet

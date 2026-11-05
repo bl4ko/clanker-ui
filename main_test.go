@@ -203,6 +203,15 @@ func TestSchemeLists(t *testing.T) {
 			t.Errorf("clanker-ui-themes.css has a rule for %q, but the picker lists do not have it", value)
 		}
 	}
+	doc, err := os.ReadFile("skills/clanker-ui/references/theming.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for value := range ruled {
+		if !strings.Contains(string(doc), "`"+value+"`") {
+			t.Errorf("references/theming.md does not list the scheme %q", value)
+		}
+	}
 }
 
 func TestETagRevalidation(t *testing.T) {

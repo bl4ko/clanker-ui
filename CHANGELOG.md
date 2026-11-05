@@ -12,6 +12,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Added
 
+- Page parts: `data-size="lg"` on `page-header` (a 30 px detail title) and `page-meta` (a wrapping row of facts under the description). `data-orientation="horizontal"` on `card`: a first-child `cover` at the start and the other parts in a column next to it (a feature or record card). A `badge` in an `accordion-trigger` sits at the end, before the chevron.
+- Agent skill: one head for every page and block in `SKILL.md` (charset, CSP meta, the a11y CSS, the core `modulepreload`, the theme script), checked against every block by `go test`, with the block slots, the ghost `icon` theme toggle, and the footer button order. Recipes for an uptime strip with full code, a toast after a page change, a dropzone with a labeled file input, lists in cards, the status under the amount in phone tables, and a dashboard in the top-header shell; the scheme and accent names in `references/theming.md`; what `detail.group` of `dropdown-menu:change` holds; rules for one page width per app, one structure for KPI cards, one status per row, public pages, and balancing a side column.
 - Kit parts (core, CSS only): `card-grid` (a grid of record cards, `data-size="sm|lg"`), `cover` (placeholder art from tokens, `data-tone="1"`…`"5"`, `data-ratio="square|video"`), `rating` (read-only stars), and `data-layout="split"` on `page` (shadcn login-02: a form column and a `page-aside` art panel from 64rem).
 - `sheet-body` and `drawer-body`: the scrolling middle of a sheet or drawer between a fixed header and footer.
 - Status fill tokens `--success-fill`, `--warning-fill`, `--error-fill`, and `--info-fill` for bars, dots, and meters: 3:1 or more on the card and the same hue in light and dark. `--neutral-fill` is the gray for "no data" marks, also 3:1 or more on the card (`--muted` is almost invisible on a light card).
@@ -42,6 +44,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Changed
 
+- Blocks load `clanker-ui-a11y.min.css` and preload the core module, as `SKILL.md` says. The theme toggle is a ghost `icon` button (32 px, as the shadcn site header) everywhere. Footer order: Cancel first and the primary last in a dialog or alert dialog footer; the primary first in a sheet or drawer footer, a card footer, and a page form. A rating input is a `radio-group` with a `rating` in each label (block `overlay-form`), the only way in the skill. The `detail` and `overlay-form` blocks have a 30 px title with a meta row, and `overlay-form` and `card-grid` show their cover in a horizontal card; covers in the `card-grid` block carry no text. The `data-table` block has a New task page action. The CSP meta tag comes right after `<meta charset>` in the docs, as in the blocks.
 - Agent skill: load `clanker-ui-a11y.css` in every app (it was optional); the head example and the known lint results show it. The version line says that it is the last release and that a copy from `main` can be newer. The dropzone recipe uses `span` parts inside its `label`.
 - Color schemes: each editor scheme (Tokyo Night, Catppuccin, Gruvbox, Nord, Dracula, Rosé Pine, Solarized, One, Kanagawa, Everforest, GitHub) has chart colors from its own accents, ordered and checked for color-vision deficiency, normal vision, and 3:1 contrast against the card in light and dark. They set `--chart-other` and `--chart-good` too. Before, all editor schemes used one generic palette that looked muddy on their surfaces, and `--chart-6` had no dark value.
 - An unknown icon name no longer throws. `icon()` and `<svg data-lucide>` log one `console.warn` per name and render an empty icon, as Lucide `createIcons` does.
@@ -49,6 +52,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Fixed
 
+- `sheet-body` and `drawer-body` are in the catalog and the component files.
+- `card-grid` block: the empty state uses `empty-icon` (it used `empty-media`, which has no style).
 - Alert: an `alert-action` wider than the 72 px that shadcn keeps free (for example "View incident" at 390 px) no longer covers the title and the description; the alert reserves the width of the action. A short action keeps the shadcn layout.
 - Section cards: with a description and a trend `badge` in `card-action`, the value takes the full width of the card under them, so a long number (`€38,550.00`) no longer breaks in the middle next to the badge.
 - Item: a `cover` in `item-media` is 40 px wide (32 px in `sm`, 24 px in `xs`) and keeps its ratio, without its text; before, it had almost no width.

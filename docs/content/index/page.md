@@ -52,7 +52,7 @@ The kit needs no more than this policy. Send it as a header on every HTML respon
 default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; require-trusted-types-for 'script'
 ```
 
-A static host that cannot send headers uses a meta tag as the first element of `<head>`, without `frame-ancestors` (browsers ignore it in a meta tag):
+A static host that cannot send headers uses a meta tag right after `<meta charset>` and before every `<link>` and `<script>`, without `frame-ancestors` (browsers ignore it in a meta tag):
 
 ```html
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">

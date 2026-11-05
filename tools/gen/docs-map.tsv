@@ -332,21 +332,21 @@ components/hover-card#hover-card-demo	demo-hover-card-0
 components/hover-card#hover-card-sides	demo-hover-card-1
 components/hover-card#hover-card-rtl	-	no example yet
 components/input	/docs/components/input
-components/input#input-demo	demo-input-0
-components/input#input-basic	-	no example yet
-components/input#input-field	demo-input-1
-components/input#input-fieldgroup	-	no example yet
-components/input#input-disabled	demo-input-2
-components/input#input-invalid	demo-input-2
-components/input#input-file	demo-input-1
-components/input#input-inline	demo-input-3
-components/input#input-grid	demo-input-1
-components/input#input-required	demo-input-2
-components/input#input-badge	-	no example yet
-components/input#input-input-group	-	no example yet
-components/input#input-button-group	-	no example yet
-components/input#input-form	-	no example yet
-components/input#input-rtl	-	no example yet
+components/input#input-demo	input-demo
+components/input#input-basic	input-basic
+components/input#input-field	input-field
+components/input#input-fieldgroup	input-fieldgroup
+components/input#input-disabled	input-disabled
+components/input#input-invalid	input-invalid
+components/input#input-file	input-file
+components/input#input-inline	input-inline
+components/input#input-grid	input-grid
+components/input#input-required	input-required
+components/input#input-badge	input-badge
+components/input#input-input-group	input-input-group
+components/input#input-button-group	input-button-group
+components/input#input-form	input-form
+components/input#input-rtl	input-rtl
 components/input-group	/docs/components/input-group
 components/input-group#input-group-demo	demo-input-group-0
 components/input-group#input-group-inline-start	-	no example yet

@@ -942,6 +942,10 @@
     color: var(--color-amber-900);
   }
 
+  .text-destructive {
+    color: var(--destructive);
+  }
+
   .text-foreground {
     color: var(--foreground);
   }

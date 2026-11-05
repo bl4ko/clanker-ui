@@ -1,0 +1,54 @@
+<div class="flex flex-col gap-4">
+  <div data-slot="dialog">
+    <button type="button" data-slot="button" data-variant="outline" class="w-fit" data-dialog-trigger>Open Menu</button>
+    <dialog data-slot="dialog-content">
+      <div data-slot="dialog-header" class="sr-only">
+        <h2 data-slot="dialog-title">Command Palette</h2>
+        <p data-slot="dialog-description">Search for a command to run...</p>
+      </div>
+      <div data-slot="command">
+        <input data-slot="command-input" placeholder="Type a command or search...">
+        <div data-slot="command-list">
+          <div data-slot="command-empty">No results found.</div>
+          <div data-slot="command-group" data-heading="Navigation">
+            <div data-slot="command-item"><svg data-lucide="house"></svg><span>Home</span><span data-slot="command-shortcut">⌘H</span></div>
+            <div data-slot="command-item"><svg data-lucide="inbox"></svg><span>Inbox</span><span data-slot="command-shortcut">⌘I</span></div>
+            <div data-slot="command-item"><svg data-lucide="file-text"></svg><span>Documents</span><span data-slot="command-shortcut">⌘D</span></div>
+            <div data-slot="command-item"><svg data-lucide="folder"></svg><span>Folders</span><span data-slot="command-shortcut">⌘F</span></div>
+          </div>
+          <div data-slot="command-separator"></div>
+          <div data-slot="command-group" data-heading="Actions">
+            <div data-slot="command-item"><svg data-lucide="plus"></svg><span>New File</span><span data-slot="command-shortcut">⌘N</span></div>
+            <div data-slot="command-item"><svg data-lucide="folder-plus"></svg><span>New Folder</span><span data-slot="command-shortcut">⇧⌘N</span></div>
+            <div data-slot="command-item"><svg data-lucide="copy"></svg><span>Copy</span><span data-slot="command-shortcut">⌘C</span></div>
+            <div data-slot="command-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"></circle><path d="M8.12 8.12 12 12"></path><path d="M20 4 8.12 15.88"></path><circle cx="6" cy="18" r="3"></circle><path d="M14.8 14.8 20 20"></path></svg><span>Cut</span><span data-slot="command-shortcut">⌘X</span></div>
+            <div data-slot="command-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 14h10"></path><path d="M16 4h2a2 2 0 0 1 2 2v1.344"></path><path d="m17 18 4-4-4-4"></path><path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 1.793-1.113"></path><rect x="8" y="2" width="8" height="4" rx="1"></rect></svg><span>Paste</span><span data-slot="command-shortcut">⌘V</span></div>
+            <div data-slot="command-item"><svg data-lucide="trash"></svg><span>Delete</span><span data-slot="command-shortcut">⌫</span></div>
+          </div>
+          <div data-slot="command-separator"></div>
+          <div data-slot="command-group" data-heading="View">
+            <div data-slot="command-item"><svg data-lucide="layout-grid"></svg><span>Grid View</span></div>
+            <div data-slot="command-item"><svg data-lucide="list"></svg><span>List View</span></div>
+            <div data-slot="command-item"><svg data-lucide="zoom-in"></svg><span>Zoom In</span><span data-slot="command-shortcut">⌘+</span></div>
+            <div data-slot="command-item"><svg data-lucide="zoom-out"></svg><span>Zoom Out</span><span data-slot="command-shortcut">⌘-</span></div>
+          </div>
+          <div data-slot="command-separator"></div>
+          <div data-slot="command-group" data-heading="Account">
+            <div data-slot="command-item"><svg data-lucide="user"></svg><span>Profile</span><span data-slot="command-shortcut">⌘P</span></div>
+            <div data-slot="command-item"><svg data-lucide="credit-card"></svg><span>Billing</span><span data-slot="command-shortcut">⌘B</span></div>
+            <div data-slot="command-item"><svg data-lucide="settings"></svg><span>Settings</span><span data-slot="command-shortcut">⌘S</span></div>
+            <div data-slot="command-item"><svg data-lucide="bell"></svg><span>Notifications</span></div>
+            <div data-slot="command-item"><svg data-lucide="circle-help"></svg><span>Help &amp; Support</span></div>
+          </div>
+          <div data-slot="command-separator"></div>
+          <div data-slot="command-group" data-heading="Tools">
+            <div data-slot="command-item"><svg data-lucide="calculator"></svg><span>Calculator</span></div>
+            <div data-slot="command-item"><svg data-lucide="calendar"></svg><span>Calendar</span></div>
+            <div data-slot="command-item"><svg data-lucide="image"></svg><span>Image Editor</span></div>
+            <div data-slot="command-item"><svg data-lucide="code"></svg><span>Code Editor</span></div>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  </div>
+</div>

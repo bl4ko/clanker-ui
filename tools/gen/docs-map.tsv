@@ -244,12 +244,12 @@ components/combobox#combobox-popup	demo-combobox-3
 components/combobox#combobox-input-group	-	no example yet
 components/combobox#combobox-rtl	-	no example yet
 components/command	/docs/components/command
-components/command#command-demo	demo-command-0
-components/command#command-basic	-	no example yet
-components/command#command-shortcuts	-	no example yet
-components/command#command-groups	-	no example yet
-components/command#command-scrollable	demo-command-2
-components/command#command-rtl	-	no example yet
+components/command#command-demo	command-demo
+components/command#command-basic	command-basic
+components/command#command-shortcuts	command-shortcuts
+components/command#command-groups	command-groups
+components/command#command-scrollable	command-scrollable
+components/command#command-rtl	command-rtl
 components/context-menu	/docs/components/context-menu
 components/context-menu#context-menu-demo	demo-context-menu-0
 components/context-menu#context-menu-basic	-	no example yet

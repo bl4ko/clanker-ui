@@ -2115,3 +2115,28 @@ def check_code_block_demo(t):
     assert plain.locator("[data-token]").count() == 0
     t.shot("code-block-demo", block)
 
+
+def check_calendar_limits_change(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const task = () => new Promise(r => setTimeout(r, 0))
+          const calendar = h("div", { "data-slot": "calendar", "data-month": "2026-10" })
+          document.body.prepend(calendar)
+          await task()
+          const enabled = () => [...calendar.querySelectorAll("td[data-day^='2026-10'] [data-calendar-day-button]")].filter(b => !b.disabled).map(b => Number(b.closest("td").dataset.day.slice(8)))
+          const out = [enabled().length]
+          calendar.dataset.max = "2026-10-15"
+          await task()
+          out.push(Math.max(...enabled()))
+          calendar.dataset.min = "2026-10-05"
+          await task()
+          out.push(Math.min(...enabled()), enabled().length)
+          delete calendar.dataset.max
+          await task()
+          out.push(Math.max(...enabled()))
+          calendar.remove()
+          return out
+        }"""
+    )
+    assert result == [31, 15, 5, 11, 31], result

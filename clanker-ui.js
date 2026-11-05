@@ -81,6 +81,7 @@ const ICONS = {
   "cloud-upload": ["M12 13v8", "M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242", "m8 17 4-4 4 4"],
   "code": ["m16 18 6-6-6-6", "m8 6-6 6 6 6"],
   "coins": ["M13.744 17.736a6 6 0 1 1-7.48-7.48", "M15 6h1v4", "m6.134 14.768.866-.5 2 3.464", ["circle", {cx: "16", cy: "8", r: "6"}]],
+  "container": ["M22 7.7c0-.6-.4-1.2-.8-1.5l-6.3-3.9a1.72 1.72 0 0 0-1.7 0l-10.3 6c-.5.2-.9.8-.9 1.4v6.6c0 .5.4 1.2.8 1.5l6.3 3.9a1.72 1.72 0 0 0 1.7 0l10.3-6c.5-.3.9-1 .9-1.5Z", "M10 21.9V14L2.1 9.1", "m10 14 11.9-6.9", "M14 19.8v-8.1", "M18 17.5V9.4"],
   "contrast": [["circle", {cx: "12", cy: "12", r: "10"}], "M12 18a6 6 0 0 0 0-12v12z"],
   "copy": [["rect", {width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2"}], "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"],
   "cpu": ["M12 20v2", "M12 2v2", "M17 20v2", "M17 2v2", "M2 12h2", "M2 17h2", "M2 7h2", "M20 12h2", "M20 17h2", "M20 7h2", "M7 20v2", "M7 2v2", ["rect", {x: "4", y: "4", width: "16", height: "16", rx: "2"}], ["rect", {x: "8", y: "8", width: "8", height: "8", rx: "1"}]],
@@ -103,6 +104,7 @@ const ICONS = {
   "file-plus": ["M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z", "M14 2v5a1 1 0 0 0 1 1h5", "M9 15h6", "M12 18v-6"],
   "file-spreadsheet": ["M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z", "M14 2v5a1 1 0 0 0 1 1h5", "M8 13h2", "M14 13h2", "M8 17h2", "M14 17h2"],
   "file-text": ["M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z", "M14 2v5a1 1 0 0 0 1 1h5", "M10 9H8", "M16 13H8", "M16 17H8"],
+  "film": [["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2"}], "M7 3v18", "M3 7.5h4", "M3 12h18", "M3 16.5h4", "M17 3v18", "M17 7.5h4", "M17 16.5h4"],
   "flag": ["M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"],
   "folder": ["M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"],
   "folder-open": ["m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"],
@@ -129,6 +131,7 @@ const ICONS = {
   "info": [["circle", {cx: "12", cy: "12", r: "10"}], "M12 16v-4", "M12 8h.01"],
   "italic": [["line", {x1: "19", x2: "10", y1: "4", y2: "4"}], ["line", {x1: "14", x2: "5", y1: "20", y2: "20"}], ["line", {x1: "15", x2: "9", y1: "4", y2: "20"}]],
   "key": ["m2 21 9.6-9.6", "m7.5 15.5 2.3 2.3a1 1 0 0 1 0 1.4l-2.1 2.1a1 1 0 0 1-1.4 0L4 19", ["circle", {cx: "15.5", cy: "7.5", r: "5.5"}]],
+  "key-round": ["M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z", ["circle", {cx: "16.5", cy: "7.5", r: ".5", fill: "currentColor"}]],
   "keyboard": ["M10 8h.01", "M12 12h.01", "M14 8h.01", "M16 12h.01", "M18 8h.01", "M6 8h.01", "M7 16h10", "M8 12h.01", ["rect", {width: "20", height: "16", x: "2", y: "4", rx: "2"}]],
   "landmark": ["M10 18v-7", "M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z", "M14 18v-7", "M18 18v-7", "M3 22h18", "M6 18v-7"],
   "laptop": ["M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z", "M20.054 15.987H3.946"],
@@ -193,6 +196,7 @@ const ICONS = {
   "rotate-ccw-clock": ["M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", "M3 3v5h5", "M12 7v5l4 2"],
   "rotate-cw": ["M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8", "M21 3v5h-5"],
   "router": [["rect", {width: "20", height: "8", x: "2", y: "14", rx: "2"}], "M6.01 18H6", "M10.01 18H10", "M15 10v4", "M17.84 7.17a4 4 0 0 0-5.66 0", "M20.66 4.34a8 8 0 0 0-11.31 0"],
+  "rss": ["M4 11a9 9 0 0 1 9 9", "M4 4a16 16 0 0 1 16 16", ["circle", {cx: "5", cy: "19", r: "1"}]],
   "save": ["M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z", "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", "M7 3v4a1 1 0 0 0 1 1h7"],
   "search": ["m21 21-4.34-4.34", ["circle", {cx: "11", cy: "11", r: "8"}]],
   "send": ["M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z", "m21.854 2.147-10.94 10.939"],
@@ -234,6 +238,7 @@ const ICONS = {
   "triangle-alert": ["m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3", "M12 9v4", "M12 17h.01"],
   "trophy": ["M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2", "M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2", "M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3", "M4 22h16", "M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z", "M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3"],
   "truck": ["M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2", "M15 18H9", "M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14", ["circle", {cx: "17", cy: "18", r: "2"}], ["circle", {cx: "7", cy: "18", r: "2"}]],
+  "tv": ["m17 2-5 5-5-5", ["rect", {width: "20", height: "15", x: "2", y: "7", rx: "2"}]],
   "underline": ["M6 4v6a6 6 0 0 0 12 0V4", ["line", {x1: "4", x2: "20", y1: "20", y2: "20"}]],
   "undo-2": ["M9 14 4 9l5-5", "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"],
   "upload": ["M12 3v12", "m17 8-5-5-5 5", "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"],
@@ -247,6 +252,7 @@ const ICONS = {
   "video": ["m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5", ["rect", {x: "2", y: "6", width: "14", height: "12", rx: "2"}]],
   "volume-off": ["M16 9a5 5 0 0 1 .95 2.293", "M19.364 5.636a9 9 0 0 1 1.889 9.96", "m2 2 20 20", "m7 7-.587.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298V11", "M9.828 4.172A.686.686 0 0 1 11 4.657v.686"],
   "wallet": ["M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1", "M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"],
+  "webhook": ["M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c.01-.7.2-1.4.57-2", "m6 17 3.13-5.78c.53-.97.1-2.18-.5-3.1a4 4 0 1 1 6.89-4.06", "m12 6 3.13 5.73C15.66 12.7 16.9 13 18 13a4 4 0 0 1 0 8"],
   "wifi": ["M12 20h.01", "M2 8.82a15 15 0 0 1 20 0", "M5 12.859a10 10 0 0 1 14 0", "M8.5 16.429a5 5 0 0 1 7 0"],
   "wifi-off": ["M12 20h.01", "M8.5 16.429a5 5 0 0 1 7 0", "M5 12.859a10 10 0 0 1 5.17-2.69", "M19 12.859a10 10 0 0 0-2.007-1.523", "M2 8.82a15 15 0 0 1 4.177-2.643", "M22 8.82a15 15 0 0 0-11.288-3.764", "m2 2 20 20"],
   "wrench": ["M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"],
@@ -7270,8 +7276,19 @@ function tabsSelect(root, value) {
     const trigger = shared && triggers.find(t => tabsValue(t) === value)
     if (trigger) panel.setAttribute("aria-labelledby", ensureId(trigger, "tabs-trigger"))
   }
+  if (root.hasAttribute("data-value") && root.dataset.value !== value) root.dataset.value = value
   return !previous || tabsValue(previous) !== value
 }
+
+const tabsWatch = new MutationObserver(records => {
+  for (const root of new Set(records.map(r => r.target))) {
+    const value = root.dataset.value
+    const trigger = value == null ? null : tabsParts(root).triggers.find(t => tabsValue(t) === value)
+    if (!trigger || trigger.dataset.state === "active") continue
+    tabsSelect(root, value)
+    tabsReveal(trigger)
+  }
+})
 
 function tabsReveal(trigger) {
   const list = trigger.closest('[data-slot="tabs-list"]')
@@ -7323,8 +7340,9 @@ define("tabs", {
       if (!panel.hasAttribute("tabindex")) panel.tabIndex = 0
     }
     const usable = triggers.filter(t => !t.disabled)
-    const initial = triggers.find(t => t.dataset.state === "active" || t.getAttribute("aria-selected") === "true") ?? triggers.find(t => tabsValue(t) === root.dataset.defaultValue) ?? usable[0]
+    const initial = triggers.find(t => root.dataset.value != null && tabsValue(t) === root.dataset.value) ?? triggers.find(t => t.dataset.state === "active" || t.getAttribute("aria-selected") === "true") ?? triggers.find(t => tabsValue(t) === root.dataset.defaultValue) ?? usable[0]
     if (initial) tabsSelect(root, tabsValue(initial))
+    tabsWatch.observe(root, { attributes: true, attributeFilter: ["data-value"] })
     if (!list || vertical) return
     if (!list.hasAttribute("tabindex")) list.tabIndex = -1
     tabsListResize.observe(list)
@@ -7382,6 +7400,24 @@ define("avatar-image", {
   },
   error(event, img) {
     avatarStatus(img, "error")
+  },
+})
+
+const alertActionResize = new ResizeObserver(entries => {
+  for (const { target, borderBoxSize } of entries) {
+    const alert = target.parentElement
+    if (alert?.getAttribute("data-slot") === "alert") alert.style.setProperty("--alert-action-width", `${borderBoxSize[0].inlineSize}px`)
+  }
+})
+
+define("alert-action", {
+  init(el) {
+    const alert = el.parentElement
+    alertActionResize.observe(el)
+    return () => {
+      alertActionResize.unobserve(el)
+      alert?.style.removeProperty("--alert-action-width")
+    }
   },
 })
 

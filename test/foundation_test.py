@@ -815,7 +815,7 @@ def check_icons_added(t):
           const { icon, iconNames } = await import("/clanker-ui.js")
           const host = document.createElement("div")
           document.body.append(host)
-          const out = ["message-square", "message-circle", "camera", "skip-forward", "book-open", "graduation-cap", "hammer", "play", "pause"].map(name => {
+          const out = ["message-square", "message-circle", "camera", "skip-forward", "book-open", "graduation-cap", "hammer", "play", "pause", "film", "tv", "webhook", "container", "rss", "key-round"].map(name => {
             const el = icon(name)
             host.append(el)
             const b = el.getBBox()
@@ -835,6 +835,12 @@ def check_icons_added(t):
         ["hammer", True, "path path path", True],
         ["play", True, "path", True],
         ["pause", True, "rect rect", True],
+        ["film", True, "rect path path path path path path path", True],
+        ["tv", True, "path rect", True],
+        ["webhook", True, "path path path", True],
+        ["container", True, "path path path path path", True],
+        ["rss", True, "path path circle", True],
+        ["key-round", True, "path circle", True],
     ], found
 
 
@@ -1633,7 +1639,7 @@ FILL_COLORS = """() => {
     ctx.fillRect(0, 0, 1, 1)
     return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3)
   }
-  return Object.fromEntries(["success-fill", "warning-fill", "error-fill", "info-fill", "card"].map(n => [n, rgb(n)]))
+  return Object.fromEntries(["success-fill", "warning-fill", "error-fill", "info-fill", "neutral-fill", "card"].map(n => [n, rgb(n)]))
 }"""
 
 
@@ -1664,3 +1670,87 @@ def check_status_fill_tokens(t):
         hue = fill_hue(colors[name])
         hue = hue + 360 if hue is not None and hue < lo - 180 else hue
         assert hue is not None and lo <= hue <= hi, (name, colors[name], hue, "a status fill keeps its hue in light and dark")
+    assert t.page.evaluate("() => getComputedStyle(document.documentElement).getPropertyValue('--neutral-fill').trim()"), "--neutral-fill is defined"
+    lum = fill_luminance(colors["neutral-fill"])
+    ratio = (max(lum, card) + 0.05) / (min(lum, card) + 0.05)
+    assert ratio >= 3, ("neutral-fill", colors["neutral-fill"], round(ratio, 2))
+    assert max(colors["neutral-fill"]) - min(colors["neutral-fill"]) <= 16, ("neutral-fill is gray", colors["neutral-fill"])
+
+
+def check_page_split_hidden(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const main = h("main", { "data-slot": "page", "data-layout": "split" },
+            h("div", {}, h("a", { "data-slot": "brand", href: "#" }, "Brand"), h("div", { id: "split-form" }, "Form"), h("div", { id: "split-sent", hidden: true }, "Check your email")),
+            h("div", { "data-slot": "page-aside" }))
+          document.body.prepend(main)
+          const out = ["split-form", "split-sent"].map(id => getComputedStyle(document.getElementById(id)).display)
+          main.remove()
+          return out
+        }"""
+    )
+    assert result == ["flex", "none"], result
+
+
+def check_item_media_cover(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h, svg } = await import("/clanker-ui.js")
+          const out = []
+          for (const size of [null, "sm", "xs"]) {
+            for (const variant of [null, "image"]) {
+              const item = h("div", { "data-slot": "item", "data-variant": "outline", "data-size": size },
+                h("div", { "data-slot": "item-media", "data-variant": variant },
+                  h("div", { "data-slot": "cover", "data-tone": "2" }, svg("svg", { viewBox: "0 0 40 60", "aria-hidden": "true" }, svg("circle", { cx: "20", cy: "30", r: "12", fill: "currentColor" })), h("span", {}, "Piranesi"))),
+                h("div", { "data-slot": "item-content" }, h("div", { "data-slot": "item-title" }, "Piranesi")))
+              document.body.prepend(item)
+              const r = item.querySelector('[data-slot="cover"]').getBoundingClientRect()
+              const text = item.querySelector('[data-slot="cover"] > span').getBoundingClientRect()
+              out.push([size, variant, Math.round(r.width), Math.round(r.height), text.width > 0])
+              item.remove()
+            }
+          }
+          return out
+        }"""
+    )
+    want = {None: 40, "sm": 32, "xs": 24}
+    for size, variant, w, hgt, text in result:
+        assert w == want[size], (size, variant, w, hgt)
+        assert hgt == (w if variant == "image" else round(w * 1.5)), (size, variant, w, hgt)
+        assert not text, (size, variant, "cover text is hidden at media size")
+
+
+def check_section_cards_value_wrap(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h, icon } = await import("/clanker-ui.js")
+          const card = value => h("div", { "data-slot": "card" },
+            h("div", { "data-slot": "card-header" },
+              h("div", { "data-slot": "card-description" }, "Outstanding"),
+              h("div", { "data-slot": "card-title" }, value),
+              h("div", { "data-slot": "card-action" }, h("span", { "data-slot": "badge", "data-variant": "outline" }, icon("trending-up"), "+12.5%"))),
+            h("div", { "data-slot": "card-footer" }, h("div", {}, "Up this month"), h("div", { "data-slot": "card-description" }, "Last 6 months")))
+          const out = []
+          for (const width of [980, 600, 358]) {
+            const host = h("div", { style: { width: width + "px" } }, h("div", { "data-slot": "section-cards" }, ["€38,550.00", "€1,250.00", "1,234", "4.5%"].map(card)))
+            document.body.prepend(host)
+            await new Promise(r => requestAnimationFrame(r))
+            for (const title of host.querySelectorAll('[data-slot="card-title"]')) {
+              const range = document.createRange()
+              range.selectNodeContents(title)
+              const lines = new Set([...range.getClientRects()].map(r => Math.round(r.top))).size
+              const text = range.getBoundingClientRect()
+              const action = title.parentElement.querySelector('[data-slot="card-action"]').getBoundingClientRect()
+              const hit = text.left < action.right && text.right > action.left && text.top < action.bottom && text.bottom > action.top
+              const header = title.parentElement.getBoundingClientRect()
+              out.push([width, title.textContent, lines, hit, Math.round(title.getBoundingClientRect().top - header.top)])
+            }
+            host.remove()
+          }
+          return out
+        }"""
+    )
+    for width, value, lines, hit, top in result:
+        assert lines == 1 and not hit, (width, value, lines, hit)
+        assert top == 24, (width, value, top, "the value stays in the second row under the description")

@@ -107,13 +107,13 @@ components/badge#badge-link	badge-link
 components/badge#badge-colors	badge-colors
 components/badge#badge-rtl	badge-rtl
 components/breadcrumb	/docs/components/breadcrumb
-components/breadcrumb#breadcrumb-demo	demo-breadcrumb-0
-components/breadcrumb#breadcrumb-basic	-	no example yet
-components/breadcrumb#breadcrumb-separator	demo-breadcrumb-2
-components/breadcrumb#breadcrumb-dropdown	demo-breadcrumb-1
-components/breadcrumb#breadcrumb-ellipsis	-	no example yet
-components/breadcrumb#breadcrumb-link	-	no example yet
-components/breadcrumb#breadcrumb-rtl	-	no example yet
+components/breadcrumb#breadcrumb-demo	breadcrumb-demo
+components/breadcrumb#breadcrumb-basic	breadcrumb-basic
+components/breadcrumb#breadcrumb-separator	breadcrumb-separator
+components/breadcrumb#breadcrumb-dropdown	breadcrumb-dropdown
+components/breadcrumb#breadcrumb-ellipsis	breadcrumb-ellipsis
+components/breadcrumb#breadcrumb-link	breadcrumb-link
+components/breadcrumb#breadcrumb-rtl	breadcrumb-rtl
 components/bubble	/docs/components/bubble
 components/bubble#bubble-demo	demo-bubble-0
 components/bubble#bubble-variants	demo-bubble-1

@@ -1,0 +1,20 @@
+<nav data-slot="breadcrumb">
+  <ol data-slot="breadcrumb-list">
+    <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="/">Home</a></li>
+    <li data-slot="breadcrumb-separator"><svg data-lucide="dot"></svg></li>
+    <li data-slot="breadcrumb-item">
+      <div data-slot="dropdown-menu">
+        <button type="button" class="flex items-center gap-1" data-dropdown-menu-trigger>Components<svg data-lucide="chevron-down" data-icon="inline-end" class="size-3.5"></svg></button>
+        <div data-slot="dropdown-menu-content" data-align="start">
+          <div data-slot="dropdown-menu-group">
+            <div data-slot="dropdown-menu-item">Documentation</div>
+            <div data-slot="dropdown-menu-item">Themes</div>
+            <div data-slot="dropdown-menu-item">GitHub</div>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li data-slot="breadcrumb-separator"><svg data-lucide="dot"></svg></li>
+    <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">Breadcrumb</span></li>
+  </ol>
+</nav>

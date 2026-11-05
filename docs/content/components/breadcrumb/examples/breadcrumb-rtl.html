@@ -1,0 +1,20 @@
+<nav data-slot="breadcrumb" dir="rtl" lang="ar">
+  <ol data-slot="breadcrumb-list">
+    <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="/">الرئيسية</a></li>
+    <li data-slot="breadcrumb-separator"><svg data-lucide="dot"></svg></li>
+    <li data-slot="breadcrumb-item">
+      <div data-slot="dropdown-menu">
+        <button type="button" class="flex items-center gap-1" data-dropdown-menu-trigger>المكونات<svg data-lucide="chevron-down" data-icon="inline-end" class="size-3.5"></svg></button>
+        <div data-slot="dropdown-menu-content" data-align="end">
+          <div data-slot="dropdown-menu-group">
+            <div data-slot="dropdown-menu-item">التوثيق</div>
+            <div data-slot="dropdown-menu-item">السمات</div>
+            <div data-slot="dropdown-menu-item">جيت هاب</div>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li data-slot="breadcrumb-separator"><svg data-lucide="dot"></svg></li>
+    <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">مسار التنقل</span></li>
+  </ol>
+</nav>

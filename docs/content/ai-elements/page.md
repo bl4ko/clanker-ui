@@ -15,6 +15,8 @@ The patterns follow the [shadcn/ui AI Elements](https://ui.shadcn.com/docs/ai-el
 | --- | --- |
 | [Chain of Thought](/docs/ai-elements/chain-of-thought) | A summary that expands into the steps an agent took. |
 | [Chat](/docs/ai-elements/chat) | The thread. Message Scroller keeps your place while the reply streams. |
+| [Checkpoint](/docs/ai-elements/checkpoint) | A point in the conversation you can return to. |
+| [Confirmation](/docs/ai-elements/confirmation) | A prompt to approve or deny a tool before it runs. |
 | [Context](/docs/ai-elements/context) | How much of the context window the conversation has used. |
 | [File Tree](/docs/ai-elements/file-tree) | The files the agent changed, as a folder tree. |
 | [Inline Citation](/docs/ai-elements/inline-citation) | A source in the sentence that opens on hover. |
@@ -22,8 +24,10 @@ The patterns follow the [shadcn/ui AI Elements](https://ui.shadcn.com/docs/ai-el
 | [Model Selector](/docs/ai-elements/model-selector) | Two menus. One picks the model the agent runs, the other picks how hard it thinks. |
 | [Plan](/docs/ai-elements/plan) | The steps the agent plans to take, and how far it has got. |
 | [Prompt Input](/docs/ai-elements/prompt-input) | A message field with attachments and a send button. |
+| [Queue](/docs/ai-elements/queue) | The agent's todo list, split into what is left and what is done. |
 | [Reasoning](/docs/ai-elements/reasoning) | The agent's thinking as it streams. |
 | [Sources](/docs/ai-elements/sources) | The links the agent used for a reply. |
+| [Subagent](/docs/ai-elements/subagent) | A subagent run, with its tool calls and result. |
 | [Suggestion](/docs/ai-elements/suggestion) | A short prompt you can send to the agent in one click. |
 | [Task](/docs/ai-elements/task) | The steps the agent takes, as it takes them. |
 | [Tool](/docs/ai-elements/tool) | A tool call the agent makes, from input to output. |

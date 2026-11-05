@@ -3,10 +3,10 @@ ai-elements/chain-of-thought	/docs/ai-elements/chain-of-thought
 ai-elements/chain-of-thought#chain-of-thought-demo	chain-of-thought-demo
 ai-elements/chat	/docs/ai-elements/chat
 ai-elements/chat#chat-demo	chat-demo
-ai-elements/checkpoint	-	AI Elements pages: #66
-ai-elements/checkpoint#checkpoint-demo	-	page has no match
-ai-elements/confirmation	-	AI Elements pages: #66
-ai-elements/confirmation#confirmation-demo	-	page has no match
+ai-elements/checkpoint	/docs/ai-elements/checkpoint
+ai-elements/checkpoint#checkpoint-demo	checkpoint-demo
+ai-elements/confirmation	/docs/ai-elements/confirmation
+ai-elements/confirmation#confirmation-demo	confirmation-demo
 ai-elements/context	/docs/ai-elements/context
 ai-elements/context#context-demo	context-demo
 ai-elements/file-tree	/docs/ai-elements/file-tree
@@ -22,9 +22,9 @@ ai-elements/plan#plan-demo	plan-demo
 ai-elements/plan#plan-description	plan-description
 ai-elements/prompt-input	/docs/ai-elements/prompt-input
 ai-elements/prompt-input#prompt-input-demo	prompt-input-demo
-ai-elements/queue	-	AI Elements pages: #66
-ai-elements/queue#queue-demo	-	page has no match
-ai-elements/queue#queue-descriptions	-	page has no match
+ai-elements/queue	/docs/ai-elements/queue
+ai-elements/queue#queue-demo	queue-demo
+ai-elements/queue#queue-descriptions	queue-descriptions
 ai-elements/reasoning	/docs/ai-elements/reasoning
 ai-elements/reasoning#reasoning-demo	reasoning-demo
 ai-elements/reasoning#reasoning-duration	reasoning-duration
@@ -33,10 +33,10 @@ ai-elements/sources#sources-demo	sources-demo
 ai-elements/stack-trace	-	AI Elements pages: #66
 ai-elements/stack-trace#stack-trace-demo	-	page has no match
 ai-elements/stack-trace#stack-trace-frames	-	page has no match
-ai-elements/subagent	-	AI Elements pages: #66
-ai-elements/subagent#subagent-demo	-	page has no match
-ai-elements/subagent#subagent-running	-	page has no match
-ai-elements/subagent#subagent-details	-	page has no match
+ai-elements/subagent	/docs/ai-elements/subagent
+ai-elements/subagent#subagent-demo	subagent-demo
+ai-elements/subagent#subagent-running	subagent-running
+ai-elements/subagent#subagent-details	subagent-details
 ai-elements/suggestion	/docs/ai-elements/suggestion
 ai-elements/suggestion#suggestion-demo	suggestion-demo
 ai-elements/task	/docs/ai-elements/task

@@ -742,6 +742,8 @@ func iconsMarkdown(js, notices string) (string, error) {
 	return b.String(), nil
 }
 
+var patternSlot = regexp.MustCompile(`"data-slot":\s*"([a-z0-9-]+)"`)
+
 func catalogPatterns(root string, cat *catalog) ([]catPattern, error) {
 	owner := map[string]string{}
 	for _, c := range cat.Components {
@@ -802,6 +804,18 @@ func catalogPatterns(root string, cat *catalog) ([]catPattern, error) {
 					}
 				}
 			})
+		}
+		scripts, _ := filepath.Glob(filepath.Join(dir, "examples", "*.js"))
+		for _, f := range scripts {
+			bs, err := os.ReadFile(f)
+			if err != nil {
+				return nil, err
+			}
+			for _, m := range patternSlot.FindAllStringSubmatch(string(bs), -1) {
+				if c := owner["slot:"+m[1]]; c != "" {
+					used[c] = true
+				}
+			}
 		}
 		for _, c := range cat.Components {
 			if used[c.Name] {

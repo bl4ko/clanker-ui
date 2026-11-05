@@ -1,0 +1,16 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/confirmation",
+  "parts": {
+    "next": {"role": "button", "name": "Send message", "optional": true},
+    "approve": {"role": "button", "name": "Approve", "optional": true},
+    "reset": {"role": "button", "name": "Reset", "optional": true}
+  },
+  "anchor": "next",
+  "positions": [],
+  "steps": [
+    {"do": "click", "target": "next"},
+    {"do": "wait", "ms": 3000},
+    {"do": "click", "target": "approve"},
+    {"do": "wait", "ms": 1500}
+  ]
+}

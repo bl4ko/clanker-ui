@@ -1,0 +1,16 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/checkpoint",
+  "parts": {
+    "restore": {"role": "button", "name": "Restore to Button renamed", "optional": true},
+    "continue": {"role": "button", "name": "Continue", "optional": true}
+  },
+  "anchor": "restore",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "Enter"},
+    {"do": "tab"},
+    {"do": "press", "key": "Enter"},
+    {"do": "wait", "ms": 1000}
+  ]
+}

@@ -53,13 +53,13 @@ ai-elements/tool#tool-states	-	page has no match
 ai-elements/tool#tool-sheet	-	page has no match
 ai-elements/tool#tool-approval	-	page has no match
 components/accordion	/docs/components/accordion
-components/accordion#accordion-demo	demo-accordion-0
-components/accordion#accordion-basic	-	no example yet
-components/accordion#accordion-multiple	demo-accordion-1
-components/accordion#accordion-disabled	-	no example yet
-components/accordion#accordion-borders	demo-accordion-3
-components/accordion#accordion-card	demo-accordion-3
-components/accordion#accordion-rtl	-	no example yet
+components/accordion#accordion-demo	accordion-demo
+components/accordion#accordion-basic	accordion-basic
+components/accordion#accordion-multiple	accordion-multiple
+components/accordion#accordion-disabled	accordion-disabled
+components/accordion#accordion-borders	accordion-borders
+components/accordion#accordion-card	accordion-card
+components/accordion#accordion-rtl	accordion-rtl
 components/alert	/docs/components/alert
 components/alert#alert-demo	alert-demo
 components/alert#alert-basic	alert-basic

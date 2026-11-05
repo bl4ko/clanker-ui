@@ -478,6 +478,11 @@
     border-top-width: 1px;
   }
 
+  .border-b {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
+  }
+
   .border-amber-200 {
     border-color: var(--color-amber-200);
   }
@@ -520,6 +525,10 @@
 
   .px-\(--card-spacing\) {
     padding-inline: var(--card-spacing);
+  }
+
+  .px-4 {
+    padding-inline: calc(var(--spacing) * 4);
   }
 
   .py-2 {
@@ -655,6 +664,11 @@
 
   .\[--card-spacing\:--spacing\(8\)\] {
     --card-spacing: calc(var(--spacing) * 8);
+  }
+
+  .last\:border-b-0:last-child {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 0;
   }
 
   @media (hover: hover) {

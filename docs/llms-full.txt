@@ -81,6 +81,7 @@ A smaller page can load only the component groups that it uses: see [Minified an
 | `clanker-ui-a11y.css` | Optional accessibility layer. Load it after the kit: 3:1 form-control edges, a 3:1 focus outline and list keyboard highlight, stronger status borders and text, darker light muted text, and the dataviz-validated chart palette. See [Accessibility layer](#accessibility-layer). |
 | `clanker-ui.js` | ES module: core helpers and all component behavior |
 | `clanker-ui-chart.js` | ES module: SVG charts, stat tiles, sparklines. Imports `./clanker-ui.js` |
+| `clanker-ui-code.js` | Optional ES module: syntax colors for the [code block](#code-block). Imports `./clanker-ui.js` |
 | `clanker-ui-theme.js` | Optional classic script for apps with a [theme toggle or switch](#theme-toggle-and-switch). Before the first paint it copies the stored theme (`light` or `dark`) to `data-theme` and the stored [color scheme](#color-schemes) to `data-scheme` on `<html>`, sets `data-system-theme`, and sets `<meta name="theme-color">` (without `media`) to `--background`. The module still owns all theme behavior. |
 | `clanker-ui-themes.css` | Optional [color schemes](#color-schemes): the shadcn base colors and accent themes, and editor palettes (Tokyo Night, Catppuccin, Gruvbox, Nord, Dracula, Rosé Pine, Solarized, One, Kanagawa, Everforest, GitHub). Load it after `clanker-ui.css`. Apps without schemes do not need it. |
 | `dist/` | Minified copies of every file and one file for each component group. See [Minified and group files](#minified-and-group-files). |
@@ -150,6 +151,7 @@ Put overrides in `app.css` after the kit files, without a layer.
 | `clanker-ui.min.js` | The behavior of all other components. Imports `./clanker-ui-core.min.js` |
 | `clanker-ui-<group>.min.js` | The behavior of one group (`forms`, `overlays`, `layout`, `chat`). Imports `./clanker-ui-core.min.js` |
 | `clanker-ui-chart.min.js` | The chart module. Imports `./clanker-ui-core.min.js` |
+| `clanker-ui-code.min.js` | The syntax color module. Imports `./clanker-ui-core.min.js` |
 
 | Group | Components | Needs |
 | --- | --- | --- |
@@ -181,10 +183,10 @@ Put overrides in `app.css` after the kit files, without a layer.
    <script type="module" src="clanker-ui-layout.min.js"></script>
    ```
 
-4. Charts: `clanker-ui-chart.min.js`, and `clanker-ui-chart.min.css` with group files (`clanker-ui.min.css` has the chart CSS).
+4. Charts: `clanker-ui-chart.min.js`, and `clanker-ui-chart.min.css` with group files (`clanker-ui.min.css` has the chart CSS). Syntax colors: `clanker-ui-code.min.js` (its CSS is in the `chat` group).
 
 - Use the `.min` files together or the readable files together, never both: two cores attach every listener two times. Two group files never define the same slot; `clanker-ui.min.js` together with a group file stops with "already defined".
-- In the readable set, `clanker-ui.js` exports everything except the chart API (`clanker-ui-chart.js`). In the one-file `.min` set, `clanker-ui.min.js` exports the same names as `clanker-ui.js`: the core API (`h`, `svg`, `icon`, `define`, `strings`, `theme`, `direction`, and the other core exports) and the component API (`toast`, `dialogOpen`, `calendarSetValue`, ...). In the group set, import the core API from `./clanker-ui-core.min.js` and a component API from its group file. The group files do not export the core API again:
+- In the readable set, `clanker-ui.js` exports everything except the chart API (`clanker-ui-chart.js`) and `codeBlockHighlight` (`clanker-ui-code.js`). In the one-file `.min` set, `clanker-ui.min.js` exports the same names as `clanker-ui.js`: the core API (`h`, `svg`, `icon`, `define`, `strings`, `theme`, `direction`, and the other core exports) and the component API (`toast`, `dialogOpen`, `calendarSetValue`, ...). In the group set, import the core API from `./clanker-ui-core.min.js` and a component API from its group file. The group files do not export the core API again:
 
    ```js
    import { h, icon, theme, toast, dialogOpen } from "./clanker-ui.min.js"
@@ -250,7 +252,7 @@ Parts that shadcn renders with `Button` keep their own `data-slot` and share the
 | `pagination-link` | `ghost`, `icon`; the current page has `data-variant="outline"` |
 | `carousel-previous`, `carousel-next` | `outline`, `icon-sm`, round 28 px |
 | `sidebar-trigger` | `ghost`, 28 px |
-| `attachment-action`, `code-block-copy-button`, `code-block-wrap-button` | `ghost`, `icon-xs` |
+| `attachment-action`, `code-block-copy-button`, `code-block-wrap-button`, `code-block-download-button` | `ghost`, `icon-xs` |
 | `message-scroller-button` | `secondary`, `icon-sm` |
 | `questionnaire-previous`, `questionnaire-skip` | `outline` |
 | `questionnaire-next`, `questionnaire-submit` | `default` |
@@ -444,6 +446,7 @@ Only the components below export functions; every name starts with the component
 | `questionnaireGoTo` | `questionnaireGoTo(el, name) → boolean` | |
 | `questionnaireRefresh` | `questionnaireRefresh(el)` | Call after you enable or disable an item. |
 | `direction` | `direction(el = <html>) → "ltr" \| "rtl"` | |
+| `codeBlockHighlight` | `codeBlockHighlight(code, language) → Node[][] \| null` | In `clanker-ui-code.js`: one list of nodes per line for `code-block-line` rows, or `null` for an unknown language. See [Code Block](#code-block). |
 | `chart` | `chart(element, data, options) → { update(data, options), destroy() }` | In `clanker-ui-chart.js`, see [Chart](#chart). |
 | `sparkline` | `sparkline(element, values, options?) → { update, destroy }` | |
 | `statTile` | `statTile(element, options) → { update(options), destroy() }` | |
@@ -492,6 +495,7 @@ Components dispatch bubbling, composed `CustomEvent`s named `<component>:<action
 | `tabs:change` | `tabs` | `{ value }` |
 | `trace:open`, `trace:close` | `trace-collapsible` | — |
 | `code-block:copy`, `code-block:wrap` | `code-block` | `{ value }` |
+| `code-block:download` | `code-block` | `{ value, filename }` |
 | `message-scroller:scrollable` | `message-scroller` | `{ start, end }` |
 | `questionnaire:change` | `questionnaire` | `{ value, index, total }` (active item name) |
 | `questionnaire:status` | `questionnaire` | `{ item, value }`: `answered`, `skipped`, `unanswered` |
@@ -532,7 +536,7 @@ Object.assign(strings, { closeToast: "Zapri obvestilo", remove: "Odstrani {label
 | `carousel`, `slide`, `slideOf`, `previousSlide`, `nextSlide` | `carousel`, `slide`, `{index} of {count}`, `Previous slide`, `Next slide` | carousel |
 | `sidebar`, `toggleSidebar` | `Sidebar`, `Toggle Sidebar` | mobile sidebar, trigger, rail |
 | `editorThemes`, `baseColor` | `Editor themes`, `Base color` | scheme picker group, accent picker first option |
-| `copy`, `copied`, `wrapLines` | `Copy`, `Copied`, `Wrap lines` | code block |
+| `copy`, `copied`, `wrapLines`, `download` | `Copy`, `Copied`, `Wrap lines`, `Download` | code block |
 | `messages`, `scrollToStart`, `scrollToEnd` | `Messages`, `Scroll to start`, `Scroll to end` | message scroller |
 | `previous`, `next`, `skip`, `submit` | `Previous`, `Next`, `Skip`, `Submit` | questionnaire buttons |
 | `questionnaireProgress`, `questionOf` | `Questionnaire progress`, `Question {current} of {total}` | questionnaire progress |
@@ -1289,14 +1293,27 @@ The kit adds the chevron and keeps `aria-expanded` and `data-state` current. It 
     <div data-slot="code-block-title"><svg data-lucide="file-text"></svg>app.ts</div>
     <div data-slot="code-block-actions">
       <button data-slot="code-block-wrap-button" aria-label="Wrap lines"><svg data-lucide="text-wrap"></svg></button>
+      <button data-slot="code-block-download-button" data-filename="app.ts"></button>
       <button data-slot="code-block-copy-button"></button>
     </div>
   </div>
-  <pre data-slot="code-block-content" data-numbered="true" data-start-line="14" data-wrap="true"><code data-slot="code-block-code">code</code></pre>
+  <pre data-slot="code-block-content" data-language="ts" data-numbered="true" data-start-line="14" data-wrap="true"><code data-slot="code-block-code">code</code></pre>
 </div>
 ```
 
-Plain monospace, no highlighter. `data-numbered` splits text into `code-block-line` rows; write `<span data-slot="code-block-line" data-variant="added|removed|highlighted">` rows for diffs. Copy uses the Clipboard API: `data-value` or the block text without line numbers; it shows a check for 2 s (`data-timeout`) and announces "Copied" (`strings.copied`). A copy button that leaves the page goes back to its copy state. The wrap button toggles `data-wrap` and `aria-pressed`.
+`data-numbered` splits text into `code-block-line` rows; write `<span data-slot="code-block-line" data-variant="added|removed|highlighted">` rows for diffs and highlighted lines. Copy uses the Clipboard API: `data-value` or the block text without line numbers; it shows a check for 2 s (`data-timeout`) and announces "Copied" (`strings.copied`). A copy button that leaves the page goes back to its copy state. The wrap button toggles `data-wrap` and `aria-pressed` (pressed text is `--foreground`). The download button saves `data-value` or the block text as `data-filename` (default: the last part of the title, else `code.txt`).
+
+Syntax colors: load `clanker-ui-code.js` and set `data-language` on `code-block-content`. Languages: `ts`, `tsx`, `js`, `jsx`, `json`, `html`, `css`, `bash`, `yaml`, `go`, `python`, `diff`, `markdown`, `sql`, `ansi` (terminal colors; the escape codes go away), and the usual aliases (`typescript`, `javascript`, `sh`, `shell`, `zsh`, `yml`, `py`, `md`, `xml`, `svg`); other languages and text over 200 000 characters stay plain, as without the module. It colors plain text and plain rows when a block starts; rows with elements stay as they are. For text that changes, build the rows again:
+
+```js
+import { h } from "./clanker-ui.js"
+import { codeBlockHighlight } from "./clanker-ui-code.js"
+
+code.replaceChildren(...codeBlockHighlight(text, "ts").map(line =>
+  h("span", { "data-slot": "code-block-line" }, h("span", { "data-slot": "code-block-line-content" }, line.length ? line : "\n"))))
+```
+
+Tokens are `<span data-token="…">` with `comment`, `keyword`, `string`, `constant`, `function`, `variable`, `tag`, `inserted`, `deleted`, or `bold`, colored by `--code-<token>` (on `:root`). The defaults are the GitHub Light and Dark colors of the shadcn highlighter, darkened or lightened to 4.5:1 on the block, its highlighted lines, and removed lines; each editor scheme sets its own (`clanker-ui-a11y.css` has the 4.5:1 changes).
 
 #### Message Scroller
 
@@ -2931,17 +2948,17 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 | Part | Write | State |
 | --- | --- | --- |
 | `code-block` (root) | `data-size` `sm`; `data-variant` `default`, `destructive` |  |
-| `code-block-content` | `data-numbered` `false`, `true`; `data-start-line` number; `data-wrap` `false`, `true` |  |
-| `code-block-copy-button` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
+| `code-block-content` | `data-language` string; `data-numbered` `false`, `true`; `data-start-line` number; `data-wrap` `false`, `true` |  |
+| `code-block-download-button` | `data-filename` string |  |
 | `code-block-line` | `data-variant` `added`, `highlighted`, `removed` |  |
 
-Other parts: `code-block-actions`, `code-block-code`, `code-block-footer`, `code-block-header`, `code-block-title`, `code-block-wrap-button`.
+Other parts: `code-block-actions`, `code-block-code`, `code-block-copy-button`, `code-block-footer`, `code-block-header`, `code-block-title`, `code-block-wrap-button`.
 
 Kit adds: `code-block-line-content`.
 
 Other options named in the docs: `data-timeout` any.
 
-Events: `code-block:copy` `{ value }`; `code-block:wrap` `{ value }`.
+Events: `code-block:copy` `{ value }`; `code-block:wrap` `{ value }`; `code-block:download` `{ value, filename }`.
 
 #### Chart (`chart`)
 

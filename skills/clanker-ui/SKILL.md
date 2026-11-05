@@ -42,6 +42,7 @@ Find the group of each component in [references/components.md](references/compon
 
 - A group module imports `clanker-ui-core.min.js` itself. Never mix readable and `.min` files, and never load `clanker-ui.min.js` with a group file. A missing group fails without a message; if you are not sure, use the one-file set.
 - Charts: module `clanker-ui-chart.min.js`. `clanker-ui.min.css` has the chart CSS; with group files also load `clanker-ui-chart.min.css`.
+- Syntax colors in a code block: module `clanker-ui-code.min.js` and `data-language` on `code-block-content`.
 - Every kit file has a `.min` version: the theme script is `clanker-ui-theme.min.js` in the `.min` set and `clanker-ui-theme.js` in the readable set.
 - Always load `clanker-ui-a11y.min.css` after the kit CSS (every block does): the kit keeps the shadcn values, and status badges, the avatar fallback, muted text, and input borders are below WCAG 2.2 AA without it.
 

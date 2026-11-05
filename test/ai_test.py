@@ -141,13 +141,10 @@ def check_ai_chat_turn(t):
 def check_ai_sources_replay(t):
     page = t.page
     t.docs("/docs/ai-elements/sources")
-    replay = page.locator("#sources-demo-replay")
     thread = page.locator("#sources-demo-thread")
     assert thread.locator('[data-slot="trace-collapsible"]').count() == 1
-    replay.click()
-    assert replay.is_hidden()
-    assert thread.locator('[data-slot="message"]').count() == 1
-    assert thread.locator('[data-slot="trace"]').count() == 0
+    state = page.evaluate("""() => { const b = document.getElementById('sources-demo-replay'); b.click(); const th = document.getElementById('sources-demo-thread'); return [b.hidden, th.querySelectorAll('[data-slot="message"]').length, th.querySelectorAll('[data-slot="trace"]').length] }""")
+    assert state == [True, 1, 0], state
     page.wait_for_function("() => document.querySelectorAll('#sources-demo-thread p').length === 1")
     page.wait_for_function("() => !document.getElementById('sources-demo-replay').hidden", timeout=5000)
     t.settle()

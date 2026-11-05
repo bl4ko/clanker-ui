@@ -9,10 +9,10 @@ ai-elements/confirmation	-	AI Elements pages: #66
 ai-elements/confirmation#confirmation-demo	-	page has no match
 ai-elements/context	/docs/ai-elements/context
 ai-elements/context#context-demo	context-demo
-ai-elements/file-tree	-	AI Elements pages: #66
-ai-elements/file-tree#file-tree-demo	-	page has no match
-ai-elements/inline-citation	-	AI Elements pages: #66
-ai-elements/inline-citation#inline-citation-demo	-	page has no match
+ai-elements/file-tree	/docs/ai-elements/file-tree
+ai-elements/file-tree#file-tree-demo	file-tree-demo
+ai-elements/inline-citation	/docs/ai-elements/inline-citation
+ai-elements/inline-citation#inline-citation-demo	inline-citation-demo
 ai-elements/message	/docs/ai-elements/message
 ai-elements/message#message-pattern	message-pattern
 ai-elements/model-selector	/docs/ai-elements/model-selector
@@ -28,8 +28,8 @@ ai-elements/queue#queue-descriptions	-	page has no match
 ai-elements/reasoning	-	AI Elements pages: #66
 ai-elements/reasoning#reasoning-demo	-	page has no match
 ai-elements/reasoning#reasoning-duration	-	page has no match
-ai-elements/sources	-	AI Elements pages: #66
-ai-elements/sources#sources-demo	-	page has no match
+ai-elements/sources	/docs/ai-elements/sources
+ai-elements/sources#sources-demo	sources-demo
 ai-elements/stack-trace	-	AI Elements pages: #66
 ai-elements/stack-trace#stack-trace-demo	-	page has no match
 ai-elements/stack-trace#stack-trace-frames	-	page has no match

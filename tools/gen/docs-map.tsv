@@ -182,13 +182,13 @@ components/carousel#carousel-plugin	-	no example yet
 components/carousel#carousel-rtl	-	no example yet
 components/chart	/docs/components/chart
 components/chart#chart-demo	demo-chart-0
-components/chart#chart-example	-	no example yet
-components/chart#chart-example-grid	-	no example yet
-components/chart#chart-example-axis	-	no example yet
-components/chart#chart-example-tooltip	-	no example yet
-components/chart#chart-example-legend	-	no example yet
-components/chart#chart-tooltip	demo-chart-1
-components/chart#chart-rtl	-	no example yet
+components/chart#chart-example	demo-chart-1
+components/chart#chart-example-grid	demo-chart-2
+components/chart#chart-example-axis	demo-chart-3
+components/chart#chart-example-tooltip	demo-chart-4
+components/chart#chart-example-legend	demo-chart-5
+components/chart#chart-tooltip	demo-chart-7
+components/chart#chart-rtl	demo-chart-8
 components/checkbox	/docs/components/checkbox
 components/checkbox#checkbox-demo	checkbox-demo
 components/checkbox#checkbox-invalid	checkbox-invalid

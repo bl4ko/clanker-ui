@@ -705,14 +705,14 @@ func TestDocsFontsSelfHosted(t *testing.T) {
 	d := docsOf(t)
 	page := request(t, h, http.MethodGet, "/docs/components/button").Body.String()
 	css, _ := os.ReadFile("docs/assets/fonts.css")
-	for _, font := range []string{"geist-latin.woff2", "geist-mono-latin.woff2"} {
+	for _, font := range []string{"geist-latin.woff2", "geist-mono-latin.woff2", "noto-sans-arabic-arabic.woff2", "noto-sans-arabic-latin.woff2"} {
 		url := "/assets/" + d.hash + "/" + font
 		rec := request(t, h, http.MethodGet, url)
 		if rec.Code != http.StatusOK || rec.Header().Get("Content-Type") != "font/woff2" || rec.Header().Get("Content-Encoding") != "" || !strings.HasPrefix(rec.Body.String(), "wOF2") {
 			t.Errorf("%s: status %d, Content-Type %q, Content-Encoding %q", url, rec.Code, rec.Header().Get("Content-Type"), rec.Header().Get("Content-Encoding"))
 		}
-		if !strings.Contains(page, `<link rel="preload" href="`+url+`" as="font" type="font/woff2" crossorigin>`) {
-			t.Errorf("page does not preload %s", font)
+		if strings.HasPrefix(font, "geist") != strings.Contains(page, `<link rel="preload" href="`+url+`" as="font" type="font/woff2" crossorigin>`) {
+			t.Errorf("page preloads %s: want only the Geist files", font)
 		}
 		if !strings.Contains(string(css), `src: url("`+font+`") format("woff2");`) {
 			t.Errorf("fonts.css has no @font-face for %s", font)
@@ -729,8 +729,8 @@ func TestDocsFontsSelfHosted(t *testing.T) {
 		}
 	}
 	notices, _ := os.ReadFile("THIRD_PARTY_NOTICES")
-	if !strings.Contains(string(notices), "Copyright 2024 The Geist Project Authors") || !strings.Contains(string(notices), "SIL OPEN FONT LICENSE Version 1.1") {
-		t.Error("THIRD_PARTY_NOTICES has no Geist OFL notice")
+	if !strings.Contains(string(notices), "Copyright 2024 The Geist Project Authors") || !strings.Contains(string(notices), "SIL OPEN FONT LICENSE Version 1.1") || !strings.Contains(string(notices), "Copyright 2022 The Noto Project Authors") {
+		t.Error("THIRD_PARTY_NOTICES has no Geist or Noto Sans Arabic OFL notice")
 	}
 }
 

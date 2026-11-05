@@ -52,6 +52,7 @@ func TestScannedFiles(t *testing.T) {
 var fileLicenseLines = map[string]string{
 	"clanker-ui.css":        "/*! clanker-ui | MIT | includes shadcn/ui (MIT, shadcn), Tailwind CSS (MIT, Tailwind Labs), tw-animate-css (MIT, Luca Bosin), and Lucide icons (ISC); see THIRD_PARTY_NOTICES */",
 	"clanker-ui-themes.css": "/*! clanker-ui | MIT | includes shadcn/ui (MIT, shadcn) and editor palettes (MIT; Tokyo Night Apache-2.0); see THIRD_PARTY_NOTICES */",
+	"clanker-ui-code.js":    "/*! clanker-ui | MIT | includes shadcn/ui (MIT, shadcn); see THIRD_PARTY_NOTICES */",
 	"clanker-ui.js":         "/*! clanker-ui | MIT | includes shadcn/ui (MIT, shadcn), Base UI (MIT, Material-UI SAS), Embla Carousel (MIT, David Jerleke), and Lucide icons (ISC); see THIRD_PARTY_NOTICES */",
 }
 
@@ -65,7 +66,7 @@ func kitLicense(name string) string {
 	case base == "clanker-ui-themes.css" || base == "clanker-ui-a11y.css":
 	case strings.HasSuffix(base, ".css"):
 		base = "clanker-ui.css"
-	case dist && base != "clanker-ui-chart.js" && base != "clanker-ui-theme.js":
+	case dist && base != "clanker-ui-chart.js" && base != "clanker-ui-code.js" && base != "clanker-ui-theme.js":
 		base = "clanker-ui.js"
 	}
 	if line, ok := fileLicenseLines[base]; ok {
@@ -84,6 +85,7 @@ func TestKitLicense(t *testing.T) {
 		"dist/clanker-ui-a11y.min.css":   licenseLine,
 		"dist/clanker-ui-core.min.js":    fileLicenseLines["clanker-ui.js"],
 		"dist/clanker-ui-chart.min.js":   licenseLine,
+		"dist/clanker-ui-code.min.js":    fileLicenseLines["clanker-ui-code.js"],
 	} {
 		if got := kitLicense(name); got != want {
 			t.Errorf("%s: license %q, want %q", name, got, want)
@@ -469,6 +471,7 @@ func TestLicenseNotices(t *testing.T) {
 		"Copyright (c) 2025 Wombosvideo",
 		"Copyright (c) 2026 Lucide Icons and Contributors",
 		"Copyright (c) 2013-present Cole Bemis",
+		"Copyright (c) 2020 Primer",
 		"Copyright (c) 2021 Catppuccin.",
 		"Copyright (c) 2018 Pavel Pertsev.",
 		"Copyright (c) 2016-present Sven Greb",

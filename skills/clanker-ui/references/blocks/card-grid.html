@@ -9,6 +9,8 @@
   <title>Library - Marginalia</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-a11y.min.css">
+  <link rel="modulepreload" href="/vendor/clanker-ui/clanker-ui-core.min.js">
   <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
   <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
   <script type="module" src="/card-grid.js"></script>
@@ -56,20 +58,24 @@
         <button type="button" data-slot="button" id="suggest"><svg data-lucide="plus"></svg>Suggest a book</button>
       </div>
     </div>
-    <div data-slot="card">
-      <div data-slot="card-header">
-        <p data-slot="card-description">This month's pick</p>
-        <h2 data-slot="card-title">Project Hail Mary</h2>
-        <div data-slot="card-action"><a data-slot="button" data-variant="outline" data-size="sm" href="#project-hail-mary">Open book</a></div>
-      </div>
-      <div data-slot="card-content">
-        <div data-slot="progress" data-value="62">
-          <span data-slot="progress-label">Club progress: 15 of 24 members past chapter 12</span>
-          <span data-slot="progress-value"></span>
+    <div data-slot="card" data-orientation="horizontal">
+      <div data-slot="cover" data-tone="1" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><circle cx="40" cy="92" r="16" fill="currentColor" opacity="0.25"/><circle cx="48" cy="93" r="15" fill="currentColor" opacity="0.6"/><circle cx="62" cy="59" r="17" fill="currentColor" opacity="0.25"/><circle cx="55" cy="71" r="16" fill="currentColor" opacity="0.25"/><circle cx="37" cy="85" r="16" fill="currentColor" opacity="0.6"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
+      <div>
+        <div data-slot="card-header">
+          <p data-slot="card-description">This month's pick</p>
+          <h2 data-slot="card-title">Project Hail Mary</h2>
+          <p data-slot="card-description">Andy Weir · Science fiction · 476 pages</p>
         </div>
-      </div>
-      <div data-slot="card-footer">
-        <p data-slot="card-description">Next meeting: Tue, Nov 18, 7:00 PM at Café Lumen. Bring one question for the group.</p>
+        <div data-slot="card-content">
+          <div data-slot="progress" data-value="62">
+            <span data-slot="progress-label">15 of 24 members past chapter 12</span>
+            <span data-slot="progress-value"></span>
+          </div>
+        </div>
+        <div data-slot="card-footer">
+          <a data-slot="button" data-variant="outline" data-size="sm" href="#project-hail-mary"><svg data-lucide="book-open"></svg>Open book</a>
+          <a data-slot="button" data-variant="outline" data-size="sm" href="#meeting"><svg data-lucide="calendar"></svg>Tue, Nov 18, 7:00 PM</a>
+        </div>
       </div>
     </div>
     <div data-slot="tabs" data-default-value="all" id="shelf">
@@ -107,7 +113,7 @@
       <div data-slot="tabs-content">
         <div data-slot="card-grid" data-size="sm" id="books">
           <div data-slot="card" data-size="sm" data-status="reading" data-title="Project Hail Mary" data-author="Andy Weir" data-added="2026-10-01" data-rating="0">
-            <div data-slot="cover" data-tone="1"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><circle cx="40" cy="92" r="16" fill="currentColor" opacity="0.25"/><circle cx="48" cy="93" r="15" fill="currentColor" opacity="0.6"/><circle cx="62" cy="59" r="17" fill="currentColor" opacity="0.25"/><circle cx="55" cy="71" r="16" fill="currentColor" opacity="0.25"/><circle cx="37" cy="85" r="16" fill="currentColor" opacity="0.6"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg><span>Project Hail Mary</span><span>Andy Weir</span></div>
+            <div data-slot="cover" data-tone="1" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><circle cx="40" cy="92" r="16" fill="currentColor" opacity="0.25"/><circle cx="48" cy="93" r="15" fill="currentColor" opacity="0.6"/><circle cx="62" cy="59" r="17" fill="currentColor" opacity="0.25"/><circle cx="55" cy="71" r="16" fill="currentColor" opacity="0.25"/><circle cx="37" cy="85" r="16" fill="currentColor" opacity="0.6"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
             <div data-slot="card-header">
               <h3 data-slot="card-title"><a href="#project-hail-mary">Project Hail Mary</a></h3>
               <p data-slot="card-description">Andy Weir · Science fiction · 2021</p>
@@ -115,7 +121,7 @@
             <div data-slot="card-footer"><span data-slot="badge" data-variant="info"><svg data-lucide="book-open"></svg>Reading</span></div>
           </div>
           <div data-slot="card" data-size="sm" data-status="reading" data-title="Piranesi" data-author="Susanna Clarke" data-added="2026-09-12" data-rating="0">
-            <div data-slot="cover" data-tone="2"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="38" width="100" height="8" fill="currentColor" opacity="0.4"/><rect x="0" y="52" width="100" height="12" fill="currentColor" opacity="0.25"/><rect x="0" y="66" width="100" height="4" fill="currentColor" opacity="0.6"/><rect x="0" y="80" width="100" height="4" fill="currentColor" opacity="0.6"/><rect x="0" y="94" width="100" height="8" fill="currentColor" opacity="0.6"/><rect x="0" y="108" width="100" height="4" fill="currentColor" opacity="0.6"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg><span>Piranesi</span><span>Susanna Clarke</span></div>
+            <div data-slot="cover" data-tone="2" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="38" width="100" height="8" fill="currentColor" opacity="0.4"/><rect x="0" y="52" width="100" height="12" fill="currentColor" opacity="0.25"/><rect x="0" y="66" width="100" height="4" fill="currentColor" opacity="0.6"/><rect x="0" y="80" width="100" height="4" fill="currentColor" opacity="0.6"/><rect x="0" y="94" width="100" height="8" fill="currentColor" opacity="0.6"/><rect x="0" y="108" width="100" height="4" fill="currentColor" opacity="0.6"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
             <div data-slot="card-header">
               <h3 data-slot="card-title"><a href="#piranesi">Piranesi</a></h3>
               <p data-slot="card-description">Susanna Clarke · Fantasy · 2020</p>
@@ -123,7 +129,7 @@
             <div data-slot="card-footer"><span data-slot="badge" data-variant="info"><svg data-lucide="book-open"></svg>Reading</span></div>
           </div>
           <div data-slot="card" data-size="sm" data-status="read" data-title="Klara and the Sun" data-author="Kazuo Ishiguro" data-added="2026-08-20" data-rating="4">
-            <div data-slot="cover" data-tone="3"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,122 0,87 20,90 40,103 60,86 80,94 100,85 100,122" fill="currentColor" opacity="0.55"/><polygon points="0,122 0,113 25,113 50,104 75,107 100,109 100,122" fill="currentColor" opacity="0.8"/><circle cx="72" cy="68" r="8" fill="currentColor" opacity="0.7"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg><span>Klara and the Sun</span><span>Kazuo Ishiguro</span></div>
+            <div data-slot="cover" data-tone="3" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,122 0,87 20,90 40,103 60,86 80,94 100,85 100,122" fill="currentColor" opacity="0.55"/><polygon points="0,122 0,113 25,113 50,104 75,107 100,109 100,122" fill="currentColor" opacity="0.8"/><circle cx="72" cy="68" r="8" fill="currentColor" opacity="0.7"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
             <div data-slot="card-header">
               <h3 data-slot="card-title"><a href="#klara-and-the-sun">Klara and the Sun</a></h3>
               <p data-slot="card-description">Kazuo Ishiguro · Literary fiction · 2021</p>
@@ -131,7 +137,7 @@
             <div data-slot="card-footer"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Read</span><span data-slot="rating" data-size="sm" role="img" aria-label="4 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg></span></div>
           </div>
           <div data-slot="card" data-size="sm" data-status="read" data-title="The Left Hand of Darkness" data-author="Ursula K. Le Guin" data-added="2026-07-18" data-rating="5">
-            <div data-slot="cover" data-tone="4"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="12" y="48" width="76" height="76" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/><rect x="18" y="54" width="64" height="64" fill="none" stroke="currentColor" stroke-width="2" opacity="0.44999999999999996"/><rect x="24" y="60" width="52" height="52" fill="none" stroke="currentColor" stroke-width="2" opacity="0.6"/><rect x="30" y="66" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" opacity="0.75"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg><span>The Left Hand of Darkness</span><span>Ursula K. Le Guin</span></div>
+            <div data-slot="cover" data-tone="4" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="12" y="48" width="76" height="76" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/><rect x="18" y="54" width="64" height="64" fill="none" stroke="currentColor" stroke-width="2" opacity="0.44999999999999996"/><rect x="24" y="60" width="52" height="52" fill="none" stroke="currentColor" stroke-width="2" opacity="0.6"/><rect x="30" y="66" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" opacity="0.75"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
             <div data-slot="card-header">
               <h3 data-slot="card-title"><a href="#the-left-hand-of-darkness">The Left Hand of Darkness</a></h3>
               <p data-slot="card-description">Ursula K. Le Guin · Science fiction · 1969</p>
@@ -139,7 +145,7 @@
             <div data-slot="card-footer"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Read</span><span data-slot="rating" data-size="sm" role="img" aria-label="5 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg></span></div>
           </div>
           <div data-slot="card" data-size="sm" data-status="want" data-title="Babel" data-author="R. F. Kuang" data-added="2026-10-20" data-rating="0">
-            <div data-slot="cover" data-tone="5"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><circle cx="50" cy="91" r="15" fill="currentColor" opacity="0.25"/><circle cx="48" cy="61" r="8" fill="currentColor" opacity="0.25"/><circle cx="56" cy="68" r="12" fill="currentColor" opacity="0.6"/><circle cx="52" cy="95" r="21" fill="currentColor" opacity="0.4"/><circle cx="51" cy="87" r="21" fill="currentColor" opacity="0.4"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg><span>Babel</span><span>R. F. Kuang</span></div>
+            <div data-slot="cover" data-tone="5" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><circle cx="50" cy="91" r="15" fill="currentColor" opacity="0.25"/><circle cx="48" cy="61" r="8" fill="currentColor" opacity="0.25"/><circle cx="56" cy="68" r="12" fill="currentColor" opacity="0.6"/><circle cx="52" cy="95" r="21" fill="currentColor" opacity="0.4"/><circle cx="51" cy="87" r="21" fill="currentColor" opacity="0.4"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
             <div data-slot="card-header">
               <h3 data-slot="card-title"><a href="#babel">Babel</a></h3>
               <p data-slot="card-description">R. F. Kuang · Fantasy · 2022</p>
@@ -147,7 +153,7 @@
             <div data-slot="card-footer"><span data-slot="badge" data-variant="outline"><svg data-lucide="bookmark"></svg>Want to read</span></div>
           </div>
           <div data-slot="card" data-size="sm" data-status="read" data-title="Middlemarch" data-author="George Eliot" data-added="2026-06-02" data-rating="4">
-            <div data-slot="cover" data-tone="1"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="38" width="100" height="12" fill="currentColor" opacity="0.4"/><rect x="0" y="52" width="100" height="12" fill="currentColor" opacity="0.6"/><rect x="0" y="66" width="100" height="8" fill="currentColor" opacity="0.6"/><rect x="0" y="80" width="100" height="4" fill="currentColor" opacity="0.4"/><rect x="0" y="94" width="100" height="12" fill="currentColor" opacity="0.25"/><rect x="0" y="108" width="100" height="8" fill="currentColor" opacity="0.6"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg><span>Middlemarch</span><span>George Eliot</span></div>
+            <div data-slot="cover" data-tone="1" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="38" width="100" height="12" fill="currentColor" opacity="0.4"/><rect x="0" y="52" width="100" height="12" fill="currentColor" opacity="0.6"/><rect x="0" y="66" width="100" height="8" fill="currentColor" opacity="0.6"/><rect x="0" y="80" width="100" height="4" fill="currentColor" opacity="0.4"/><rect x="0" y="94" width="100" height="12" fill="currentColor" opacity="0.25"/><rect x="0" y="108" width="100" height="8" fill="currentColor" opacity="0.6"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
             <div data-slot="card-header">
               <h3 data-slot="card-title"><a href="#middlemarch">Middlemarch</a></h3>
               <p data-slot="card-description">George Eliot · Classic · 1871</p>
@@ -155,7 +161,7 @@
             <div data-slot="card-footer"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Read</span><span data-slot="rating" data-size="sm" role="img" aria-label="4 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg></span></div>
           </div>
           <div data-slot="card" data-size="sm" data-status="read" data-title="Tomorrow, and Tomorrow, and Tomorrow" data-author="Gabrielle Zevin" data-added="2026-05-11" data-rating="3">
-            <div data-slot="cover" data-tone="2"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,122 0,90 20,95 40,102 60,103 80,103 100,88 100,122" fill="currentColor" opacity="0.55"/><polygon points="0,122 0,111 25,110 50,103 75,110 100,113 100,122" fill="currentColor" opacity="0.8"/><circle cx="78" cy="63" r="8" fill="currentColor" opacity="0.7"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg><span>Tomorrow, and Tomorrow, and Tomorrow</span><span>Gabrielle Zevin</span></div>
+            <div data-slot="cover" data-tone="2" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,122 0,90 20,95 40,102 60,103 80,103 100,88 100,122" fill="currentColor" opacity="0.55"/><polygon points="0,122 0,111 25,110 50,103 75,110 100,113 100,122" fill="currentColor" opacity="0.8"/><circle cx="78" cy="63" r="8" fill="currentColor" opacity="0.7"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
             <div data-slot="card-header">
               <h3 data-slot="card-title"><a href="#tomorrow-and-tomorrow-and-tomorrow">Tomorrow, and Tomorrow, and Tomorrow</a></h3>
               <p data-slot="card-description">Gabrielle Zevin · Literary fiction · 2022</p>
@@ -163,7 +169,7 @@
             <div data-slot="card-footer"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Read</span><span data-slot="rating" data-size="sm" role="img" aria-label="3 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg><svg data-lucide="star"></svg></span></div>
           </div>
           <div data-slot="card" data-size="sm" data-status="want" data-title="The Dispossessed" data-author="Ursula K. Le Guin" data-added="2026-10-26" data-rating="0">
-            <div data-slot="cover" data-tone="3"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="12" y="48" width="76" height="76" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/><rect x="18" y="54" width="64" height="64" fill="none" stroke="currentColor" stroke-width="2" opacity="0.44999999999999996"/><rect x="24" y="60" width="52" height="52" fill="none" stroke="currentColor" stroke-width="2" opacity="0.6"/><rect x="30" y="66" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" opacity="0.75"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg><span>The Dispossessed</span><span>Ursula K. Le Guin</span></div>
+            <div data-slot="cover" data-tone="3" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="12" y="48" width="76" height="76" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/><rect x="18" y="54" width="64" height="64" fill="none" stroke="currentColor" stroke-width="2" opacity="0.44999999999999996"/><rect x="24" y="60" width="52" height="52" fill="none" stroke="currentColor" stroke-width="2" opacity="0.6"/><rect x="30" y="66" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" opacity="0.75"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
             <div data-slot="card-header">
               <h3 data-slot="card-title"><a href="#the-dispossessed">The Dispossessed</a></h3>
               <p data-slot="card-description">Ursula K. Le Guin · Science fiction · 1974</p>
@@ -171,7 +177,7 @@
             <div data-slot="card-footer"><span data-slot="badge" data-variant="outline"><svg data-lucide="bookmark"></svg>Want to read</span></div>
           </div>
           <div data-slot="card" data-size="sm" data-status="read" data-title="Braiding Sweetgrass" data-author="Robin Wall Kimmerer" data-added="2026-04-08" data-rating="5">
-            <div data-slot="cover" data-tone="4"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><circle cx="43" cy="62" r="9" fill="currentColor" opacity="0.4"/><circle cx="65" cy="85" r="9" fill="currentColor" opacity="0.4"/><circle cx="29" cy="81" r="22" fill="currentColor" opacity="0.25"/><circle cx="26" cy="73" r="14" fill="currentColor" opacity="0.4"/><circle cx="32" cy="57" r="17" fill="currentColor" opacity="0.6"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg><span>Braiding Sweetgrass</span><span>Robin Wall Kimmerer</span></div>
+            <div data-slot="cover" data-tone="4" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><circle cx="43" cy="62" r="9" fill="currentColor" opacity="0.4"/><circle cx="65" cy="85" r="9" fill="currentColor" opacity="0.4"/><circle cx="29" cy="81" r="22" fill="currentColor" opacity="0.25"/><circle cx="26" cy="73" r="14" fill="currentColor" opacity="0.4"/><circle cx="32" cy="57" r="17" fill="currentColor" opacity="0.6"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
             <div data-slot="card-header">
               <h3 data-slot="card-title"><a href="#braiding-sweetgrass">Braiding Sweetgrass</a></h3>
               <p data-slot="card-description">Robin Wall Kimmerer · Nonfiction · 2013</p>
@@ -179,7 +185,7 @@
             <div data-slot="card-footer"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Read</span><span data-slot="rating" data-size="sm" role="img" aria-label="5 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg></span></div>
           </div>
           <div data-slot="card" data-size="sm" data-status="want" data-title="Sea of Tranquility" data-author="Emily St. John Mandel" data-added="2026-10-28" data-rating="0">
-            <div data-slot="cover" data-tone="5"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="38" width="100" height="4" fill="currentColor" opacity="0.4"/><rect x="0" y="52" width="100" height="12" fill="currentColor" opacity="0.6"/><rect x="0" y="66" width="100" height="8" fill="currentColor" opacity="0.6"/><rect x="0" y="80" width="100" height="8" fill="currentColor" opacity="0.6"/><rect x="0" y="94" width="100" height="4" fill="currentColor" opacity="0.25"/><rect x="0" y="108" width="100" height="8" fill="currentColor" opacity="0.25"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg><span>Sea of Tranquility</span><span>Emily St. John Mandel</span></div>
+            <div data-slot="cover" data-tone="5" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="38" width="100" height="4" fill="currentColor" opacity="0.4"/><rect x="0" y="52" width="100" height="12" fill="currentColor" opacity="0.6"/><rect x="0" y="66" width="100" height="8" fill="currentColor" opacity="0.6"/><rect x="0" y="80" width="100" height="8" fill="currentColor" opacity="0.6"/><rect x="0" y="94" width="100" height="4" fill="currentColor" opacity="0.25"/><rect x="0" y="108" width="100" height="8" fill="currentColor" opacity="0.25"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
             <div data-slot="card-header">
               <h3 data-slot="card-title"><a href="#sea-of-tranquility">Sea of Tranquility</a></h3>
               <p data-slot="card-description">Emily St. John Mandel · Science fiction · 2022</p>
@@ -187,7 +193,7 @@
             <div data-slot="card-footer"><span data-slot="badge" data-variant="outline"><svg data-lucide="bookmark"></svg>Want to read</span></div>
           </div>
           <div data-slot="card" data-size="sm" data-status="read" data-title="The Remains of the Day" data-author="Kazuo Ishiguro" data-added="2026-03-03" data-rating="4">
-            <div data-slot="cover" data-tone="1"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,122 0,87 20,88 40,104 60,102 80,86 100,91 100,122" fill="currentColor" opacity="0.55"/><polygon points="0,122 0,106 25,104 50,109 75,104 100,102 100,122" fill="currentColor" opacity="0.8"/><circle cx="82" cy="56" r="8" fill="currentColor" opacity="0.7"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg><span>The Remains of the Day</span><span>Kazuo Ishiguro</span></div>
+            <div data-slot="cover" data-tone="1" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,122 0,87 20,88 40,104 60,102 80,86 100,91 100,122" fill="currentColor" opacity="0.55"/><polygon points="0,122 0,106 25,104 50,109 75,104 100,102 100,122" fill="currentColor" opacity="0.8"/><circle cx="82" cy="56" r="8" fill="currentColor" opacity="0.7"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
             <div data-slot="card-header">
               <h3 data-slot="card-title"><a href="#the-remains-of-the-day">The Remains of the Day</a></h3>
               <p data-slot="card-description">Kazuo Ishiguro · Literary fiction · 1989</p>
@@ -195,7 +201,7 @@
             <div data-slot="card-footer"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Read</span><span data-slot="rating" data-size="sm" role="img" aria-label="4 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg></span></div>
           </div>
           <div data-slot="card" data-size="sm" data-status="want" data-title="Circe" data-author="Madeline Miller" data-added="2026-10-30" data-rating="0">
-            <div data-slot="cover" data-tone="2"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="12" y="48" width="76" height="76" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/><rect x="18" y="54" width="64" height="64" fill="none" stroke="currentColor" stroke-width="2" opacity="0.44999999999999996"/><rect x="24" y="60" width="52" height="52" fill="none" stroke="currentColor" stroke-width="2" opacity="0.6"/><rect x="30" y="66" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" opacity="0.75"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg><span>Circe</span><span>Madeline Miller</span></div>
+            <div data-slot="cover" data-tone="2" aria-hidden="true"><svg viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"><rect x="12" y="48" width="76" height="76" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/><rect x="18" y="54" width="64" height="64" fill="none" stroke="currentColor" stroke-width="2" opacity="0.44999999999999996"/><rect x="24" y="60" width="52" height="52" fill="none" stroke="currentColor" stroke-width="2" opacity="0.6"/><rect x="30" y="66" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" opacity="0.75"/><rect x="0" y="0" width="4" height="150" fill="currentColor" opacity="0.5"/></svg></div>
             <div data-slot="card-header">
               <h3 data-slot="card-title"><a href="#circe">Circe</a></h3>
               <p data-slot="card-description">Madeline Miller · Fantasy · 2018</p>
@@ -205,7 +211,7 @@
         </div>
         <div data-slot="empty" id="shelf-empty" hidden>
           <div data-slot="empty-header">
-            <div data-slot="empty-media" data-variant="icon"><svg data-lucide="search"></svg></div>
+            <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="search"></svg></div>
             <div data-slot="empty-title">No books match</div>
             <div data-slot="empty-description">Try another title or author, or show all books.</div>
           </div>

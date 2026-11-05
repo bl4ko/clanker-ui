@@ -641,6 +641,20 @@ def check_docs_theme_toggle(t):
     assert page.evaluate(is_dark) == dark and page.evaluate(meta)
 
 
+def check_docs_code_block_preview(t):
+    page = t.page
+    t.docs("/docs/components/code-block")
+    page.wait_for_function("""() => document.querySelectorAll('#code-block-header [data-token]').length > 20""")
+    got = page.evaluate("""() => {
+      const pad = el => getComputedStyle(el).paddingInlineStart
+      const demo = document.querySelector('#code-block-header [data-slot="code-block-content"]')
+      const start = document.querySelector('#code-block-lines [data-start-line] [data-slot="code-block-code"]')
+      const view = document.querySelector('[data-docs="code"] [data-slot="code-block-content"]')
+      return [pad(demo), getComputedStyle(start).counterReset, pad(view)]
+    }""")
+    assert got == ["12px", "none", "0px"], got
+
+
 def check_docs_component_demos(t):
     page = t.page
     t.docs("/docs/components/dialog")
@@ -906,3 +920,139 @@ def check_blocks_login_split(t):
     page.get_by_role("button", name="Sign in").click()
     page.wait_for_function("() => document.querySelector('#email').getAttribute('aria-invalid') === 'true'")
     assert page.evaluate("() => document.activeElement.id") == "email"
+
+
+def check_blocks_detail_header_and_hero(t):
+    page = t.page
+    t.docs("/blocks/detail")
+    m = page.evaluate("""() => {
+      const r = s => document.querySelector(s).getBoundingClientRect()
+      const meta = [...document.querySelectorAll('[data-slot=page-meta] > *')].map(e => e.getBoundingClientRect())
+      return { title: parseFloat(getComputedStyle(document.querySelector('[data-slot=page-title]')).fontSize), desc: r('[data-slot=page-description]').bottom, meta: meta.map(b => [b.top, b.bottom]) }
+    }""")
+    assert m["title"] == 30, m
+    assert len(m["meta"]) == 4 and m["meta"][0][0] >= m["desc"], m
+    if not t.mobile:
+        assert len({round((a + b) / 2) for a, b in m["meta"]}) == 1, m
+    url = page.evaluate("() => document.querySelector('script[src*=\"clanker-ui.min.js\"]').src")
+    page.evaluate("""async url => {
+      const { h } = await import(url)
+      document.querySelector('[data-slot=page]').append(h('div', { 'data-slot': 'accordion', id: 'badge-accordion' }, h('div', { 'data-slot': 'accordion-item', 'data-value': 'payments' },
+        h('h3', null, h('button', { type: 'button', 'data-slot': 'accordion-trigger' }, 'Payments', h('span', { 'data-slot': 'badge', 'data-variant': 'warning' }, 'Degraded'))),
+        h('div', { 'data-slot': 'accordion-content', hidden: 'until-found' }, h('div', null, 'All payment services.')))))
+    }""", url)
+    page.wait_for_selector("#badge-accordion [data-slot=accordion-trigger-icon]", state="attached")
+    gap = page.evaluate("""rtl => {
+      const tr = document.querySelector('#badge-accordion [data-slot=accordion-trigger]').getBoundingClientRect()
+      const b = document.querySelector('#badge-accordion [data-slot=badge]').getBoundingClientRect()
+      return rtl ? b.left - tr.left : tr.right - b.right
+    }""", t.rtl)
+    assert gap < 48, gap
+    for name, card in (("overlay-form", '[data-slot=page-body] [data-slot=card][data-orientation=horizontal]'), ("card-grid", '[data-slot=card][data-orientation=horizontal]')):
+        t.docs("/blocks/" + name)
+        h = page.evaluate("""([sel, rtl]) => {
+          const card = document.querySelector(sel)
+          const c = card.querySelector(':scope > [data-slot=cover]').getBoundingClientRect()
+          const head = card.querySelector('[data-slot=card-header]').getBoundingClientRect()
+          const buttons = [...card.querySelectorAll('[data-slot=card-footer] [data-slot=button]')].map(b => b.getBoundingClientRect().top)
+          return { w: c.width, h: c.height, apart: rtl ? c.left - head.right : head.left - c.right, buttons }
+        }""", [card, t.rtl])
+        assert h["w"] == (96 if t.width < 768 else 128) and abs(h["h"] - h["w"] * 1.5) < 1, (name, h)
+        assert 0 <= h["apart"] <= 1, (name, h)
+        if h["buttons"] and not t.mobile:
+            assert len({round(y) for y in h["buttons"]}) == 1, (name, h)
+
+
+KIT_FIXTURE = """(tree) => {
+  const make = ([tag, attrs, ...kids]) => {
+    const e = document.createElement(tag)
+    for (const [k, v] of Object.entries(attrs || {})) k === "style" ? Object.assign(e.style, v) : e.setAttribute(k, v)
+    e.append(...kids.map(k => typeof k === "string" ? k : make(k)))
+    return e
+  }
+  document.getElementById("fx-kit")?.remove()
+  const host = make(tree)
+  host.id = "fx-kit"
+  document.body.prepend(host)
+  return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+}"""
+
+RECT = "el => { const r = el.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, left: r.left, right: r.right, width: r.width, height: r.height } }"
+
+
+def kit_fixture(t, tree):
+    t.docs("/blocks/states")
+    t.page.evaluate(KIT_FIXTURE, tree)
+
+
+def rect(t, selector):
+    return t.page.locator(selector).evaluate(RECT)
+
+
+def check_kit_card_grid_rows(t):
+    card = lambda i, title: ["div", {"data-slot": "card", "id": f"fx-card-{i}"},
+        ["div", {"data-slot": "card-header"}, ["div", {"data-slot": "card-title"}, title]],
+        ["div", {"data-slot": "card-content"}, ["p", {}, "Ana Rossi"]],
+        ["div", {"data-slot": "card-footer", "id": f"fx-foot-{i}"}, ["span", {"data-slot": "badge"}, "Read"]]]
+    kit_fixture(t, ["div", {"style": {"width": "340px"}}, ["div", {"data-slot": "card-grid", "data-size": "sm"},
+        card(1, "Circe"), card(2, "The Unbearable Lightness of Being and Other Long Titles"), card(3, "Babel"), card(4, "Klara and the Sun")]])
+    cards = [rect(t, f"#fx-card-{i}") for i in range(1, 5)]
+    feet = [rect(t, f"#fx-foot-{i}") for i in range(1, 5)]
+    assert abs(cards[0]["top"] - cards[1]["top"]) < 1 and cards[2]["top"] > cards[0]["bottom"], cards
+    assert abs(cards[0]["height"] - cards[1]["height"]) < 1, ("cards in one row have one height", cards[:2])
+    assert abs(feet[0]["bottom"] - feet[1]["bottom"]) < 1 and abs(feet[0]["bottom"] - cards[0]["bottom"]) < 1, ("footers sit at the bottom", feet[:2], cards[:2])
+
+
+def check_kit_cover_words(t):
+    words = lambda text: [["span", {}, w + " "] for w in text.split(" ")]
+    kit_fixture(t, ["div", {},
+        ["div", {"style": {"display": "grid", "gridTemplateColumns": "min-content 1fr", "width": "340px"}},
+            ["div", {"data-slot": "cover", "id": "fx-cover"}, ["span", {"id": "fx-cover-title"}, *words("Sea of Tranquility")]],
+            ["p", {}, "A long description next to the cover that takes the free space of the row and more than that."]],
+        ["div", {"data-slot": "cover", "style": {"width": "110px"}}, ["span", {"id": "fx-cover-long"}, "Pneumonoultramicroscopicsilicovolcanoconiosis"]]])
+    split = t.page.locator("#fx-cover-title").evaluate("s => [...s.children].filter(w => w.getClientRects().length > 1).map(w => w.textContent.trim())")
+    assert "Sea" not in split and "of" not in split, ("a word that fits never breaks", split)
+    for sel in ("#fx-cover-title", "#fx-cover-long"):
+        assert t.page.locator(sel).evaluate("s => s.scrollWidth <= s.clientWidth + 1"), sel
+
+
+def check_kit_item_actions_phone(t):
+    item = lambda i, action: ["div", {"data-slot": "item", "data-variant": "outline", "role": "listitem"},
+        ["div", {"data-slot": "item-media", "data-variant": "icon"}, ["svg", {"data-lucide": "server"}]],
+        ["div", {"data-slot": "item-content", "id": f"fx-item-text-{i}"}, ["div", {"data-slot": "item-title"}, "API gateway"], ["p", {"data-slot": "item-description"}, "Degraded performance in two regions since 09:40"]],
+        ["div", {"data-slot": "item-actions", "id": f"fx-item-actions-{i}"}, action]]
+    kit_fixture(t, ["div", {"data-slot": "item-group", "role": "list"},
+        item(1, ["button", {"type": "button", "data-slot": "button", "data-variant": "outline", "data-size": "sm"}, "View incident"]),
+        item(2, ["button", {"type": "button", "data-slot": "button", "data-variant": "ghost", "data-size": "icon-sm", "aria-label": "More"}, ["svg", {"data-lucide": "ellipsis"}]]),
+        item(3, ["button", {"type": "button", "data-slot": "switch", "aria-label": "Alerts"}])])
+    for i in (1, 2, 3):
+        text, actions = rect(t, f"#fx-item-text-{i}"), rect(t, f"#fx-item-actions-{i}")
+        below = actions["top"] >= text["bottom"] - 0.5
+        assert below == (t.mobile and i == 1), (i, text, actions)
+    if t.mobile:
+        assert rect(t, "#fx-item-text-1")["width"] > rect(t, "#fx-item-text-2")["width"] - 1, "the text keeps the row width"
+
+
+def check_kit_toolbar_phone(t):
+    filters = lambda: [["div", {"data-slot": "dropdown-menu"}, ["button", {"type": "button", "data-slot": "button", "data-variant": "outline", "data-size": "sm", "data-dropdown-menu-trigger": ""}, "Status"], ["div", {"data-slot": "dropdown-menu-content"}, ["div", {"data-slot": "dropdown-menu-item"}, "Done"]]],
+        ["button", {"type": "button", "data-slot": "button", "data-variant": "outline", "data-size": "sm"}, "Priority"]]
+    search = ["input", {"data-slot": "input", "type": "search", "aria-label": "Filter tasks", "placeholder": "Filter tasks..."}]
+    group = ["div", {"data-slot": "input-group"}, ["div", {"data-slot": "input-group-addon"}, ["svg", {"data-lucide": "search"}]], ["input", {"data-slot": "input-group-control", "type": "search", "aria-label": "Search"}]]
+    bar = lambda i, first: ["div", {"data-slot": "data-table-toolbar", "id": f"fx-bar-{i}"},
+        ["div", {}, first, *filters()],
+        ["div", {}, ["button", {"type": "button", "data-slot": "button", "data-size": "sm", "id": f"fx-add-{i}"}, "Add task"]]]
+    kit_fixture(t, ["div", {"style": {"display": "flex", "flexDirection": "column", "gap": "24px"}}, bar(1, search), bar(2, group)])
+    for i in (1, 2):
+        m = t.page.locator(f"#fx-bar-{i}").evaluate(f"""bar => {{
+          const r = {RECT}
+          const [search, status, priority] = [bar.querySelector('[data-slot=input], [data-slot=input-group]'), bar.querySelector('[data-dropdown-menu-trigger]'), [...bar.querySelectorAll('button')].find(b => b.textContent === 'Priority')]
+          return {{ bar: r(bar), search: r(search), status: r(status), priority: r(priority), add: r(bar.querySelector('#fx-add-{i}')), rtl: getComputedStyle(bar).direction === 'rtl' }}
+        }}""")
+        tops = {round(m[k]["top"]) for k in ("status", "priority", "add")}
+        if t.mobile:
+            assert abs(m["search"]["width"] - m["bar"]["width"]) < 1, ("the search takes the first row", i, m)
+            assert len(tops) == 1 and m["status"]["top"] >= m["search"]["bottom"], ("filters and actions share the next row", i, m)
+            end = m["add"]["left"] - m["bar"]["left"] if m["rtl"] else m["bar"]["right"] - m["add"]["right"]
+            assert abs(end) < 1, ("the actions stay at the end", i, m)
+        else:
+            assert abs(m["search"]["top"] - m["status"]["top"]) < 1 and len(tops) == 1, ("one row from 40rem", i, m)

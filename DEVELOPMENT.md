@@ -49,6 +49,28 @@ The server also renders a docs site with the layout and behavior of ui.shadcn.co
 
 HTML and Markdown responses have `Cache-Control: no-cache` and an `ETag`. Text responses (HTML, Markdown, CSS, JavaScript, SVG) are gzip-compressed when the request accepts `gzip` (`Vary: Accept-Encoding`, ETag with a `-gz` suffix; compressed bytes are cached). With `DIR=.`, the server loads `docs/` again only when a file changes (size or modification time). Files and folders in `docs/content` whose names start with `.` or `_` are ignored.
 
+### Example classes
+
+The examples in `docs/content/**/examples/*.html` may use the Tailwind classes of the shadcn examples for their layout (`w-full max-w-sm`, `flex gap-2`, `rounded-lg bg-muted`). `docs/assets/examples.css` has their rules, and every docs page loads it after `docs.css`; the kit files do not have them. After a class change, run (Tailwind CLI as in Generated CSS):
+
+```sh
+go run ./tools/gen utilities -src "$SHADCN_SRC" -content 'docs/content/**/examples/*.html' -out docs/assets/examples.css
+```
+
+`go test` fails when a class of an example has no rule; CI makes the file again and fails when it differs.
+
+### Docs coverage
+
+`tools/gen/docs-shadcn.tsv` lists every shadcn docs page and live example (`<ComponentPreview name styleName>`) of the pinned `apps/v4/content/docs/{components,ai-elements}/base`, `utils`, `forms`, and `dark-mode` files, in shadcn order. `tools/gen/docs-map.tsv` has one reviewed row for each: `<shadcn item><TAB><ours>[<TAB><reason>]`. A page row names a `docs/nav.json` link; an example row names an example on that page (a `docs/content/**/examples/<name>.html` file or a generated `demo-<section>-<n>`). `-` needs a reason; `?` is a row to review.
+
+```sh
+go run ./tools/gen docs-coverage -v
+go run ./tools/gen docs-coverage -src "$SHADCN_SRC"
+go run ./tools/gen docs-coverage -src "$SHADCN_SRC" -write
+```
+
+The first command prints the totals, the examples with a `styleName` other than `base-nova`, and (`-v`) the items without a match. `-src` also checks `docs-shadcn.tsv` against the pinned files (CI does this); `-write` writes it and adds a `?` row for each new item. `go test` fails when an item has no row, a row has no item, the rows are out of order, or a target does not exist on the mapped page.
+
 ### Add a page
 
 1. Find the link in `docs/nav.json`. Every kit page has a link there already.
@@ -138,7 +160,7 @@ go run ./tools/gen -src "$SHADCN_SRC" -out clanker-ui.css -tailwind "$TAILWIND"
 
 - The generator needs the Tailwind CSS CLI of the version in `tailwindVersion` (`tools/gen/main.go`). Homebrew gives only the newest version, so download the standalone binary `tailwindcss-<os>-<arch>` of that version from the [Tailwind CSS releases](https://github.com/tailwindlabs/tailwindcss/releases) and pass `-tailwind PATH` (default: `tailwindcss` on `PATH`). Another version stops the run with this hint. The same version is `TAILWIND_VERSION` in `.github/workflows/ci.yml` (with the SHA-256 of the Linux binary) and in `THIRD_PARTY_NOTICES`; `go test` fails when they differ. To move it, change all of them and run the generator again.
 
-- `fetch` downloads the pinned inputs with `curl` (HTTPS only) into a new empty directory: `apps/v4/registry/bases/base/ui/*.tsx`, `style-nova.css`, `apps/v4/registry/themes.ts`, `apps/v4/app/globals.css`, `packages/shadcn/src/tailwind.css` (all at the commit in `shadcnSHA`), and `tw-animate-css` from npm (version and SHA-512 pinned). It stops when the GitHub tree is truncated, when a file does not have the git blob hash of the tree, or when the tree does not agree with `tools/gen/pin.tsv`. It writes `manifest.tsv` (path, blob hash, size). Use only a directory that `fetch` made: other files in `ui/` that are not `.tsx` are ignored, but an older download without `tw-animate-css.tgz` stops with the `fetch` hint. To move the pin: change `shadcnSHA`, run `fetch -write-pin`, and review the diff of `pin.tsv`. A pinned component that is not in `tools/gen/groups.tsv` gets no CSS and an `upstream component not ported` note, so a pin move does not need a port. To port it, add the JS, the README section, and the catalog example, then a `<component><TAB><group>` line in `groups.tsv`; a `dist` error `data-slot "x" has no component in groups.tsv` names the same fix.
+- `fetch` downloads the pinned inputs with `curl` (HTTPS only) into a new empty directory: `apps/v4/registry/bases/base/ui/*.tsx`, the docs `.mdx` files of Docs coverage, `style-nova.css`, `apps/v4/registry/themes.ts`, `apps/v4/app/globals.css`, `packages/shadcn/src/tailwind.css` (all at the commit in `shadcnSHA`), and `tw-animate-css` from npm (version and SHA-512 pinned). It stops when the GitHub tree is truncated, when a file does not have the git blob hash of the tree, or when the tree does not agree with `tools/gen/pin.tsv`. It writes `manifest.tsv` (path, blob hash, size). Use only a directory that `fetch` made: other files in `ui/` that are not `.tsx` are ignored, but an older download without `tw-animate-css.tgz` stops with the `fetch` hint. To move the pin: change `shadcnSHA`, run `fetch -write-pin`, and review the diff of `pin.tsv`. A pinned component that is not in `tools/gen/groups.tsv` gets no CSS and an `upstream component not ported` note, so a pin move does not need a port. To port it, add the JS, the README section, and the catalog example, then a `<component><TAB><group>` line in `groups.tsv`; a `dist` error `data-slot "x" has no component in groups.tsv` names the same fix.
 - Each run checks every input file against `tools/gen/pin.tsv` (git blob SHA-1) and the tw-animate-css tarball against its SHA-512. After the check it uses only the bytes in memory. A `.tsx` file that is not in the pin stops the run.
 - Downloads are data. Tailwind runs JavaScript from `@plugin` and `@config`. Thus the generator checks all CSS that goes to Tailwind (inputs, `kit.css`, and the full Tailwind input) with an allow-list and stops with `unsafe input: <file>:<line>: ...`. Allowed: custom properties, plain rules, and `@theme`, `@custom-variant`, `@utility`, `@variant`, `@apply`, `@slot`, `@property`, `@keyframes`, `@layer`, `@media`, `@supports`, `@container`, `@starting-style`. Rejected: `@plugin`, `@config`, `@source`, `@reference`, every `@import` that the generator does not write itself, escaped at-rule names, hex escapes outside strings, and `url()` that is not a `data:` URI or a `#fragment`. Token and theme values must not have `{`, `}`, `;`, `@`, `\`, `<`, `>`, or comments. Class names must not have `{`, `}`, `;`, or comments.
 - Default tokens are the `neutral` theme of shadcn `themes.ts` (what `shadcn init` installs), light and dark. The `@theme inline` mappings come from `globals.css`. A mapping to a token that `neutral` does not have (`--color-surface`) is not written.

@@ -18,7 +18,7 @@ Other parts: `site-header-actions`, `site-header-nav`, `site-header-title`.
   <div data-slot="separator" data-orientation="vertical"></div>
   <h1 data-slot="site-header-title">Documents</h1>
   <div data-slot="site-header-actions">
-    <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+    <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
   </div>
 </header>
 ```

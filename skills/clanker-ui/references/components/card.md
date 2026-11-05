@@ -4,7 +4,7 @@ Group `core`. Needs none. CSS only.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `card` (root) | `data-size` `sm` |  |
+| `card` (root) | `data-orientation` `horizontal`; `data-size` `sm` |  |
 
 Other parts: `card-action`, `card-content`, `card-description`, `card-footer`, `card-header`, `card-title`.
 
@@ -25,4 +25,4 @@ Other parts: `card-action`, `card-content`, `card-description`, `card-footer`, `
 ### Alert, Aspect Ratio, Badge, Card, Empty, Item, Separator, Skeleton
 
 - `<div data-slot="aspect-ratio" data-ratio="16/9">` (any ratio, `"4/3"`, `"2.4"`): the kit sets `--ratio`, like shadcn. Children are not positioned; give an image `position: absolute; inset: 0; width: 100%; height: 100%` (the shadcn examples use `fill`).
-- `card` with `card-header` (`card-title`, `card-description`, `card-action`), `card-content`, `card-footer`. `data-size="sm"`; override `--card-spacing`. A first-child `<img>` sits flush with the top.
+- `card` with `card-header` (`card-title`, `card-description`, `card-action`), `card-content`, `card-footer`. `data-size="sm"`; override `--card-spacing`. A first-child `<img>` sits flush with the top. Kit extension: `data-orientation="horizontal"` puts a first-child `cover` (6rem, 8rem from 48rem) at the start and the other parts in a `div` column next to it, with a wrapping `card-footer` (a hero or feature card: art left, text and actions right).

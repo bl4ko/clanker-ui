@@ -19,9 +19,9 @@ func TestBlobSHA1(t *testing.T) {
 }
 
 func TestTreeFiles(t *testing.T) {
-	tree := `{"sha":"x","tree":[{"path":"` + uiDir + `/button.tsx","type":"blob","sha":"aa"},{"path":"` + uiDir + `/sub/x.tsx","type":"blob","sha":"bb"},{"path":"` + uiDir + `","type":"tree","sha":"cc"},{"path":"` + styleFile("nova") + `","type":"blob","sha":"dd"},{"path":"` + stylesDir + `/other.css","type":"blob","sha":"ee"}],"truncated":false}`
+	tree := `{"sha":"x","tree":[{"path":"` + uiDir + `/button.tsx","type":"blob","sha":"aa"},{"path":"` + uiDir + `/sub/x.tsx","type":"blob","sha":"bb"},{"path":"` + uiDir + `","type":"tree","sha":"cc"},{"path":"` + docsRoot + `utils/shimmer.mdx","type":"blob","sha":"dd"},{"path":"` + docsRoot + `utils/meta.json","type":"blob","sha":"ee"},{"path":"` + styleFile("nova") + `","type":"blob","sha":"ff"},{"path":"` + stylesDir + `/other.css","type":"blob","sha":"gg"}],"truncated":false}`
 	blobs, files, err := treeFiles([]byte(tree))
-	if err != nil || blobs[uiDir+"/button.tsx"] != "aa" || !slices.Equal(files, append(slices.Clone(fixedFiles), uiDir+"/button.tsx", styleFile("nova"))) {
+	if err != nil || blobs[uiDir+"/button.tsx"] != "aa" || !slices.Equal(files, append(slices.Clone(fixedFiles), uiDir+"/button.tsx", styleFile("nova"), docsRoot+"utils/shimmer.mdx")) {
 		t.Errorf("tree: %v %v %v", blobs, files, err)
 	}
 	if _, _, err := treeFiles([]byte(strings.Replace(tree, `"truncated":false`, `"truncated":true`, 1))); err == nil || !strings.Contains(err.Error(), "truncated") {

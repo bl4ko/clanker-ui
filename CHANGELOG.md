@@ -12,6 +12,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Added
 
+- `data-variant="sticky"` on a last `page-aside`: the side column stays in view below the header from 64rem (the live summary of the `form` block).
 - Page parts: `data-size="lg"` on `page-header` (a 30 px detail title) and `page-meta` (a wrapping row of facts under the description). `data-orientation="horizontal"` on `card`: a first-child `cover` at the start and the other parts in a column next to it (a feature or record card). A `badge` in an `accordion-trigger` sits at the end, before the chevron.
 - Agent skill: one head for every page and block in `SKILL.md` (charset, CSP meta, the a11y CSS, the core `modulepreload`, the theme script), checked against every block by `go test`, with the block slots, the ghost `icon` theme toggle, and the footer button order. Recipes for an uptime strip with full code, a toast after a page change, a dropzone with a labeled file input, lists in cards, the status under the amount in phone tables, and a dashboard in the top-header shell; the scheme and accent names in `references/theming.md`; what `detail.group` of `dropdown-menu:change` holds; rules for one page width per app, one structure for KPI cards, one status per row, public pages, and balancing a side column.
 - Kit parts (core, CSS only): `card-grid` (a grid of record cards, `data-size="sm|lg"`), `cover` (placeholder art from tokens, `data-tone="1"`…`"5"`, `data-ratio="square|video"`), `rating` (read-only stars), and `data-layout="split"` on `page` (shadcn login-02: a form column and a `page-aside` art panel from 64rem).
@@ -44,6 +45,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Changed
 
+- `clanker-ui-a11y.css`: the text of destructive buttons and badges is `--destructive` mixed with 25 % `--foreground`, 4.5:1 on the tinted background (shadcn 3.83:1 in light). Blocks have no `empty-region` or `low-contrast` warning: the `detail` block has a Files card and 4 activity rows, the `overlay-form` block has tags and a Next meeting card, and the `form` summary is sticky. The `card-grid` search is the first control of the toolbar, so it takes the first row on phones.
 - Blocks load `clanker-ui-a11y.min.css` and preload the core module, as `SKILL.md` says. The theme toggle is a ghost `icon` button (32 px, as the shadcn site header) everywhere. Footer order: Cancel first and the primary last in a dialog or alert dialog footer; the primary first in a sheet or drawer footer, a card footer, and a page form. A rating input is a `radio-group` with a `rating` in each label (block `overlay-form`), the only way in the skill. The `detail` and `overlay-form` blocks have a 30 px title with a meta row, and `overlay-form` and `card-grid` show their cover in a horizontal card; covers in the `card-grid` block carry no text. The `data-table` block has a New task page action. The CSP meta tag comes right after `<meta charset>` in the docs, as in the blocks.
 - Agent skill: load `clanker-ui-a11y.css` in every app (it was optional); the head example and the known lint results show it. The version line says that it is the last release and that a copy from `main` can be newer. The dropzone recipe uses `span` parts inside its `label`.
 - Color schemes: each editor scheme (Tokyo Night, Catppuccin, Gruvbox, Nord, Dracula, Rosé Pine, Solarized, One, Kanagawa, Everforest, GitHub) has chart colors from its own accents, ordered and checked for color-vision deficiency, normal vision, and 3:1 contrast against the card in light and dark. They set `--chart-other` and `--chart-good` too. Before, all editor schemes used one generic palette that looked muddy on their surfaces, and `--chart-6` had no dark value.
@@ -52,6 +54,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Fixed
 
+- `data-layout="split"`: a child of the form column with `hidden` stays hidden (before, the layout made it `display: flex`).
 - `sheet-body` and `drawer-body` are in the catalog and the component files.
 - `card-grid` block: the empty state uses `empty-icon` (it used `empty-media`, which has no style).
 - Alert: an `alert-action` wider than the 72 px that shadcn keeps free (for example "View incident" at 390 px) no longer covers the title and the description; the alert reserves the width of the action. A short action keeps the shadcn layout.

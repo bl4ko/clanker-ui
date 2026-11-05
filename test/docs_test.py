@@ -724,6 +724,8 @@ def check_blocks_render(t):
     t.docs("/blocks/detail")
     stats = page.evaluate(BLOCK_LAYOUT)["stats"][:4]
     assert len({s["y"] for s in stats}) == (2 if t.mobile else 1), stats
+    side = page.evaluate("""() => { const a = document.querySelector('[data-slot=page-body] > [data-slot=page-aside]').getBoundingClientRect(); const m = document.querySelector('[data-slot=page-body] > :first-child').getBoundingClientRect(); return a.left >= m.right - 1 || a.right <= m.left + 1 }""")
+    assert side == (t.width >= 1024), "the detail aside is a side column from 64rem"
     t.docs("/blocks/settings")
     nav = page.evaluate(BLOCK_LAYOUT)["nav"]
     assert len({n["y"] for n in nav}) == (1 if t.mobile else len(nav)), nav
@@ -857,6 +859,15 @@ def check_blocks_card_grid(t):
     t.docs("/blocks/card-grid")
     cards = page.locator('#books > [data-slot="card"]:not([hidden])')
     assert cards.count() == 12
+    m = page.locator("#shelf [data-slot=data-table-toolbar]").evaluate("""bar => {
+      const r = s => bar.querySelector(s).getBoundingClientRect().toJSON()
+      const status = r('#shelf-select [data-slot=select-trigger]').width ? r('#shelf-select [data-slot=select-trigger]') : r('[data-slot=tabs-list]')
+      return { bar: bar.getBoundingClientRect().width, search: r('#shelf-filter'), status, sort: r('#shelf-sort [data-slot=select-trigger]') }
+    }""")
+    if t.mobile:
+        assert abs(m["search"]["width"] - m["bar"]) < 1 and abs(m["status"]["top"] - m["sort"]["top"]) < 1 and m["sort"]["top"] >= m["search"]["bottom"], m
+    else:
+        assert abs(m["search"]["top"] - m["sort"]["top"]) < 1, m
     if t.mobile:
         page.locator("#shelf-select [data-slot=select-trigger]").click()
         page.get_by_role("option", name="Read (6)").click()
@@ -911,6 +922,8 @@ def check_blocks_login_split(t):
     t.docs("/blocks/login-split")
     aside = page.locator('[data-slot="page-aside"]')
     assert aside.is_visible() == (t.width >= 1024)
+    step = """() => { const d = document.createElement('div'); d.hidden = true; document.querySelector('[data-layout=split] > :first-child').append(d); const v = getComputedStyle(d).display; d.remove(); return v }"""
+    assert page.evaluate(step) == "none", "a hidden step in the form column stays hidden"
     link = page.get_by_role("link", name="Forgot your password?")
     muted = page.evaluate("""() => { const p = document.createElement('p'); p.style.color = 'var(--muted-foreground)'; document.body.append(p); const c = getComputedStyle(p).color; p.remove(); return c }""")
     assert link.evaluate("a => getComputedStyle(a).color") == muted

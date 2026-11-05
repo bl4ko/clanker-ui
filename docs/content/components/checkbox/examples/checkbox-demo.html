@@ -1,0 +1,26 @@
+<div data-slot="field-group" class="max-w-sm">
+  <div data-slot="field" data-orientation="horizontal">
+    <button type="button" data-slot="checkbox" id="terms-checkbox" data-name="terms-checkbox"></button>
+    <label data-slot="label" for="terms-checkbox">Accept terms and conditions</label>
+  </div>
+  <div data-slot="field" data-orientation="horizontal">
+    <button type="button" data-slot="checkbox" id="terms-checkbox-2" data-name="terms-checkbox-2" data-checked></button>
+    <div data-slot="field-content">
+      <label data-slot="field-label" for="terms-checkbox-2">Accept terms and conditions</label>
+      <p data-slot="field-description">By clicking this checkbox, you agree to the terms.</p>
+    </div>
+  </div>
+  <div data-slot="field" data-orientation="horizontal" data-disabled="true">
+    <button type="button" data-slot="checkbox" id="toggle-checkbox" data-name="toggle-checkbox" disabled></button>
+    <label data-slot="field-label" for="toggle-checkbox">Enable notifications</label>
+  </div>
+  <label data-slot="field-label">
+    <div data-slot="field" data-orientation="horizontal">
+      <button type="button" data-slot="checkbox" id="toggle-checkbox-2" data-name="toggle-checkbox-2"></button>
+      <div data-slot="field-content">
+        <div data-slot="field-label">Enable notifications</div>
+        <p data-slot="field-description">You can enable or disable notifications at any time.</p>
+      </div>
+    </div>
+  </label>
+</div>

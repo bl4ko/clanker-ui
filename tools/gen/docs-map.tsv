@@ -190,14 +190,14 @@ components/chart#chart-example-legend	-	no example yet
 components/chart#chart-tooltip	demo-chart-1
 components/chart#chart-rtl	-	no example yet
 components/checkbox	/docs/components/checkbox
-components/checkbox#checkbox-demo	demo-checkbox-0
-components/checkbox#checkbox-invalid	-	no example yet
-components/checkbox#checkbox-basic	-	no example yet
-components/checkbox#checkbox-description	-	no example yet
-components/checkbox#checkbox-disabled	-	no example yet
-components/checkbox#checkbox-group	demo-checkbox-2
-components/checkbox#checkbox-table	-	no example yet
-components/checkbox#checkbox-rtl	-	no example yet
+components/checkbox#checkbox-demo	checkbox-demo
+components/checkbox#checkbox-invalid	checkbox-invalid
+components/checkbox#checkbox-basic	checkbox-basic
+components/checkbox#checkbox-description	checkbox-description
+components/checkbox#checkbox-disabled	checkbox-disabled
+components/checkbox#checkbox-group	checkbox-group
+components/checkbox#checkbox-table	checkbox-table
+components/checkbox#checkbox-rtl	checkbox-rtl
 components/code-block	/docs/components/code-block
 components/code-block#code-block-demo	demo-code-block-0
 components/code-block#code-block-basic	demo-code-block-1

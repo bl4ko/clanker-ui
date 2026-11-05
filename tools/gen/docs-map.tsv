@@ -88,16 +88,16 @@ components/attachment#attachment-sizes	demo-attachment-2
 components/attachment#attachment-group	demo-attachment-4
 components/attachment#attachment-trigger	demo-attachment-3
 components/avatar	/docs/components/avatar
-components/avatar#avatar-demo	demo-avatar-0
-components/avatar#avatar-basic	-	no example yet
-components/avatar#avatar-badge	demo-avatar-1
-components/avatar#avatar-badge-icon	-	no example yet
-components/avatar#avatar-group	-	no example yet
-components/avatar#avatar-group-count	-	no example yet
-components/avatar#avatar-group-count-icon	-	no example yet
-components/avatar#avatar-size	demo-avatar-4
-components/avatar#avatar-dropdown	demo-avatar-3
-components/avatar#avatar-rtl	-	no example yet
+components/avatar#avatar-demo	avatar-demo
+components/avatar#avatar-basic	avatar-basic
+components/avatar#avatar-badge	avatar-badge
+components/avatar#avatar-badge-icon	avatar-badge-icon
+components/avatar#avatar-group	avatar-group
+components/avatar#avatar-group-count	avatar-group-count
+components/avatar#avatar-group-count-icon	avatar-group-count-icon
+components/avatar#avatar-size	avatar-size
+components/avatar#avatar-dropdown	avatar-dropdown
+components/avatar#avatar-rtl	avatar-rtl
 components/badge	/docs/components/badge
 components/badge#badge-demo	demo-badge-0
 components/badge#badge-variants	-	no example yet

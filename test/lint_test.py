@@ -9,7 +9,7 @@ LINT = LINT_FILE.read_text()
 KNOWN = {rule: list(selectors) for rule, selectors in json.loads((HERE / "lint/known.json").read_text()).items()}
 
 BAD = {
-    "button-size-mismatch": [("error", "#bad-size-sm"), ("error", "#bad-toggle-sm")],
+    "button-size-mismatch": [("error", "#bad-size-sm"), ("error", "#bad-toggle-sm"), ("error", "#bad-search-group"), ("error", "#bad-native-sm")],
     "multiple-primary": [("error", "#bad-second-primary")],
     "text-clipped": [("error", "#bad-clip"), ("warn", "#bad-ellipsis")],
     "horizontal-scroll": [("error", "#bad-wide")],

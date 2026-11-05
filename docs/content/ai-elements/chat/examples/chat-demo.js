@@ -27,6 +27,8 @@ const fallback = "This demo only knows the scripted turns. Press reset to start 
 
 const empty = document.getElementById("chat-demo-empty")
 const scroller = document.getElementById("chat-demo-scroller")
+scroller.remove()
+scroller.hidden = false
 const thread = document.getElementById("chat-demo-thread")
 const form = document.getElementById("chat-demo-form")
 const text = document.getElementById("chat-demo-text")
@@ -42,7 +44,7 @@ const wait = ms => new Promise(resolve => setTimeout(() => resolve(), ms))
 
 function inline(line) {
   return line.split(/(`[^`]+`|\*\*[^*]+\*\*)/).filter(Boolean).map(part => {
-    if (part.startsWith("`") && part.endsWith("`") && part.length > 1) return h("code", { "data-typography": "inline-code" }, part.slice(1, -1))
+    if (part.startsWith("`") && part.endsWith("`") && part.length > 1) return h("code", { class: "rounded-sm bg-muted px-1 py-0.5 font-mono text-[0.9em]" }, part.slice(1, -1))
     if (part.startsWith("**") && part.endsWith("**") && part.length > 3) return h("strong", { class: "font-semibold" }, part.slice(2, -2))
     return part
   })
@@ -136,8 +138,8 @@ async function tool(trace, command, output, ms, token) {
 
 function state() {
   const has = thread.querySelector(':scope > [data-slot="message-scroller-item"]') !== null
-  empty.hidden = has
-  scroller.hidden = !has
+  if (has && empty.isConnected) empty.replaceWith(scroller)
+  if (!has && scroller.isConnected) scroller.replaceWith(empty)
   thread.setAttribute("aria-busy", String(busy))
   reset.disabled = busy
   send.disabled = busy || text.value.trim() === ""

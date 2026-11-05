@@ -699,3 +699,28 @@ func TestDocsPagesLinkMarkdownAndLLMs(t *testing.T) {
 		t.Error("components.md does not follow the typography redirect")
 	}
 }
+
+var (
+	docsExampleRoot = regexp.MustCompile(`\[data-docs="(?:component-preview|preview|view)"\]`)
+	docsOwnPart     = regexp.MustCompile(`\[data-docs="(?:code|code-block|code-teaser)"\]`)
+	docsKitTarget   = regexp.MustCompile(`\[data-slot|(?:^|[\s>+~(])(?:pre|code|span|div|button|svg|a|p)\b`)
+	docsNotGroup    = regexp.MustCompile(`:not\([^()]*(?:\([^()]*\)[^()]*)*\)`)
+)
+
+func TestDocsCSSLeavesExamplePartsAlone(t *testing.T) {
+	css := regexp.MustCompile(`(?s)/\*.*?\*/`).ReplaceAllString(readText(t, "docs/assets/docs.css"), "")
+	for _, m := range regexp.MustCompile(`([^{}]+)\{`).FindAllStringSubmatch(css, -1) {
+		sel := strings.TrimSpace(m[1])
+		if strings.HasPrefix(sel, "@") {
+			continue
+		}
+		loc := docsExampleRoot.FindStringIndex(sel)
+		if loc == nil {
+			continue
+		}
+		rest := docsNotGroup.ReplaceAllString(sel[loc[1]:], "")
+		if docsKitTarget.MatchString(rest) && !docsOwnPart.MatchString(rest) {
+			t.Errorf("docs.css styles kit parts inside an example: %s", sel)
+		}
+	}
+}

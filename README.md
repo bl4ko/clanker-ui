@@ -1307,7 +1307,7 @@ code.replaceChildren(...codeBlockHighlight(text, "ts").map(line =>
   h("span", { "data-slot": "code-block-line" }, h("span", { "data-slot": "code-block-line-content" }, line.length ? line : "\n"))))
 ```
 
-Tokens are `<span data-token="…">` with `comment`, `keyword`, `string`, `constant`, `function`, `variable`, `tag`, `inserted`, `deleted`, or `bold`, colored by `--code-<token>`. The defaults are the GitHub Light and Dark colors of the shadcn highlighter, darkened or lightened to 4.5:1 on the block, its highlighted lines, and removed lines; each editor scheme sets its own (`clanker-ui-a11y.css` has the 4.5:1 changes).
+Tokens are `<span data-token="…">` with `comment`, `keyword`, `string`, `constant`, `function`, `variable`, `tag`, `inserted`, `deleted`, or `bold`, colored by `--code-<token>` (on `:root`). The defaults are the GitHub Light and Dark colors of the shadcn highlighter, darkened or lightened to 4.5:1 on the block, its highlighted lines, and removed lines; each editor scheme sets its own (`clanker-ui-a11y.css` has the 4.5:1 changes).
 
 #### Message Scroller
 

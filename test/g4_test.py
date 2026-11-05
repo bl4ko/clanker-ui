@@ -604,7 +604,7 @@ CODE_TOKENS = [
     ("go", 'func (s *Server) Run() error {\n\tx := 1\n\treturn fmt.Errorf("x %d", x) // c\n}', [["func", "keyword"], ["*", "keyword"], ["Run", "function"], ["error", "keyword"], [":=", "keyword"], ["1", "constant"], ["return", "keyword"], ["Errorf", "function"], ['"x %d"', "string"], ["// c", "comment"]]),
     ("python", 'def greet(name: str) -> str:\n    return f"Hello, {name}!"  # hi', [["def", "keyword"], ["greet", "function"], ["str", "constant"], ["str", "constant"], ["return", "keyword"], ["f", "keyword"], ['"Hello, ', "string"], ["{", "constant"], ["}", "constant"], ['!"', "string"], ["# hi", "comment"]]),
     ("diff", "--- a/x.ts\n+++ b/x.ts\n@@ -1 +1 @@\n-const a = 1\n+const a = 2\n same", [["--- a/x.ts", "constant"], ["+++ b/x.ts", "constant"], ["@@ -1 +1 @@", "function"], ["-const a = 1", "deleted"], ["+const a = 2", "inserted"]]),
-    ("markdown", "# Title\n\nSome **bold** and `code` and [link](https://x).\n- item", [["# Title", "constant bold"], ["**bold**", "bold"], ["`code`", "constant"], ["[link]", "string"], ["(https://x)", "string"], ["-", "variable"]]),
+    ("markdown", "# Title\n\nSome **bold** and `code` and [link](https://x).\n- item", [["# Title", "constant bold"], ["**bold**", "bold"], ["`code`", "constant"], ["[link](https://x)", "string"], ["-", "variable"]]),
     ("sql", "SELECT id, count(*) FROM users WHERE name = 'a' -- c", [["SELECT", "keyword"], ["count", "function"], ["*", "keyword"], ["FROM", "keyword"], ["WHERE", "keyword"], ["=", "keyword"], ["'a'", "string"], ["-- c", "comment"]]),
     ("ansi", "\x1b[32m✓\x1b[39m ok \x1b[2m(4)\x1b[22m\n\x1b[1;31m✗ fail\nnext\x1b[0m", [["✓", "inserted"], ["✗ fail", "keyword bold"]]),
 ]

@@ -86,7 +86,7 @@ func TestServesEmbeddedFiles(t *testing.T) {
 	if !slices.Equal(names, disk) {
 		t.Errorf("embedded files %v, want the kit, demo, docs, and skill files %v", names, disk)
 	}
-	for _, want := range []string{"clanker-ui.css", "clanker-ui-a11y.css", "clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-theme.js", "clanker-ui-themes.css", "demo/index.html", "demo/demo.css", "demo/demo.js", "docs/nav.json", "docs/assets/docs.css", "docs/assets/docs.js", "docs/assets/docs-sidebar.js"} {
+	for _, want := range []string{"clanker-ui.css", "clanker-ui-a11y.css", "clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-code.js", "clanker-ui-theme.js", "clanker-ui-themes.css", "demo/index.html", "demo/demo.css", "demo/demo.js", "docs/nav.json", "docs/assets/docs.css", "docs/assets/docs.js", "docs/assets/docs-sidebar.js"} {
 		if !slices.Contains(names, want) {
 			t.Errorf("%s is not embedded", want)
 		}
@@ -201,6 +201,15 @@ func TestSchemeLists(t *testing.T) {
 	for value := range ruled {
 		if !listed[value] && value != "menu-bold" && !strings.HasPrefix(value, "radius-") {
 			t.Errorf("clanker-ui-themes.css has a rule for %q, but the picker lists do not have it", value)
+		}
+	}
+	doc, err := os.ReadFile("skills/clanker-ui/references/theming.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for value := range ruled {
+		if !strings.Contains(string(doc), "`"+value+"`") {
+			t.Errorf("references/theming.md does not list the scheme %q", value)
 		}
 	}
 }
@@ -352,6 +361,7 @@ func TestKitMinServesMinifiedFiles(t *testing.T) {
 	dir := writeFiles(t, files)
 	license, _, _ := strings.Cut(files["clanker-ui.js"], "\n")
 	chartLicense, _, _ := strings.Cut(files["clanker-ui-chart.js"], "\n")
+	codeLicense, _, _ := strings.Cut(files["clanker-ui-code.js"], "\n")
 	h := newKitSite(dir, "min").routes()
 	for path, body := range map[string]string{
 		"/clanker-ui.css":         "min-css\n",
@@ -359,6 +369,7 @@ func TestKitMinServesMinifiedFiles(t *testing.T) {
 		"/clanker-ui-a11y.css":    "min-a11y\n",
 		"/clanker-ui.js":          license + "\nexport * from \"./clanker-ui-core.min.js\"\nexport * from \"./clanker-ui.min.js\"\n",
 		"/clanker-ui-chart.js":    chartLicense + "\nexport * from \"./clanker-ui-chart.min.js\"\n",
+		"/clanker-ui-code.js":     codeLicense + "\nexport * from \"./clanker-ui-code.min.js\"\n",
 		"/clanker-ui-theme.js":    "min-theme\n",
 		"/clanker-ui-core.min.js": "export const h=1\n",
 	} {

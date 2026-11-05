@@ -177,6 +177,8 @@ def check_ai_tool_approval(t):
         assert page.locator('#tool-approval [data-slot="message-content"] > p').inner_text() == reply
         send.click()
         assert page.locator('#tool-approval > [data-slot="message"]').count() == 0
+
+
 def check_ai_suggestion_send(t):
     page = t.page
     t.docs("/docs/ai-elements/suggestion")
@@ -232,6 +234,17 @@ def check_ai_prompt_input_attach(t):
     assert text.input_value() == ""
 
 
+CHAT_STATE = """() => {
+  const v = document.querySelector('#chat-demo [data-slot=message-scroller-viewport]')
+  const box = e => { const r = e.getBoundingClientRect(); return [Math.round(r.top), Math.round(r.height)] }
+  return {
+    viewport: [box(v), v.scrollTop, v.scrollHeight, v.clientHeight, getComputedStyle(v).visibility, v.hasAttribute('data-pending-scroll')],
+    items: [...v.querySelectorAll(':scope [data-slot=message-scroller-item]')].map(i => [box(i), getComputedStyle(i).contentVisibility, i.checkVisibility({ contentVisibilityAuto: true }), i.innerText.length]),
+    window: [scrollY, innerHeight],
+  }
+}"""
+
+
 def check_ai_chat_turn(t):
     page = t.page
     t.docs("/docs/ai-elements/chat")
@@ -245,8 +258,10 @@ def check_ai_chat_turn(t):
     page.wait_for_function("() => document.querySelector('#chat-demo [data-slot=trace-title]')?.textContent === 'Thinking'")
     assert demo.locator('[data-slot="trace-collapsible"]').first.get_attribute("data-state") == "open"
     page.wait_for_function("() => document.querySelector('#chat-demo-text').value === 'Make it follow the system setting by default.'", timeout=10000)
+    page.locator("#chat-demo-thread").evaluate("e => e.closest('[data-slot=message-scroller]').scrollIntoView({ block: 'center' })")
+    page.evaluate("() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))")
     titles = demo.locator('[data-slot="trace-title"]').all_inner_texts()
-    assert titles == ["Thought", "Ran rg -l ThemeProvider app"], titles
+    assert titles == ["Thought", "Ran rg -l ThemeProvider app"], (titles, page.evaluate(CHAT_STATE))
     assert demo.locator('[data-slot="trace-collapsible"]').first.get_attribute("data-state") == "closed"
     reply = demo.locator('[data-slot="message"]:not([data-align="end"]) [data-slot="message-content"] > div:last-child')
     assert reply.locator("p").first.text_content() == "next-themes is already set up in app/layout.tsx, so the toggle only has to call setTheme."
@@ -370,3 +385,195 @@ def check_ai_test_results_suites(t):
     failed.locator('[data-slot="trace-collapsible-trigger"]').click()
     t.settle()
     assert failed.get_attribute("data-state") == "open" and failed.locator('[data-slot="code-block-code"]').is_visible()
+
+
+def check_ai_sources_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/sources")
+    thread = page.locator("#sources-demo-thread")
+    assert thread.locator('[data-slot="trace-collapsible"]').count() == 1
+    state = page.evaluate("""() => { const b = document.getElementById('sources-demo-replay'); b.click(); const th = document.getElementById('sources-demo-thread'); return [b.hidden, th.querySelectorAll('[data-slot="message"]').length, th.querySelectorAll('[data-slot="trace"]').length] }""")
+    assert state == [True, 1, 0], state
+    page.wait_for_function("() => document.querySelectorAll('#sources-demo-thread p').length === 1")
+    page.wait_for_function("() => !document.getElementById('sources-demo-replay').hidden", timeout=5000)
+    t.settle()
+    text = thread.locator("p").inner_text()
+    assert text.startswith("Run pnpm create astro@latest") and text.endswith("installs the dependencies."), text
+    collapsible = thread.locator('[data-slot="trace-collapsible"]')
+    assert collapsible.count() == 1 and collapsible.get_attribute("data-state") == "open"
+    assert collapsible.locator('[data-slot="trace-collapsible-trigger"] [data-slot="trace-title"]').inner_text() == "Used 3 sources"
+    links = collapsible.locator("a[href]")
+    assert [links.nth(i).get_attribute("href") for i in range(links.count())] == ["https://docs.astro.build/en/install-and-setup/", "https://www.npmjs.com/package/create-astro", "https://pnpm.io/cli/create"]
+    assert links.first.get_attribute("target") == "_blank" and links.first.locator(".sr-only").text_content() == " (opens in a new tab)"
+    collapsible.locator('[data-slot="trace-collapsible-trigger"]').click()
+    t.settle()
+    assert collapsible.get_attribute("data-state") == "closed"
+
+
+def check_ai_file_tree_select(t):
+    page = t.page
+    t.docs("/docs/ai-elements/file-tree")
+    tree = page.locator("#file-tree-demo")
+    current = tree.locator('[aria-current="true"]')
+    assert current.count() == 1 and current.inner_text() == "button.tsx"
+    selected_bg = current.evaluate("b => getComputedStyle(b).backgroundColor")
+    page_file = tree.locator('[data-slot="button"]', has_text="page.tsx")
+    assert page_file.evaluate("b => getComputedStyle(b).backgroundColor") != selected_bg
+    page_file.click()
+    assert current.count() == 1 and current.inner_text() == "page.tsx"
+    page.mouse.move(0, 0)
+    t.settle()
+    assert page_file.evaluate("b => getComputedStyle(b).backgroundColor") == selected_bg
+    assert tree.locator('[data-slot="button"]', has_text="button.tsx").get_attribute("aria-current") is None
+    folder = tree.locator("[data-collapsible-trigger]", has_text="app")
+    folder.click()
+    t.settle()
+    assert folder.get_attribute("aria-expanded") == "false"
+    assert current.count() == 1 and current.text_content() == "page.tsx"
+
+
+def check_ai_file_tree_folders(t):
+    page = t.page
+    t.docs("/docs/ai-elements/file-tree")
+    tree = page.locator("#file-tree-demo")
+    folder = tree.locator("[data-collapsible-trigger]", has_text="components")
+    chevron = folder.locator('svg[data-lucide="chevron-right"]')
+    assert folder.get_attribute("aria-expanded") == "true"
+    assert chevron.evaluate("s => getComputedStyle(s).rotate") == "90deg"
+    assert folder.evaluate("b => getComputedStyle(b).backgroundColor") == "rgba(0, 0, 0, 0)"
+    folder.click()
+    t.settle()
+    assert folder.get_attribute("aria-expanded") == "false"
+    assert chevron.evaluate("s => getComputedStyle(s).rotate") in ("none", "0deg")
+    assert tree.locator('[data-slot="button"]', has_text="login-form.tsx").is_hidden()
+    folder.focus()
+    page.keyboard.press("Enter")
+    t.settle()
+    assert folder.get_attribute("aria-expanded") == "true"
+    assert tree.locator('[data-slot="button"]', has_text="login-form.tsx").is_visible()
+
+
+def check_ai_inline_citation_card(t):
+    if t.mobile:
+        t.skip("hover cards open on hover and focus, not touch")
+    page = t.page
+    t.docs("/docs/ai-elements/inline-citation")
+    preview = page.locator('[data-example="inline-citation-demo"] [data-docs="preview"]')
+    assert preview.locator("p").count() == 3
+    triggers = preview.locator("p [data-hover-card-trigger]")
+    assert [triggers.nth(i).inner_text() for i in range(triggers.count())] == ["nextjs.org", "react.dev", "react.dev", "nextjs.org", "developer.mozilla.org"]
+    triggers.nth(1).hover()
+    content = preview.locator('[data-slot="hover-card-content"]').nth(1)
+    page.wait_for_function("el => el.dataset.state === 'open'", arg=content.element_handle())
+    assert content.locator(".font-medium").inner_text() == "<Suspense>"
+    assert content.evaluate("e => getComputedStyle(e).display") == "flex"
+    assert content.locator("a").get_attribute("href") == "https://react.dev/reference/react/Suspense"
+    page.mouse.move(0, 0)
+    page.wait_for_function("el => el.dataset.state !== 'open'", arg=content.element_handle())
+
+
+def wait_text(page, selector, text, timeout=10000):
+    page.wait_for_function("([s, t]) => [...document.querySelectorAll(s)].some(e => e.textContent.trim() === t)", arg=[selector, text], timeout=timeout)
+
+
+def check_ai_queue_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/queue")
+    root = page.locator("#queue-demo")
+    replay = page.locator("#queue-demo-replay")
+    replay.click()
+    assert replay.is_hidden()
+    wait_text(page, "#queue-demo [data-slot=trace-title]", "4 to do")
+    running = root.locator('[data-slot=trace-line][data-status="running"]')
+    assert running.count() == 1 and running.locator("[data-slot=trace-title]").inner_text() == "Add a dark variant to the theme tokens"
+    assert running.locator('svg[data-lucide="circle-dot"]').count() == 1
+    wait_text(page, "#queue-demo [data-slot=trace-title]", "1 completed")
+    assert root.locator("[data-slot=trace-title]", has_text="3 to do").count() == 1
+    replay.wait_for(state="visible", timeout=10000)
+    titles = root.locator(":scope > [data-slot=message] [data-slot=trace-collapsible-trigger] [data-slot=trace-title]").all_inner_texts()
+    assert titles == ["4 completed"], titles
+    assert root.locator('[data-slot=trace-line][data-status="running"]').count() == 0
+    assert root.locator(":scope > [data-slot=message]").count() == 2
+    assert root.locator("p").inner_text() == "Dark mode is in. The toggle is under Settings, Appearance."
+
+
+def check_ai_subagent_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/subagent")
+    root = page.locator("#subagent-demo")
+    replay = page.locator("#subagent-demo-replay")
+    replay.click()
+    assert replay.is_hidden()
+    wait_text(page, "#subagent-demo [data-slot=trace-title]", "Running the research subagent")
+    wait_text(page, "#subagent-demo [data-slot=trace-title]", "Running grep -rn cacheKey scripts")
+    run = root.locator(":scope > [data-slot=message] > [data-slot=message-content] > [data-slot=trace] > [data-slot=trace-collapsible]")
+    assert run.get_attribute("data-state") == "open"
+    assert run.locator(":scope > [data-slot=trace-collapsible-trigger] [data-slot=trace-line]").get_attribute("data-status") == "running"
+    wait_text(page, "#subagent-demo [data-slot=trace-title]", "Ran grep -rn cacheKey scripts")
+    replay.wait_for(state="visible", timeout=10000)
+    line = run.locator(":scope > [data-slot=trace-collapsible-trigger] [data-slot=trace-line]")
+    assert line.get_attribute("data-status") is None and line.locator("[data-slot=trace-title]").inner_text() == "Ran the research subagent"
+    assert run.locator("[data-slot=trace] [data-slot=trace-collapsible]").count() == 3
+    assert root.locator('[data-status="running"]').count() == 0
+    assert root.locator("p").count() == 2 and root.locator("p").last.inner_text().startswith("Image optimization reruns")
+
+
+def confirmation_ask(t):
+    page = t.page
+    t.docs("/docs/ai-elements/confirmation")
+    root = page.locator("#confirmation-demo")
+    next_button = page.locator("#confirmation-demo-next")
+    assert root.locator("[data-slot=message]").count() == 0 and next_button.inner_text() == "Send message"
+    next_button.click()
+    assert next_button.is_hidden()
+    wait_text(page, "#confirmation-demo [data-slot=trace-title]", "Thinking")
+    reasoning = root.locator("[data-slot=trace-collapsible]")
+    assert reasoning.get_attribute("data-state") == "open"
+    root.locator("[data-slot=item]").wait_for(timeout=10000)
+    assert reasoning.locator("[data-slot=trace-title]").inner_text() == "Thought"
+    page.wait_for_function("() => document.querySelector('#confirmation-demo [data-slot=trace-collapsible]').dataset.state === 'closed'")
+    assert root.locator("[data-slot=item-title]").inner_text() == "Run rm -rf dist?"
+    assert next_button.is_visible() and next_button.inner_text() == "Reset"
+    return page, root, next_button
+
+
+def check_ai_confirmation_approve(t):
+    page, root, next_button = confirmation_ask(t)
+    root.locator("[data-slot=item] button", has_text="Approve").click()
+    assert root.locator("[data-slot=item]").count() == 0
+    wait_text(page, "#confirmation-demo [data-slot=trace-title]", "Ran rm -rf dist")
+    wait_text(page, "#confirmation-demo p", "Removed the dist folder.")
+    line = root.locator("[data-slot=trace-line]", has_text="Ran rm -rf dist")
+    assert line.get_attribute("data-status") is None
+    next_button.wait_for(state="visible")
+    assert next_button.inner_text() == "Reset"
+    next_button.click()
+    assert root.locator("[data-slot=message]").count() == 0 and next_button.inner_text() == "Send message"
+
+
+def check_ai_confirmation_deny(t):
+    page, root, next_button = confirmation_ask(t)
+    root.locator("[data-slot=item] button", has_text="Deny").click()
+    assert root.locator("[data-slot=item]").count() == 0
+    line = root.locator("[data-slot=trace-line]", has_text="Denied rm -rf dist")
+    assert line.count() == 1 and line.get_attribute("data-status") is None
+    wait_text(page, "#confirmation-demo p", "Okay, I left the dist folder in place.")
+    next_button.wait_for(state="visible")
+
+
+def check_ai_checkpoint_restore(t):
+    page = t.page
+    t.docs("/docs/ai-elements/checkpoint")
+    root = page.locator("#checkpoint-demo")
+    next_button = page.locator("#checkpoint-demo-continue")
+    assert next_button.is_hidden() and root.locator("[data-slot=message]").count() == 4
+    page.get_by_role("button", name="Restore to Button renamed").click()
+    assert root.locator("[data-slot=message]").count() == 2
+    assert page.locator("#checkpoint-demo-restore").count() == 0
+    assert next_button.is_visible()
+    next_button.click()
+    assert next_button.is_hidden()
+    wait_text(page, "#checkpoint-demo p", "Updated the Button page to say Action.")
+    assert root.locator("[data-slot=message]").count() == 4
+    page.locator("#checkpoint-demo-restore").wait_for()
+    assert next_button.is_hidden()

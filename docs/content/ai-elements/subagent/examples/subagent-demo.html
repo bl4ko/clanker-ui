@@ -1,0 +1,62 @@
+<div class="flex min-h-72 w-full max-w-sm flex-col gap-4 py-6 text-sm" id="subagent-demo">
+  <div data-slot="message" data-align="end">
+    <div data-slot="message-content">
+      <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Why does image optimization rerun on every deploy?</div></div>
+    </div>
+  </div>
+  <div data-slot="message">
+    <div data-slot="message-content" class="gap-4">
+      <div data-slot="trace">
+        <div data-slot="trace-collapsible" data-default-open>
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line">
+              <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+              <span data-slot="trace-title">Ran the research subagent</span>
+            </span>
+          </button>
+          <div data-slot="trace-collapsible-content">
+            <div class="flex flex-col gap-3">
+              <div data-slot="trace">
+                <div data-slot="trace-collapsible">
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span><span data-slot="trace-title">Ran grep -rn cacheKey scripts</span></span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <div data-slot="code-block" data-size="sm">
+                      <pre data-slot="code-block-content" data-wrap="true" class="max-h-64"><code data-slot="code-block-code">scripts/optimize-images.ts:14:  const cacheKey = process.env.COMMIT_SHA</code></pre>
+                    </div>
+                  </div>
+                </div>
+                <div data-slot="trace-collapsible">
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span><span data-slot="trace-title">Ran sed -n 13,15p scripts/optimize-images.ts</span></span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <div data-slot="code-block" data-size="sm">
+                      <pre data-slot="code-block-content" data-wrap="true" class="max-h-64"><code data-slot="code-block-code">const cacheDir = ".next/cache/images"
+const cacheKey = process.env.COMMIT_SHA
+const cached = await restoreCache(cacheDir, cacheKey)</code></pre>
+                    </div>
+                  </div>
+                </div>
+                <div data-slot="trace-collapsible">
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span><span data-slot="trace-title">Ran ls public/images | wc -l</span></span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <div data-slot="code-block" data-size="sm">
+                      <pre data-slot="code-block-content" data-wrap="true" class="max-h-64"><code data-slot="code-block-code">1240</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p>The cache is keyed on the commit SHA, so every deploy misses it and optimizes all 1,240 images again.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p>Image optimization reruns because its cache is keyed on the commit SHA, which changes on every deploy. Key the cache on a hash of public/images instead, and unchanged images will be skipped.</p>
+    </div>
+  </div>
+  <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="mt-auto self-start" id="subagent-demo-replay">Replay</button>
+</div>

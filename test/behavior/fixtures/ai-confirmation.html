@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Confirmation behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/assets/fixture/docs.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/assets/fixture/confirmation-demo.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage" data-docs="view">
+      <div data-behavior="preview">
+        <div class="flex min-h-72 w-full max-w-sm flex-col gap-4 py-6 text-sm" id="confirmation-demo">
+          <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="mt-auto self-start" id="confirmation-demo-next">Send message</button>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

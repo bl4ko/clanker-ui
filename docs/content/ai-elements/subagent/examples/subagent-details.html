@@ -1,0 +1,25 @@
+<div data-slot="trace" class="w-full max-w-sm">
+  <div data-slot="trace-collapsible" data-default-open>
+    <button type="button" data-slot="trace-collapsible-trigger">
+      <span data-slot="trace-line">
+        <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+        <span data-slot="trace-title">Ran the research agent</span>
+        <span data-slot="trace-description">48s</span>
+      </span>
+    </button>
+    <div data-slot="trace-collapsible-content">
+      <div class="flex flex-col gap-3">
+        <div class="flex flex-wrap gap-1.5">
+          <span data-slot="badge" data-variant="secondary">anthropic/claude-sonnet-4.5</span>
+          <span data-slot="badge" data-variant="outline" class="font-mono">runCommand</span>
+        </div>
+        <p>Find out why image optimization reruns on every deploy.</p>
+        <div data-slot="trace">
+          <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span><span data-slot="trace-title">Ran grep -rn cacheKey scripts</span></span>
+          <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span><span data-slot="trace-title">Ran sed -n 13,15p scripts/optimize-images.ts</span></span>
+        </div>
+        <p>The cache is keyed on the commit SHA.</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-<div class="preview-flush theme-blue relative flex w-full flex-col gap-4" id="chat-demo">
+<div class="relative flex w-full flex-col gap-4" id="chat-demo" data-docs-preview="flush" data-docs-accent="blue">
   <div class="flex h-200 w-full flex-col gap-4">
     <div class="flex items-start justify-between gap-4 p-8 pb-4">
       <div class="flex flex-col gap-1">
@@ -18,7 +18,7 @@
           <div data-slot="empty-description">The agent can read your code, run commands and make changes. Press send to start.</div>
         </div>
       </div>
-      <div data-slot="message-scroller" id="chat-demo-scroller" hidden>
+      <div data-slot="message-scroller" data-default-scroll-position="start" id="chat-demo-scroller" hidden>
         <div data-slot="message-scroller-viewport">
           <div data-slot="message-scroller-content" class="gap-6 px-8" aria-busy="false" id="chat-demo-thread"></div>
         </div>

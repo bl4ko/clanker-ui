@@ -831,6 +831,8 @@ code:not([data-slot]) { font-size: 0.875em; }
 }
 
 #code-block [data-demo~="stack"] { gap: 1rem; }
+#code-block #code-block-header { max-width: 32rem; }
+#code-block :is(#code-block-highlighting, #code-block-languages, #code-block-ansi) { max-width: 28rem; }
 #code-block #code-block-more [data-slot="code-block-content"][data-collapsed] { max-height: 12rem; }
 #code-block #code-block-more [data-slot="code-block-content"]:not([data-collapsed]) { max-height: 24rem; }
 #code-block #code-block-more-toggle[aria-expanded="true"] svg { rotate: 180deg; }

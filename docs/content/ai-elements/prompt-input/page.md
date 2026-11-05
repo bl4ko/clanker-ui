@@ -26,7 +26,7 @@ Prompt Input is built with the [Input Group](/docs/components/input-group), [Att
 </form>
 ```
 
-Enable the send button when the field has text:
+Enable the send button when the field has text. In the Nova style, an input group with a disabled control is shown at 50 % opacity (shadcn/ui `has-disabled:opacity-50`), so the field looks dimmed until the person types.
 
 ```js
 text.addEventListener("input", () => {

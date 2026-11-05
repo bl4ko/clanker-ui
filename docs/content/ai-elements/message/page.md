@@ -56,7 +56,7 @@ copy.addEventListener("click", async () => {
 
 ## Markdown
 
-The reply streams as Markdown. The kit has no Markdown renderer, and the strict CSP blocks `innerHTML`, so render it to elements with `h()` (or on the server). Put fenced code in a [Code Block](/docs/components/code-block), so code in the reply gets line numbers and a copy button, and inline code in `<code data-typography="inline-code">`.
+The reply streams as Markdown. The kit has no Markdown renderer, and the strict CSP blocks `innerHTML`, so render it to elements with `h()` (or on the server). Put fenced code in a [Code Block](/docs/components/code-block), so code in the reply gets line numbers and a copy button, and inline code in a `<code>` with a muted background.
 
 ## From code
 

@@ -259,3 +259,114 @@ def check_ai_chat_turn(t):
     page.locator("#chat-demo-reset").click()
     assert page.locator("#chat-demo-empty").is_visible() and demo.locator('[data-slot="message-scroller-item"]').count() == 0
     assert text.input_value() == "Add a dark mode toggle to the settings page."
+
+
+def rows_state(page, root):
+    return page.evaluate("""r => [...document.querySelectorAll(r)].map(c => [c.querySelector('[data-slot="trace-title"]').textContent, c.dataset.state, c.querySelector('[data-slot="trace-line"]').dataset.status ?? null])""", root)
+
+
+def check_ai_terminal_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/terminal")
+    rows = '#terminal-demo [data-slot="message-content"] > [data-slot="trace"] > [data-slot="trace-collapsible"]'
+    assert rows_state(page, rows) == [["Ran pnpm lint", "closed", None], ["Ran pnpm test", "closed", None], ["Ran pnpm build", "open", None]]
+    page.locator("#terminal-demo-replay").click()
+    wait_js(page, f"""() => {{ const r = document.querySelector('{rows}'); return r?.dataset.state === 'open' && r.querySelector('[data-slot="trace-line"]').dataset.status === 'running' && r.querySelector('[data-slot="trace-title"]').textContent === 'Running pnpm lint' && r.querySelector('[data-slot="code-block-code"]').textContent.length > 0 }}""")
+    wait_js(page, f"""() => {{ const r = document.querySelectorAll('{rows}'); return r.length === 2 && r[0].dataset.state === 'closed' && r[1].dataset.state === 'open' }}""")
+    wait_js(page, """() => !document.getElementById('terminal-demo-replay').hidden""")
+    assert rows_state(page, rows) == [["Ran pnpm lint", "closed", None], ["Ran pnpm test", "closed", None], ["Ran pnpm build", "closed", None]]
+    assert page.locator(f"{rows} >> nth=1").locator('[data-slot="code-block-code"]').text_content().endswith("Tests  15 passed (15)")
+    assert page.locator("#terminal-demo p").inner_text() == "Lint and tests pass, and the build compiled both routes."
+
+
+def check_ai_terminal_choice_wins(t):
+    page = t.page
+    t.docs("/docs/ai-elements/terminal")
+    rows = '#terminal-demo [data-slot="message-content"] > [data-slot="trace"] > [data-slot="trace-collapsible"]'
+    page.locator("#terminal-demo-replay").click()
+    wait_js(page, f"""() => document.querySelector('{rows}')?.dataset.state === 'open'""")
+    trigger = page.locator(f"{rows} >> nth=0").locator('[data-slot="trace-collapsible-trigger"]')
+    trigger.click()
+    wait_js(page, f"""() => document.querySelector('{rows}').dataset.state === 'closed'""")
+    trigger.click()
+    wait_js(page, """() => !document.getElementById('terminal-demo-replay').hidden""")
+    assert [s for _, s, _ in rows_state(page, rows)] == ["open", "closed", "closed"]
+
+
+def check_ai_terminal_error(t):
+    page = t.page
+    t.docs("/docs/ai-elements/terminal")
+    example = page.locator('[data-slot="trace"]:has(> [data-slot="trace-collapsible"] [data-status="error"])').first
+    assert example.locator(':scope > [data-slot="trace-line"]').inner_text() == "Ran pnpm install"
+    row = example.locator(':scope > [data-slot="trace-collapsible"]')
+    assert row.get_attribute("data-state") == "open" and row.locator('[data-slot="trace-title"]').inner_text() == "pnpm lint exited with code 1"
+    assert row.locator('[data-slot="code-block-code"]').text_content().endswith("Command failed with exit code 1.")
+    row.locator('[data-slot="trace-collapsible-trigger"]').click()
+    t.settle()
+    assert row.get_attribute("data-state") == "closed"
+
+
+def check_ai_stack_trace_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/stack-trace")
+    rows = '#stack-trace-demo [data-slot="message-content"] > [data-slot="trace"] > *'
+    page.locator("#stack-trace-demo-replay").click()
+    wait_js(page, f"""() => {{ const r = document.querySelector('{rows}'); return r?.dataset.slot === 'trace-line' && r.dataset.status === 'running' && r.textContent.trim() === 'Running pnpm prisma migrate reset --skip-seed' }}""")
+    wait_js(page, f"""() => {{ const r = document.querySelectorAll('{rows}'); return r.length === 2 && r[1].dataset.status === 'running' && r[1].textContent.trim() === 'Running pnpm prisma db seed' }}""")
+    wait_js(page, """() => !document.getElementById('stack-trace-demo-replay').hidden""")
+    assert rows_state(page, rows) == [["Ran pnpm prisma migrate reset --skip-seed", "closed", None], ["Failed: TypeError: Cannot read properties of undefined (reading 'email')", "open", "error"]]
+    failed = page.locator(f"{rows} >> nth=1")
+    assert failed.locator("p").inner_text() == "TypeError: Cannot read properties of undefined (reading 'email')"
+    assert [a.get_attribute("href") for a in failed.locator("a").all()] == ["#prisma/seed.ts:27", "#prisma/seed.ts:51"]
+    frames = failed.locator('[data-slot="trace"] > [data-slot="trace-collapsible"]')
+    assert frames.locator('[data-slot="trace-title"]').inner_text() == "4 framework frames" and frames.get_attribute("data-state") == "closed"
+    frames.locator('[data-slot="trace-collapsible-trigger"]').click()
+    t.settle()
+    assert frames.get_attribute("data-state") == "open" and frames.locator("li").count() == 4
+    assert page.locator("#stack-trace-demo p:not(.font-mono)").inner_text().startswith("The migrations ran, but the seed failed in seedUsers.")
+
+
+def check_ai_stack_trace_frames(t):
+    page = t.page
+    t.docs("/docs/ai-elements/stack-trace")
+    example = page.locator('[data-slot="trace"].max-w-sm').first
+    row = example.locator(':scope > [data-slot="trace-collapsible"]')
+    assert row.get_attribute("data-state") == "open"
+    links = row.locator("a")
+    assert links.all_inner_texts() == ["formatInvoice in app/lib/billing.ts:42", "InvoiceRow in app/components/invoice-row.tsx:18"]
+    frames = row.locator('[data-slot="trace"] > [data-slot="trace-collapsible"]')
+    frames.locator('[data-slot="trace-collapsible-trigger"]').press("Enter")
+    t.settle()
+    assert frames.get_attribute("data-state") == "open"
+    assert frames.locator("li").first.inner_text() == "at renderWithHooks (node_modules/react-dom/cjs/react-dom.development.js:14985:18)"
+
+
+def check_ai_test_results_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/test-results")
+    rows = '#test-results-demo [data-slot="message-content"] > [data-slot="trace"] > *'
+    page.locator("#test-results-demo-replay").click()
+    wait_js(page, f"""() => {{ const r = document.querySelector('{rows}'); return r?.dataset.status === 'running' && r.textContent.trim() === 'Running pnpm test checkout' }}""")
+    wait_js(page, """() => !document.getElementById('test-results-demo-replay').hidden""")
+    assert rows_state(page, rows) == [["Ran 5 tests, 1 failed", "open", "error"]]
+    suites = f'{rows} > [data-slot="trace-collapsible-content"] > * > [data-slot="trace"] > [data-slot="trace-collapsible"]'
+    assert rows_state(page, suites) == [["cart.test.ts, 3 tests", "closed", None], ["payment.test.ts, 2 tests, 1 failed", "open", "error"]]
+    failed = page.locator(f'{suites} >> nth=1').locator('[data-slot="trace-collapsible"]')
+    assert failed.get_attribute("data-state") == "open" and failed.locator('[data-slot="code-block-code"]').text_content().startswith("Expected 2 charge attempts, received 1")
+    assert page.locator("#test-results-demo p").inner_text().startswith("One test failed.")
+
+
+def check_ai_test_results_suites(t):
+    page = t.page
+    t.docs("/docs/ai-elements/test-results")
+    summary = '[data-slot="trace"].max-w-sm > [data-slot="trace-collapsible"]'
+    assert rows_state(page, summary) == [["Ran 8 tests, 2 failed, 1 skipped", "open", "error"]]
+    suites = f'{summary} > [data-slot="trace-collapsible-content"] > * > [data-slot="trace"] > [data-slot="trace-collapsible"]'
+    assert rows_state(page, suites) == [["auth.test.ts, 3 tests", "closed", None], ["user-api.test.ts, 3 tests, 1 failed, 1 skipped", "open", "error"], ["db.test.ts, 2 tests, 1 failed", "open", "error"]]
+    user = page.locator(f"{suites} >> nth=1")
+    assert user.locator('[data-slot="trace-line"]:not([data-status])').all_inner_texts()[-1] == "Skipped deletes a user"
+    failed = user.locator('[data-slot="trace-collapsible"]')
+    assert failed.get_attribute("data-state") == "closed"
+    failed.locator('[data-slot="trace-collapsible-trigger"]').click()
+    t.settle()
+    assert failed.get_attribute("data-state") == "open" and failed.locator('[data-slot="code-block-code"]').is_visible()

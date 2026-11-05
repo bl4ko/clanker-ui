@@ -19,6 +19,9 @@ Rules for every pattern:
 | Steps known before the work starts, with done, running, and pending steps and a count | [Plan](https://bl4ko.github.io/clanker-ui/docs/ai-elements/plan/) | `trace`, `trace-description` |
 | The message field with attachments, model menus, and send | [Prompt Input](https://bl4ko.github.io/clanker-ui/docs/ai-elements/prompt-input/) | `input-group` with a `textarea`, `attachment`, `dropdown-menu` |
 | The model's thinking: "Thinking" and open while it streams, "Thought" and closed after | [Reasoning](https://bl4ko.github.io/clanker-ui/docs/ai-elements/reasoning/) | `trace-collapsible` |
+| A failed tool call: the error as the title, own frames as links, framework frames folded | [Stack Trace](https://bl4ko.github.io/clanker-ui/docs/ai-elements/stack-trace/) | `trace-collapsible` with a `trace` of link lines |
 | Prompts that the person sends in one click | [Suggestion](https://bl4ko.github.io/clanker-ui/docs/ai-elements/suggestion/) | outline `sm` `button` row with `scroll-fade-x` |
 | Steps that appear as the agent takes them, grouped per piece of work | [Task](https://bl4ko.github.io/clanker-ui/docs/ai-elements/task/) | `trace` in a `trace-collapsible` |
+| A shell command with its output as it streams; open while it runs, error on a non-zero exit | [Terminal](https://bl4ko.github.io/clanker-ui/docs/ai-elements/terminal/) | `trace-collapsible`, `code-block` (`data-size="sm"`, `data-wrap`) |
+| A test run: counts on the line, suites and failures inside, failed suites open | [Test Results](https://bl4ko.github.io/clanker-ui/docs/ai-elements/test-results/) | nested `trace-collapsible`, `code-block` |
 | One tool call (a command, a file read) from running to output or error; long output in a sheet | [Tool](https://bl4ko.github.io/clanker-ui/docs/ai-elements/tool/) | `trace-collapsible`, `code-block`, `sheet`, `item` |

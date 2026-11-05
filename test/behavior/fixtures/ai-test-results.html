@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Test Results behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="trace" data-behavior="w-full-max-w-sm">
+          <div data-slot="trace-collapsible" data-default-open>
+            <button type="button" data-slot="trace-collapsible-trigger">
+              <span data-slot="trace-line" data-status="error">
+                <span data-slot="trace-icon"><svg data-lucide="flask-conical"></svg></span>
+                <span data-slot="trace-title">Ran 8 tests, 2 failed, 1 skipped</span>
+              </span>
+            </button>
+            <div data-slot="trace-collapsible-content">
+              <div data-slot="trace">
+                <div data-slot="trace-collapsible">
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="file-code"></svg></span>
+                      <span data-slot="trace-title">auth.test.ts, 3 tests</span>
+                    </span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <div data-slot="trace">
+                      <span data-slot="trace-line">
+                        <span data-slot="trace-icon"><svg data-lucide="check"></svg></span>
+                        <span data-slot="trace-title">logs in with valid credentials</span>
+                      </span>
+                      <span data-slot="trace-line">
+                        <span data-slot="trace-icon"><svg data-lucide="check"></svg></span>
+                        <span data-slot="trace-title">rejects an invalid password</span>
+                      </span>
+                      <span data-slot="trace-line">
+                        <span data-slot="trace-icon"><svg data-lucide="check"></svg></span>
+                        <span data-slot="trace-title">refreshes an expired token</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div data-slot="trace-collapsible" data-default-open>
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line" data-status="error">
+                      <span data-slot="trace-icon"><svg data-lucide="file-code"></svg></span>
+                      <span data-slot="trace-title">user-api.test.ts, 3 tests, 1 failed, 1 skipped</span>
+                    </span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <div data-slot="trace">
+                      <span data-slot="trace-line">
+                        <span data-slot="trace-icon"><svg data-lucide="check"></svg></span>
+                        <span data-slot="trace-title">creates a user</span>
+                      </span>
+                      <div data-slot="trace-collapsible">
+                        <button type="button" data-slot="trace-collapsible-trigger">
+                          <span data-slot="trace-line" data-status="error">
+                            <span data-slot="trace-icon"><svg data-lucide="x"></svg></span>
+                            <span data-slot="trace-title">updates a user profile</span>
+                          </span>
+                        </button>
+                        <div data-slot="trace-collapsible-content">
+                          <div data-slot="code-block" data-size="sm">
+                            <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">Expected status 200, received 500
+
+  at Object.&lt;anonymous&gt; (src/user-api.test.ts:45:12)</code></pre>
+                          </div>
+                        </div>
+                      </div>
+                      <span data-slot="trace-line">
+                        <span data-slot="trace-icon"><svg data-lucide="circle-dashed"></svg></span>
+                        <span data-slot="trace-title">Skipped deletes a user</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div data-slot="trace-collapsible" data-default-open>
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line" data-status="error">
+                      <span data-slot="trace-icon"><svg data-lucide="file-code"></svg></span>
+                      <span data-slot="trace-title">db.test.ts, 2 tests, 1 failed</span>
+                    </span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <div data-slot="trace">
+                      <span data-slot="trace-line">
+                        <span data-slot="trace-icon"><svg data-lucide="check"></svg></span>
+                        <span data-slot="trace-title">connects to the database</span>
+                      </span>
+                      <div data-slot="trace-collapsible">
+                        <button type="button" data-slot="trace-collapsible-trigger">
+                          <span data-slot="trace-line" data-status="error">
+                            <span data-slot="trace-icon"><svg data-lucide="x"></svg></span>
+                            <span data-slot="trace-title">times out a slow query</span>
+                          </span>
+                        </button>
+                        <div data-slot="trace-collapsible-content">
+                          <div data-slot="code-block" data-size="sm">
+                            <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">Exceeded timeout of 5000 ms for a test.
+
+  at Object.&lt;anonymous&gt; (src/db.test.ts:22:3)</code></pre>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

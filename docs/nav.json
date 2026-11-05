@@ -106,8 +106,11 @@
         {"title": "Plan", "href": "/docs/ai-elements/plan"},
         {"title": "Prompt Input", "href": "/docs/ai-elements/prompt-input"},
         {"title": "Reasoning", "href": "/docs/ai-elements/reasoning"},
+        {"title": "Stack Trace", "href": "/docs/ai-elements/stack-trace"},
         {"title": "Suggestion", "href": "/docs/ai-elements/suggestion"},
         {"title": "Task", "href": "/docs/ai-elements/task"},
+        {"title": "Terminal", "href": "/docs/ai-elements/terminal"},
+        {"title": "Test Results", "href": "/docs/ai-elements/test-results"},
         {"title": "Tool", "href": "/docs/ai-elements/tool"}
       ]
     },

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Stack Trace behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="trace" data-behavior="w-full-max-w-sm">
+          <div data-slot="trace-collapsible" data-default-open>
+            <button type="button" data-slot="trace-collapsible-trigger">
+              <span data-slot="trace-line" data-status="error">
+                <span data-slot="trace-icon"><svg data-lucide="circle-x"></svg></span>
+                <span data-slot="trace-title">Failed: TypeError: Cannot read properties of undefined (reading 'total')</span>
+              </span>
+            </button>
+            <div data-slot="trace-collapsible-content">
+              <div data-behavior="stack-2">
+                <p>TypeError: Cannot read properties of undefined (reading 'total')</p>
+                <div data-slot="trace">
+                  <a href="#app/lib/billing.ts:42">
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="file-code"></svg></span>
+                      <span data-slot="trace-title">formatInvoice in app/lib/billing.ts:42</span>
+                    </span>
+                  </a>
+                  <a href="#app/components/invoice-row.tsx:18">
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="file-code"></svg></span>
+                      <span data-slot="trace-title">InvoiceRow in app/components/invoice-row.tsx:18</span>
+                    </span>
+                  </a>
+                  <div data-slot="trace-collapsible">
+                    <button type="button" data-slot="trace-collapsible-trigger">
+                      <span data-slot="trace-line">
+                        <span data-slot="trace-icon"><svg data-lucide="layers"></svg></span>
+                        <span data-slot="trace-title">4 framework frames</span>
+                      </span>
+                    </button>
+                    <div data-slot="trace-collapsible-content">
+                      <ol>
+                        <li>at renderWithHooks (node_modules/react-dom/cjs/react-dom.development.js:14985:18)</li>
+                        <li>at beginWork (node_modules/react-dom/cjs/react-dom.development.js:19049:16)</li>
+                        <li>at performUnitOfWork (node_modules/react-dom/cjs/react-dom.development.js:22776:12)</li>
+                        <li>at workLoopSync (node_modules/react-dom/cjs/react-dom.development.js:22707:5)</li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

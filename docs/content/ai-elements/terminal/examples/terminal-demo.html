@@ -1,0 +1,72 @@
+<div class="flex min-h-72 w-full max-w-sm flex-col gap-4 py-6 text-sm" id="terminal-demo">
+  <div data-slot="message" data-align="end">
+    <div data-slot="message-content">
+      <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Run the checks, then build the app.</div></div>
+    </div>
+  </div>
+  <div data-slot="message">
+    <div data-slot="message-content" class="gap-4">
+      <div data-slot="trace">
+        <div data-slot="trace-collapsible">
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line">
+              <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+              <span data-slot="trace-title">Ran pnpm lint</span>
+            </span>
+          </button>
+          <div data-slot="trace-collapsible-content">
+            <div data-slot="code-block" data-size="sm">
+              <pre data-slot="code-block-content" data-wrap="true" class="max-h-64"><code data-slot="code-block-code">&gt; acme-chat@0.1.0 lint
+&gt; eslint .</code></pre>
+            </div>
+          </div>
+        </div>
+        <div data-slot="trace-collapsible">
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line">
+              <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+              <span data-slot="trace-title">Ran pnpm test</span>
+            </span>
+          </button>
+          <div data-slot="trace-collapsible-content">
+            <div data-slot="code-block" data-size="sm">
+              <pre data-slot="code-block-content" data-wrap="true" class="max-h-64"><code data-slot="code-block-code">&gt; acme-chat@0.1.0 test
+&gt; vitest run
+
+ ✓ lib/ai.test.ts (6 tests) 41ms
+ ✓ components/chat.test.tsx (9 tests) 212ms
+
+ Test Files  2 passed (2)
+      Tests  15 passed (15)</code></pre>
+            </div>
+          </div>
+        </div>
+        <div data-slot="trace-collapsible" data-default-open>
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line">
+              <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+              <span data-slot="trace-title">Ran pnpm build</span>
+            </span>
+          </button>
+          <div data-slot="trace-collapsible-content">
+            <div data-slot="code-block" data-size="sm">
+              <pre data-slot="code-block-content" data-wrap="true" class="max-h-64"><code data-slot="code-block-code">&gt; acme-chat@0.1.0 build
+&gt; next build
+
+   ▲ Next.js 16.3.0
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 4.2s
+ ✓ Generating static pages (12/12)
+
+Route (app)                Size  First Load JS
+┌ ○ /                     1.9 kB       112 kB
+└ ƒ /api/chat              141 B       102 kB</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p>Lint and tests pass, and the build compiled both routes.</p>
+    </div>
+  </div>
+  <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="mt-auto self-start" id="terminal-demo-replay">Replay</button>
+</div>

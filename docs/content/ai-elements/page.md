@@ -21,8 +21,11 @@ The patterns follow the [shadcn/ui AI Elements](https://ui.shadcn.com/docs/ai-el
 | [Plan](/docs/ai-elements/plan) | The steps the agent plans to take, and how far it has got. |
 | [Prompt Input](/docs/ai-elements/prompt-input) | A message field with attachments and a send button. |
 | [Reasoning](/docs/ai-elements/reasoning) | The agent's thinking as it streams. |
+| [Stack Trace](/docs/ai-elements/stack-trace) | A failed tool call and its stack frames. |
 | [Suggestion](/docs/ai-elements/suggestion) | A short prompt you can send to the agent in one click. |
 | [Task](/docs/ai-elements/task) | The steps the agent takes, as it takes them. |
+| [Terminal](/docs/ai-elements/terminal) | A command the agent runs, with its output as it streams. |
+| [Test Results](/docs/ai-elements/test-results) | A test run, with its suites and failures. |
 | [Tool](/docs/ai-elements/tool) | A tool call the agent makes, from input to output. |
 
 ## Load the files

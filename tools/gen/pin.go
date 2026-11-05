@@ -182,7 +182,7 @@ func treeFiles(b []byte) (map[string]string, []string, error) {
 		return nil, nil, fmt.Errorf("tree.json: the GitHub tree is truncated; the file list is not complete")
 	}
 	blobs := map[string]string{}
-	var files []string
+	var files, docs []string
 	for _, e := range t.Tree {
 		if e.Type != "blob" {
 			continue
@@ -191,9 +191,13 @@ func treeFiles(b []byte) (map[string]string, []string, error) {
 		if name, ok := strings.CutPrefix(e.Path, uiDir+"/"); ok && !strings.Contains(name, "/") && strings.HasSuffix(name, ".tsx") {
 			files = append(files, e.Path)
 		}
+		if docsFile(e.Path) {
+			docs = append(docs, e.Path)
+		}
 	}
 	slices.Sort(files)
-	return blobs, append(slices.Clone(fixedFiles), files...), nil
+	slices.Sort(docs)
+	return blobs, slices.Concat(fixedFiles, files, docs), nil
 }
 
 func curl(url, dest string) error {

@@ -1,4 +1,5 @@
 import * as ui from "../clanker-ui.js"
+import { codeBlockHighlight } from "../clanker-ui-code.js"
 
 const demoTokens = ["background", "foreground", "card", "card-foreground", "popover", "popover-foreground", "primary", "primary-foreground", "secondary", "secondary-foreground", "muted", "muted-foreground", "accent", "accent-foreground", "destructive", "border", "input", "ring", "chart-1", "chart-2", "chart-3", "chart-4", "chart-5", "chart-6", "chart-7", "chart-8", "sidebar", "sidebar-foreground", "sidebar-primary", "sidebar-primary-foreground", "sidebar-accent", "sidebar-accent-foreground", "sidebar-border", "sidebar-ring"]
 const demoRadii = ["sm", "md", "lg", "xl", "2xl", "3xl", "4xl"]
@@ -485,6 +486,12 @@ document.getElementById("calendar-form")?.addEventListener("submit", event => {
   const stay = new FormData(event.currentTarget).get("stay")
   document.getElementById("calendar-form-value").textContent = `The form sent stay=${stay || "(empty)"}.`
 })
+
+const codeBlockAnsi = document.querySelector("#code-block-ansi [data-slot=code-block-code]")
+if (codeBlockAnsi) {
+  const output = "$ pnpm test\n\x1b[32m✓\x1b[39m src/format.test.ts \x1b[2m(4 tests)\x1b[22m\n\x1b[32m✓\x1b[39m src/parse.test.ts \x1b[2m(7 tests)\x1b[22m\n\x1b[31m✗\x1b[39m src/stream.test.ts \x1b[2m(3 tests | 1 failed)\x1b[22m\n\n\x1b[31mAssertionError: expected 'hello' to be 'hello world'\x1b[39m\n\nTests  \x1b[31m1 failed\x1b[39m | \x1b[32m13 passed\x1b[39m (14)"
+  codeBlockAnsi.replaceChildren(...codeBlockHighlight(output, "ansi").map(line => ui.h("span", { "data-slot": "code-block-line", "data-variant": "default" }, ui.h("span", { "data-slot": "code-block-line-content" }, line.length ? line : "\n"))))
+}
 
 document.getElementById("code-block-more-toggle")?.addEventListener("click", event => {
   const toggle = event.currentTarget

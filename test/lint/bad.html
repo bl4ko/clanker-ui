@@ -20,19 +20,15 @@
       </div>
       <div data-slot="data-table-toolbar">
         <div>
-          <input data-slot="input" aria-label="Filter" placeholder="Filter">
           <div data-slot="toggle-group" data-type="single" data-variant="outline" data-size="sm" aria-label="Status" id="bad-toggle-sm">
             <button type="button" data-slot="toggle-group-item" data-value="all">All</button>
             <button type="button" data-slot="toggle-group-item" data-value="open">Open</button>
           </div>
+          <input data-slot="input" aria-label="Filter" placeholder="Filter">
         </div>
       </div>
       <div data-slot="data-table-toolbar">
         <div>
-          <div data-slot="input-group" role="group" id="bad-search-group">
-            <input data-slot="input-group-control" aria-label="Search" placeholder="Search">
-            <div data-slot="input-group-addon"><svg data-lucide="search"></svg></div>
-          </div>
           <div data-slot="select" data-value="all">
             <button data-slot="select-trigger" data-size="sm" aria-label="Status"><span data-slot="select-value">All</span></button>
             <div data-slot="select-content"><div data-slot="select-item" data-value="all">All</div><div data-slot="select-item" data-value="open">Open</div></div>
@@ -41,17 +37,21 @@
             <button data-slot="select-trigger" data-size="sm" aria-label="Owner"><span data-slot="select-value">Anyone</span></button>
             <div data-slot="select-content"><div data-slot="select-item" data-value="any">Anyone</div><div data-slot="select-item" data-value="me">Me</div></div>
           </div>
+          <div data-slot="input-group" role="group" id="bad-search-group">
+            <input data-slot="input-group-control" aria-label="Search" placeholder="Search">
+            <div data-slot="input-group-addon"><svg data-lucide="search"></svg></div>
+          </div>
         </div>
       </div>
       <div data-slot="data-table-toolbar">
         <div>
-        <input data-slot="input" aria-label="Amount" placeholder="Amount">
         <div data-slot="native-select-wrapper">
           <select data-slot="native-select" data-size="sm" aria-label="Currency" id="bad-native-sm">
             <option data-slot="native-select-option" value="eur">EUR</option>
           </select>
           <svg data-lucide="chevron-down" data-slot="native-select-icon"></svg>
         </div>
+        <input data-slot="input" aria-label="Amount" placeholder="Amount">
         </div>
       </div>
     </section>

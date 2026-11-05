@@ -23,8 +23,9 @@ const (
 )
 
 var (
-	exampleName = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
-	docsAssets  = []string{"docs.css", "docs.js", "docs-sidebar.js"}
+	exampleName    = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
+	previewHeights = []string{"auto", "24rem"}
+	docsAssets     = []string{"docs.css", "docs.js", "docs-sidebar.js", "examples.css"}
 )
 
 type navItem struct {
@@ -298,7 +299,7 @@ func (d *docsSite) loadExample(fsys fs.FS, name string) error {
 	text := strings.Trim(strings.ReplaceAll(string(raw), "\r\n", "\n"), "\n")
 	switch {
 	case ext == ".html" && ex.HTML == "":
-		ex.HTML = text
+		ex.HTML = d.siteRelative(text)
 	case ext == ".js" && ex.JS == "":
 		ex.JS = text
 		d.assets[id+".js"] = raw
@@ -375,7 +376,7 @@ func (d *docsSite) renderPage(p *docPage) error {
 				return "", fmt.Errorf("unknown example %q", name)
 			}
 			for key, value := range attrs {
-				ok := key == "align" && slices.Contains([]string{"center", "start", "end"}, value) || key == "height" && value == "auto"
+				ok := key == "align" && slices.Contains([]string{"center", "start", "end"}, value) || key == "height" && slices.Contains(previewHeights, value)
 				if !ok {
 					return "", fmt.Errorf("example %q: bad attribute %s=%q", name, key, value)
 				}

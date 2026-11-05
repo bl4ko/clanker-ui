@@ -10,9 +10,10 @@ The kit needs no `data:` URL; `img-src data:` is for app images. Add the hosts t
 
 ## Static hosts (no headers)
 
-When the host cannot send headers (for example GitHub Pages), put the policy in a meta tag as the first element of `<head>`. A meta policy does not apply to elements before it. Browsers ignore `frame-ancestors` in a meta tag and log a warning, so the meta policy leaves it out:
+When the host cannot send headers (for example GitHub Pages), put the policy in a meta tag right after `<meta charset>` and before every `<link>` and `<script>` (the head of `SKILL.md` step 3 and of every block). A meta policy does not apply to elements before it. Browsers ignore `frame-ancestors` in a meta tag and log a warning, so the meta policy leaves it out:
 
 ```html
+<meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
 <meta name="referrer" content="no-referrer">
 ```

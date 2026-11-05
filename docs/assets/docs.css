@@ -1049,7 +1049,8 @@ body[data-docs="body"] {
 
 [data-docs="preview"]:is([data-align="start"], [data-align="end"]) { align-items: flex-start; }
 [data-docs="preview"][data-height="auto"] { height: auto; }
-[data-docs="preview"]:has(> .preview-flush) { padding: 0; }
+[data-docs="preview"]:has(> [data-docs-preview="flush"]) { padding: 0; }
+[data-docs="preview"][data-height="24rem"] { height: 24rem; }
 
 [data-docs="preview"][data-height="demo"] {
   flex-direction: column;
@@ -1096,10 +1097,10 @@ body[data-docs="body"] {
 [data-docs="code-teaser"] { position: relative; }
 [data-docs="code-teaser"] pre { min-height: calc(3lh + 1.75rem + 6px); }
 
-[data-docs="component-preview"] :is([data-docs="code-teaser"] pre, [data-slot="code-block-content"]) { padding-inline: 0; }
-[data-docs="component-preview"] pre code { counter-reset: line; }
+[data-docs="component-preview"] [data-docs="code"] :is([data-docs="code-teaser"] pre, [data-slot="code-block-content"]) { padding-inline: 0; }
+[data-docs="component-preview"] [data-docs="code"] pre code { counter-reset: line; }
 
-[data-docs="component-preview"] pre [data-line]::before {
+[data-docs="component-preview"] [data-docs="code"] pre [data-line]::before {
   position: sticky;
   inset-inline-start: 0;
   display: inline-block;
@@ -1223,7 +1224,7 @@ body[data-docs="body"] {
   & .animate-spin { animation: spin 1s linear infinite; }
   & .fill-current { fill: currentColor; }
   & .list-disc { list-style: disc; }
-  & .theme-blue {
+  & [data-docs-accent="blue"] {
     --primary: light-dark(oklch(0.488 0.243 264.376), oklch(0.424 0.199 265.638));
     --primary-foreground: oklch(0.97 0.014 254.604);
   }

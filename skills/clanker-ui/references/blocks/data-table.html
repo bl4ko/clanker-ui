@@ -9,6 +9,8 @@
   <title>Tasks - Acme Inc.</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-a11y.min.css">
+  <link rel="modulepreload" href="/vendor/clanker-ui/clanker-ui-core.min.js">
   <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
   <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
   <script type="module" src="/data-table.js"></script>
@@ -59,6 +61,9 @@
     <div data-slot="page-header">
       <h1 data-slot="page-title">Tasks</h1>
       <p data-slot="page-description">Here's a list of your tasks for this month.</p>
+      <div data-slot="page-actions">
+        <button type="button" data-slot="button" id="task-new"><svg data-lucide="plus"></svg>New task</button>
+      </div>
     </div>
     <div data-slot="data-table" id="tasks">
       <div data-slot="data-table-toolbar">

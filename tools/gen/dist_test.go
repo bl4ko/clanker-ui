@@ -67,15 +67,15 @@ func TestDistFresh(t *testing.T) {
 
 func TestDistFiles(t *testing.T) {
 	res := testDist(t)
-	want := []string{"clanker-ui-a11y.min.css", "clanker-ui-chart.min.css", "clanker-ui-chart.min.js", "clanker-ui-chat.min.css", "clanker-ui-chat.min.js", "clanker-ui-core.min.css", "clanker-ui-core.min.js", "clanker-ui-forms.min.css", "clanker-ui-forms.min.js", "clanker-ui-layout.min.css", "clanker-ui-layout.min.js", "clanker-ui-overlays.min.css", "clanker-ui-overlays.min.js", "clanker-ui-theme.min.js", "clanker-ui-themes.min.css", "clanker-ui.min.css", "clanker-ui.min.js"}
+	want := []string{"clanker-ui-a11y.min.css", "clanker-ui-chart.min.css", "clanker-ui-chart.min.js", "clanker-ui-chat.min.css", "clanker-ui-chat.min.js", "clanker-ui-code.min.js", "clanker-ui-core.min.css", "clanker-ui-core.min.js", "clanker-ui-forms.min.css", "clanker-ui-forms.min.js", "clanker-ui-layout.min.css", "clanker-ui-layout.min.js", "clanker-ui-overlays.min.css", "clanker-ui-overlays.min.js", "clanker-ui-theme.min.js", "clanker-ui-themes.min.css", "clanker-ui.min.css", "clanker-ui.min.js"}
 	if got := slices.Sorted(maps.Keys(res.files)); !slices.Equal(got, want) {
 		t.Fatalf("dist files\n got %v\nwant %v", got, want)
 	}
 	for name, b := range res.files {
 		src := "../../clanker-ui.js"
 		switch {
-		case name == "clanker-ui-chart.min.js":
-			src = "../../clanker-ui-chart.js"
+		case name == "clanker-ui-chart.min.js" || name == "clanker-ui-code.min.js":
+			src = "../../" + strings.Replace(name, ".min.", ".", 1)
 		case name == "clanker-ui-theme.min.js":
 			src = "../../clanker-ui-theme.js"
 		case name == "clanker-ui-themes.min.css":
@@ -101,8 +101,10 @@ func TestDistFiles(t *testing.T) {
 			t.Errorf("%s: want a minified file that ends with a new line", name)
 		}
 	}
-	if !strings.Contains(string(res.files["clanker-ui-chart.min.js"]), `from"./clanker-ui-core.min.js"`) {
-		t.Error("clanker-ui-chart.min.js does not import ./clanker-ui-core.min.js")
+	for _, name := range []string{"clanker-ui-chart.min.js", "clanker-ui-code.min.js"} {
+		if !strings.Contains(string(res.files[name]), `from"./clanker-ui-core.min.js"`) {
+			t.Errorf("%s does not import ./clanker-ui-core.min.js", name)
+		}
 	}
 }
 
@@ -476,7 +478,7 @@ func TestDistJSLinks(t *testing.T) {
 		}
 	}
 	var public []string
-	for _, f := range []string{"../../clanker-ui.js", "../../clanker-ui-chart.js"} {
+	for _, f := range []string{"../../clanker-ui.js", "../../clanker-ui-chart.js", "../../clanker-ui-code.js"} {
 		b, err := os.ReadFile(f)
 		if err != nil {
 			t.Fatal(err)
@@ -493,12 +495,12 @@ func TestDistJSLinks(t *testing.T) {
 		}
 		return b.String()
 	}
-	groups := []string{distCore, "clanker-ui-chart.min.js"}
+	groups := []string{distCore, "clanker-ui-chart.min.js", "clanker-ui-code.min.js"}
 	for _, g := range distJSGroups[1:] {
 		groups = append(groups, "clanker-ui-"+g+".min.js")
 	}
 	os.WriteFile(filepath.Join(dir, "groups.js"), []byte(line(groups...)), 0o644)
-	os.WriteFile(filepath.Join(dir, "all.js"), []byte(line(distAll, "clanker-ui-chart.min.js")), 0o644)
+	os.WriteFile(filepath.Join(dir, "all.js"), []byte(line(distAll, "clanker-ui-chart.min.js", "clanker-ui-code.min.js")), 0o644)
 	for _, entry := range []string{"groups.js", "all.js"} {
 		if got := esbuildBundle(t, dir, entry); !slices.Equal(got, public) {
 			t.Errorf("%s exports\n got %v\nwant %v", entry, got, public)
@@ -577,7 +579,7 @@ var docImport = regexp.MustCompile(`import\s*\{([^}]*)\}\s*from\s*"([^"]+)"`)
 
 func TestDocsImportNames(t *testing.T) {
 	exports := map[string][]string{}
-	for _, f := range []string{"clanker-ui.js", "clanker-ui-chart.js"} {
+	for _, f := range []string{"clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-code.js"} {
 		exports[f] = esbuildBundle(t, "../..", f)
 	}
 	mins, err := filepath.Glob("../../dist/*.min.js")
@@ -634,8 +636,9 @@ func TestDocsImportNames(t *testing.T) {
 	}
 	cat := testCatalog(t)
 	for _, c := range cat.Components {
-		files := []string{readableModule(c.Group)}
-		for _, m := range strings.Split(minModules(c.Group), " or ") {
+		readable, min := exportModules(cat, c)
+		files := []string{readable}
+		for _, m := range strings.Split(min, " or ") {
 			files = append(files, strings.Trim(m, "`"))
 		}
 		for _, name := range c.Exports {

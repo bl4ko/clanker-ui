@@ -9,6 +9,8 @@ metadata:
 
 # clanker-ui
 
+**Version: the `version` in the front matter is the last release. Kit files that came with this skill can be newer (a copy from `main`); then this skill describes those files, so use them and ignore the number.**
+
 clanker-ui is shadcn/ui as static files. You write the HTML that shadcn renders (`data-slot` parts). The kit module adds the behavior, ARIA, and missing decorations. You never call an init function. In React projects, use shadcn/ui, not this kit.
 
 References in this skill:
@@ -20,12 +22,12 @@ References in this skill:
 - [references/design.md](references/design.md): design rules for layout, spacing, type, buttons, color, forms, states, and phones. [references/choosing.md](references/choosing.md): which component for which job.
 - `references/blocks/<name>.html` (and `.js`): whole pages to start from.
 - [references/ai-elements.md](references/ai-elements.md): chat and agent patterns (message, prompt, steps, sources, code output) and which one to use.
-- [references/recipes.md](references/recipes.md): set values from code, forms in overlays, several rules per field, star rating, card grid, a shared header on static pages, breadcrumbs in the top header, category bar charts, status strips, long pages.
+- [references/recipes.md](references/recipes.md): set values from code, forms in overlays, several rules per field, star rating, card grid, a shared header on static pages, breadcrumbs in the top header, category bar charts, uptime strips, long pages, a toast after a page change, a dropzone, lists in cards, phone tables, a dashboard in the top-header shell.
 - [references/events.md](references/events.md), [references/theming.md](references/theming.md), [references/testing.md](references/testing.md) (Playwright check and design lint), [references/clanker-ui.json](references/clanker-ui.json) (all component data as JSON).
 
 ## 1. Get the files
 
-`version` above is the last release. A copy from `main` can be newer (the Unreleased part of `CHANGELOG.md` in the repository). When the kit files came with this skill, use those files and skip the download. Else use one release version for all files: `gh release download v0.2.1 -R bl4ko/clanker-ui -p 'clanker-ui-*.zip' -p SHA256SUMS`, or `curl -fLO https://github.com/bl4ko/clanker-ui/releases/download/v0.2.1/clanker-ui-0.2.1.zip`. The zip has the readable files, `dist/` (the `.min` files), and this skill.
+When the kit files came with this skill, use those files and skip the download. Else use one release version for all files: `gh release download v0.2.1 -R bl4ko/clanker-ui -p 'clanker-ui-*.zip' -p SHA256SUMS`, or `curl -fLO https://github.com/bl4ko/clanker-ui/releases/download/v0.2.1/clanker-ui-0.2.1.zip`. The zip has the readable files, `dist/` (the `.min` files), and this skill.
 
 Copy the files that the page loads (step 2) and the files they import into one directory, for example `static/vendor/clanker-ui/` with `static/` as the web root. Put the `dist/` files in that directory, not in a subdirectory. Do not change the files. Put your styles in `app.css` and your code in a module such as `app.js`.
 
@@ -41,34 +43,39 @@ Find the group of each component in [references/components.md](references/compon
 
 - A group module imports `clanker-ui-core.min.js` itself. Never mix readable and `.min` files, and never load `clanker-ui.min.js` with a group file. A missing group fails without a message; if you are not sure, use the one-file set.
 - Charts: module `clanker-ui-chart.min.js`. `clanker-ui.min.css` has the chart CSS; with group files also load `clanker-ui-chart.min.css`.
+- Syntax colors in a code block: module `clanker-ui-code.min.js` and `data-language` on `code-block-content`.
 - Every kit file has a `.min` version: the theme script is `clanker-ui-theme.min.js` in the `.min` set and `clanker-ui-theme.js` in the readable set.
-- Always load `clanker-ui-a11y.min.css` after the kit CSS: the kit keeps the shadcn values, and status badges, the avatar fallback, muted text, and input borders are below WCAG 2.2 AA without it. Color schemes: `clanker-ui-themes.min.css` between the kit CSS and the a11y file.
+- Always load `clanker-ui-a11y.min.css` after the kit CSS (every block does): the kit keeps the shadcn values, and status badges, the avatar fallback, muted text, and input borders are below WCAG 2.2 AA without it.
 
 ## 3. Write the head
+
+Every page and every block has this head, in this order:
 
 ```html
 <!doctype html>
 <html lang="en">
 <head>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
   <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
+  <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-core.min.css">
-  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-forms.min.css">
-  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-overlays.min.css">
+  <title>Invoices - Tally</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
   <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-a11y.min.css">
   <link rel="stylesheet" href="/app.css">
   <link rel="modulepreload" href="/vendor/clanker-ui/clanker-ui-core.min.js">
-  <script type="module" src="/vendor/clanker-ui/clanker-ui-forms.min.js"></script>
-  <script type="module" src="/vendor/clanker-ui/clanker-ui-overlays.min.js"></script>
+  <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
+  <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
   <script type="module" src="/app.js"></script>
 </head>
 ```
 
-- The CSP meta tag is for static hosts (`python3 -m http.server`, GitHub Pages) and comes first in `<head>`. A server that sends the CSP header ([references/csp.md](references/csp.md)) does not need it.
+- `<meta charset>` is first (it must be in the first 1024 bytes). The CSP meta tag comes next, before every `<link>` and `<script>`: a meta policy does not apply to elements before it. A server that sends the CSP header ([references/csp.md](references/csp.md)) can leave the meta tag out.
+- Group files: replace `clanker-ui.min.css` with the group CSS files and `clanker-ui.min.js` with one module per group (step 2). Color schemes: `clanker-ui-themes.min.css` between the kit CSS and the a11y file. A real icon: `<link rel="icon" href="/favicon.svg">`.
 - All scripts are external files from the same origin. No inline `<script>` or `<style>`, no `style=""`, no `onclick=""`.
-- A theme toggle or theme switch (not the switch component): see [references/theming.md](references/theming.md).
+- Theme toggle and theme switch (not the switch component): [references/theming.md](references/theming.md).
 
 ## 4. Build a page
 
@@ -80,10 +87,10 @@ Find the group of each component in [references/components.md](references/compon
    | `data-table` | A top-header app: a list with filters, sorting, and paging |
    | `settings` | Settings in sections with their own save actions |
    | `form` | Create or edit one record, with a live summary and Delete in edit mode |
-   | `detail` | One record with facts and activity |
+   | `detail` | One record: a large title with a meta row, facts, and activity |
    | `login`, `login-split` | Sign in: centered card, or a form next to a brand panel |
    | `card-grid` | Records with a preview (books, products): filters, sort, a grid of cards |
-   | `overlay-form` | A form in a dialog and a long form in a sheet with a scrolling body |
+   | `overlay-form` | A record page with a cover: a form in a dialog and a long form in a sheet with a scrolling body |
    | `states` | Empty, loading, and error states (a catalog: copy single cards) |
 
 2. Follow [references/design.md](references/design.md) and [references/choosing.md](references/choosing.md). The page parts (`page`, `site-header`, `section-cards`, `stat-grid`, `data-table`) do the layout: `app.css` holds token overrides and real app parts only.

@@ -52,6 +52,15 @@
     --chart-grid: var(--border);
     --chart-axis: oklch(0.871 0.006 286.286);
     --chart-area-opacity: 0.1;
+    --code-comment: light-dark(#606973, #919aa4);
+    --code-keyword: light-dark(#c7293c, #f97583);
+    --code-string: light-dark(#032f62, #9ecbff);
+    --code-constant: light-dark(#005cc5, #79b8ff);
+    --code-function: light-dark(#6f42c1, #b392f0);
+    --code-variable: light-dark(#bc3d00, #ffab70);
+    --code-tag: light-dark(#0c792e, #85e89d);
+    --code-inserted: light-dark(#0c792e, #85e89d);
+    --code-deleted: light-dark(#b31d28, #fdaeb7);
   }
   [data-theme="dark"] {
     --success-bg: hsl(150 100% 6%);
@@ -455,6 +464,30 @@
   }
   @container page-header (width < 32rem) {
     [data-slot="page-actions"] { grid-column: 1 / -1; grid-row: auto; justify-content: flex-start; margin-top: calc(var(--spacing) * 2); }
+  }
+  [data-slot="page-header"][data-size="lg"] { row-gap: calc(var(--spacing) * 1.5); }
+  [data-slot="page-header"][data-size="lg"] > [data-slot="page-title"] { font-size: 1.875rem; line-height: 2.25rem; }
+  [data-slot="page-meta"] {
+    grid-column: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing) calc(var(--spacing) * 4);
+    margin-top: var(--spacing);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    color: var(--muted-foreground);
+  }
+  [data-slot="page-meta"] > * { display: inline-flex; align-items: center; gap: calc(var(--spacing) * 1.5); min-width: 0; }
+  [data-slot="page-meta"] > * > svg:not([data-slot]) { flex: none; width: 1rem; height: 1rem; }
+  [data-slot="accordion-trigger"] > [data-slot="badge"] { margin-inline-start: auto; align-self: center; }
+  [data-slot="accordion-trigger"] > [data-slot="badge"] ~ [data-slot="accordion-trigger-icon"] { margin-inline-start: calc(var(--spacing) * 2); }
+  [data-slot="card"][data-orientation="horizontal"] { flex-direction: row; align-items: flex-start; column-gap: 0; padding-inline-start: var(--card-spacing); }
+  [data-slot="card"][data-orientation="horizontal"] > [data-slot="cover"] { flex: none; width: 6rem; }
+  [data-slot="card"][data-orientation="horizontal"] > :not([data-slot="cover"]) { display: flex; flex: 1 1 0; flex-direction: column; gap: var(--card-spacing); min-width: 0; }
+  [data-slot="card"][data-orientation="horizontal"] [data-slot="card-footer"] { flex-wrap: wrap; gap: calc(var(--spacing) * 2); }
+  @media (width >= 48rem) {
+    [data-slot="card"][data-orientation="horizontal"] > [data-slot="cover"] { width: 8rem; }
   }
   [data-slot="page-body"] {
     display: grid;
@@ -863,7 +896,7 @@
   [data-slot="text-stack"] > :first-child { font-weight: 500; }
   [data-slot="text-stack"] > :not(:first-child) { font-size: var(--text-xs); color: color-mix(in oklab, currentColor 70%, transparent); }
 
-  :is([data-slot="sheet-body"], [data-slot="drawer-body"]) {
+  [data-slot="sheet-body"], [data-slot="drawer-body"] {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
@@ -1342,6 +1375,17 @@
     font-size: 0.875rem;
     line-height: 1.25rem;
   }
+  [data-slot="code-block-wrap-button"][aria-pressed="true"] { color: var(--foreground); }
+  [data-slot="code-block-code"] [data-token~="comment"] { color: var(--code-comment); }
+  [data-slot="code-block-code"] [data-token~="keyword"] { color: var(--code-keyword); }
+  [data-slot="code-block-code"] [data-token~="string"] { color: var(--code-string); }
+  [data-slot="code-block-code"] [data-token~="constant"] { color: var(--code-constant); }
+  [data-slot="code-block-code"] [data-token~="function"] { color: var(--code-function); }
+  [data-slot="code-block-code"] [data-token~="variable"] { color: var(--code-variable); }
+  [data-slot="code-block-code"] [data-token~="tag"] { color: var(--code-tag); }
+  [data-slot="code-block-code"] [data-token~="inserted"] { color: var(--code-inserted); }
+  [data-slot="code-block-code"] [data-token~="deleted"] { color: var(--code-deleted); }
+  [data-slot="code-block-code"] [data-token~="bold"] { font-weight: 600; }
 }
 
 @layer clanker.utilities {

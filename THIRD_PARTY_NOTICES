@@ -93,7 +93,8 @@ SOFTWARE.
 
 ================================================================================
 
-The generated CSS of clanker-ui includes CSS from Tailwind CSS 4.3.3 (https://github.com/tailwindlabs/tailwindcss).
+The generated CSS of clanker-ui and of the docs examples (docs/assets/examples.css)
+includes CSS from Tailwind CSS 4.3.3 (https://github.com/tailwindlabs/tailwindcss).
 Tailwind CSS is distributed under the following license:
 
 MIT License

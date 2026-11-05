@@ -76,10 +76,10 @@ components/alert-dialog#alert-dialog-small-media	-	no example yet
 components/alert-dialog#alert-dialog-destructive	demo-alert-dialog-3
 components/alert-dialog#alert-dialog-rtl	-	no example yet
 components/aspect-ratio	/docs/components/aspect-ratio
-components/aspect-ratio#aspect-ratio-demo	demo-aspect-ratio-0
-components/aspect-ratio#aspect-ratio-square	demo-aspect-ratio-1
-components/aspect-ratio#aspect-ratio-portrait	demo-aspect-ratio-1
-components/aspect-ratio#aspect-ratio-rtl	-	no example yet
+components/aspect-ratio#aspect-ratio-demo	aspect-ratio-demo
+components/aspect-ratio#aspect-ratio-square	aspect-ratio-square
+components/aspect-ratio#aspect-ratio-portrait	aspect-ratio-portrait
+components/aspect-ratio#aspect-ratio-rtl	aspect-ratio-rtl
 components/attachment	/docs/components/attachment
 components/attachment#attachment-demo	demo-attachment-0
 components/attachment#attachment-image	demo-attachment-3

@@ -45,6 +45,7 @@ uv run --no-project --with playwright python -I tools/behavior gate --quick --ba
 - Change component CSS in the generator or `tools/gen/kit.css`, never in `clanker-ui.css`. After a change to either, run `go run ./tools/gen -src "$SHADCN_SRC" -out clanker-ui.css` (it also runs `dist`; `go run ./tools/gen fetch -src <new empty directory>` makes `$SHADCN_SRC`). `dist` alone does not copy `kit.css` into `clanker-ui.css`.
 - On a merge conflict in a generated file, take either side and run the generator again.
 - After a docs example or page change, update its rows in `tools/gen/docs-map.tsv` (DEVELOPMENT.md "Docs coverage").
+- After a class change in `docs/content/**/examples/*.html`, run `go run ./tools/gen utilities` for `docs/assets/examples.css` (DEVELOPMENT.md "Example classes").
 
 ## Code style
 

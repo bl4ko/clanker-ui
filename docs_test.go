@@ -821,3 +821,26 @@ func docsAlternatives(sel string) []string {
 	}
 	return out
 }
+
+func TestExampleClassesHaveRules(t *testing.T) {
+	docsCSS := readText(t, "docs/assets/docs.css")
+	for _, h := range previewHeights {
+		if !strings.Contains(docsCSS, `[data-docs="preview"][data-height="`+h+`"] { height: `+h+`; }`) {
+			t.Errorf("docs.css has no rule for the preview height %s", h)
+		}
+	}
+	css := readText(t, "docs/assets/examples.css")
+	esc := regexp.MustCompile(`[^A-Za-z0-9_-]`)
+	class := regexp.MustCompile(`\sclass="([^"]*)"`)
+	files, _ := filepath.Glob("docs/content/*/*/examples/*.html")
+	more, _ := filepath.Glob("docs/content/*/examples/*.html")
+	for _, f := range append(files, more...) {
+		for _, m := range class.FindAllStringSubmatch(readText(t, f), -1) {
+			for _, c := range strings.Fields(m[1]) {
+				if !strings.Contains(css, "."+esc.ReplaceAllString(c, `\$0`)) {
+					t.Errorf("%s: class %s has no rule in docs/assets/examples.css (go run ./tools/gen utilities, DEVELOPMENT.md Docs site)", f, c)
+				}
+			}
+		}
+	}
+}

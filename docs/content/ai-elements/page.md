@@ -5,7 +5,7 @@ description: Patterns for agentic interfaces, built from clanker-ui components.
 
 AI Elements are patterns for agentic interfaces. Each one is a composition of kit components that you copy into your page. There is nothing more to load: a pattern uses the parts, the CSS, and the JavaScript of its components, and adds no `data-slot` of its own.
 
-A chat is a list of [Message](/docs/ai-elements/message) turns inside a [Message Scroller](/docs/components/message-scroller). The steps that an agent takes inside a turn are lines of a [Trace](/docs/components/trace), so every step has the same shape.
+A [Chat](/docs/ai-elements/chat) is a list of [Message](/docs/ai-elements/message) turns inside a [Message Scroller](/docs/components/message-scroller). The steps that an agent takes inside a turn are lines of a [Trace](/docs/components/trace), so every step has the same shape.
 
 The patterns follow the [shadcn/ui AI Elements](https://ui.shadcn.com/docs/ai-elements). Where shadcn/ui uses the AI SDK, these pages show plain JavaScript that changes the markup: each example has the HTML of the finished state and a module that plays the steps again.
 
@@ -13,10 +13,15 @@ The patterns follow the [shadcn/ui AI Elements](https://ui.shadcn.com/docs/ai-el
 
 | Pattern | Use |
 | --- | --- |
+| [Chat](/docs/ai-elements/chat) | The thread. Message Scroller keeps your place while the reply streams. |
+| [Context](/docs/ai-elements/context) | How much of the context window the conversation has used. |
 | [File Tree](/docs/ai-elements/file-tree) | The files the agent changed, as a folder tree. |
 | [Inline Citation](/docs/ai-elements/inline-citation) | A source in the sentence that opens on hover. |
 | [Message](/docs/ai-elements/message) | One turn. The person's message, and the agent's reply with its actions. |
+| [Model Selector](/docs/ai-elements/model-selector) | Two menus. One picks the model the agent runs, the other picks how hard it thinks. |
+| [Prompt Input](/docs/ai-elements/prompt-input) | A message field with attachments and a send button. |
 | [Sources](/docs/ai-elements/sources) | The links the agent used for a reply. |
+| [Suggestion](/docs/ai-elements/suggestion) | A short prompt you can send to the agent in one click. |
 
 ## Load the files
 

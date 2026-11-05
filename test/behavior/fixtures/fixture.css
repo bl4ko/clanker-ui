@@ -468,6 +468,46 @@ html {
   max-width: 352px;
 }
 
+[data-behavior~="col-gap-1"],
+[data-behavior~="col-gap-3"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+[data-behavior~="col-gap-3"] {
+  gap: 0.75rem;
+  font-size: inherit;
+}
+
+[data-behavior~="row-between"] {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+[data-behavior~="max-w-512"] {
+  width: 100%;
+  max-width: 32rem;
+}
+
+[data-behavior~="p-3"] {
+  padding: 0.75rem;
+}
+
+[data-behavior~="ms-auto"] {
+  margin-inline-start: auto;
+}
+
+[data-behavior~="round"] {
+  border-radius: 9999px;
+}
+
+[data-behavior~="w-36"] {
+  width: 9rem;
+
 [data-behavior~="col-gap-1"] {
   display: flex;
   flex-direction: column;

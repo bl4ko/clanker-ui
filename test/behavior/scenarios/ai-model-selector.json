@@ -1,0 +1,24 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/model-selector",
+  "note": "AI Elements pattern: two dropdown menus with radio items that close on click, in an input group. The live example uses the base-rhea style.",
+  "parts": {
+    "model": {"role": "button", "name": "Model:"},
+    "effort": {"role": "button", "name": "Effort:"},
+    "menu": {"role": "menu", "popup": true},
+    "sonnet": {"role": "menuitemradio", "name": "Claude Sonnet 4.5", "in": "page"},
+    "high": {"role": "menuitemradio", "name": "High", "in": "page"}
+  },
+  "positions": [],
+  "steps": [
+    {"do": "click", "target": "model", "motion": "menu"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "Enter", "motion": "menu"},
+    {"do": "click", "target": "model", "motion": "menu", "label": "open again"},
+    {"do": "click", "target": "sonnet", "motion": "menu"},
+    {"do": "tab"},
+    {"do": "press", "key": "Enter", "motion": "menu", "label": "open the effort menu"},
+    {"do": "click", "target": "high", "motion": "menu"},
+    {"do": "press", "key": "Escape"}
+  ]
+}

@@ -1,0 +1,36 @@
+<div class="flex min-h-72 w-full max-w-sm flex-col gap-4 py-6 text-sm" id="tool-approval">
+  <template id="tool-approval-turn">
+    <div data-slot="message" data-align="end">
+      <div data-slot="message-content">
+        <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Clean up the build folder.</div></div>
+      </div>
+    </div>
+    <div data-slot="message">
+      <div data-slot="message-content" class="gap-4">
+        <div data-slot="trace">
+          <div data-slot="trace-collapsible">
+            <button type="button" data-slot="trace-collapsible-trigger">
+              <span data-slot="trace-line">
+                <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                <span data-slot="trace-title">Thought</span>
+              </span>
+            </button>
+            <div data-slot="trace-collapsible-content" class="whitespace-pre-wrap">The build output lives in dist. Deleting it cannot be undone, so I should ask before I run the command.</div>
+          </div>
+        </div>
+        <div data-slot="item" data-variant="outline" data-size="sm">
+          <div data-slot="item-media" data-variant="icon"><svg data-lucide="terminal"></svg></div>
+          <div data-slot="item-content">
+            <div data-slot="item-title">Run rm -rf dist?</div>
+            <p data-slot="item-description">The command runs in this project.</p>
+          </div>
+          <div data-slot="item-actions">
+            <button type="button" data-slot="button" data-variant="outline" data-size="sm">Deny</button>
+            <button type="button" data-slot="button" data-size="sm">Approve</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="mt-auto self-start" id="tool-approval-send">Send message</button>
+</div>

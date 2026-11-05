@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Task behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-behavior="col-gap-2 max-w-sm text-sm">
+          <div data-slot="message" data-align="end">
+            <div data-slot="message-content">
+              <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Add Open Graph metadata to the home page.</div></div>
+            </div>
+          </div>
+          <div data-slot="message">
+            <div data-slot="message-content">
+              <div data-slot="trace">
+                <div data-slot="trace-collapsible">
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                      <span data-slot="trace-title">Found the project files</span>
+                    </span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <div data-slot="trace">
+                      <span data-slot="trace-line"><span data-slot="trace-title">Searched for generateMetadata</span></span>
+                      <span data-slot="trace-line"><span data-slot="trace-title">Read app/layout.tsx</span></span>
+                      <span data-slot="trace-line"><span data-slot="trace-title">Read app/page.tsx</span></span>
+                    </div>
+                  </div>
+                </div>
+                <div data-slot="trace-collapsible">
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                      <span data-slot="trace-title">Updated the page metadata</span>
+                    </span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <div data-slot="trace">
+                      <span data-slot="trace-line"><span data-slot="trace-title">Edited app/layout.tsx</span></span>
+                      <span data-slot="trace-line"><span data-slot="trace-title">Edited app/page.tsx</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p>Added Open Graph defaults to app/layout.tsx and a title, description and image for the home page in app/page.tsx.</p>
+            </div>
+          </div>
+          <button type="button" data-slot="button" data-variant="outline" data-size="sm">Replay</button>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

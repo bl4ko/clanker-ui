@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Chain of Thought behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-behavior="col-gap-2 max-w-sm text-sm">
+          <div data-slot="message" data-align="end">
+            <div data-slot="message-content">
+              <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Why is the checkout deploy so slow?</div></div>
+            </div>
+          </div>
+          <div data-slot="message">
+            <div data-slot="message-content">
+              <div data-slot="trace">
+                <div data-slot="trace-collapsible">
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                      <span data-slot="trace-title">Researched in 3 steps</span>
+                    </span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <div data-slot="trace">
+                      <div data-slot="trace-collapsible" data-default-open>
+                        <button type="button" data-slot="trace-collapsible-trigger">
+                          <span data-slot="trace-line">
+                            <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                            <span data-slot="trace-title">Read the build log for dpl_8Kx2</span>
+                          </span>
+                        </button>
+                        <div data-slot="trace-collapsible-content">
+                          <div data-slot="code-block" data-size="sm">
+                            <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">install    41s
+        compile    38s
+        images   3m 52s</code></pre>
+                          </div>
+                        </div>
+                      </div>
+                      <div data-slot="trace-collapsible">
+                        <button type="button" data-slot="trace-collapsible-trigger">
+                          <span data-slot="trace-line">
+                            <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                            <span data-slot="trace-title">Searched the web for next.js image cache key</span>
+                          </span>
+                        </button>
+                        <div data-slot="trace-collapsible-content">
+                          <div data-slot="trace">
+                            <a href="https://nextjs.org/docs/app/api-reference/components/image" target="_blank" rel="noreferrer">
+                              <span data-slot="trace-line">
+                                <span data-slot="trace-icon"><svg data-lucide="globe"></svg></span>
+                                <span data-slot="trace-title">Image component | nextjs.org<span class="sr-only"> (opens in a new tab)</span></span>
+                                <span data-slot="trace-icon"><svg data-lucide="arrow-up-right"></svg></span>
+                              </span>
+                            </a>
+                            <a href="https://vercel.com/docs/deployments/troubleshoot-a-build" target="_blank" rel="noreferrer">
+                              <span data-slot="trace-line">
+                                <span data-slot="trace-icon"><svg data-lucide="globe"></svg></span>
+                                <span data-slot="trace-title">Build cache | vercel.com<span class="sr-only"> (opens in a new tab)</span></span>
+                                <span data-slot="trace-icon"><svg data-lucide="arrow-up-right"></svg></span>
+                              </span>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      <div data-slot="trace-collapsible">
+                        <button type="button" data-slot="trace-collapsible-trigger">
+                          <span data-slot="trace-line">
+                            <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                            <span data-slot="trace-title">Searched the code for cacheKey</span>
+                          </span>
+                        </button>
+                        <div data-slot="trace-collapsible-content">
+                          <div data-behavior="row-wrap-2">
+                            <span data-slot="badge" data-variant="secondary">next.config.ts</span>
+                            <span data-slot="badge" data-variant="secondary">scripts/optimize-images.ts</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p>Image optimization takes almost four minutes because its cache key includes the commit hash. Key it on the image directory instead.</p>
+            </div>
+          </div>
+          <button type="button" data-slot="button" data-variant="outline" data-size="sm">Replay</button>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

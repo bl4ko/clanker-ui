@@ -1,0 +1,51 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/chain-of-thought",
+  "note": "The docs example uses the base-rhea style; behavior does not depend on it, and no step compares sizes.",
+  "parts": {
+    "trigger": {
+      "role": "button",
+      "name": "Researched in 3 steps"
+    },
+    "log": {
+      "role": "button",
+      "name": "Read the build log"
+    },
+    "content": {
+      "slot": "trace-collapsible-content",
+      "optional": true
+    }
+  },
+  "anchor": "trigger",
+  "positions": [],
+  "steps": [
+    {
+      "do": "click",
+      "target": "trigger",
+      "motion": "content"
+    },
+    {
+      "do": "tab"
+    },
+    {
+      "do": "press",
+      "key": "Enter",
+      "motion": "content",
+      "label": "close the build log"
+    },
+    {
+      "do": "tab"
+    },
+    {
+      "do": "press",
+      "key": "Space",
+      "motion": "content",
+      "label": "open the web search"
+    },
+    {
+      "do": "click",
+      "target": "trigger",
+      "motion": "content",
+      "label": "close the summary"
+    }
+  ]
+}

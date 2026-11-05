@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Tool behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-behavior="col-gap-2 max-w-sm text-sm">
+          <div data-slot="message" data-align="end">
+            <div data-slot="message-content">
+              <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Which package managers are installed?</div></div>
+            </div>
+          </div>
+          <div data-slot="message">
+            <div data-slot="message-content">
+              <div data-slot="trace">
+                <div data-slot="trace-collapsible">
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+                      <span data-slot="trace-title">Ran node --version</span>
+                    </span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <div data-slot="code-block" data-size="sm">
+                      <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">v24.18.0</code></pre>
+                    </div>
+                  </div>
+                </div>
+                <div data-slot="trace-collapsible">
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+                      <span data-slot="trace-title">Ran npm --version</span>
+                    </span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <div data-slot="code-block" data-size="sm">
+                      <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">11.6.2</code></pre>
+                    </div>
+                  </div>
+                </div>
+                <div data-slot="trace-collapsible" data-default-open>
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line" data-status="error">
+                      <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+                      <span data-slot="trace-title">Failed to run pnpm --version</span>
+                    </span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <div data-slot="code-block" data-size="sm">
+                      <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">command not found: pnpm</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p>Node 24 and npm 11 are installed. pnpm is not.</p>
+            </div>
+          </div>
+          <button type="button" data-slot="button" data-variant="outline" data-size="sm">Replay</button>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

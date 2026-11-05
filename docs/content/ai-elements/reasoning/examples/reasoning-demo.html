@@ -1,0 +1,23 @@
+<div class="flex min-h-72 w-full max-w-sm flex-col gap-4 py-6 text-sm" id="reasoning-demo">
+  <div data-slot="message" data-align="end">
+    <div data-slot="message-content">
+      <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Why is the checkout deploy so slow?</div></div>
+    </div>
+  </div>
+  <div data-slot="message">
+    <div data-slot="message-content" class="gap-4">
+      <div data-slot="trace">
+        <div data-slot="trace-collapsible" data-default-open>
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line"><span data-slot="trace-title">Thought for 5s</span></span>
+          </button>
+          <div data-slot="trace-collapsible-content" class="whitespace-pre-wrap">The deploy log has three phases. Install takes 38s and next build takes 52s, both normal for this repo.
+
+Image optimization takes 3m 50s. It reruns on every deploy because its cache key includes the commit hash, so the cache never hits.</div>
+        </div>
+      </div>
+      <p>Image optimization is the bottleneck. Key its cache on the lockfile and the image directory instead of the commit hash, and the deploy should take under two minutes.</p>
+    </div>
+  </div>
+  <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="mt-auto self-start" id="reasoning-demo-replay">Replay</button>
+</div>

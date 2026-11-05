@@ -11,4 +11,9 @@ Rules for every pattern:
 
 | Need | Pattern | Built with |
 | --- | --- | --- |
+| Several steps behind one summary line ("Researched in 3 steps") that opens while they run | [Chain of Thought](https://bl4ko.github.io/clanker-ui/docs/ai-elements/chain-of-thought/) | `trace` in a `trace-collapsible`, `code-block`, `badge` |
 | One turn: the person's bubble, the agent's reply, copy and feedback buttons | [Message](https://bl4ko.github.io/clanker-ui/docs/ai-elements/message/) | `message`, `bubble`, `tooltip`, `code-block` |
+| Steps known before the work starts, with done, running, and pending steps and a count | [Plan](https://bl4ko.github.io/clanker-ui/docs/ai-elements/plan/) | `trace`, `trace-description` |
+| The model's thinking: "Thinking" and open while it streams, "Thought" and closed after | [Reasoning](https://bl4ko.github.io/clanker-ui/docs/ai-elements/reasoning/) | `trace-collapsible` |
+| Steps that appear as the agent takes them, grouped per piece of work | [Task](https://bl4ko.github.io/clanker-ui/docs/ai-elements/task/) | `trace` in a `trace-collapsible` |
+| One tool call (a command, a file read) from running to output or error; long output in a sheet | [Tool](https://bl4ko.github.io/clanker-ui/docs/ai-elements/tool/) | `trace-collapsible`, `code-block`, `sheet`, `item` |

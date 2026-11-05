@@ -1,0 +1,34 @@
+<div data-slot="trace" class="max-w-sm">
+  <div data-slot="trace-collapsible" data-default-open>
+    <button type="button" data-slot="trace-collapsible-trigger">
+      <span data-slot="trace-line">
+        <span data-slot="trace-icon"><svg data-lucide="route"></svg></span>
+        <span data-slot="trace-title">Plan: add dark mode</span>
+        <span data-slot="trace-description">1 of 4 done</span>
+      </span>
+    </button>
+    <div data-slot="trace-collapsible-content">
+      <div class="flex flex-col gap-3">
+        <p>Store the theme in a cookie so the server renders the right one and the page does not flash on load.</p>
+        <div data-slot="trace">
+          <span data-slot="trace-line">
+            <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+            <span data-slot="trace-title">Add a dark variant to the theme tokens</span>
+          </span>
+          <span data-slot="trace-line" data-status="pending">
+            <span data-slot="trace-icon"><svg data-lucide="circle"></svg></span>
+            <span data-slot="trace-title">Read the theme from a cookie on the server</span>
+          </span>
+          <span data-slot="trace-line" data-status="pending">
+            <span data-slot="trace-icon"><svg data-lucide="circle"></svg></span>
+            <span data-slot="trace-title">Add a toggle to the settings page</span>
+          </span>
+          <span data-slot="trace-line" data-status="pending">
+            <span data-slot="trace-icon"><svg data-lucide="circle"></svg></span>
+            <span data-slot="trace-title">Check contrast on the charts</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -98,7 +98,12 @@
       "title": "AI Elements",
       "items": [
         {"title": "AI Elements", "href": "/docs/ai-elements", "hidden": true},
-        {"title": "Message", "href": "/docs/ai-elements/message"}
+        {"title": "Chain of Thought", "href": "/docs/ai-elements/chain-of-thought"},
+        {"title": "Message", "href": "/docs/ai-elements/message"},
+        {"title": "Plan", "href": "/docs/ai-elements/plan"},
+        {"title": "Reasoning", "href": "/docs/ai-elements/reasoning"},
+        {"title": "Task", "href": "/docs/ai-elements/task"},
+        {"title": "Tool", "href": "/docs/ai-elements/tool"}
       ]
     },
     {

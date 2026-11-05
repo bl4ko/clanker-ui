@@ -13,7 +13,12 @@ The patterns follow the [shadcn/ui AI Elements](https://ui.shadcn.com/docs/ai-el
 
 | Pattern | Use |
 | --- | --- |
+| [Chain of Thought](/docs/ai-elements/chain-of-thought) | A summary that expands into the steps an agent took. |
 | [Message](/docs/ai-elements/message) | One turn. The person's message, and the agent's reply with its actions. |
+| [Plan](/docs/ai-elements/plan) | The steps the agent plans to take, and how far it has got. |
+| [Reasoning](/docs/ai-elements/reasoning) | The agent's thinking as it streams. |
+| [Task](/docs/ai-elements/task) | The steps the agent takes, as it takes them. |
+| [Tool](/docs/ai-elements/tool) | A tool call the agent makes, from input to output. |
 
 ## Load the files
 

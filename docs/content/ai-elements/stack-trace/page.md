@@ -41,14 +41,14 @@ The title truncates, so repeat the full error at the top of the content. Frames 
 
 ## Frame Links
 
-Turn your own frames into links that open the file at the line. Fold the framework frames into a collapsible line of their own, so the frames you can fix come first.
+Turn your own frames into links that open the file at the line. The examples link to `#`; point the links at your editor or code viewer, such as `vscode://file/<absolute path>:<line>`. Fold the framework frames into a collapsible line of their own, so the frames you can fix come first.
 
 {{example "stack-trace-frames" height="auto"}}
 
 A link that holds a `trace-line` is a step like a button: put it straight in the `trace`, so it gets the focus ring and the hover color.
 
 ```html
-<a href="/open?file=app/lib/billing.ts&line=42">
+<a href="vscode://file/home/me/acme/app/lib/billing.ts:42">
   <span data-slot="trace-line">
     <span data-slot="trace-icon"><svg data-lucide="file-code"></svg></span>
     <span data-slot="trace-title">formatInvoice in app/lib/billing.ts:42</span>

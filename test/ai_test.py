@@ -332,7 +332,8 @@ def check_ai_stack_trace_replay(t):
     assert rows_state(page, rows) == [["Ran pnpm prisma migrate reset --skip-seed", "closed", None], ["Failed: TypeError: Cannot read properties of undefined (reading 'email')", "open", "error"]]
     failed = page.locator(f"{rows} >> nth=1")
     assert failed.locator("p").inner_text() == "TypeError: Cannot read properties of undefined (reading 'email')"
-    assert [a.get_attribute("href") for a in failed.locator("a").all()] == ["#prisma/seed.ts:27", "#prisma/seed.ts:51"]
+    assert [a.get_attribute("href") for a in failed.locator("a").all()] == ["#", "#"]
+    assert failed.locator("a").all_inner_texts() == ["seedUsers in prisma/seed.ts:27", "main in prisma/seed.ts:51"]
     frames = failed.locator('[data-slot="trace"] > [data-slot="trace-collapsible"]')
     assert frames.locator('[data-slot="trace-title"]').inner_text() == "4 framework frames" and frames.get_attribute("data-state") == "closed"
     frames.locator('[data-slot="trace-collapsible-trigger"]').click()

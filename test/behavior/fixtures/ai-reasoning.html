@@ -30,7 +30,7 @@
                   </button>
                   <div data-slot="trace-collapsible-content" data-behavior="pre-wrap">The deploy log has three phases. Install takes 38s and next build takes 52s, both normal for this repo.
 
-        Image optimization takes 3m 50s. It reruns on every deploy because its cache key includes the commit hash, so the cache never hits.</div>
+Image optimization takes 3m 50s. It reruns on every deploy because its cache key includes the commit hash, so the cache never hits.</div>
                 </div>
               </div>
               <p>Image optimization is the bottleneck. Key its cache on the lockfile and the image directory instead of the commit hash, and the deploy should take under two minutes.</p>

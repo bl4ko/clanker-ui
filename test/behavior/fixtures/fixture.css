@@ -93,6 +93,24 @@ html {
   white-space: pre-wrap;
 }
 
+[data-behavior~="text-xs"] {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+[data-behavior~="frames"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-x: auto;
+  padding: 0.75rem;
+  border-radius: calc(var(--radius) * 0.8);
+  background: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  white-space: nowrap;
+}
+
 @media (min-width: 640px) {
   [data-behavior~="max-w-sm"] {
     max-width: 24rem;

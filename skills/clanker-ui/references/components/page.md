@@ -5,8 +5,9 @@ Group `core`. Needs none. CSS only.
 | Part | Write | State |
 | --- | --- | --- |
 | `page` (root) | `data-size` `lg`, `md`, `sm` | `data-layout` |
+| `page-header` | `data-size` `lg` |  |
 
-Other parts: `page-actions`, `page-aside`, `page-body`, `page-description`, `page-header`, `page-nav`, `page-title`.
+Other parts: `page-actions`, `page-aside`, `page-body`, `page-description`, `page-meta`, `page-nav`, `page-title`.
 
 Other options named in the docs: `data-layout` string.
 
@@ -39,6 +40,6 @@ Other options named in the docs: `data-layout` string.
 - `data-layout="split"` on `page` is the sign-in layout of shadcn `login-02`: two columns from 64rem. The first child is the form column: its first child is the top bar (a `brand`, or a `div` with the `brand` and a theme toggle at the ends), and the next child (the form) is centered at most 20rem wide. A `page-aside` second child is the art panel (hidden below 64rem): `--muted`, its text at the bottom, an `svg` child that fills it behind the text (`--muted-foreground` at 35 %), and a `blockquote` (18 px, weight 500, at most 28rem) with a muted `footer`.
 - `data-layout="center"` on `page` is the sign-in layout of shadcn `login-03`: a muted full-height page with its children centered at most 24rem wide. In it, card headers are centered, the card title is 20 px, a `field-description` child of the page is centered, and so is one in the field of the submit button.
 - `page` is the content column: gutters of 1rem (1.5rem from 64rem), a 1rem gap between its children (1.5rem from 48rem), and `container: page`. Put it in `sidebar-inset` or `<body>`. `data-size="sm|md|lg"` limits the content to 42rem, 56rem, or 72rem and centers it; no size fills the width (dashboards, tables).
-- `page-header` is a grid: `page-title` (24 px, weight 600) and `page-description` (muted) on the start side, `page-actions` (a row of buttons, `gap` 0.5rem) on the end side. Below 32rem of header width, the actions move under the text.
+- `page-header` is a grid: `page-title` (24 px, weight 600) and `page-description` (muted) on the start side, `page-actions` (a row of buttons, `gap` 0.5rem) on the end side. Below 32rem of header width, the actions move under the text. `data-size="lg"` makes the title 30 px (the header of a detail page). `page-meta` after the description is a wrapping row of facts (14 px, muted, 1rem apart; an icon or a `badge` before each word).
 - `page-body` puts its children in one column. With a `page-aside` first, it is a 12rem navigation column (sticky below a header of `--header-height`, default 3.5rem) and a content column of at most 42rem from 64rem; with a `page-aside` last, a 20rem side column. Each child is a flex column with a 1.5rem gap.
 - `page-nav` holds ghost buttons (`aria-current="page"` on the current one gets the muted background). It is a row that scrolls below 64rem and a column from 64rem.

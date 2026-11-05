@@ -15,7 +15,7 @@ Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui-core.min.js`):
 ### Theme toggle and switch
 
 ```html
-<button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode" aria-keyshortcuts="D"><svg data-lucide="contrast"></svg></button>
+<button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-theme-set="toggle" aria-label="Dark mode" aria-keyshortcuts="D"><svg data-lucide="contrast"></svg></button>
 <div data-slot="theme-switch" role="group" aria-label="Theme">
   <button type="button" data-theme-set="light" aria-label="Light theme"><svg data-lucide="sun"></svg></button>
   <button type="button" data-theme-set="dark" aria-label="Dark theme"><svg data-lucide="moon"></svg></button>

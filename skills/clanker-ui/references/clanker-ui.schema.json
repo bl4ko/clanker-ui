@@ -62,7 +62,7 @@
         "required": ["name", "module", "signature"],
         "properties": {
           "name": { "type": "string" },
-          "module": { "enum": ["clanker-ui.js", "clanker-ui-chart.js"] },
+          "module": { "enum": ["clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-code.js"] },
           "component": { "type": "string" },
           "signature": { "type": "string" },
           "notes": { "type": "string" }

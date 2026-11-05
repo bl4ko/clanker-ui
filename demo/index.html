@@ -4930,23 +4930,30 @@
 
       <section id="code-block" data-demo="section">
         <h3 data-demo="title">Code Block</h3>
-        <p data-demo="description">Displays code, terminal output and diffs with an optional header, line numbers and a copy button. Plain monospace text, no highlighter.</p>
+        <p data-demo="description">Displays code, terminal output and diffs with an optional header, line numbers and a copy button.</p>
         <div data-demo="preview full">
           <div id="code-block-header" data-slot="code-block">
             <div data-slot="code-block-header">
-              <div data-slot="code-block-title"><svg data-lucide="file-text"></svg>lib/auth/redirect.ts</div>
+              <div data-slot="code-block-title"><svg data-lucide="file-code"></svg>app/api/chat/route.ts</div>
               <div data-slot="code-block-actions">
+                <button type="button" data-slot="code-block-wrap-button" data-variant="ghost" data-size="icon-xs" aria-label="Wrap lines"><svg data-lucide="text-wrap"></svg></button>
+                <button type="button" data-slot="code-block-download-button" data-variant="ghost" data-size="icon-xs" aria-label="Download" data-filename="route.ts"><svg data-lucide="download"></svg></button>
                 <button type="button" data-slot="code-block-copy-button" data-variant="ghost" data-size="icon-xs" aria-label="Copy"><svg data-lucide="copy"></svg></button>
               </div>
             </div>
-            <pre data-slot="code-block-content"><code data-slot="code-block-code">export function safeRedirect(next: string | undefined) {
-  if (!next || !next.startsWith("/") || next.startsWith("//")) {
-    return "/"
-  }
-
-  return next
-}
-</code></pre>
+            <pre data-slot="code-block-content" data-language="ts" data-numbered="true"><code data-slot="code-block-code"><span data-slot="code-block-line">import { streamText } from "ai"</span>
+<span data-slot="code-block-line"></span>
+<span data-slot="code-block-line">export async function POST(request: Request) {</span>
+<span data-slot="code-block-line">  const { messages } = await request.json()</span>
+<span data-slot="code-block-line"></span>
+<span data-slot="code-block-line" data-variant="highlighted">  const result = streamText({</span>
+<span data-slot="code-block-line" data-variant="highlighted">    model: "anthropic/claude-sonnet-4.5",</span>
+<span data-slot="code-block-line" data-variant="highlighted">    system: "You are a helpful assistant. Answer in one short paragraph.",</span>
+<span data-slot="code-block-line" data-variant="highlighted">    messages,</span>
+<span data-slot="code-block-line" data-variant="highlighted">  })</span>
+<span data-slot="code-block-line"></span>
+<span data-slot="code-block-line">  return result.toUIMessageStreamResponse()</span>
+<span data-slot="code-block-line">}</span></code></pre>
           </div>
         </div>
         <h4 data-demo="subtitle">Basic and floating actions</h4>
@@ -4994,7 +5001,7 @@ done  - Compiled successfully in 41.2s
               <div data-slot="code-block-header">
                 <div data-slot="code-block-title">app/login/page.tsx</div>
               </div>
-              <pre data-slot="code-block-content" data-numbered="true" data-start-line="14"><code data-slot="code-block-code"><span data-slot="code-block-line">  const { next } = await searchParams</span>
+              <pre data-slot="code-block-content" data-language="tsx" data-numbered="true" data-start-line="14"><code data-slot="code-block-code"><span data-slot="code-block-line">  const { next } = await searchParams</span>
 <span data-slot="code-block-line" data-variant="highlighted">  const redirectTo = safeRedirect(next)</span>
 <span data-slot="code-block-line"></span>
 <span data-slot="code-block-line">  return &lt;LoginForm redirectTo={redirectTo} /&gt;</span></code></pre>
@@ -5062,6 +5069,63 @@ done  - Compiled successfully in 41.2s
               </div>
               <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code">ERR_PNPM_OUTDATED_LOCKFILE  Cannot install with "frozen-lockfile" because pnpm-lock.yaml is not up to date with package.json</code></pre>
             </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Syntax highlighting</h4>
+        <p data-demo="caption">Load <code>clanker-ui-code.js</code> and set <code>data-language</code> on the content.</p>
+        <div data-demo="preview full">
+          <div id="code-block-highlighting" data-slot="code-block">
+            <div data-slot="code-block-header">
+              <div data-slot="code-block-title">getWeather output</div>
+            </div>
+            <pre data-slot="code-block-content" data-language="json"><code data-slot="code-block-code">{
+  "location": "San Francisco",
+  "temperature": 18,
+  "unit": "celsius",
+  "conditions": ["fog", "wind"]
+}</code></pre>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Languages</h4>
+        <p data-demo="caption">A language that is not in the list renders as plain text.</p>
+        <div data-demo="preview full">
+          <div id="code-block-languages" data-demo="stack">
+            <div data-slot="code-block">
+              <div data-slot="code-block-header">
+                <div data-slot="code-block-title">app/globals.css</div>
+              </div>
+              <pre data-slot="code-block-content" data-language="css"><code data-slot="code-block-code">@import "tailwindcss";
+
+:root {
+  --radius: 0.625rem;
+}</code></pre>
+            </div>
+            <div data-slot="code-block">
+              <div data-slot="code-block-header">
+                <div data-slot="code-block-title">main.py</div>
+              </div>
+              <pre data-slot="code-block-content" data-language="python"><code data-slot="code-block-code">def greet(name: str) -&gt; str:
+    return f"Hello, {name}!"</code></pre>
+            </div>
+            <div data-slot="code-block">
+              <div data-slot="code-block-header">
+                <div data-slot="code-block-title">notes.txt</div>
+              </div>
+              <pre data-slot="code-block-content" data-language="text"><code data-slot="code-block-code">A language that is not in the list renders as plain text.</code></pre>
+            </div>
+          </div>
+        </div>
+        <h4 data-demo="subtitle">Terminal output</h4>
+        <p data-demo="caption">The language <code>ansi</code> shows the colors of terminal output and removes the escape codes. Colors do not carry from one line to the next.</p>
+        <div data-demo="preview full">
+          <div id="code-block-ansi" data-slot="code-block">
+            <div data-slot="code-block-header">
+              <div data-slot="code-block-title"><svg data-lucide="terminal"></svg>Terminal</div>
+              <div data-slot="code-block-actions">
+                <button type="button" data-slot="code-block-copy-button" data-variant="ghost" data-size="icon-xs" aria-label="Copy"><svg data-lucide="copy"></svg></button>
+              </div>
+            </div>
+            <pre data-slot="code-block-content" data-wrap="true"><code data-slot="code-block-code"></code></pre>
           </div>
         </div>
       </section>

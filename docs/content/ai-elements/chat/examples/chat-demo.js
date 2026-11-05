@@ -1,4 +1,5 @@
 import { h, icon, traceClose, traceOpen } from "./clanker-ui.js"
+import "./clanker-ui-code.js"
 
 const turns = [
   {
@@ -64,7 +65,7 @@ function markdown(source) {
           h("div", { "data-slot": "code-block-title" }, lang),
           h("div", { "data-slot": "code-block-actions" }, h("button", { type: "button", "data-slot": "code-block-copy-button", disabled: i >= lines.length })),
         ),
-        h("pre", { "data-slot": "code-block-content", "data-numbered": "true" }, h("code", { "data-slot": "code-block-code" }, code.join("\n")))))
+        h("pre", { "data-slot": "code-block-content", "data-numbered": "true", "data-language": lang }, h("code", { "data-slot": "code-block-code" }, code.join("\n")))))
     } else if (line.startsWith("- ")) {
       const items = []
       for (; i < lines.length && lines[i].startsWith("- "); i++) items.push(h("li", { class: "py-1" }, inline(lines[i].slice(2))))

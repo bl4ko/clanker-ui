@@ -96,6 +96,17 @@ def check_ai_prompt_input_attach(t):
     assert text.input_value() == ""
 
 
+CHAT_STATE = """() => {
+  const v = document.querySelector('#chat-demo [data-slot=message-scroller-viewport]')
+  const box = e => { const r = e.getBoundingClientRect(); return [Math.round(r.top), Math.round(r.height)] }
+  return {
+    viewport: [box(v), v.scrollTop, v.scrollHeight, v.clientHeight, getComputedStyle(v).visibility, v.hasAttribute('data-pending-scroll')],
+    items: [...v.querySelectorAll(':scope [data-slot=message-scroller-item]')].map(i => [box(i), getComputedStyle(i).contentVisibility, i.checkVisibility({ contentVisibilityAuto: true }), i.innerText.length]),
+    window: [scrollY, innerHeight],
+  }
+}"""
+
+
 def check_ai_chat_turn(t):
     page = t.page
     t.docs("/docs/ai-elements/chat")
@@ -109,8 +120,10 @@ def check_ai_chat_turn(t):
     page.wait_for_function("() => document.querySelector('#chat-demo [data-slot=trace-title]')?.textContent === 'Thinking'")
     assert demo.locator('[data-slot="trace-collapsible"]').first.get_attribute("data-state") == "open"
     page.wait_for_function("() => document.querySelector('#chat-demo-text').value === 'Make it follow the system setting by default.'", timeout=10000)
+    page.locator("#chat-demo-thread").evaluate("e => e.closest('[data-slot=message-scroller]').scrollIntoView({ block: 'center' })")
+    page.evaluate("() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))")
     titles = demo.locator('[data-slot="trace-title"]').all_inner_texts()
-    assert titles == ["Thought", "Ran rg -l ThemeProvider app"], titles
+    assert titles == ["Thought", "Ran rg -l ThemeProvider app"], (titles, page.evaluate(CHAT_STATE))
     assert demo.locator('[data-slot="trace-collapsible"]').first.get_attribute("data-state") == "closed"
     reply = demo.locator('[data-slot="message"]:not([data-align="end"]) [data-slot="message-content"] > div:last-child')
     assert reply.locator("p").first.text_content() == "next-themes is already set up in app/layout.tsx, so the toggle only has to call setTheme."

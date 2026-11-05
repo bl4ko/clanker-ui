@@ -1,4 +1,5 @@
 import { icon } from "./clanker-ui.js"
+import "./clanker-ui-code.js"
 
 const copy = document.getElementById("message-pattern-copy")
 let timer

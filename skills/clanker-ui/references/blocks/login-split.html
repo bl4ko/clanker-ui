@@ -9,6 +9,8 @@
   <title>Sign in - Marginalia</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-a11y.min.css">
+  <link rel="modulepreload" href="/vendor/clanker-ui/clanker-ui-core.min.js">
   <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
   <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
   <script type="module" src="/login-split.js"></script>
@@ -18,7 +20,7 @@
     <div>
       <div>
         <a data-slot="brand" href="#"><span data-slot="brand-mark" data-size="sm"><svg data-lucide="book-open"></svg></span>Marginalia</a>
-        <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+        <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
       </div>
       <form data-slot="form" id="login-form">
         <div data-slot="field-group">

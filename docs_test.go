@@ -710,3 +710,114 @@ func TestDocsPagesLinkMarkdownAndLLMs(t *testing.T) {
 		t.Error("components.md does not follow the typography redirect")
 	}
 }
+
+func TestDocsMapTargets(t *testing.T) {
+	d := docsOf(t)
+	raw, err := os.ReadFile("tools/gen/docs-map.tsv")
+	if err != nil {
+		t.Fatal(err)
+	}
+	page := map[string]string{}
+	for _, line := range strings.Split(strings.TrimSpace(string(raw)), "\n")[1:] {
+		f := strings.Split(line, "\t")
+		key, ours := f[0], f[1]
+		item, name, isExample := strings.Cut(key, "#")
+		switch {
+		case ours == "-" || ours == "?":
+		case !isExample:
+			if d.pages[ours] == nil {
+				t.Errorf("%s: %s is not a docs page", key, ours)
+			}
+			page[item] = ours
+		case d.pages[page[item]] == nil:
+			t.Errorf("%s: %s, but the page of %s has no match", key, ours, item)
+		case !strings.Contains(d.pages[page[item]].Source, `{{example "`+ours+`"`):
+			t.Errorf("%s: %s is not an example on %s (shadcn %s)", key, ours, page[item], name)
+		}
+	}
+}
+
+var (
+	docsExampleRoot = regexp.MustCompile(`\[data-docs="(?:component-preview|preview|view)"\]`)
+	docsOwnPart     = regexp.MustCompile(`\[data-docs="(?:code|code-block|code-teaser)"\]`)
+	docsKitTarget   = regexp.MustCompile(`\[data-slot|(?:^|[\s>+~(])(?:pre|code|span|div|button|svg|a|p)\b`)
+	docsNotGroup    = regexp.MustCompile(`:not\([^()]*(?:\([^()]*\)[^()]*)*\)`)
+)
+
+func TestDocsCSSLeavesExamplePartsAlone(t *testing.T) {
+	css := regexp.MustCompile(`(?s)/\*.*?\*/`).ReplaceAllString(readText(t, "docs/assets/docs.css"), "")
+	for _, m := range regexp.MustCompile(`([^{}]+)\{`).FindAllStringSubmatch(css, -1) {
+		sel := strings.TrimSpace(m[1])
+		if strings.HasPrefix(sel, "@") {
+			continue
+		}
+		plain := docsNotGroup.ReplaceAllString(sel, "")
+		loc := docsExampleRoot.FindStringIndex(plain)
+		if loc == nil {
+			continue
+		}
+		for _, rest := range docsAlternatives(plain[loc[1]:]) {
+			if docsKitTarget.MatchString(rest) && !docsOwnPart.MatchString(rest) {
+				t.Errorf("docs.css styles kit parts inside an example: %s", sel)
+				break
+			}
+		}
+	}
+}
+
+func docsAlternatives(sel string) []string {
+	i := strings.Index(sel, ":is(")
+	if i < 0 {
+		return []string{sel}
+	}
+	depth, start, end := 0, i+4, -1
+	var parts []string
+	for j := i + 3; j < len(sel) && end < 0; j++ {
+		switch sel[j] {
+		case '(':
+			depth++
+		case ')':
+			depth--
+			if depth == 0 {
+				parts = append(parts, sel[start:j])
+				end = j
+			}
+		case ',':
+			if depth == 1 {
+				parts = append(parts, sel[start:j])
+				start = j + 1
+			}
+		}
+	}
+	if end < 0 {
+		return []string{sel}
+	}
+	var out []string
+	for _, p := range parts {
+		out = append(out, docsAlternatives(sel[:i]+" "+strings.TrimSpace(p)+sel[end+1:])...)
+	}
+	return out
+}
+
+func TestExampleClassesHaveRules(t *testing.T) {
+	docsCSS := readText(t, "docs/assets/docs.css")
+	for _, h := range previewHeights {
+		if !strings.Contains(docsCSS, `[data-docs="preview"][data-height="`+h+`"] { height: `+h+`; }`) {
+			t.Errorf("docs.css has no rule for the preview height %s", h)
+		}
+	}
+	css := readText(t, "docs/assets/examples.css")
+	esc := regexp.MustCompile(`[^A-Za-z0-9_-]`)
+	class := regexp.MustCompile(`\sclass="([^"]*)"`)
+	files, _ := filepath.Glob("docs/content/*/*/examples/*.html")
+	more, _ := filepath.Glob("docs/content/*/examples/*.html")
+	for _, f := range append(files, more...) {
+		for _, m := range class.FindAllStringSubmatch(readText(t, f), -1) {
+			for _, c := range strings.Fields(m[1]) {
+				if !strings.Contains(css, "."+esc.ReplaceAllString(c, `\$0`)) {
+					t.Errorf("%s: class %s has no rule in docs/assets/examples.css (go run ./tools/gen utilities, DEVELOPMENT.md Docs site)", f, c)
+				}
+			}
+		}
+	}
+}

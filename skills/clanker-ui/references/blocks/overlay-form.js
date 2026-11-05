@@ -29,10 +29,11 @@ reviewForm.addEventListener("form:submit", event => {
 
 bookForm.addEventListener("form:submit", event => {
   event.preventDefault()
-  const { title, author, year, pages } = event.detail.values
+  const { title, author, year, pages, synopsis } = event.detail.values
   document.querySelector('[data-slot="page-title"]').textContent = title
   document.querySelector('[data-slot="breadcrumb-page"]').textContent = title
   document.querySelector('[data-slot="page-description"]').textContent = `${author} · ${year} · ${pages} pages. Our November pick, discussed on Nov 18.`
+  document.getElementById("book-about").textContent = synopsis
   dialogClose("edit-book")
   toast.success("Details saved", { description: `${title} is up to date.` })
 })

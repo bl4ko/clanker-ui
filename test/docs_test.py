@@ -906,3 +906,44 @@ def check_blocks_login_split(t):
     page.get_by_role("button", name="Sign in").click()
     page.wait_for_function("() => document.querySelector('#email').getAttribute('aria-invalid') === 'true'")
     assert page.evaluate("() => document.activeElement.id") == "email"
+
+
+def check_blocks_detail_header_and_hero(t):
+    page = t.page
+    t.docs("/blocks/detail")
+    m = page.evaluate("""() => {
+      const r = s => document.querySelector(s).getBoundingClientRect()
+      const meta = [...document.querySelectorAll('[data-slot=page-meta] > *')].map(e => e.getBoundingClientRect())
+      return { title: parseFloat(getComputedStyle(document.querySelector('[data-slot=page-title]')).fontSize), desc: r('[data-slot=page-description]').bottom, meta: meta.map(b => [b.top, b.bottom]) }
+    }""")
+    assert m["title"] == 30, m
+    assert len(m["meta"]) == 4 and m["meta"][0][0] >= m["desc"], m
+    if not t.mobile:
+        assert len({round((a + b) / 2) for a, b in m["meta"]}) == 1, m
+    url = page.evaluate("() => document.querySelector('script[src*=\"clanker-ui.min.js\"]').src")
+    page.evaluate("""async url => {
+      const { h } = await import(url)
+      document.querySelector('[data-slot=page]').append(h('div', { 'data-slot': 'accordion', id: 'badge-accordion' }, h('div', { 'data-slot': 'accordion-item', 'data-value': 'payments' },
+        h('h3', null, h('button', { type: 'button', 'data-slot': 'accordion-trigger' }, 'Payments', h('span', { 'data-slot': 'badge', 'data-variant': 'warning' }, 'Degraded'))),
+        h('div', { 'data-slot': 'accordion-content', hidden: 'until-found' }, h('div', null, 'All payment services.')))))
+    }""", url)
+    page.wait_for_selector("#badge-accordion [data-slot=accordion-trigger-icon]", state="attached")
+    gap = page.evaluate("""rtl => {
+      const tr = document.querySelector('#badge-accordion [data-slot=accordion-trigger]').getBoundingClientRect()
+      const b = document.querySelector('#badge-accordion [data-slot=badge]').getBoundingClientRect()
+      return rtl ? b.left - tr.left : tr.right - b.right
+    }""", t.rtl)
+    assert gap < 48, gap
+    for name, card in (("overlay-form", '[data-slot=page-body] [data-slot=card][data-orientation=horizontal]'), ("card-grid", '[data-slot=card][data-orientation=horizontal]')):
+        t.docs("/blocks/" + name)
+        h = page.evaluate("""([sel, rtl]) => {
+          const card = document.querySelector(sel)
+          const c = card.querySelector(':scope > [data-slot=cover]').getBoundingClientRect()
+          const head = card.querySelector('[data-slot=card-header]').getBoundingClientRect()
+          const buttons = [...card.querySelectorAll('[data-slot=card-footer] [data-slot=button]')].map(b => b.getBoundingClientRect().top)
+          return { w: c.width, h: c.height, apart: rtl ? c.left - head.right : head.left - c.right, buttons }
+        }""", [card, t.rtl])
+        assert h["w"] == (96 if t.width < 768 else 128) and abs(h["h"] - h["w"] * 1.5) < 1, (name, h)
+        assert 0 <= h["apart"] <= 1, (name, h)
+        if h["buttons"] and not t.mobile:
+            assert len({round(y) for y in h["buttons"]}) == 1, (name, h)

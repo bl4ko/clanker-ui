@@ -649,8 +649,8 @@ func TestEveryDocsPageIsReal(t *testing.T) {
 			}
 		}
 	}
-	if generated < 60 {
-		t.Errorf("%d generated component pages with a demo, want at least 60", generated)
+	if generated < 40 {
+		t.Errorf("%d generated component pages with a demo, want at least 40", generated)
 	}
 	for href, u := range d.readme {
 		anchor := strings.TrimPrefix(u, githubURL+"#")

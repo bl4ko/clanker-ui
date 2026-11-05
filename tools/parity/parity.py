@@ -53,6 +53,7 @@ DEFAULT_OPEN = '[data-slot$="-trigger"]:not([data-slot="tabs-trigger"], [data-sl
 BACKDROPS = {"dialog-overlay": "dialog-content", "alert-dialog-overlay": "alert-dialog-content", "sheet-overlay": "sheet-content", "drawer-overlay": "drawer-viewport"}
 JS = (pathlib.Path(__file__).parent / "parity.js").read_text()
 GEN = ""
+STYLES = ["nova"]
 SETTLE = "ms => window.__parity.settle(ms)"
 NOVA_PAGE = "/preview/base/"
 KIT_CLASSES = {"sr-only"}
@@ -1101,21 +1102,35 @@ def measure_view(comp, docs, args, view, prefix, offset, examples, view_style=No
     return out
 
 
+def page_style(cap):
+    counts = collections.Counter(st for r, st in zip(cap["roots"], cap.get("styles") or []) if r["kind"] == "preview" and st in STYLES)
+    return counts.most_common(1)[0][0] if counts else STYLES[0]
+
+
 def measure_ours(comp, results, ours, parts, names, gen_css, src, out, docs, sources):
-    conv = Converter(parts, names, comp)
-    pages = {r["label"]: page_html(conv, r["cap"], sources.of) for r in results}
+    if isinstance(parts, Parts):
+        parts = {STYLES[0]: parts}
+    convs = {st: Converter(p, names, comp) for st, p in parts.items()}
+    pages, used = {}, collections.Counter()
+    for r in results:
+        r["style"] = page_style(r["cap"])
+        pages[r["label"]] = page_html(convs[r["style"]], r["cap"], sources.of)
+        used[r["style"]] += 1
+    conv = convs[used.most_common(1)[0][0] if used else STYLES[0]]
+    consumer = set().union(*(c.consumer for c in convs.values()))
     content = out / "pages" / comp
     content.mkdir(parents=True, exist_ok=True)
     for name, body in pages.items():
         (content / f"{name}.html").write_text(body)
-    (content / "classes.html").write_text("\n".join(sorted(conv.consumer)) + "\n")
+    (content / "classes.html").write_text("\n".join(sorted(consumer)) + "\n")
     consumer_css = content / "consumer.css"
     r = subprocess.run([GEN, "utilities", "-src", src, "-content", str(content / "classes.html"), "-out", str(consumer_css)], cwd=ROOT, capture_output=True, text=True)
     if r.returncode != 0:
         raise RuntimeError(f"utilities: {r.stderr}")
-    ours.files = {"gen.css": gen_css, "consumer.css": consumer_css.read_text(), "font.css": FONT}
+    ours.files = {"consumer.css": consumer_css.read_text(), "font.css": FONT}
     ours.files.update({f"{k}.html": v for k, v in pages.items()})
     for res in results:
+        ours.files["gen.css"] = gen_css[res["style"]]
         ov = res["overlays"]
         backdrop = [ov[c] for o, c in BACKDROPS.items() if o in ov and c in ov]
         ours.scoped = res["tokens"]
@@ -1267,7 +1282,7 @@ def initial_of(init, tag, prop):
     return (init.get(tag) or {}).get(prop)
 
 
-def compare_maps(docs, ours, meta, scen, state, theme, rows, pairs, overlays=(), initial=None):
+def compare_maps(docs, ours, meta, scen, state, theme, rows, pairs, overlays=(), initial=None, measured="nova"):
     ov_ids = {str(o): str(c) for o, c in overlays}
     init_docs, init_ours = (initial or {}).get("docs") or {}, (initial or {}).get("ours") or {}
     for dk, dv in docs.items():
@@ -1293,7 +1308,10 @@ def compare_maps(docs, ours, meta, scen, state, theme, rows, pairs, overlays=(),
         no_outline = dv.get("outline-style") == "none" and (ov or {}).get("outline-style") == "none"
         sr_only = dv.get("position") == "absolute" and (ov or {}).get("position") == "absolute" and dv.get("width") == "1px" and (ov or {}).get("width") == "1px"
         key = (scen, base, lab_, st, theme)
-        pr = pairs.setdefault(key, {"part": lab_, "state": st, "theme": theme, "scenario": scen, "style": m.get("style", "nova"), "visible": bool(visible), "props": 0, "meaningful": 0, "equal": 0, "meaningful_equal": 0, "diffs": []})
+        style = m.get("style", "nova")
+        if style != measured:
+            style += "@" + measured
+        pr = pairs.setdefault(key, {"part": lab_, "state": st, "theme": theme, "scenario": scen, "style": style, "visible": bool(visible), "props": 0, "meaningful": 0, "equal": 0, "meaningful_equal": 0, "diffs": []})
         for prop, v in dv.items():
             if prop in SKIP_PROPS or props and prop not in props or spinning and prop in MOVING or positioned and prop in ("right", "bottom"):
                 continue
@@ -1308,7 +1326,7 @@ def compare_maps(docs, ours, meta, scen, state, theme, rows, pairs, overlays=(),
             pr["meaningful_equal"] += good and meaningful
             if not good:
                 pr["diffs"].append(prop)
-                rows.append({"scenario": scen, "state": st, "theme": theme, "part": lab_, "id": base, "prop": prop, "shadcn": v, "ours": o, "style": m.get("style", "nova")})
+                rows.append({"scenario": scen, "state": st, "theme": theme, "part": lab_, "id": base, "prop": prop, "shadcn": v, "ours": o, "style": style})
 
 
 def compare(comp, results):
@@ -1318,14 +1336,15 @@ def compare(comp, results):
         ov = res["overlays"]
         overlay_pairs = [(ov[o], ov[c]) for o, c in BACKDROPS.items() if o in ov and c in ov]
         initial = res.get("initial")
+        measured = res.get("style", "nova")
         for theme in ("light", "dark"):
-            compare_maps(res["docs"][theme], res["ours"][theme], meta, res["label"], "rest", theme, rows, pairs, overlay_pairs, initial)
+            compare_maps(res["docs"][theme], res["ours"][theme], meta, res["label"], "rest", theme, rows, pairs, overlay_pairs, initial, measured)
         for key, st in res["states"].items():
             if "ours" not in st:
                 continue
             i, state, theme = key.split("|")
             only = {k: v for k, v in st["docs"].items() if k.split("::")[0] == i}
-            compare_maps(only, st["ours"], meta, res["label"], state, theme, rows, pairs, (), initial)
+            compare_maps(only, st["ours"], meta, res["label"], state, theme, rows, pairs, (), initial, measured)
     return rows, pairs
 
 
@@ -1350,24 +1369,30 @@ def part_stats(pairs):
     return by_state, by_part, differing
 
 
-def summarize(comp, rows, pairs):
-    visible = [p for p in pairs.values() if p["visible"]]
-    nova = [p for p in visible if p.get("style", "nova") == "nova"]
-    other = [p for p in visible if p.get("style", "nova") != "nova"]
-    totals = {k: sum(p[k] for p in pairs.values() if p.get("style", "nova") == "nova") for k in ("props", "equal", "meaningful", "meaningful_equal")}
-    by_state, by_part, differing = part_stats(nova)
-    _, other_parts, other_differing = part_stats(other)
+def style_summary(rows, pairs, style):
+    own = [p for p in pairs.values() if p.get("style", "nova") == style]
+    visible = [p for p in own if p["visible"]]
+    totals = {k: sum(p[k] for p in own) for k in ("props", "equal", "meaningful", "meaningful_equal")}
+    by_state, by_part, differing = part_stats(visible)
     groups = collections.defaultdict(list)
-    novarows = {(p["scenario"], p["state"], p["theme"], p["part"]) for p in nova}
+    keys = {(p["scenario"], p["state"], p["theme"], p["part"]) for p in visible}
     for r in rows:
-        if (r["scenario"], r["state"], r["theme"], r["part"]) in novarows:
+        if r.get("style", "nova") == style and (r["scenario"], r["state"], r["theme"], r["part"]) in keys:
             groups[(r["part"], r["state"], r["prop"])].append(r)
     top = sorted(groups.items(), key=lambda kv: -len(kv[1]))
-    return {"component": comp, "equal": totals["equal"], "measured": totals["props"], "meaningful_equal": totals["meaningful_equal"], "meaningful": totals["meaningful"],
-            "pairs_equal": sum(not p["diffs"] for p in nova), "pairs": len(nova), "parts": len(by_part), "parts_equal": sum(v["equal"] == v["pairs"] for v in by_part.values()),
+    return {"equal": totals["equal"], "measured": totals["props"], "meaningful_equal": totals["meaningful_equal"], "meaningful": totals["meaningful"],
+            "pairs_equal": sum(not p["diffs"] for p in visible), "pairs": len(visible), "parts": len(by_part), "parts_equal": sum(v["equal"] == v["pairs"] for v in by_part.values()),
             "by_state": {k: v for k, v in sorted(by_state.items())}, "differing_parts": differing,
-            "other_style": {"styles": sorted({p["style"] for p in other}), "pairs": len(other), "pairs_equal": sum(not p["diffs"] for p in other), "parts": len(other_parts), "parts_equal": sum(v["equal"] == v["pairs"] for v in other_parts.values()), "differing_parts": other_differing},
             "top": [{"part": k[0], "state": k[1], "prop": k[2], "count": len(v), "themes": sorted({x["theme"] for x in v}), "shadcn": v[0]["shadcn"], "ours": v[0]["ours"]} for k, v in top[:40]]}
+
+
+def summarize(comp, rows, pairs):
+    other = [p for p in pairs.values() if p["visible"] and p.get("style", "nova") not in STYLES]
+    _, other_parts, other_differing = part_stats(other)
+    out = {"component": comp, **style_summary(rows, pairs, "nova")}
+    out["styles"] = {st: style_summary(rows, pairs, st) for st in STYLES[1:] if any(p.get("style") == st for p in pairs.values())}
+    return {**out,
+            "other_style": {"styles": sorted({p["style"] for p in other}), "pairs": len(other), "pairs_equal": sum(not p["diffs"] for p in other), "parts": len(other_parts), "parts_equal": sum(v["equal"] == v["pairs"] for v in other_parts.values()), "differing_parts": other_differing}}
 
 
 def recompare(out):
@@ -1416,13 +1441,16 @@ def main():
     gen = out / "gen"
     global GEN
     GEN = str(out / "gen-bin")
-    for cmd in (["go", "build", "-o", GEN, "./tools/gen"], [GEN, "-src", args.src, "-kit", "", "-out", str(gen / "clanker-ui.generated.css"), "-notes", str(gen / "notes.txt"), "-parts", str(out / "parts.json")]):
+    STYLES[:] = [s["name"] for s in json.loads((ROOT / "skills/clanker-ui/references/clanker-ui.json").read_text())["files"]["styles"]]
+    cmds = [["go", "build", "-o", GEN, "./tools/gen"], [GEN, "-src", args.src, "-kit", "", "-out", str(gen / "clanker-ui.generated.css"), "-notes", str(gen / "notes.txt"), "-parts", str(out / "parts.json")]]
+    cmds += [[GEN, "-src", args.src, "-kit", "", "-style", st, "-out", str(gen / f"clanker-ui-{st}.generated.css"), "-notes", str(gen / f"notes-{st}.txt"), "-parts", str(gen / f"parts-{st}.json")] for st in STYLES[1:]]
+    for cmd in cmds:
         r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
         if r.returncode != 0:
             raise SystemExit(r.stderr)
-    gen_css = (gen / "clanker-ui.generated.css").read_text()
+    gen_css = {STYLES[0]: (gen / "clanker-ui.generated.css").read_text()} | {st: (gen / f"clanker-ui-{st}.generated.css").read_text() for st in STYLES[1:]}
     data = json.loads((out / "parts.json").read_text())
-    parts = Parts(data)
+    parts = {STYLES[0]: Parts(data)} | {st: Parts(json.loads((gen / f"parts-{st}.json").read_text())) for st in STYLES[1:]}
     names = data["components"]
     comps = [c for c in (args.only.split(",") if args.only else names) if c and c not in EXCLUDED]
     args.names = names

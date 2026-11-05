@@ -292,19 +292,19 @@ components/drawer#drawer-non-modal	demo-drawer-5
 components/drawer#drawer-snap-points	demo-drawer-3
 components/drawer#drawer-dialog	demo-drawer-6
 components/dropdown-menu	/docs/components/dropdown-menu
-components/dropdown-menu#dropdown-menu-demo	demo-dropdown-menu-0
-components/dropdown-menu#dropdown-menu-basic	-	no example yet
-components/dropdown-menu#dropdown-menu-submenu	-	no example yet
-components/dropdown-menu#dropdown-menu-shortcuts	-	no example yet
-components/dropdown-menu#dropdown-menu-icons	demo-dropdown-menu-2
-components/dropdown-menu#dropdown-menu-checkboxes	demo-dropdown-menu-1
-components/dropdown-menu#dropdown-menu-checkboxes-icons	demo-dropdown-menu-1
-components/dropdown-menu#dropdown-menu-radio-group	demo-dropdown-menu-1
-components/dropdown-menu#dropdown-menu-radio-icons	-	no example yet
-components/dropdown-menu#dropdown-menu-destructive	demo-dropdown-menu-2
-components/dropdown-menu#dropdown-menu-avatar	-	no example yet
-components/dropdown-menu#dropdown-menu-complex	-	no example yet
-components/dropdown-menu#dropdown-menu-rtl	-	no example yet
+components/dropdown-menu#dropdown-menu-demo	dropdown-menu-demo
+components/dropdown-menu#dropdown-menu-basic	dropdown-menu-basic
+components/dropdown-menu#dropdown-menu-submenu	dropdown-menu-submenu
+components/dropdown-menu#dropdown-menu-shortcuts	dropdown-menu-shortcuts
+components/dropdown-menu#dropdown-menu-icons	dropdown-menu-icons
+components/dropdown-menu#dropdown-menu-checkboxes	dropdown-menu-checkboxes
+components/dropdown-menu#dropdown-menu-checkboxes-icons	dropdown-menu-checkboxes-icons
+components/dropdown-menu#dropdown-menu-radio-group	dropdown-menu-radio-group
+components/dropdown-menu#dropdown-menu-radio-icons	dropdown-menu-radio-icons
+components/dropdown-menu#dropdown-menu-destructive	dropdown-menu-destructive
+components/dropdown-menu#dropdown-menu-avatar	dropdown-menu-avatar
+components/dropdown-menu#dropdown-menu-complex	dropdown-menu-complex
+components/dropdown-menu#dropdown-menu-rtl	dropdown-menu-rtl
 components/empty	/docs/components/empty
 components/empty#empty-demo	demo-empty-0
 components/empty#empty-outline	demo-empty-1

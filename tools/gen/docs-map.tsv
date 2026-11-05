@@ -314,19 +314,19 @@ components/empty#empty-avatar-group	-	no example yet
 components/empty#empty-input-group	-	no example yet
 components/empty#empty-rtl	-	no example yet
 components/field	/docs/components/field
-components/field#field-demo	demo-field-0
-components/field#field-input	-	no example yet
-components/field#field-textarea	-	no example yet
-components/field#field-select	-	no example yet
-components/field#field-slider	demo-field-2
-components/field#field-fieldset	-	no example yet
-components/field#field-checkbox	-	no example yet
-components/field#field-radio	-	no example yet
-components/field#field-switch	-	no example yet
-components/field#field-choice-card	demo-field-1
-components/field#field-group	-	no example yet
-components/field#field-rtl	-	no example yet
-components/field#field-responsive	demo-field-3
+components/field#field-demo	field-demo
+components/field#field-input	field-input
+components/field#field-textarea	field-textarea
+components/field#field-select	field-select
+components/field#field-slider	field-slider
+components/field#field-fieldset	field-fieldset
+components/field#field-checkbox	field-checkbox
+components/field#field-radio	field-radio
+components/field#field-switch	field-switch
+components/field#field-choice-card	field-choice-card
+components/field#field-group	field-group
+components/field#field-rtl	field-rtl
+components/field#field-responsive	field-responsive
 components/hover-card	/docs/components/hover-card
 components/hover-card#hover-card-demo	demo-hover-card-0
 components/hover-card#hover-card-sides	demo-hover-card-1

@@ -1,0 +1,19 @@
+<fieldset data-slot="field-set" class="w-full max-w-xs">
+  <legend data-slot="field-legend" data-variant="label">Subscription Plan</legend>
+  <p data-slot="field-description">Yearly and lifetime plans offer significant savings.</p>
+  <div data-slot="radio-group" data-value="monthly">
+    <div data-slot="field" data-orientation="horizontal">
+      <button type="button" data-slot="radio-group-item" value="monthly" id="plan-monthly"></button>
+      <label data-slot="field-label" for="plan-monthly" class="font-normal">Monthly ($9.99/month)</label>
+    </div>
+    <div data-slot="field" data-orientation="horizontal">
+      <button type="button" data-slot="radio-group-item" value="yearly" id="plan-yearly"></button>
+      <label data-slot="field-label" for="plan-yearly" class="font-normal">Yearly ($99.99/year)</label>
+    </div>
+    <div data-slot="field" data-orientation="horizontal">
+      <button type="button" data-slot="radio-group-item" value="lifetime" id="plan-lifetime"></button>
+      <label data-slot="field-label" for="plan-lifetime" class="font-normal">Lifetime ($299.99)</label>
+    </div>
+  </div>
+</fieldset>
+

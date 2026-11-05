@@ -1207,12 +1207,22 @@ body[data-docs="body"] {
   & .text-muted-foreground { color: var(--muted-foreground); }
   & .text-destructive { color: var(--destructive); }
   & .bg-muted { background-color: var(--muted); }
+  & .bg-accent { background-color: var(--accent); }
+  & .text-accent-foreground { color: var(--accent-foreground); }
+  & .aria-expanded\:bg-transparent[aria-expanded="true"] { background-color: transparent; }
+  & .transition-transform { transition-property: transform, translate, scale, rotate; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+  & [aria-expanded="true"] > .group-aria-expanded\:rotate-90 { rotate: 90deg; }
   & .rounded-md { border-radius: var(--radius-md); }
   & .underline-offset-4 { text-underline-offset: 4px; }
   & .animate-spin { animation: spin 1s linear infinite; }
   & .fill-current { fill: currentColor; }
   @media (hover: hover) {
     & .hover\:underline:hover { text-decoration-line: underline; }
+    & .aria-expanded\:hover\:bg-muted[aria-expanded="true"]:hover { background-color: var(--muted); }
+    & .dark\:aria-expanded\:hover\:bg-muted\/50[aria-expanded="true"]:hover:is([data-theme="dark"] *) { background-color: color-mix(in oklab, var(--muted) 50%, transparent); }
+    @media (prefers-color-scheme: dark) {
+      & .dark\:aria-expanded\:hover\:bg-muted\/50[aria-expanded="true"]:hover:not([data-theme="light"] *) { background-color: color-mix(in oklab, var(--muted) 50%, transparent); }
+    }
   }
   @media (width >= 40rem) {
     & .sm\:flex { display: flex; }

@@ -11,4 +11,7 @@ Rules for every pattern:
 
 | Need | Pattern | Built with |
 | --- | --- | --- |
+| The files that the agent changed, as folders that open and close; a click selects a file | [File Tree](https://bl4ko.github.io/clanker-ui/docs/ai-elements/file-tree/) | `collapsible` (div root, ghost `sm` button trigger), `button` with `aria-current` |
+| A source inside the sentence that it supports, with a card on hover and focus | [Inline Citation](https://bl4ko.github.io/clanker-ui/docs/ai-elements/inline-citation/) | `hover-card` (all `span` parts inside a `p`), `button` `secondary` `xs` |
 | One turn: the person's bubble, the agent's reply, copy and feedback buttons | [Message](https://bl4ko.github.io/clanker-ui/docs/ai-elements/message/) | `message`, `bubble`, `tooltip`, `code-block` |
+| The links that the agent used, after the reply ("Used 3 sources"); remove duplicate URLs | [Sources](https://bl4ko.github.io/clanker-ui/docs/ai-elements/sources/) | `trace-collapsible` with a nested `trace` of links |

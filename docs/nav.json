@@ -98,7 +98,10 @@
       "title": "AI Elements",
       "items": [
         {"title": "AI Elements", "href": "/docs/ai-elements", "hidden": true},
-        {"title": "Message", "href": "/docs/ai-elements/message"}
+        {"title": "File Tree", "href": "/docs/ai-elements/file-tree"},
+        {"title": "Inline Citation", "href": "/docs/ai-elements/inline-citation"},
+        {"title": "Message", "href": "/docs/ai-elements/message"},
+        {"title": "Sources", "href": "/docs/ai-elements/sources"}
       ]
     },
     {

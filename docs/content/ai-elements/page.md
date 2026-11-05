@@ -13,7 +13,10 @@ The patterns follow the [shadcn/ui AI Elements](https://ui.shadcn.com/docs/ai-el
 
 | Pattern | Use |
 | --- | --- |
+| [File Tree](/docs/ai-elements/file-tree) | The files the agent changed, as a folder tree. |
+| [Inline Citation](/docs/ai-elements/inline-citation) | A source in the sentence that opens on hover. |
 | [Message](/docs/ai-elements/message) | One turn. The person's message, and the agent's reply with its actions. |
+| [Sources](/docs/ai-elements/sources) | The links the agent used for a reply. |
 
 ## Load the files
 

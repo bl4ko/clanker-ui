@@ -1,0 +1,47 @@
+<div class="flex min-h-72 w-full max-w-sm flex-col gap-4 py-6 text-sm" id="sources-demo">
+  <div id="sources-demo-thread" class="flex flex-col gap-4">
+    <div data-slot="message" data-align="end">
+      <div data-slot="message-content">
+        <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">How do I start an Astro project with pnpm?</div></div>
+      </div>
+    </div>
+    <div data-slot="message">
+      <div data-slot="message-content" class="gap-4">
+        <p>Run pnpm create astro@latest and follow the prompts. It scaffolds the project and installs the dependencies.</p>
+        <div data-slot="trace">
+          <div data-slot="trace-collapsible" data-default-open>
+            <button type="button" data-slot="trace-collapsible-trigger">
+              <span data-slot="trace-line">
+                <span data-slot="trace-icon"><svg data-lucide="globe"></svg></span>
+                <span data-slot="trace-title">Used 3 sources</span>
+              </span>
+            </button>
+            <div data-slot="trace-collapsible-content">
+              <div data-slot="trace">
+                <a href="https://docs.astro.build/en/install-and-setup/" target="_blank" rel="noreferrer">
+                  <span data-slot="trace-line">
+                    <span data-slot="trace-title">Install Astro | docs.astro.build<span class="sr-only"> (opens in a new tab)</span></span>
+                    <span data-slot="trace-icon"><svg data-lucide="arrow-up-right"></svg></span>
+                  </span>
+                </a>
+                <a href="https://www.npmjs.com/package/create-astro" target="_blank" rel="noreferrer">
+                  <span data-slot="trace-line">
+                    <span data-slot="trace-title">create-astro | npmjs.com<span class="sr-only"> (opens in a new tab)</span></span>
+                    <span data-slot="trace-icon"><svg data-lucide="arrow-up-right"></svg></span>
+                  </span>
+                </a>
+                <a href="https://pnpm.io/cli/create" target="_blank" rel="noreferrer">
+                  <span data-slot="trace-line">
+                    <span data-slot="trace-title">pnpm create | pnpm.io<span class="sr-only"> (opens in a new tab)</span></span>
+                    <span data-slot="trace-icon"><svg data-lucide="arrow-up-right"></svg></span>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="mt-auto self-start" id="sources-demo-replay">Replay</button>
+</div>

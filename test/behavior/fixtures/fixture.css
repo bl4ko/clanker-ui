@@ -467,3 +467,62 @@ html {
   width: 100%;
   max-width: 352px;
 }
+
+[data-behavior~="col-gap-1"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+[data-behavior~="ai-citations"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 24rem;
+  margin-inline: auto;
+  padding-block: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.625;
+}
+
+[data-behavior~="ai-cite-link"] {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: var(--muted-foreground);
+  text-underline-offset: 4px;
+}
+
+[data-behavior~="ai-tree"] {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 20rem;
+  padding-block: 1.5rem;
+  font-size: 0.875rem;
+}
+
+[data-behavior~="ai-tree-indent"] {
+  display: flex;
+  flex-direction: column;
+  margin-inline-start: 1rem;
+}
+
+[data-behavior~="ai-tree-item"] {
+  width: 100%;
+  justify-content: flex-start;
+  font-weight: 400;
+}
+
+[data-behavior~="ai-tree-item"][aria-expanded="true"] {
+  background-color: transparent;
+}
+
+[data-behavior~="ai-tree-current"] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+[aria-expanded="true"] > [data-behavior~="ai-tree-chevron"] {
+  rotate: 90deg;
+}

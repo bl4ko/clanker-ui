@@ -1,0 +1,26 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/file-tree",
+  "parts": {
+    "app": {"role": "button", "name": "app"},
+    "components": {"role": "button", "name": "components"},
+    "ui": {"role": "button", "name": "ui"},
+    "page": {"role": "button", "name": "page.tsx", "optional": true},
+    "button": {"role": "button", "name": "button.tsx", "optional": true},
+    "login": {"role": "button", "name": "login-form.tsx", "optional": true}
+  },
+  "anchor": "app",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "Enter"},
+    {"do": "press", "key": "Space", "label": "open with Space"},
+    {"do": "tab"},
+    {"do": "tab", "label": "tab to page.tsx"},
+    {"do": "press", "key": "Enter", "label": "select page.tsx"},
+    {"do": "click", "target": "components"},
+    {"do": "click", "target": "components", "label": "click again"},
+    {"do": "click", "target": "button", "label": "select button.tsx"},
+    {"do": "click", "target": "ui", "label": "close ui"},
+    {"do": "tab"}
+  ]
+}

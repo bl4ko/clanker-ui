@@ -83,7 +83,7 @@ def check_ai_chain_of_thought_replay(t):
     replay = page.locator("#chain-of-thought-demo-replay")
     replay.click()
     assert replay.is_hidden()
-    summary = """document.querySelector('#chain-of-thought-demo [data-slot="message"]:not([data-align]) [data-slot="trace-collapsible"]')"""
+    summary = """document.querySelector('#chain-of-thought-demo [data-slot="message"]:not([data-align="end"]) [data-slot="trace-collapsible"]')"""
     wait_js(page, f"""() => {{ const s = {summary}; return s?.dataset.state === 'open' && s.querySelector('[data-slot="trace-line"]').dataset.status === 'running' && s.querySelector('[data-slot="trace-title"]').textContent === 'Researching' }}""")
     wait_js(page, f"""() => [...{summary}.querySelectorAll('[data-slot="trace-collapsible-content"] [data-slot="trace-line"][data-status="running"] [data-slot="trace-title"]')].some(e => e.textContent === 'Reading the build log for dpl_8Kx2')""")
     wait_js(page, f"""() => {summary}.querySelector(':scope > [data-slot="trace-collapsible-trigger"] [data-slot="trace-title"]').textContent === 'Researched in 3 steps'""")
@@ -98,7 +98,7 @@ def check_ai_task_replay(t):
     page = t.page
     t.docs("/docs/ai-elements/task")
     page.locator("#task-demo-replay").click()
-    rows = """document.querySelectorAll('#task-demo [data-slot="message"]:not([data-align]) [data-slot="message-content"] > [data-slot="trace"] > [data-slot="trace-collapsible"]')"""
+    rows = """document.querySelectorAll('#task-demo [data-slot="message"]:not([data-align="end"]) [data-slot="message-content"] > [data-slot="trace"] > [data-slot="trace-collapsible"]')"""
     wait_js(page, f"""() => {{ const r = {rows}[0]; return r?.dataset.state === 'open' && r.querySelector('[data-slot="trace-line"]').dataset.status === 'running' && r.querySelector('[data-slot="trace-title"]').textContent === 'Finding the project files' }}""")
     wait_js(page, f"""() => {{ const lines = {rows}[0].querySelectorAll('[data-slot="trace-collapsible-content"] [data-slot="trace-line"]'); return lines.length === 2 && !lines[0].hasAttribute('data-status') && lines[0].textContent === 'Searched for generateMetadata' && lines[1].dataset.status === 'running' && lines[1].textContent === 'Reading app/layout.tsx' }}""")
     wait_js(page, f"""() => {rows}.length === 2 && {rows}[0].dataset.state === 'closed' && {rows}[1].dataset.state === 'open'""")
@@ -112,7 +112,7 @@ def check_ai_plan_replay(t):
     page = t.page
     t.docs("/docs/ai-elements/plan")
     page.locator("#plan-demo-replay").click()
-    plan = """document.querySelector('#plan-demo [data-slot="message"]:not([data-align]) [data-slot="trace-collapsible"]')"""
+    plan = """document.querySelector('#plan-demo [data-slot="message"]:not([data-align="end"]) [data-slot="trace-collapsible"]')"""
     read = f"""() => {{ const p = {plan}; if (!p) return null; const line = p.querySelector('[data-slot="trace-line"]'); return [line.getAttribute('data-status'), line.querySelector('[data-slot="trace-description"]').textContent, [...p.querySelectorAll('[data-slot="trace-collapsible-content"] [data-slot="trace-line"]')].map(l => (l.getAttribute('data-status') ?? 'done') + ':' + l.querySelector('svg').dataset.lucide)] }}"""
     page.wait_for_function(f"""() => JSON.stringify(({read})()) === JSON.stringify(['running', '0 of 4 done', ['running:circle-dot', 'pending:circle', 'pending:circle', 'pending:circle']])""")
     page.wait_for_function(f"""() => JSON.stringify(({read})()) === JSON.stringify(['running', '1 of 4 done', ['done:circle-check', 'running:circle-dot', 'pending:circle', 'pending:circle']])""", timeout=5000)
@@ -125,13 +125,13 @@ def check_ai_tool_replay(t):
     page = t.page
     t.docs("/docs/ai-elements/tool")
     page.locator("#tool-demo-replay").click()
-    trace = """document.querySelector('#tool-demo [data-slot="message"]:not([data-align]) [data-slot="trace"]')"""
+    trace = """document.querySelector('#tool-demo [data-slot="message"]:not([data-align="end"]) [data-slot="trace"]')"""
     wait_js(page, f"""() => {trace}?.querySelector(':scope > [data-slot="trace-line"][data-status="running"]')?.textContent === 'Running node --version'""")
     wait_js(page, f"""() => {trace}.querySelector(':scope > [data-slot="trace-collapsible"] [data-slot="trace-title"]')?.textContent === 'Ran node --version'""")
     wait_js(page, """() => !document.getElementById('tool-demo-replay').hidden""")
     rows = page.evaluate(f"""() => [...{trace}.children].map(c => [c.dataset.slot, c.querySelector('[data-slot="trace-title"]').textContent, c.querySelector('[data-slot="trace-line"]').getAttribute('data-status'), c.dataset.state, c.querySelector('code')?.textContent])""")
     assert rows == [["trace-collapsible", "Ran node --version", None, "closed", "v24.18.0"], ["trace-collapsible", "Ran npm --version", None, "closed", "11.6.2"], ["trace-collapsible", "Failed to run pnpm --version", "error", "closed", "command not found: pnpm"]], rows
-    page.locator('#tool-demo [data-slot="message"]:not([data-align]) [data-slot="trace-collapsible-trigger"]').nth(2).click()
+    page.locator('#tool-demo [data-slot="message"]:not([data-align="end"]) [data-slot="trace-collapsible-trigger"]').nth(2).click()
     wait_js(page, f"""() => {trace}.children[2].dataset.state === 'open'""")
     assert page.locator("#tool-demo p").inner_text() == "Node 24 and npm 11 are installed. pnpm is not."
 
@@ -146,7 +146,7 @@ def check_ai_tool_sheet(t):
     trigger = page.locator('#tool-sheet [data-sheet-trigger="tool-sheet-file"]')
     trigger.wait_for(state="visible")
     wait_js(page, """() => document.getElementById('tool-sheet-send').textContent === 'Reset' && !document.getElementById('tool-sheet-send').hidden""")
-    assert page.locator("#tool-sheet p").inner_text() == "It uses ai 7 with @ai-sdk/react 4."
+    assert page.locator('#tool-sheet [data-slot="message-content"] > p').inner_text() == "It uses ai 7 with @ai-sdk/react 4."
     trigger.click()
     wait_js(page, """() => document.querySelector('#tool-sheet-file [data-slot="sheet-content"]')?.dataset.state === 'open'""")
     assert page.locator('#tool-sheet-file [data-slot="sheet-title"]').inner_text() == "package.json"
@@ -172,8 +172,8 @@ def check_ai_tool_approval(t):
         assert send.inner_text() == "Reset"
         item.get_by_role("button", name="Approve" if approve else "Deny").click()
         assert item.count() == 0
-        wait_js(page, f"""() => document.querySelectorAll('#tool-approval [data-slot="message"]:not([data-align]) [data-slot="message-content"] > [data-slot="trace"]')[1]?.textContent.trim() === {line!r}""")
+        wait_js(page, f"""() => document.querySelectorAll('#tool-approval [data-slot="message"]:not([data-align="end"]) [data-slot="message-content"] > [data-slot="trace"]')[1]?.textContent.trim() === {line!r}""")
         wait_js(page, """() => !document.getElementById('tool-approval-send').hidden""")
-        assert page.locator("#tool-approval p").inner_text() == reply
+        assert page.locator('#tool-approval [data-slot="message-content"] > p').inner_text() == reply
         send.click()
         assert page.locator('#tool-approval > [data-slot="message"]').count() == 0

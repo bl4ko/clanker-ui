@@ -5,7 +5,7 @@ description: One turn. The person's message, and the agent's reply with its acti
 
 {{example "message-pattern" height="auto"}}
 
-Use Message for one turn in a thread. The person's text is a [Bubble](/docs/components/bubble) in a [Message](/docs/components/message) with `data-align="end"`. The agent's reply is formatted text in a Message, with actions under it. A thread of these turns is a chat.
+Use Message for one turn in a thread. The person's text is a [Bubble](/docs/components/bubble) in a [Message](/docs/components/message) with `data-align="end"`. The agent's reply is formatted text in a Message, with actions under it. A thread of these turns is [Chat](/docs/ai-elements/chat).
 
 ## Installation
 

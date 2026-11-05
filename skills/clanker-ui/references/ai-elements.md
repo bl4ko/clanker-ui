@@ -11,8 +11,13 @@ Rules for every pattern:
 
 | Need | Pattern | Built with |
 | --- | --- | --- |
+| A chat page: the thread that keeps the reading position while a reply streams | [Chat](https://bl4ko.github.io/clanker-ui/docs/ai-elements/chat/) | `message-scroller` (anchor on the person's turn), `message`, `bubble`, `input-group` |
+| How much of the model's context window is used | [Context](https://bl4ko.github.io/clanker-ui/docs/ai-elements/context/) | `hover-card` on a `button`, `progress` |
 | One turn: the person's bubble, the agent's reply, copy and feedback buttons | [Message](https://bl4ko.github.io/clanker-ui/docs/ai-elements/message/) | `message`, `bubble`, `tooltip`, `code-block` |
 | The agent's todo list while it works: what is left and what is done | [Queue](https://bl4ko.github.io/clanker-ui/docs/ai-elements/queue/) | `trace` with a `trace-collapsible` per section |
 | Work handed to a subagent: the run, its tool calls, and its result | [Subagent](https://bl4ko.github.io/clanker-ui/docs/ai-elements/subagent/) | `trace`, nested `trace`, `code-block`, `badge` |
 | Ask yes or no before a tool runs; the answer turns into a tool line | [Confirmation](https://bl4ko.github.io/clanker-ui/docs/ai-elements/confirmation/) | `item`, `button`, `trace` |
 | A point in the thread to go back to (Restore drops the later turns) | [Checkpoint](https://bl4ko.github.io/clanker-ui/docs/ai-elements/checkpoint/) | `marker` (`separator`), `button` |
+| Pick the model and the effort next to the field | [Model Selector](https://bl4ko.github.io/clanker-ui/docs/ai-elements/model-selector/) | two `dropdown-menu` radio groups (`data-close-on-click`) in the `input-group-addon` |
+| The message field with attachments, model menus, and send | [Prompt Input](https://bl4ko.github.io/clanker-ui/docs/ai-elements/prompt-input/) | `input-group` with a `textarea`, `attachment`, `dropdown-menu` |
+| Prompts that the person sends in one click | [Suggestion](https://bl4ko.github.io/clanker-ui/docs/ai-elements/suggestion/) | outline `sm` `button` row with `scroll-fade-x` |

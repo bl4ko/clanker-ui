@@ -543,10 +543,10 @@ components/switch#switch-invalid	demo-switch-2
 components/switch#switch-sizes	demo-switch-2
 components/switch#switch-rtl	-	no example yet
 components/table	/docs/components/table
-components/table#table-demo	demo-table-0
-components/table#table-footer	-	no example yet
-components/table#table-actions	-	no example yet
-components/table#table-rtl	-	no example yet
+components/table#table-demo	table-demo
+components/table#table-footer	table-footer
+components/table#table-actions	table-actions
+components/table#table-rtl	table-rtl
 components/tabs	/docs/components/tabs
 components/tabs#tabs-demo	demo-tabs-0
 components/tabs#tabs-line	demo-tabs-1

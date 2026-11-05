@@ -49,6 +49,16 @@ The server also renders a docs site with the layout and behavior of ui.shadcn.co
 
 HTML and Markdown responses have `Cache-Control: no-cache` and an `ETag`. Text responses (HTML, Markdown, CSS, JavaScript, SVG) are gzip-compressed when the request accepts `gzip` (`Vary: Accept-Encoding`, ETag with a `-gz` suffix; compressed bytes are cached). With `DIR=.`, the server loads `docs/` again only when a file changes (size or modification time). Files and folders in `docs/content` whose names start with `.` or `_` are ignored.
 
+### Example classes
+
+The examples in `docs/content/**/examples/*.html` may use the Tailwind classes of the shadcn examples for their layout (`w-full max-w-sm`, `flex gap-2`, `rounded-lg bg-muted`). `docs/assets/examples.css` has their rules, and every docs page loads it after `docs.css`; the kit files do not have them. After a class change, run (Tailwind CLI as in Generated CSS):
+
+```sh
+go run ./tools/gen utilities -src "$SHADCN_SRC" -content 'docs/content/**/examples/*.html' -out docs/assets/examples.css
+```
+
+`go test` fails when a class of an example has no rule; CI makes the file again and fails when it differs.
+
 ### Docs coverage
 
 `tools/gen/docs-shadcn.tsv` lists every shadcn docs page and live example (`<ComponentPreview name styleName>`) of the pinned `apps/v4/content/docs/{components,ai-elements}/base`, `utils`, `forms`, and `dark-mode` files, in shadcn order. `tools/gen/docs-map.tsv` has one reviewed row for each: `<shadcn item><TAB><ours>[<TAB><reason>]`. A page row names a `docs/nav.json` link; an example row names an example on that page (a `docs/content/**/examples/<name>.html` file or a generated `demo-<section>-<n>`). `-` needs a reason; `?` is a row to review.

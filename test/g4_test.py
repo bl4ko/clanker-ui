@@ -2009,3 +2009,29 @@ def check_date_picker_field_width(t):
     t.a11y()
     assert style(page, "#fx-picker-due", "borderTopColor") == style(page, "#fx-picker-name", "borderTopColor"), "the a11y layer gives the trigger the input border"
     page.evaluate("() => document.getElementById('fx-picker-field').remove()")
+
+
+def check_calendar_limits_change(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const task = () => new Promise(r => setTimeout(r, 0))
+          const calendar = h("div", { "data-slot": "calendar", "data-month": "2026-10" })
+          document.body.prepend(calendar)
+          await task()
+          const enabled = () => [...calendar.querySelectorAll("td[data-day^='2026-10'] [data-calendar-day-button]")].filter(b => !b.disabled).map(b => Number(b.closest("td").dataset.day.slice(8)))
+          const out = [enabled().length]
+          calendar.dataset.max = "2026-10-15"
+          await task()
+          out.push(Math.max(...enabled()))
+          calendar.dataset.min = "2026-10-05"
+          await task()
+          out.push(Math.min(...enabled()), enabled().length)
+          delete calendar.dataset.max
+          await task()
+          out.push(Math.max(...enabled()))
+          calendar.remove()
+          return out
+        }"""
+    )
+    assert result == [31, 15, 5, 11, 31], result

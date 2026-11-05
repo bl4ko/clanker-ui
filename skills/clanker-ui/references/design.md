@@ -105,7 +105,7 @@ Rules for pages that look like an official shadcn block. Each rule names the kit
 ## 10. Dark mode and theme control
 
 - Check every page in light and dark. Use tokens only, so both modes come from the same CSS.
-- Theme control as on shadcn sites: one ghost `icon` toggle (32 px, as the shadcn site header; `data-theme-set="toggle"`, `contrast` icon) in `site-header-actions`, before the user menu. An app with settings also offers light, dark, and system with `theme-switch` in Settings, Appearance. Never two theme controls in one header, and never in page content except Settings, Appearance. Load `clanker-ui-theme.js` ([theming.md](theming.md)).
+- Theme control as on shadcn sites: one ghost `icon` toggle (32 px, as the shadcn site header; `data-theme-set="toggle"`, `contrast` icon) in `site-header-actions`, before the user menu; the other controls of the header are default size too. An app with settings also offers light, dark, and system with `theme-switch` in Settings, Appearance. Never two theme controls in one header, and never in page content except Settings, Appearance. Load `clanker-ui-theme.js` ([theming.md](theming.md)).
 - Color schemes (`data-scheme`) are an app choice for the whole app, not per page.
 
 ## 11. Icons

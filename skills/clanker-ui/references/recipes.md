@@ -266,7 +266,7 @@ The zone stays (drop another file to replace it), and the input stays in the lab
 
 ## Lists in cards and longer text
 
-- In a `card-content`: `item-group` with `data-size="sm"` items (`xs` for one-line rows such as a team list). With `item-separator` between rows: group gap 0 and `xs` items.
+- In a `card-content`: `item-group` with `data-size="sm"` items (`xs` for one-line rows such as a team list). A small `cover` in `item-media` is 40 px wide (32 px in `sm`, 24 px in `xs`) and shows no text. With `item-separator` between rows: group gap 0 and `xs` items.
 - `item-description` clamps at 2 lines (shadcn). Longer secondary text (a review, a note) is a plain `p` in `item-content` after the description; it is 14 px `--foreground`. For a long muted note use `<p data-slot="card-description">` in a card or `field-description` in a form, not app CSS.
 
 ## Phone tables: status with the amount

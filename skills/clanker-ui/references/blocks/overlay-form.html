@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Project Hail Mary - Marginalia</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
+  <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
+  <script type="module" src="/overlay-form.js"></script>
+</head>
+<body>
+  <header data-slot="site-header" data-size="lg">
+    <div data-slot="dropdown-menu" data-hide-from="md">
+      <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-dropdown-menu-trigger aria-label="Menu"><svg data-lucide="menu"></svg></button>
+      <div data-slot="dropdown-menu-content" data-align="start">
+        <a data-slot="dropdown-menu-item" href="#library" aria-current="page">Library</a>
+        <a data-slot="dropdown-menu-item" href="#meetings">Meetings</a>
+        <a data-slot="dropdown-menu-item" href="#members">Members</a>
+        <a data-slot="dropdown-menu-item" href="#settings">Settings</a>
+      </div>
+    </div>
+    <a data-slot="brand" href="#"><span data-slot="brand-mark" data-size="sm"><svg data-lucide="book-open"></svg></span>Marginalia</a>
+    <nav data-slot="site-header-nav" aria-label="Main" data-show-from="md">
+      <a href="#library" aria-current="page">Library</a>
+      <a href="#meetings">Meetings</a>
+      <a href="#members">Members</a>
+      <a href="#settings">Settings</a>
+    </nav>
+    <div data-slot="site-header-actions">
+      <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
+      <div data-slot="dropdown-menu">
+        <button type="button" data-slot="button" data-variant="ghost" data-size="icon" data-dropdown-menu-trigger aria-label="Account"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">AR</span></span></button>
+        <div data-slot="dropdown-menu-content" data-align="end">
+          <div data-slot="dropdown-menu-label">
+            <span data-slot="text-stack"><span>Ana Rossi</span><span>ana@marginalia.club</span></span>
+          </div>
+          <div data-slot="dropdown-menu-separator"></div>
+          <a data-slot="dropdown-menu-item" href="#profile"><svg data-lucide="user"></svg>Profile</a>
+          <a data-slot="dropdown-menu-item" href="#settings"><svg data-lucide="settings"></svg>Settings</a>
+          <div data-slot="dropdown-menu-separator"></div>
+          <a data-slot="dropdown-menu-item" href="#logout"><svg data-lucide="log-out"></svg>Log out</a>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main data-slot="page">
+    <nav data-slot="breadcrumb">
+      <ol data-slot="breadcrumb-list">
+        <li data-slot="breadcrumb-item"><a data-slot="breadcrumb-link" href="#library">Library</a></li>
+        <li data-slot="breadcrumb-separator"></li>
+        <li data-slot="breadcrumb-item"><span data-slot="breadcrumb-page">Project Hail Mary</span></li>
+      </ol>
+    </nav>
+    <div data-slot="page-header">
+      <h1 data-slot="page-title">Project Hail Mary</h1>
+      <p data-slot="page-description">Andy Weir · 2021 · 476 pages. Our November pick, discussed on Nov 18.</p>
+      <div data-slot="page-actions">
+        <button type="button" data-slot="button" data-variant="outline" data-sheet-trigger="edit-book"><svg data-lucide="pencil"></svg>Edit details</button>
+        <button type="button" data-slot="button" data-dialog-trigger="review-dialog"><svg data-lucide="star"></svg>Write a review</button>
+      </div>
+    </div>
+    <div data-slot="page-body">
+      <div>
+        <div data-slot="card">
+          <div data-slot="card-header">
+            <h2 data-slot="card-title">Reviews</h2>
+            <p data-slot="card-description" id="review-count">4 of 24 reviews, newest first.</p>
+            <div data-slot="card-action"><a data-slot="button" data-variant="outline" data-size="sm" href="#reviews">View all</a></div>
+          </div>
+          <div data-slot="card-content">
+            <div data-slot="item-group" role="list" id="reviews">
+                <div data-slot="item" role="listitem">
+                  <div data-slot="item-media"><span data-slot="avatar"><span data-slot="avatar-fallback">NO</span></span></div>
+                  <div data-slot="item-content">
+                    <div data-slot="item-title">Rocky stole the book</div>
+                    <p data-slot="item-description">Nadia Okafor · <time>Oct 24</time></p>
+                    <p>I expected a lonely survival story and got the best friendship in recent science fiction. The science is dense, but the jokes carry it.</p>
+                  </div>
+                  <div data-slot="item-actions"><span data-slot="rating" role="img" aria-label="5 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg></span></div>
+                </div>
+                <div data-slot="item" role="listitem">
+                  <div data-slot="item-media"><span data-slot="avatar"><span data-slot="avatar-fallback">TB</span></span></div>
+                  <div data-slot="item-content">
+                    <div data-slot="item-title">Fun, if a little long</div>
+                    <p data-slot="item-description">Tomás Berg · <time>Oct 21</time></p>
+                    <p>The flashbacks slow the middle third. The last 80 pages make up for it, and the ending is earned.</p>
+                  </div>
+                  <div data-slot="item-actions"><span data-slot="rating" role="img" aria-label="4 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg></span></div>
+                </div>
+                <div data-slot="item" role="listitem">
+                  <div data-slot="item-media"><span data-slot="avatar"><span data-slot="avatar-fallback">LK</span></span></div>
+                  <div data-slot="item-content">
+                    <div data-slot="item-title">Read it in two nights</div>
+                    <p data-slot="item-description">Lea Kranjc · <time>Oct 19</time></p>
+                    <p>Great pick for a club: everyone has a favorite scene, and the science gives us something to argue about.</p>
+                  </div>
+                  <div data-slot="item-actions"><span data-slot="rating" role="img" aria-label="5 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg></span></div>
+                </div>
+                <div data-slot="item" role="listitem">
+                  <div data-slot="item-media"><span data-slot="avatar"><span data-slot="avatar-fallback">MH</span></span></div>
+                  <div data-slot="item-content">
+                    <div data-slot="item-title">Clever, but the humor wore thin</div>
+                    <p data-slot="item-description">Marco Haas · <time>Oct 12</time></p>
+                    <p>I liked the puzzles more than the narrator. Worth reading for the first contact chapters alone.</p>
+                  </div>
+                  <div data-slot="item-actions"><span data-slot="rating" role="img" aria-label="3 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg><svg data-lucide="star"></svg></span></div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside data-slot="page-aside">
+        <div data-slot="card">
+          <div data-slot="card-header">
+            <h2 data-slot="card-title">Ratings</h2>
+            <p data-slot="card-description"><span data-slot="rating" role="img" aria-label="4 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg></span> 4.4 average from 24 members.</p>
+          </div>
+          <div data-slot="card-content">
+            <div data-slot="field-group">
+                <div data-slot="progress" data-value="58">
+                  <span data-slot="progress-label">5 stars</span>
+                  <span data-slot="progress-value"></span>
+                </div>
+                <div data-slot="progress" data-value="25">
+                  <span data-slot="progress-label">4 stars</span>
+                  <span data-slot="progress-value"></span>
+                </div>
+                <div data-slot="progress" data-value="13">
+                  <span data-slot="progress-label">3 stars</span>
+                  <span data-slot="progress-value"></span>
+                </div>
+                <div data-slot="progress" data-value="4">
+                  <span data-slot="progress-label">2 stars</span>
+                  <span data-slot="progress-value"></span>
+                </div>
+                <div data-slot="progress" data-value="0">
+                  <span data-slot="progress-label">1 star</span>
+                  <span data-slot="progress-value"></span>
+                </div>
+            </div>
+          </div>
+        </div>
+        <dl data-slot="stat-grid" data-size="sm">
+          <div><dt>Status</dt><dd><span data-slot="badge" data-variant="info"><svg data-lucide="book-open"></svg>Reading</span></dd></div>
+          <div><dt>Genre</dt><dd>Science fiction</dd></div>
+          <div><dt>Suggested by</dt><dd>Lea Kranjc</dd></div>
+          <div><dt>ISBN</dt><dd>978-0593135204</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </main>
+  <div data-slot="dialog" id="review-dialog">
+    <dialog data-slot="dialog-content">
+      <form data-slot="form" id="review-form">
+        <div data-slot="dialog-header">
+          <h2 data-slot="dialog-title">Write a review</h2>
+          <p data-slot="dialog-description">Members see your review on the book page and in the meeting notes.</p>
+        </div>
+        <div data-slot="field-group">
+          <fieldset data-slot="field-set">
+            <legend data-slot="field-legend" data-variant="label">Your rating</legend>
+            <div data-slot="radio-group" data-name="rating" data-required data-error-value-missing="Choose a rating from 1 to 5 stars.">
+                    <div data-slot="field" data-orientation="horizontal">
+                      <button type="button" data-slot="radio-group-item" id="rating-5" value="5"></button>
+                      <label data-slot="field-label" for="rating-5"><span data-slot="rating" role="img" aria-label="5 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg></span>Loved it</label>
+                    </div>
+                    <div data-slot="field" data-orientation="horizontal">
+                      <button type="button" data-slot="radio-group-item" id="rating-4" value="4"></button>
+                      <label data-slot="field-label" for="rating-4"><span data-slot="rating" role="img" aria-label="4 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg></span>Liked it</label>
+                    </div>
+                    <div data-slot="field" data-orientation="horizontal">
+                      <button type="button" data-slot="radio-group-item" id="rating-3" value="3"></button>
+                      <label data-slot="field-label" for="rating-3"><span data-slot="rating" role="img" aria-label="3 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg><svg data-lucide="star"></svg></span>It was fine</label>
+                    </div>
+                    <div data-slot="field" data-orientation="horizontal">
+                      <button type="button" data-slot="radio-group-item" id="rating-2" value="2"></button>
+                      <label data-slot="field-label" for="rating-2"><span data-slot="rating" role="img" aria-label="2 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg><svg data-lucide="star"></svg><svg data-lucide="star"></svg></span>Not for me</label>
+                    </div>
+                    <div data-slot="field" data-orientation="horizontal">
+                      <button type="button" data-slot="radio-group-item" id="rating-1" value="1"></button>
+                      <label data-slot="field-label" for="rating-1"><span data-slot="rating" role="img" aria-label="1 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg><svg data-lucide="star"></svg><svg data-lucide="star"></svg><svg data-lucide="star"></svg></span>Did not finish</label>
+                    </div>
+            </div>
+          </fieldset>
+          <div data-slot="field" role="group">
+            <label data-slot="field-label" for="review-title">Headline</label>
+            <input data-slot="input" id="review-title" name="title" required maxlength="80" placeholder="Rocky stole the book" data-error-value-missing="Write a short headline.">
+          </div>
+          <div data-slot="field" role="group">
+            <label data-slot="field-label" for="review-text">Review</label>
+            <textarea data-slot="textarea" id="review-text" name="text" rows="4" required minlength="20" maxlength="1000" placeholder="What worked for you, and what did not?" data-error-value-missing="Write your review." data-error-too-short="Write at least 20 characters."></textarea>
+            <p data-slot="field-description">20 to 1,000 characters.</p>
+          </div>
+          <div data-slot="field" data-orientation="horizontal">
+            <button type="button" data-slot="checkbox" id="review-spoilers" data-name="spoilers"></button>
+            <label data-slot="field-label" for="review-spoilers">Contains spoilers</label>
+          </div>
+        </div>
+        <div data-slot="dialog-footer">
+          <button type="button" data-slot="button" data-variant="outline" data-dialog-close>Cancel</button>
+          <button type="submit" data-slot="button">Post review</button>
+        </div>
+      </form>
+    </dialog>
+  </div>
+  <div data-slot="sheet" id="edit-book">
+    <dialog data-slot="sheet-content" data-side="right">
+      <form data-slot="form" id="book-form">
+        <div data-slot="sheet-header">
+          <h2 data-slot="sheet-title">Edit details</h2>
+          <p data-slot="sheet-description">Changes show for every member of the club.</p>
+        </div>
+        <div data-slot="sheet-body">
+          <div data-slot="field-group">
+            <div data-slot="field" role="group">
+              <label data-slot="field-label" for="book-title">Title</label>
+              <input data-slot="input" id="book-title" name="title" required value="Project Hail Mary" data-error-value-missing="Enter the title.">
+            </div>
+            <div data-slot="field" role="group">
+              <label data-slot="field-label" for="book-author">Author</label>
+              <input data-slot="input" id="book-author" name="author" required value="Andy Weir" data-error-value-missing="Enter the author.">
+            </div>
+            <div data-slot="field-group" data-columns="2">
+              <div data-slot="field" role="group">
+                <label data-slot="field-label" for="book-year">Year</label>
+                <input data-slot="input" id="book-year" name="year" type="number" min="1450" max="2026" value="2021" data-error-range-overflow="Use a year up to 2026." data-error-range-underflow="Use a year from 1450.">
+              </div>
+              <div data-slot="field" role="group">
+                <label data-slot="field-label" for="book-pages">Pages</label>
+                <input data-slot="input" id="book-pages" name="pages" type="number" min="1" value="476" data-error-range-underflow="A book has at least 1 page.">
+              </div>
+            </div>
+            <div data-slot="field" role="group">
+              <label data-slot="field-label" for="book-isbn">ISBN</label>
+              <input data-slot="input" id="book-isbn" name="isbn" inputmode="numeric" pattern="97[89]-?[0-9]{10}" value="978-0593135204" data-error-pattern-mismatch="Use 13 digits that start with 978 or 979.">
+              <p data-slot="field-description">Optional. Members use it to find the edition.</p>
+            </div>
+            <div data-slot="field" role="group">
+              <label data-slot="field-label" for="book-genre">Genre</label>
+              <div data-slot="select" data-name="genre" data-value="scifi">
+                <button data-slot="select-trigger" id="book-genre"><span data-slot="select-value">Select a genre</span></button>
+                <div data-slot="select-content">
+                  <div data-slot="select-item" data-value="scifi">Science fiction</div>
+                  <div data-slot="select-item" data-value="fantasy">Fantasy</div>
+                  <div data-slot="select-item" data-value="literary">Literary fiction</div>
+                  <div data-slot="select-item" data-value="nonfiction">Nonfiction</div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="field" role="group">
+              <label data-slot="field-label" for="book-synopsis">Synopsis</label>
+              <textarea data-slot="textarea" id="book-synopsis" name="synopsis" rows="6" maxlength="600">Ryland Grace wakes up alone on a spaceship with no memory of how he got there. As his memory returns, he learns that he is humanity's last chance to stop a microbe that dims the sun.</textarea>
+              <p data-slot="field-description">At most 600 characters. No spoilers past chapter 3.</p>
+            </div>
+            <div data-slot="field" data-orientation="horizontal">
+              <button type="button" data-slot="checkbox" id="book-pick" data-name="pick" data-checked></button>
+              <label data-slot="field-label" for="book-pick">Show as the pick of the month</label>
+            </div>
+          </div>
+        </div>
+        <div data-slot="sheet-footer">
+          <button type="submit" data-slot="button">Save changes</button>
+          <button type="button" data-slot="button" data-variant="outline" data-sheet-close>Cancel</button>
+        </div>
+      </form>
+    </dialog>
+  </div>
+</body>
+</html>

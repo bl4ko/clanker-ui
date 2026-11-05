@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
+  <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <title>New project - Acme Inc.</title>
@@ -144,117 +146,202 @@
           <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-theme-set="toggle" aria-label="Dark mode"><svg data-lucide="contrast"></svg></button>
         </div>
       </header>
-      <div data-slot="page" data-size="sm">
+      <div data-slot="page" data-size="lg">
         <div data-slot="page-header">
-          <h1 data-slot="page-title">New project</h1>
-          <p data-slot="page-description">A project groups tasks, files, and people. You can change all of this later.</p>
+          <h1 data-slot="page-title" id="project-title">New project</h1>
+          <p data-slot="page-description" id="project-lead">A project groups tasks, files, and people. You can change all of this later.</p>
         </div>
-        <form data-slot="form" id="project-form">
-          <div data-slot="field-group">
-            <fieldset data-slot="field-set">
-              <legend data-slot="field-legend">Details</legend>
-              <p data-slot="field-description">The name and key show in the sidebar, in links, and in task IDs.</p>
+        <div data-slot="page-body">
+          <div>
+            <form data-slot="form" id="project-form">
               <div data-slot="field-group">
-                <div data-slot="field-group" data-columns="3">
-                  <div data-slot="field" role="group" data-span="2">
-                    <label data-slot="field-label" for="project-name">Name</label>
-                    <input data-slot="input" id="project-name" name="name" placeholder="Website redesign" required maxlength="60" data-error-value-missing="Enter a project name.">
-                  </div>
-                  <div data-slot="field" role="group">
-                    <label data-slot="field-label" for="project-key">Key</label>
-                    <input data-slot="input" id="project-key" name="key" placeholder="WEB" required pattern="[A-Z]{2,5}" data-error-value-missing="Enter a key." data-error-pattern-mismatch="Use 2 to 5 capital letters.">
-                  </div>
-                </div>
-                <div data-slot="field" role="group">
-                  <label data-slot="field-label" for="project-description">Description</label>
-                  <textarea data-slot="textarea" id="project-description" name="description" rows="3" maxlength="280" placeholder="What is the goal of this project?"></textarea>
-                  <p data-slot="field-description">Optional. At most 280 characters.</p>
-                </div>
-              </div>
-            </fieldset>
-            <div data-slot="field-separator"></div>
-            <fieldset data-slot="field-set">
-              <legend data-slot="field-legend">Planning</legend>
-              <p data-slot="field-description">The dates and the budget set the numbers on the project page.</p>
-              <div data-slot="field-group" data-columns="2">
-                <div data-slot="field" role="group">
-                  <label data-slot="field-label" for="project-status">Status</label>
-                  <div data-slot="select" data-name="status" data-required data-error-value-missing="Select a status.">
-                    <button data-slot="select-trigger" id="project-status"><span data-slot="select-value">Select a status</span></button>
-                    <div data-slot="select-content">
-                      <div data-slot="select-item" data-value="planned">Planned</div>
-                      <div data-slot="select-item" data-value="active">Active</div>
-                      <div data-slot="select-item" data-value="paused">Paused</div>
-                    </div>
-                  </div>
-                </div>
-                <div data-slot="field" role="group">
-                  <label data-slot="field-label" for="project-budget">Budget</label>
-                  <div data-slot="input-group" role="group">
-                    <div data-slot="input-group-addon"><span data-slot="input-group-text">$</span></div>
-                    <input data-slot="input-group-control" id="project-budget" name="budget" type="number" inputmode="decimal" min="0" step="100" placeholder="0" data-error-range-underflow="The budget cannot be negative.">
-                    <div data-slot="input-group-addon" data-align="inline-end"><span data-slot="input-group-text">USD</span></div>
-                  </div>
-                </div>
-                <div data-slot="field" role="group">
-                  <label data-slot="field-label" for="project-start">Start date</label>
-                  <input data-slot="input" id="project-start" name="start" type="date" required data-error-value-missing="Select a start date.">
-                </div>
-                <div data-slot="field" role="group">
-                  <label data-slot="field-label" for="project-due">Due date</label>
-                  <input data-slot="input" id="project-due" name="due" type="date" required data-error-value-missing="Select a due date.">
-                  <p data-slot="field-description">After the start date.</p>
-                </div>
-              </div>
-            </fieldset>
-            <div data-slot="field-separator"></div>
-            <fieldset data-slot="field-set">
-              <legend data-slot="field-legend">Visibility</legend>
-              <p data-slot="field-description">Who can see the project and its tasks.</p>
-              <div data-slot="radio-group" data-name="visibility" data-value="team">
-                  <label data-slot="field-label" for="visibility-private">
-                    <div data-slot="field" data-orientation="horizontal">
-                      <div data-slot="field-content">
-                        <div data-slot="field-label">Private</div>
-                        <p data-slot="field-description">Only you and the people you invite.</p>
+                <fieldset data-slot="field-set">
+                  <legend data-slot="field-legend">Details</legend>
+                  <p data-slot="field-description">The name and key show in the sidebar, in links, and in task IDs.</p>
+                  <div data-slot="field-group">
+                    <div data-slot="field-group" data-columns="3">
+                      <div data-slot="field" role="group" data-span="2">
+                        <label data-slot="field-label" for="project-name">Name</label>
+                        <input data-slot="input" id="project-name" name="name" placeholder="Website redesign" required maxlength="60" data-error-value-missing="Enter a project name.">
                       </div>
-                      <button type="button" data-slot="radio-group-item" id="visibility-private" value="private"></button>
-                    </div>
-                  </label>
-                  <label data-slot="field-label" for="visibility-team">
-                    <div data-slot="field" data-orientation="horizontal">
-                      <div data-slot="field-content">
-                        <div data-slot="field-label">Team</div>
-                        <p data-slot="field-description">Everyone in Acme Inc.</p>
+                      <div data-slot="field" role="group">
+                        <label data-slot="field-label" for="project-key">Key</label>
+                        <input data-slot="input" id="project-key" name="key" placeholder="WEB" required pattern="[A-Z]{2,5}" data-error-value-missing="Enter a key." data-error-pattern-mismatch="Use 2 to 5 capital letters.">
                       </div>
-                      <button type="button" data-slot="radio-group-item" id="visibility-team" value="team"></button>
                     </div>
-                  </label>
-                  <label data-slot="field-label" for="visibility-public">
-                    <div data-slot="field" data-orientation="horizontal">
-                      <div data-slot="field-content">
-                        <div data-slot="field-label">Public</div>
-                        <p data-slot="field-description">Anyone with the link can view.</p>
+                    <div data-slot="field" role="group">
+                      <label data-slot="field-label" for="project-description">Description</label>
+                      <textarea data-slot="textarea" id="project-description" name="description" rows="3" maxlength="280" placeholder="What is the goal of this project?"></textarea>
+                      <p data-slot="field-description">Optional. At most 280 characters.</p>
+                    </div>
+                  </div>
+                </fieldset>
+                <div data-slot="field-separator"></div>
+                <fieldset data-slot="field-set">
+                  <legend data-slot="field-legend">Planning</legend>
+                  <p data-slot="field-description">The timeline and the budget set the numbers on the project page.</p>
+                  <div data-slot="field-group" data-columns="2">
+                    <div data-slot="field" role="group">
+                      <label data-slot="field-label" for="project-status">Status</label>
+                      <div data-slot="select" data-name="status" data-required data-error-value-missing="Select a status." id="project-status-select">
+                        <button data-slot="select-trigger" id="project-status"><span data-slot="select-value">Select a status</span></button>
+                        <div data-slot="select-content">
+                          <div data-slot="select-item" data-value="planned">Planned</div>
+                          <div data-slot="select-item" data-value="active">Active</div>
+                          <div data-slot="select-item" data-value="paused">Paused</div>
+                        </div>
                       </div>
-                      <button type="button" data-slot="radio-group-item" id="visibility-public" value="public"></button>
                     </div>
-                  </label>
+                    <div data-slot="field" role="group">
+                      <label data-slot="field-label" for="project-budget">Budget</label>
+                      <div data-slot="input-group" role="group">
+                        <div data-slot="input-group-addon"><span data-slot="input-group-text">$</span></div>
+                        <input data-slot="input-group-control" id="project-budget" name="budget" type="number" inputmode="decimal" min="0" step="100" placeholder="0" data-error-range-underflow="The budget cannot be negative.">
+                        <div data-slot="input-group-addon" data-align="inline-end"><span data-slot="input-group-text">USD</span></div>
+                      </div>
+                      <p data-slot="field-description">Over $50,000 needs approval from finance.</p>
+                    </div>
+                    <div data-slot="field" role="group" data-span="2">
+                      <label data-slot="field-label" for="project-timeline">Timeline</label>
+                      <div data-slot="date-picker" id="project-timeline-picker" data-placeholder="Pick the start and due dates" data-format="medium" data-required data-error-value-missing="Pick the start and due dates.">
+                        <button type="button" id="project-timeline" data-slot="button" data-variant="outline" data-date-picker-trigger><svg data-lucide="calendar"></svg><span data-slot="date-picker-value"></span></button>
+                        <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose the timeline">
+                          <div data-slot="calendar" data-mode="range" data-name="timeline" data-min="2026-10-01" id="project-calendar"></div>
+                        </div>
+                      </div>
+                      <p data-slot="field-description">The first and the last working day.</p>
+                    </div>
+                  </div>
+                </fieldset>
+                <div data-slot="field-separator"></div>
+                <fieldset data-slot="field-set">
+                  <legend data-slot="field-legend">Visibility</legend>
+                  <p data-slot="field-description">Who can see the project and its tasks.</p>
+                  <div data-slot="radio-group" data-name="visibility" data-value="team" id="project-visibility">
+                      <label data-slot="field-label" for="visibility-private">
+                        <div data-slot="field" data-orientation="horizontal">
+                          <div data-slot="field-content">
+                            <div data-slot="field-label">Private</div>
+                            <p data-slot="field-description">Only you and the people you invite.</p>
+                          </div>
+                          <button type="button" data-slot="radio-group-item" id="visibility-private" value="private"></button>
+                        </div>
+                      </label>
+                      <label data-slot="field-label" for="visibility-team">
+                        <div data-slot="field" data-orientation="horizontal">
+                          <div data-slot="field-content">
+                            <div data-slot="field-label">Team</div>
+                            <p data-slot="field-description">Everyone in Acme Inc.</p>
+                          </div>
+                          <button type="button" data-slot="radio-group-item" id="visibility-team" value="team"></button>
+                        </div>
+                      </label>
+                      <label data-slot="field-label" for="visibility-public">
+                        <div data-slot="field" data-orientation="horizontal">
+                          <div data-slot="field-content">
+                            <div data-slot="field-label">Public</div>
+                            <p data-slot="field-description">Anyone with the link can view.</p>
+                          </div>
+                          <button type="button" data-slot="radio-group-item" id="visibility-public" value="public"></button>
+                        </div>
+                      </label>
+                  </div>
+                </fieldset>
+                <div data-slot="field-separator"></div>
+                <div data-slot="field" data-orientation="horizontal">
+                  <button type="button" data-slot="checkbox" id="project-notify" data-name="notify" data-checked></button>
+                  <div data-slot="field-content">
+                    <label data-slot="field-label" for="project-notify">Email the team when the project starts</label>
+                    <p data-slot="field-description">Everyone with access gets one email on the start date.</p>
+                  </div>
+                </div>
+                <div data-slot="field" data-orientation="horizontal">
+                  <button type="submit" data-slot="button" id="project-submit">Create project</button>
+                  <a data-slot="button" data-variant="outline" href="#projects">Cancel</a>
+                </div>
               </div>
-            </fieldset>
-            <div data-slot="field-separator"></div>
-            <div data-slot="field" data-orientation="horizontal">
-              <button type="button" data-slot="checkbox" id="project-notify" data-name="notify" data-checked></button>
-              <div data-slot="field-content">
-                <label data-slot="field-label" for="project-notify">Email the team when the project starts</label>
-                <p data-slot="field-description">Everyone with access gets one email on the start date.</p>
-              </div>
-            </div>
-            <div data-slot="field" data-orientation="horizontal">
-              <button type="submit" data-slot="button">Create project</button>
-              <a data-slot="button" data-variant="outline" href="#projects">Cancel</a>
-            </div>
+            </form>
           </div>
-        </form>
+          <aside data-slot="page-aside">
+            <div data-slot="card">
+              <div data-slot="card-header">
+                <h2 data-slot="card-title">Summary</h2>
+                <p data-slot="card-description">Updates as you fill in the form.</p>
+              </div>
+              <div data-slot="card-content">
+                <div data-slot="item-group" role="list" id="project-summary">
+                  <div data-slot="item" data-size="xs" role="listitem">
+                    <div data-slot="item-content"><div data-slot="item-description">Key</div></div>
+                    <div data-slot="item-actions" data-summary="key">—</div>
+                  </div>
+                  <div data-slot="item" data-size="xs" role="listitem">
+                    <div data-slot="item-content"><div data-slot="item-description">Status</div></div>
+                    <div data-slot="item-actions" data-summary="status">—</div>
+                  </div>
+                  <div data-slot="item" data-size="xs" role="listitem">
+                    <div data-slot="item-content"><div data-slot="item-description">Budget</div></div>
+                    <div data-slot="item-actions" data-summary="budget">—</div>
+                  </div>
+                  <div data-slot="item" data-size="xs" role="listitem">
+                    <div data-slot="item-content"><div data-slot="item-description">Budget per week</div></div>
+                    <div data-slot="item-actions" data-summary="weekly">—</div>
+                  </div>
+                  <div data-slot="item" data-size="xs" role="listitem">
+                    <div data-slot="item-content"><div data-slot="item-description">Duration</div></div>
+                    <div data-slot="item-actions" data-summary="duration">—</div>
+                  </div>
+                  <div data-slot="item" data-size="xs" role="listitem">
+                    <div data-slot="item-content"><div data-slot="item-description">Visibility</div></div>
+                    <div data-slot="item-actions" data-summary="visibility">Team</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="card">
+              <div data-slot="card-header">
+                <h2 data-slot="card-title">Before you start</h2>
+                <p data-slot="card-description">Rules for every project in Acme Inc.</p>
+              </div>
+              <div data-slot="card-content">
+                <div data-slot="item-group" role="list">
+                  <div data-slot="item" data-size="xs" role="listitem">
+                    <div data-slot="item-media" data-variant="icon"><svg data-lucide="wallet"></svg></div>
+                    <div data-slot="item-content"><div data-slot="item-title">Finance approves budgets over $50,000</div><p data-slot="item-description">Usually in 2 working days.</p></div>
+                  </div>
+                  <div data-slot="item" data-size="xs" role="listitem">
+                    <div data-slot="item-media" data-variant="icon"><svg data-lucide="lock"></svg></div>
+                    <div data-slot="item-content"><div data-slot="item-title">The key is fixed after the first task</div><p data-slot="item-description">Task IDs use it, for example WEB-12.</p></div>
+                  </div>
+                  <div data-slot="item" data-size="xs" role="listitem">
+                    <div data-slot="item-media" data-variant="icon"><svg data-lucide="globe"></svg></div>
+                    <div data-slot="item-content"><div data-slot="item-title">Public projects show the name and description</div><p data-slot="item-description">Tasks and files stay private.</p></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="card" id="project-danger" hidden>
+              <div data-slot="card-header">
+                <h2 data-slot="card-title">Delete project</h2>
+                <p data-slot="card-description">Removes the project, its 68 tasks, and its files for everyone.</p>
+              </div>
+              <div data-slot="card-footer">
+                <div data-slot="alert-dialog">
+                  <button type="button" data-slot="button" data-variant="destructive" data-alert-dialog-trigger><svg data-lucide="trash"></svg>Delete project</button>
+                  <dialog data-slot="alert-dialog-content">
+                    <div data-slot="alert-dialog-header">
+                      <h2 data-slot="alert-dialog-title">Delete Website redesign?</h2>
+                      <p data-slot="alert-dialog-description">This deletes 68 tasks and 214 files. You cannot undo this.</p>
+                    </div>
+                    <div data-slot="alert-dialog-footer">
+                      <button type="button" data-slot="alert-dialog-cancel" data-variant="outline">Cancel</button>
+                      <button type="button" data-slot="alert-dialog-action" data-variant="destructive" id="project-delete">Delete project</button>
+                    </div>
+                  </dialog>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
     </main>
   </div>

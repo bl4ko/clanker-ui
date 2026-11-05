@@ -663,7 +663,7 @@ def check_docs_component_demos(t):
     page.wait_for_function("""() => document.querySelectorAll('#icon-grid svg').length > 100""")
 
 
-BLOCKS = ["dashboard", "data-table", "settings", "form", "detail", "login", "states"]
+BLOCKS = ["dashboard", "data-table", "settings", "form", "detail", "login", "login-split", "card-grid", "overlay-form", "states"]
 
 BLOCK_LAYOUT = """() => {
   const box = el => { const r = el.getBoundingClientRect(); return { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height), b: Math.round(r.bottom) } }
@@ -742,11 +742,18 @@ def check_blocks_data_table(t):
     assert rows.count() == 10 and page.locator("#task-filter").input_value() == ""
     page.locator('#tasks thead [data-slot="checkbox"]').click()
     assert page.locator('[data-slot="data-table-selection"]').inner_text() == "10 of 16 row(s) selected."
+    status = page.locator('#tasks tbody tr:not([hidden]) [data-hide-from="sm"] [data-slot="text-stack"] > :last-child').first
+    assert status.is_visible() == t.mobile and page.locator('th[data-column="status"]').is_visible() != t.mobile
     if not t.mobile:
-        page.locator('[data-sort="title"]').click()
+        sort = page.locator('[data-sort="title"]')
+        sort.click()
         assert page.locator('th:has([data-sort="title"])').get_attribute("aria-sort") == "ascending"
-        titles = rows.evaluate_all("rows => rows.map(r => r.cells[2].textContent.trim())")
-        assert titles == sorted(titles, key=str.lower) or titles == sorted(titles), titles
+        titles = rows.evaluate_all("rows => rows.map(r => r.cells[2].querySelector('[title]').title)")
+        assert titles == sorted(titles), titles
+        sort.click()
+        sort.click()
+        assert page.locator('th:has([data-sort="title"])').get_attribute("aria-sort") == "none"
+        assert page.locator('#tasks thead [data-sort] > svg').evaluate_all("icons => icons.map(i => i.dataset.lucide)") == ["chevrons-up-down"] * 3
     page.locator('[data-page="next"]').click()
     assert page.locator("#task-page").inner_text() == "Page 2 of 2" and rows.count() == 6
 
@@ -801,3 +808,101 @@ def check_blocks_form_fields(t):
     page.wait_for_function("() => document.querySelector('#project-name').getAttribute('aria-invalid') === 'true'")
     after = page.locator("#project-budget").locator("xpath=ancestor::*[@data-slot='field'][1]").bounding_box()
     assert abs(after["x"] - budget["x"]) < 1 and abs(after["width"] - budget["width"]) < 1, (budget, after)
+
+
+def check_blocks_csp_meta(t):
+    page = t.page
+    for name in BLOCKS:
+        t.docs("/blocks/" + name)
+        metas = page.evaluate("""() => [...document.querySelectorAll('meta[http-equiv="Content-Security-Policy"]')].map(m => m.content)""")
+        assert len(metas) == 1 and "require-trusted-types-for 'script'" in metas[0] and "frame-ancestors" not in metas[0], (name, metas)
+
+
+def check_blocks_form_edit(t):
+    page = t.page
+    t.docs("/blocks/form")
+    assert page.locator("#project-danger").is_hidden()
+    t.docs("/blocks/form?id=web")
+    page.wait_for_function("() => document.querySelector('[data-summary=duration]').textContent === '10 weeks'")
+    assert page.locator("#project-title").inner_text() == "Website redesign"
+    assert page.locator("#project-status").inner_text().strip() == "Active"
+    assert page.locator('[data-summary="weekly"]').inner_text() == "$4,800"
+    trigger = page.locator("#project-timeline")
+    field = trigger.locator("xpath=ancestor::*[@data-slot='field'][1]")
+    assert abs(trigger.bounding_box()["width"] - field.bounding_box()["width"]) < 1
+    page.locator("#project-budget").fill("60000")
+    assert page.locator('[data-summary="budget"]').inner_text() == "$60,000"
+    page.get_by_role("button", name="Delete project").click()
+    page.wait_for_selector('#project-danger [data-slot="alert-dialog-content"][data-open]')
+    page.keyboard.press("Escape")
+    page.wait_for_selector('#project-danger [data-slot="alert-dialog-content"]:not([data-open])', state="attached")
+
+
+def check_blocks_card_grid(t):
+    page = t.page
+    t.docs("/blocks/card-grid")
+    cards = page.locator('#books > [data-slot="card"]:not([hidden])')
+    assert cards.count() == 12
+    if t.mobile:
+        page.locator("#shelf-select [data-slot=select-trigger]").click()
+        page.get_by_role("option", name="Read (6)").click()
+    else:
+        page.get_by_role("tab", name="Read 6").click()
+    page.wait_for_function("() => document.querySelectorAll('#books > [data-slot=card]:not([hidden])').length === 6")
+    assert cards.evaluate_all("cs => cs.every(c => c.dataset.status === 'read')")
+    columns = len({round(b["x"]) for b in cards.evaluate_all("cs => cs.map(c => c.getBoundingClientRect().toJSON())")})
+    assert columns == (2 if t.mobile else 6), columns
+    page.locator("#shelf-filter").fill("zzz")
+    page.locator("#shelf-empty").wait_for(state="visible")
+    page.locator("#shelf-clear").click()
+    page.wait_for_function("() => document.querySelectorAll('#books > [data-slot=card]:not([hidden])').length === 12")
+    page.locator("#shelf-sort [data-slot=select-trigger]").click()
+    page.get_by_role("option", name="Title").click()
+    titles = cards.evaluate_all("cs => cs.map(c => c.dataset.title)")
+    assert titles == sorted(titles), titles
+    for cover in page.locator('#books [data-slot="cover"]').all()[:4]:
+        assert cover.evaluate("c => [...c.children].filter(e => e.localName === 'span').every(s => s.scrollWidth <= s.clientWidth + 1)")
+
+
+def check_blocks_overlay_form(t):
+    page = t.page
+    t.docs("/blocks/overlay-form")
+    page.get_by_role("button", name="Write a review").click()
+    page.wait_for_selector("#review-dialog [data-slot=dialog-content][data-open]")
+    t.settle()
+    page.get_by_role("button", name="Post review").click()
+    errors = page.locator("#review-form [data-slot=field-error]:visible")
+    assert errors.all_inner_texts() == ["Choose a rating from 1 to 5 stars.", "Write a short headline.", "Write your review."], errors.all_inner_texts()
+    gap = page.evaluate("""() => { const h = document.querySelector('#review-form [data-slot=dialog-header]').getBoundingClientRect(); const g = document.querySelector('#review-form > [data-slot=field-group]').getBoundingClientRect(); return g.top - h.bottom }""")
+    assert abs(gap - 16) < 1, gap
+    page.locator("label[for=rating-4]").click()
+    page.locator("#review-title").fill("Worth the hype")
+    page.locator("#review-text").fill("The middle drags, but the ending is earned.")
+    page.get_by_role("button", name="Post review").click()
+    page.wait_for_selector("#review-dialog [data-slot=dialog-content]:not([data-open])", state="attached")
+    assert page.locator("#reviews [data-slot=item-title]").first.inner_text() == "Worth the hype"
+    assert page.locator("#reviews [data-slot=rating]").first.get_attribute("aria-label") == "4 of 5 stars"
+    page.get_by_role("button", name="Edit details").click()
+    page.wait_for_selector("#edit-book [data-slot=sheet-content][data-open]")
+    t.settle()
+    m = page.evaluate("""() => { const b = document.querySelector('#edit-book [data-slot=sheet-body]'); const f = document.querySelector('#edit-book [data-slot=sheet-footer]').getBoundingClientRect(); return { overflow: getComputedStyle(b).overflowY, footer: f.bottom, height: innerHeight } }""")
+    assert m["footer"] <= m["height"] + 1 and m["overflow"] == "auto", m
+    page.locator("#book-title").fill("Project Hail Mary (2nd ed.)")
+    page.get_by_role("button", name="Save changes").click()
+    page.wait_for_function("() => document.querySelector('[data-slot=page-title]').textContent === 'Project Hail Mary (2nd ed.)'")
+
+
+def check_blocks_login_split(t):
+    page = t.page
+    t.docs("/blocks/login-split")
+    aside = page.locator('[data-slot="page-aside"]')
+    assert aside.is_visible() == (t.width >= 1024)
+    link = page.get_by_role("link", name="Forgot your password?")
+    muted = page.evaluate("""() => { const p = document.createElement('p'); p.style.color = 'var(--muted-foreground)'; document.body.append(p); const c = getComputedStyle(p).color; p.remove(); return c }""")
+    assert link.evaluate("a => getComputedStyle(a).color") == muted
+    toggle = page.locator('[data-theme-set="toggle"]')
+    brand = page.locator('[data-slot="brand"]')
+    assert abs(toggle.bounding_box()["y"] + toggle.bounding_box()["height"] / 2 - brand.bounding_box()["y"] - brand.bounding_box()["height"] / 2) < 2
+    page.get_by_role("button", name="Sign in").click()
+    page.wait_for_function("() => document.querySelector('#email').getAttribute('aria-invalid') === 'true'")
+    assert page.evaluate("() => document.activeElement.id") == "email"

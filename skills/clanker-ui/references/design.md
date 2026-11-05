@@ -1,6 +1,6 @@
 # Design rules
 
-Rules for pages that look like an official shadcn block. Each rule names the kit part, attribute, or token that does the work, and the design lint rule (`clankerDesignLint()`, see [testing.md](testing.md)) that finds a break. Start every page from the closest block in [blocks/](blocks/); the blocks follow all of these rules. Take the shell from `dashboard` (sidebar) or `data-table` (top header) and keep it on every page; take the page content from any block. `states` is a catalog of patterns, not a page. Component choice: [choosing.md](choosing.md).
+Rules for pages that look like an official shadcn block. Each rule names the kit part, attribute, or token that does the work, and the design lint rule (`clankerDesignLint()`, see [testing.md](testing.md)) that finds a break. Start every page from the closest block in [blocks/](blocks/); the blocks follow all of these rules. Take the shell from `dashboard` (sidebar) or `data-table` (top header) and keep it on every page; take the page content from any block (`card-grid` for records with a preview, `overlay-form` for forms in a dialog or sheet, `login-split` for a branded sign-in). `states` is a catalog of patterns, not a page. Component choice: [choosing.md](choosing.md).
 
 ## 1. Page structure
 

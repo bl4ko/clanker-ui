@@ -144,7 +144,7 @@ def check_ai_sources_replay(t):
     assert collapsible.locator('[data-slot="trace-collapsible-trigger"] [data-slot="trace-title"]').inner_text() == "Used 3 sources"
     links = collapsible.locator("a[href]")
     assert [links.nth(i).get_attribute("href") for i in range(links.count())] == ["https://docs.astro.build/en/install-and-setup/", "https://www.npmjs.com/package/create-astro", "https://pnpm.io/cli/create"]
-    assert links.first.get_attribute("target") == "_blank" and links.first.locator(".sr-only").inner_text() == " (opens in a new tab)"
+    assert links.first.get_attribute("target") == "_blank" and links.first.locator(".sr-only").text_content() == " (opens in a new tab)"
     collapsible.locator('[data-slot="trace-collapsible-trigger"]').click()
     t.settle()
     assert collapsible.get_attribute("data-state") == "closed"

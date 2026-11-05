@@ -354,6 +354,7 @@ func TestKitMinServesMinifiedFiles(t *testing.T) {
 		files[name] = string(b)
 	}
 	files["dist/clanker-ui.min.css"] = "min-css\n"
+	files["dist/clanker-ui-rhea.min.css"] = "min-rhea\n"
 	files["dist/clanker-ui-themes.min.css"] = "min-themes\n"
 	files["dist/clanker-ui-a11y.min.css"] = "min-a11y\n"
 	files["dist/clanker-ui-theme.min.js"] = "min-theme\n"
@@ -365,6 +366,7 @@ func TestKitMinServesMinifiedFiles(t *testing.T) {
 	h := newKitSite(dir, "min").routes()
 	for path, body := range map[string]string{
 		"/clanker-ui.css":         "min-css\n",
+		"/clanker-ui-rhea.css":    "min-rhea\n",
 		"/clanker-ui-themes.css":  "min-themes\n",
 		"/clanker-ui-a11y.css":    "min-a11y\n",
 		"/clanker-ui.js":          license + "\nexport * from \"./clanker-ui-core.min.js\"\nexport * from \"./clanker-ui.min.js\"\n",

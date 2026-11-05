@@ -55,6 +55,15 @@ type catFiles struct {
 	Readable catFileSet `json:"readable"`
 	Bundle   catFileSet `json:"bundle"`
 	Optional []catFile  `json:"optional"`
+	Styles   []catStyle `json:"styles"`
+}
+
+type catStyle struct {
+	Name   string `json:"name"`
+	CSS    string `json:"css"`
+	Min    string `json:"min"`
+	Groups string `json:"groups"`
+	Use    string `json:"use"`
 }
 
 type catFileSet struct {
@@ -624,6 +633,14 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 			{"clanker-ui-chart.js", "chart, sparkline, and stat tile module (min: clanker-ui-chart.min.js with clanker-ui-chart.min.css)"},
 			{"clanker-ui-code.js", "syntax colors for code-block-content with data-language (min: clanker-ui-code.min.js)"},
 		},
+	}
+	for i, st := range kitStyles {
+		base := strings.TrimSuffix(st.file, ".css")
+		use := "default"
+		if i > 0 {
+			use = "the shadcn " + strings.ToUpper(st.name[:1]) + st.name[1:] + " style: load it instead of clanker-ui.css (or its .min and group files instead of the Nova ones), never both; same markup and JavaScript"
+		}
+		cat.Files.Styles = append(cat.Files.Styles, catStyle{Name: st.name, CSS: st.file, Min: base + ".min.css", Groups: base + "-<group>.min.css", Use: use})
 	}
 	for _, g := range distGroups {
 		grp := catGroup{Name: g, CSS: "clanker-ui-" + g + ".min.css"}

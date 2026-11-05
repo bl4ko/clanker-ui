@@ -99,9 +99,14 @@
       "items": [
         {"title": "AI Elements", "href": "/docs/ai-elements", "hidden": true},
         {"title": "Chain of Thought", "href": "/docs/ai-elements/chain-of-thought"},
+        {"title": "Chat", "href": "/docs/ai-elements/chat"},
+        {"title": "Context", "href": "/docs/ai-elements/context"},
         {"title": "Message", "href": "/docs/ai-elements/message"},
+        {"title": "Model Selector", "href": "/docs/ai-elements/model-selector"},
         {"title": "Plan", "href": "/docs/ai-elements/plan"},
+        {"title": "Prompt Input", "href": "/docs/ai-elements/prompt-input"},
         {"title": "Reasoning", "href": "/docs/ai-elements/reasoning"},
+        {"title": "Suggestion", "href": "/docs/ai-elements/suggestion"},
         {"title": "Task", "href": "/docs/ai-elements/task"},
         {"title": "Tool", "href": "/docs/ai-elements/tool"}
       ]

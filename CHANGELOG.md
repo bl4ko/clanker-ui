@@ -49,6 +49,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Fixed
 
+- Input group: a click in a menu or another popup inside an addon (a model menu next to the field) no longer moves focus to the field; the menu returns focus to its trigger.
 - Alert: an `alert-action` wider than the 72 px that shadcn keeps free (for example "View incident" at 390 px) no longer covers the title and the description; the alert reserves the width of the action. A short action keeps the shadcn layout.
 - Section cards: with a description and a trend `badge` in `card-action`, the value takes the full width of the card under them, so a long number (`€38,550.00`) no longer breaks in the middle next to the badge.
 - Item: a `cover` in `item-media` is 40 px wide (32 px in `sm`, 24 px in `xs`) and keeps its ratio, without its text; before, it had almost no width.

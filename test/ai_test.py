@@ -205,6 +205,7 @@ def check_ai_model_selector_pick(t):
     content.locator('[data-value="claude-sonnet-4-5"]').click()
     page.wait_for_function("() => document.querySelector('#model-selector-demo-model [data-slot=dropdown-menu-content]').dataset.state === 'closed'")
     assert model.get_attribute("aria-label") == "Model: Claude Sonnet 4.5"
+    assert model.evaluate("b => document.activeElement === b")
     assert model.inner_text().strip() == "Claude Sonnet 4.5"
     effort = page.locator("#model-selector-demo-effort [data-dropdown-menu-trigger]")
     effort.click()

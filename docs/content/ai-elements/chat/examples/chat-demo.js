@@ -27,9 +27,9 @@ const fallback = "This demo only knows the scripted turns. Press reset to start 
 
 const empty = document.getElementById("chat-demo-empty")
 const scroller = document.getElementById("chat-demo-scroller")
+const thread = document.getElementById("chat-demo-thread")
 scroller.remove()
 scroller.hidden = false
-const thread = document.getElementById("chat-demo-thread")
 const form = document.getElementById("chat-demo-form")
 const text = document.getElementById("chat-demo-text")
 const send = document.getElementById("chat-demo-send")

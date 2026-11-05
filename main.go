@@ -47,17 +47,18 @@ var skillFile = regexp.MustCompile(`^skills/clanker-ui/(SKILL\.md|references/(co
 var devFile = regexp.MustCompile(`^(test/spike/[a-z0-9-]+\.(html|css)|test/behavior/fixtures/[a-z0-9-]+\.(html|css|js)|test/split/[a-z0-9-]+\.(html|js)|test/lint/[a-z0-9-]+\.(html|css))$`)
 
 var contentTypes = map[string]string{
-	".css":  "text/css; charset=utf-8",
-	".js":   "text/javascript; charset=utf-8",
-	".html": "text/html; charset=utf-8",
-	".md":   "text/markdown; charset=utf-8",
-	".txt":  "text/plain; charset=utf-8",
-	".json": "application/json",
-	".svg":  "image/svg+xml",
-	".png":  "image/png",
-	".jpg":  "image/jpeg",
-	".webp": "image/webp",
-	".avif": "image/avif",
+	".css":   "text/css; charset=utf-8",
+	".js":    "text/javascript; charset=utf-8",
+	".html":  "text/html; charset=utf-8",
+	".md":    "text/markdown; charset=utf-8",
+	".txt":   "text/plain; charset=utf-8",
+	".json":  "application/json",
+	".svg":   "image/svg+xml",
+	".png":   "image/png",
+	".jpg":   "image/jpeg",
+	".webp":  "image/webp",
+	".avif":  "image/avif",
+	".woff2": "font/woff2",
 }
 
 type site struct {

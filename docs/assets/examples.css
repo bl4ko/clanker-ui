@@ -54,10 +54,15 @@
 
 @layer clanker.tokens {
   :root, :host {
+    --color-amber-50: oklch(98.7% .022 95.277);
+    --color-amber-200: oklch(92.4% .12 95.746);
+    --color-amber-900: oklch(41.4% .112 45.904);
+    --color-amber-950: oklch(27.9% .077 45.635);
     --color-black: #000;
     --spacing: .25rem;
     --container-xs: 20rem;
     --container-sm: 24rem;
+    --container-md: 28rem;
     --text-xs: .75rem;
     --text-xs--line-height: calc(1 / .75);
     --text-sm: .875rem;
@@ -255,6 +260,10 @@
     max-width: 12rem;
   }
 
+  .max-w-md {
+    max-width: var(--container-md);
+  }
+
   .max-w-sm {
     max-width: var(--container-sm);
   }
@@ -359,6 +368,14 @@
     border-top-width: 1px;
   }
 
+  .border-amber-200 {
+    border-color: var(--color-amber-200);
+  }
+
+  .bg-amber-50 {
+    background-color: var(--color-amber-50);
+  }
+
   .bg-black\/35 {
     background-color: #00000059;
   }
@@ -453,6 +470,10 @@
     white-space: nowrap;
   }
 
+  .text-amber-900 {
+    color: var(--color-amber-900);
+  }
+
   .text-foreground {
     color: var(--foreground);
   }
@@ -526,6 +547,36 @@
 
   .rtl\:rotate-180:where(:dir(rtl)) {
     rotate: 180deg;
+  }
+
+  .dark\:border-amber-900:is([data-theme="dark"] *) {
+    border-color: var(--color-amber-900);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .dark\:border-amber-900:not([data-theme="light"] *) {
+      border-color: var(--color-amber-900);
+    }
+  }
+
+  .dark\:bg-amber-950:is([data-theme="dark"] *) {
+    background-color: var(--color-amber-950);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .dark\:bg-amber-950:not([data-theme="light"] *) {
+      background-color: var(--color-amber-950);
+    }
+  }
+
+  .dark\:text-amber-50:is([data-theme="dark"] *) {
+    color: var(--color-amber-50);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .dark\:text-amber-50:not([data-theme="light"] *) {
+      color: var(--color-amber-50);
+    }
   }
 
   .dark\:brightness-20:is([data-theme="dark"] *) {

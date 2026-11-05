@@ -61,12 +61,12 @@ components/accordion#accordion-borders	demo-accordion-3
 components/accordion#accordion-card	demo-accordion-3
 components/accordion#accordion-rtl	-	no example yet
 components/alert	/docs/components/alert
-components/alert#alert-demo	demo-alert-0
-components/alert#alert-basic	-	no example yet
-components/alert#alert-destructive	-	no example yet
-components/alert#alert-action	demo-alert-1
-components/alert#alert-colors	demo-alert-1
-components/alert#alert-rtl	-	no example yet
+components/alert#alert-demo	alert-demo
+components/alert#alert-basic	alert-basic
+components/alert#alert-destructive	alert-destructive
+components/alert#alert-action	alert-action
+components/alert#alert-colors	alert-colors
+components/alert#alert-rtl	alert-rtl
 components/alert-dialog	/docs/components/alert-dialog
 components/alert-dialog#alert-dialog-demo	demo-alert-dialog-0
 components/alert-dialog#alert-dialog-basic	-	no example yet

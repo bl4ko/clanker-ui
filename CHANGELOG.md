@@ -25,6 +25,9 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Skill: `references/design.md` (design rules with the kit part and the lint rule of each), `references/choosing.md` (which component for which job), and a "Build a page" step in `SKILL.md`.
 - 115 more Lucide icons that apps often need (for example `layout-grid`, `receipt`, `wallet`, `euro`, `server`, `database`, `map-pin`, `phone`, `chart-bar`, `chart-pie`, `loader`, `film`, `tv`, `webhook`, `container`, `rss`, `key-round`), 242 in total. The old Lucide names (`alert-triangle`, `help-circle`, `check-circle`, `unlock`, `bar-chart`, ...) work as aliases. The core module grows by 19.6 KB (5.7 KB gzip).
 - `registerIcons({ name: nodes })` adds app icons from Lucide icon nodes, under the strict CSP.
+- Code block syntax colors: the optional module `clanker-ui-code.js` (`clanker-ui-code.min.js`, 8.4 KB, 3.8 KB gzip) colors `code-block-content` with `data-language` in the languages of the shadcn highlighter (`ts`, `tsx`, `js`, `jsx`, `json`, `html`, `css`, `bash`, `yaml`, `python`, `diff`, `markdown`, `sql`, `ansi`) plus `go`, and exports `codeBlockHighlight(code, language)`. No dependency, no `innerHTML`: it builds text nodes and `<span data-token>`. Colors are `--code-*` tokens: the shadcn GitHub Light and Dark colors at 4.5:1 on the block, highlighted lines, and removed lines; every editor scheme sets its own, and `clanker-ui-a11y.css` lifts them to 4.5:1. Cost outside the module: core CSS +0.4 KB (+0.2 KB gzip, the `--code-*` defaults), `chat` CSS +6.5 KB (+0.4 KB gzip), `chat` JS +0.7 KB (+0.2 KB gzip), themes +6.5 KB (+0.9 KB gzip), a11y +6.2 KB (+1.2 KB gzip), core JS +20 bytes.
+- `code-block-download-button`: saves the block text as `data-filename` (default: the last part of the title) and emits `code-block:download` `{ value, filename }`.
+- Docs: the Code Block page shows the shadcn demo (file header, wrap, download, and copy, line numbers, highlighted lines 6 to 10, TypeScript colors), and the Syntax highlighting, Languages, and Terminal output examples.
 - Agent skill: `references/icons.md` lists every icon name and alias and shows how to add an icon. It is made from the kit by `go run ./tools/gen catalog`.
 - `dist/clanker-ui-theme.min.js`, so every kit file has a `.min` version.
 - Chart `timeZone` option: the time axis places its ticks, and every date and time shows, in that IANA zone (default: the browser zone). An ISO date (`2026-10-01`) is that day in the zone.
@@ -65,6 +68,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Form reset: a value that the app sets right after `form.reset()` or in its `reset` listener (select, combobox, toggle group `data-value`, `calendarSetValue`) is no longer overwritten by the kit restore one task later.
 - Date picker: `calendarSetValue()` without `{ emit: true }` and a `data-value` change on the calendar update the trigger text.
 - Field: `field-separator` draws its line; the kit adds the `separator` child and `data-content`, as shadcn renders them.
+- Code block: the wrap button has the ghost `icon-xs` button look of the copy button (it had no button styles), and a pressed wrap button has the foreground color.
+- Docs: a code block in a component preview keeps its inline padding and its start line; a docs rule for the View Code panel had removed both.
 - Form: after a submit, leaving a control does not validate it; only a change does, as in React Hook Form. Before, a field that the app cleared after a valid send showed its error on blur, and the layout shift could move the next click target.
 
 ## 0.2.1 - 2026-11-04

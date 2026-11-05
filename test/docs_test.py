@@ -641,6 +641,20 @@ def check_docs_theme_toggle(t):
     assert page.evaluate(is_dark) == dark and page.evaluate(meta)
 
 
+def check_docs_code_block_preview(t):
+    page = t.page
+    t.docs("/docs/components/code-block")
+    page.wait_for_function("""() => document.querySelectorAll('#code-block-header [data-token]').length > 20""")
+    got = page.evaluate("""() => {
+      const pad = el => getComputedStyle(el).paddingInlineStart
+      const demo = document.querySelector('#code-block-header [data-slot="code-block-content"]')
+      const start = document.querySelector('#code-block-lines [data-start-line] [data-slot="code-block-code"]')
+      const view = document.querySelector('[data-docs="code"] [data-slot="code-block-content"]')
+      return [pad(demo), getComputedStyle(start).counterReset, pad(view)]
+    }""")
+    assert got == ["12px", "none", "0px"], got
+
+
 def check_docs_component_demos(t):
     page = t.page
     t.docs("/docs/components/dialog")

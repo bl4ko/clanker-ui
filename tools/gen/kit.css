@@ -52,6 +52,15 @@
     --chart-grid: var(--border);
     --chart-axis: oklch(0.871 0.006 286.286);
     --chart-area-opacity: 0.1;
+    --code-comment: light-dark(#606973, #919aa4);
+    --code-keyword: light-dark(#c7293c, #f97583);
+    --code-string: light-dark(#032f62, #9ecbff);
+    --code-constant: light-dark(#005cc5, #79b8ff);
+    --code-function: light-dark(#6f42c1, #b392f0);
+    --code-variable: light-dark(#bc3d00, #ffab70);
+    --code-tag: light-dark(#0c792e, #85e89d);
+    --code-inserted: light-dark(#0c792e, #85e89d);
+    --code-deleted: light-dark(#b31d28, #fdaeb7);
   }
   [data-theme="dark"] {
     --success-bg: hsl(150 100% 6%);
@@ -1366,6 +1375,17 @@
     font-size: 0.875rem;
     line-height: 1.25rem;
   }
+  [data-slot="code-block-wrap-button"][aria-pressed="true"] { color: var(--foreground); }
+  [data-slot="code-block-code"] [data-token~="comment"] { color: var(--code-comment); }
+  [data-slot="code-block-code"] [data-token~="keyword"] { color: var(--code-keyword); }
+  [data-slot="code-block-code"] [data-token~="string"] { color: var(--code-string); }
+  [data-slot="code-block-code"] [data-token~="constant"] { color: var(--code-constant); }
+  [data-slot="code-block-code"] [data-token~="function"] { color: var(--code-function); }
+  [data-slot="code-block-code"] [data-token~="variable"] { color: var(--code-variable); }
+  [data-slot="code-block-code"] [data-token~="tag"] { color: var(--code-tag); }
+  [data-slot="code-block-code"] [data-token~="inserted"] { color: var(--code-inserted); }
+  [data-slot="code-block-code"] [data-token~="deleted"] { color: var(--code-deleted); }
+  [data-slot="code-block-code"] [data-token~="bold"] { font-weight: 600; }
 }
 
 @layer clanker.utilities {

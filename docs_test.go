@@ -699,3 +699,65 @@ func TestDocsPagesLinkMarkdownAndLLMs(t *testing.T) {
 		t.Error("components.md does not follow the typography redirect")
 	}
 }
+
+var (
+	docsExampleRoot = regexp.MustCompile(`\[data-docs="(?:component-preview|preview|view)"\]`)
+	docsOwnPart     = regexp.MustCompile(`\[data-docs="(?:code|code-block|code-teaser)"\]`)
+	docsKitTarget   = regexp.MustCompile(`\[data-slot|(?:^|[\s>+~(])(?:pre|code|span|div|button|svg|a|p)\b`)
+	docsNotGroup    = regexp.MustCompile(`:not\([^()]*(?:\([^()]*\)[^()]*)*\)`)
+)
+
+func TestDocsCSSLeavesExamplePartsAlone(t *testing.T) {
+	css := regexp.MustCompile(`(?s)/\*.*?\*/`).ReplaceAllString(readText(t, "docs/assets/docs.css"), "")
+	for _, m := range regexp.MustCompile(`([^{}]+)\{`).FindAllStringSubmatch(css, -1) {
+		sel := strings.TrimSpace(m[1])
+		if strings.HasPrefix(sel, "@") {
+			continue
+		}
+		plain := docsNotGroup.ReplaceAllString(sel, "")
+		loc := docsExampleRoot.FindStringIndex(plain)
+		if loc == nil {
+			continue
+		}
+		for _, rest := range docsAlternatives(plain[loc[1]:]) {
+			if docsKitTarget.MatchString(rest) && !docsOwnPart.MatchString(rest) {
+				t.Errorf("docs.css styles kit parts inside an example: %s", sel)
+				break
+			}
+		}
+	}
+}
+
+func docsAlternatives(sel string) []string {
+	i := strings.Index(sel, ":is(")
+	if i < 0 {
+		return []string{sel}
+	}
+	depth, start, end := 0, i+4, -1
+	var parts []string
+	for j := i + 3; j < len(sel) && end < 0; j++ {
+		switch sel[j] {
+		case '(':
+			depth++
+		case ')':
+			depth--
+			if depth == 0 {
+				parts = append(parts, sel[start:j])
+				end = j
+			}
+		case ',':
+			if depth == 1 {
+				parts = append(parts, sel[start:j])
+				start = j + 1
+			}
+		}
+	}
+	if end < 0 {
+		return []string{sel}
+	}
+	var out []string
+	for _, p := range parts {
+		out = append(out, docsAlternatives(sel[:i]+" "+strings.TrimSpace(p)+sel[end+1:])...)
+	}
+	return out
+}

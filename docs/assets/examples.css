@@ -5,6 +5,7 @@
     }
 
     *, :before, :after, ::backdrop {
+      --tw-font-weight: initial;
       --tw-outline-style: solid;
       --tw-blur: initial;
       --tw-brightness: initial;
@@ -49,22 +50,51 @@
 
 @layer clanker.tokens {
   :root, :host {
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
     --spacing: .25rem;
     --container-sm: 24rem;
+    --container-md: 28rem;
+    --container-lg: 32rem;
     --text-sm: .875rem;
     --text-sm--line-height: calc(1.25 / .875);
+    --font-weight-medium: 500;
   }
 }
 
 @layer clanker.themes, clanker.base, clanker.components;
 
 @layer clanker.utilities {
+  .sr-only {
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border-width: 0;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    position: absolute;
+    overflow: hidden;
+  }
+
   .absolute {
     position: absolute;
   }
 
+  .relative {
+    position: relative;
+  }
+
   .inset-0 {
     inset: 0;
+  }
+
+  .mx-auto {
+    margin-inline: auto;
+  }
+
+  .ms-auto {
+    margin-inline-start: auto;
   }
 
   .mt-2 {
@@ -84,8 +114,40 @@
     height: 100%;
   }
 
+  .h-200 {
+    height: calc(var(--spacing) * 200);
+  }
+
+  .h-full {
+    height: 100%;
+  }
+
+  .min-h-0 {
+    min-height: 0;
+  }
+
+  .min-h-14 {
+    min-height: calc(var(--spacing) * 14);
+  }
+
+  .w-36 {
+    width: calc(var(--spacing) * 36);
+  }
+
   .w-40 {
     width: calc(var(--spacing) * 40);
+  }
+
+  .w-44 {
+    width: calc(var(--spacing) * 44);
+  }
+
+  .w-48 {
+    width: calc(var(--spacing) * 48);
+  }
+
+  .w-64 {
+    width: calc(var(--spacing) * 64);
   }
 
   .w-full {
@@ -100,8 +162,75 @@
     max-width: 12rem;
   }
 
+  .max-w-lg {
+    max-width: var(--container-lg);
+  }
+
+  .max-w-md {
+    max-width: var(--container-md);
+  }
+
   .max-w-sm {
     max-width: var(--container-sm);
+  }
+
+  .flex-1 {
+    flex: 1;
+  }
+
+  .shrink-0 {
+    flex-shrink: 0;
+  }
+
+  .scroll-fade-x {
+    --_scroll-fade-size-s: var(--scroll-fade-s-size, var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10))));
+    --_scroll-fade-size-e: var(--scroll-fade-e-size, var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10))));
+    --scroll-fade-inline: linear-gradient(to right,
+    transparent 0,
+    #000 var(--scroll-fade-s, 0px),
+    #000 calc(100% - var(--scroll-fade-e, 0px)),
+    transparent 100%);
+  }
+
+  .scroll-fade-x:where([dir="rtl"], [dir="rtl"] *) {
+    --scroll-fade-inline: linear-gradient(to left,
+      transparent 0,
+      #000 var(--scroll-fade-s, 0px),
+      #000 calc(100% - var(--scroll-fade-e, 0px)),
+      transparent 100%);
+  }
+
+  .scroll-fade-x {
+    -webkit-mask-image: var(--scroll-fade-mask, var(--scroll-fade-inline));
+    -webkit-mask-image: var(--scroll-fade-mask, var(--scroll-fade-inline));
+    -webkit-mask-image: var(--scroll-fade-mask, var(--scroll-fade-inline));
+    mask-image: var(--scroll-fade-mask, var(--scroll-fade-inline));
+    -webkit-mask-composite: source-in;
+    -webkit-mask-composite: source-in;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .scroll-fade-x {
+      animation: 1ms ease-in-out scroll-fade-reveal-s, 1ms ease-in-out scroll-fade-reveal-e;
+      animation-timeline: scroll(self inline), scroll(self inline);
+      animation-range: 0 var(--scroll-fade-reveal, calc(var(--spacing) * 24)), calc(100% - var(--scroll-fade-reveal, calc(var(--spacing) * 24))) 100%;
+      animation-fill-mode: both;
+    }
+  }
+
+  @supports not (animation-timeline: scroll()) {
+    .scroll-fade-x {
+      --scroll-fade-s: var(--_scroll-fade-size-s);
+      --scroll-fade-e: var(--_scroll-fade-size-e);
+    }
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
   }
 
   .flex-col {
@@ -120,12 +249,44 @@
     align-items: flex-start;
   }
 
+  .justify-between {
+    justify-content: space-between;
+  }
+
+  .justify-center {
+    justify-content: center;
+  }
+
+  .gap-1 {
+    gap: var(--spacing);
+  }
+
   .gap-2 {
     gap: calc(var(--spacing) * 2);
   }
 
+  .gap-3 {
+    gap: calc(var(--spacing) * 3);
+  }
+
+  .gap-4 {
+    gap: calc(var(--spacing) * 4);
+  }
+
+  .gap-6 {
+    gap: calc(var(--spacing) * 6);
+  }
+
   .gap-8 {
     gap: calc(var(--spacing) * 8);
+  }
+
+  .overflow-x-auto {
+    overflow-x: auto;
+  }
+
+  .overscroll-x-contain {
+    overscroll-behavior-x: contain;
   }
 
   .rounded-full {
@@ -136,6 +297,10 @@
     border-radius: var(--radius);
   }
 
+  .rounded-sm {
+    border-radius: calc(var(--radius) * .6);
+  }
+
   .bg-muted {
     background-color: var(--muted);
   }
@@ -144,13 +309,70 @@
     object-fit: cover;
   }
 
+  .p-3 {
+    padding: calc(var(--spacing) * 3);
+  }
+
+  .p-8 {
+    padding: calc(var(--spacing) * 8);
+  }
+
+  .px-0 {
+    padding-inline: 0;
+  }
+
+  .px-1 {
+    padding-inline: var(--spacing);
+  }
+
+  .px-8 {
+    padding-inline: calc(var(--spacing) * 8);
+  }
+
+  .py-0\.5 {
+    padding-block: calc(var(--spacing) * .5);
+  }
+
+  .py-6 {
+    padding-block: calc(var(--spacing) * 6);
+  }
+
+  .py-12 {
+    padding-block: calc(var(--spacing) * 12);
+  }
+
+  .pt-0 {
+    padding-top: 0;
+  }
+
+  .pt-1 {
+    padding-top: var(--spacing);
+  }
+
+  .pb-4 {
+    padding-bottom: calc(var(--spacing) * 4);
+  }
+
   .text-center {
     text-align: center;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
   }
 
   .text-sm {
     font-size: var(--text-sm);
     line-height: var(--tw-leading, var(--text-sm--line-height));
+  }
+
+  .text-\[0\.9em\] {
+    font-size: .9em;
+  }
+
+  .font-medium {
+    --tw-font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-medium);
   }
 
   .text-muted-foreground {
@@ -348,6 +570,11 @@
   }
 }
 
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false
+}
+
 @property --tw-outline-style {
   syntax: "*";
   inherits: false;
@@ -418,4 +645,24 @@
 @property --tw-drop-shadow-size {
   syntax: "*";
   inherits: false
+}
+
+@keyframes scroll-fade-reveal-s {
+  from {
+    --scroll-fade-s: 0px;
+  }
+
+  to {
+    --scroll-fade-s: var(--_scroll-fade-size-s, var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10))));
+  }
+}
+
+@keyframes scroll-fade-reveal-e {
+  from {
+    --scroll-fade-e: var(--_scroll-fade-size-e, var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10))));
+  }
+
+  to {
+    --scroll-fade-e: 0px;
+  }
 }

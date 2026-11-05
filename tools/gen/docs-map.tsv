@@ -1,27 +1,27 @@
 shadcn	ours	reason
 ai-elements/chain-of-thought	-	AI Elements pages: #66
 ai-elements/chain-of-thought#chain-of-thought-demo	-	page has no match
-ai-elements/chat	-	AI Elements pages: #66
-ai-elements/chat#chat-demo	-	page has no match
+ai-elements/chat	/docs/ai-elements/chat
+ai-elements/chat#chat-demo	chat-demo
 ai-elements/checkpoint	-	AI Elements pages: #66
 ai-elements/checkpoint#checkpoint-demo	-	page has no match
 ai-elements/confirmation	-	AI Elements pages: #66
 ai-elements/confirmation#confirmation-demo	-	page has no match
-ai-elements/context	-	AI Elements pages: #66
-ai-elements/context#context-demo	-	page has no match
+ai-elements/context	/docs/ai-elements/context
+ai-elements/context#context-demo	context-demo
 ai-elements/file-tree	-	AI Elements pages: #66
 ai-elements/file-tree#file-tree-demo	-	page has no match
 ai-elements/inline-citation	-	AI Elements pages: #66
 ai-elements/inline-citation#inline-citation-demo	-	page has no match
-ai-elements/message	-	AI Elements pages: #66
-ai-elements/message#message-pattern	-	page has no match
-ai-elements/model-selector	-	AI Elements pages: #66
-ai-elements/model-selector#model-selector-demo	-	page has no match
+ai-elements/message	/docs/ai-elements/message
+ai-elements/message#message-pattern	message-pattern
+ai-elements/model-selector	/docs/ai-elements/model-selector
+ai-elements/model-selector#model-selector-demo	model-selector-demo
 ai-elements/plan	-	AI Elements pages: #66
 ai-elements/plan#plan-demo	-	page has no match
 ai-elements/plan#plan-description	-	page has no match
-ai-elements/prompt-input	-	AI Elements pages: #66
-ai-elements/prompt-input#prompt-input-demo	-	page has no match
+ai-elements/prompt-input	/docs/ai-elements/prompt-input
+ai-elements/prompt-input#prompt-input-demo	prompt-input-demo
 ai-elements/queue	-	AI Elements pages: #66
 ai-elements/queue#queue-demo	-	page has no match
 ai-elements/queue#queue-descriptions	-	page has no match
@@ -37,8 +37,8 @@ ai-elements/subagent	-	AI Elements pages: #66
 ai-elements/subagent#subagent-demo	-	page has no match
 ai-elements/subagent#subagent-running	-	page has no match
 ai-elements/subagent#subagent-details	-	page has no match
-ai-elements/suggestion	-	AI Elements pages: #66
-ai-elements/suggestion#suggestion-demo	-	page has no match
+ai-elements/suggestion	/docs/ai-elements/suggestion
+ai-elements/suggestion#suggestion-demo	suggestion-demo
 ai-elements/task	-	AI Elements pages: #66
 ai-elements/task#task-demo	-	page has no match
 ai-elements/terminal	-	AI Elements pages: #66

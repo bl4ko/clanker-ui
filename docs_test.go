@@ -704,7 +704,7 @@ func TestDocsFontsSelfHosted(t *testing.T) {
 	h := newSite("").routes()
 	d := docsOf(t)
 	page := request(t, h, http.MethodGet, "/docs/components/button").Body.String()
-	css, _ := os.ReadFile("docs/assets/docs.css")
+	css, _ := os.ReadFile("docs/assets/fonts.css")
 	for _, font := range []string{"geist-latin.woff2", "geist-mono-latin.woff2"} {
 		url := "/assets/" + d.hash + "/" + font
 		rec := request(t, h, http.MethodGet, url)
@@ -715,12 +715,12 @@ func TestDocsFontsSelfHosted(t *testing.T) {
 			t.Errorf("page does not preload %s", font)
 		}
 		if !strings.Contains(string(css), `src: url("`+font+`") format("woff2");`) {
-			t.Errorf("docs.css has no @font-face for %s", font)
+			t.Errorf("fonts.css has no @font-face for %s", font)
 		}
 	}
 	for _, want := range []string{`--font-sans: "Geist", "Geist Fallback";`, `--font-mono: "Geist Mono", "Geist Mono Fallback";`} {
 		if !strings.Contains(string(css), want) {
-			t.Errorf("docs.css has no %s", want)
+			t.Errorf("fonts.css has no %s", want)
 		}
 	}
 	for name := range kitFiles {

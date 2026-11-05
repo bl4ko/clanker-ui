@@ -141,18 +141,18 @@ components/button#button-group-demo	button-group-demo
 components/button#button-render	button-as-link
 components/button#button-rtl	button-rtl
 components/button-group	/docs/components/button-group
-components/button-group#button-group-demo	demo-button-group-0
-components/button-group#button-group-orientation	demo-button-group-1
-components/button-group#button-group-size	demo-button-group-2
-components/button-group#button-group-nested	demo-button-group-3
-components/button-group#button-group-separator	demo-button-group-3
-components/button-group#button-group-split	demo-button-group-3
-components/button-group#button-group-input	demo-button-group-5
-components/button-group#button-group-input-group	-	no example yet
-components/button-group#button-group-dropdown	demo-button-group-4
-components/button-group#button-group-select	demo-button-group-5
-components/button-group#button-group-popover	demo-button-group-4
-components/button-group#button-group-rtl	-	no example yet
+components/button-group#button-group-demo	button-group-demo
+components/button-group#button-group-orientation	button-group-orientation
+components/button-group#button-group-size	button-group-size
+components/button-group#button-group-nested	button-group-nested
+components/button-group#button-group-separator	button-group-separator
+components/button-group#button-group-split	button-group-split
+components/button-group#button-group-input	button-group-input
+components/button-group#button-group-input-group	button-group-input-group
+components/button-group#button-group-dropdown	button-group-dropdown
+components/button-group#button-group-select	button-group-select
+components/button-group#button-group-popover	button-group-popover
+components/button-group#button-group-rtl	button-group-rtl
 components/calendar	/docs/components/calendar
 components/calendar#calendar-demo	calendar-demo
 components/calendar#calendar-hijri	-	kit calendar is Gregorian only

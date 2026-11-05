@@ -1,0 +1,17 @@
+<div data-slot="button-group" role="group">
+  <button type="button" data-slot="button" data-variant="outline"><svg data-lucide="bot"></svg> Copilot</button>
+  <div data-slot="popover">
+    <button type="button" data-slot="button" data-variant="outline" data-size="icon" data-popover-trigger aria-label="Open Popover"><svg data-lucide="chevron-down"></svg></button>
+    <div data-slot="popover-content" data-align="end" class="rounded-xl text-sm">
+      <div data-slot="popover-header">
+        <h4 data-slot="popover-title">Start a new task with Copilot</h4>
+        <p data-slot="popover-description">Describe your task in natural language.</p>
+      </div>
+      <div data-slot="field">
+        <label data-slot="field-label" for="task" class="sr-only">Task Description</label>
+        <textarea data-slot="textarea" id="task" placeholder="I need to..." class="resize-none"></textarea>
+        <p data-slot="field-description">Copilot will open a pull request for review.</p>
+      </div>
+    </div>
+  </div>
+</div>

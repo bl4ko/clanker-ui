@@ -263,8 +263,8 @@ components/context-menu#context-menu-destructive	demo-context-menu-1
 components/context-menu#context-menu-sides	-	no example yet
 components/context-menu#context-menu-rtl	-	no example yet
 components/data-table	/docs/components/data-table
-components/data-table#data-table-demo	-	no example yet
-components/data-table#data-table-rtl	-	no example yet
+components/data-table#data-table-demo	data-table-demo
+components/data-table#data-table-rtl	data-table-rtl
 components/date-picker	/docs/components/date-picker
 components/date-picker#date-picker-demo	demo-date-picker-0
 components/date-picker#date-picker-basic	-	no example yet

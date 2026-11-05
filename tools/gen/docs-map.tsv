@@ -374,17 +374,17 @@ components/input-otp#input-otp-alphanumeric	-	no example yet
 components/input-otp#input-otp-form	-	no example yet
 components/input-otp#input-otp-rtl	-	no example yet
 components/item	/docs/components/item
-components/item#item-demo	demo-item-0
-components/item#item-variant	demo-item-1
-components/item#item-size	demo-item-1
-components/item#item-icon	-	no example yet
-components/item#item-avatar	-	no example yet
-components/item#item-image	-	no example yet
-components/item#item-group	demo-item-2
-components/item#item-header	demo-item-2
-components/item#item-link	-	no example yet
-components/item#item-dropdown	-	no example yet
-components/item#item-rtl	-	no example yet
+components/item#item-demo	item-demo
+components/item#item-variant	item-variant
+components/item#item-size	item-size
+components/item#item-icon	item-icon
+components/item#item-avatar	item-avatar
+components/item#item-image	item-image
+components/item#item-group	item-group
+components/item#item-header	item-header
+components/item#item-link	item-link
+components/item#item-dropdown	item-dropdown
+components/item#item-rtl	item-rtl
 components/kbd	/docs/components/kbd
 components/kbd#kbd-demo	demo-kbd-0
 components/kbd#kbd-group	demo-kbd-1

@@ -163,6 +163,7 @@ def check_ai_file_tree_select(t):
     page_file.click()
     assert current.count() == 1 and current.inner_text() == "page.tsx"
     page.mouse.move(0, 0)
+    t.settle()
     assert page_file.evaluate("b => getComputedStyle(b).backgroundColor") == selected_bg
     assert tree.locator('[data-slot="button"]', has_text="button.tsx").get_attribute("aria-current") is None
     folder = tree.locator("[data-collapsible-trigger]", has_text="app")

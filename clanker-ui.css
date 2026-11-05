@@ -1688,7 +1688,7 @@
     margin-inline-end: calc(var(--spacing) * -1.5);
     display: flex;
   }
-  [data-slot="code-block-copy-button"] {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]) {
     border-style: var(--tw-border-style);
     --tw-font-weight: var(--font-weight-medium);
     font-weight: var(--font-weight-medium);
@@ -1707,44 +1707,44 @@
     align-items: center;
     display: inline-flex;
   }
-  [data-slot="code-block-copy-button"]:not(:where([data-size="xs"]), :where([data-size="sm"])) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):not(:where([data-size="xs"]), :where([data-size="sm"])) {
     font-size: var(--text-sm);
     line-height: var(--tw-leading, var(--text-sm--line-height));
   }
-  [data-slot="code-block-copy-button"]:not(:where([data-size="xs"]), :where([data-size="sm"]), :where(:is(:not([data-size]), [data-size="icon-xs"])), :where([data-size="icon-sm"])) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):not(:where([data-size="xs"]), :where([data-size="sm"]), :where(:is(:not([data-size]), [data-size="icon-xs"])), :where([data-size="icon-sm"])) {
     border-radius: var(--radius);
   }
-  [data-slot="code-block-copy-button"]:not(:where([data-variant="outline"])) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):not(:where([data-variant="outline"])) {
     border-color: #0000;
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="default"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="default"]) {
     background-color: var(--primary);
     color: var(--primary-foreground);
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="outline"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="outline"]) {
     border-color: var(--border);
     background-color: var(--background);
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="secondary"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="secondary"]) {
     background-color: var(--secondary);
     color: var(--secondary-foreground);
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="destructive"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="destructive"]) {
     background-color: color-mix(in oklab, var(--destructive) 10%, transparent);
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="destructive"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="destructive"]) {
     color: var(--destructive);
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="link"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="link"]) {
     color: var(--primary);
     text-underline-offset: 4px;
   }
-  [data-slot="code-block-copy-button"]:where([data-size="default"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="default"]) {
     height: calc(var(--spacing) * 8);
     gap: calc(var(--spacing) * 1.5);
     padding-inline: calc(var(--spacing) * 2.5);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="xs"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="xs"]) {
     height: calc(var(--spacing) * 6);
     gap: var(--spacing);
     border-radius: min(var(--radius-md), 10px);
@@ -1752,33 +1752,33 @@
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
   }
-  [data-slot="code-block-copy-button"]:where([data-size="sm"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="sm"]) {
     height: calc(var(--spacing) * 7);
     gap: var(--spacing);
     border-radius: min(var(--radius-md), 12px);
     padding-inline: calc(var(--spacing) * 2.5);
     font-size: .8rem;
   }
-  [data-slot="code-block-copy-button"]:where([data-size="lg"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="lg"]) {
     height: calc(var(--spacing) * 9);
     gap: calc(var(--spacing) * 1.5);
     padding-inline: calc(var(--spacing) * 2.5);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="icon"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="icon"]) {
     width: calc(var(--spacing) * 8);
     height: calc(var(--spacing) * 8);
   }
-  [data-slot="code-block-copy-button"]:where(:is(:not([data-size]), [data-size="icon-xs"])) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where(:is(:not([data-size]), [data-size="icon-xs"])) {
     width: calc(var(--spacing) * 6);
     height: calc(var(--spacing) * 6);
     border-radius: min(var(--radius-md), 10px);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="icon-sm"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="icon-sm"]) {
     width: calc(var(--spacing) * 7);
     height: calc(var(--spacing) * 7);
     border-radius: min(var(--radius-md), 12px);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="icon-lg"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="icon-lg"]) {
     width: calc(var(--spacing) * 9);
     height: calc(var(--spacing) * 9);
   }
@@ -7897,218 +7897,218 @@
   :is([data-slot="code-block"] > [data-slot="code-block-actions"] > *):is(button) {
     --tw-ring-color: color-mix(in oklab, var(--foreground) 10%, transparent);
   }
-  [data-slot="code-block-copy-button"]:focus-visible {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):focus-visible {
     --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
-  [data-slot="code-block-copy-button"]:active:not([aria-haspopup]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):active:not([aria-haspopup]) {
     --tw-translate-y: 1px;
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
-  [data-slot="code-block-copy-button"]:disabled {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):disabled {
     pointer-events: none;
     opacity: .5;
   }
-  [data-slot="code-block-copy-button"][aria-invalid="true"] {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"])[aria-invalid="true"] {
     border-color: var(--destructive);
     --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
-  [data-slot="code-block-copy-button"][aria-invalid="true"] {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"])[aria-invalid="true"] {
     --tw-ring-color: color-mix(in oklab, var(--destructive) 20%, transparent);
   }
-  [data-slot="code-block-copy-button"]:is([data-theme="dark"] *)[aria-invalid="true"] {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):is([data-theme="dark"] *)[aria-invalid="true"] {
     border-color: color-mix(in oklab, var(--destructive) 50%, transparent);
   }
   @media (prefers-color-scheme: dark) {
-    [data-slot="code-block-copy-button"]:not([data-theme="light"] *)[aria-invalid="true"] {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):not([data-theme="light"] *)[aria-invalid="true"] {
       border-color: color-mix(in oklab, var(--destructive) 50%, transparent);
     }
   }
-  [data-slot="code-block-copy-button"]:is([data-theme="dark"] *)[aria-invalid="true"] {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):is([data-theme="dark"] *)[aria-invalid="true"] {
     --tw-ring-color: color-mix(in oklab, var(--destructive) 40%, transparent);
   }
   @media (prefers-color-scheme: dark) {
-    [data-slot="code-block-copy-button"]:not([data-theme="light"] *)[aria-invalid="true"] {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):not([data-theme="light"] *)[aria-invalid="true"] {
       --tw-ring-color: color-mix(in oklab, var(--destructive) 40%, transparent);
     }
   }
-  [data-slot="code-block-copy-button"] svg {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]) svg {
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="code-block-copy-button"]:not(:where([data-size="xs"]), :where([data-size="sm"]), :where(:is(:not([data-size]), [data-size="icon-xs"]))) svg:not([class*="size-"], [data-slot]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):not(:where([data-size="xs"]), :where([data-size="sm"]), :where(:is(:not([data-size]), [data-size="icon-xs"]))) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
-  [data-slot="code-block-copy-button"]:not(:where([data-variant="destructive"])):focus-visible {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):not(:where([data-variant="destructive"])):focus-visible {
     border-color: var(--ring);
   }
-  [data-slot="code-block-copy-button"]:not(:where([data-variant="destructive"])):focus-visible {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):not(:where([data-variant="destructive"])):focus-visible {
     --tw-ring-color: color-mix(in oklab, var(--ring) 50%, transparent);
   }
   @media (hover: hover) {
-    [data-slot="code-block-copy-button"]:where([data-variant="default"]):hover {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="default"]):hover {
       background-color: color-mix(in oklab, var(--primary) 80%, transparent);
     }
-    [data-slot="code-block-copy-button"]:where([data-variant="outline"]):hover {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="outline"]):hover {
       background-color: var(--muted);
       color: var(--foreground);
     }
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="outline"])[aria-expanded="true"] {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="outline"])[aria-expanded="true"] {
     background-color: var(--muted);
     color: var(--foreground);
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="outline"]):is([data-theme="dark"] *) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="outline"]):is([data-theme="dark"] *) {
     border-color: var(--input);
   }
   @media (prefers-color-scheme: dark) {
-    [data-slot="code-block-copy-button"]:where([data-variant="outline"]):not([data-theme="light"] *) {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="outline"]):not([data-theme="light"] *) {
       border-color: var(--input);
     }
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="outline"]):is([data-theme="dark"] *) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="outline"]):is([data-theme="dark"] *) {
     background-color: color-mix(in oklab, var(--input) 30%, transparent);
   }
   @media (prefers-color-scheme: dark) {
-    [data-slot="code-block-copy-button"]:where([data-variant="outline"]):not([data-theme="light"] *) {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="outline"]):not([data-theme="light"] *) {
       background-color: color-mix(in oklab, var(--input) 30%, transparent);
     }
   }
   @media (hover: hover) {
-    [data-slot="code-block-copy-button"]:where([data-variant="outline"]):is([data-theme="dark"] *):hover {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="outline"]):is([data-theme="dark"] *):hover {
       background-color: color-mix(in oklab, var(--input) 50%, transparent);
     }
   }
   @media (prefers-color-scheme: dark) {
     @media (hover: hover) {
-      [data-slot="code-block-copy-button"]:where([data-variant="outline"]):not([data-theme="light"] *):hover {
+      :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="outline"]):not([data-theme="light"] *):hover {
         background-color: color-mix(in oklab, var(--input) 50%, transparent);
       }
     }
   }
   @media (hover: hover) {
-    [data-slot="code-block-copy-button"]:where([data-variant="secondary"]):hover {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="secondary"]):hover {
       background-color: color-mix(in oklch,var(--secondary),var(--foreground) 5%);
     }
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="secondary"])[aria-expanded="true"] {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="secondary"])[aria-expanded="true"] {
     background-color: var(--secondary);
     color: var(--secondary-foreground);
   }
   @media (hover: hover) {
-    [data-slot="code-block-copy-button"]:where(:is(:not([data-variant]), [data-variant="ghost"])):hover {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where(:is(:not([data-variant]), [data-variant="ghost"])):hover {
       background-color: var(--muted);
       color: var(--foreground);
     }
   }
-  [data-slot="code-block-copy-button"]:where(:is(:not([data-variant]), [data-variant="ghost"]))[aria-expanded="true"] {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where(:is(:not([data-variant]), [data-variant="ghost"]))[aria-expanded="true"] {
     background-color: var(--muted);
     color: var(--foreground);
   }
   @media (hover: hover) {
-    [data-slot="code-block-copy-button"]:where(:is(:not([data-variant]), [data-variant="ghost"])):is([data-theme="dark"] *):hover {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where(:is(:not([data-variant]), [data-variant="ghost"])):is([data-theme="dark"] *):hover {
       background-color: color-mix(in oklab, var(--muted) 50%, transparent);
     }
   }
   @media (prefers-color-scheme: dark) {
     @media (hover: hover) {
-      [data-slot="code-block-copy-button"]:where(:is(:not([data-variant]), [data-variant="ghost"])):not([data-theme="light"] *):hover {
+      :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where(:is(:not([data-variant]), [data-variant="ghost"])):not([data-theme="light"] *):hover {
         background-color: color-mix(in oklab, var(--muted) 50%, transparent);
       }
     }
   }
   @media (hover: hover) {
-    [data-slot="code-block-copy-button"]:where([data-variant="destructive"]):hover {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="destructive"]):hover {
       background-color: color-mix(in oklab, var(--destructive) 20%, transparent);
     }
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="destructive"]):focus-visible {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="destructive"]):focus-visible {
     border-color: color-mix(in oklab, var(--destructive) 40%, transparent);
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="destructive"]):focus-visible {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="destructive"]):focus-visible {
     --tw-ring-color: color-mix(in oklab, var(--destructive) 20%, transparent);
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="destructive"]):is([data-theme="dark"] *) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="destructive"]):is([data-theme="dark"] *) {
     background-color: color-mix(in oklab, var(--destructive) 20%, transparent);
   }
   @media (prefers-color-scheme: dark) {
-    [data-slot="code-block-copy-button"]:where([data-variant="destructive"]):not([data-theme="light"] *) {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="destructive"]):not([data-theme="light"] *) {
       background-color: color-mix(in oklab, var(--destructive) 20%, transparent);
     }
   }
   @media (hover: hover) {
-    [data-slot="code-block-copy-button"]:where([data-variant="destructive"]):is([data-theme="dark"] *):hover {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="destructive"]):is([data-theme="dark"] *):hover {
       background-color: color-mix(in oklab, var(--destructive) 30%, transparent);
     }
   }
   @media (prefers-color-scheme: dark) {
     @media (hover: hover) {
-      [data-slot="code-block-copy-button"]:where([data-variant="destructive"]):not([data-theme="light"] *):hover {
+      :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="destructive"]):not([data-theme="light"] *):hover {
         background-color: color-mix(in oklab, var(--destructive) 30%, transparent);
       }
     }
   }
-  [data-slot="code-block-copy-button"]:where([data-variant="destructive"]):is([data-theme="dark"] *):focus-visible {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="destructive"]):is([data-theme="dark"] *):focus-visible {
     --tw-ring-color: color-mix(in oklab, var(--destructive) 40%, transparent);
   }
   @media (prefers-color-scheme: dark) {
-    [data-slot="code-block-copy-button"]:where([data-variant="destructive"]):not([data-theme="light"] *):focus-visible {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="destructive"]):not([data-theme="light"] *):focus-visible {
       --tw-ring-color: color-mix(in oklab, var(--destructive) 40%, transparent);
     }
   }
   @media (hover: hover) {
-    [data-slot="code-block-copy-button"]:where([data-variant="link"]):hover {
+    :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-variant="link"]):hover {
       text-decoration-line: underline;
     }
   }
-  [data-slot="code-block-copy-button"]:where([data-size="default"]):has([data-icon="inline-end"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="default"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="default"]):has([data-icon="inline-start"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="default"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  :where([data-slot="button-group"]) [data-slot="code-block-copy-button"]:where([data-size="xs"]) {
+  :where([data-slot="button-group"]) :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="xs"]) {
     border-radius: var(--radius);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="xs"]):has([data-icon="inline-end"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="xs"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="xs"]):has([data-icon="inline-start"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
   }
-  :where([data-slot="button-group"]) [data-slot="code-block-copy-button"]:where([data-size="sm"]) {
+  :where([data-slot="button-group"]) :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="sm"]) {
     border-radius: var(--radius);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="sm"]):has([data-icon="inline-end"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="sm"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="lg"]):has([data-icon="inline-end"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="lg"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
   }
-  [data-slot="code-block-copy-button"]:where([data-size="lg"]):has([data-icon="inline-start"]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  :where([data-slot="button-group"]) [data-slot="code-block-copy-button"]:where(:is(:not([data-size]), [data-size="icon-xs"])) {
+  :where([data-slot="button-group"]) :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where(:is(:not([data-size]), [data-size="icon-xs"])) {
     border-radius: var(--radius);
   }
-  [data-slot="code-block-copy-button"]:where(:is(:not([data-size]), [data-size="icon-xs"])) svg:not([class*="size-"], [data-slot]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where(:is(:not([data-size]), [data-size="icon-xs"])) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
   }
-  :where([data-slot="button-group"]) [data-slot="code-block-copy-button"]:where([data-size="icon-sm"]) {
+  :where([data-slot="button-group"]) :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="icon-sm"]) {
     border-radius: var(--radius);
   }
   [data-slot="code-block-content"]:is(:where([data-slot="code-block"]):has([data-slot="code-block-footer"]) *) {
@@ -16129,6 +16129,15 @@
     --chart-grid: var(--border);
     --chart-axis: oklch(0.871 0.006 286.286);
     --chart-area-opacity: 0.1;
+    --code-comment: light-dark(#606973, #919aa4);
+    --code-keyword: light-dark(#c7293c, #f97583);
+    --code-string: light-dark(#032f62, #9ecbff);
+    --code-constant: light-dark(#005cc5, #79b8ff);
+    --code-function: light-dark(#6f42c1, #b392f0);
+    --code-variable: light-dark(#bc3d00, #ffab70);
+    --code-tag: light-dark(#0c792e, #85e89d);
+    --code-inserted: light-dark(#0c792e, #85e89d);
+    --code-deleted: light-dark(#b31d28, #fdaeb7);
   }
   [data-theme="dark"] {
     --success-bg: hsl(150 100% 6%);
@@ -16533,6 +16542,30 @@
   @container page-header (width < 32rem) {
     [data-slot="page-actions"] { grid-column: 1 / -1; grid-row: auto; justify-content: flex-start; margin-top: calc(var(--spacing) * 2); }
   }
+  [data-slot="page-header"][data-size="lg"] { row-gap: calc(var(--spacing) * 1.5); }
+  [data-slot="page-header"][data-size="lg"] > [data-slot="page-title"] { font-size: 1.875rem; line-height: 2.25rem; }
+  [data-slot="page-meta"] {
+    grid-column: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing) calc(var(--spacing) * 4);
+    margin-top: var(--spacing);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    color: var(--muted-foreground);
+  }
+  [data-slot="page-meta"] > * { display: inline-flex; align-items: center; gap: calc(var(--spacing) * 1.5); min-width: 0; }
+  [data-slot="page-meta"] > * > svg:not([data-slot]) { flex: none; width: 1rem; height: 1rem; }
+  [data-slot="accordion-trigger"] > [data-slot="badge"] { margin-inline-start: auto; align-self: center; }
+  [data-slot="accordion-trigger"] > [data-slot="badge"] ~ [data-slot="accordion-trigger-icon"] { margin-inline-start: calc(var(--spacing) * 2); }
+  [data-slot="card"][data-orientation="horizontal"] { flex-direction: row; align-items: flex-start; column-gap: 0; padding-inline-start: var(--card-spacing); }
+  [data-slot="card"][data-orientation="horizontal"] > [data-slot="cover"] { flex: none; width: 6rem; }
+  [data-slot="card"][data-orientation="horizontal"] > :not([data-slot="cover"]) { display: flex; flex: 1 1 0; flex-direction: column; gap: var(--card-spacing); min-width: 0; }
+  [data-slot="card"][data-orientation="horizontal"] [data-slot="card-footer"] { flex-wrap: wrap; gap: calc(var(--spacing) * 2); }
+  @media (width >= 48rem) {
+    [data-slot="card"][data-orientation="horizontal"] > [data-slot="cover"] { width: 8rem; }
+  }
   [data-slot="page-body"] {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -16675,12 +16708,12 @@
     --card-grid-min: 13rem;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-grid-min)), 1fr));
-    align-items: start;
     gap: calc(var(--spacing) * 4);
   }
   [data-slot="card-grid"][data-size="sm"] { --card-grid-min: 10rem; }
   [data-slot="card-grid"][data-size="lg"] { --card-grid-min: 18rem; }
   [data-slot="card-grid"] > * { min-width: 0; }
+  [data-slot="card-grid"] > [data-slot="card"] > [data-slot="card-footer"] { margin-block-start: auto; }
   [data-slot="cover"] {
     --tone: var(--chart-1);
     --cover-background: color-mix(in oklab, var(--tone) 22%, var(--card));
@@ -16703,7 +16736,7 @@
   [data-slot="cover"][data-tone="4"] { --tone: var(--chart-4); }
   [data-slot="cover"][data-tone="5"] { --tone: var(--chart-5); }
   [data-slot="cover"] > svg { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--tone); pointer-events: none; }
-  [data-slot="cover"] > :not(svg) { position: relative; min-width: 0; overflow-wrap: anywhere; font-size: var(--text-xs); line-height: var(--text-xs--line-height); }
+  [data-slot="cover"] > :not(svg) { position: relative; min-width: 0; overflow-wrap: break-word; hyphens: auto; font-size: var(--text-xs); line-height: var(--text-xs--line-height); }
   [data-slot="cover"] > :nth-child(1 of :not(svg)) { font-size: var(--text-base); line-height: 1.25; font-weight: 600; text-wrap: balance; }
   [data-slot="item-media"] > [data-slot="cover"] { flex: none; width: calc(var(--spacing) * 10); padding: 0; border-radius: calc(var(--radius) * .6); }
   [data-slot="item"][data-size="sm"] > [data-slot="item-media"] > [data-slot="cover"] { width: calc(var(--spacing) * 8); }
@@ -16801,6 +16834,16 @@
   [data-slot="data-table-toolbar"] [data-slot="button"][data-size="sm"] { height: calc(var(--spacing) * 8); }
   [data-slot="data-table-toolbar"] > * > [data-slot="input"] { flex: 1 1 9.375rem; max-width: 15.625rem; }
   [data-slot="data-table-toolbar"] > * > [data-slot="input-group"] { flex: 1 1 9.375rem; max-width: 15.625rem; }
+  @media (width < 40rem) {
+    [data-slot="data-table-toolbar"]:has(> :first-child > :is([data-slot="input"], [data-slot="input-group"]):first-child) { justify-content: flex-start; }
+    [data-slot="data-table-toolbar"] > :first-child:has(> :is([data-slot="input"], [data-slot="input-group"]):first-child) { display: contents; }
+    [data-slot="data-table-toolbar"] > :first-child > [data-slot="input"]:first-child { flex-basis: 100%; max-width: none; }
+    [data-slot="data-table-toolbar"] > :first-child > [data-slot="input-group"]:first-child { flex-basis: 100%; max-width: none; }
+    [data-slot="data-table-toolbar"]:has(> :first-child > :is([data-slot="input"], [data-slot="input-group"]):first-child) > :last-child:not(:first-child) { margin-inline-start: auto; }
+  }
+  @media (width < 40rem) {
+    [data-slot="item-actions"]:has(> [data-slot="button"]:not([data-size^="icon"]), > * > [data-slot="button"]:not([data-size^="icon"])) { flex-basis: 100%; }
+  }
   [data-slot="data-table"] [data-slot="table-container"] {
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
@@ -16940,7 +16983,7 @@
   [data-slot="text-stack"] > :first-child { font-weight: 500; }
   [data-slot="text-stack"] > :not(:first-child) { font-size: var(--text-xs); color: color-mix(in oklab, currentColor 70%, transparent); }
 
-  :is([data-slot="sheet-body"], [data-slot="drawer-body"]) {
+  [data-slot="sheet-body"], [data-slot="drawer-body"] {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
@@ -17419,6 +17462,17 @@
     font-size: 0.875rem;
     line-height: 1.25rem;
   }
+  [data-slot="code-block-wrap-button"][aria-pressed="true"] { color: var(--foreground); }
+  [data-slot="code-block-code"] [data-token~="comment"] { color: var(--code-comment); }
+  [data-slot="code-block-code"] [data-token~="keyword"] { color: var(--code-keyword); }
+  [data-slot="code-block-code"] [data-token~="string"] { color: var(--code-string); }
+  [data-slot="code-block-code"] [data-token~="constant"] { color: var(--code-constant); }
+  [data-slot="code-block-code"] [data-token~="function"] { color: var(--code-function); }
+  [data-slot="code-block-code"] [data-token~="variable"] { color: var(--code-variable); }
+  [data-slot="code-block-code"] [data-token~="tag"] { color: var(--code-tag); }
+  [data-slot="code-block-code"] [data-token~="inserted"] { color: var(--code-inserted); }
+  [data-slot="code-block-code"] [data-token~="deleted"] { color: var(--code-deleted); }
+  [data-slot="code-block-code"] [data-token~="bold"] { font-weight: 600; }
 }
 
 @layer clanker.utilities {

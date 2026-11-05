@@ -134,3 +134,5 @@ root.addEventListener("dropdown-menu:select", event => {
 })
 
 render()
+
+document.getElementById("task-new").addEventListener("click", () => toast("New task", { description: "The task form opens here." }))

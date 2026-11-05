@@ -43,6 +43,7 @@ var ignoredMarkers = map[string]string{
 
 var kit = kitMap{
 	alias: map[string]string{
+		"code-block-copy-button":                `:is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"])`,
 		"dropdown-menu-checkbox-item-indicator": `:is([data-slot="dropdown-menu-checkbox-item-indicator"], [data-slot="dropdown-menu-item-indicator"])`,
 		"dropdown-menu-radio-item-indicator":    `:is([data-slot="dropdown-menu-radio-item-indicator"], [data-slot="dropdown-menu-item-indicator"])`,
 	},
@@ -77,6 +78,12 @@ func main() {
 	}
 	if len(os.Args) > 1 && os.Args[1] == "dist" {
 		if err := distMain(os.Args[2:]); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+	if len(os.Args) > 1 && os.Args[1] == "docs-coverage" {
+		if err := docsCoverageMain(os.Args[2:]); err != nil {
 			log.Fatal(err)
 		}
 		return
@@ -446,6 +453,9 @@ func utilities(src, pinPath, content, out, tailwind string) error {
 	compiled, stderr, err := compile(tailwind, work, css, importUtilities, source)
 	if err != nil {
 		return fmt.Errorf("tailwindcss: %v\n%s", err, stderr)
+	}
+	if first, rest, ok := strings.Cut(compiled, "\n"); ok && strings.HasPrefix(first, "/*! tailwindcss ") {
+		compiled = rest
 	}
 	return os.WriteFile(out, []byte(compiled), 0o644)
 }

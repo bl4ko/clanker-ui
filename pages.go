@@ -449,8 +449,8 @@ func (d *docsSite) fixLinks(md string) string {
 	})
 }
 
-func (d *docsSite) demoHTML(src, own string) string {
-	src = exportTag.ReplaceAllStringFunc(src, func(tag string) string {
+func (d *docsSite) siteRelative(src string) string {
+	return exportTag.ReplaceAllStringFunc(src, func(tag string) string {
 		return tagURL.ReplaceAllStringFunc(tag, func(attr string) string {
 			m := tagURL.FindStringSubmatch(attr)
 			if !relativeURL.MatchString(m[2]) {
@@ -459,6 +459,10 @@ func (d *docsSite) demoHTML(src, own string) string {
 			return fmt.Sprintf(` %s="%s"`, m[1], d.urls.url("/"+m[2]))
 		})
 	})
+}
+
+func (d *docsSite) demoHTML(src, own string) string {
+	src = d.siteRelative(src)
 	return hashLink.ReplaceAllStringFunc(src, func(attr string) string {
 		id := hashLink.FindStringSubmatch(attr)[1]
 		if _, ok := d.demo[id]; !ok {

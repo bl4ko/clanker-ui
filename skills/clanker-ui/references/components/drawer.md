@@ -10,7 +10,7 @@ Group `overlays`. Needs `core`. CSS and JS.
 | `drawer-swipe-handle` (kit adds) |  | `data-show-swipe-handle` |
 | `drawer-viewport` |  | `data-ending-style`, `data-modal`, `data-snap-points`, `data-starting-style`, `data-swiping` |
 
-Other parts: `drawer-description`, `drawer-footer`, `drawer-header`, `drawer-title`.
+Other parts: `drawer-body`, `drawer-description`, `drawer-footer`, `drawer-header`, `drawer-title`.
 
 Part attributes: `data-drawer-close` boolean; `data-drawer-trigger` boolean.
 

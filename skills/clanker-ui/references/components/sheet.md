@@ -6,7 +6,7 @@ Group `overlays`. Needs `core`. CSS and JS.
 | --- | --- | --- |
 | `sheet-content` | `data-side` `bottom`, `left`, `right`, `top` | `data-ending-style`, `data-starting-style` |
 
-Other parts: `sheet` (root), `sheet-close`, `sheet-description`, `sheet-footer`, `sheet-header`, `sheet-title`.
+Other parts: `sheet` (root), `sheet-body`, `sheet-close`, `sheet-description`, `sheet-footer`, `sheet-header`, `sheet-title`.
 
 Kit adds: `sheet-overlay`.
 

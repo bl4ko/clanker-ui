@@ -33,6 +33,7 @@ grep -rhoE 'data-slot="[a-z0-9-]+"' --include='*.html' . | cut -d'"' -f2 | sort 
 | Core API (`h`, `svg`, `icon`, `define`, `emit`, `strings`, `theme`, `direction`, `isOpen`, ...) | `clanker-ui.js` | `clanker-ui.min.js` or `clanker-ui-core.min.js` |
 | Component API (`toast`, `dialogOpen`, `calendarSetValue`, ...) | `clanker-ui.js` | `clanker-ui.min.js` or the group file |
 | Charts (`chart`, `sparkline`, `statTile`) | `clanker-ui-chart.js` | `clanker-ui-chart.min.js` |
+| Syntax colors (`codeBlockHighlight`) | `clanker-ui-code.js` | `clanker-ui-code.min.js` |
 
 Group set:
 

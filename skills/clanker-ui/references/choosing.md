@@ -28,7 +28,7 @@ Pick by the job, not by the look. Each row names the kit part; its file is `comp
 | Many options, or the user types to find one (people, countries, tags) | `combobox` (`data-multiple` for several) |
 | A date or a range | `date-picker` (a `calendar` in a `popover`) |
 | A number in a range where the exact value does not matter (volume, size) | `slider`; else an `input type="number"` |
-| A rating of 1 to 5 | input: star radios ([recipes.md](recipes.md)), not a `toggle-group`; read-only: `rating` |
+| A rating of 1 to 5 | input: a `radio-group` with a `rating` in each label (block `overlay-form`), not a `toggle-group`; read-only: `rating` |
 
 ## Messages
 

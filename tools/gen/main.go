@@ -34,6 +34,21 @@ var sourceFixes = []struct {
 	{regexp.MustCompile(`:not\(\[class\*='size-'\]\)`), ":not([class*='size-'],[data-slot])", "class adapted to the kit markup", "kit markup has no size classes; an icon with a data-slot gets its size from its own part"},
 }
 
+type kitStyle struct{ name, file string }
+
+var kitStyles = []kitStyle{
+	{"nova", "clanker-ui.css"},
+	{"rhea", "clanker-ui-rhea.css"},
+}
+
+func kitStyleFiles() []string {
+	var out []string
+	for _, s := range kitStyles {
+		out = append(out, styleFile(s.name))
+	}
+	return out
+}
+
 var ignoredMarkers = map[string]string{
 	"cn-menu-target":      "",
 	"cn-menu-translucent": "",
@@ -99,6 +114,7 @@ func main() {
 	flag.StringVar(&o.groups, "groups", "tools/gen/groups.tsv", "ported components; the default component list (other pinned components get a note)")
 	flag.StringVar(&o.parts, "parts", "", "also write the parts as JSON to this file (for tools/parity)")
 	flag.BoolVar(&o.physical, "physical", false, "keep physical classes (ml-, right-) instead of the shadcn rtl mapping")
+	flag.StringVar(&o.style, "style", kitStyles[0].name, "shadcn style (apps/v4/registry/styles/style-<name>.css); with -out clanker-ui.css and no -style, every style in kitStyles is written next to it")
 	flag.Parse()
 	set := map[string]bool{}
 	flag.Visit(func(f *flag.Flag) { set[f.Name] = true })
@@ -114,12 +130,27 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println(summary)
+	if filepath.Base(o.out) != kitStyles[0].file || o.kit == "" || set["style"] {
+		return
+	}
+	for _, s := range kitStyles[1:] {
+		so := o
+		so.style, so.out, so.notes, so.parts = s.name, filepath.Join(filepath.Dir(o.out), s.file), "", ""
+		summary, err := run(so)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(summary)
+	}
+	if _, err := writeDist(filepath.Dir(o.out), filepath.Join(filepath.Dir(o.out), "dist")); err != nil {
+		log.Fatalf("dist: %v", err)
+	}
 }
 
 type options struct {
-	src, pin, out, notes, kit, tailwind, mapFile, parts, groups string
-	components                                                  []string
-	physical                                                    bool
+	src, pin, out, notes, kit, tailwind, mapFile, parts, groups, style string
+	components                                                         []string
+	physical                                                           bool
 }
 
 func (o options) notesPath() string {
@@ -222,7 +253,11 @@ func run(o options) (string, error) {
 		}
 	}
 	components = order
-	nova, err := p.read(novaFile)
+	if o.style == "" {
+		o.style = kitStyles[0].name
+	}
+	file := styleFile(o.style)
+	styleCSS, err := p.read(file)
 	if err != nil {
 		return "", err
 	}
@@ -230,20 +265,26 @@ func run(o options) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	styles := parseStyles(nova)
+	styles := parseStyles(styleCSS)
 	for _, cls := range sortedKeys(styles) {
 		for _, c := range strings.Fields(styles[cls]) {
-			if err := checkClass(novaFile+" ."+cls, c); err != nil {
+			if err := checkClass(file+" ."+cls, c); err != nil {
 				return "", err
 			}
 		}
 	}
 	g := newGen(sources, styles, manual, ignoredMarkers)
 	g.fps = fps
+	g.style = o.style
 	g.physical = o.physical
 	g.kit = kit
 	for _, c := range notPorted {
 		g.note("upstream component not ported (port it, then add it to tools/gen/groups.tsv)", "%s", c)
+	}
+	for _, s := range p.styles {
+		if !slices.ContainsFunc(kitStyles, func(k kitStyle) bool { return k.name == s }) {
+			g.note("upstream style not ported (add it to kitStyles in tools/gen/main.go)", "%s", s)
+		}
 	}
 	if err := g.generate(components, len(o.components) == 0); err != nil {
 		return "", err
@@ -316,11 +357,6 @@ func run(o options) (string, error) {
 	if o.parts != "" {
 		if err := os.WriteFile(o.parts, g.partsJSON(kit, components), 0o644); err != nil {
 			return "", err
-		}
-	}
-	if filepath.Base(o.out) == "clanker-ui.css" && kitCSS != "" {
-		if _, err := writeDist(filepath.Dir(o.out), filepath.Join(filepath.Dir(o.out), "dist")); err != nil {
-			return "", fmt.Errorf("dist: %w", err)
 		}
 	}
 	notes := g.report(components, len(css))
@@ -452,7 +488,7 @@ func utilities(src, pinPath, content, out, tailwind string) error {
 
 func (g *gen) report(components []string, size int) string {
 	var b strings.Builder
-	fmt.Fprintf(&b, "shadcn %s, tailwindcss %s, tw-animate-css %s\n", shadcnSHA, tailwindVersion, twAnimateVersion)
+	fmt.Fprintf(&b, "shadcn %s, style %s, tailwindcss %s, tw-animate-css %s\n", shadcnSHA, g.style, tailwindVersion, twAnimateVersion)
 	fmt.Fprintf(&b, "components: %s\n", strings.Join(components, ", "))
 	fmt.Fprintf(&b, "parts: %d, compiled bytes: %d\n", len(g.parts), size)
 	for _, kind := range sortedKeys(g.notes) {

@@ -57,14 +57,16 @@ var fileLicenseLines = map[string]string{
 
 func kitLicense(name string) string {
 	base := filepath.Base(name)
-	if strings.HasPrefix(filepath.ToSlash(name), "dist/") {
-		switch base = strings.Replace(base, ".min.", ".", 1); {
-		case base == "clanker-ui-themes.css" || base == "clanker-ui-a11y.css":
-		case strings.HasSuffix(base, ".css"):
-			base = "clanker-ui.css"
-		case base != "clanker-ui-chart.js" && base != "clanker-ui-theme.js":
-			base = "clanker-ui.js"
-		}
+	dist := strings.HasPrefix(filepath.ToSlash(name), "dist/")
+	if dist {
+		base = strings.Replace(base, ".min.", ".", 1)
+	}
+	switch {
+	case base == "clanker-ui-themes.css" || base == "clanker-ui-a11y.css":
+	case strings.HasSuffix(base, ".css"):
+		base = "clanker-ui.css"
+	case dist && base != "clanker-ui-chart.js" && base != "clanker-ui-theme.js":
+		base = "clanker-ui.js"
 	}
 	if line, ok := fileLicenseLines[base]; ok {
 		return line

@@ -236,8 +236,18 @@ func buildDist(root string) (*distResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := t.distCSS(res, css); err != nil {
+	if err := t.distCSS(res, css, "clanker-ui"); err != nil {
 		return nil, fmt.Errorf("clanker-ui.css: %w", err)
+	}
+	for _, s := range kitStyles[1:] {
+		css, err := read(s.file)
+		if err != nil {
+			return nil, err
+		}
+		alt := &distResult{files: res.files, cssBody: map[string]string{}}
+		if err := t.distCSS(alt, css, strings.TrimSuffix(s.file, ".css")); err != nil {
+			return nil, fmt.Errorf("%s: %w", s.file, err)
+		}
 	}
 	for _, name := range []string{"clanker-ui-themes.css", "clanker-ui-a11y.css"} {
 		src, err := read(name)
@@ -316,7 +326,7 @@ func esbuildErr(msgs []api.Message) error {
 	return errors.New("esbuild: " + strings.Join(parts, "; "))
 }
 
-func (t *groupTable) distCSS(res *distResult, src string) error {
+func (t *groupTable) distCSS(res *distResult, src, prefix string) error {
 	lic, _, _ := strings.Cut(src, "\n")
 	tree, err := parseCSS(src)
 	if err != nil {
@@ -413,10 +423,10 @@ func (t *groupTable) distCSS(res *distResult, src string) error {
 			return fmt.Errorf("group %s: %w", g, err)
 		}
 		res.cssBody[g] = min
-		res.files["clanker-ui-"+g+".min.css"] = []byte(lic + "\n" + layerOrder + min + "\n")
+		res.files[prefix+"-"+g+".min.css"] = []byte(lic + "\n" + layerOrder + min + "\n")
 		full.WriteString(min)
 	}
-	res.files[distCSS] = []byte(lic + "\n" + layerOrder + full.String() + "\n")
+	res.files[prefix+".min.css"] = []byte(lic + "\n" + layerOrder + full.String() + "\n")
 	return nil
 }
 

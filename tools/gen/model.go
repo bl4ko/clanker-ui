@@ -51,6 +51,7 @@ type part struct {
 type gen struct {
 	sources   map[string]*source
 	styles    map[string]string
+	style     string
 	parts     []*part
 	free      map[string][]*part
 	notes     map[string][]string
@@ -157,7 +158,7 @@ func (g *gen) classes(raw string) ([]layer, []string) {
 		case strings.HasPrefix(tok, "group/") || strings.HasPrefix(tok, "peer/"):
 			groups = append(groups, tok)
 		case strings.HasPrefix(tok, "cn-") && g.noMarkers:
-			g.note("marker that the shadcn transform keeps (no Nova rule; like the installed file and the docs page)", "%s in %s", tok, g.where)
+			g.note("marker that the shadcn transform keeps (no style rule; like the installed file and the docs page)", "%s in %s", tok, g.where)
 		case strings.HasPrefix(tok, "cn-"):
 			markers = append(markers, tok)
 			if repl, ok := g.ignored[tok]; ok {
@@ -1477,7 +1478,7 @@ func (g *gen) partsJSON(k kitMap, components []string) []byte {
 		sourceTokens[c] = g.sourceTokens(c)
 		all = append(all, sourceTokens[c]...)
 	}
-	b, _ := json.MarshalIndent(map[string]any{"shadcn": shadcnSHA, "components": components, "parts": out, "source_tokens": sourceTokens, "logical": g.logicalMap(all)}, "", " ")
+	b, _ := json.MarshalIndent(map[string]any{"shadcn": shadcnSHA, "style": g.style, "components": components, "parts": out, "source_tokens": sourceTokens, "logical": g.logicalMap(all)}, "", " ")
 	return append(b, '\n')
 }
 

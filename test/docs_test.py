@@ -476,7 +476,7 @@ def check_docs_pages(t):
     t.shot("components", page)
     t.docs("/docs/components/accordion")
     assert "not ported yet" not in page.locator('[data-docs="article"]').inner_text()
-    assert page.locator('#accordion [data-docs="preview"] [data-slot="accordion"]').count() > 0
+    assert page.locator('[data-example="accordion-demo"] [data-docs="preview"] [data-slot="accordion"]').count() > 0
     assert page.locator('link[rel="alternate"][type="text/markdown"]').get_attribute("href") == "/docs/components/accordion.md"
     assert page.locator('link[rel="describedby"]').get_attribute("href") == "/llms.txt"
     t.docs("/docs/installation")

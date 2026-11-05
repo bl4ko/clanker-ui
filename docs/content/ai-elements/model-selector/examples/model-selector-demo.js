@@ -7,7 +7,7 @@ for (const [id, name] of [["model-selector-demo-model", "Model"], ["model-select
   menu.addEventListener("dropdown-menu:change", event => {
     const trigger = menu.querySelector("[data-dropdown-menu-trigger]")
     const label = event.detail.item.textContent.trim()
-    trigger.querySelector("span:last-of-type").textContent = label
+    trigger.querySelector("svg").previousSibling.replaceWith(label)
     trigger.setAttribute("aria-label", `${name}: ${label}`)
   })
 }

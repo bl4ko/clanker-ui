@@ -16,7 +16,7 @@ Model Selector is built with the [Dropdown Menu](/docs/components/dropdown-menu)
   <textarea data-slot="input-group-control" placeholder="Ask the agent to change your code..." aria-label="Message"></textarea>
   <div data-slot="input-group-addon" data-align="block-end">
     <div data-slot="dropdown-menu" id="model">
-      <button type="button" data-slot="button" data-input-group-button data-size="sm" data-dropdown-menu-trigger><span>GPT-5</span><svg data-lucide="chevron-down"></svg></button>
+      <button type="button" data-slot="button" data-input-group-button data-size="sm" data-dropdown-menu-trigger>GPT-5<svg data-lucide="chevron-down"></svg></button>
       <div data-slot="dropdown-menu-content" data-align="start">
         <div data-slot="dropdown-menu-radio-group" data-value="gpt-5">
           <div data-slot="dropdown-menu-group">
@@ -28,7 +28,7 @@ Model Selector is built with the [Dropdown Menu](/docs/components/dropdown-menu)
       </div>
     </div>
     <div data-slot="dropdown-menu" id="effort">
-      <button type="button" data-slot="button" data-input-group-button data-size="sm" data-dropdown-menu-trigger><span>Medium</span><svg data-lucide="chevron-down"></svg></button>
+      <button type="button" data-slot="button" data-input-group-button data-size="sm" data-dropdown-menu-trigger>Medium<svg data-lucide="chevron-down"></svg></button>
       <div data-slot="dropdown-menu-content" data-align="start">
         <div data-slot="dropdown-menu-radio-group" data-value="medium">
           <div data-slot="dropdown-menu-radio-item" data-value="low" data-close-on-click>Low</div>
@@ -48,7 +48,8 @@ Radio items keep a menu open; `data-close-on-click` closes it after a pick, like
 menu.addEventListener("dropdown-menu:change", event => {
   const label = event.detail.item.textContent.trim()
   const trigger = menu.querySelector("[data-dropdown-menu-trigger]")
-  trigger.querySelector("span").textContent = label
+  const chevron = trigger.querySelector("svg")
+  chevron.previousSibling.replaceWith(label)
   trigger.setAttribute("aria-label", `Model: ${label}`)
 })
 ```

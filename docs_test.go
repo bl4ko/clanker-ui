@@ -699,3 +699,37 @@ func TestDocsPagesLinkMarkdownAndLLMs(t *testing.T) {
 		t.Error("components.md does not follow the typography redirect")
 	}
 }
+
+func TestDocsFontsSelfHosted(t *testing.T) {
+	h := newSite("").routes()
+	d := docsOf(t)
+	page := request(t, h, http.MethodGet, "/docs/components/button").Body.String()
+	css, _ := os.ReadFile("docs/assets/docs.css")
+	for _, font := range []string{"geist-latin.woff2", "geist-mono-latin.woff2"} {
+		url := "/assets/" + d.hash + "/" + font
+		rec := request(t, h, http.MethodGet, url)
+		if rec.Code != http.StatusOK || rec.Header().Get("Content-Type") != "font/woff2" || rec.Header().Get("Content-Encoding") != "" || !strings.HasPrefix(rec.Body.String(), "wOF2") {
+			t.Errorf("%s: status %d, Content-Type %q, Content-Encoding %q", url, rec.Code, rec.Header().Get("Content-Type"), rec.Header().Get("Content-Encoding"))
+		}
+		if !strings.Contains(page, `<link rel="preload" href="`+url+`" as="font" type="font/woff2" crossorigin>`) {
+			t.Errorf("page does not preload %s", font)
+		}
+		if !strings.Contains(string(css), `src: url("`+font+`") format("woff2");`) {
+			t.Errorf("docs.css has no @font-face for %s", font)
+		}
+	}
+	for _, want := range []string{`--font-sans: "Geist", "Geist Fallback";`, `--font-mono: "Geist Mono", "Geist Mono Fallback";`} {
+		if !strings.Contains(string(css), want) {
+			t.Errorf("docs.css has no %s", want)
+		}
+	}
+	for name := range kitFiles {
+		if b, _ := os.ReadFile(name); strings.Contains(string(b), "Geist") {
+			t.Errorf("%s names Geist; the fonts are for the docs site only", name)
+		}
+	}
+	notices, _ := os.ReadFile("THIRD_PARTY_NOTICES")
+	if !strings.Contains(string(notices), "Copyright 2024 The Geist Project Authors") || !strings.Contains(string(notices), "SIL OPEN FONT LICENSE Version 1.1") {
+		t.Error("THIRD_PARTY_NOTICES has no Geist OFL notice")
+	}
+}

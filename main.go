@@ -58,6 +58,7 @@ var contentTypes = map[string]string{
 	".jpg":  "image/jpeg",
 	".webp": "image/webp",
 	".avif": "image/avif",
+	".woff2": "font/woff2",
 }
 
 type site struct {

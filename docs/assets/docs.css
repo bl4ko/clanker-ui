@@ -1049,6 +1049,7 @@ body[data-docs="body"] {
 
 [data-docs="preview"]:is([data-align="start"], [data-align="end"]) { align-items: flex-start; }
 [data-docs="preview"][data-height="auto"] { height: auto; }
+[data-docs="preview"][data-height="24rem"] { height: 24rem; }
 
 [data-docs="preview"][data-height="demo"] {
   flex-direction: column;

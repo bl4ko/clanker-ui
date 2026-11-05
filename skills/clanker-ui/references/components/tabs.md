@@ -26,7 +26,7 @@ Events: `tabs:change` `{ value }`.
 </div>
 ```
 
-A `tabs-content` without `data-value` is a shared panel: it shows for every tab and is labelled by the selected tab. Use it for a tab bar that filters one list or table: render the rows on `tabs:change`. A filter with no panel at all is a toggle group (`data-type="single" data-required`), not tabs.
+Keep a tab bar short enough for 390 px: when it scrolls, the cut last label has no other sign. With more tabs, put a `select` with the same choices next to the list, as shadcn `dashboard-01` does: `data-hide-from="sm"` on the select and `data-show-from="sm"` on the `tabs-list`; or use fewer and shorter labels. A `tabs-content` without `data-value` is a shared panel: it shows for every tab and is labelled by the selected tab. Use it for a tab bar that filters one list or table: render the rows on `tabs:change`. A filter with no panel at all is a toggle group (`data-type="single" data-required`), not tabs.
 
 Manual activation as in Base UI: the arrow keys move focus, Enter, Space, or a click selects (`data-activation="automatic"` selects on focus), roving tabindex, arrows (RTL aware), Home, End; disabled tabs are skipped. Tab panels are focusable (`tabindex="0"`) and show the standard focus ring.
 

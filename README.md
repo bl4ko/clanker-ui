@@ -113,7 +113,7 @@ A smaller page can load only the component groups that it uses: see [Minified an
    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --primary: oklch(0.75 0.15 260); } }
    ```
 
-   `clanker-ui-themes.css` and `clanker-ui-a11y.css` are optional. Load them in this order after `clanker-ui.css` and before `app.css`: the accessibility layer has adjustments for each color scheme that must come after the schemes.
+   `clanker-ui-themes.css` is optional. Load `clanker-ui-a11y.css` in every app: the kit keeps the shadcn values for parity, and some of them are below WCAG 2.2 AA (status badges and alerts, the avatar fallback, muted text on `--muted`, input borders, the focus ring); the layer fixes them (see [Accessibility layer](#accessibility-layer)). Load them in this order after `clanker-ui.css` and before `app.css`: the accessibility layer has adjustments for each color scheme that must come after the schemes.
 
 5. Send this CSP header (the dev server does):
 
@@ -604,7 +604,7 @@ show(content, { trigger, anchor = trigger, side, align, sideOffset = 4, alignOff
 
 ### Accessibility layer
 
-`clanker-ui-a11y.css` is optional and loads after `clanker-ui.css` (and after `clanker-ui-themes.css`). It changes only what the list below names, in the kit layers, so `app.css` still wins.
+`clanker-ui-a11y.css` loads after `clanker-ui.css` (and after `clanker-ui-themes.css`). It is a separate file only so that the kit itself keeps the shadcn values; load it in every app. It changes only what the list below names, in the kit layers, so `app.css` still wins.
 
 - With a [color scheme](#color-schemes), its last part (layer `clanker.themes`) has the changes for that scheme: the gate fixes in [Adjusted tokens](#adjusted-tokens), and the validated chart palette for the shadcn base schemes. It is hand-written, like `clanker-ui-themes.css`; the `foundation` check `check_scheme_contrast` is the gate.
 
@@ -650,16 +650,16 @@ Nest groups for spacing. A `select`, `dropdown-menu`, `popover`, `tooltip`, or `
 
 `aria-invalid="true"` shows the error border. A label after a `:disabled` control is dimmed. A `kbd` inside `tooltip-content` uses the inverted tooltip colors. CSS only.
 
-File upload: `<input data-slot="input" type="file" accept="image/*,application/pdf" name="receipt">` is the shadcn file input (the button is plain `text-sm` text with no border). shadcn has no dropzone component. A dropzone is a `<label>` with the outline `empty` style around a visually hidden file input, and a few lines of app code for drag and drop; show the chosen file with an `attachment` (it works outside a chat):
+File upload: `<input data-slot="input" type="file" accept="image/*,application/pdf" name="receipt">` is the shadcn file input (the button is plain `text-sm` text with no border). shadcn has no dropzone component. A dropzone is a `<label>` with the outline `empty` style around a visually hidden file input, and a few lines of app code for drag and drop; show the chosen file with an `attachment` (it works outside a chat). A `label` holds only phrasing content, so the `empty` parts are `span`s:
 
 ```html
 <label data-slot="empty" data-variant="outline" class="dropzone">
   <input type="file" name="receipt" accept="image/*,application/pdf" class="sr-only">
-  <div data-slot="empty-header">
-    <div data-slot="empty-icon" data-variant="icon"><svg data-lucide="cloud-upload"></svg></div>
-    <div data-slot="empty-title">Upload a receipt</div>
-    <div data-slot="empty-description">Drop a file here, or click to choose one. PNG, JPG, or PDF.</div>
-  </div>
+  <span data-slot="empty-header">
+    <span data-slot="empty-icon" data-variant="icon"><svg data-lucide="cloud-upload"></svg></span>
+    <span data-slot="empty-title">Upload a receipt</span>
+    <span data-slot="empty-description">Drop a file here, or click to choose one. PNG, JPG, or PDF.</span>
+  </span>
 </label>
 ```
 
@@ -676,7 +676,7 @@ zone.addEventListener("drop", event => {
 })
 ```
 
-App CSS: `.dropzone { cursor: pointer }`, a focus ring with `.dropzone:has(input:focus-visible) { outline: 2px solid var(--ring); outline-offset: 2px }`, and `.dropzone[data-dragging] { border-color: var(--primary) }`. A `required` file input in a `data-slot="form"` gets the `field-error` of its field.
+App CSS: `.dropzone { cursor: pointer }`, a focus ring with `.dropzone:has(input:focus-visible) { outline: 2px solid var(--ring); outline-offset: 2px }`, and `.dropzone[data-dragging] { border-color: var(--primary) }`. A `required` file input in a `data-slot="form"` gets the `field-error` of its field. On `change` with a file, set `hidden` on the zone's header and show an `attachment` with the file name, size, and a remove button (`attachment-action`) in the same field; the remove button clears `input.value`, removes the attachment, and shows the header again. Keep the input in the label, so the field still validates.
 
 #### Input Group
 
@@ -712,7 +712,7 @@ Kit extensions: `field-label-row` holds a `field-label` and a link that goes to 
 
 - Native constraint validation. The kit sets `novalidate` and shows its own errors: after the user changed a control and left it, and on submit, then live. After a submit, leaving a control does not validate it, as in React Hook Form (`reValidateMode: "onChange"`): a control that the app clears after a send shows no error on blur.
 - An invalid control gets `aria-invalid="true"` and `aria-describedby` to a `field-error` (`role="alert"`), created if missing. The field gets `data-invalid="true"`. Legacy `form-item`, `form-label` (`data-error`), `form-description`, and `form-message` work the same way.
-- Message: `data-error-<validity-flag>`, then `data-error`, then the browser message, read from the control, the visible control, or the component root (`radio-group`, `select`, `combobox`, `toggle-group`, `date-picker`, `input-otp`, `slider`). The flags, in the order the kit checks them: `data-error-value-missing`, `data-error-type-mismatch`, `data-error-pattern-mismatch`, `data-error-too-long`, `data-error-too-short`, `data-error-range-underflow`, `data-error-range-overflow`, `data-error-step-mismatch`, `data-error-bad-input`, `data-error-custom-error` (for `setCustomValidity()`).
+- Message: `data-error-<validity-flag>`, then `data-error`, then the browser message (`validationMessage`), read from the control, the visible control, or the component root (`radio-group`, `select`, `combobox`, `toggle-group`, `date-picker`, `input-otp`, `slider`). The flags, in the order the kit checks them: `data-error-value-missing`, `data-error-type-mismatch`, `data-error-pattern-mismatch`, `data-error-too-long`, `data-error-too-short`, `data-error-range-underflow`, `data-error-range-overflow`, `data-error-step-mismatch`, `data-error-bad-input`, `data-error-custom-error` (for `setCustomValidity()`). Several custom rules on one field: leave out `data-error-custom-error` and `data-error`, and pass each message to `setCustomValidity(message)` in the control's own `input` or `change` listener; the kit shows it.
 - Checkbox, switch, and radio validate through their hidden native input; `aria-invalid` (and so `data-invalid`) goes on the button, and submit focuses the button.
 - Submit with errors focuses the first invalid control and emits `form:invalid`; the browser does not submit. A valid submit emits cancelable `form:submit` (`values` has an array for repeated names). If no listener calls `event.preventDefault()`, the browser submits the form natively (to `action`, or to the page URL with `method="get"` when there is no `action`), so the page navigates. A static page or an app that sends with `fetch` must call `preventDefault()` in its `form:submit` listener.
 - Form `reset` clears errors and resets all components to their authored values after the reset event. A value that the app sets right after `form.reset()` (`data-value` on a select, combobox, or toggle group, or `calendarSetValue`) stays; the kit does not overwrite it.
@@ -737,7 +737,7 @@ Kit extensions: `field-label-row` holds a `field-label` and a link that goes to 
 - Initial state: `data-checked` on the button. Change it later the same way: toggle `data-checked` on the button. `disabled`, `aria-invalid`, `data-required`, and `data-readonly` changes are applied at once. The kit moves `disabled` to `aria-disabled`, so enable the control again with `el.disabled = false` or by removing `aria-disabled` (removing the `disabled` attribute has no effect). Read-only controls do not change. A click on a disabled control does not move focus.
 - Checkbox: `data-indeterminate` gives the mixed state; toggle it later the same way. Click, Space, and a `<label for>` or wrapping `<label>` toggle; Enter does nothing.
 - Switch: `data-name`, `data-required`, and `data-readonly` on the button. Click, Space, Enter, and a `<label for>` or wrapping `<label>` toggle.
-- Radio group: the group `data-value` selects the initial item. `data-disabled`, `data-readonly`, and `data-required` on the group apply to all items (`data-disabled` only at init). One tab stop (the checked item, else the first enabled one, with `data-composite-item-active`); arrows move and check, wrap, skip disabled items, and follow RTL; Home and End do nothing. Click, Space, and a `<label for>` check an item; Enter does nothing.
+- Radio group: the group `data-value` selects the initial item; later, toggle `data-checked` on an item (a `data-value` change on the group does nothing). `data-disabled`, `data-readonly`, and `data-required` on the group apply to all items (`data-disabled` only at init). One tab stop (the checked item, else the first enabled one, with `data-composite-item-active`); arrows move and check, wrap, skip disabled items, and follow RTL; Home and End do nothing. Click, Space, and a `<label for>` check an item; Enter does nothing.
 - Events: `checkbox:change` and `switch:change` on the button (`{ checked, value }`), `radio-group:change` on the group (`{ value }`), and native `input` and `change` on the hidden input.
 
 #### Native Select
@@ -845,7 +845,7 @@ One real input lies over the slots (autofill, form value, `required`, `minlength
 
 A `toggle` gets `tabindex="0"` like the Base UI toggle.
 
-Toggle group: one tab stop, arrows (RTL aware), Home, End. Single items use `role="radio"` and `aria-checked`, multiple items `aria-pressed`. A pressed single item can be unpressed, as in shadcn.
+Toggle group: one tab stop, arrows (RTL aware), Home, End. A group is not labelable, so `<label for>` does not name it: give the `field-label` an `id` and the group `aria-labelledby` with it. Single items use `role="radio"` and `aria-checked`, multiple items `aria-pressed`. A pressed single item can be unpressed, as in shadcn.
 
 - `data-required`: the last pressed item cannot be unpressed (a view switch, a filter, or a rating that always has one value), and in a form the group needs a value: without one, a `data-slot="form"` shows the `field-error` (`data-error-value-missing` on the group) and focuses the first item.
 - `data-name` submits the value: a visually hidden input after the group (single), or one hidden input per value (multiple). `form.reset()` restores the authored value.
@@ -918,7 +918,7 @@ The kit sets `type="button"` on dialog, alert dialog, sheet, drawer, popover, dr
 
 `popover` > `popover-trigger` (or `data-popover-trigger`), optional `popover-anchor`, `popover-content` with `popover-header`, `popover-title`, `popover-description`. Non-modal: focus moves into the content; Escape, outside click, and focus leaving close it. As in Base UI, a mouse press outside closes it on the click (a held press, a right or middle click, or a press that ends in the popup keep it open); a touch outside closes it at the end of the tap. `data-modal` on the root traps focus and locks scroll. Default placement: bottom, center, 4 px; the trigger has `data-pressed` while it is open.
 
-Custom floating content, for example one readout for many small hover targets (a bar per day in an uptime row, where one tooltip per bar is too heavy): use the core `position()` with your own `popover="manual"` element. It places the element next to an anchor element or a virtual anchor (`{ getBoundingClientRect() }`), flips at the viewport edge, follows scroll and resize, and returns `stop()`. It sets `data-side`, `data-align`, and the `--anchor-*`, `--available-*`, and `--transform-origin` variables, as for kit popups ([Popups](#popups)). Dismissal and focus stay app code; for an interactive popup use `popover`.
+Custom floating content (also linked from Tooltip), for example one readout for many small hover targets (a bar per day in an uptime row, where one tooltip per bar is too heavy): use the core `position()` with your own `popover="manual"` element. It places the element next to an anchor element or a virtual anchor (`{ getBoundingClientRect() }`), flips at the viewport edge, follows scroll and resize, and returns `stop()`. It sets `data-side`, `data-align`, and the `--anchor-*`, `--available-*`, and `--transform-origin` variables, as for kit popups ([Popups](#popups)). Dismissal and focus stay app code; for an interactive popup use `popover`.
 
 ```js
 import { position } from "/vendor/clanker-ui/clanker-ui.min.js"
@@ -943,6 +943,8 @@ grid.addEventListener("pointerleave", () => {
 #### Tooltip and Hover Card
 
 `tooltip` > trigger (`tooltip-trigger` or `data-tooltip-trigger`) + `tooltip-content`. Timing is the shadcn setup (a `TooltipProvider` with `delay` 0 at the app root): `data-delay` (open, default 0), `data-close-delay` (default 0), and `data-timeout` (default 400) on the trigger, the root, or a `tooltip-provider` (`data-delay-duration` and `data-skip-delay-duration` also work). When a tooltip is open, or closed less than `data-timeout` ago, the next one opens at once. It opens on keyboard focus too; it closes on leave, Escape, press, and blur. Like Base UI, it stays open when the page scrolls and follows the trigger. A grace area lets the pointer move into the content. Touch never opens it. Default side `top`, 4 px; the kit adds the arrow (`<div data-slot="tooltip-arrow">`), which points at the trigger center. Like Base UI, the content and the arrow get `data-instant`: `delay` (opened at once because another tooltip was open or closed less than `data-timeout` ago), `focus` (opened by keyboard focus), `dismiss` (closed by Escape or a press).
+
+Many small marks with their own readout (a bar per day in an uptime row): one tooltip per mark is too heavy. Use one `popover="manual"` readout placed with the core `position()` ([Popover](#popover) has the code). For the keyboard, make the row one Tab stop (`tabindex="0"`, `role="group"`, an `aria-label` with the summary): Left and Right move a current mark, place the readout on it, and write the same text into a visually hidden `role="status"` element; Escape hides it.
 
 `hover-card` > trigger + `hover-card-content`. `data-delay` (600) and `data-close-delay` (300) on the trigger or the root (`data-open-delay` also works), the Base UI defaults; shadcn examples set `data-delay="10" data-close-delay="100"`. Placement: bottom, center, 4 px, `alignOffset` 4. Opens on hover and keyboard focus, never on touch. It closes at once when focus leaves the trigger and the card (Base UI); the close delay is for the pointer. A card that focus opened stays open when the pointer leaves the card or a press in it moves focus away, as in Base UI; it closes when the pointer leaves the trigger.
 
@@ -971,6 +973,7 @@ grid.addEventListener("pointerleave", () => {
 
 - Same parts with the `context-menu-` and `menubar-` prefixes, plus `-group`, `-radio-group`, and `-label` (`menubar-label` too). Items: `data-disabled`, `data-inset`, `data-variant="destructive"` (other items get `data-variant="default"`), `data-value`, `data-text-value` (typeahead label), `data-close-on-click`. Checkbox and radio items: `data-checked` (or `data-state="checked"`). `data-value` on a radio group selects the item with that value. A later change of `data-value` on the radio group or of `data-checked` on an item, from code, updates the items (no event). Links work as items.
 - Base UI DOM and states: a label gets `role="presentation"` and names its group (`aria-labelledby`); a separator gets `data-orientation="horizontal"`; checkbox and radio items get `data-checked` or `data-unchecked` and an indicator as the first child (`dropdown-menu-checkbox-item-indicator`, `dropdown-menu-radio-item-indicator`; a `span` without a slot in context menus and menubars) that holds `<span data-checked aria-hidden="true">` with the `check` icon only while checked. The highlighted item has `data-highlighted`; an open sub menu's trigger has `data-popup-open` and loses `data-highlighted` while focus or the pointer is in the sub menu. The content has `data-open` or `data-closed`, `data-side`, `data-align`, and `data-instant` (`click` when a keyboard key or a right click opened it, `group` when a menubar switched menus, `dismiss` after Escape); the trigger has `data-popup-open` and `data-pressed` while open.
+- `dropdown-menu:change` and `:select` are emitted on the `dropdown-menu` root (also for an item in a sub menu or a radio group) and bubble to `document`; a listener on the radio group gets nothing. `detail.group` names the radio group.
 - A plain item closes the menu; checkbox and radio items keep it open (Base UI `closeOnClick`), unless `data-close-on-click` says otherwise.
 - Like Base UI, menus are modal (`data-modal="false"` on the root or `menubar` turns this off): page scroll is locked, and the first press outside only closes the menu (the click does not reach the element below, and focus returns to the trigger). A touch outside closes it when the tap ends, or during a drag of more than 10 px.
 - A mouse press on the trigger opens the menu; release over an item to choose it (press, drag, release). Placement: dropdown bottom, start, 4 px; context menu at the pointer, right, start, `alignOffset` 4; menubar bottom, start, 8 px, `alignOffset` -4; sub menus right, start, `alignOffset` -3 (context menu 4); 5 px from the viewport edge.
@@ -1044,7 +1047,7 @@ The Base UI DOM: a heading with the trigger button, and a panel with one inner `
 - `badge` (`data-variant="secondary|destructive|outline|ghost|link"`, or `<a data-slot="badge">`). Icons and spinners inside are 12 px.
 - `card` with `card-header` (`card-title`, `card-description`, `card-action`), `card-content`, `card-footer`. `data-size="sm"`; override `--card-spacing`. A first-child `<img>` sits flush with the top.
 - `empty` with `empty-header` (`empty-icon` with `data-variant="icon"`, `empty-title`, `empty-description`) and `empty-content`. Kit extension: `data-variant="outline"` adds the 1 px dashed border.
-- `item` (`data-variant="outline|muted"`, `data-size="sm|xs"`, or `<a data-slot="item">`) with `item-media` (`data-variant="icon|image"`), `item-content` (`item-title`, `item-description`), `item-actions`, `item-header`, `item-footer`; `item-group` (`role="list"`) and `item-separator`.
+- `item` (`data-variant="outline|muted"`, `data-size="sm|xs"`, or `<a data-slot="item">`) with `item-media` (`data-variant="icon|image"`), `item-content` (`item-title`, `item-description`), `item-actions`, `item-header`, `item-footer`; `item-group` (`role="list"`) and `item-separator`. As in shadcn, `item-title` is one line and `item-description` at most two lines (`line-clamp`): give a cut text a `title`, or for long text (a timeline update) use a `p` in `item-content`, not `item-description`. `item-group` has a 16 px gap and `item-separator` adds 8 px above and below: in a list with separators set the group gap to 0 in app CSS (`.list { gap: 0 }`), so the rows are as close as without them.
 - `separator` (`data-orientation="vertical"`): decorative (`role="none"`) unless you add `role="separator"`.
 - `skeleton`, sized by app CSS.
 
@@ -1131,6 +1134,8 @@ Set `dir="rtl"` on `<html>` or a container. Kit styles use logical properties (`
 
 The markup is the shadcn DOM: a link is a `ghost` button of size `icon` (32 px); the current page is `data-variant="outline"` with `aria-current="page"`. `data-pagination-previous` and `data-pagination-next` with `data-size="default"` mark Previous and Next; their text hides below 640 px and their chevrons turn in RTL.
 
+Use `pagination` for pages of content (search results, a blog, a gallery) where each page has its own URL. A table uses the `data-table-pagination` row (rows per page, "Page 1 of 7", icon buttons), as in the shadcn tasks example.
+
 Disabled Previous or Next (first or last page): `aria-disabled="true"` on the link, and remove its `href` so it is not a Tab stop. The link is dimmed (opacity 0.5) and takes no pointer events, like a disabled button; the kit also cancels a click on it, so a link that keeps its `href` does not navigate.
 
 #### Progress, Spinner
@@ -1211,7 +1216,7 @@ The viewport is the real scroll container; the kit makes it focusable, hides the
 </div>
 ```
 
-A `tabs-content` without `data-value` is a shared panel: it shows for every tab and is labelled by the selected tab. Use it for a tab bar that filters one list or table: render the rows on `tabs:change`. A filter with no panel at all is a toggle group (`data-type="single" data-required`), not tabs.
+Keep a tab bar short enough for 390 px: when it scrolls, the cut last label has no other sign. With more tabs, put a `select` with the same choices next to the list, as shadcn `dashboard-01` does: `data-hide-from="sm"` on the select and `data-show-from="sm"` on the `tabs-list`; or use fewer and shorter labels. A `tabs-content` without `data-value` is a shared panel: it shows for every tab and is labelled by the selected tab. Use it for a tab bar that filters one list or table: render the rows on `tabs:change`. A filter with no panel at all is a toggle group (`data-type="single" data-required`), not tabs.
 
 Manual activation as in Base UI: the arrow keys move focus, Enter, Space, or a click selects (`data-activation="automatic"` selects on focus), roving tabindex, arrows (RTL aware), Home, End; disabled tabs are skipped. Tab panels are focusable (`tabindex="0"`) and show the standard focus ring.
 
@@ -1529,6 +1534,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 - Each card is a subgrid row of the grid, so the headers and the footers of one row line up when a label wraps. A card with a `card-content` takes three rows.
 - `card-title` is the value: 24 px (30 px when the card is at least 250 px wide), weight 600, tabular numbers. It wraps instead of being cut. The footer holds a medium trend line with an icon and a `card-description`.
 - `statTile()` elements can be the children too.
+- The trend `badge` holds any short delta (`+12.5%`, `4 late`). Compute values and deltas from the data and today's date (`new Date()`), not from fixed strings.
 
 #### Stat Grid
 
@@ -1639,7 +1645,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 <span data-slot="rating" role="img" aria-label="4 of 5 stars"><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star" fill="currentColor"></svg><svg data-lucide="star"></svg></span>
 ```
 
-- A read-only star rating: a row of 16 px icons (`data-size="sm"` 12 px) with a 2 px gap. Filled stars (`fill="currentColor"`) are `--foreground`, empty stars `--muted-foreground`. Give the root `role="img"` and an `aria-label` with the value. For a rating input, use a `radio-group` (one item per value, each with a label such as "4 stars").
+- A read-only star rating: a row of 16 px icons (`data-size="sm"` 12 px) with a 2 px gap. Filled stars (`fill="currentColor"`) are `--foreground`, empty stars `--muted-foreground`. Give the root `role="img"` and an `aria-label` with the value. For a rating input, use native radio inputs with star labels (the agent skill `references/recipes.md` has the markup and CSS): the browser gives the arrow keys and the form value, and a `data-slot="form"` shows the error.
 
 
 ## How parity with shadcn is tested

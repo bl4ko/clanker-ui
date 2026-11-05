@@ -21,7 +21,8 @@ When the host cannot send headers (for example GitHub Pages), put the policy in 
 
 - Caddy: `header Content-Security-Policy "<policy>"` in the site block.
 - nginx: `add_header Content-Security-Policy "<policy>" always;`
-- Local test server (Go standard library, `go run server.go static 127.0.0.1:8300`):
+- Local test server without headers: `python3 -m http.server 8300 --bind 127.0.0.1 --directory static`. It cannot send the CSP header, so every page needs the meta tag above.
+- Local test server with the header (Go standard library, `go run server.go static 127.0.0.1:8300`):
 
 ```go
 package main

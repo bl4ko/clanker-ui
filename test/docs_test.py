@@ -530,6 +530,7 @@ def check_docs_preview_keeps_kit_styles(t):
       document.head.append(link)
     })"""
     page.evaluate(load, "/clanker-ui.css")
+    page.evaluate(load, href.replace("/docs.css", "/fonts.css"))
     t.settle(5000)
     before = page.evaluate(KIT_SNAPSHOT, KIT_PROPS)
     page.evaluate(load, href)

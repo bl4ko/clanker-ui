@@ -26,6 +26,6 @@ Other parts: `section-cards` (root).
 
 - The KPI cards of shadcn `dashboard-01`. Columns follow the width of the grid itself: 1, then 2 from 34rem, then 4 from 61rem; exactly 3 cards go to 3 columns from 44rem. Use 2, 3, 4, or 8 cards.
 - Each card is a subgrid row of the grid, so the headers and the footers of one row line up when a label wraps. A card with a `card-content` takes three rows.
-- `card-title` is the value: 24 px (30 px when the card is at least 250 px wide), weight 600, tabular numbers. It wraps instead of being cut. The footer holds a medium trend line with an icon and a `card-description`.
+- `card-title` is the value: 24 px (30 px when the card is at least 250 px wide), weight 600, tabular numbers. With a description first and a `badge` in `card-action`, the value takes the full width of the row under them, so a number does not break next to the badge. It wraps at spaces, and only a value wider than the card breaks inside. The footer holds a medium trend line with an icon and a `card-description`.
 - `statTile()` elements can be the children too.
 - The trend `badge` holds any short delta (`+12.5%`, `4 late`). Compute values and deltas from the data and today's date (`new Date()`), not from fixed strings.

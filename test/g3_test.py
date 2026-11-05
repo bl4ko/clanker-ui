@@ -2101,3 +2101,69 @@ def check_pagination_disabled(t):
         }"""
     )
     assert result == ["0.5", "none", True, "1"], result
+
+
+def check_alert_action_room(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h, icon } = await import("/clanker-ui.js")
+          const frame = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+          const out = []
+          for (const width of [358, 640]) {
+            for (const [label, size] of [["Enable", "xs"], ["View incident", "sm"]]) {
+              const host = h("div", { style: { width: width + "px" } },
+                h("div", { "data-slot": "alert" }, icon("circle-alert"),
+                  h("div", { "data-slot": "alert-title" }, "Elevated error rates on the payments API in the eu-west region"),
+                  h("div", { "data-slot": "alert-description" }, "Card payments can fail or take longer than usual while we investigate."),
+                  h("div", { "data-slot": "alert-action" }, h("button", { type: "button", "data-slot": "button", "data-size": size, "data-variant": "outline" }, label))))
+              document.body.prepend(host)
+              await frame()
+              const alert = host.firstChild
+              const box = s => alert.querySelector(s).getBoundingClientRect()
+              const action = box('[data-slot="alert-action"]')
+              const hit = r => r.left < action.right && r.right > action.left && r.top < action.bottom && r.bottom > action.top
+              out.push([width, label, hit(box('[data-slot="alert-title"]')), hit(box('[data-slot="alert-description"]')), getComputedStyle(alert).paddingInlineEnd])
+              host.remove()
+            }
+          }
+          return out
+        }"""
+    )
+    for width, label, title, description, pad in result:
+        assert not title and not description, (width, label, title, description, pad)
+        if label == "Enable":
+            assert pad == "72px", (width, pad)
+
+
+def check_tabs_value_from_code(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const task = () => new Promise(r => setTimeout(r, 0))
+          const tabs = h("div", { "data-slot": "tabs", "data-value": "paid" },
+            h("div", { "data-slot": "tabs-list" }, ["all", "paid", "overdue"].map(v => h("button", { "data-slot": "tabs-trigger", "data-value": v }, v))),
+            ["all", "paid", "overdue"].map(v => h("div", { "data-slot": "tabs-content", "data-value": v }, v)))
+          const events = []
+          tabs.addEventListener("tabs:change", e => events.push(e.detail.value))
+          document.body.prepend(tabs)
+          await task()
+          const active = () => [tabs.querySelector('[aria-selected="true"]')?.dataset.value, [...tabs.querySelectorAll('[data-slot="tabs-content"]')].filter(p => !p.hidden).map(p => p.dataset.value).join(), tabs.dataset.value]
+          const out = { init: active() }
+          tabs.dataset.value = "overdue"
+          await task()
+          out.code = active()
+          tabs.dataset.value = "nope"
+          await task()
+          out.unknown = active()
+          tabs.querySelector('[data-value="all"]').click()
+          out.click = active()
+          out.events = events
+          tabs.remove()
+          return out
+        }"""
+    )
+    assert result["init"] == ["paid", "paid", "paid"], result
+    assert result["code"] == ["overdue", "overdue", "overdue"], result
+    assert result["unknown"][:2] == ["overdue", "overdue"], result
+    assert result["click"] == ["all", "all", "all"], result
+    assert result["events"] == ["all"], result

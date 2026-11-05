@@ -4,7 +4,7 @@ Group `layout`. Needs `core`. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `tabs` (root) | `data-default-value` string; `data-orientation` `horizontal`, `vertical` |  |
+| `tabs` (root) | `data-default-value` string; `data-orientation` `horizontal`, `vertical`; `data-value` string |  |
 | `tabs-content` | `data-value` string |  |
 | `tabs-list` | `data-variant` `default`, `line` |  |
 | `tabs-trigger` | `data-value` string | `data-active`, `data-state` |
@@ -25,6 +25,12 @@ Events: `tabs:change` `{ value }`.
   <div data-slot="tabs-content" data-value="account">...</div>
 </div>
 ```
+
+```html
+<div data-slot="tabs" data-value="password">...</div>
+```
+
+Set the tab from code with `data-value` on the root (`tabs.dataset.value = "password"`): the kit selects that tab without a `tabs:change` event, as for a select. A root with `data-value` keeps it in sync when the user picks a tab, and `data-value` in the markup wins over `data-default-value`. A value that no trigger has changes nothing.
 
 Keep a tab bar short enough for 390 px: when it scrolls, the cut last label has no other sign. With more tabs, put a `select` with the same choices next to the list, as shadcn `dashboard-01` does: `data-hide-from="sm"` on the select and `data-show-from="sm"` on the `tabs-list`; or use fewer and shorter labels. A `tabs-content` without `data-value` is a shared panel: it shows for every tab and is labelled by the selected tab. Use it for a tab bar that filters one list or table: render the rows on `tabs:change`. A filter with no panel at all is a toggle group (`data-type="single" data-required`), not tabs.
 

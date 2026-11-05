@@ -662,20 +662,20 @@ forms/tanstack-form#form-tanstack-switch	-	page has no match
 forms/tanstack-form#form-tanstack-complex	-	page has no match
 forms/tanstack-form#form-tanstack-array	-	page has no match
 utils/scroll-fade	/docs/utils/scroll-fade
-utils/scroll-fade#scroll-fade-demo	-	no example yet
-utils/scroll-fade#scroll-fade-overflow	-	no example yet
-utils/scroll-fade#scroll-fade-horizontal	-	no example yet
-utils/scroll-fade#scroll-fade-edge	-	no example yet
-utils/scroll-fade#scroll-fade-size	-	no example yet
-utils/scroll-fade#scroll-fade-none	-	no example yet
-utils/scroll-fade#scroll-fade-rtl	-	no example yet
+utils/scroll-fade#scroll-fade-demo	scroll-fade-demo
+utils/scroll-fade#scroll-fade-overflow	scroll-fade-overflow
+utils/scroll-fade#scroll-fade-horizontal	scroll-fade-horizontal
+utils/scroll-fade#scroll-fade-edge	scroll-fade-edge
+utils/scroll-fade#scroll-fade-size	scroll-fade-size
+utils/scroll-fade#scroll-fade-none	scroll-fade-none
+utils/scroll-fade#scroll-fade-rtl	scroll-fade-rtl
 utils/shimmer	/docs/utils/shimmer
-utils/shimmer#shimmer-demo	-	no example yet
-utils/shimmer#shimmer-marker	-	no example yet
-utils/shimmer#shimmer-color	-	no example yet
-utils/shimmer#shimmer-duration	-	no example yet
-utils/shimmer#shimmer-spread	-	no example yet
-utils/shimmer#shimmer-angle	-	no example yet
-utils/shimmer#shimmer-once	-	no example yet
-utils/shimmer#shimmer-none	-	no example yet
-utils/shimmer#shimmer-rtl	-	no example yet
+utils/shimmer#shimmer-demo	shimmer-demo
+utils/shimmer#shimmer-marker	shimmer-marker
+utils/shimmer#shimmer-color	shimmer-color
+utils/shimmer#shimmer-duration	shimmer-duration
+utils/shimmer#shimmer-spread	shimmer-spread
+utils/shimmer#shimmer-angle	shimmer-angle
+utils/shimmer#shimmer-once	shimmer-once
+utils/shimmer#shimmer-none	shimmer-none
+utils/shimmer#shimmer-rtl	shimmer-rtl

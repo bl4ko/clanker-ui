@@ -88,6 +88,7 @@ jobs:
           go run ./tools/gen fetch -src "$RUNNER_TEMP/shadcn"
           go run ./tools/gen -src "$RUNNER_TEMP/shadcn" -out clanker-ui.css
           git diff --exit-code clanker-ui.css
+          go run ./tools/gen docs-coverage -src "$RUNNER_TEMP/shadcn"
 
   gitleaks:
     runs-on: ubuntu-26.04

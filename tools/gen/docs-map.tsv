@@ -348,20 +348,20 @@ components/input#input-button-group	input-button-group
 components/input#input-form	input-form
 components/input#input-rtl	input-rtl
 components/input-group	/docs/components/input-group
-components/input-group#input-group-demo	demo-input-group-0
-components/input-group#input-group-inline-start	-	no example yet
-components/input-group#input-group-inline-end	-	no example yet
-components/input-group#input-group-block-start	demo-input-group-2
-components/input-group#input-group-block-end	demo-input-group-2
-components/input-group#input-group-icon	-	no example yet
-components/input-group#input-group-text	demo-input-group-1
-components/input-group#input-group-button	demo-input-group-1
-components/input-group#input-group-kbd	demo-input-group-1
-components/input-group#input-group-dropdown	-	no example yet
-components/input-group#input-group-spinner	-	no example yet
-components/input-group#input-group-textarea	-	no example yet
-components/input-group#input-group-custom	-	no example yet
-components/input-group#input-group-rtl	-	no example yet
+components/input-group#input-group-demo	input-group-demo
+components/input-group#input-group-inline-start	input-group-inline-start
+components/input-group#input-group-inline-end	input-group-inline-end
+components/input-group#input-group-block-start	input-group-block-start
+components/input-group#input-group-block-end	input-group-block-end
+components/input-group#input-group-icon	input-group-icon
+components/input-group#input-group-text	input-group-text
+components/input-group#input-group-button	input-group-button
+components/input-group#input-group-kbd	input-group-kbd
+components/input-group#input-group-dropdown	input-group-dropdown
+components/input-group#input-group-spinner	input-group-spinner
+components/input-group#input-group-textarea	input-group-textarea
+components/input-group#input-group-custom	input-group-custom
+components/input-group#input-group-rtl	input-group-rtl
 components/input-otp	/docs/components/input-otp
 components/input-otp#input-otp-demo	demo-input-otp-0
 components/input-otp#input-otp-pattern	demo-input-otp-1

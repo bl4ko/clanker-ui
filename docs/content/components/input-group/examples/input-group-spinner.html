@@ -1,0 +1,19 @@
+<div class="grid w-full max-w-sm gap-4">
+  <div data-slot="input-group">
+    <input data-slot="input-group-control" placeholder="Searching..." aria-label="Search">
+    <div data-slot="input-group-addon" data-align="inline-end"><svg data-slot="spinner"></svg></div>
+  </div>
+  <div data-slot="input-group">
+    <input data-slot="input-group-control" placeholder="Processing..." aria-label="Process">
+    <div data-slot="input-group-addon"><svg data-slot="spinner"></svg></div>
+  </div>
+  <div data-slot="input-group">
+    <input data-slot="input-group-control" placeholder="Saving changes..." aria-label="Changes">
+    <div data-slot="input-group-addon" data-align="inline-end"><span data-slot="input-group-text">Saving...</span><svg data-slot="spinner"></svg></div>
+  </div>
+  <div data-slot="input-group">
+    <input data-slot="input-group-control" placeholder="Refreshing data..." aria-label="Data">
+    <div data-slot="input-group-addon"><svg data-lucide="loader" class="animate-spin"></svg></div>
+    <div data-slot="input-group-addon" data-align="inline-end"><span data-slot="input-group-text" class="text-muted-foreground">Please wait...</span></div>
+  </div>
+</div>

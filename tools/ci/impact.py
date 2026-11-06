@@ -547,7 +547,7 @@ class Recorder:
         self.root, self.page = root, page
         split = urlsplit(base_url)
         self.origin, self.prefix = f"{split.scheme}://{split.netloc}", split.path.rstrip("/")
-        self.slots, self.urls, self.after, self.load, self.length = set(), set(), set(), set(), None
+        self.slots, self.urls, self.after, self.load, self.length, self.script = set(), set(), set(), set(), None, None
         context.add_init_script(SLOTS)
         context.on("request", lambda r: self.urls.add((r.url, r.resource_type == "document")))
         self.cdp = None
@@ -580,9 +580,8 @@ class Recorder:
                 continue
             for fn in script["functions"]:
                 r = fn["ranges"][0]
-                if r["startOffset"] == 0:
-                    self.length = r["endOffset"]
-                elif r["count"] > 0:
+                self.script = script["url"]
+                if r["startOffset"] > 0 and r["count"] > 0:
                     into.add(r["startOffset"])
 
     def flush(self):
@@ -591,16 +590,18 @@ class Recorder:
 
     def loaded(self):
         if self.cdp:
+            self.take(self.load)
             try:
                 self.start()
             except Exception:
-                return
-            self.take(self.load)
+                pass
 
     def finish(self):
         self.flush()
         try:
             self.slots.update(self.page.evaluate(FINAL))
+            if self.script:
+                self.length = self.page.evaluate("u => fetch(u).then(r => r.text()).then(t => t.length)", self.script)
         except Exception:
             pass
         keys = set()

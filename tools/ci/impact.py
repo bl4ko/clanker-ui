@@ -171,7 +171,7 @@ def mask_js(src):
     return "".join(out)
 
 
-DECL = re.compile(r"^(?:export\s+)?(?:async\s+)?(?:function\s*\*?\s*([A-Za-z_$][\w$]*)|(?:const|let|var|class)\s+([A-Za-z_$][\w$]*))")
+DECL = re.compile(r"^(export\s+)?(?:async\s+)?(?:function\s*\*?\s*([A-Za-z_$][\w$]*)|(?:const|let|var|class)\s+([A-Za-z_$][\w$]*))")
 DEFINE = re.compile(r'^(?:define|partDefaults)\("([a-z0-9-]+)"')
 
 
@@ -193,20 +193,54 @@ def js_spans(src, g):
     for k, s in enumerate(starts):
         e = starts[k + 1] if k + 1 < len(starts) else len(src)
         line = src[s:].split("\n", 1)[0]
+        decl = DECL.match(line)
         if core:
             comp = "*"
             core = src[s:e].strip() != ANCHOR
         elif m := DEFINE.match(line):
             comp = g.component(m[1]) or "*"
-        elif m := DECL.match(line):
-            comp = g.named(m[1] or m[2]) or "*"
+        elif decl:
+            comp = g.named(decl[2] or decl[3]) or "*"
         else:
             comp = prev
         prev = comp
-        spans.append((s, e, src.count("\n", 0, s) + 1, src.count("\n", 0, e - 1) + 1, comp))
+        spans.append(Stmt(s, e, src.count("\n", 0, s) + 1, src.count("\n", 0, e - 1) + 1, comp, decl and (decl[2] or decl[3]), bool(decl and decl[1]), masked[s:e]))
     if core:
         raise ValueError(f"no top-level {ANCHOR}")
     return spans
+
+
+IDENT = re.compile(r"(?<![\w$])[A-Za-z_$][\w$]*")
+
+
+class Stmt:
+    def __init__(self, start, end, l0, l1, comp, name, exported, masked):
+        self.start, self.end, self.l0, self.l1, self.comp, self.name, self.exported, self.masked = start, end, l0, l1, comp, name, exported, masked
+
+    def ids(self):
+        out = set()
+        for m in IDENT.finditer(self.masked):
+            k = m.start() - 1
+            while k >= 0 and self.masked[k] in " \n":
+                k -= 1
+            if not (k >= 0 and self.masked[k] == "." and self.masked[k - 2 : k] != ".."):
+                out.add(m[0])
+        return out
+
+
+def js_closure(stmts, hit):
+    users = {}
+    for i, st in enumerate(stmts):
+        for name in st.ids():
+            users.setdefault(name, set()).add(i)
+    seen, todo = set(hit), list(hit)
+    while todo:
+        st = stmts[todo.pop()]
+        for j in users.get(st.name, ()) if st.name else ():
+            if j not in seen:
+                seen.add(j)
+                todo.append(j)
+    return seen
 
 
 SLOT = re.compile(r"""\[data-(slot|backdrop-of)\s*[~|^$*]?=\s*["']?([a-z0-9-]+)["']?\s*\]""")
@@ -338,9 +372,13 @@ def line_reqs(kind, text, lines, g):
     if not lines:
         return []
     if kind == "js":
-        spans = [(l0, l1, None if c == "*" else [frozenset({"c:" + c})]) for _, _, l0, l1, c in js_spans(text, g)]
-    else:
-        spans = css_spans(text, g)
+        stmts = js_spans(text, g)
+        hit = {i for i, st in enumerate(stmts) for ln in lines if st.l0 <= ln <= st.l1}
+        if any(not any(st.l0 <= ln <= st.l1 for st in stmts) for ln in lines):
+            return None
+        comps = {stmts[i].comp for i in js_closure(stmts, hit)}
+        return None if "*" in comps else [frozenset({"c:" + c}) for c in sorted(comps)]
+    spans = css_spans(text, g)
     out = []
     for ln in sorted(lines):
         hit = [r for l0, l1, r in spans if l0 <= ln <= l1]
@@ -442,11 +480,11 @@ class Coverage:
             units = [0]
             for ch in src:
                 units.append(units[-1] + (2 if ord(ch) > 0xFFFF else 1))
-            spans = [(units[s], units[e], c) for s, e, _, _, c in js_spans(src, self.g)]
+            spans = [(units[st.start], units[st.end], st.comp, st.exported) for st in js_spans(src, self.g)]
             self.cache[name] = (units[-1], spans)
         return self.cache[name]
 
-    def keys(self, name, length, starts):
+    def keys(self, name, length, starts, exported=False):
         total, spans = self.table(name)
         if length != total:
             return set()
@@ -454,8 +492,8 @@ class Coverage:
         for s in sorted(starts):
             while k < len(spans) and spans[k][1] <= s:
                 k += 1
-            if k < len(spans) and spans[k][0] <= s and spans[k][2] != "*":
-                out.add("c:" + spans[k][2])
+            if k < len(spans) and spans[k][0] <= s and spans[k][2] != "*" and (spans[k][3] or not exported):
+                out.add(spans[k][2])
         return out
 
 
@@ -467,6 +505,7 @@ SLOTS = """(() => {
     dirty = false
     try { sessionStorage.setItem("clanker-impact", JSON.stringify([...seen])) } catch {}
   }
+  const shown = el => !el.closest("[hidden]")
   const add = el => {
     const s = el.getAttribute?.("data-slot")
     if (s && !seen.has(s)) {
@@ -479,16 +518,16 @@ SLOTS = """(() => {
   }
   new MutationObserver(records => {
     for (const r of records) {
-      if (r.type === "attributes") add(r.target)
-      else for (const n of r.addedNodes) if (n.nodeType === 1) {
+      const roots = r.type === "childList" ? [...r.addedNodes] : r.attributeName === "hidden" || r.attributeName === "data-slot" ? [r.target] : []
+      for (const n of roots) if (n.nodeType === 1 && shown(n)) {
         add(n)
-        n.querySelectorAll("[data-slot]").forEach(add)
+        n.querySelectorAll("[data-slot]").forEach(e => shown(e) && add(e))
       }
     }
-  }).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ["data-slot"] })
+  }).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ["data-slot", "hidden"] })
   window.__clankerImpact = seen
 })()"""
-FINAL = '() => [...(window.__clankerImpact || []), ...[...document.querySelectorAll("[data-slot]")].map(e => e.dataset.slot)]'
+FINAL = '() => [...(window.__clankerImpact || []), ...[...document.querySelectorAll("[data-slot]")].filter(e => !e.closest("[hidden]")).map(e => e.dataset.slot)]'
 
 
 class Recorder:
@@ -502,7 +541,7 @@ class Recorder:
         self.root, self.page = root, page
         split = urlsplit(base_url)
         self.origin, self.prefix = f"{split.scheme}://{split.netloc}", split.path.rstrip("/")
-        self.slots, self.urls, self.starts, self.length = set(), set(), set(), None
+        self.slots, self.urls, self.after, self.load, self.length = set(), set(), set(), set(), None
         context.add_init_script(SLOTS)
         context.on("request", lambda r: self.urls.add((r.url, r.resource_type == "document")))
         self.cdp = None
@@ -514,9 +553,7 @@ class Recorder:
         self.cdp.send("Profiler.enable")
         self.cdp.send("Profiler.startPreciseCoverage", {"callCount": True, "detailed": False})
 
-    def flush(self):
-        if not self.cdp:
-            return
+    def take(self, into):
         try:
             res = self.cdp.send("Profiler.takePreciseCoverage")["result"]
         except Exception:
@@ -529,14 +566,19 @@ class Recorder:
                 if r["startOffset"] == 0:
                     self.length = r["endOffset"]
                 elif r["count"] > 0:
-                    self.starts.add(r["startOffset"])
+                    into.add(r["startOffset"])
 
-    def navigated(self):
+    def flush(self):
+        if self.cdp:
+            self.take(self.after)
+
+    def loaded(self):
         if self.cdp:
             try:
                 self.start()
             except Exception:
-                pass
+                return
+            self.take(self.load)
 
     def finish(self):
         self.flush()
@@ -553,7 +595,9 @@ class Recorder:
             if f"{u.scheme}://{u.netloc}" == self.origin and u.path.startswith(self.prefix):
                 keys |= url_keys(u.path[len(self.prefix):] or "/", document, self.root)
         if self.length is not None:
-            keys |= self.coverage.keys("clanker-ui.js", self.length, self.starts)
+            cov = self.coverage
+            keys |= {"c:" + c for c in cov.keys("clanker-ui.js", self.length, self.after) | cov.keys("clanker-ui.js", self.length, self.load, exported=True)}
+            keys |= {"l:" + c for c in cov.keys("clanker-ui.js", self.length, self.load)}
         return keys
 
 
@@ -575,7 +619,7 @@ def build(out, *dirs):
         for f in sorted(pathlib.Path(d).rglob("*.log")):
             for m in IMPACT.finditer(f.read_text(errors="replace")):
                 acc.setdefault(m[1], set()).update(m[2].split())
-    rows = [f"{c}\t{' '.join(sorted(k for k in keys if not k.startswith(('u:', 's:'))))}\n" for c, keys in sorted(acc.items())]
+    rows = [f"{c}\t{' '.join(sorted(k for k in keys if not k.startswith(('u:', 's:', 'l:'))))}\n" for c, keys in sorted(acc.items())]
     pathlib.Path(out).write_text("check\tcomponents\n" + "".join(rows))
     print(f"{len(rows)} checks, {len({k for keys in acc.values() for k in keys})} components")
 

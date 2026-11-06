@@ -158,7 +158,7 @@ class T:
             self.recorder.flush()
         response = self.page.goto(self.base_url + path, wait_until="load")
         if self.recorder:
-            self.recorder.navigated()
+            self.recorder.loaded()
         if response is None or response.status not in (200, 304):
             raise AssertionError(f"{path} returned {response and response.status}")
         self.current = None
@@ -335,6 +335,8 @@ def run_check(browser, args, engine, theme, width, module, name, fn, start):
         response = page.goto(base_url + start, wait_until="load")
         if response is None or response.status != 200:
             raise AssertionError(f"{start} returned {response and response.status}")
+        if recorder:
+            recorder.loaded()
         fn(t)
         if t.current is not None and t.shots == 0:
             t.shot()

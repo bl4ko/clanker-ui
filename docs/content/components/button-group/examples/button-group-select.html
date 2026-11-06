@@ -1,0 +1,18 @@
+<div data-slot="button-group" role="group">
+  <div data-slot="button-group" role="group">
+    <div data-slot="select" data-value="$">
+      <button type="button" data-slot="select-trigger" class="font-mono" aria-label="Currency"><span data-slot="select-value"></span></button>
+      <div data-slot="select-content" data-align-trigger="false" data-align="start">
+        <div data-slot="select-group">
+          <div data-slot="select-item" data-value="$" data-label="$">$ <span class="text-muted-foreground">US Dollar</span></div>
+          <div data-slot="select-item" data-value="€" data-label="€">€ <span class="text-muted-foreground">Euro</span></div>
+          <div data-slot="select-item" data-value="£" data-label="£">£ <span class="text-muted-foreground">British Pound</span></div>
+        </div>
+      </div>
+    </div>
+    <input data-slot="input" placeholder="10.00" pattern="[0-9]*" aria-label="Amount">
+  </div>
+  <div data-slot="button-group" role="group">
+    <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Send"><svg data-lucide="arrow-right"></svg></button>
+  </div>
+</div>

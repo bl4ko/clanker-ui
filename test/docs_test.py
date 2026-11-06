@@ -476,7 +476,7 @@ def check_docs_pages(t):
     t.shot("components", page)
     t.docs("/docs/components/accordion")
     assert "not ported yet" not in page.locator('[data-docs="article"]').inner_text()
-    assert page.locator('#accordion [data-docs="preview"] [data-slot="accordion"]').count() > 0
+    assert page.locator('[data-example="accordion-demo"] [data-docs="preview"] [data-slot="accordion"]').count() > 0
     assert page.locator('link[rel="alternate"][type="text/markdown"]').get_attribute("href") == "/docs/components/accordion.md"
     assert page.locator('link[rel="describedby"]').get_attribute("href") == "/llms.txt"
     t.docs("/docs/installation")
@@ -530,6 +530,7 @@ def check_docs_preview_keeps_kit_styles(t):
       document.head.append(link)
     })"""
     page.evaluate(load, "/clanker-ui.css")
+    page.evaluate(load, href.replace("/docs.css", "/fonts.css"))
     t.settle(5000)
     before = page.evaluate(KIT_SNAPSHOT, KIT_PROPS)
     page.evaluate(load, href)
@@ -666,8 +667,9 @@ def check_docs_component_demos(t):
     page.wait_for_function("""() => !document.querySelector('#dialog-demo dialog').open""")
     t.docs("/docs/components/chart")
     page.wait_for_function("""() => document.querySelectorAll('#chart [data-docs="preview"] [data-slot="chart"] svg').length >= 10""")
-    t.docs("/docs/components/table")
-    page.wait_for_function("""() => document.querySelectorAll('#table-data tbody tr[data-id]').length === 5""")
+    t.docs("/docs/components/data-table")
+    page.locator('[data-example="data-table-demo"] [data-js="filter"]').fill("ken")
+    page.wait_for_function("""() => document.querySelectorAll('[data-example="data-table-demo"] tbody tr[data-id]:not([hidden])').length === 1""")
     t.docs("/docs/components/stat-tile")
     page.wait_for_function("""() => document.querySelectorAll('#chart-stat [data-slot="chart-stat"]').length >= 7""")
     t.docs("/docs/components/sidebar")

@@ -5938,6 +5938,37 @@ const config = {
 const view = chart(document.getElementById("visitors"), { rows, config }, { type: "bar", x: "month" })
 view.update({ rows: next })
 view.destroy()</code></pre>
+        <div data-demo="chart-grid wide">
+          <article data-slot="card" id="chart-interactive-card" aria-labelledby="chart-interactive-title">
+            <div data-slot="card-header">
+              <div>
+                <h4 id="chart-interactive-title" data-slot="card-title">Bar Chart - Interactive</h4>
+                <p data-slot="card-description">Showing total visitors for the last 3 months</p>
+              </div>
+              <div data-demo="chart-switch">
+                <button type="button" data-chart-key="desktop" data-active="true" aria-pressed="true"><span>Desktop</span><span data-chart-total="desktop"></span></button>
+                <button type="button" data-chart-key="mobile" data-active="false" aria-pressed="false"><span>Mobile</span><span data-chart-total="mobile"></span></button>
+              </div>
+            </div>
+            <div data-slot="card-content"><div id="chart-interactive"></div></div>
+          </article>
+        </div>
+        <h4 data-demo="subtitle">Your First Chart</h4>
+        <p data-demo="caption">A bar chart of two series. The <code>config</code> gives each series a label and a color.</p>
+        <div data-demo="chart-step"><div id="chart-example"></div></div>
+        <h4 data-demo="subtitle">Add a Grid</h4>
+        <p data-demo="caption"><code>grid: true</code> draws the horizontal grid lines.</p>
+        <div data-demo="chart-step"><div id="chart-example-grid"></div></div>
+        <h4 data-demo="subtitle">Add an Axis</h4>
+        <p data-demo="caption"><code>categoryAxis: true</code> adds the x axis; <code>xFormat</code> shortens the month names.</p>
+        <div data-demo="chart-step"><div id="chart-example-axis"></div></div>
+        <h4 data-demo="subtitle">Add Tooltip</h4>
+        <p data-demo="caption">Hover a bar, or focus the chart and use the arrow keys. Every kit chart has the tooltip.</p>
+        <div data-demo="chart-step"><div id="chart-example-tooltip"></div></div>
+        <h4 data-demo="subtitle">Add Legend</h4>
+        <p data-demo="caption"><code>legend: true</code> adds the legend. Each legend item toggles its series.</p>
+        <div data-demo="chart-step"><div id="chart-example-legend"></div></div>
+        <h4 data-demo="subtitle">Chart Config</h4>
         <div data-demo="chart-grid">
           <article data-slot="card" aria-labelledby="chart-demo-title">
             <div data-slot="card-header">
@@ -5992,6 +6023,8 @@ view.destroy()</code></pre>
             <div data-slot="card-content"><div id="chart-tooltip-label"></div></div>
           </article>
         </div>
+        <h4 data-demo="subtitle">RTL</h4>
+        <div data-demo="chart-step" dir="rtl" lang="ar"><div id="chart-rtl"></div></div>
       </section>
       <section id="chart-area" data-demo="section">
         <h3 data-demo="title">Area Chart</h3>

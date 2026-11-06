@@ -1050,7 +1050,24 @@ body[data-docs="body"] {
 [data-docs="preview"]:is([data-align="start"], [data-align="end"]) { align-items: flex-start; }
 [data-docs="preview"][data-height="auto"] { height: auto; }
 [data-docs="preview"]:has(> [data-docs-preview="flush"]) { padding: 0; }
+[data-docs="preview"][data-height="10rem"] { height: 10rem; }
+[data-docs="preview"][data-height="12rem"] { height: 12rem; }
+[data-docs="preview"][data-height="14rem"] { height: 14rem; }
+[data-docs="preview"][data-height="16rem"] { height: 16rem; }
+[data-docs="preview"][data-height="18rem"] { height: 18rem; }
+[data-docs="preview"][data-height="20rem"] { height: 20rem; }
 [data-docs="preview"][data-height="24rem"] { height: 24rem; }
+[data-docs="preview"][data-height="24.5rem"] { height: 24.5rem; }
+[data-docs="preview"][data-height="26rem"] { height: 26rem; }
+[data-docs="preview"][data-height="30rem"] { height: 30rem; }
+[data-docs="preview"][data-height="32rem"] { height: 32rem; }
+[data-docs="preview"][data-height="34rem"] { height: 34rem; }
+[data-docs="preview"][data-height="300px"] { height: 300px; }
+[data-docs="preview"][data-height="435px"] { height: 435px; }
+[data-docs="preview"][data-height="450px"] { height: 450px; }
+[data-docs="preview"][data-height="560px"] { height: 560px; }
+[data-docs="preview"][data-height="600px"] { height: 600px; }
+[data-docs="preview"][data-height="650px"] { height: 650px; }
 
 [data-docs="preview"][data-height="demo"] {
   flex-direction: column;

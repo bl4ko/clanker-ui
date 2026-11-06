@@ -1,0 +1,46 @@
+<div data-slot="trace" class="w-full max-w-sm">
+  <div data-slot="trace-collapsible" data-default-open>
+    <button type="button" data-slot="trace-collapsible-trigger">
+      <span data-slot="trace-line">
+        <span data-slot="trace-icon"><svg data-lucide="list-todo"></svg></span>
+        <span data-slot="trace-title">3 to do</span>
+      </span>
+    </button>
+    <div data-slot="trace-collapsible-content">
+      <div data-slot="trace">
+        <div data-slot="trace-collapsible">
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle"></svg></span><span data-slot="trace-title">Fix the focus ring on the select trigger</span></span>
+          </button>
+          <div data-slot="trace-collapsible-content">It is clipped by overflow-hidden on the field.</div>
+        </div>
+        <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle"></svg></span><span data-slot="trace-title">Update the registry snapshots</span></span>
+        <div data-slot="trace-collapsible">
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle"></svg></span><span data-slot="trace-title">Add tests for the combobox</span></span>
+          </button>
+          <div data-slot="trace-collapsible-content">Typing, clearing and keyboard selection.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-slot="trace-collapsible">
+    <button type="button" data-slot="trace-collapsible-trigger">
+      <span data-slot="trace-line">
+        <span data-slot="trace-icon"><svg data-lucide="list-checks"></svg></span>
+        <span data-slot="trace-title">2 completed</span>
+      </span>
+    </button>
+    <div data-slot="trace-collapsible-content">
+      <div data-slot="trace">
+        <div data-slot="trace-collapsible">
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span><span data-slot="trace-title">Write the migration guide</span></span>
+          </button>
+          <div data-slot="trace-collapsible-content">Cover the renamed props and the new data attributes.</div>
+        </div>
+        <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span><span data-slot="trace-title">Add a changeset</span></span>
+      </div>
+    </div>
+  </div>
+</div>

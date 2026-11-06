@@ -85,8 +85,19 @@ func TestNavCoversGroupsAndOrder(t *testing.T) {
 	for _, g := range d.nav.Groups {
 		groups = append(groups, g.Title)
 	}
-	if want := []string{"Components", "Blocks", "Get Started", "Utilities", "clanker-ui"}; !slices.Equal(groups, want) {
+	if want := []string{"Components", "AI Elements", "Blocks", "Get Started", "Utilities", "clanker-ui"}; !slices.Equal(groups, want) {
 		t.Errorf("groups %v, want %v", groups, want)
+	}
+	patterns := d.nav.Groups[1].Items
+	for i := 2; i < len(patterns); i++ {
+		if strings.ToLower(patterns[i-1].Title) > strings.ToLower(patterns[i].Title) {
+			t.Errorf("AI Elements are not in alphabetical order at %q", patterns[i].Title)
+		}
+	}
+	for _, item := range patterns {
+		if d.pages[item.Href] == nil {
+			t.Errorf("%s has no page.md", item.Href)
+		}
 	}
 	components := d.componentLinks("")
 	if len(components) != 67 {

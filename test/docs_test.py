@@ -81,7 +81,7 @@ def check_docs_sidebar(t):
     assert [s.strip() for s in sidebar.locator('[data-active="true"]').all_inner_texts()] == ["Components", "Button"]
     assert [s.strip() for s in sidebar.locator('[aria-current="page"]').all_inner_texts()] == ["Button"]
     labels = [s.strip() for s in sidebar.locator('[data-slot="sidebar-group-label"]').all_inner_texts()]
-    assert labels == ["Sections", "Components", "Blocks", "Get Started", "Utilities", "clanker-ui"]
+    assert labels == ["Sections", "Components", "AI Elements", "Blocks", "Get Started", "Utilities", "clanker-ui"]
     assert sidebar.locator('a[href="/docs"]').count() == 1
     styles = page.evaluate("""() => {
       const a = document.querySelector('[data-docs="sidebar"] [aria-current="page"]')

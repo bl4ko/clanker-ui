@@ -1,0 +1,53 @@
+<div class="mx-auto flex max-w-sm flex-col gap-3 py-6 text-sm leading-relaxed">
+  <p>
+    Next.js streams a route in chunks, so the page shows up before every request finishes.
+    <span data-slot="hover-card">
+      <button type="button" data-slot="button" data-variant="secondary" data-size="xs" data-hover-card-trigger data-delay="10" data-close-delay="100">nextjs.org</button>
+      <span data-slot="hover-card-content" class="flex w-64 flex-col gap-1">
+        <span class="font-medium">Linking and Navigating</span>
+        <span class="text-muted-foreground">How the App Router streams a route to the browser.</span>
+        <a href="https://nextjs.org/docs/app/getting-started/linking-and-navigating#streaming" target="_blank" rel="noreferrer" class="text-xs text-muted-foreground underline-offset-4 hover:underline">nextjs.org<span class="sr-only"> (opens in a new tab)</span></a>
+      </span>
+    </span>
+  </p>
+  <p>
+    Wrap a slow part of the page in a Suspense boundary and React sends the fallback first. When the data resolves, the finished HTML streams into the same response and replaces the fallback, with no extra request from the browser.
+    <span data-slot="hover-card">
+      <button type="button" data-slot="button" data-variant="secondary" data-size="xs" data-hover-card-trigger data-delay="10" data-close-delay="100">react.dev</button>
+      <span data-slot="hover-card-content" class="flex w-64 flex-col gap-1">
+        <span class="font-medium">&lt;Suspense&gt;</span>
+        <span class="text-muted-foreground">Display a fallback until its children have finished loading.</span>
+        <a href="https://react.dev/reference/react/Suspense" target="_blank" rel="noreferrer" class="text-xs text-muted-foreground underline-offset-4 hover:underline">react.dev<span class="sr-only"> (opens in a new tab)</span></a>
+      </span>
+    </span>
+    Server Components help here, because their code never ships to the browser.
+    <span data-slot="hover-card">
+      <button type="button" data-slot="button" data-variant="secondary" data-size="xs" data-hover-card-trigger data-delay="10" data-close-delay="100">react.dev</button>
+      <span data-slot="hover-card-content" class="flex w-64 flex-col gap-1">
+        <span class="font-medium">Server Components</span>
+        <span class="text-muted-foreground">Components that render ahead of time, on the server.</span>
+        <a href="https://react.dev/reference/rsc/server-components" target="_blank" rel="noreferrer" class="text-xs text-muted-foreground underline-offset-4 hover:underline">react.dev<span class="sr-only"> (opens in a new tab)</span></a>
+      </span>
+    </span>
+  </p>
+  <p>
+    A loading.tsx file does the same for a whole route segment.
+    <span data-slot="hover-card">
+      <button type="button" data-slot="button" data-variant="secondary" data-size="xs" data-hover-card-trigger data-delay="10" data-close-delay="100">nextjs.org</button>
+      <span data-slot="hover-card-content" class="flex w-64 flex-col gap-1">
+        <span class="font-medium">loading.js</span>
+        <span class="text-muted-foreground">Show an instant loading state for a route segment.</span>
+        <a href="https://nextjs.org/docs/app/api-reference/file-conventions/loading" target="_blank" rel="noreferrer" class="text-xs text-muted-foreground underline-offset-4 hover:underline">nextjs.org<span class="sr-only"> (opens in a new tab)</span></a>
+      </span>
+    </span>
+    It all runs over chunked transfer encoding, so there is nothing extra to set up.
+    <span data-slot="hover-card">
+      <button type="button" data-slot="button" data-variant="secondary" data-size="xs" data-hover-card-trigger data-delay="10" data-close-delay="100">developer.mozilla.org</button>
+      <span data-slot="hover-card-content" class="flex w-64 flex-col gap-1">
+        <span class="font-medium">Transfer-Encoding</span>
+        <span class="text-muted-foreground">Send a response as a series of chunks.</span>
+        <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Transfer-Encoding" target="_blank" rel="noreferrer" class="text-xs text-muted-foreground underline-offset-4 hover:underline">developer.mozilla.org<span class="sr-only"> (opens in a new tab)</span></a>
+      </span>
+    </span>
+  </p>
+</div>

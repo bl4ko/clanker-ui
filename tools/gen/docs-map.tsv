@@ -1,57 +1,57 @@
 shadcn	ours	reason
-ai-elements/chain-of-thought	-	AI Elements pages: #66
-ai-elements/chain-of-thought#chain-of-thought-demo	-	page has no match
-ai-elements/chat	-	AI Elements pages: #66
-ai-elements/chat#chat-demo	-	page has no match
-ai-elements/checkpoint	-	AI Elements pages: #66
-ai-elements/checkpoint#checkpoint-demo	-	page has no match
-ai-elements/confirmation	-	AI Elements pages: #66
-ai-elements/confirmation#confirmation-demo	-	page has no match
-ai-elements/context	-	AI Elements pages: #66
-ai-elements/context#context-demo	-	page has no match
-ai-elements/file-tree	-	AI Elements pages: #66
-ai-elements/file-tree#file-tree-demo	-	page has no match
-ai-elements/inline-citation	-	AI Elements pages: #66
-ai-elements/inline-citation#inline-citation-demo	-	page has no match
-ai-elements/message	-	AI Elements pages: #66
-ai-elements/message#message-pattern	-	page has no match
-ai-elements/model-selector	-	AI Elements pages: #66
-ai-elements/model-selector#model-selector-demo	-	page has no match
-ai-elements/plan	-	AI Elements pages: #66
-ai-elements/plan#plan-demo	-	page has no match
-ai-elements/plan#plan-description	-	page has no match
-ai-elements/prompt-input	-	AI Elements pages: #66
-ai-elements/prompt-input#prompt-input-demo	-	page has no match
-ai-elements/queue	-	AI Elements pages: #66
-ai-elements/queue#queue-demo	-	page has no match
-ai-elements/queue#queue-descriptions	-	page has no match
-ai-elements/reasoning	-	AI Elements pages: #66
-ai-elements/reasoning#reasoning-demo	-	page has no match
-ai-elements/reasoning#reasoning-duration	-	page has no match
-ai-elements/sources	-	AI Elements pages: #66
-ai-elements/sources#sources-demo	-	page has no match
-ai-elements/stack-trace	-	AI Elements pages: #66
-ai-elements/stack-trace#stack-trace-demo	-	page has no match
-ai-elements/stack-trace#stack-trace-frames	-	page has no match
-ai-elements/subagent	-	AI Elements pages: #66
-ai-elements/subagent#subagent-demo	-	page has no match
-ai-elements/subagent#subagent-running	-	page has no match
-ai-elements/subagent#subagent-details	-	page has no match
-ai-elements/suggestion	-	AI Elements pages: #66
-ai-elements/suggestion#suggestion-demo	-	page has no match
-ai-elements/task	-	AI Elements pages: #66
-ai-elements/task#task-demo	-	page has no match
-ai-elements/terminal	-	AI Elements pages: #66
-ai-elements/terminal#terminal-demo	-	page has no match
-ai-elements/terminal#terminal-error	-	page has no match
-ai-elements/test-results	-	AI Elements pages: #66
-ai-elements/test-results#test-results-demo	-	page has no match
-ai-elements/test-results#test-results-suites	-	page has no match
-ai-elements/tool	-	AI Elements pages: #66
-ai-elements/tool#tool-demo	-	page has no match
-ai-elements/tool#tool-states	-	page has no match
-ai-elements/tool#tool-sheet	-	page has no match
-ai-elements/tool#tool-approval	-	page has no match
+ai-elements/chain-of-thought	/docs/ai-elements/chain-of-thought
+ai-elements/chain-of-thought#chain-of-thought-demo	chain-of-thought-demo
+ai-elements/chat	/docs/ai-elements/chat
+ai-elements/chat#chat-demo	chat-demo
+ai-elements/checkpoint	/docs/ai-elements/checkpoint
+ai-elements/checkpoint#checkpoint-demo	checkpoint-demo
+ai-elements/confirmation	/docs/ai-elements/confirmation
+ai-elements/confirmation#confirmation-demo	confirmation-demo
+ai-elements/context	/docs/ai-elements/context
+ai-elements/context#context-demo	context-demo
+ai-elements/file-tree	/docs/ai-elements/file-tree
+ai-elements/file-tree#file-tree-demo	file-tree-demo
+ai-elements/inline-citation	/docs/ai-elements/inline-citation
+ai-elements/inline-citation#inline-citation-demo	inline-citation-demo
+ai-elements/message	/docs/ai-elements/message
+ai-elements/message#message-pattern	message-pattern
+ai-elements/model-selector	/docs/ai-elements/model-selector
+ai-elements/model-selector#model-selector-demo	model-selector-demo
+ai-elements/plan	/docs/ai-elements/plan
+ai-elements/plan#plan-demo	plan-demo
+ai-elements/plan#plan-description	plan-description
+ai-elements/prompt-input	/docs/ai-elements/prompt-input
+ai-elements/prompt-input#prompt-input-demo	prompt-input-demo
+ai-elements/queue	/docs/ai-elements/queue
+ai-elements/queue#queue-demo	queue-demo
+ai-elements/queue#queue-descriptions	queue-descriptions
+ai-elements/reasoning	/docs/ai-elements/reasoning
+ai-elements/reasoning#reasoning-demo	reasoning-demo
+ai-elements/reasoning#reasoning-duration	reasoning-duration
+ai-elements/sources	/docs/ai-elements/sources
+ai-elements/sources#sources-demo	sources-demo
+ai-elements/stack-trace	/docs/ai-elements/stack-trace
+ai-elements/stack-trace#stack-trace-demo	stack-trace-demo
+ai-elements/stack-trace#stack-trace-frames	stack-trace-frames
+ai-elements/subagent	/docs/ai-elements/subagent
+ai-elements/subagent#subagent-demo	subagent-demo
+ai-elements/subagent#subagent-running	subagent-running
+ai-elements/subagent#subagent-details	subagent-details
+ai-elements/suggestion	/docs/ai-elements/suggestion
+ai-elements/suggestion#suggestion-demo	suggestion-demo
+ai-elements/task	/docs/ai-elements/task
+ai-elements/task#task-demo	task-demo
+ai-elements/terminal	/docs/ai-elements/terminal
+ai-elements/terminal#terminal-demo	terminal-demo
+ai-elements/terminal#terminal-error	terminal-error
+ai-elements/test-results	/docs/ai-elements/test-results
+ai-elements/test-results#test-results-demo	test-results-demo
+ai-elements/test-results#test-results-suites	test-results-suites
+ai-elements/tool	/docs/ai-elements/tool
+ai-elements/tool#tool-demo	tool-demo
+ai-elements/tool#tool-states	tool-states
+ai-elements/tool#tool-sheet	tool-sheet
+ai-elements/tool#tool-approval	tool-approval
 components/accordion	/docs/components/accordion
 components/accordion#accordion-demo	accordion-demo
 components/accordion#accordion-basic	accordion-basic

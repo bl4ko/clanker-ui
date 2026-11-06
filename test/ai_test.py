@@ -1,0 +1,580 @@
+START = "/docs/ai-elements"
+
+
+def check_ai_index(t):
+    page = t.page
+    links = page.locator('[data-docs="content"] table a[href^="/docs/ai-elements/"]')
+    sidebar = page.locator('[data-docs="sidebar"] a[href^="/docs/ai-elements/"]')
+    assert links.count() >= 1
+    if t.width >= 1024:
+        assert sidebar.count() == links.count()
+
+
+def check_ai_message_feedback(t):
+    page = t.page
+    t.docs("/docs/ai-elements/message")
+    like = page.locator("#message-pattern-like")
+    dislike = page.locator("#message-pattern-dislike")
+    like.click()
+    assert like.get_attribute("aria-pressed") == "true" and dislike.get_attribute("aria-pressed") == "false"
+    assert like.locator("svg").evaluate("s => getComputedStyle(s).fill") != "none"
+    dislike.click()
+    assert like.get_attribute("aria-pressed") == "false" and dislike.get_attribute("aria-pressed") == "true"
+    assert like.locator("svg").evaluate("s => getComputedStyle(s).fill") == "none"
+    dislike.click()
+    assert dislike.get_attribute("aria-pressed") == "false"
+
+
+def check_ai_message_copy(t):
+    page = t.page
+    t.docs("/docs/ai-elements/message")
+    if t.engine == "chromium":
+        page.context.grant_permissions(["clipboard-read", "clipboard-write"], origin=t.base_url)
+    copy = page.locator("#message-pattern-copy")
+    copy.click()
+    page.wait_for_function("() => document.querySelector('#message-pattern-copy').getAttribute('aria-label') === 'Copied'")
+    assert copy.locator("svg.lucide-check").count() == 1
+    if t.engine == "chromium":
+        text = page.evaluate("() => navigator.clipboard.readText()")
+        assert text.startswith("Install Dialog") and "npx shadcn@latest add dialog" in text and text.rstrip().endswith("closes it."), text
+    page.wait_for_function("() => document.querySelector('#message-pattern-copy').getAttribute('aria-label') === 'Copy'", timeout=4000)
+    assert copy.locator("svg.lucide-copy").count() == 1
+
+
+def wait_js(page, expr, timeout=20000):
+    page.wait_for_function(expr, timeout=timeout)
+
+
+def check_ai_reasoning_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/reasoning")
+    replay = page.locator("#reasoning-demo-replay")
+    replay.click()
+    assert replay.is_hidden()
+    wait_js(page, """() => document.querySelector('#reasoning-demo [data-slot="trace-line"][data-status="running"]')?.textContent.includes('Thinking')""")
+    wait_js(page, """() => document.querySelector('#reasoning-demo [data-slot="trace-collapsible"]')?.dataset.state === 'open' && document.querySelector('#reasoning-demo [data-slot="trace-collapsible-content"]').textContent.length > 0""")
+    first = page.evaluate("""() => document.querySelector('#reasoning-demo [data-slot="trace-collapsible-content"]').textContent.length""")
+    page.wait_for_function("""n => document.querySelector('#reasoning-demo [data-slot="trace-collapsible-content"]').textContent.length > n""", arg=first)
+    wait_js(page, """() => document.querySelector('#reasoning-demo [data-slot="trace-title"]').textContent === 'Thought for 5s'""")
+    state = page.evaluate("""() => { const c = document.querySelector('#reasoning-demo [data-slot="trace-collapsible"]'); return [c.dataset.state, c.querySelector('[data-slot="trace-line"]').hasAttribute('data-status'), c.querySelector('[data-slot="trace-collapsible-content"]').textContent.startsWith('The deploy log has three phases.')] }""")
+    assert state[1] is False and state[2] is True, state
+    wait_js(page, """() => document.querySelector('#reasoning-demo [data-slot="trace-collapsible"]').dataset.state === 'closed'""")
+    wait_js(page, """() => !document.getElementById('reasoning-demo-replay').hidden""")
+    assert page.locator("#reasoning-demo p").inner_text().startswith("Image optimization is the bottleneck.")
+    assert page.locator('#reasoning-demo > [data-slot="message"]').count() == 2
+
+
+def check_ai_reasoning_choice_wins(t):
+    page = t.page
+    t.docs("/docs/ai-elements/reasoning")
+    page.locator("#reasoning-demo-replay").click()
+    wait_js(page, """() => document.querySelector('#reasoning-demo [data-slot="trace-collapsible"]')?.dataset.state === 'open'""")
+    trigger = page.locator('#reasoning-demo [data-slot="trace-collapsible-trigger"]')
+    trigger.click()
+    wait_js(page, """() => document.querySelector('#reasoning-demo [data-slot="trace-collapsible"]').dataset.state === 'closed'""")
+    trigger.click()
+    wait_js(page, """() => !document.getElementById('reasoning-demo-replay').hidden""")
+    assert page.evaluate("""() => document.querySelector('#reasoning-demo [data-slot="trace-collapsible"]').dataset.state""") == "open"
+
+
+def check_ai_chain_of_thought_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/chain-of-thought")
+    replay = page.locator("#chain-of-thought-demo-replay")
+    replay.click()
+    assert replay.is_hidden()
+    summary = """document.querySelector('#chain-of-thought-demo [data-slot="message"]:not([data-align="end"]) [data-slot="trace-collapsible"]')"""
+    wait_js(page, f"""() => {{ const s = {summary}; return s?.dataset.state === 'open' && s.querySelector('[data-slot="trace-line"]').dataset.status === 'running' && s.querySelector('[data-slot="trace-title"]').textContent === 'Researching' }}""")
+    wait_js(page, f"""() => [...{summary}.querySelectorAll('[data-slot="trace-collapsible-content"] [data-slot="trace-line"][data-status="running"] [data-slot="trace-title"]')].some(e => e.textContent === 'Reading the build log for dpl_8Kx2')""")
+    wait_js(page, f"""() => {summary}.querySelector(':scope > [data-slot="trace-collapsible-trigger"] [data-slot="trace-title"]').textContent === 'Researched in 3 steps'""")
+    wait_js(page, f"""() => {summary}.dataset.state === 'closed'""")
+    steps = page.evaluate(f"""() => [...{summary}.querySelectorAll(':scope > [data-slot="trace-collapsible-content"] > * > [data-slot="trace"] > [data-slot="trace-collapsible"]')].map(c => [c.querySelector('[data-slot="trace-title"]').textContent, c.dataset.state])""")
+    assert steps == [["Read the build log for dpl_8Kx2", "open"], ["Searched the web for next.js image cache key", "closed"], ["Searched the code for cacheKey", "closed"]], steps
+    wait_js(page, """() => !document.getElementById('chain-of-thought-demo-replay').hidden""")
+    assert page.locator("#chain-of-thought-demo p").inner_text().endswith("Key it on the image directory instead.")
+
+
+def check_ai_task_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/task")
+    page.locator("#task-demo-replay").click()
+    rows = """document.querySelectorAll('#task-demo [data-slot="message"]:not([data-align="end"]) [data-slot="message-content"] > [data-slot="trace"] > [data-slot="trace-collapsible"]')"""
+    wait_js(page, f"""() => {{ const r = {rows}[0]; return r?.dataset.state === 'open' && r.querySelector('[data-slot="trace-line"]').dataset.status === 'running' && r.querySelector('[data-slot="trace-title"]').textContent === 'Finding the project files' }}""")
+    wait_js(page, f"""() => {{ const lines = {rows}[0].querySelectorAll('[data-slot="trace-collapsible-content"] [data-slot="trace-line"]'); return lines.length === 2 && !lines[0].hasAttribute('data-status') && lines[0].textContent === 'Searched for generateMetadata' && lines[1].dataset.status === 'running' && lines[1].textContent === 'Reading app/layout.tsx' }}""")
+    wait_js(page, f"""() => {rows}.length === 2 && {rows}[0].dataset.state === 'closed' && {rows}[1].dataset.state === 'open'""")
+    wait_js(page, """() => !document.getElementById('task-demo-replay').hidden""")
+    final = page.evaluate(f"""() => [...{rows}].map(r => [r.querySelector('[data-slot="trace-title"]').textContent, r.dataset.state, r.querySelector('[data-slot="trace-line"]').hasAttribute('data-status'), [...r.querySelectorAll('[data-slot="trace-collapsible-content"] [data-slot="trace-line"]')].map(l => l.textContent + (l.hasAttribute('data-status') ? '!' : ''))])""")
+    assert final == [["Found the project files", "closed", False, ["Searched for generateMetadata", "Read app/layout.tsx", "Read app/page.tsx"]], ["Updated the page metadata", "closed", False, ["Edited app/layout.tsx", "Edited app/page.tsx"]]], final
+    assert page.locator("#task-demo p").inner_text().startswith("Added Open Graph defaults")
+
+
+def check_ai_plan_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/plan")
+    page.locator("#plan-demo-replay").click()
+    plan = """document.querySelector('#plan-demo [data-slot="message"]:not([data-align="end"]) [data-slot="trace-collapsible"]')"""
+    read = f"""() => {{ const p = {plan}; if (!p) return null; const line = p.querySelector('[data-slot="trace-line"]'); return [line.getAttribute('data-status'), line.querySelector('[data-slot="trace-description"]').textContent, [...p.querySelectorAll('[data-slot="trace-collapsible-content"] [data-slot="trace-line"]')].map(l => (l.getAttribute('data-status') ?? 'done') + ':' + l.querySelector('svg').dataset.lucide)] }}"""
+    page.wait_for_function(f"""() => JSON.stringify(({read})()) === JSON.stringify(['running', '0 of 4 done', ['running:circle-dot', 'pending:circle', 'pending:circle', 'pending:circle']])""")
+    page.wait_for_function(f"""() => JSON.stringify(({read})()) === JSON.stringify(['running', '1 of 4 done', ['done:circle-check', 'running:circle-dot', 'pending:circle', 'pending:circle']])""", timeout=5000)
+    page.wait_for_function(f"""() => JSON.stringify(({read})()) === JSON.stringify([null, '4 of 4 done', ['done:circle-check', 'done:circle-check', 'done:circle-check', 'done:circle-check']])""", timeout=10000)
+    wait_js(page, """() => !document.getElementById('plan-demo-replay').hidden""")
+    assert page.locator("#plan-demo p").inner_text() == "Migrated Dialog and AlertDialog. The type checker passes."
+
+
+def check_ai_tool_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/tool")
+    page.locator("#tool-demo-replay").click()
+    trace = """document.querySelector('#tool-demo [data-slot="message"]:not([data-align="end"]) [data-slot="trace"]')"""
+    wait_js(page, f"""() => {trace}?.querySelector(':scope > [data-slot="trace-line"][data-status="running"]')?.textContent === 'Running node --version'""")
+    wait_js(page, f"""() => {trace}.querySelector(':scope > [data-slot="trace-collapsible"] [data-slot="trace-title"]')?.textContent === 'Ran node --version'""")
+    wait_js(page, """() => !document.getElementById('tool-demo-replay').hidden""")
+    rows = page.evaluate(f"""() => [...{trace}.children].map(c => [c.dataset.slot, c.querySelector('[data-slot="trace-title"]').textContent, c.querySelector('[data-slot="trace-line"]').getAttribute('data-status'), c.dataset.state, c.querySelector('code')?.textContent])""")
+    assert rows == [["trace-collapsible", "Ran node --version", None, "closed", "v24.18.0"], ["trace-collapsible", "Ran npm --version", None, "closed", "11.6.2"], ["trace-collapsible", "Failed to run pnpm --version", "error", "closed", "command not found: pnpm"]], rows
+    page.locator('#tool-demo [data-slot="message"]:not([data-align="end"]) [data-slot="trace-collapsible-trigger"]').nth(2).click()
+    wait_js(page, f"""() => {trace}.children[2].dataset.state === 'open'""")
+    assert page.locator("#tool-demo p").inner_text() == "Node 24 and npm 11 are installed. pnpm is not."
+
+
+def check_ai_tool_sheet(t):
+    page = t.page
+    t.docs("/docs/ai-elements/tool")
+    send = page.locator("#tool-sheet-send")
+    assert page.locator('#tool-sheet > [data-slot="message"]').count() == 0
+    send.click()
+    wait_js(page, """() => document.querySelector('#tool-sheet [data-slot="trace-line"][data-status="running"]')?.textContent === 'Reading package.json'""")
+    trigger = page.locator('#tool-sheet [data-sheet-trigger="tool-sheet-file"]')
+    trigger.wait_for(state="visible")
+    wait_js(page, """() => document.getElementById('tool-sheet-send').textContent === 'Reset' && !document.getElementById('tool-sheet-send').hidden""")
+    assert page.locator('#tool-sheet [data-slot="message-content"] > p').inner_text() == "It uses ai 7 with @ai-sdk/react 4."
+    trigger.click()
+    wait_js(page, """() => document.querySelector('#tool-sheet-file [data-slot="sheet-content"]')?.dataset.state === 'open'""")
+    assert page.locator('#tool-sheet-file [data-slot="sheet-title"]').inner_text() == "package.json"
+    assert page.locator('#tool-sheet-file [data-slot="code-block-line"]').count() == 9
+    t.settle()
+    page.keyboard.press("Escape")
+    wait_js(page, """() => document.querySelector('#tool-sheet-file [data-slot="sheet-content"]').dataset.state === 'closed'""")
+    t.settle()
+    send.click()
+    assert page.locator('#tool-sheet > [data-slot="message"]').count() == 0 and send.inner_text() == "Send message"
+
+
+def check_ai_tool_approval(t):
+    page = t.page
+    t.docs("/docs/ai-elements/tool")
+    send = page.locator("#tool-approval-send")
+    for approve, line, reply in [(True, "Ran rm -rf dist", "Removed the dist folder."), (False, "Denied rm -rf dist", "Okay, I left the dist folder in place.")]:
+        send.click()
+        wait_js(page, """() => document.querySelector('#tool-approval [data-slot="trace-line"][data-status="running"]')?.textContent.includes('Thinking')""")
+        item = page.locator('#tool-approval [data-slot="item"]')
+        item.wait_for(state="visible")
+        assert page.evaluate("""() => [document.querySelector('#tool-approval [data-slot="trace-collapsible"]').dataset.state, document.querySelector('#tool-approval [data-slot="trace-title"]').textContent]""") == ["closed", "Thought"]
+        assert send.inner_text() == "Reset"
+        item.get_by_role("button", name="Approve" if approve else "Deny").click()
+        assert item.count() == 0
+        wait_js(page, f"""() => document.querySelectorAll('#tool-approval [data-slot="message"]:not([data-align="end"]) [data-slot="message-content"] > [data-slot="trace"]')[1]?.textContent.trim() === {line!r}""")
+        wait_js(page, """() => !document.getElementById('tool-approval-send').hidden""")
+        assert page.locator('#tool-approval [data-slot="message-content"] > p').inner_text() == reply
+        send.click()
+        assert page.locator('#tool-approval > [data-slot="message"]').count() == 0
+
+
+def check_ai_suggestion_send(t):
+    page = t.page
+    t.docs("/docs/ai-elements/suggestion")
+    demo = page.locator("#suggestion-demo")
+    send = page.locator("#suggestion-demo-send")
+    assert send.is_disabled()
+    demo.get_by_role("button", name="Fix the failing build").click()
+    assert demo.locator('[data-slot="bubble-content"]').inner_text() == "Fix the failing build"
+    assert demo.locator('[data-slot="message"]:not([data-align="end"]) p').inner_text().startswith("The build failed on a missing import")
+    text = page.locator("#suggestion-demo-text")
+    text.fill("Hello")
+    assert not send.is_disabled()
+    text.press("Enter")
+    assert demo.locator('[data-slot="bubble-content"]').count() == 1
+    assert demo.locator('[data-slot="bubble-content"]').inner_text() == "Hello"
+    assert demo.locator('[data-slot="message"]:not([data-align="end"]) p').inner_text() == "This demo only knows the suggestions. Pick one."
+    assert text.input_value() == "" and send.is_disabled()
+
+
+def check_ai_model_selector_pick(t):
+    page = t.page
+    t.docs("/docs/ai-elements/model-selector")
+    model = page.locator("#model-selector-demo-model [data-dropdown-menu-trigger]")
+    model.click()
+    content = page.locator("#model-selector-demo-model [data-slot=dropdown-menu-content]")
+    content.locator('[data-value="claude-sonnet-4-5"]').click()
+    page.wait_for_function("() => document.querySelector('#model-selector-demo-model [data-slot=dropdown-menu-content]').dataset.state === 'closed'")
+    assert model.get_attribute("aria-label") == "Model: Claude Sonnet 4.5"
+    assert model.evaluate("b => document.activeElement === b")
+    assert model.inner_text().strip() == "Claude Sonnet 4.5"
+    effort = page.locator("#model-selector-demo-effort [data-dropdown-menu-trigger]")
+    effort.click()
+    page.locator('#model-selector-demo-effort [data-value="high"]').click()
+    page.wait_for_function("() => document.querySelector('#model-selector-demo-effort [data-slot=dropdown-menu-radio-group]').dataset.value === 'high'")
+    assert effort.get_attribute("aria-label") == "Effort: High"
+    assert " ".join(effort.inner_text().split()) == "Effort High"
+
+
+def check_ai_prompt_input_attach(t):
+    page = t.page
+    t.docs("/docs/ai-elements/prompt-input")
+    files = page.locator("#prompt-input-demo-files")
+    files.set_input_files([{"name": "notes.md", "mimeType": "text/markdown", "buffer": b"# notes"}, {"name": "plan.txt", "mimeType": "text/plain", "buffer": b"plan"}])
+    chips = page.locator('#prompt-input-demo-list [data-slot="attachment"]')
+    assert chips.count() == 2 and page.locator("#prompt-input-demo-list").is_visible()
+    assert chips.nth(0).locator('[data-slot="attachment-title"]').inner_text() == "notes.md"
+    page.get_by_role("button", name="Remove notes.md").click()
+    assert chips.count() == 1
+    text = page.locator("#prompt-input-demo-text")
+    text.fill("Summarize the plan")
+    text.press("Enter")
+    assert chips.count() == 0 and not page.locator("#prompt-input-demo-list").is_visible()
+    assert text.input_value() == ""
+
+
+CHAT_STATE = """() => {
+  const v = document.querySelector('#chat-demo [data-slot=message-scroller-viewport]')
+  const box = e => { const r = e.getBoundingClientRect(); return [Math.round(r.top), Math.round(r.height)] }
+  return {
+    viewport: [box(v), v.scrollTop, v.scrollHeight, v.clientHeight, getComputedStyle(v).visibility, v.hasAttribute('data-pending-scroll')],
+    items: [...v.querySelectorAll(':scope [data-slot=message-scroller-item]')].map(i => [box(i), getComputedStyle(i).contentVisibility, i.checkVisibility({ contentVisibilityAuto: true }), i.innerText.length]),
+    window: [scrollY, innerHeight],
+  }
+}"""
+
+
+def check_ai_chat_turn(t):
+    page = t.page
+    t.docs("/docs/ai-elements/chat")
+    demo = page.locator("#chat-demo")
+    assert page.locator("#chat-demo-empty").is_visible() and not page.locator("#chat-demo-scroller").is_visible()
+    text = page.locator("#chat-demo-text")
+    assert text.input_value() == "Add a dark mode toggle to the settings page."
+    page.locator("#chat-demo-send").click()
+    assert page.locator("#chat-demo-scroller").is_visible()
+    assert page.locator("#chat-demo-reset").is_disabled() and page.locator("#chat-demo-thread").get_attribute("aria-busy") == "true"
+    page.wait_for_function("() => document.querySelector('#chat-demo [data-slot=trace-title]')?.textContent === 'Thinking'")
+    assert demo.locator('[data-slot="trace-collapsible"]').first.get_attribute("data-state") == "open"
+    page.wait_for_function("() => document.querySelector('#chat-demo-text').value === 'Make it follow the system setting by default.'", timeout=10000)
+    page.locator("#chat-demo-thread").evaluate("e => e.closest('[data-slot=message-scroller]').scrollIntoView({ block: 'center' })")
+    page.evaluate("() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))")
+    titles = demo.locator('[data-slot="trace-title"]').all_inner_texts()
+    assert titles == ["Thought", "Ran rg -l ThemeProvider app"], (titles, page.evaluate(CHAT_STATE))
+    assert demo.locator('[data-slot="trace-collapsible"]').first.get_attribute("data-state") == "closed"
+    reply = demo.locator('[data-slot="message"]:not([data-align="end"]) [data-slot="message-content"] > div:last-child')
+    assert reply.locator("p").first.text_content() == "next-themes is already set up in app/layout.tsx, so the toggle only has to call setTheme."
+    assert reply.locator("li").count() == 2 and reply.locator('[data-slot="code-block-code"]').text_content() == "const { setTheme } = useTheme()"
+    assert page.locator("#chat-demo-thread").get_attribute("aria-busy") == "false"
+    text.fill("Something else")
+    text.press("Enter")
+    page.wait_for_function("() => document.querySelector('#chat-demo-thread').getAttribute('aria-busy') === 'false' && document.querySelectorAll('#chat-demo [data-slot=bubble-content]').length === 2", timeout=10000)
+    assert reply.last.text_content() == "This demo only knows the scripted turns. Press reset to start over."
+    page.locator("#chat-demo-reset").click()
+    assert page.locator("#chat-demo-empty").is_visible() and demo.locator('[data-slot="message-scroller-item"]').count() == 0
+    assert text.input_value() == "Add a dark mode toggle to the settings page."
+
+
+def rows_state(page, root):
+    return page.evaluate("""r => [...document.querySelectorAll(r)].map(c => [c.querySelector('[data-slot="trace-title"]').textContent, c.dataset.state, c.querySelector('[data-slot="trace-line"]').dataset.status ?? null])""", root)
+
+
+def check_ai_terminal_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/terminal")
+    rows = '#terminal-demo [data-slot="message-content"] > [data-slot="trace"] > [data-slot="trace-collapsible"]'
+    assert rows_state(page, rows) == [["Ran pnpm lint", "closed", None], ["Ran pnpm test", "closed", None], ["Ran pnpm build", "open", None]]
+    page.locator("#terminal-demo-replay").click()
+    wait_js(page, f"""() => {{ const r = document.querySelector('{rows}'); return r?.dataset.state === 'open' && r.querySelector('[data-slot="trace-line"]').dataset.status === 'running' && r.querySelector('[data-slot="trace-title"]').textContent === 'Running pnpm lint' && r.querySelector('[data-slot="code-block-code"]').textContent.length > 0 }}""")
+    wait_js(page, f"""() => {{ const r = document.querySelectorAll('{rows}'); return r.length === 2 && r[0].dataset.state === 'closed' && r[1].dataset.state === 'open' }}""")
+    wait_js(page, """() => !document.getElementById('terminal-demo-replay').hidden""")
+    assert rows_state(page, rows) == [["Ran pnpm lint", "closed", None], ["Ran pnpm test", "closed", None], ["Ran pnpm build", "closed", None]]
+    assert page.locator(f"{rows} >> nth=1").locator('[data-slot="code-block-code"]').text_content().endswith("Tests  15 passed (15)")
+    assert page.locator("#terminal-demo p").inner_text() == "Lint and tests pass, and the build compiled both routes."
+
+
+def check_ai_terminal_choice_wins(t):
+    page = t.page
+    t.docs("/docs/ai-elements/terminal")
+    rows = '#terminal-demo [data-slot="message-content"] > [data-slot="trace"] > [data-slot="trace-collapsible"]'
+    page.locator("#terminal-demo-replay").click()
+    wait_js(page, f"""() => document.querySelector('{rows}')?.dataset.state === 'open'""")
+    trigger = page.locator(f"{rows} >> nth=0").locator('[data-slot="trace-collapsible-trigger"]')
+    trigger.click()
+    wait_js(page, f"""() => document.querySelector('{rows}').dataset.state === 'closed'""")
+    trigger.click()
+    wait_js(page, """() => !document.getElementById('terminal-demo-replay').hidden""")
+    assert [s for _, s, _ in rows_state(page, rows)] == ["open", "closed", "closed"]
+
+
+def check_ai_terminal_error(t):
+    page = t.page
+    t.docs("/docs/ai-elements/terminal")
+    example = page.locator('[data-slot="trace"]:has(> [data-slot="trace-collapsible"] [data-status="error"])').first
+    assert example.locator(':scope > [data-slot="trace-line"]').inner_text() == "Ran pnpm install"
+    row = example.locator(':scope > [data-slot="trace-collapsible"]')
+    assert row.get_attribute("data-state") == "open" and row.locator('[data-slot="trace-title"]').inner_text() == "pnpm lint exited with code 1"
+    assert row.locator('[data-slot="code-block-code"]').text_content().endswith("Command failed with exit code 1.")
+    row.locator('[data-slot="trace-collapsible-trigger"]').click()
+    t.settle()
+    assert row.get_attribute("data-state") == "closed"
+
+
+def check_ai_stack_trace_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/stack-trace")
+    rows = '#stack-trace-demo [data-slot="message-content"] > [data-slot="trace"] > *'
+    page.locator("#stack-trace-demo-replay").click()
+    wait_js(page, f"""() => {{ const r = document.querySelector('{rows}'); return r?.dataset.slot === 'trace-line' && r.dataset.status === 'running' && r.textContent.trim() === 'Running pnpm prisma migrate reset --skip-seed' }}""")
+    wait_js(page, f"""() => {{ const r = document.querySelectorAll('{rows}'); return r.length === 2 && r[1].dataset.status === 'running' && r[1].textContent.trim() === 'Running pnpm prisma db seed' }}""")
+    wait_js(page, """() => !document.getElementById('stack-trace-demo-replay').hidden""")
+    assert rows_state(page, rows) == [["Ran pnpm prisma migrate reset --skip-seed", "closed", None], ["Failed: TypeError: Cannot read properties of undefined (reading 'email')", "open", "error"]]
+    failed = page.locator(f"{rows} >> nth=1")
+    assert failed.locator("p").inner_text() == "TypeError: Cannot read properties of undefined (reading 'email')"
+    assert [a.get_attribute("href") for a in failed.locator("a").all()] == ["#", "#"]
+    assert failed.locator("a").all_inner_texts() == ["seedUsers in prisma/seed.ts:27", "main in prisma/seed.ts:51"]
+    frames = failed.locator('[data-slot="trace"] > [data-slot="trace-collapsible"]')
+    assert frames.locator('[data-slot="trace-title"]').inner_text() == "4 framework frames" and frames.get_attribute("data-state") == "closed"
+    frames.locator('[data-slot="trace-collapsible-trigger"]').click()
+    t.settle()
+    assert frames.get_attribute("data-state") == "open" and frames.locator("li").count() == 4
+    assert page.locator("#stack-trace-demo p:not(.font-mono)").inner_text().startswith("The migrations ran, but the seed failed in seedUsers.")
+
+
+def check_ai_stack_trace_frames(t):
+    page = t.page
+    t.docs("/docs/ai-elements/stack-trace")
+    example = page.locator('[data-slot="trace"].max-w-sm').first
+    row = example.locator(':scope > [data-slot="trace-collapsible"]')
+    assert row.get_attribute("data-state") == "open"
+    links = row.locator("a")
+    assert links.all_inner_texts() == ["formatInvoice in app/lib/billing.ts:42", "InvoiceRow in app/components/invoice-row.tsx:18"]
+    frames = row.locator('[data-slot="trace"] > [data-slot="trace-collapsible"]')
+    frames.locator('[data-slot="trace-collapsible-trigger"]').press("Enter")
+    t.settle()
+    assert frames.get_attribute("data-state") == "open"
+    assert frames.locator("li").first.inner_text() == "at renderWithHooks (node_modules/react-dom/cjs/react-dom.development.js:14985:18)"
+
+
+def check_ai_test_results_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/test-results")
+    rows = '#test-results-demo [data-slot="message-content"] > [data-slot="trace"] > *'
+    page.locator("#test-results-demo-replay").click()
+    wait_js(page, f"""() => {{ const r = document.querySelector('{rows}'); return r?.dataset.status === 'running' && r.textContent.trim() === 'Running pnpm test checkout' }}""")
+    wait_js(page, """() => !document.getElementById('test-results-demo-replay').hidden""")
+    assert rows_state(page, rows) == [["Ran 5 tests, 1 failed", "open", "error"]]
+    suites = f'{rows} > [data-slot="trace-collapsible-content"] > * > [data-slot="trace"] > [data-slot="trace-collapsible"]'
+    assert rows_state(page, suites) == [["cart.test.ts, 3 tests", "closed", None], ["payment.test.ts, 2 tests, 1 failed", "open", "error"]]
+    failed = page.locator(f'{suites} >> nth=1').locator('[data-slot="trace-collapsible"]')
+    assert failed.get_attribute("data-state") == "open" and failed.locator('[data-slot="code-block-code"]').text_content().startswith("Expected 2 charge attempts, received 1")
+    assert page.locator("#test-results-demo p").inner_text().startswith("One test failed.")
+
+
+def check_ai_test_results_suites(t):
+    page = t.page
+    t.docs("/docs/ai-elements/test-results")
+    summary = '[data-slot="trace"].max-w-sm > [data-slot="trace-collapsible"]'
+    assert rows_state(page, summary) == [["Ran 8 tests, 2 failed, 1 skipped", "open", "error"]]
+    suites = f'{summary} > [data-slot="trace-collapsible-content"] > * > [data-slot="trace"] > [data-slot="trace-collapsible"]'
+    assert rows_state(page, suites) == [["auth.test.ts, 3 tests", "closed", None], ["user-api.test.ts, 3 tests, 1 failed, 1 skipped", "open", "error"], ["db.test.ts, 2 tests, 1 failed", "open", "error"]]
+    user = page.locator(f"{suites} >> nth=1")
+    assert user.locator('[data-slot="trace-line"]:not([data-status])').all_inner_texts()[-1] == "Skipped deletes a user"
+    failed = user.locator('[data-slot="trace-collapsible"]')
+    assert failed.get_attribute("data-state") == "closed"
+    failed.locator('[data-slot="trace-collapsible-trigger"]').click()
+    t.settle()
+    assert failed.get_attribute("data-state") == "open" and failed.locator('[data-slot="code-block-code"]').is_visible()
+
+
+def check_ai_sources_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/sources")
+    thread = page.locator("#sources-demo-thread")
+    assert thread.locator('[data-slot="trace-collapsible"]').count() == 1
+    state = page.evaluate("""() => { const b = document.getElementById('sources-demo-replay'); b.click(); const th = document.getElementById('sources-demo-thread'); return [b.hidden, th.querySelectorAll('[data-slot="message"]').length, th.querySelectorAll('[data-slot="trace"]').length] }""")
+    assert state == [True, 1, 0], state
+    page.wait_for_function("() => document.querySelectorAll('#sources-demo-thread p').length === 1")
+    page.wait_for_function("() => !document.getElementById('sources-demo-replay').hidden", timeout=5000)
+    t.settle()
+    text = thread.locator("p").inner_text()
+    assert text.startswith("Run pnpm create astro@latest") and text.endswith("installs the dependencies."), text
+    collapsible = thread.locator('[data-slot="trace-collapsible"]')
+    assert collapsible.count() == 1 and collapsible.get_attribute("data-state") == "open"
+    assert collapsible.locator('[data-slot="trace-collapsible-trigger"] [data-slot="trace-title"]').inner_text() == "Used 3 sources"
+    links = collapsible.locator("a[href]")
+    assert [links.nth(i).get_attribute("href") for i in range(links.count())] == ["https://docs.astro.build/en/install-and-setup/", "https://www.npmjs.com/package/create-astro", "https://pnpm.io/cli/create"]
+    assert links.first.get_attribute("target") == "_blank" and links.first.locator(".sr-only").text_content() == " (opens in a new tab)"
+    collapsible.locator('[data-slot="trace-collapsible-trigger"]').click()
+    t.settle()
+    assert collapsible.get_attribute("data-state") == "closed"
+
+
+def check_ai_file_tree_select(t):
+    page = t.page
+    t.docs("/docs/ai-elements/file-tree")
+    tree = page.locator("#file-tree-demo")
+    current = tree.locator('[aria-current="true"]')
+    assert current.count() == 1 and current.inner_text() == "button.tsx"
+    selected_bg = current.evaluate("b => getComputedStyle(b).backgroundColor")
+    page_file = tree.locator('[data-slot="button"]', has_text="page.tsx")
+    assert page_file.evaluate("b => getComputedStyle(b).backgroundColor") != selected_bg
+    page_file.click()
+    assert current.count() == 1 and current.inner_text() == "page.tsx"
+    page.mouse.move(0, 0)
+    t.settle()
+    assert page_file.evaluate("b => getComputedStyle(b).backgroundColor") == selected_bg
+    assert tree.locator('[data-slot="button"]', has_text="button.tsx").get_attribute("aria-current") is None
+    folder = tree.locator("[data-collapsible-trigger]", has_text="app")
+    folder.click()
+    t.settle()
+    assert folder.get_attribute("aria-expanded") == "false"
+    assert current.count() == 1 and current.text_content() == "page.tsx"
+
+
+def check_ai_file_tree_folders(t):
+    page = t.page
+    t.docs("/docs/ai-elements/file-tree")
+    tree = page.locator("#file-tree-demo")
+    folder = tree.locator("[data-collapsible-trigger]", has_text="components")
+    chevron = folder.locator('svg[data-lucide="chevron-right"]')
+    assert folder.get_attribute("aria-expanded") == "true"
+    assert chevron.evaluate("s => getComputedStyle(s).rotate") == "90deg"
+    assert folder.evaluate("b => getComputedStyle(b).backgroundColor") == "rgba(0, 0, 0, 0)"
+    folder.click()
+    t.settle()
+    assert folder.get_attribute("aria-expanded") == "false"
+    assert chevron.evaluate("s => getComputedStyle(s).rotate") in ("none", "0deg")
+    assert tree.locator('[data-slot="button"]', has_text="login-form.tsx").is_hidden()
+    folder.focus()
+    page.keyboard.press("Enter")
+    t.settle()
+    assert folder.get_attribute("aria-expanded") == "true"
+    assert tree.locator('[data-slot="button"]', has_text="login-form.tsx").is_visible()
+
+
+def check_ai_inline_citation_card(t):
+    if t.mobile:
+        t.skip("hover cards open on hover and focus, not touch")
+    page = t.page
+    t.docs("/docs/ai-elements/inline-citation")
+    preview = page.locator('[data-example="inline-citation-demo"] [data-docs="preview"]')
+    assert preview.locator("p").count() == 3
+    triggers = preview.locator("p [data-hover-card-trigger]")
+    assert [triggers.nth(i).inner_text() for i in range(triggers.count())] == ["nextjs.org", "react.dev", "react.dev", "nextjs.org", "developer.mozilla.org"]
+    triggers.nth(1).hover()
+    content = preview.locator('[data-slot="hover-card-content"]').nth(1)
+    page.wait_for_function("el => el.dataset.state === 'open'", arg=content.element_handle())
+    assert content.locator(".font-medium").inner_text() == "<Suspense>"
+    assert content.evaluate("e => getComputedStyle(e).display") == "flex"
+    assert content.locator("a").get_attribute("href") == "https://react.dev/reference/react/Suspense"
+    page.mouse.move(0, 0)
+    page.wait_for_function("el => el.dataset.state !== 'open'", arg=content.element_handle())
+
+
+def wait_text(page, selector, text, timeout=10000):
+    page.wait_for_function("([s, t]) => [...document.querySelectorAll(s)].some(e => e.textContent.trim() === t)", arg=[selector, text], timeout=timeout)
+
+
+def check_ai_queue_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/queue")
+    root = page.locator("#queue-demo")
+    replay = page.locator("#queue-demo-replay")
+    replay.click()
+    assert replay.is_hidden()
+    wait_text(page, "#queue-demo [data-slot=trace-title]", "4 to do")
+    running = root.locator('[data-slot=trace-line][data-status="running"]')
+    assert running.count() == 1 and running.locator("[data-slot=trace-title]").inner_text() == "Add a dark variant to the theme tokens"
+    assert running.locator('svg[data-lucide="circle-dot"]').count() == 1
+    wait_text(page, "#queue-demo [data-slot=trace-title]", "1 completed")
+    assert root.locator("[data-slot=trace-title]", has_text="3 to do").count() == 1
+    replay.wait_for(state="visible", timeout=10000)
+    titles = root.locator(":scope > [data-slot=message] [data-slot=trace-collapsible-trigger] [data-slot=trace-title]").all_inner_texts()
+    assert titles == ["4 completed"], titles
+    assert root.locator('[data-slot=trace-line][data-status="running"]').count() == 0
+    assert root.locator(":scope > [data-slot=message]").count() == 2
+    assert root.locator("p").inner_text() == "Dark mode is in. The toggle is under Settings, Appearance."
+
+
+def check_ai_subagent_replay(t):
+    page = t.page
+    t.docs("/docs/ai-elements/subagent")
+    root = page.locator("#subagent-demo")
+    replay = page.locator("#subagent-demo-replay")
+    replay.click()
+    assert replay.is_hidden()
+    wait_text(page, "#subagent-demo [data-slot=trace-title]", "Running the research subagent")
+    wait_text(page, "#subagent-demo [data-slot=trace-title]", "Running grep -rn cacheKey scripts")
+    run = root.locator(":scope > [data-slot=message] > [data-slot=message-content] > [data-slot=trace] > [data-slot=trace-collapsible]")
+    assert run.get_attribute("data-state") == "open"
+    assert run.locator(":scope > [data-slot=trace-collapsible-trigger] [data-slot=trace-line]").get_attribute("data-status") == "running"
+    wait_text(page, "#subagent-demo [data-slot=trace-title]", "Ran grep -rn cacheKey scripts")
+    replay.wait_for(state="visible", timeout=10000)
+    line = run.locator(":scope > [data-slot=trace-collapsible-trigger] [data-slot=trace-line]")
+    assert line.get_attribute("data-status") is None and line.locator("[data-slot=trace-title]").inner_text() == "Ran the research subagent"
+    assert run.locator("[data-slot=trace] [data-slot=trace-collapsible]").count() == 3
+    assert root.locator('[data-status="running"]').count() == 0
+    assert root.locator("p").count() == 2 and root.locator("p").last.inner_text().startswith("Image optimization reruns")
+
+
+def confirmation_ask(t):
+    page = t.page
+    t.docs("/docs/ai-elements/confirmation")
+    root = page.locator("#confirmation-demo")
+    next_button = page.locator("#confirmation-demo-next")
+    assert root.locator("[data-slot=message]").count() == 0 and next_button.inner_text() == "Send message"
+    next_button.click()
+    assert next_button.is_hidden()
+    wait_text(page, "#confirmation-demo [data-slot=trace-title]", "Thinking")
+    reasoning = root.locator("[data-slot=trace-collapsible]")
+    assert reasoning.get_attribute("data-state") == "open"
+    root.locator("[data-slot=item]").wait_for(timeout=10000)
+    assert reasoning.locator("[data-slot=trace-title]").inner_text() == "Thought"
+    page.wait_for_function("() => document.querySelector('#confirmation-demo [data-slot=trace-collapsible]').dataset.state === 'closed'")
+    assert root.locator("[data-slot=item-title]").inner_text() == "Run rm -rf dist?"
+    assert next_button.is_visible() and next_button.inner_text() == "Reset"
+    return page, root, next_button
+
+
+def check_ai_confirmation_approve(t):
+    page, root, next_button = confirmation_ask(t)
+    root.locator("[data-slot=item] button", has_text="Approve").click()
+    assert root.locator("[data-slot=item]").count() == 0
+    wait_text(page, "#confirmation-demo [data-slot=trace-title]", "Ran rm -rf dist")
+    wait_text(page, "#confirmation-demo p", "Removed the dist folder.")
+    line = root.locator("[data-slot=trace-line]", has_text="Ran rm -rf dist")
+    assert line.get_attribute("data-status") is None
+    next_button.wait_for(state="visible")
+    assert next_button.inner_text() == "Reset"
+    next_button.click()
+    assert root.locator("[data-slot=message]").count() == 0 and next_button.inner_text() == "Send message"
+
+
+def check_ai_confirmation_deny(t):
+    page, root, next_button = confirmation_ask(t)
+    root.locator("[data-slot=item] button", has_text="Deny").click()
+    assert root.locator("[data-slot=item]").count() == 0
+    line = root.locator("[data-slot=trace-line]", has_text="Denied rm -rf dist")
+    assert line.count() == 1 and line.get_attribute("data-status") is None
+    wait_text(page, "#confirmation-demo p", "Okay, I left the dist folder in place.")
+    next_button.wait_for(state="visible")
+
+
+def check_ai_checkpoint_restore(t):
+    page = t.page
+    t.docs("/docs/ai-elements/checkpoint")
+    root = page.locator("#checkpoint-demo")
+    next_button = page.locator("#checkpoint-demo-continue")
+    assert next_button.is_hidden() and root.locator("[data-slot=message]").count() == 4
+    page.get_by_role("button", name="Restore to Button renamed").click()
+    assert root.locator("[data-slot=message]").count() == 2
+    assert page.locator("#checkpoint-demo-restore").count() == 0
+    assert next_button.is_visible()
+    next_button.click()
+    assert next_button.is_hidden()
+    wait_text(page, "#checkpoint-demo p", "Updated the Button page to say Action.")
+    assert root.locator("[data-slot=message]").count() == 4
+    page.locator("#checkpoint-demo-restore").wait_for()
+    assert next_button.is_hidden()

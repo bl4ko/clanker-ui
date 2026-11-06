@@ -13,7 +13,8 @@
     "[data-slot=\"sidebar-menu-action\"]": "shadcn sidebar menu action is 20 px from the md breakpoint, next to its 32 px menu button"
   },
   "text-clipped": {
-    "#checkout-exp-month-ts6-rtl": "shadcn field RTL example: at 390 px the month select of the three-column row cuts the Arabic value, as the shadcn select value has no ellipsis"
+    "#checkout-exp-month-ts6-rtl": "shadcn field RTL example: at 390 px the month select of the three-column row cuts the Arabic value, as the shadcn select value has no ellipsis",
+    "#form-country": "shadcn input form example: at 390 px the country select of the two-column row cuts \"United States\", as the shadcn select value has no ellipsis"
   },
   "low-contrast": {
     "[data-slot=\"trace-description\"]": "shadcn trace description is --muted-foreground at 70 %: 2.71:1 on --background",

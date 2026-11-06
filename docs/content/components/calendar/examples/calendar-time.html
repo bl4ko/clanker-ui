@@ -1,0 +1,27 @@
+<div data-slot="card" data-size="sm" class="mx-auto w-fit">
+  <div data-slot="card-content">
+    <div data-slot="calendar" data-week-start="0" class="p-0" data-js="calendar-time"></div>
+  </div>
+  <div data-slot="card-footer" class="border-t bg-card">
+    <div data-slot="field-group">
+      <div data-slot="field">
+        <label data-slot="field-label" for="time-from">Start Time</label>
+        <div data-slot="input-group">
+          <input data-slot="input-group-control" id="time-from" type="time" step="1" value="10:30:00" class="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none">
+          <div data-slot="input-group-addon">
+            <svg data-lucide="clock-2" class="text-muted-foreground"></svg>
+          </div>
+        </div>
+      </div>
+      <div data-slot="field">
+        <label data-slot="field-label" for="time-to">End Time</label>
+        <div data-slot="input-group">
+          <input data-slot="input-group-control" id="time-to" type="time" step="1" value="12:30:00" class="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none">
+          <div data-slot="input-group-addon">
+            <svg data-lucide="clock-2" class="text-muted-foreground"></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

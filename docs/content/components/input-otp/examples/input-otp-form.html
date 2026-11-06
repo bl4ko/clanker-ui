@@ -1,0 +1,27 @@
+<div data-slot="card" class="mx-auto max-w-md">
+  <div data-slot="card-header">
+    <div data-slot="card-title">Verify your login</div>
+    <div data-slot="card-description">Enter the verification code we sent to your email address: <span class="font-medium">m@example.com</span>.</div>
+  </div>
+  <div data-slot="card-content">
+    <div data-slot="field">
+      <div class="flex items-center justify-between">
+        <label data-slot="field-label" for="otp-verification">Verification code</label>
+        <button type="button" data-slot="button" data-variant="outline" data-size="xs"><svg data-lucide="refresh-cw"></svg>Resend Code</button>
+      </div>
+      <div data-slot="input-otp">
+        <input id="otp-verification" maxlength="6" required>
+        <div data-slot="input-otp-group" class="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl"><div data-slot="input-otp-slot"></div><div data-slot="input-otp-slot"></div><div data-slot="input-otp-slot"></div></div>
+        <div data-slot="input-otp-separator" role="separator" class="mx-2"><svg data-lucide="minus"></svg></div>
+        <div data-slot="input-otp-group" class="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl"><div data-slot="input-otp-slot"></div><div data-slot="input-otp-slot"></div><div data-slot="input-otp-slot"></div></div>
+      </div>
+      <p data-slot="field-description"><a href="#">I no longer have access to this email address.</a></p>
+    </div>
+  </div>
+  <div data-slot="card-footer">
+    <div data-slot="field">
+      <button type="submit" data-slot="button" class="w-full">Verify</button>
+      <div class="text-sm text-muted-foreground">Having trouble signing in? <a href="#" class="underline underline-offset-4 transition-colors hover:text-primary">Contact support</a></div>
+    </div>
+  </div>
+</div>

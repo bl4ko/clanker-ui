@@ -1,0 +1,14 @@
+<div class="grid w-full max-w-md gap-4">
+  <div data-slot="input-group">
+    <textarea data-slot="input-group-control" id="textarea-code-32" placeholder="console.log('Hello, world!');" class="min-h-[200px]"></textarea>
+    <div data-slot="input-group-addon" data-align="block-end" class="border-t">
+      <span data-slot="input-group-text">Line 1, Column 1</span>
+      <button type="button" data-slot="button" data-input-group-button data-size="sm" data-variant="default" class="ml-auto">Run <svg data-lucide="corner-down-left"></svg></button>
+    </div>
+    <div data-slot="input-group-addon" data-align="block-start" class="border-b">
+      <span data-slot="input-group-text" class="font-mono font-medium"><svg data-lucide="file-code"></svg>script.js</span>
+      <button type="button" data-slot="button" data-input-group-button data-size="icon-xs" class="ml-auto" aria-label="Refresh"><svg data-lucide="refresh-cw"></svg></button>
+      <button type="button" data-slot="button" data-input-group-button data-variant="ghost" data-size="icon-xs" aria-label="Copy"><svg data-lucide="copy"></svg></button>
+    </div>
+  </div>
+</div>

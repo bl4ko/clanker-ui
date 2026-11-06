@@ -88,32 +88,32 @@ components/attachment#attachment-sizes	demo-attachment-2
 components/attachment#attachment-group	demo-attachment-4
 components/attachment#attachment-trigger	demo-attachment-3
 components/avatar	/docs/components/avatar
-components/avatar#avatar-demo	demo-avatar-0
-components/avatar#avatar-basic	-	no example yet
-components/avatar#avatar-badge	demo-avatar-1
-components/avatar#avatar-badge-icon	-	no example yet
-components/avatar#avatar-group	-	no example yet
-components/avatar#avatar-group-count	-	no example yet
-components/avatar#avatar-group-count-icon	-	no example yet
-components/avatar#avatar-size	demo-avatar-4
-components/avatar#avatar-dropdown	demo-avatar-3
-components/avatar#avatar-rtl	-	no example yet
+components/avatar#avatar-demo	avatar-demo
+components/avatar#avatar-basic	avatar-basic
+components/avatar#avatar-badge	avatar-badge
+components/avatar#avatar-badge-icon	avatar-badge-icon
+components/avatar#avatar-group	avatar-group
+components/avatar#avatar-group-count	avatar-group-count
+components/avatar#avatar-group-count-icon	avatar-group-count-icon
+components/avatar#avatar-size	avatar-size
+components/avatar#avatar-dropdown	avatar-dropdown
+components/avatar#avatar-rtl	avatar-rtl
 components/badge	/docs/components/badge
-components/badge#badge-demo	demo-badge-0
-components/badge#badge-variants	-	no example yet
-components/badge#badge-icon	demo-badge-1
-components/badge#badge-spinner	-	no example yet
-components/badge#badge-link	demo-badge-1
-components/badge#badge-colors	-	no example yet
-components/badge#badge-rtl	-	no example yet
+components/badge#badge-demo	badge-demo
+components/badge#badge-variants	badge-variants
+components/badge#badge-icon	badge-icon
+components/badge#badge-spinner	badge-spinner
+components/badge#badge-link	badge-link
+components/badge#badge-colors	badge-colors
+components/badge#badge-rtl	badge-rtl
 components/breadcrumb	/docs/components/breadcrumb
-components/breadcrumb#breadcrumb-demo	demo-breadcrumb-0
-components/breadcrumb#breadcrumb-basic	-	no example yet
-components/breadcrumb#breadcrumb-separator	demo-breadcrumb-2
-components/breadcrumb#breadcrumb-dropdown	demo-breadcrumb-1
-components/breadcrumb#breadcrumb-ellipsis	-	no example yet
-components/breadcrumb#breadcrumb-link	-	no example yet
-components/breadcrumb#breadcrumb-rtl	-	no example yet
+components/breadcrumb#breadcrumb-demo	breadcrumb-demo
+components/breadcrumb#breadcrumb-basic	breadcrumb-basic
+components/breadcrumb#breadcrumb-separator	breadcrumb-separator
+components/breadcrumb#breadcrumb-dropdown	breadcrumb-dropdown
+components/breadcrumb#breadcrumb-ellipsis	breadcrumb-ellipsis
+components/breadcrumb#breadcrumb-link	breadcrumb-link
+components/breadcrumb#breadcrumb-rtl	breadcrumb-rtl
 components/bubble	/docs/components/bubble
 components/bubble#bubble-demo	demo-bubble-0
 components/bubble#bubble-variants	demo-bubble-1
@@ -141,30 +141,30 @@ components/button#button-group-demo	button-group-demo
 components/button#button-render	button-as-link
 components/button#button-rtl	button-rtl
 components/button-group	/docs/components/button-group
-components/button-group#button-group-demo	demo-button-group-0
-components/button-group#button-group-orientation	demo-button-group-1
-components/button-group#button-group-size	demo-button-group-2
-components/button-group#button-group-nested	demo-button-group-3
-components/button-group#button-group-separator	demo-button-group-3
-components/button-group#button-group-split	demo-button-group-3
-components/button-group#button-group-input	demo-button-group-5
-components/button-group#button-group-input-group	-	no example yet
-components/button-group#button-group-dropdown	demo-button-group-4
-components/button-group#button-group-select	demo-button-group-5
-components/button-group#button-group-popover	demo-button-group-4
-components/button-group#button-group-rtl	-	no example yet
+components/button-group#button-group-demo	button-group-demo
+components/button-group#button-group-orientation	button-group-orientation
+components/button-group#button-group-size	button-group-size
+components/button-group#button-group-nested	button-group-nested
+components/button-group#button-group-separator	button-group-separator
+components/button-group#button-group-split	button-group-split
+components/button-group#button-group-input	button-group-input
+components/button-group#button-group-input-group	button-group-input-group
+components/button-group#button-group-dropdown	button-group-dropdown
+components/button-group#button-group-select	button-group-select
+components/button-group#button-group-popover	button-group-popover
+components/button-group#button-group-rtl	button-group-rtl
 components/calendar	/docs/components/calendar
-components/calendar#calendar-demo	demo-calendar-0
-components/calendar#calendar-hijri	-	no example yet
-components/calendar#calendar-basic	-	no example yet
-components/calendar#calendar-range	-	no example yet
-components/calendar#calendar-caption	-	no example yet
-components/calendar#calendar-presets	-	no example yet
-components/calendar#calendar-time	-	no example yet
-components/calendar#calendar-booked-dates	-	no example yet
-components/calendar#calendar-custom-days	demo-calendar-4
-components/calendar#calendar-week-numbers	demo-calendar-3
-components/calendar#calendar-rtl	-	no example yet
+components/calendar#calendar-demo	calendar-demo
+components/calendar#calendar-hijri	-	kit calendar is Gregorian only
+components/calendar#calendar-basic	calendar-basic
+components/calendar#calendar-range	calendar-range
+components/calendar#calendar-caption	calendar-caption
+components/calendar#calendar-presets	calendar-presets
+components/calendar#calendar-time	calendar-time
+components/calendar#calendar-booked-dates	calendar-booked-dates
+components/calendar#calendar-custom-days	calendar-custom-days
+components/calendar#calendar-week-numbers	calendar-week-numbers
+components/calendar#calendar-rtl	calendar-rtl
 components/card	/docs/components/card
 components/card#card-demo	card-demo
 components/card#card-small	card-small
@@ -251,17 +251,17 @@ components/command#command-groups	command-groups
 components/command#command-scrollable	command-scrollable
 components/command#command-rtl	command-rtl
 components/context-menu	/docs/components/context-menu
-components/context-menu#context-menu-demo	demo-context-menu-0
-components/context-menu#context-menu-basic	-	no example yet
-components/context-menu#context-menu-submenu	-	no example yet
-components/context-menu#context-menu-shortcuts	-	no example yet
-components/context-menu#context-menu-groups	-	no example yet
-components/context-menu#context-menu-icons	demo-context-menu-1
-components/context-menu#context-menu-checkboxes	-	no example yet
-components/context-menu#context-menu-radio	-	no example yet
-components/context-menu#context-menu-destructive	demo-context-menu-1
-components/context-menu#context-menu-sides	-	no example yet
-components/context-menu#context-menu-rtl	-	no example yet
+components/context-menu#context-menu-demo	context-menu-demo
+components/context-menu#context-menu-basic	context-menu-basic
+components/context-menu#context-menu-submenu	context-menu-submenu
+components/context-menu#context-menu-shortcuts	context-menu-shortcuts
+components/context-menu#context-menu-groups	context-menu-groups
+components/context-menu#context-menu-icons	context-menu-icons
+components/context-menu#context-menu-checkboxes	context-menu-checkboxes
+components/context-menu#context-menu-radio	context-menu-radio
+components/context-menu#context-menu-destructive	context-menu-destructive
+components/context-menu#context-menu-sides	context-menu-sides
+components/context-menu#context-menu-rtl	context-menu-rtl
 components/data-table	/docs/components/data-table
 components/data-table#data-table-demo	data-table-demo
 components/data-table#data-table-rtl	data-table-rtl
@@ -292,19 +292,19 @@ components/drawer#drawer-non-modal	demo-drawer-5
 components/drawer#drawer-snap-points	demo-drawer-3
 components/drawer#drawer-dialog	demo-drawer-6
 components/dropdown-menu	/docs/components/dropdown-menu
-components/dropdown-menu#dropdown-menu-demo	demo-dropdown-menu-0
-components/dropdown-menu#dropdown-menu-basic	-	no example yet
-components/dropdown-menu#dropdown-menu-submenu	-	no example yet
-components/dropdown-menu#dropdown-menu-shortcuts	-	no example yet
-components/dropdown-menu#dropdown-menu-icons	demo-dropdown-menu-2
-components/dropdown-menu#dropdown-menu-checkboxes	demo-dropdown-menu-1
-components/dropdown-menu#dropdown-menu-checkboxes-icons	demo-dropdown-menu-1
-components/dropdown-menu#dropdown-menu-radio-group	demo-dropdown-menu-1
-components/dropdown-menu#dropdown-menu-radio-icons	-	no example yet
-components/dropdown-menu#dropdown-menu-destructive	demo-dropdown-menu-2
-components/dropdown-menu#dropdown-menu-avatar	-	no example yet
-components/dropdown-menu#dropdown-menu-complex	-	no example yet
-components/dropdown-menu#dropdown-menu-rtl	-	no example yet
+components/dropdown-menu#dropdown-menu-demo	dropdown-menu-demo
+components/dropdown-menu#dropdown-menu-basic	dropdown-menu-basic
+components/dropdown-menu#dropdown-menu-submenu	dropdown-menu-submenu
+components/dropdown-menu#dropdown-menu-shortcuts	dropdown-menu-shortcuts
+components/dropdown-menu#dropdown-menu-icons	dropdown-menu-icons
+components/dropdown-menu#dropdown-menu-checkboxes	dropdown-menu-checkboxes
+components/dropdown-menu#dropdown-menu-checkboxes-icons	dropdown-menu-checkboxes-icons
+components/dropdown-menu#dropdown-menu-radio-group	dropdown-menu-radio-group
+components/dropdown-menu#dropdown-menu-radio-icons	dropdown-menu-radio-icons
+components/dropdown-menu#dropdown-menu-destructive	dropdown-menu-destructive
+components/dropdown-menu#dropdown-menu-avatar	dropdown-menu-avatar
+components/dropdown-menu#dropdown-menu-complex	dropdown-menu-complex
+components/dropdown-menu#dropdown-menu-rtl	dropdown-menu-rtl
 components/empty	/docs/components/empty
 components/empty#empty-demo	demo-empty-0
 components/empty#empty-outline	demo-empty-1
@@ -348,31 +348,31 @@ components/input#input-button-group	input-button-group
 components/input#input-form	input-form
 components/input#input-rtl	input-rtl
 components/input-group	/docs/components/input-group
-components/input-group#input-group-demo	demo-input-group-0
-components/input-group#input-group-inline-start	-	no example yet
-components/input-group#input-group-inline-end	-	no example yet
-components/input-group#input-group-block-start	demo-input-group-2
-components/input-group#input-group-block-end	demo-input-group-2
-components/input-group#input-group-icon	-	no example yet
-components/input-group#input-group-text	demo-input-group-1
-components/input-group#input-group-button	demo-input-group-1
-components/input-group#input-group-kbd	demo-input-group-1
-components/input-group#input-group-dropdown	-	no example yet
-components/input-group#input-group-spinner	-	no example yet
-components/input-group#input-group-textarea	-	no example yet
-components/input-group#input-group-custom	-	no example yet
-components/input-group#input-group-rtl	-	no example yet
+components/input-group#input-group-demo	input-group-demo
+components/input-group#input-group-inline-start	input-group-inline-start
+components/input-group#input-group-inline-end	input-group-inline-end
+components/input-group#input-group-block-start	input-group-block-start
+components/input-group#input-group-block-end	input-group-block-end
+components/input-group#input-group-icon	input-group-icon
+components/input-group#input-group-text	input-group-text
+components/input-group#input-group-button	input-group-button
+components/input-group#input-group-kbd	input-group-kbd
+components/input-group#input-group-dropdown	input-group-dropdown
+components/input-group#input-group-spinner	input-group-spinner
+components/input-group#input-group-textarea	input-group-textarea
+components/input-group#input-group-custom	input-group-custom
+components/input-group#input-group-rtl	input-group-rtl
 components/input-otp	/docs/components/input-otp
-components/input-otp#input-otp-demo	demo-input-otp-0
-components/input-otp#input-otp-pattern	demo-input-otp-1
-components/input-otp#input-otp-separator	demo-input-otp-1
-components/input-otp#input-otp-disabled	demo-input-otp-3
-components/input-otp#input-otp-controlled	demo-input-otp-2
-components/input-otp#input-otp-invalid	demo-input-otp-3
-components/input-otp#input-otp-four-digits	demo-input-otp-2
-components/input-otp#input-otp-alphanumeric	-	no example yet
-components/input-otp#input-otp-form	-	no example yet
-components/input-otp#input-otp-rtl	-	no example yet
+components/input-otp#input-otp-demo	input-otp-demo
+components/input-otp#input-otp-pattern	input-otp-pattern
+components/input-otp#input-otp-separator	input-otp-separator
+components/input-otp#input-otp-disabled	input-otp-disabled
+components/input-otp#input-otp-controlled	input-otp-controlled
+components/input-otp#input-otp-invalid	input-otp-invalid
+components/input-otp#input-otp-four-digits	input-otp-four-digits
+components/input-otp#input-otp-alphanumeric	input-otp-alphanumeric
+components/input-otp#input-otp-form	input-otp-form
+components/input-otp#input-otp-rtl	input-otp-rtl
 components/item	/docs/components/item
 components/item#item-demo	item-demo
 components/item#item-variant	item-variant

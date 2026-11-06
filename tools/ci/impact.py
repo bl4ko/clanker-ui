@@ -210,6 +210,8 @@ def js_spans(src, g):
     return spans
 
 
+TAGS = {"button", "input", "label", "table", "select", "dialog", "form", "textarea", "progress", "menu", "output", "item", "page", "part", "empty", "field", "message"}
+LITERAL = re.compile(r"""["'`]([a-z][a-z0-9-]*)["'`=\]]""")
 IDENT = re.compile(r"(?<![\w$])[A-Za-z_$][\w$]*")
 
 
@@ -376,7 +378,11 @@ def line_reqs(kind, text, lines, g):
         hit = {i for i, st in enumerate(stmts) for ln in lines if st.l0 <= ln <= st.l1}
         if any(not any(st.l0 <= ln <= st.l1 for st in stmts) for ln in lines):
             return None
-        comps = {stmts[i].comp for i in js_closure(stmts, hit)}
+        closure = js_closure(stmts, hit)
+        comps = {stmts[i].comp for i in closure}
+        for i in closure:
+            st = stmts[i]
+            comps |= {c for s in LITERAL.findall(text[st.start : st.end]) if s not in TAGS and (c := g.component(s))}
         return None if "*" in comps else [frozenset({"c:" + c}) for c in sorted(comps)]
     spans = css_spans(text, g)
     out = []
@@ -548,6 +554,17 @@ class Recorder:
         if engine == "chromium":
             self.cdp = context.new_cdp_session(page)
             self.start()
+            for name in ("goto", "reload", "go_back", "go_forward"):
+                setattr(page, name, self.wrap(getattr(page, name)))
+
+    def wrap(self, navigate):
+        def run(*args, **kwargs):
+            self.flush()
+            try:
+                return navigate(*args, **kwargs)
+            finally:
+                self.loaded()
+        return run
 
     def start(self):
         self.cdp.send("Profiler.enable")

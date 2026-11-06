@@ -1,0 +1,44 @@
+<div class="flex min-h-72 w-full max-w-sm flex-col gap-4 py-6 text-sm" id="plan-demo">
+  <div data-slot="message" data-align="end">
+    <div data-slot="message-content">
+      <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Migrate the dialog components to Base UI.</div></div>
+    </div>
+  </div>
+  <div data-slot="message">
+    <div data-slot="message-content" class="gap-4">
+      <div data-slot="trace">
+        <div data-slot="trace-collapsible" data-default-open>
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line">
+              <span data-slot="trace-icon"><svg data-lucide="route"></svg></span>
+              <span data-slot="trace-title">Plan: migrate to Base UI</span>
+              <span data-slot="trace-description">4 of 4 done</span>
+            </span>
+          </button>
+          <div data-slot="trace-collapsible-content">
+            <div data-slot="trace">
+              <span data-slot="trace-line">
+                <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                <span data-slot="trace-title">Install @base-ui/react</span>
+              </span>
+              <span data-slot="trace-line">
+                <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                <span data-slot="trace-title">Replace the Radix imports</span>
+              </span>
+              <span data-slot="trace-line">
+                <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                <span data-slot="trace-title">Rename asChild to render</span>
+              </span>
+              <span data-slot="trace-line">
+                <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+                <span data-slot="trace-title">Run the type checker</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p>Migrated Dialog and AlertDialog. The type checker passes.</p>
+    </div>
+  </div>
+  <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="mt-auto self-start" id="plan-demo-replay">Replay</button>
+</div>

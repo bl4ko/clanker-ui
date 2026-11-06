@@ -1,0 +1,18 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/subagent",
+  "parts": {
+    "run": {"role": "button", "name": "Ran the research subagent"},
+    "step": {"role": "button", "name": "Ran grep -rn cacheKey scripts"},
+    "output": {"slot": "code-block", "optional": true}
+  },
+  "anchor": "run",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "tab"},
+    {"do": "press", "key": "Enter"},
+    {"do": "click", "target": "step", "label": "close the step"},
+    {"do": "click", "target": "run"},
+    {"do": "click", "target": "run", "label": "open the run"}
+  ]
+}

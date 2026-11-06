@@ -2248,9 +2248,14 @@ def check_field_separator_line(t):
           document.body.prepend(group)
           await new Promise(r => setTimeout(r, 0))
           const line = plain.querySelector(':scope > [data-slot="separator"]')
-          const out = [!!line, line && Math.round(line.getBoundingClientRect().height), line && getComputedStyle(line).position, plain.dataset.content, text.dataset.content, text.querySelectorAll('[data-slot="separator"]').length]
+          const probe = h("div", { "data-slot": "separator" })
+          document.body.append(probe)
+          const border = getComputedStyle(probe).backgroundColor
+          probe.remove()
+          const mid = el => { const r = el.getBoundingClientRect(); return (r.top + r.bottom) / 2 }
+          const out = [!!line, line && Math.round(line.getBoundingClientRect().height), line && getComputedStyle(line).position, plain.dataset.content, text.dataset.content, text.querySelectorAll('[data-slot="separator"]').length, line && Math.abs(mid(line) - mid(plain)) < 1, line && getComputedStyle(line).backgroundColor === border, Math.round(text.querySelector('[data-slot="separator"]').getBoundingClientRect().width) === Math.round(text.getBoundingClientRect().width)]
           group.remove()
           return out
         }"""
     )
-    assert result == [True, 1, "absolute", "false", "true", 1], result
+    assert result == [True, 1, "absolute", "false", "true", 1, True, True, True], result

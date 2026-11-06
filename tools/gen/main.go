@@ -484,9 +484,10 @@ func utilities(src, pinPath, content, out, tailwind string) error {
 		return err
 	}
 	source := fmt.Sprintf("@source %q;", abs)
+	kitOwn := `@source not inline("{scroll-fade,scroll-fade-x}");`
 	css := layerOrder +
-		importUtilities + "\n" + source + "\n" + in.preamble()
-	compiled, stderr, err := compile(tailwind, work, css, importUtilities, source)
+		importUtilities + "\n" + source + "\n" + kitOwn + "\n" + in.preamble()
+	compiled, stderr, err := compile(tailwind, work, css, importUtilities, source, kitOwn)
 	if err != nil {
 		return fmt.Errorf("tailwindcss: %v\n%s", err, stderr)
 	}

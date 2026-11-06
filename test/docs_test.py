@@ -81,7 +81,7 @@ def check_docs_sidebar(t):
     assert [s.strip() for s in sidebar.locator('[data-active="true"]').all_inner_texts()] == ["Components", "Button"]
     assert [s.strip() for s in sidebar.locator('[aria-current="page"]').all_inner_texts()] == ["Button"]
     labels = [s.strip() for s in sidebar.locator('[data-slot="sidebar-group-label"]').all_inner_texts()]
-    assert labels == ["Sections", "Components", "Blocks", "Get Started", "Utilities", "clanker-ui"]
+    assert labels == ["Sections", "Components", "AI Elements", "Blocks", "Get Started", "Utilities", "clanker-ui"]
     assert sidebar.locator('a[href="/docs"]').count() == 1
     styles = page.evaluate("""() => {
       const a = document.querySelector('[data-docs="sidebar"] [aria-current="page"]')
@@ -476,7 +476,7 @@ def check_docs_pages(t):
     t.shot("components", page)
     t.docs("/docs/components/accordion")
     assert "not ported yet" not in page.locator('[data-docs="article"]').inner_text()
-    assert page.locator('#accordion [data-docs="preview"] [data-slot="accordion"]').count() > 0
+    assert page.locator('[data-example="accordion-demo"] [data-docs="preview"] [data-slot="accordion"]').count() > 0
     assert page.locator('link[rel="alternate"][type="text/markdown"]').get_attribute("href") == "/docs/components/accordion.md"
     assert page.locator('link[rel="describedby"]').get_attribute("href") == "/llms.txt"
     t.docs("/docs/installation")
@@ -530,6 +530,7 @@ def check_docs_preview_keeps_kit_styles(t):
       document.head.append(link)
     })"""
     page.evaluate(load, "/clanker-ui.css")
+    page.evaluate(load, href.replace("/docs.css", "/fonts.css"))
     t.settle(5000)
     before = page.evaluate(KIT_SNAPSHOT, KIT_PROPS)
     page.evaluate(load, href)
@@ -707,8 +708,9 @@ def check_docs_component_demos(t):
     page.wait_for_function("""() => !document.querySelector('#dialog-demo dialog').open""")
     t.docs("/docs/components/chart")
     page.wait_for_function("""() => document.querySelectorAll('#chart [data-docs="preview"] [data-slot="chart"] svg').length >= 10""")
-    t.docs("/docs/components/table")
-    page.wait_for_function("""() => document.querySelectorAll('#table-data tbody tr[data-id]').length === 5""")
+    t.docs("/docs/components/data-table")
+    page.locator('[data-example="data-table-demo"] [data-js="filter"]').fill("ken")
+    page.wait_for_function("""() => document.querySelectorAll('[data-example="data-table-demo"] tbody tr[data-id]:not([hidden])').length === 1""")
     t.docs("/docs/components/stat-tile")
     page.wait_for_function("""() => document.querySelectorAll('#chart-stat [data-slot="chart-stat"]').length >= 7""")
     t.docs("/docs/components/sidebar")
@@ -765,6 +767,8 @@ def check_blocks_render(t):
     t.docs("/blocks/detail")
     stats = page.evaluate(BLOCK_LAYOUT)["stats"][:4]
     assert len({s["y"] for s in stats}) == (2 if t.mobile else 1), stats
+    side = page.evaluate("""() => { const a = document.querySelector('[data-slot=page-body] > [data-slot=page-aside]').getBoundingClientRect(); const m = document.querySelector('[data-slot=page-body] > :first-child').getBoundingClientRect(); return a.left >= m.right - 1 || a.right <= m.left + 1 }""")
+    assert side == (t.width >= 1024), "the detail aside is a side column from 64rem"
     t.docs("/blocks/settings")
     nav = page.evaluate(BLOCK_LAYOUT)["nav"]
     assert len({n["y"] for n in nav}) == (1 if t.mobile else len(nav)), nav
@@ -898,6 +902,15 @@ def check_blocks_card_grid(t):
     t.docs("/blocks/card-grid")
     cards = page.locator('#books > [data-slot="card"]:not([hidden])')
     assert cards.count() == 12
+    m = page.locator("#shelf [data-slot=data-table-toolbar]").evaluate("""bar => {
+      const r = s => bar.querySelector(s).getBoundingClientRect().toJSON()
+      const status = r('#shelf-select [data-slot=select-trigger]').width ? r('#shelf-select [data-slot=select-trigger]') : r('[data-slot=tabs-list]')
+      return { bar: bar.getBoundingClientRect().width, search: r('#shelf-filter'), status, sort: r('#shelf-sort [data-slot=select-trigger]') }
+    }""")
+    if t.mobile:
+        assert abs(m["search"]["width"] - m["bar"]) < 1 and abs(m["status"]["top"] - m["sort"]["top"]) < 1 and m["sort"]["top"] >= m["search"]["bottom"], m
+    else:
+        assert abs(m["search"]["top"] - m["sort"]["top"]) < 1, m
     if t.mobile:
         page.locator("#shelf-select [data-slot=select-trigger]").click()
         page.get_by_role("option", name="Read (6)").click()
@@ -952,6 +965,8 @@ def check_blocks_login_split(t):
     t.docs("/blocks/login-split")
     aside = page.locator('[data-slot="page-aside"]')
     assert aside.is_visible() == (t.width >= 1024)
+    step = """() => { const d = document.createElement('div'); d.hidden = true; document.querySelector('[data-layout=split] > :first-child').append(d); const v = getComputedStyle(d).display; d.remove(); return v }"""
+    assert page.evaluate(step) == "none", "a hidden step in the form column stays hidden"
     link = page.get_by_role("link", name="Forgot your password?")
     muted = page.evaluate("""() => { const p = document.createElement('p'); p.style.color = 'var(--muted-foreground)'; document.body.append(p); const c = getComputedStyle(p).color; p.remove(); return c }""")
     assert link.evaluate("a => getComputedStyle(a).color") == muted

@@ -1,0 +1,20 @@
+<div data-slot="button-group" role="group">
+  <button type="button" data-slot="button" data-variant="outline">Follow</button>
+  <div data-slot="dropdown-menu">
+    <button type="button" data-slot="button" data-variant="outline" class="pl-2!" data-dropdown-menu-trigger aria-label="More follow options"><svg data-lucide="chevron-down"></svg></button>
+    <div data-slot="dropdown-menu-content" data-align="end" class="w-44">
+      <div data-slot="dropdown-menu-group">
+        <div data-slot="dropdown-menu-item"><svg data-lucide="volume-off"></svg>Mute Conversation</div>
+        <div data-slot="dropdown-menu-item"><svg data-lucide="check"></svg>Mark as Read</div>
+        <div data-slot="dropdown-menu-item"><svg data-lucide="triangle-alert"></svg>Report Conversation</div>
+        <div data-slot="dropdown-menu-item"><svg data-lucide="user-round-x"></svg>Block User</div>
+        <div data-slot="dropdown-menu-item"><svg data-lucide="share"></svg>Share Conversation</div>
+        <div data-slot="dropdown-menu-item"><svg data-lucide="copy"></svg>Copy Conversation</div>
+      </div>
+      <div data-slot="dropdown-menu-separator"></div>
+      <div data-slot="dropdown-menu-group">
+        <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash"></svg>Delete Conversation</div>
+      </div>
+    </div>
+  </div>
+</div>

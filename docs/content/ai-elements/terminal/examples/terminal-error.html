@@ -1,0 +1,30 @@
+<div data-slot="trace" class="max-w-sm">
+  <span data-slot="trace-line">
+    <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+    <span data-slot="trace-title">Ran pnpm install</span>
+  </span>
+  <div data-slot="trace-collapsible" data-default-open>
+    <button type="button" data-slot="trace-collapsible-trigger">
+      <span data-slot="trace-line" data-status="error">
+        <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+        <span data-slot="trace-title">pnpm lint exited with code 1</span>
+      </span>
+    </button>
+    <div data-slot="trace-collapsible-content">
+      <div data-slot="code-block" data-size="sm">
+        <pre data-slot="code-block-content" data-wrap="true" class="max-h-64"><code data-slot="code-block-code">&gt; acme-chat@0.1.0 lint
+&gt; eslint .
+
+app/api/chat/route.ts
+  14:7  error  'model' is assigned a value but never used  no-unused-vars
+
+components/chat.tsx
+  42:5  error  React Hook useEffect has a missing dependency: 'messages'  react-hooks/exhaustive-deps
+
+✖ 2 problems (2 errors, 0 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.</code></pre>
+      </div>
+    </div>
+  </div>
+</div>

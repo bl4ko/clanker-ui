@@ -1,0 +1,39 @@
+<div data-slot="table-container">
+  <table data-slot="table">
+    <caption data-slot="table-caption">A list of your recent invoices.</caption>
+    <thead data-slot="table-header">
+      <tr data-slot="table-row">
+        <th data-slot="table-head" scope="col" class="w-[100px]">Invoice</th>
+        <th data-slot="table-head" scope="col">Status</th>
+        <th data-slot="table-head" scope="col">Method</th>
+        <th data-slot="table-head" scope="col" class="text-right">Amount</th>
+      </tr>
+    </thead>
+    <tbody data-slot="table-body">
+        <tr data-slot="table-row">
+          <td data-slot="table-cell" class="font-medium">INV001</td>
+          <td data-slot="table-cell">Paid</td>
+          <td data-slot="table-cell">Credit Card</td>
+          <td data-slot="table-cell" class="text-right">$250.00</td>
+        </tr>
+        <tr data-slot="table-row">
+          <td data-slot="table-cell" class="font-medium">INV002</td>
+          <td data-slot="table-cell">Pending</td>
+          <td data-slot="table-cell">PayPal</td>
+          <td data-slot="table-cell" class="text-right">$150.00</td>
+        </tr>
+        <tr data-slot="table-row">
+          <td data-slot="table-cell" class="font-medium">INV003</td>
+          <td data-slot="table-cell">Unpaid</td>
+          <td data-slot="table-cell">Bank Transfer</td>
+          <td data-slot="table-cell" class="text-right">$350.00</td>
+        </tr>
+    </tbody>
+    <tfoot data-slot="table-footer">
+      <tr data-slot="table-row">
+        <td data-slot="table-cell" colspan="3">Total</td>
+        <td data-slot="table-cell" class="text-right">$2,500.00</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>

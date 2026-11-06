@@ -1,0 +1,26 @@
+<div data-slot="data-table" class="w-full">
+  <div data-slot="data-table-toolbar">
+    <div><input data-slot="input" type="search" placeholder="Filter invoices..." aria-label="Filter invoices"></div>
+    <div><button type="button" data-slot="button" data-size="sm"><svg data-lucide="plus"></svg>New invoice</button></div>
+  </div>
+  <div data-slot="table-container">
+    <table data-slot="table">
+      <thead data-slot="table-header">
+        <tr data-slot="table-row"><th data-slot="table-head" scope="col">Invoice</th><th data-slot="table-head" scope="col">Status</th><th data-slot="table-head" scope="col" data-align="end">Amount</th></tr>
+      </thead>
+      <tbody data-slot="table-body">
+        <tr data-slot="table-row"><td data-slot="table-cell">INV-001</td><td data-slot="table-cell"><span data-slot="badge" data-variant="success"><svg data-lucide="circle-check"></svg>Paid</span></td><td data-slot="table-cell" data-align="end">$250.00</td></tr>
+        <tr data-slot="table-row"><td data-slot="table-cell">INV-002</td><td data-slot="table-cell"><span data-slot="badge" data-variant="outline"><svg data-lucide="clock"></svg>Pending</span></td><td data-slot="table-cell" data-align="end">$1,150.00</td></tr>
+        <tr data-slot="table-row"><td data-slot="table-cell">INV-003</td><td data-slot="table-cell"><span data-slot="badge" data-variant="warning"><svg data-lucide="triangle-alert"></svg>Overdue</span></td><td data-slot="table-cell" data-align="end">$90.00</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div data-slot="data-table-pagination">
+    <div data-slot="data-table-selection">3 invoices</div>
+    <div>Page 1 of 1</div>
+    <div>
+      <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Go to previous page" disabled><svg data-lucide="chevron-left"></svg></button>
+      <button type="button" data-slot="button" data-variant="outline" data-size="icon-sm" aria-label="Go to next page" disabled><svg data-lucide="chevron-right"></svg></button>
+    </div>
+  </div>
+</div>

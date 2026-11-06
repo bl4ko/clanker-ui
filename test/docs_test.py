@@ -531,6 +531,7 @@ def check_docs_preview_keeps_kit_styles(t):
     })"""
     page.evaluate(load, "/clanker-ui.css")
     page.evaluate(load, href.replace("/docs.css", "/fonts.css"))
+    page.evaluate("() => Promise.allSettled([...document.fonts].map(f => f.load())).then(() => document.fonts.ready).then(() => true)")
     t.settle(5000)
     before = page.evaluate(KIT_SNAPSHOT, KIT_PROPS)
     page.evaluate(load, href)
@@ -656,7 +657,7 @@ def check_docs_code_block_preview(t):
     assert got == ["16px", "none", "0px"], got
 
 
-RHEA_PROPS = ["border-top-width", "border-top-left-radius", "padding-top", "padding-inline-start", "margin-top", "box-shadow", "background-color", "color", "font-size", "font-weight", "line-height", "gap", "display", "outline-width", "border-top-color"]
+RHEA_PROPS = ["border-top-width", "border-top-left-radius", "padding-top", "padding-inline-start", "margin-top", "box-shadow", "background-color", "color", "font-size", "font-weight", "line-height", "gap", "display", "outline-width", "border-top-color", "fill", "stroke"]
 RHEA_SNAPSHOT = """props => [...document.querySelectorAll('[data-docs="preview"][data-docs-style="rhea"]')].map(root => [root, ...root.querySelectorAll("*")].map(el => {
   const cs = getComputedStyle(el)
   return [el.dataset.slot || el.tagName, ...props.map(p => cs.getPropertyValue(p))]

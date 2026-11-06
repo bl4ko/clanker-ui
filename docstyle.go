@@ -123,7 +123,7 @@ func docsStyleCSS(name string, base, style []byte, extra ...[]byte) ([]byte, err
 		b.WriteString(top[0] + "\n")
 		top = top[1:]
 	}
-	fmt.Fprintf(&b, "@layer clanker-docs-%s {\n@layer reset {\n%s {\n*, ::before, ::after, ::backdrop, ::placeholder, ::marker, ::file-selector-button { all: revert;", name, scope)
+	fmt.Fprintf(&b, "@layer clanker-docs-%s {\n@layer reset {\n%s {\n:not(svg, svg *), ::before, ::after, ::backdrop, ::placeholder, ::marker, ::file-selector-button { all: revert;", name, scope)
 	for _, p := range slices.Sorted(func(yield func(string) bool) {
 		for p := range props {
 			if !yield(p) {
@@ -181,7 +181,8 @@ func docsStyleCSS(name string, base, style []byte, extra ...[]byte) ([]byte, err
 }
 
 func (d *docsSite) hasScheme(name string) bool {
-	return schemeName.MatchString(name) && strings.Contains(string(d.assets["clanker-ui-themes.css"]), `[data-scheme~="`+name+`"]`)
+	css := string(d.assets["clanker-ui-themes.css"])
+	return schemeName.MatchString(name) && (strings.Contains(css, `[data-scheme~="`+name+`"]`) || strings.Contains(css, `[data-scheme~=`+name+`]`))
 }
 
 func (d *docsSite) loadStyles(fsys fs.FS) error {

@@ -829,7 +829,7 @@ func TestExampleClassesHaveRules(t *testing.T) {
 			t.Errorf("docs.css has no rule for the preview height %s", h)
 		}
 	}
-	css := readText(t, "docs/assets/examples.css")
+	css := readText(t, "docs/assets/examples.css") + readText(t, "clanker-ui.css")
 	esc := regexp.MustCompile(`[^A-Za-z0-9_-]`)
 	class := regexp.MustCompile(`\sclass="([^"]*)"`)
 	files, _ := filepath.Glob("docs/content/*/*/examples/*.html")

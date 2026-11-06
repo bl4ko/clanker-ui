@@ -53,13 +53,13 @@ ai-elements/tool#tool-states	-	page has no match
 ai-elements/tool#tool-sheet	-	page has no match
 ai-elements/tool#tool-approval	-	page has no match
 components/accordion	/docs/components/accordion
-components/accordion#accordion-demo	demo-accordion-0
-components/accordion#accordion-basic	-	no example yet
-components/accordion#accordion-multiple	demo-accordion-1
-components/accordion#accordion-disabled	-	no example yet
-components/accordion#accordion-borders	demo-accordion-3
-components/accordion#accordion-card	demo-accordion-3
-components/accordion#accordion-rtl	-	no example yet
+components/accordion#accordion-demo	accordion-demo
+components/accordion#accordion-basic	accordion-basic
+components/accordion#accordion-multiple	accordion-multiple
+components/accordion#accordion-disabled	accordion-disabled
+components/accordion#accordion-borders	accordion-borders
+components/accordion#accordion-card	accordion-card
+components/accordion#accordion-rtl	accordion-rtl
 components/alert	/docs/components/alert
 components/alert#alert-demo	alert-demo
 components/alert#alert-basic	alert-basic
@@ -244,12 +244,12 @@ components/combobox#combobox-popup	demo-combobox-3
 components/combobox#combobox-input-group	-	no example yet
 components/combobox#combobox-rtl	-	no example yet
 components/command	/docs/components/command
-components/command#command-demo	demo-command-0
-components/command#command-basic	-	no example yet
-components/command#command-shortcuts	-	no example yet
-components/command#command-groups	-	no example yet
-components/command#command-scrollable	demo-command-2
-components/command#command-rtl	-	no example yet
+components/command#command-demo	command-demo
+components/command#command-basic	command-basic
+components/command#command-shortcuts	command-shortcuts
+components/command#command-groups	command-groups
+components/command#command-scrollable	command-scrollable
+components/command#command-rtl	command-rtl
 components/context-menu	/docs/components/context-menu
 components/context-menu#context-menu-demo	demo-context-menu-0
 components/context-menu#context-menu-basic	-	no example yet
@@ -314,19 +314,19 @@ components/empty#empty-avatar-group	-	no example yet
 components/empty#empty-input-group	-	no example yet
 components/empty#empty-rtl	-	no example yet
 components/field	/docs/components/field
-components/field#field-demo	demo-field-0
-components/field#field-input	-	no example yet
-components/field#field-textarea	-	no example yet
-components/field#field-select	-	no example yet
-components/field#field-slider	demo-field-2
-components/field#field-fieldset	-	no example yet
-components/field#field-checkbox	-	no example yet
-components/field#field-radio	-	no example yet
-components/field#field-switch	-	no example yet
-components/field#field-choice-card	demo-field-1
-components/field#field-group	-	no example yet
-components/field#field-rtl	-	no example yet
-components/field#field-responsive	demo-field-3
+components/field#field-demo	field-demo
+components/field#field-input	field-input
+components/field#field-textarea	field-textarea
+components/field#field-select	field-select
+components/field#field-slider	field-slider
+components/field#field-fieldset	field-fieldset
+components/field#field-checkbox	field-checkbox
+components/field#field-radio	field-radio
+components/field#field-switch	field-switch
+components/field#field-choice-card	field-choice-card
+components/field#field-group	field-group
+components/field#field-rtl	field-rtl
+components/field#field-responsive	field-responsive
 components/hover-card	/docs/components/hover-card
 components/hover-card#hover-card-demo	demo-hover-card-0
 components/hover-card#hover-card-sides	demo-hover-card-1
@@ -374,17 +374,17 @@ components/input-otp#input-otp-alphanumeric	-	no example yet
 components/input-otp#input-otp-form	-	no example yet
 components/input-otp#input-otp-rtl	-	no example yet
 components/item	/docs/components/item
-components/item#item-demo	demo-item-0
-components/item#item-variant	demo-item-1
-components/item#item-size	demo-item-1
-components/item#item-icon	-	no example yet
-components/item#item-avatar	-	no example yet
-components/item#item-image	-	no example yet
-components/item#item-group	demo-item-2
-components/item#item-header	demo-item-2
-components/item#item-link	-	no example yet
-components/item#item-dropdown	-	no example yet
-components/item#item-rtl	-	no example yet
+components/item#item-demo	item-demo
+components/item#item-variant	item-variant
+components/item#item-size	item-size
+components/item#item-icon	item-icon
+components/item#item-avatar	item-avatar
+components/item#item-image	item-image
+components/item#item-group	item-group
+components/item#item-header	item-header
+components/item#item-link	item-link
+components/item#item-dropdown	item-dropdown
+components/item#item-rtl	item-rtl
 components/kbd	/docs/components/kbd
 components/kbd#kbd-demo	demo-kbd-0
 components/kbd#kbd-group	demo-kbd-1
@@ -452,10 +452,10 @@ components/popover#popover-alignments	demo-popover-1
 components/popover#popover-form	demo-popover-2
 components/popover#popover-rtl	-	no example yet
 components/progress	/docs/components/progress
-components/progress#progress-demo	demo-progress-0
-components/progress#progress-label	-	no example yet
-components/progress#progress-controlled	-	no example yet
-components/progress#progress-rtl	-	no example yet
+components/progress#progress-demo	progress-demo
+components/progress#progress-label	progress-label
+components/progress#progress-controlled	progress-controlled
+components/progress#progress-rtl	progress-rtl
 components/questionnaire	/docs/components/questionnaire
 components/questionnaire#questionnaire-demo	demo-questionnaire-0
 components/questionnaire#questionnaire-multiple	-	no example yet
@@ -662,20 +662,20 @@ forms/tanstack-form#form-tanstack-switch	-	page has no match
 forms/tanstack-form#form-tanstack-complex	-	page has no match
 forms/tanstack-form#form-tanstack-array	-	page has no match
 utils/scroll-fade	/docs/utils/scroll-fade
-utils/scroll-fade#scroll-fade-demo	-	no example yet
-utils/scroll-fade#scroll-fade-overflow	-	no example yet
-utils/scroll-fade#scroll-fade-horizontal	-	no example yet
-utils/scroll-fade#scroll-fade-edge	-	no example yet
-utils/scroll-fade#scroll-fade-size	-	no example yet
-utils/scroll-fade#scroll-fade-none	-	no example yet
-utils/scroll-fade#scroll-fade-rtl	-	no example yet
+utils/scroll-fade#scroll-fade-demo	scroll-fade-demo
+utils/scroll-fade#scroll-fade-overflow	scroll-fade-overflow
+utils/scroll-fade#scroll-fade-horizontal	scroll-fade-horizontal
+utils/scroll-fade#scroll-fade-edge	scroll-fade-edge
+utils/scroll-fade#scroll-fade-size	scroll-fade-size
+utils/scroll-fade#scroll-fade-none	scroll-fade-none
+utils/scroll-fade#scroll-fade-rtl	scroll-fade-rtl
 utils/shimmer	/docs/utils/shimmer
-utils/shimmer#shimmer-demo	-	no example yet
-utils/shimmer#shimmer-marker	-	no example yet
-utils/shimmer#shimmer-color	-	no example yet
-utils/shimmer#shimmer-duration	-	no example yet
-utils/shimmer#shimmer-spread	-	no example yet
-utils/shimmer#shimmer-angle	-	no example yet
-utils/shimmer#shimmer-once	-	no example yet
-utils/shimmer#shimmer-none	-	no example yet
-utils/shimmer#shimmer-rtl	-	no example yet
+utils/shimmer#shimmer-demo	shimmer-demo
+utils/shimmer#shimmer-marker	shimmer-marker
+utils/shimmer#shimmer-color	shimmer-color
+utils/shimmer#shimmer-duration	shimmer-duration
+utils/shimmer#shimmer-spread	shimmer-spread
+utils/shimmer#shimmer-angle	shimmer-angle
+utils/shimmer#shimmer-once	shimmer-once
+utils/shimmer#shimmer-none	shimmer-none
+utils/shimmer#shimmer-rtl	shimmer-rtl

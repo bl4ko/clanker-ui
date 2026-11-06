@@ -6,7 +6,7 @@ _spec = importlib.util.spec_from_file_location("clanker_behavior_engine", pathli
 E = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(E)
 
-START = "/test/behavior/fixtures/index.html"
+START = None
 
 
 def behavior(t, name):

@@ -249,13 +249,21 @@ def explain(text, op, got, want, msg=None):
     return explain_msg(f"{text}\n    got:      {short(repr(got))}\n    expected: {op}{short(repr(want))}", msg)
 
 
+def opens_page(fn):
+    body = [s for s in fn.body if not (isinstance(s, ast.Expr) and isinstance(s.value, ast.Constant))]
+    call = body[0].value if body and isinstance(body[0], ast.Expr) else None
+    return isinstance(call, ast.Call) and isinstance(call.func, ast.Attribute) and call.func.attr == "docs" and isinstance(call.func.value, ast.Name) and call.func.value.id in [a.arg for a in fn.args.args[:1]]
+
+
 def load(name, path):
     spec = importlib.util.spec_from_file_location(name, path)
     mod = importlib.util.module_from_spec(spec)
     source = path.read_text()
     mod._explain = explain
     mod._explain_msg = explain_msg
-    tree = ast.fix_missing_locations(Explain(source).visit(ast.parse(source)))
+    tree = ast.parse(source)
+    mod._opens_page = {n.name for n in tree.body if isinstance(n, ast.FunctionDef) and opens_page(n)}
+    tree = ast.fix_missing_locations(Explain(source).visit(tree))
     exec(compile(tree, str(path), "exec"), mod.__dict__)
     return mod
 
@@ -267,8 +275,9 @@ def discover(only):
     modules = []
     for f in files:
         mod = load(f"clanker_{f.parent.name}_{f.stem}", f)
-        checks = [(n.removeprefix("check_"), fn) for n, fn in vars(mod).items() if n.startswith("check_") and callable(fn)]
-        modules.append((f.stem.removesuffix("_test"), checks, getattr(mod, "START", "/demo")))
+        start = getattr(mod, "START", "/demo")
+        checks = [(n.removeprefix("check_"), fn, None if n in mod._opens_page else start) for n, fn in vars(mod).items() if n.startswith("check_") and callable(fn)]
+        modules.append((f.stem.removesuffix("_test"), checks))
     return modules
 
 
@@ -317,9 +326,10 @@ def run_check(browser, args, engine, theme, width, module, name, fn, start):
     t = T(page, engine, theme, width, args.out, module, name, args.reduced_motion, args.rtl, base_url, args.shots)
     status, detail = "pass", ""
     try:
-        response = page.goto(base_url + start, wait_until="load")
-        if response is None or response.status != 200:
-            raise AssertionError(f"{start} returned {response and response.status}")
+        if start is not None:
+            response = page.goto(base_url + start, wait_until="load")
+            if response is None or response.status != 200:
+                raise AssertionError(f"{start} returned {response and response.status}")
         fn(t)
         if t.current is not None and t.shots == 0:
             t.shot()
@@ -466,8 +476,8 @@ def run_variants(variants, tally, retry=False, exitfirst=False, annotate=False):
 
 def selected(modules, widths, pattern):
     for width in widths:
-        for module, checks, start in modules:
-            for name, fn in checks:
+        for module, checks in modules:
+            for name, fn, start in checks:
                 if not pattern or pattern.search(f"{module}.{name}"):
                     yield width, module, name, fn, start
 

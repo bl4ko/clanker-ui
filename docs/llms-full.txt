@@ -614,6 +614,7 @@ show(content, { trigger, anchor = trigger, side, align, sideOffset = 4, alignOff
 - Focus: every `:focus-visible` element gets `outline: 3px solid var(--focus-ring)`. `--focus-ring` mixes `--ring` with 25 % `--foreground` (at least 3:1 on `--background`; the shadcn ring at 50 % is below 2:1). `aria-invalid="true"` and destructive buttons use `--focus-ring-invalid` (`--destructive`). Composite fields (input group, OTP slot, combobox chips, calendar dropdown, code block, questionnaire choice, slider thumb) draw the outline on the field, not on the inner control. Sidebar items use a 2 px outline of `--sidebar-ring` mixed with 25 % `--sidebar-foreground`; the resizable handle a 1 px outline.
 - Keyboard highlight in item lists (select, combobox, and command items, dropdown, context, and menubar items, menubar triggers, and links in navigation menu content): a 2 px `--focus-ring` outline inside the item (`outline-offset: -2px`), only while `<html>` has `data-keyboard` (the kit sets it during keyboard use). Pointer hover shows only the `--accent` background, like shadcn.
 - Status tokens: borders reach 3:1 on `--background` (in dark also on `--card`) and light text reaches 4.5:1 on its background (success `hsl(140 100% 25%)`, info `hsl(210 92% 43%)`, warning `hsl(31 92% 35%)`, error `hsl(360 100% 43%)`).
+- Destructive buttons and badges (the tinted shadcn `destructive` variant): the text is `--destructive` mixed with 25 % `--foreground`, so it has 4.5:1 on its tinted background, also on hover. The background keeps the shadcn value.
 - Light `--muted-foreground` is `oklch(0.54 0 0)` (shadcn 0.556), so it has 4.6:1 on `--muted`.
 - `--chart-1`…`--chart-8` is the categorical palette validated with the dataviz `validate_palette.js` in light and dark: all checks pass. In light, slots 3, 4, and 5 are below 3:1 contrast; every chart and sparkline has a tooltip and a table view as relief, and charts with two or more series also have a legend. The kit tokens have the same palette; the layer also gives it to the shadcn base schemes, which set a gray ramp.
 - Shimmer text (`.shimmer`, running trace titles, uploading or processing attachment titles): when the shimmer color cannot be computed (an invalid `--shimmer-color`, or a browser without relative color syntax), the text stays plain and visible. Without the layer, the text is transparent then, as in shadcn.
@@ -1511,11 +1512,11 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 </main>
 ```
 
-- `data-layout="split"` on `page` is the sign-in layout of shadcn `login-02`: two columns from 64rem. The first child is the form column: its first child is the top bar (a `brand`, or a `div` with the `brand` and a theme toggle at the ends), and the next child (the form) is centered at most 20rem wide. A `page-aside` second child is the art panel (hidden below 64rem): `--muted`, its text at the bottom, an `svg` child that fills it behind the text (`--muted-foreground` at 35 %), and a `blockquote` (18 px, weight 500, at most 28rem) with a muted `footer`.
+- `data-layout="split"` on `page` is the sign-in layout of shadcn `login-02`: two columns from 64rem. The first child is the form column: its first child is the top bar (a `brand`, or a `div` with the `brand` and a theme toggle at the ends), and the next children (the form, and a step such as "Check your email") are centered at most 20rem wide; a child with `hidden` stays hidden. A `page-aside` second child is the art panel (hidden below 64rem): `--muted`, its text at the bottom, an `svg` child that fills it behind the text (`--muted-foreground` at 35 %), and a `blockquote` (18 px, weight 500, at most 28rem) with a muted `footer`.
 - `data-layout="center"` on `page` is the sign-in layout of shadcn `login-03`: a muted full-height page with its children centered at most 24rem wide. In it, card headers are centered, the card title is 20 px, a `field-description` child of the page is centered, and so is one in the field of the submit button.
 - `page` is the content column: gutters of 1rem (1.5rem from 64rem), a 1rem gap between its children (1.5rem from 48rem), and `container: page`. Put it in `sidebar-inset` or `<body>`. `data-size="sm|md|lg"` limits the content to 42rem, 56rem, or 72rem and centers it; no size fills the width (dashboards, tables).
 - `page-header` is a grid: `page-title` (24 px, weight 600) and `page-description` (muted) on the start side, `page-actions` (a row of buttons, `gap` 0.5rem) on the end side. Below 32rem of header width, the actions move under the text. `data-size="lg"` makes the title 30 px (the header of a detail page). `page-meta` after the description is a wrapping row of facts (14 px, muted, 1rem apart; an icon or a `badge` before each word).
-- `page-body` puts its children in one column. With a `page-aside` first, it is a 12rem navigation column (sticky below a header of `--header-height`, default 3.5rem) and a content column of at most 42rem from 64rem; with a `page-aside` last, a 20rem side column. Each child is a flex column with a 1.5rem gap.
+- `page-body` puts its children in one column. With a `page-aside` first, it is a 12rem navigation column (sticky below a header of `--header-height`, default 3.5rem) and a content column of at most 42rem from 64rem; with a `page-aside` last, a 20rem side column; `data-variant="sticky"` on that aside keeps it in view below the header (a live summary next to a long form; only for an aside shorter than the screen). Each child is a flex column with a 1.5rem gap.
 - `page-nav` holds ghost buttons (`aria-current="page"` on the current one gets the muted background). It is a row that scrolls below 64rem and a column from 64rem.
 
 #### Site Header
@@ -1919,9 +1920,10 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 | Part | Write | State |
 | --- | --- | --- |
 | `page` (root) | `data-size` `lg`, `md`, `sm` | `data-layout` |
+| `page-aside` | `data-variant` `sticky` |  |
 | `page-header` | `data-size` `lg` |  |
 
-Other parts: `page-actions`, `page-aside`, `page-body`, `page-description`, `page-meta`, `page-nav`, `page-title`.
+Other parts: `page-actions`, `page-body`, `page-description`, `page-meta`, `page-nav`, `page-title`.
 
 Other options named in the docs: `data-layout` string.
 

@@ -1,0 +1,37 @@
+<div data-slot="trace" class="max-w-sm">
+  <div data-slot="trace-collapsible">
+    <button type="button" data-slot="trace-collapsible-trigger">
+      <span data-slot="trace-line">
+        <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+        <span data-slot="trace-title">Ran git status --short</span>
+      </span>
+    </button>
+    <div data-slot="trace-collapsible-content">
+      <div data-slot="code-block" data-size="sm">
+        <pre data-slot="code-block-content" data-wrap="true" class="max-h-64"><code data-slot="code-block-code"> M app/api/chat/route.ts
+ M components/chat.tsx</code></pre>
+      </div>
+    </div>
+  </div>
+  <div data-slot="trace-collapsible">
+    <button type="button" data-slot="trace-collapsible-trigger">
+      <span data-slot="trace-line" data-status="error">
+        <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+        <span data-slot="trace-title">Failed to run pnpm dev</span>
+      </span>
+    </button>
+    <div data-slot="trace-collapsible-content">
+      <div data-slot="code-block" data-size="sm">
+        <pre data-slot="code-block-content" data-wrap="true" class="max-h-64"><code data-slot="code-block-code">Command timed out after 120 seconds.</code></pre>
+      </div>
+    </div>
+  </div>
+  <span data-slot="trace-line">
+    <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+    <span data-slot="trace-title">Denied rm -rf dist</span>
+  </span>
+  <span data-slot="trace-line" data-status="running">
+    <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+    <span data-slot="trace-title">Running pnpm test</span>
+  </span>
+</div>

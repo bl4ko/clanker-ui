@@ -990,3 +990,23 @@ code:not([data-slot]) { font-size: 0.875em; }
 #button-group #button-group-copilot [data-slot="popover-content"] { border-radius: var(--radius-xl); font-size: 0.875rem; }
 #button-group #button-group-copilot [data-slot="popover-content"]:popover-open { display: grid; gap: 1rem; }
 #button-group #button-group-copilot textarea { resize: none; }
+
+[data-demo="chart-step"] { width: 100%; }
+#chart-rtl, #chart-example, #chart-example-grid, #chart-example-axis, #chart-example-tooltip, #chart-example-legend { min-height: 200px; }
+#chart-interactive-card { padding-block: 0 1rem; border: 0; box-shadow: none; }
+#chart-interactive-card > [data-slot="card-header"] { display: flex; flex-direction: column; align-items: stretch; padding: 0; border-bottom: 1px solid var(--border); }
+#chart-interactive-card > [data-slot="card-header"] > div:first-child { display: flex; flex: 1; flex-direction: column; justify-content: center; gap: 0.25rem; padding: 1rem 1.5rem 0.75rem; }
+#chart-interactive-card [data-demo="chart-switch"] { display: flex; }
+#chart-interactive-card [data-chart-key] { position: relative; display: flex; flex: 1; flex-direction: column; justify-content: center; gap: 0.25rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); text-align: start; }
+#chart-interactive-card [data-chart-key] + [data-chart-key] { border-inline-start: 1px solid var(--border); }
+#chart-interactive-card [data-chart-key][data-active="true"] { background: color-mix(in oklab, var(--muted) 50%, transparent); }
+#chart-interactive-card [data-chart-key] > span:first-child { font-size: 0.75rem; line-height: 1rem; color: var(--muted-foreground); }
+#chart-interactive-card [data-chart-total] { font-size: 1.125rem; line-height: 1; font-weight: 700; }
+#chart-interactive-card > [data-slot="card-content"] { padding-inline: 0.5rem; }
+@media (width >= 40rem) {
+  #chart-interactive-card > [data-slot="card-header"] { flex-direction: row; }
+  #chart-interactive-card > [data-slot="card-header"] > div:first-child { padding-block: 0; }
+  #chart-interactive-card [data-chart-key] { border-top: 0; border-inline-start: 1px solid var(--border); padding: 1.5rem 2rem; }
+  #chart-interactive-card [data-chart-total] { font-size: 1.875rem; }
+  #chart-interactive-card > [data-slot="card-content"] { padding: 1.5rem; }
+}

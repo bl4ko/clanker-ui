@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>File Tree behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+  <script type="module" src="/test/behavior/fixtures/ai-file-tree.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-behavior="ai-tree" id="file-tree-demo">
+          <div data-slot="collapsible" data-state="open">
+            <button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-behavior="ai-tree-item" data-collapsible-trigger><svg data-lucide="chevron-right" data-behavior="ai-tree-chevron"></svg><svg data-lucide="folder"></svg>app</button>
+            <div data-slot="collapsible-content">
+              <div data-behavior="ai-tree-indent">
+                <button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-behavior="ai-tree-item"><svg data-lucide="file"></svg>layout.tsx</button>
+                <button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-behavior="ai-tree-item"><svg data-lucide="file"></svg>page.tsx</button>
+              </div>
+            </div>
+          </div>
+          <div data-slot="collapsible" data-state="open">
+            <button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-behavior="ai-tree-item" data-collapsible-trigger><svg data-lucide="chevron-right" data-behavior="ai-tree-chevron"></svg><svg data-lucide="folder"></svg>components</button>
+            <div data-slot="collapsible-content">
+              <div data-behavior="ai-tree-indent">
+                <div data-slot="collapsible" data-state="open">
+                  <button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-behavior="ai-tree-item" data-collapsible-trigger><svg data-lucide="chevron-right" data-behavior="ai-tree-chevron"></svg><svg data-lucide="folder"></svg>ui</button>
+                  <div data-slot="collapsible-content">
+                    <div data-behavior="ai-tree-indent">
+                      <button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-behavior="ai-tree-item ai-tree-current" aria-current="true"><svg data-lucide="file"></svg>button.tsx</button>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" data-slot="button" data-variant="ghost" data-size="sm" data-behavior="ai-tree-item"><svg data-lucide="file"></svg>login-form.tsx</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

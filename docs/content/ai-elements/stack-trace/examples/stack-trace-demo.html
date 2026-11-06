@@ -1,0 +1,77 @@
+<div class="flex min-h-72 w-full max-w-sm flex-col gap-4 py-6 text-sm" id="stack-trace-demo">
+  <div data-slot="message" data-align="end">
+    <div data-slot="message-content">
+      <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Reset the database and seed it.</div></div>
+    </div>
+  </div>
+  <div data-slot="message">
+    <div data-slot="message-content" class="gap-4">
+      <div data-slot="trace">
+        <div data-slot="trace-collapsible">
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line">
+              <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+              <span data-slot="trace-title">Ran pnpm prisma migrate reset --skip-seed</span>
+            </span>
+          </button>
+          <div data-slot="trace-collapsible-content">
+            <div data-slot="code-block" data-size="sm">
+              <pre data-slot="code-block-content" data-wrap="true" class="max-h-64"><code data-slot="code-block-code">Database reset successful
+
+The following migrations have been applied:
+
+migrations/
+  └─ 20260912_init/
+  └─ 20260920_add_profiles/</code></pre>
+            </div>
+          </div>
+        </div>
+        <div data-slot="trace-collapsible" data-default-open>
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line" data-status="error">
+              <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
+              <span data-slot="trace-title">Failed: TypeError: Cannot read properties of undefined (reading 'email')</span>
+            </span>
+          </button>
+          <div data-slot="trace-collapsible-content">
+            <div class="flex flex-col gap-2">
+              <p class="font-mono text-xs text-destructive">TypeError: Cannot read properties of undefined (reading 'email')</p>
+              <div data-slot="trace">
+                <a href="#">
+                  <span data-slot="trace-line">
+                    <span data-slot="trace-icon"><svg data-lucide="file-code"></svg></span>
+                    <span data-slot="trace-title">seedUsers in prisma/seed.ts:27</span>
+                  </span>
+                </a>
+                <a href="#">
+                  <span data-slot="trace-line">
+                    <span data-slot="trace-icon"><svg data-lucide="file-code"></svg></span>
+                    <span data-slot="trace-title">main in prisma/seed.ts:51</span>
+                  </span>
+                </a>
+                <div data-slot="trace-collapsible">
+                  <button type="button" data-slot="trace-collapsible-trigger">
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="layers"></svg></span>
+                      <span data-slot="trace-title">4 framework frames</span>
+                    </span>
+                  </button>
+                  <div data-slot="trace-collapsible-content">
+                    <ol class="flex flex-col gap-1 overflow-x-auto rounded-md bg-muted p-3 font-mono text-xs">
+                      <li class="whitespace-nowrap">at Module._compile (node:internal/modules/cjs/loader:1554:14)</li>
+                      <li class="whitespace-nowrap">at Object.transformer (node_modules/tsx/dist/register.cjs:3:1104)</li>
+                      <li class="whitespace-nowrap">at Module.load (node:internal/modules/cjs/loader:1289:32)</li>
+                      <li class="whitespace-nowrap">at process.processTicksAndRejections (node:internal/process/task_queues:105:5)</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p>The migrations ran, but the seed failed in seedUsers. One fixture has no profile, so profile.email is undefined.</p>
+    </div>
+  </div>
+  <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="mt-auto self-start" id="stack-trace-demo-replay" data-command="pnpm prisma db seed">Replay</button>
+</div>

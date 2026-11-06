@@ -29,6 +29,7 @@ const (
 	catalogIcons   = "skills/clanker-ui/references/icons.md"
 	catalogLLMs    = "docs/llms-full.txt"
 	catalogExDir   = "tools/gen/examples"
+	catalogPattern = "docs/content/ai-elements"
 )
 
 type catalog struct {
@@ -48,6 +49,16 @@ type catalog struct {
 	Global      catAttrs       `json:"globalAttributes"`
 	Exports     []catExport    `json:"exports"`
 	Components  []catComponent `json:"components"`
+	Patterns    []catPattern   `json:"patterns"`
+}
+
+type catPattern struct {
+	Name         string   `json:"name"`
+	Title        string   `json:"title"`
+	Description  string   `json:"description"`
+	Components   []string `json:"components"`
+	Docs         string   `json:"docs"`
+	DocsMarkdown string   `json:"docsMarkdown"`
 }
 
 type catFiles struct {
@@ -672,6 +683,9 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 			}
 		}
 	}
+	if cat.Patterns, err = catalogPatterns(root, cat); err != nil {
+		return nil, nil, err
+	}
 	jsonOut, err := catalogJSON(cat)
 	if err != nil {
 		return nil, nil, err
@@ -743,6 +757,94 @@ func iconsMarkdown(js, notices string) (string, error) {
 	}
 	b.WriteString("\n\n## Add an icon\n\nCopy the icon node of a Lucide icon (lucide.dev: the icon page, or `lucide-static/icon-nodes.json`) and register it once, before or after the markup that uses it:\n\n```js\nimport { registerIcons } from \"/vendor/clanker-ui/clanker-ui.min.js\"\n\nregisterIcons({\n  \"ship\": [\n    [\"path\", { d: \"M12 2v2\" }],\n    [\"path\", { d: \"M12 9.189V13\" }],\n    [\"path\", { d: \"M19 12V6a2 2 0 00-2-2H7a2 2 0 00-2 2v6\" }],\n    [\"path\", { d: \"M19.38 19A11.6 11.6 0 0021 13l-8.188-3.639a2 2 0 00-1.624 0L3 13.001a11.6 11.6 0 002.81 7.76\" }],\n    [\"path\", { d: \"M2 20c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1\" }],\n  ],\n})\n```\n\n- Each node is a path `d` string or a `[tag, attrs]` pair. Tags: `path`, `circle`, `rect`, `line`, `polyline`, `polygon`, `ellipse`. Attributes: geometry, `fill`, `stroke*`, `fill-rule`, `clip-rule`, `opacity`, `transform`. Other tags or attributes throw a `TypeError`. The icon uses the Lucide frame: `viewBox=\"0 0 24 24\"`, `stroke=\"currentColor\"`, stroke width 2, `fill=\"none\"`.\n- Names are lowercase words joined by `-`. A name that the kit already has (or an alias) throws.\n- The kit fills `<svg data-lucide>` elements with the new names that are already in the page. `iconNames` includes the new names.\n- The kit builds the SVG with DOM calls, so this works under the strict CSP and Trusted Types. Do not inline SVG markup with `innerHTML`.\n")
 	return b.String(), nil
+}
+
+var patternSlot = regexp.MustCompile(`"data-slot":\s*"([a-z0-9-]+)"`)
+
+func catalogPatterns(root string, cat *catalog) ([]catPattern, error) {
+	owner := map[string]string{}
+	for _, c := range cat.Components {
+		for _, p := range c.Parts {
+			owner["slot:"+p.Slot] = c.Name
+		}
+		for _, k := range c.KitAdds {
+			owner["slot:"+k] = c.Name
+		}
+		for a := range c.PartAttributes {
+			owner["attr:"+a] = c.Name
+		}
+	}
+	dirs, err := os.ReadDir(filepath.Join(root, catalogPattern))
+	if errors.Is(err, os.ErrNotExist) {
+		return []catPattern{}, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	out := []catPattern{}
+	for _, d := range dirs {
+		if !d.IsDir() || strings.HasPrefix(d.Name(), ".") || strings.HasPrefix(d.Name(), "_") {
+			continue
+		}
+		dir := filepath.Join(root, catalogPattern, d.Name())
+		page, err := os.ReadFile(filepath.Join(dir, "page.md"))
+		if err != nil {
+			return nil, err
+		}
+		front, _, ok := strings.Cut(strings.TrimPrefix(string(page), "---\n"), "\n---\n")
+		if !strings.HasPrefix(string(page), "---\n") || !ok {
+			return nil, fmt.Errorf("%s/page.md: no front matter", d.Name())
+		}
+		p := catPattern{Name: d.Name(), Docs: catalogSite + "/docs/ai-elements/" + d.Name() + "/", DocsMarkdown: catalogSite + "/docs/ai-elements/" + d.Name() + ".md"}
+		for _, line := range strings.Split(front, "\n") {
+			if v, ok := strings.CutPrefix(line, "title: "); ok {
+				p.Title = v
+			} else if v, ok := strings.CutPrefix(line, "description: "); ok {
+				p.Description = v
+			}
+		}
+		used := map[string]bool{}
+		files, _ := filepath.Glob(filepath.Join(dir, "examples", "*.html"))
+		for _, f := range files {
+			bs, err := os.ReadFile(f)
+			if err != nil {
+				return nil, err
+			}
+			walkNodes(parseFragment(string(bs)), func(n *htmlNode) {
+				for _, a := range n.attrs {
+					key := "attr:" + a[0]
+					if a[0] == "data-slot" {
+						key = "slot:" + a[1]
+					}
+					if c := owner[key]; c != "" {
+						used[c] = true
+					}
+				}
+			})
+		}
+		scripts, _ := filepath.Glob(filepath.Join(dir, "examples", "*.js"))
+		for _, f := range scripts {
+			bs, err := os.ReadFile(f)
+			if err != nil {
+				return nil, err
+			}
+			for _, m := range patternSlot.FindAllStringSubmatch(string(bs), -1) {
+				if c := owner["slot:"+m[1]]; c != "" {
+					used[c] = true
+				}
+			}
+		}
+		for _, c := range cat.Components {
+			if used[c.Name] {
+				p.Components = append(p.Components, c.Name)
+			}
+		}
+		if p.Title == "" || p.Description == "" || len(p.Components) == 0 {
+			return nil, fmt.Errorf("%s: a pattern needs a title, a description, and examples with kit parts", d.Name())
+		}
+		out = append(out, p)
+	}
+	return out, nil
 }
 
 func catalogJSON(cat *catalog) ([]byte, error) {

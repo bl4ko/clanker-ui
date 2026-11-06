@@ -1,0 +1,42 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/plan",
+  "note": "The docs example uses the base-rhea style; behavior does not depend on it, and no step compares sizes.",
+  "parts": {
+    "trigger": {
+      "role": "button",
+      "name": "Plan: migrate to Base UI"
+    },
+    "content": {
+      "slot": "trace-collapsible-content",
+      "optional": true
+    }
+  },
+  "anchor": "trigger",
+  "positions": [],
+  "steps": [
+    {
+      "do": "tab_in"
+    },
+    {
+      "do": "press",
+      "key": "Enter",
+      "motion": "content"
+    },
+    {
+      "do": "press",
+      "key": "Space",
+      "motion": "content"
+    },
+    {
+      "do": "click",
+      "target": "trigger",
+      "motion": "content"
+    },
+    {
+      "do": "click",
+      "target": "trigger",
+      "motion": "content",
+      "label": "click again"
+    }
+  ]
+}

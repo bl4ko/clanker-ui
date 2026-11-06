@@ -1,0 +1,43 @@
+<div class="flex min-h-72 w-full max-w-sm flex-col gap-4 py-6 text-sm" id="tool-sheet">
+  <template id="tool-sheet-turn">
+    <div data-slot="message" data-align="end">
+      <div data-slot="message-content">
+        <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Which AI SDK version does this app use?</div></div>
+      </div>
+    </div>
+    <div data-slot="message">
+      <div data-slot="message-content" class="gap-4">
+        <div data-slot="trace">
+          <button type="button" data-sheet-trigger="tool-sheet-file">
+            <span data-slot="trace-line">
+              <span data-slot="trace-icon"><svg data-lucide="file-text"></svg></span>
+              <span data-slot="trace-title">Read package.json</span>
+              <span data-slot="trace-icon"><svg data-lucide="chevron-right"></svg></span>
+            </span>
+          </button>
+        </div>
+        <div data-slot="sheet" id="tool-sheet-file">
+          <dialog data-slot="sheet-content" data-side="right">
+            <div data-slot="sheet-header">
+              <h2 data-slot="sheet-title" class="font-mono">package.json</h2>
+              <p data-slot="sheet-description">10 lines</p>
+            </div>
+            <div data-slot="code-block" class="mx-6 mb-6 w-auto">
+              <pre data-slot="code-block-content" data-numbered="true"><code data-slot="code-block-code">{
+  "name": "acme-chat",
+  "private": true,
+  "dependencies": {
+    "@ai-sdk/react": "^4.0.0",
+    "ai": "^7.0.0",
+    "next": "^16.3.0"
+  }
+}</code></pre>
+            </div>
+          </dialog>
+        </div>
+        <p>It uses ai 7 with @ai-sdk/react 4.</p>
+      </div>
+    </div>
+  </template>
+  <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="mt-auto self-start" id="tool-sheet-send">Send message</button>
+</div>

@@ -1,0 +1,43 @@
+<div dir="rtl" lang="ar">
+  <div data-slot="button-group" role="group">
+    <div data-slot="button-group" role="group" class="hidden sm:flex">
+      <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Go Back"><svg data-lucide="arrow-left" class="rtl:rotate-180"></svg></button>
+    </div>
+    <div data-slot="button-group" role="group">
+      <button type="button" data-slot="button" data-variant="outline">أرشفة</button>
+      <button type="button" data-slot="button" data-variant="outline">تقرير</button>
+    </div>
+    <div data-slot="button-group" role="group">
+      <button type="button" data-slot="button" data-variant="outline">تأجيل</button>
+      <div data-slot="dropdown-menu">
+        <button type="button" data-slot="button" data-variant="outline" data-size="icon" data-dropdown-menu-trigger aria-label="More Options"><svg data-lucide="ellipsis"></svg></button>
+        <div data-slot="dropdown-menu-content" data-align="start" class="w-40">
+          <div data-slot="dropdown-menu-group">
+            <div data-slot="dropdown-menu-item"><svg data-lucide="mail-check"></svg>وضع علامة كمقروء</div>
+            <div data-slot="dropdown-menu-item"><svg data-lucide="archive"></svg>أرشفة</div>
+          </div>
+          <div data-slot="dropdown-menu-separator"></div>
+          <div data-slot="dropdown-menu-group">
+            <div data-slot="dropdown-menu-item"><svg data-lucide="clock"></svg>تأجيل</div>
+            <div data-slot="dropdown-menu-item"><svg data-lucide="calendar-plus"></svg>إضافة إلى التقويم</div>
+            <div data-slot="dropdown-menu-item"><svg data-lucide="list-filter"></svg>إضافة إلى القائمة</div>
+            <div data-slot="dropdown-menu-sub">
+              <div data-slot="dropdown-menu-sub-trigger"><svg data-lucide="tag"></svg>تصنيف كـ...</div>
+              <div data-slot="dropdown-menu-sub-content">
+                <div data-slot="dropdown-menu-radio-group" data-value="personal">
+                  <div data-slot="dropdown-menu-radio-item" data-value="personal">شخصي</div>
+                  <div data-slot="dropdown-menu-radio-item" data-value="work">عمل</div>
+                  <div data-slot="dropdown-menu-radio-item" data-value="other">آخر</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-slot="dropdown-menu-separator"></div>
+          <div data-slot="dropdown-menu-group">
+            <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="trash-2"></svg>سلة المهملات</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

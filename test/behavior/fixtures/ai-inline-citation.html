@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Inline Citation behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-behavior="ai-citations">
+          <p>
+            Next.js streams a route in chunks, so the page shows up before every request finishes.
+            <span data-slot="hover-card">
+              <button type="button" data-slot="button" data-variant="secondary" data-size="xs" data-hover-card-trigger data-delay="10" data-close-delay="100">nextjs.org</button>
+              <span data-slot="hover-card-content" data-behavior="w-64 col-gap-1">
+                <span data-behavior="medium">Linking and Navigating</span>
+                <span data-behavior="muted">How the App Router streams a route to the browser.</span>
+                <a href="https://nextjs.org/docs/app/getting-started/linking-and-navigating#streaming" target="_blank" rel="noreferrer" data-behavior="ai-cite-link">nextjs.org<span class="sr-only"> (opens in a new tab)</span></a>
+              </span>
+            </span>
+          </p>
+          <p>
+            Wrap a slow part of the page in a Suspense boundary and React sends the fallback first. When the data resolves, the finished HTML streams into the same response and replaces the fallback, with no extra request from the browser.
+            <span data-slot="hover-card">
+              <button type="button" data-slot="button" data-variant="secondary" data-size="xs" data-hover-card-trigger data-delay="10" data-close-delay="100">react.dev</button>
+              <span data-slot="hover-card-content" data-behavior="w-64 col-gap-1">
+                <span data-behavior="medium">&lt;Suspense&gt;</span>
+                <span data-behavior="muted">Display a fallback until its children have finished loading.</span>
+                <a href="https://react.dev/reference/react/Suspense" target="_blank" rel="noreferrer" data-behavior="ai-cite-link">react.dev<span class="sr-only"> (opens in a new tab)</span></a>
+              </span>
+            </span>
+            Server Components help here, because their code never ships to the browser.
+            <span data-slot="hover-card">
+              <button type="button" data-slot="button" data-variant="secondary" data-size="xs" data-hover-card-trigger data-delay="10" data-close-delay="100">react.dev</button>
+              <span data-slot="hover-card-content" data-behavior="w-64 col-gap-1">
+                <span data-behavior="medium">Server Components</span>
+                <span data-behavior="muted">Components that render ahead of time, on the server.</span>
+                <a href="https://react.dev/reference/rsc/server-components" target="_blank" rel="noreferrer" data-behavior="ai-cite-link">react.dev<span class="sr-only"> (opens in a new tab)</span></a>
+              </span>
+            </span>
+          </p>
+          <p>
+            A loading.tsx file does the same for a whole route segment.
+            <span data-slot="hover-card">
+              <button type="button" data-slot="button" data-variant="secondary" data-size="xs" data-hover-card-trigger data-delay="10" data-close-delay="100">nextjs.org</button>
+              <span data-slot="hover-card-content" data-behavior="w-64 col-gap-1">
+                <span data-behavior="medium">loading.js</span>
+                <span data-behavior="muted">Show an instant loading state for a route segment.</span>
+                <a href="https://nextjs.org/docs/app/api-reference/file-conventions/loading" target="_blank" rel="noreferrer" data-behavior="ai-cite-link">nextjs.org<span class="sr-only"> (opens in a new tab)</span></a>
+              </span>
+            </span>
+            It all runs over chunked transfer encoding, so there is nothing extra to set up.
+            <span data-slot="hover-card">
+              <button type="button" data-slot="button" data-variant="secondary" data-size="xs" data-hover-card-trigger data-delay="10" data-close-delay="100">developer.mozilla.org</button>
+              <span data-slot="hover-card-content" data-behavior="w-64 col-gap-1">
+                <span data-behavior="medium">Transfer-Encoding</span>
+                <span data-behavior="muted">Send a response as a series of chunks.</span>
+                <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Transfer-Encoding" target="_blank" rel="noreferrer" data-behavior="ai-cite-link">developer.mozilla.org<span class="sr-only"> (opens in a new tab)</span></a>
+              </span>
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

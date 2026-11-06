@@ -1,0 +1,23 @@
+<div class="flex w-full max-w-md flex-col gap-6">
+  <div data-slot="item" data-variant="outline">
+    <div data-slot="item-content">
+      <div data-slot="item-title">Basic Item</div>
+      <p data-slot="item-description">A simple item with title and description.</p>
+    </div>
+    <div data-slot="item-actions">
+      <button type="button" data-slot="button" data-variant="outline" data-size="sm">Action</button>
+    </div>
+  </div>
+  <a data-slot="item" data-variant="outline" data-size="sm" href="#">
+    <div data-slot="item-media">
+      <svg data-lucide="badge-check" class="size-5"></svg>
+    </div>
+    <div data-slot="item-content">
+      <div data-slot="item-title">Your profile has been verified.</div>
+    </div>
+    <div data-slot="item-actions">
+      <svg data-lucide="chevron-right" class="size-4"></svg>
+    </div>
+  </a>
+</div>
+

@@ -1,0 +1,58 @@
+<div data-slot="table-container">
+  <table data-slot="table">
+    <thead data-slot="table-header">
+      <tr data-slot="table-row">
+        <th data-slot="table-head" scope="col">Product</th>
+        <th data-slot="table-head" scope="col">Price</th>
+        <th data-slot="table-head" scope="col" class="text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody data-slot="table-body">
+        <tr data-slot="table-row">
+          <td data-slot="table-cell" class="font-medium">Wireless Mouse</td>
+          <td data-slot="table-cell">$29.99</td>
+          <td data-slot="table-cell" class="text-right">
+            <div data-slot="dropdown-menu">
+              <button type="button" data-slot="button" data-variant="ghost" data-size="icon" class="size-8" data-dropdown-menu-trigger><svg data-lucide="ellipsis"></svg><span class="sr-only">Open menu</span></button>
+              <div data-slot="dropdown-menu-content" data-align="end">
+                <div data-slot="dropdown-menu-item">Edit</div>
+                <div data-slot="dropdown-menu-item">Duplicate</div>
+                <div data-slot="dropdown-menu-separator"></div>
+                <div data-slot="dropdown-menu-item" data-variant="destructive">Delete</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr data-slot="table-row">
+          <td data-slot="table-cell" class="font-medium">Mechanical Keyboard</td>
+          <td data-slot="table-cell">$129.99</td>
+          <td data-slot="table-cell" class="text-right">
+            <div data-slot="dropdown-menu">
+              <button type="button" data-slot="button" data-variant="ghost" data-size="icon" class="size-8" data-dropdown-menu-trigger><svg data-lucide="ellipsis"></svg><span class="sr-only">Open menu</span></button>
+              <div data-slot="dropdown-menu-content" data-align="end">
+                <div data-slot="dropdown-menu-item">Edit</div>
+                <div data-slot="dropdown-menu-item">Duplicate</div>
+                <div data-slot="dropdown-menu-separator"></div>
+                <div data-slot="dropdown-menu-item" data-variant="destructive">Delete</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr data-slot="table-row">
+          <td data-slot="table-cell" class="font-medium">USB-C Hub</td>
+          <td data-slot="table-cell">$49.99</td>
+          <td data-slot="table-cell" class="text-right">
+            <div data-slot="dropdown-menu">
+              <button type="button" data-slot="button" data-variant="ghost" data-size="icon" class="size-8" data-dropdown-menu-trigger><svg data-lucide="ellipsis"></svg><span class="sr-only">Open menu</span></button>
+              <div data-slot="dropdown-menu-content" data-align="end">
+                <div data-slot="dropdown-menu-item">Edit</div>
+                <div data-slot="dropdown-menu-item">Duplicate</div>
+                <div data-slot="dropdown-menu-separator"></div>
+                <div data-slot="dropdown-menu-item" data-variant="destructive">Delete</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+</div>

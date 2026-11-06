@@ -61,12 +61,12 @@ components/accordion#accordion-borders	demo-accordion-3
 components/accordion#accordion-card	demo-accordion-3
 components/accordion#accordion-rtl	-	no example yet
 components/alert	/docs/components/alert
-components/alert#alert-demo	demo-alert-0
-components/alert#alert-basic	-	no example yet
-components/alert#alert-destructive	-	no example yet
-components/alert#alert-action	demo-alert-1
-components/alert#alert-colors	demo-alert-1
-components/alert#alert-rtl	-	no example yet
+components/alert#alert-demo	alert-demo
+components/alert#alert-basic	alert-basic
+components/alert#alert-destructive	alert-destructive
+components/alert#alert-action	alert-action
+components/alert#alert-colors	alert-colors
+components/alert#alert-rtl	alert-rtl
 components/alert-dialog	/docs/components/alert-dialog
 components/alert-dialog#alert-dialog-demo	demo-alert-dialog-0
 components/alert-dialog#alert-dialog-basic	-	no example yet
@@ -166,12 +166,12 @@ components/calendar#calendar-custom-days	demo-calendar-4
 components/calendar#calendar-week-numbers	demo-calendar-3
 components/calendar#calendar-rtl	-	no example yet
 components/card	/docs/components/card
-components/card#card-demo	demo-card-0
-components/card#card-small	-	no example yet
-components/card#card-spacing	-	no example yet
-components/card#card-edge-to-edge	-	no example yet
-components/card#card-image	demo-card-1
-components/card#card-rtl	-	no example yet
+components/card#card-demo	card-demo
+components/card#card-small	card-small
+components/card#card-spacing	card-spacing
+components/card#card-edge-to-edge	card-edge-to-edge
+components/card#card-image	card-image
+components/card#card-rtl	card-rtl
 components/carousel	/docs/components/carousel
 components/carousel#carousel-demo	demo-carousel-0
 components/carousel#carousel-size	demo-carousel-1
@@ -190,14 +190,14 @@ components/chart#chart-example-legend	-	no example yet
 components/chart#chart-tooltip	demo-chart-1
 components/chart#chart-rtl	-	no example yet
 components/checkbox	/docs/components/checkbox
-components/checkbox#checkbox-demo	demo-checkbox-0
-components/checkbox#checkbox-invalid	-	no example yet
-components/checkbox#checkbox-basic	-	no example yet
-components/checkbox#checkbox-description	-	no example yet
-components/checkbox#checkbox-disabled	-	no example yet
-components/checkbox#checkbox-group	demo-checkbox-2
-components/checkbox#checkbox-table	-	no example yet
-components/checkbox#checkbox-rtl	-	no example yet
+components/checkbox#checkbox-demo	checkbox-demo
+components/checkbox#checkbox-invalid	checkbox-invalid
+components/checkbox#checkbox-basic	checkbox-basic
+components/checkbox#checkbox-description	checkbox-description
+components/checkbox#checkbox-disabled	checkbox-disabled
+components/checkbox#checkbox-group	checkbox-group
+components/checkbox#checkbox-table	checkbox-table
+components/checkbox#checkbox-rtl	checkbox-rtl
 components/code-block	/docs/components/code-block
 components/code-block#code-block-demo	demo-code-block-0
 components/code-block#code-block-basic	demo-code-block-1
@@ -263,8 +263,8 @@ components/context-menu#context-menu-destructive	demo-context-menu-1
 components/context-menu#context-menu-sides	-	no example yet
 components/context-menu#context-menu-rtl	-	no example yet
 components/data-table	/docs/components/data-table
-components/data-table#data-table-demo	-	no example yet
-components/data-table#data-table-rtl	-	no example yet
+components/data-table#data-table-demo	data-table-demo
+components/data-table#data-table-rtl	data-table-rtl
 components/date-picker	/docs/components/date-picker
 components/date-picker#date-picker-demo	demo-date-picker-0
 components/date-picker#date-picker-basic	-	no example yet
@@ -485,9 +485,9 @@ components/resizable#resizable-vertical	demo-resizable-1
 components/resizable#resizable-handle	-	no example yet
 components/resizable#resizable-rtl	-	no example yet
 components/scroll-area	/docs/components/scroll-area
-components/scroll-area#scroll-area-demo	demo-scroll-area-0
-components/scroll-area#scroll-area-horizontal-demo	demo-scroll-area-1
-components/scroll-area#scroll-area-rtl	-	no example yet
+components/scroll-area#scroll-area-demo	scroll-area-demo
+components/scroll-area#scroll-area-horizontal-demo	scroll-area-horizontal-demo
+components/scroll-area#scroll-area-rtl	scroll-area-rtl
 components/select	/docs/components/select
 components/select#select-demo	demo-select-0
 components/select#select-align-item	demo-select-1
@@ -543,10 +543,10 @@ components/switch#switch-invalid	demo-switch-2
 components/switch#switch-sizes	demo-switch-2
 components/switch#switch-rtl	-	no example yet
 components/table	/docs/components/table
-components/table#table-demo	demo-table-0
-components/table#table-footer	-	no example yet
-components/table#table-actions	-	no example yet
-components/table#table-rtl	-	no example yet
+components/table#table-demo	table-demo
+components/table#table-footer	table-footer
+components/table#table-actions	table-actions
+components/table#table-rtl	table-rtl
 components/tabs	/docs/components/tabs
 components/tabs#tabs-demo	demo-tabs-0
 components/tabs#tabs-line	demo-tabs-1

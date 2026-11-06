@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 	"testing"
@@ -16,7 +17,7 @@ func TestDocsStyleCSS(t *testing.T) {
 	}
 	css := string(got)
 	for _, want := range []string{
-		"/*! lic */\n@layer clanker-docs-rhea {\n@layer reset {\n@scope ([data-docs-style=\"rhea\"]) {\n*, ::before, ::after, ::backdrop, ::placeholder, ::marker, ::file-selector-button { all: revert; --b-gap: revert; }",
+		"/*! lic */\n@layer clanker-docs-rhea {\n@layer reset {\n@scope ([data-docs-style=\"rhea\"]) {\n:not(svg, svg *), ::before, ::after, ::backdrop, ::placeholder, ::marker, ::file-selector-button { all: revert; --b-gap: revert; }",
 		"@layer properties, clanker.tokens, clanker.components;\n@layer clanker.components {\n@scope ([data-docs-style=\"rhea\"]) {\n\n  [data-slot=\"b\"] { --tw-ring-shadow: 0 0 0 1px red; content: \"}\"; }\n\n}\n}\n",
 		"@layer clanker.utilities {\n@scope ([data-docs-style=\"rhea\"]) {\n\n  .flex { display: flex; }\n\n}\n}\n",
 		"@layer clanker.tokens {\n@scope ([data-docs-style=\"rhea\"]) {\n:scope { --text-lg: 1.125rem; }\n}\n}\n}\n",
@@ -66,5 +67,15 @@ func TestDocsPageStyles(t *testing.T) {
 		if strings.Contains(body, "data-docs-style") || strings.Contains(body, "style-rhea.css") {
 			t.Errorf("%s is a Nova page", href)
 		}
+	}
+}
+
+func TestDocsPageStylesMinKit(t *testing.T) {
+	d, err := loadDocs(minFS{os.DirFS(".")})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !d.hasScheme("blue") || len(d.assets["style-rhea.css"]) == 0 || d.previews["/docs/components/attachment"].Scheme != "blue" {
+		t.Fatalf("minified kit: scheme blue %v, style-rhea.css %d bytes", d.hasScheme("blue"), len(d.assets["style-rhea.css"]))
 	}
 }

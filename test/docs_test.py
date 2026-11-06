@@ -656,7 +656,7 @@ def check_docs_code_block_preview(t):
     assert got == ["16px", "none", "0px"], got
 
 
-RHEA_PROPS = ["border-top-width", "border-top-left-radius", "padding-top", "padding-inline-start", "margin-top", "box-shadow", "background-color", "color", "font-size", "font-weight", "line-height", "gap", "display", "outline-width", "border-top-color"]
+RHEA_PROPS = ["border-top-width", "border-top-left-radius", "padding-top", "padding-inline-start", "margin-top", "box-shadow", "background-color", "color", "font-size", "font-weight", "line-height", "gap", "display", "outline-width", "border-top-color", "fill", "stroke"]
 RHEA_SNAPSHOT = """props => [...document.querySelectorAll('[data-docs="preview"][data-docs-style="rhea"]')].map(root => [root, ...root.querySelectorAll("*")].map(el => {
   const cs = getComputedStyle(el)
   return [el.dataset.slot || el.tagName, ...props.map(p => cs.getPropertyValue(p))]

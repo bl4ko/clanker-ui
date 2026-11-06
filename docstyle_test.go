@@ -44,9 +44,12 @@ func TestDocsPageStyles(t *testing.T) {
 		t.Fatalf("styles %v, style-rhea.css %d bytes", d.styles, len(d.assets["style-rhea.css"]))
 	}
 	h := newSite("").routes()
-	shadcn := map[string]string{"attachment": "blue", "bubble": "blue", "code-block": "", "drawer": "", "marker": "blue", "message": "blue", "message-scroller": "blue", "trace": ""}
+	shadcn := map[string]string{"components/attachment": "blue", "components/bubble": "blue", "components/code-block": "", "components/drawer": "", "components/marker": "blue", "components/message": "blue", "components/message-scroller": "blue", "components/trace": "", "ai-elements/chat": "blue"}
+	for _, name := range []string{"chain-of-thought", "checkpoint", "confirmation", "context", "file-tree", "inline-citation", "message", "model-selector", "plan", "prompt-input", "queue", "reasoning", "sources", "stack-trace", "subagent", "suggestion", "task", "terminal", "test-results", "tool"} {
+		shadcn["ai-elements/"+name] = ""
+	}
 	for name, scheme := range shadcn {
-		href := "/docs/components/" + name
+		href := "/docs/" + name
 		body := request(t, h, http.MethodGet, href).Body.String()
 		tags := previewTag.FindAllString(body, -1)
 		if len(tags) == 0 {

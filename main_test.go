@@ -498,3 +498,20 @@ func TestAccordionClosedPanelsHidden(t *testing.T) {
 		t.Fatalf("only %d accordion items found", found)
 	}
 }
+
+func TestBehaviorFixtureSentinels(t *testing.T) {
+	for _, f := range repoFiles(t, "test/behavior/fixtures/*.html") {
+		b, err := os.ReadFile(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		s := string(b)
+		i := strings.Index(s, `<div tabindex="0" data-behavior="sentinel">After the example</div>`)
+		if i < 0 {
+			continue
+		}
+		if open := strings.Count(s[:i], "<div ") + strings.Count(s[:i], "<div>") - strings.Count(s[:i], "</div>"); open != 0 {
+			t.Errorf("%s: the After sentinel is inside %d open div elements; it must follow the stage", f, open)
+		}
+	}
+}

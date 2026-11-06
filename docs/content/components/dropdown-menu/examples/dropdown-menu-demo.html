@@ -1,0 +1,35 @@
+<div data-slot="dropdown-menu">
+  <button type="button" data-slot="button" data-variant="outline" data-dropdown-menu-trigger>Open</button>
+  <div data-slot="dropdown-menu-content" data-align="start" class="w-40">
+    <div data-slot="dropdown-menu-group">
+      <div data-slot="dropdown-menu-label">My Account</div>
+      <div data-slot="dropdown-menu-item">Profile<span data-slot="dropdown-menu-shortcut">⇧⌘P</span></div>
+      <div data-slot="dropdown-menu-item">Billing<span data-slot="dropdown-menu-shortcut">⌘B</span></div>
+      <div data-slot="dropdown-menu-item">Settings<span data-slot="dropdown-menu-shortcut">⌘S</span></div>
+    </div>
+    <div data-slot="dropdown-menu-separator"></div>
+    <div data-slot="dropdown-menu-group">
+      <div data-slot="dropdown-menu-item">Team</div>
+      <div data-slot="dropdown-menu-sub">
+        <div data-slot="dropdown-menu-sub-trigger">Invite users</div>
+        <div data-slot="dropdown-menu-sub-content">
+          <div data-slot="dropdown-menu-item">Email</div>
+          <div data-slot="dropdown-menu-item">Message</div>
+          <div data-slot="dropdown-menu-separator"></div>
+          <div data-slot="dropdown-menu-item">More...</div>
+        </div>
+      </div>
+      <div data-slot="dropdown-menu-item">New Team<span data-slot="dropdown-menu-shortcut">⌘+T</span></div>
+    </div>
+    <div data-slot="dropdown-menu-separator"></div>
+    <div data-slot="dropdown-menu-group">
+      <div data-slot="dropdown-menu-item">GitHub</div>
+      <div data-slot="dropdown-menu-item">Support</div>
+      <div data-slot="dropdown-menu-item" data-disabled>API</div>
+    </div>
+    <div data-slot="dropdown-menu-separator"></div>
+    <div data-slot="dropdown-menu-group">
+      <div data-slot="dropdown-menu-item">Log out<span data-slot="dropdown-menu-shortcut">⇧⌘Q</span></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+<div data-slot="button-group" role="group" class="[--radius:9999rem]" data-js="button-group-input-group">
+  <div data-slot="button-group" role="group">
+    <button type="button" data-slot="button" data-variant="outline" data-size="icon" aria-label="Add"><svg data-lucide="plus"></svg></button>
+  </div>
+  <div data-slot="button-group" role="group">
+    <div data-slot="input-group">
+      <input data-slot="input-group-control" placeholder="Send a message..." aria-label="Message">
+      <div data-slot="input-group-addon" data-align="inline-end">
+        <div data-slot="tooltip">
+          <button type="button" data-slot="button" data-input-group-button data-size="icon-xs" aria-pressed="false" aria-label="Voice Mode" data-tooltip-trigger class="data-[active=true]:bg-orange-100 data-[active=true]:text-orange-700 dark:data-[active=true]:bg-orange-800 dark:data-[active=true]:text-orange-100"><svg data-lucide="audio-lines"></svg></button>
+          <div data-slot="tooltip-content"><p>Voice Mode</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

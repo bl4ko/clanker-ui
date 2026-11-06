@@ -1,0 +1,27 @@
+<div data-slot="field-group" class="w-full max-w-xs">
+  <fieldset data-slot="field-set">
+    <legend data-slot="field-legend" data-variant="label">Compute Environment</legend>
+    <p data-slot="field-description">Select the compute environment for your cluster.</p>
+    <div data-slot="radio-group" data-value="kubernetes">
+      <label data-slot="field-label" for="kubernetes-r2h">
+        <div data-slot="field" data-orientation="horizontal">
+          <div data-slot="field-content">
+            <div data-slot="field-label">Kubernetes</div>
+            <p data-slot="field-description">Run GPU workloads on a K8s cluster.</p>
+          </div>
+          <button type="button" data-slot="radio-group-item" value="kubernetes" id="kubernetes-r2h"></button>
+        </div>
+      </label>
+      <label data-slot="field-label" for="vm-z4k">
+        <div data-slot="field" data-orientation="horizontal">
+          <div data-slot="field-content">
+            <div data-slot="field-label">Virtual Machine</div>
+            <p data-slot="field-description">Access a cluster to run GPU workloads.</p>
+          </div>
+          <button type="button" data-slot="radio-group-item" value="vm" id="vm-z4k"></button>
+        </div>
+      </label>
+    </div>
+  </fieldset>
+</div>
+

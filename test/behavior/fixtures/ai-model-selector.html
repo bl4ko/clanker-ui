@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>AI Model Selector behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+  <script type="module" src="/test/behavior/fixtures/ai-model-selector.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <form data-behavior="max-w-512" id="model-selector-demo">
+          <div data-slot="input-group">
+            <textarea data-slot="input-group-control" data-behavior="p-3" placeholder="Ask the agent to change your code..." aria-label="Message"></textarea>
+            <div data-slot="input-group-addon" data-align="block-end">
+              <button type="button" data-slot="button" data-input-group-button data-variant="outline" data-size="icon-sm" data-behavior="round" aria-label="Attach"><svg data-lucide="plus"></svg></button>
+              <div data-slot="dropdown-menu" id="model-selector-demo-model">
+                <button type="button" data-slot="button" data-input-group-button data-variant="outline" data-size="sm" data-behavior="ms-auto" data-dropdown-menu-trigger aria-label="Model: GPT-5">GPT-5<svg data-lucide="chevron-down"></svg></button>
+                <div data-slot="dropdown-menu-content" data-align="start" data-behavior="w-48">
+                  <div data-slot="dropdown-menu-radio-group" data-value="gpt-5">
+                    <div data-slot="dropdown-menu-group">
+                      <div data-slot="dropdown-menu-label">OpenAI</div>
+                      <div data-slot="dropdown-menu-radio-item" data-value="gpt-5" data-close-on-click>GPT-5</div>
+                      <div data-slot="dropdown-menu-radio-item" data-value="gpt-5-mini" data-close-on-click>GPT-5 mini</div>
+                    </div>
+                    <div data-slot="dropdown-menu-separator"></div>
+                    <div data-slot="dropdown-menu-group">
+                      <div data-slot="dropdown-menu-label">Anthropic</div>
+                      <div data-slot="dropdown-menu-radio-item" data-value="claude-sonnet-4-5" data-close-on-click>Claude Sonnet 4.5</div>
+                      <div data-slot="dropdown-menu-radio-item" data-value="claude-haiku-4-5" data-close-on-click>Claude Haiku 4.5</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div data-slot="dropdown-menu" id="model-selector-demo-effort">
+                <button type="button" data-slot="button" data-input-group-button data-variant="outline" data-size="sm" data-dropdown-menu-trigger aria-label="Effort: Medium"><span data-behavior="muted">Effort</span>Medium<svg data-lucide="chevron-down"></svg></button>
+                <div data-slot="dropdown-menu-content" data-align="start" data-behavior="w-36">
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-label">Effort</div>
+                    <div data-slot="dropdown-menu-radio-group" data-value="medium">
+                      <div data-slot="dropdown-menu-radio-item" data-value="low" data-close-on-click>Low</div>
+                      <div data-slot="dropdown-menu-radio-item" data-value="medium" data-close-on-click>Medium</div>
+                      <div data-slot="dropdown-menu-radio-item" data-value="high" data-close-on-click>High</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" data-slot="button" data-input-group-button data-variant="default" data-size="icon-sm" data-behavior="round" aria-label="Send" disabled><svg data-lucide="arrow-up"></svg></button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

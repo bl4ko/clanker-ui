@@ -80,7 +80,13 @@
               <h2 data-slot="card-title">About the book</h2>
             </div>
             <div data-slot="card-content">
-              <p id="book-about">Ryland Grace wakes up alone on a spaceship with no memory of how he got there. As his memory returns, he learns that he is humanity's last chance to stop a microbe that dims the sun.</p>
+              <p id="book-about">Ryland Grace wakes up alone on a spaceship with no memory of how he got there. As his memory returns, he learns that he is humanity's last chance to stop a microbe that dims the sun. To save Earth, he needs the help of the last crewmate he expected: an engineer from another star who is on the same mission.</p>
+            </div>
+            <div data-slot="card-footer" aria-label="Tags" role="group">
+              <span data-slot="badge" data-variant="outline">Space</span>
+              <span data-slot="badge" data-variant="outline">First contact</span>
+              <span data-slot="badge" data-variant="outline">Hard science fiction</span>
+              <span data-slot="badge" data-variant="outline">Humor</span>
             </div>
           </div>
         </div>
@@ -169,6 +175,30 @@
           <div><dt>Suggested by</dt><dd>Lea Kranjc</dd></div>
           <div><dt>ISBN</dt><dd>978-0593135204</dd></div>
         </dl>
+        <div data-slot="card">
+          <div data-slot="card-header">
+            <h2 data-slot="card-title">Next meeting</h2>
+            <p data-slot="card-description">Tue, Nov 18 at 19:00, Café Moro. 3 of 12 members said yes.</p>
+          </div>
+          <div data-slot="card-content">
+            <div data-slot="item-group" role="list">
+              <div data-slot="item" data-size="xs" role="listitem">
+                <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">LK</span></span></div>
+                <div data-slot="item-content"><div data-slot="item-title">Lea Kranjc</div></div>
+                <div data-slot="item-actions"><span data-slot="badge" data-variant="secondary">Host</span></div>
+              </div>
+              <div data-slot="item" data-size="xs" role="listitem">
+                <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">NO</span></span></div>
+                <div data-slot="item-content"><div data-slot="item-title">Nadia Okafor</div></div>
+              </div>
+              <div data-slot="item" data-size="xs" role="listitem">
+                <div data-slot="item-media"><span data-slot="avatar" data-size="sm"><span data-slot="avatar-fallback">TB</span></span></div>
+                <div data-slot="item-content"><div data-slot="item-title">Tomás Berg</div></div>
+              </div>
+            </div>
+          </div>
+          <div data-slot="card-footer"><button type="button" data-slot="button" data-variant="outline" id="rsvp"><svg data-lucide="calendar-check"></svg>I'm coming</button></div>
+        </div>
       </aside>
     </div>
   </main>
@@ -272,7 +302,7 @@
             </div>
             <div data-slot="field" role="group">
               <label data-slot="field-label" for="book-synopsis">Synopsis</label>
-              <textarea data-slot="textarea" id="book-synopsis" name="synopsis" rows="6" maxlength="600">Ryland Grace wakes up alone on a spaceship with no memory of how he got there. As his memory returns, he learns that he is humanity's last chance to stop a microbe that dims the sun.</textarea>
+              <textarea data-slot="textarea" id="book-synopsis" name="synopsis" rows="6" maxlength="600">Ryland Grace wakes up alone on a spaceship with no memory of how he got there. As his memory returns, he learns that he is humanity's last chance to stop a microbe that dims the sun. To save Earth, he needs the help of the last crewmate he expected: an engineer from another star who is on the same mission.</textarea>
               <p data-slot="field-description">At most 600 characters. No spoilers past chapter 3.</p>
             </div>
             <div data-slot="field" data-orientation="horizontal">

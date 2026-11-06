@@ -1,0 +1,30 @@
+<div data-slot="context-menu">
+  <div data-slot="context-menu-trigger" tabindex="0" class="flex aspect-video w-full max-w-xs items-center justify-center rounded-xl border border-dashed text-sm">
+    <span class="hidden pointer-fine:inline-block">Right click here</span>
+    <span class="hidden pointer-coarse:inline-block">Long press here</span>
+  </div>
+  <div data-slot="context-menu-content">
+    <div data-slot="context-menu-group">
+      <div data-slot="context-menu-item">Copy<span data-slot="context-menu-shortcut">⌘C</span></div>
+      <div data-slot="context-menu-item">Cut<span data-slot="context-menu-shortcut">⌘X</span></div>
+    </div>
+    <div data-slot="context-menu-sub">
+      <div data-slot="context-menu-sub-trigger">More Tools</div>
+      <div data-slot="context-menu-sub-content">
+        <div data-slot="context-menu-group">
+          <div data-slot="context-menu-item">Save Page...</div>
+          <div data-slot="context-menu-item">Create Shortcut...</div>
+          <div data-slot="context-menu-item">Name Window...</div>
+        </div>
+        <div data-slot="context-menu-separator"></div>
+        <div data-slot="context-menu-group">
+          <div data-slot="context-menu-item">Developer Tools</div>
+        </div>
+        <div data-slot="context-menu-separator"></div>
+        <div data-slot="context-menu-group">
+          <div data-slot="context-menu-item" data-variant="destructive">Delete</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

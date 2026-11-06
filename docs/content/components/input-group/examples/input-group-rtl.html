@@ -1,0 +1,28 @@
+<div class="grid w-full max-w-sm gap-6" dir="rtl" lang="ar">
+  <div data-slot="input-group" class="max-w-xs">
+    <input data-slot="input-group-control" placeholder="بحث..." aria-label="بحث">
+    <div data-slot="input-group-addon"><svg data-lucide="search"></svg></div>
+    <div data-slot="input-group-addon" data-align="inline-end">١٢ نتيجة</div>
+  </div>
+  <div data-slot="input-group">
+    <input data-slot="input-group-control" placeholder="جاري البحث..." aria-label="بحث">
+    <div data-slot="input-group-addon" data-align="inline-end"><svg data-slot="spinner"></svg></div>
+  </div>
+  <div data-slot="input-group">
+    <input data-slot="input-group-control" placeholder="جاري حفظ التغييرات..." aria-label="التغييرات">
+    <div data-slot="input-group-addon" data-align="inline-end"><span data-slot="input-group-text">جاري الحفظ...</span><svg data-slot="spinner"></svg></div>
+  </div>
+  <div data-slot="field-group" class="max-w-sm">
+    <div data-slot="field">
+      <label data-slot="field-label" for="rtl-textarea">منطقة النص</label>
+      <div data-slot="input-group">
+        <textarea data-slot="input-group-control" id="rtl-textarea" placeholder="اكتب تعليقًا..."></textarea>
+        <div data-slot="input-group-addon" data-align="block-end">
+          <span data-slot="input-group-text">٠/٢٨٠</span>
+          <button type="button" data-slot="button" data-input-group-button data-variant="default" data-size="sm" class="ms-auto">نشر</button>
+        </div>
+      </div>
+      <p data-slot="field-description">تذييل موضع أسفل منطقة النص.</p>
+    </div>
+  </div>
+</div>

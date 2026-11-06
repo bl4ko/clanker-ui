@@ -1,0 +1,17 @@
+<div class="flex justify-center py-12">
+  <div data-slot="hover-card" id="context-demo">
+    <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-hover-card-trigger data-delay="10" data-close-delay="100">8% context</button>
+    <div data-slot="hover-card-content" class="flex w-64 flex-col gap-3">
+      <div class="flex items-center justify-between gap-3 text-sm">
+        <span class="font-medium">Context</span>
+        <span class="text-muted-foreground">10.7k / 128k</span>
+      </div>
+      <div data-slot="progress" data-value="8" aria-label="Context used"></div>
+      <div class="flex flex-col gap-1 text-sm">
+        <div class="flex justify-between gap-3"><span class="text-muted-foreground">Input</span><span>8.4k</span></div>
+        <div class="flex justify-between gap-3"><span class="text-muted-foreground">Output</span><span>1.3k</span></div>
+        <div class="flex justify-between gap-3"><span class="text-muted-foreground">Reasoning</span><span>980</span></div>
+      </div>
+    </div>
+  </div>
+</div>

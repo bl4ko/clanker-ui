@@ -128,6 +128,8 @@ The `go` job also runs `test/run.py --self-test` and makes `clanker-ui.css` agai
 
 `python3 -I tools/ci/plan.py --self-test` checks that each check runs once in each tier. The `go` job runs it.
 
+`plan.py` splits each engine, theme, and mode into jobs of about equal time. `tools/ci/durations.tsv` gives the seconds of each check from a full run; a check that is not in the file gets the median. The file changes only the split, not the checks that run.
+
 ## Demo and tests
 
 ```sh

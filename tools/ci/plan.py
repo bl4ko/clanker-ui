@@ -12,59 +12,92 @@ def job(engine, id, only, k="", themes="", **extra):
     return {"engine": engine, "id": id, "only": only, "k": k, "themes": themes, **extra}
 
 
-PR = [
-    job("chromium", "behavior-a-d-g3-g5-split-spike-light", "behavior,g3,g5,split,spike", r"^(behavior\.[a-d]|g3\.|g5\.|split\.|spike\.)", "light"),
-    job("chromium", "behavior-e-z-docs-g4-light", "behavior,docs,g4", r"^(behavior\.[e-z]|docs\.|g4\.)", "light"),
-    job("chromium", "docs-g3-g4-g5-split-spike-dark", "docs,g3,g4,g5,split,spike", themes="dark"),
-    job("chromium", "foundation-g1-g2a-lint-pages", "foundation,g1,g2,lint", r"^(foundation\.|g1\.|g2\.[ab]|lint\.)", pages=True),
-    job("chromium", "g2b", "g2", r"^g2\.[c-n]"),
-    job("chromium", "g2c", "g2", r"^g2\.[o-z]"),
-    job("firefox", "behavior-a-c-g3-g5-light", "behavior,g3,g5", r"^(behavior\.[a-c]|g3\.|g5\.)", "light"),
-    job("firefox", "behavior-d-m-g1-g4-light", "behavior,g1,g4", r"^(behavior\.[d-m]|g1\.|g4\.)", "light"),
-    job("firefox", "behavior-n-z-docs-foundation-lint-spike-split-light", "behavior,docs,foundation,lint,spike,split", r"^(behavior\.[n-z]|docs\.|foundation\.|lint\.|spike\.|split\.)", "light"),
-    job("firefox", "g3-g4-g5-dark", "g3,g4,g5", themes="dark"),
-    job("firefox", "docs-foundation-g1-lint-spike-split-dark", "docs,foundation,g1,lint,spike,split", themes="dark"),
-    job("firefox", "g2a", "g2", r"^g2\.[a-m]"),
-    job("firefox", "g2b", "g2", r"^g2\.[n-z]"),
-    job("webkit", "behavior-a-d-g1-g4b-light", "behavior,g1,g4", r"^(behavior\.[a-d]|g1\.|g4\.[d-l])", "light"),
-    job("webkit", "behavior-e-z-docs-g3b-spike-split-pages-light", "behavior,docs,g3,spike,split", r"^(behavior\.[e-z]|docs\.|g3\.[d-o]|spike\.|split\.)", "light", pages=True),
-    job("webkit", "foundation-g4c-g5-lint-light", "foundation,g4,g5,lint", r"^(foundation\.|g4\.[m-z]|g5\.|lint\.)", "light"),
-    job("webkit", "g2a-g3a-light", "g2,g3", r"^(g2\.[a-gk-m]|g3\.[a-c])", "light"),
-    job("webkit", "g2b-g3c-g4a-light", "g2,g3,g4", r"^(g2\.[h-jn-z]|g3\.[p-z]|g4\.[a-c])", "light"),
-    job("chromium", "min-smoke", "foundation,g5,g1,g2,g3,g4", r"^(foundation\.|g5\.|g1\.select$|g2\.dialog$|g3\.carousel$|g4\.calendar$)", "light", kit="min"),
-]
+LINUX_JOBS = 32
+MACOS_JOBS = 5
+PAGES_EXTRA = 10
+NO_DARK = {"behavior"}
+NO_MODE = {"behavior", "split"}
+SMOKE = job("chromium", "min-smoke", "foundation,g5,g1,g2,g3,g4", r"^(foundation\.|g5\.|g1\.select$|g2\.dialog$|g3\.carousel$|g4\.calendar$)", "light", kit="min")
 
-FULL = [
-    job("webkit", "foundation-docs-lint-spike-split-pages-dark", "foundation,docs,lint,spike,split", themes="dark", pages=True),
-    job("webkit", "g2a-g5-dark", "g2,g5", r"^(g2\.[a-d]|g5\.)", "dark"),
-    job("webkit", "g2b-dark", "g2", r"^g2\.[e-z]", "dark"),
-    job("webkit", "g1-g3a-dark", "g1,g3", r"^(g1\.|g3\.[a-c])", "dark"),
-    job("webkit", "g3b-g4-dark", "g3,g4", r"^(g3\.[d-z]|g4\.)", "dark"),
-    *[
-        job("chromium", f"{mode}-{id}", only, k, "light", mode=mode)
-        for mode in ("rtl", "reduced-motion")
-        for id, only, k in [
-            ("g2a-spike", "g2,spike", r"^(g2\.[a-n]|spike\.)"),
-            ("g2b-g5", "g2,g5", r"^(g2\.[o-z]|g5\.)"),
-            ("foundation-g1-docs-lint", "foundation,g1,docs,lint", ""),
-            ("g3-g4", "g3,g4", ""),
-        ]
-    ],
-    *[
-        job("chromium", f"min-{id}", only, k, kit="min")
-        for id, only, k in [
-            ("foundation-docs-lint", "foundation,docs,lint", ""),
-            ("g1", "g1", ""),
-            ("g2a", "g2", r"^g2\.[a-d]"),
-            ("g2b-g5", "g2,g5", r"^(g2\.[e-n]|g5\.)"),
-            ("g2c", "g2", r"^g2\.[o-s]"),
-            ("g2d-g4a", "g2,g4", r"^(g2\.[t-z]|g4\.[a-c])"),
-            ("g3a-spike", "g3,spike", r"^(g3\.[a-c]|spike\.)"),
-            ("g3b", "g3", r"^g3\.[d-z]"),
-            ("g4b", "g4", r"^g4\.[d-z]"),
-        ]
-    ],
-]
+
+def durations():
+    d = {}
+    f = ROOT / "tools/ci/durations.tsv"
+    for line in f.read_text().splitlines()[1:] if f.exists() else []:
+        engine, mode, theme, check, secs = line.split("\t")
+        d[(engine, mode, theme, check)] = float(secs)
+    return d
+
+
+def weight(d, engine, mode, theme, check):
+    for key in ((engine, mode, theme, check), (engine, "base", theme, check), (engine, "base", "light", check)):
+        if key in d:
+            return d[key]
+    return sorted(d.values())[len(d) // 2] if d else 5.0
+
+
+def fill(units, cap):
+    parts, cur, load = [], [], 0.0
+    for name, w in units:
+        if cur and load + w > cap and load + w - cap > cap - load:
+            parts.append(cur)
+            cur, load = [], 0.0
+        cur.append(name)
+        load += w
+    return parts + [cur] if cur else parts
+
+
+def cut(units, n):
+    lo, hi = sum(w for _, w in units) / n, sum(w for _, w in units)
+    for _ in range(40):
+        mid = (lo + hi) / 2
+        lo, hi = (lo, mid) if len(fill(units, mid)) <= n else (mid, hi)
+    parts = fill(units, hi)
+    loads = {name: w for name, w in units}
+    return parts, max(sum(loads[x] for x in p) for p in parts)
+
+
+def group(d, tier, engine, theme, mode="", kit="", skip=(), pages=False, jobs=0):
+    mk = mode or kit or "base"
+    units = [(f"{m}.{n}", weight(d, engine, mk, theme, f"{m}.{n}")) for m in sorted(NAMES) if m != "pages" and m not in skip for n in NAMES[m]]
+    if pages:
+        units.append(("pages", sum(weight(d, engine, "base", theme, f"pages.{n}") for n in NAMES["pages"]) + PAGES_EXTRA))
+    return {"tier": tier, "engine": engine, "theme": theme, "mode": mode, "kit": kit, "mk": mk, "units": units, "jobs": jobs}
+
+
+def matrix():
+    d = durations()
+    groups = [
+        group(d, "pr", "chromium", "light", skip={"pages"}),
+        group(d, "pr", "chromium", "dark", skip=NO_DARK),
+        group(d, "pr", "firefox", "light", skip={"pages"}),
+        group(d, "pr", "firefox", "dark", skip=NO_DARK),
+        group(d, "pr", "webkit", "light", skip={"pages"}, pages=True, jobs=MACOS_JOBS),
+        group(d, "full", "webkit", "dark", skip=NO_DARK, pages=True, jobs=MACOS_JOBS),
+        group(d, "full", "chromium", "light", mode="rtl", skip=NO_MODE),
+        group(d, "full", "chromium", "light", mode="reduced-motion", skip=NO_MODE),
+        group(d, "full", "chromium", "light", kit="min", skip=NO_MODE),
+        group(d, "full", "chromium", "dark", kit="min", skip=NO_MODE),
+    ]
+    linux = [g for g in groups if not g["jobs"]]
+    for g in linux:
+        g["jobs"] = 1
+    while sum(g["jobs"] for g in linux) < LINUX_JOBS:
+        g = max((g for g in linux if g["jobs"] < len(g["units"])), key=lambda g: cut(g["units"], g["jobs"])[1])
+        g["jobs"] += 1
+    pr, full = [], []
+    for g in groups:
+        parts = cut(g["units"], g["jobs"])[0]
+        for i, part in enumerate(parts):
+            checks = [n for n in part if n != "pages"]
+            only = ",".join(dict.fromkeys(n.split(".")[0] for n in checks))
+            k = "^(" + "|".join(re.escape(n) for n in checks) + ")$" if checks else ""
+            extra = {"mode": g["mode"]} if g["mode"] else {"kit": g["kit"]} if g["kit"] else {}
+            j = job(g["engine"], f"{g['mk']}-{g['theme']}-{i + 1}of{len(parts)}", only, k, g["theme"], **({"pages": True} if "pages" in part else {}), **extra)
+            (pr if g["tier"] == "pr" else full).append(j)
+    pr += [job("chromium", "pages-light-dark", "", pages=True), SMOKE]
+    return pr, full
+
 
 PAGES = [job("chromium", "pages", "", pages=True), job("webkit", "pages-light", "", themes="light", pages=True)]
 
@@ -180,6 +213,7 @@ def self_test():
 
 
 NAMES = checks()
+PR, FULL = matrix()
 
 if __name__ == "__main__":
     if sys.argv[1:] == ["--self-test"]:

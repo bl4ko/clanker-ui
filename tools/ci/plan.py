@@ -270,6 +270,44 @@ def self_test():
     check("design lint change runs lint and pages", classify(["skills/clanker-ui/references/design-lint.js", "test/lint/bad.html"])[:2] == ("tests", {"lint", "pages"}))
     check("label runs all", plan("pull_request", True, ["README.md"])[1] == PR + FULL)
     check("schedule and dispatch run all", all(plan(e, False, [])[1] == PR + FULL for e in ("schedule", "workflow_dispatch")))
+    js, css = (ROOT / "clanker-ui.js").read_text(), (ROOT / "clanker-ui.css").read_text()
+    page = (ROOT / "docs/content/components/button/page.md").read_text()
+    edits = {
+        "carousel": ("clanker-ui.js", js.replace("function carouselChange(inst) {\n", "function carouselChange(inst) {\n  inst.x = 1\n", 1)),
+        "core": ("clanker-ui.js", js.replace("\nconst SVG_NS", "\nconst coreX = 1\nconst SVG_NS", 1)),
+        "token": ("clanker-ui.css", css.replace("    --radius: .625rem;\n", "    --radius: .5rem;\n", 1)),
+        "button": ("clanker-ui.css", css.replace('  [data-slot="button"] {\n', '  [data-slot="button"] {\n    color: red;\n', 1)),
+        "page": ("docs/content/components/button/page.md", page + "\nMore text.\n"),
+        "title": ("docs/content/components/button/page.md", page.replace("title: Button", "title: Buttons", 1)),
+    }
+    new = {k: v for k, v in edits.values()}
+    def reader(*names):
+        texts = dict(edits[n] for n in names)
+        return lambda f: ((ROOT / f).read_text() if (ROOT / f).exists() else None, texts.get(f, (ROOT / f).read_text() if (ROOT / f).exists() else None))
+    check("self-test edits apply", all(t != (ROOT / f).read_text() for f, t in edits.values()))
+    names = [f"{m}.{n}" for m, ns in NAMES.items() for n in ns]
+    impact = {n: frozenset({"c:carousel"} if n.startswith("g3.carousel") else {"site:docs", "p:/docs/components/button", "c:button"} if n.startswith(("docs.", "pages.")) else {"c:button"}) for n in names if n != "g1.select"}
+    def run(names_, files=None):
+        return plan("pull_request", False, files or [edits[n][0] for n in names_], reader(*names_), impact)
+    tier, jobs = run(["carousel"])
+    sel = {n for n in names if n.startswith("g3.carousel") or n == "g1.select"}
+    smoke = coverage([SMOKE])
+    got = {k: v - smoke.get(k, 0) for k, v in coverage(jobs).items() if v - smoke.get(k, 0)}
+    wanted = {k for k in coverage(PR) if k[3] in sel and k not in smoke}
+    check("carousel change runs its checks once in each pull request variant, plus unmeasured checks and min-smoke", tier == "impact" and SMOKE in jobs and set(got) == wanted and set(got.values()) == {1})
+    check("carousel change needs fewer jobs", len(jobs) < len(PR))
+    check("core JS change is full", run(["core"]) == ("full", PR))
+    check("token CSS change is full", run(["token"]) == ("full", PR))
+    tier, jobs = run(["button"])
+    check("button CSS change runs the checks that touch button", tier == "impact" and {k[3] for k in coverage(jobs)} == {n for n in names if not n.startswith("g3.carousel")} | {k[3] for k in smoke})
+    tier, jobs = run(["page"])
+    check("docs page change runs docs and pages checks", tier == "impact" and {k[3].split(".")[0] for k in coverage(jobs) if k not in smoke} >= {"docs", "pages"} and any(j.get("pages") for j in jobs))
+    check("front matter change counts for all docs pages", classify(["docs/content/components/button/page.md"], reader("title"))[2] == [frozenset({"site:docs"})])
+    check("kit change with dist is impact", run(["carousel"], ["clanker-ui.js", "dist/clanker-ui.min.js"])[0] == "impact")
+    check("dist change alone is full", run([], ["dist/clanker-ui.min.js"])[0] == "full")
+    check("plan, impact map, or harness change with a kit change is full", all(run(["carousel"], ["clanker-ui.js", f])[0] == "full" for f in ("tools/ci/plan.py", "tools/ci/impact.py", "tools/ci/impact.tsv", "test/run.py")))
+    check("unmeasured component is full", plan("pull_request", False, ["clanker-ui.js"], reader("carousel"), {n: frozenset({"c:button"}) for n in names})[0] == "full")
+    check("label still runs all with a kit change", plan("pull_request", True, ["clanker-ui.js"], reader("carousel"), impact)[1] == PR + FULL)
     return 0 if ok else 1
 
 

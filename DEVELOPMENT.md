@@ -118,6 +118,7 @@ Behavior:
 | --- | --- |
 | Nightly run, `workflow_dispatch` (release check), or label `full-ci` | All: Chromium, Firefox, and WebKit in light and dark, `--rtl`, `--reduced-motion`, the minified kit, and the exported pages. |
 | Kit, generator, server, `test/run.py`, `ci.yml`, `tools/ci/plan.py`, or any other file | Pull request tier: Chromium and Firefox in light and dark, WebKit light (5 macOS jobs), a minified-kit smoke set, and the exported pages. |
+| Only component files: lines of `clanker-ui.js`, `clanker-ui.css`, or `tools/gen/kit.css` that belong to a component, the other kit files, `docs/content/`, `docs/assets/`, `docs/nav.json`, `docs/templates/`, `demo/` (with `dist/`, test modules, Go test files, and docs) | The pull request tier, only the checks that touched the changed components in the last measured run (`tools/ci/impact.tsv`), checks that are not in the file, and the minified-kit smoke set. Core JS, tokens, base CSS, utilities, and a component that no check touched count as "any other file". |
 | Only `test/<module>_test.py`, `test/behavior/`, `test/split/`, `test/spike/`, `test/lint/`, or `skills/clanker-ui/references/design-lint.js` (Go test files and docs can be in the same change) | The pull request tier, only for the changed modules. `test/lint/` and `design-lint.js` run the `lint` and `pages` modules. |
 | Only Markdown, `docs/*.txt`, `skills/`, licenses, issue templates, `release.yml`, `pages.yml`, or `renovate.json` | Only the exported pages in Chromium. |
 | Only Go test files (`*_test.go`) | None. |
@@ -127,6 +128,8 @@ Browser jobs run `test/run.py --retry`, and on a pull request also `--exitfirst`
 The `go` job also runs `test/run.py --self-test` and makes `clanker-ui.css` again from the pinned inputs (`tools/gen fetch`, then `tools/gen -out clanker-ui.css`). It fails when the file differs, so a hand edit of `clanker-ui.css` cannot merge.
 
 `python3 -I tools/ci/plan.py --self-test` checks that each check runs once in each tier. The `go` job runs it.
+
+`tools/ci/impact.py` maps a change to components: a JS line to its top-level statement (named like the component, as in `tools/gen dist`) and to the statements that use it, a CSS line to the `data-slot` components of its rule, a docs file to its page. `tools/ci/impact.tsv` lists for each check the components that it touched: rendered `data-slot` elements (outside `[hidden]`), kit functions that ran after the page load (Chromium coverage), and the fetched files and pages. `test/run.py --impact` prints these lines; it changes no result. Refresh the file after a big change of the tests or the demo: run the full matrix with `--impact` (all engines and modes), then `python3 -I tools/ci/impact.py build tools/ci/impact.tsv <log directories>`.
 
 `plan.py` splits each engine, theme, and mode into jobs of about equal time. `tools/ci/durations.tsv` gives the seconds of each check from a full run; a check that is not in the file gets the median. The file changes only the split, not the checks that run.
 

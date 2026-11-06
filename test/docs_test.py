@@ -654,7 +654,48 @@ def check_docs_code_block_preview(t):
       const view = document.querySelector('[data-docs="code"] [data-slot="code-block-content"]')
       return [pad(demo), getComputedStyle(start).counterReset, pad(view)]
     }""")
-    assert got == ["12px", "none", "0px"], got
+    assert got == ["16px", "none", "0px"], got
+
+
+RHEA_PROPS = ["border-top-width", "border-top-left-radius", "padding-top", "padding-inline-start", "margin-top", "box-shadow", "background-color", "color", "font-size", "font-weight", "line-height", "gap", "display", "outline-width", "border-top-color", "fill", "stroke"]
+RHEA_SNAPSHOT = """props => [...document.querySelectorAll('[data-docs="preview"][data-docs-style="rhea"]')].map(root => [root, ...root.querySelectorAll("*")].map(el => {
+  const cs = getComputedStyle(el)
+  return [el.dataset.slot || el.tagName, ...props.map(p => cs.getPropertyValue(p))]
+}))"""
+RHEA_ONLY = """() => {
+  const d = document.documentElement.cloneNode(true)
+  d.querySelectorAll("script, meta[http-equiv]").forEach(e => e.remove())
+  for (const l of d.querySelectorAll("link[rel=stylesheet]")) {
+    const h = l.getAttribute("href")
+    if (h.endsWith("/style-rhea.css")) l.remove()
+    else if (h.endsWith("/clanker-ui.css")) l.setAttribute("href", h.slice(0, -"clanker-ui.css".length) + "clanker-ui-rhea.css")
+  }
+  return "<!doctype html>" + d.outerHTML
+}"""
+
+
+def check_docs_rhea_previews(t):
+    page = t.page
+    t.docs("/docs/components/button")
+    chrome = page.evaluate("""() => getComputedStyle(document.querySelector('[data-docs="search-trigger"]')).borderTopLeftRadius""")
+    for href in ("/docs/components/bubble", "/docs/components/code-block", "/docs/components/drawer"):
+        t.docs(href)
+        t.settle(3000)
+        assert page.evaluate("""() => getComputedStyle(document.querySelector('[data-docs="search-trigger"]')).borderTopLeftRadius""") == chrome, f"{href}: the docs chrome must stay Nova"
+        docs = page.evaluate(RHEA_SNAPSHOT, RHEA_PROPS)
+        assert docs, f"{href} has no Rhea preview"
+        html = page.evaluate(RHEA_ONLY)
+        other = page.context.new_page()
+        try:
+            other.route(t.base_url + "/__rhea-only", lambda r: r.fulfill(status=200, content_type="text/html", body=html))
+            other.goto(t.base_url + "/__rhea-only", wait_until="load")
+            other.emulate_media(color_scheme=t.theme)
+            other.wait_for_timeout(300)
+            only = other.evaluate(RHEA_SNAPSHOT, RHEA_PROPS)
+        finally:
+            other.close()
+        diffs = [(a[0], prop, a[1 + i], b[1 + i]) for x, y in zip(docs, only) for a, b in zip(x, y) for i, prop in enumerate(RHEA_PROPS) if a[1 + i] != b[1 + i]]
+        assert len(docs) == len(only) and not diffs, f"{href}: a Rhea preview differs from a page with only clanker-ui-rhea.css: {diffs[:5]}"
 
 
 def check_docs_component_demos(t):

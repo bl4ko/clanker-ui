@@ -21,7 +21,7 @@
     "files": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["note", "readable", "bundle", "optional"],
+      "required": ["note", "readable", "bundle", "optional", "styles"],
       "properties": {
         "note": { "type": "string" },
         "readable": { "$ref": "#/$defs/fileSet" },
@@ -33,6 +33,17 @@
             "additionalProperties": false,
             "required": ["file", "use"],
             "properties": { "file": { "type": "string" }, "use": { "type": "string" } }
+          }
+        },
+        "styles": {
+          "type": "array",
+          "description": "shadcn styles. The first is the default. A page loads the CSS of exactly one style.",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "css", "min", "groups", "use"],
+            "properties": { "name": { "type": "string" }, "css": { "type": "string" }, "min": { "type": "string" }, "groups": { "type": "string" }, "use": { "type": "string" } }
           }
         }
       }

@@ -87,7 +87,7 @@ jobs:
         run: |
           go run ./tools/gen fetch -src "$RUNNER_TEMP/shadcn"
           go run ./tools/gen -src "$RUNNER_TEMP/shadcn" -out clanker-ui.css
-          git diff --exit-code clanker-ui.css
+          git diff --exit-code clanker-ui.css clanker-ui-rhea.css dist
           go run ./tools/gen docs-coverage -src "$RUNNER_TEMP/shadcn"
           go run ./tools/gen utilities -src "$RUNNER_TEMP/shadcn" -content 'docs/content/**/examples/*.{html,js}' -out docs/assets/examples.css
           git diff --exit-code docs/assets/examples.css

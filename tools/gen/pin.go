@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	novaFile    = "apps/v4/registry/styles/style-nova.css"
+	stylesDir   = "apps/v4/registry/styles"
 	globalsFile = "apps/v4/app/globals.css"
 	twFile      = "packages/shadcn/src/tailwind.css"
 	themesFile  = "apps/v4/registry/themes.ts"
@@ -28,11 +28,22 @@ const (
 	animateCSS  = "package/dist/tw-animate.css"
 )
 
-var fixedFiles = []string{novaFile, globalsFile, twFile, themesFile}
+var fixedFiles = []string{globalsFile, twFile, themesFile}
+
+func styleFile(name string) string { return stylesDir + "/style-" + name + ".css" }
+
+func styleName(path string) (string, bool) {
+	name, ok := strings.CutPrefix(path, stylesDir+"/style-")
+	if !ok || !strings.HasSuffix(name, ".css") || strings.Contains(name, "/") {
+		return "", false
+	}
+	return strings.TrimSuffix(name, ".css"), true
+}
 
 type pinned struct {
 	files   map[string]string
 	ui      []string
+	styles  []string
 	animate string
 }
 
@@ -67,7 +78,7 @@ func parsePin(text string) (map[string]string, error) {
 		}
 		out[path] = sum
 	}
-	for _, f := range fixedFiles {
+	for _, f := range append(slices.Clone(fixedFiles), kitStyleFiles()...) {
 		if out[f] == "" {
 			return nil, fmt.Errorf("pin: %s is missing", f)
 		}
@@ -105,6 +116,9 @@ func loadPinned(src, pinPath string) (*pinned, error) {
 		p.files[path] = string(b)
 		if name, ok := strings.CutPrefix(path, uiDir+"/"); ok {
 			p.ui = append(p.ui, strings.TrimSuffix(name, ".tsx"))
+		}
+		if name, ok := styleName(path); ok {
+			p.styles = append(p.styles, name)
 		}
 	}
 	entries, err := os.ReadDir(filepath.Join(src, filepath.FromSlash(uiDir)))
@@ -189,6 +203,9 @@ func treeFiles(b []byte) (map[string]string, []string, error) {
 		}
 		blobs[e.Path] = e.Sha
 		if name, ok := strings.CutPrefix(e.Path, uiDir+"/"); ok && !strings.Contains(name, "/") && strings.HasSuffix(name, ".tsx") {
+			files = append(files, e.Path)
+		}
+		if _, ok := styleName(e.Path); ok {
 			files = append(files, e.Path)
 		}
 		if docsFile(e.Path) {

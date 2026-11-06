@@ -12,6 +12,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Added
 
+- Rhea style: `clanker-ui-rhea.css` (and `dist/clanker-ui-rhea.min.css`, `dist/clanker-ui-rhea-<group>.min.css`) is the kit CSS generated from the shadcn `style-rhea.css`. Load it instead of `clanker-ui.css`; markup and JavaScript are the same. Nova stays the default and does not change. The catalog lists the styles in `files.styles`.
 - `data-variant="sticky"` on a last `page-aside`: the side column stays in view below the header from 64rem (the live summary of the `form` block).
 - AI Elements (shadcn/ui October 2026): docs pages at `/docs/ai-elements` with patterns for chat and agent pages, built only from kit components: Chat, Message, Prompt Input, Model Selector, Context, and Suggestion. Each page has the shadcn sections, live examples, and the module that plays the demo. `clanker-ui.json` has a `patterns` list (name, title, description, the components of the examples, docs links), and the skill has `references/ai-elements.md` (which pattern for which job).
 - AI Elements: Sources (a trace line that opens into the links of a reply, with a Replay demo), Inline Citation (hover cards in a sentence, all `span` parts), and File Tree (folders as collapsibles, a click selects a file).

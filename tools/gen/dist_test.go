@@ -67,7 +67,7 @@ func TestDistFresh(t *testing.T) {
 
 func TestDistFiles(t *testing.T) {
 	res := testDist(t)
-	want := []string{"clanker-ui-a11y.min.css", "clanker-ui-chart.min.css", "clanker-ui-chart.min.js", "clanker-ui-chat.min.css", "clanker-ui-chat.min.js", "clanker-ui-code.min.js", "clanker-ui-core.min.css", "clanker-ui-core.min.js", "clanker-ui-forms.min.css", "clanker-ui-forms.min.js", "clanker-ui-layout.min.css", "clanker-ui-layout.min.js", "clanker-ui-overlays.min.css", "clanker-ui-overlays.min.js", "clanker-ui-theme.min.js", "clanker-ui-themes.min.css", "clanker-ui.min.css", "clanker-ui.min.js"}
+	want := []string{"clanker-ui-a11y.min.css", "clanker-ui-chart.min.css", "clanker-ui-chart.min.js", "clanker-ui-chat.min.css", "clanker-ui-chat.min.js", "clanker-ui-code.min.js", "clanker-ui-core.min.css", "clanker-ui-core.min.js", "clanker-ui-forms.min.css", "clanker-ui-forms.min.js", "clanker-ui-layout.min.css", "clanker-ui-layout.min.js", "clanker-ui-overlays.min.css", "clanker-ui-overlays.min.js", "clanker-ui-rhea-chart.min.css", "clanker-ui-rhea-chat.min.css", "clanker-ui-rhea-core.min.css", "clanker-ui-rhea-forms.min.css", "clanker-ui-rhea-layout.min.css", "clanker-ui-rhea-overlays.min.css", "clanker-ui-rhea.min.css", "clanker-ui-theme.min.js", "clanker-ui-themes.min.css", "clanker-ui.min.css", "clanker-ui.min.js"}
 	if got := slices.Sorted(maps.Keys(res.files)); !slices.Equal(got, want) {
 		t.Fatalf("dist files\n got %v\nwant %v", got, want)
 	}
@@ -82,6 +82,8 @@ func TestDistFiles(t *testing.T) {
 			src = "../../clanker-ui-themes.css"
 		case name == "clanker-ui-a11y.min.css":
 			src = "../../clanker-ui-a11y.css"
+		case strings.HasPrefix(name, "clanker-ui-rhea"):
+			src = "../../clanker-ui-rhea.css"
 		case strings.HasSuffix(name, ".css"):
 			src = "../../clanker-ui.css"
 		}

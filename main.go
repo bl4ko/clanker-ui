@@ -279,6 +279,8 @@ func (s *site) routes() http.Handler {
 	return secure(mux)
 }
 
+var demoEnd = []byte("\n      </section>\n")
+
 var demoBlock = regexp.MustCompile(`(?m)^      <(?:section id="([a-z0-9-]+)" data-demo="[a-z]+"|h2 id="([a-z0-9-]+)" data-demo="category")>`)
 
 func (s *site) demo(w http.ResponseWriter, r *http.Request) {
@@ -319,8 +321,15 @@ func demoOnly(body []byte, only []string) ([]byte, bool) {
 		if slices.Contains(only, id) {
 			found++
 		} else if !slices.Contains(only, category) {
-			out = append(append(out, body[last:m[1]-1]...), " hidden"...)
-			last = m[1] - 1
+			end := bytes.Index(body[m[1]:], demoEnd)
+			if end < 0 {
+				return nil, false
+			}
+			out = append(out, body[last:m[0]]...)
+			last = m[1] + end + len(demoEnd)
+			if last < len(body) && body[last] == '\n' {
+				last++
+			}
 		}
 	}
 	return append(out, body[last:]...), found == len(only)

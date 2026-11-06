@@ -151,7 +151,6 @@ class T:
         self.keep_shots = shots
         self.shots = 0
         self.current = None
-        self.recorder = None
 
     def docs(self, path):
         response = self.page.goto(self.base_url + path, wait_until="load")
@@ -325,7 +324,6 @@ def run_check(browser, args, engine, theme, width, module, name, fn, start):
     page.on("response", lambda r: problems.append(f"http {r.status}: {r.url}") if r.status >= 400 else None)
     base_url = args.base_url.rstrip("/")
     t = T(page, engine, theme, width, args.out, module, name, args.reduced_motion, args.rtl, base_url, args.shots)
-    t.recorder = recorder
     status, detail = "pass", ""
     try:
         response = page.goto(base_url + start, wait_until="load")

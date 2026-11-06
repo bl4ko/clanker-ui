@@ -99,6 +99,9 @@ def emit(groups):
     return out
 
 
+CAP = {}
+
+
 def matrix():
     groups = all_groups(durations())
     linux = [g for g in groups if not g["jobs"]]
@@ -107,6 +110,7 @@ def matrix():
     while sum(g["jobs"] for g in linux) < LINUX_JOBS:
         g = max((g for g in linux if g["jobs"] < len(g["units"])), key=lambda g: cut(g["units"], g["jobs"])[1])
         g["jobs"] += 1
+    CAP.update({(g["engine"], g["theme"], g["mk"]): g["jobs"] for g in groups if g["tier"] == "pr"})
     pr = [j for tier, j in emit(groups) if tier == "pr"] + [job("chromium", "pages-light-dark", "", pages=True), SMOKE]
     return pr, [j for tier, j in emit(groups) if tier == "full"]
 
@@ -122,7 +126,7 @@ def reduced(selected):
     for macos in (False, True):
         mine = [g for g in groups if (g["engine"] == "webkit") == macos]
         while mine and sum(g["jobs"] for g in mine) < (MACOS_JOBS if macos else LINUX_JOBS):
-            g = max((g for g in mine if g["jobs"] < len(g["units"])), key=lambda g: cut(g["units"], g["jobs"])[1], default=None)
+            g = max((g for g in mine if g["jobs"] < min(len(g["units"]), CAP[(g["engine"], g["theme"], g["mk"])])), key=lambda g: cut(g["units"], g["jobs"])[1], default=None)
             if not g or cut(g["units"], g["jobs"])[1] <= JOB_TARGET:
                 break
             g["jobs"] += 1

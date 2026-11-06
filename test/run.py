@@ -297,6 +297,11 @@ def drop_webkit_noise(problems, selects):
     return kept
 
 
+def aborted_prefetch(request):
+    purpose = " ".join(request.headers.get(h, "") for h in ("sec-purpose", "purpose", "x-moz"))
+    return request.failure in ("NS_BINDING_ABORTED", "net::ERR_ABORTED") and "prefetch" in purpose
+
+
 def run_check(browser, args, engine, theme, width, module, name, fn, start):
     context = browser.new_context(
         viewport={"width": width, "height": WIDTHS[width]},
@@ -311,7 +316,7 @@ def run_check(browser, args, engine, theme, width, module, name, fn, start):
     problems = []
     page.on("console", lambda m: problems.append(f"console.{m.type}: {m.text}") if m.type in ("error", "warning", "assert") else None)
     page.on("pageerror", lambda e: problems.append(f"pageerror: {e}"))
-    page.on("requestfailed", lambda r: problems.append(f"requestfailed: {r.url} {r.failure}"))
+    page.on("requestfailed", lambda r: None if aborted_prefetch(r) else problems.append(f"requestfailed: {r.url} {r.failure}"))
     page.on("response", lambda r: problems.append(f"http {r.status}: {r.url}") if r.status >= 400 else None)
     base_url = args.base_url.rstrip("/")
     t = T(page, engine, theme, width, args.out, module, name, args.reduced_motion, args.rtl, base_url, args.shots)
@@ -601,6 +606,9 @@ def self_test():
     case(drop_webkit_noise(kit + [refused] * len(kit), 5) == kit + [refused] * len(kit), "kit violations must stay")
     extra = "style-src-attr blocked inline at ?:0  on <document>"
     case(drop_webkit_noise([extra, extra], 1) == [extra], "document reports are bounded by the selects created by script")
+    req = lambda failure, headers: type("R", (), {"failure": failure, "headers": headers})()
+    case(aborted_prefetch(req("NS_BINDING_ABORTED", {"x-moz": "prefetch"})) and aborted_prefetch(req("net::ERR_ABORTED", {"sec-purpose": "prefetch"})), "a link prefetch that the next page load cancels is not a failure")
+    case(not aborted_prefetch(req("NS_BINDING_ABORTED", {})) and not aborted_prefetch(req("net::ERR_CONNECTION_RESET", {"sec-purpose": "prefetch"})), "other failed requests stay failures")
     status, detail = verdict("skip", "desktop only", ["console.error: boom"], [])
     case(status == "fail" and "boom" in detail, "a skip must keep the console errors collected before it")
     case(verdict("skip", "desktop only", ["console.error: boom"], [re.compile("boom")]) == ("skip", "desktop only"), "allowed messages must not fail a skip")

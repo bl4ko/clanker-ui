@@ -1,0 +1,32 @@
+<div class="grid w-full max-w-sm gap-4">
+  <div data-slot="input-group">
+    <input data-slot="input-group-control" placeholder="Enter file name" aria-label="File name">
+    <div data-slot="input-group-addon" data-align="inline-end">
+      <div data-slot="dropdown-menu">
+        <button type="button" data-slot="button" data-input-group-button data-variant="ghost" data-size="icon-xs" aria-label="More" data-dropdown-menu-trigger><svg data-lucide="ellipsis"></svg></button>
+        <div data-slot="dropdown-menu-content" data-align="end" data-side-offset="8" data-align-offset="-4">
+          <div data-slot="dropdown-menu-group">
+            <div data-slot="dropdown-menu-item">Settings</div>
+            <div data-slot="dropdown-menu-item">Copy path</div>
+            <div data-slot="dropdown-menu-item">Open location</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-slot="input-group">
+    <input data-slot="input-group-control" placeholder="Enter search query" aria-label="Search query">
+    <div data-slot="input-group-addon" data-align="inline-end">
+      <div data-slot="dropdown-menu">
+        <button type="button" data-slot="button" data-input-group-button data-variant="ghost" class="pr-1.5! text-xs" data-dropdown-menu-trigger>Search In... <svg data-lucide="chevron-down" class="size-3"></svg></button>
+        <div data-slot="dropdown-menu-content" data-align="end" data-side-offset="8" data-align-offset="-4">
+          <div data-slot="dropdown-menu-group">
+            <div data-slot="dropdown-menu-item">Documentation</div>
+            <div data-slot="dropdown-menu-item">Blog Posts</div>
+            <div data-slot="dropdown-menu-item">Changelog</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

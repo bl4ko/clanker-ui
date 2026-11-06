@@ -1,0 +1,27 @@
+<div class="flex w-full max-w-xs flex-col py-6 text-sm" id="file-tree-demo">
+  <div data-slot="collapsible" data-state="open">
+    <button type="button" data-slot="button" data-variant="ghost" data-size="sm" class="w-full justify-start font-normal aria-expanded:bg-transparent aria-expanded:hover:bg-muted dark:aria-expanded:hover:bg-muted/50" data-collapsible-trigger><svg data-lucide="chevron-right" class="transition-transform group-aria-expanded:rotate-90"></svg><svg data-lucide="folder"></svg>app</button>
+    <div data-slot="collapsible-content">
+      <div class="ms-4 flex flex-col">
+        <button type="button" data-slot="button" data-variant="ghost" data-size="sm" class="w-full justify-start font-normal"><svg data-lucide="file"></svg>layout.tsx</button>
+        <button type="button" data-slot="button" data-variant="ghost" data-size="sm" class="w-full justify-start font-normal"><svg data-lucide="file"></svg>page.tsx</button>
+      </div>
+    </div>
+  </div>
+  <div data-slot="collapsible" data-state="open">
+    <button type="button" data-slot="button" data-variant="ghost" data-size="sm" class="w-full justify-start font-normal aria-expanded:bg-transparent aria-expanded:hover:bg-muted dark:aria-expanded:hover:bg-muted/50" data-collapsible-trigger><svg data-lucide="chevron-right" class="transition-transform group-aria-expanded:rotate-90"></svg><svg data-lucide="folder"></svg>components</button>
+    <div data-slot="collapsible-content">
+      <div class="ms-4 flex flex-col">
+        <div data-slot="collapsible" data-state="open">
+          <button type="button" data-slot="button" data-variant="ghost" data-size="sm" class="w-full justify-start font-normal aria-expanded:bg-transparent aria-expanded:hover:bg-muted dark:aria-expanded:hover:bg-muted/50" data-collapsible-trigger><svg data-lucide="chevron-right" class="transition-transform group-aria-expanded:rotate-90"></svg><svg data-lucide="folder"></svg>ui</button>
+          <div data-slot="collapsible-content">
+            <div class="ms-4 flex flex-col">
+              <button type="button" data-slot="button" data-variant="ghost" data-size="sm" class="w-full justify-start font-normal bg-accent text-accent-foreground" aria-current="true"><svg data-lucide="file"></svg>button.tsx</button>
+            </div>
+          </div>
+        </div>
+        <button type="button" data-slot="button" data-variant="ghost" data-size="sm" class="w-full justify-start font-normal"><svg data-lucide="file"></svg>login-form.tsx</button>
+      </div>
+    </div>
+  </div>
+</div>

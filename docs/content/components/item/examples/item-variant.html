@@ -1,0 +1,30 @@
+<div class="flex w-full max-w-md flex-col gap-6">
+  <div data-slot="item">
+    <div data-slot="item-media" data-variant="icon">
+      <svg data-lucide="inbox"></svg>
+    </div>
+    <div data-slot="item-content">
+      <div data-slot="item-title">Default Variant</div>
+      <p data-slot="item-description">Transparent background with no border.</p>
+    </div>
+  </div>
+  <div data-slot="item" data-variant="outline">
+    <div data-slot="item-media" data-variant="icon">
+      <svg data-lucide="inbox"></svg>
+    </div>
+    <div data-slot="item-content">
+      <div data-slot="item-title">Outline Variant</div>
+      <p data-slot="item-description">Outlined style with a visible border.</p>
+    </div>
+  </div>
+  <div data-slot="item" data-variant="muted">
+    <div data-slot="item-media" data-variant="icon">
+      <svg data-lucide="inbox"></svg>
+    </div>
+    <div data-slot="item-content">
+      <div data-slot="item-title">Muted Variant</div>
+      <p data-slot="item-description">Muted background for secondary content.</p>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,23 @@
+<div data-slot="field-group" class="max-w-sm">
+  <div data-slot="field">
+    <label data-slot="field-label" for="block-end-input">Input</label>
+    <div data-slot="input-group" class="h-auto">
+      <input data-slot="input-group-control" id="block-end-input" placeholder="Enter amount">
+      <div data-slot="input-group-addon" data-align="block-end">
+        <span data-slot="input-group-text">USD</span>
+      </div>
+    </div>
+    <p data-slot="field-description">Footer positioned below the input.</p>
+  </div>
+  <div data-slot="field">
+    <label data-slot="field-label" for="block-end-textarea">Textarea</label>
+    <div data-slot="input-group">
+      <textarea data-slot="input-group-control" id="block-end-textarea" placeholder="Write a comment..."></textarea>
+      <div data-slot="input-group-addon" data-align="block-end">
+        <span data-slot="input-group-text">0/280</span>
+        <button type="button" data-slot="button" data-input-group-button data-variant="default" data-size="sm" class="ml-auto">Post</button>
+      </div>
+    </div>
+    <p data-slot="field-description">Footer positioned below the textarea.</p>
+  </div>
+</div>

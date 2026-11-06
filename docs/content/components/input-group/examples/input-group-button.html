@@ -1,0 +1,30 @@
+<div class="grid w-full max-w-sm gap-6" data-js="input-group-button">
+  <div data-slot="input-group">
+    <input data-slot="input-group-control" placeholder="https://x.com/shadcn" readonly aria-label="Link">
+    <div data-slot="input-group-addon" data-align="inline-end">
+      <button type="button" data-slot="button" data-input-group-button data-size="icon-xs" aria-label="Copy" title="Copy" data-js="copy"><svg data-lucide="copy"></svg></button>
+    </div>
+  </div>
+  <div data-slot="input-group" class="[--radius:9999px]">
+    <div data-slot="popover">
+      <div data-slot="input-group-addon" data-popover-trigger>
+        <button type="button" data-slot="button" data-input-group-button data-variant="secondary" data-size="icon-xs" aria-label="Connection info"><svg data-lucide="info"></svg></button>
+      </div>
+      <div data-slot="popover-content" data-align="start" class="flex flex-col gap-1 rounded-xl text-sm">
+        <p class="font-medium">Your connection is not secure.</p>
+        <p>You should not enter any sensitive information on this site.</p>
+      </div>
+    </div>
+    <div data-slot="input-group-addon" class="pl-1.5 text-muted-foreground">https://</div>
+    <input data-slot="input-group-control" id="input-secure-19" aria-label="Website">
+    <div data-slot="input-group-addon" data-align="inline-end">
+      <button type="button" data-slot="button" data-input-group-button data-size="icon-xs" aria-label="Favorite" aria-pressed="false" data-js="favorite"><svg data-lucide="star" data-favorite="false" class="data-[favorite=true]:fill-blue-600 data-[favorite=true]:stroke-blue-600"></svg></button>
+    </div>
+  </div>
+  <div data-slot="input-group">
+    <input data-slot="input-group-control" placeholder="Type to search..." aria-label="Search">
+    <div data-slot="input-group-addon" data-align="inline-end">
+      <button type="button" data-slot="button" data-input-group-button data-variant="secondary">Search</button>
+    </div>
+  </div>
+</div>

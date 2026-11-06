@@ -1,0 +1,41 @@
+<form class="w-full max-w-sm">
+  <div data-slot="field-group">
+    <div data-slot="field">
+      <label data-slot="field-label" for="form-name">Name</label>
+      <input data-slot="input" id="form-name" type="text" placeholder="Evil Rabbit" required>
+    </div>
+    <div data-slot="field">
+      <label data-slot="field-label" for="form-email">Email</label>
+      <input data-slot="input" id="form-email" type="email" placeholder="john@example.com">
+      <p data-slot="field-description">We&#39;ll never share your email with anyone.</p>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div data-slot="field">
+        <label data-slot="field-label" for="form-phone">Phone</label>
+        <input data-slot="input" id="form-phone" type="tel" placeholder="+1 (555) 123-4567">
+      </div>
+      <div data-slot="field">
+        <label data-slot="field-label" for="form-country">Country</label>
+        <div data-slot="select" data-value="us">
+          <button type="button" data-slot="select-trigger" id="form-country"><span data-slot="select-value">United States</span></button>
+          <div data-slot="select-content">
+            <div data-slot="select-group">
+              <div data-slot="select-item" data-value="us">United States</div>
+              <div data-slot="select-item" data-value="uk">United Kingdom</div>
+              <div data-slot="select-item" data-value="ca">Canada</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-slot="field">
+      <label data-slot="field-label" for="form-address">Address</label>
+      <input data-slot="input" id="form-address" type="text" placeholder="123 Main St">
+    </div>
+    <div data-slot="field" data-orientation="horizontal">
+      <button type="button" data-slot="button" data-variant="outline">Cancel</button>
+      <button type="submit" data-slot="button">Submit</button>
+    </div>
+  </div>
+</form>
+

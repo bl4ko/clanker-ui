@@ -1,0 +1,17 @@
+<div data-slot="command" class="max-w-sm rounded-lg border">
+  <input data-slot="command-input" placeholder="Type a command or search...">
+  <div data-slot="command-list">
+    <div data-slot="command-empty">No results found.</div>
+    <div data-slot="command-group" data-heading="Suggestions">
+      <div data-slot="command-item"><svg data-lucide="calendar"></svg><span>Calendar</span></div>
+      <div data-slot="command-item"><svg data-lucide="smile"></svg><span>Search Emoji</span></div>
+      <div data-slot="command-item" data-disabled><svg data-lucide="calculator"></svg><span>Calculator</span></div>
+    </div>
+    <div data-slot="command-separator"></div>
+    <div data-slot="command-group" data-heading="Settings">
+      <div data-slot="command-item"><svg data-lucide="user"></svg><span>Profile</span><span data-slot="command-shortcut">⌘P</span></div>
+      <div data-slot="command-item"><svg data-lucide="credit-card"></svg><span>Billing</span><span data-slot="command-shortcut">⌘B</span></div>
+      <div data-slot="command-item"><svg data-lucide="settings"></svg><span>Settings</span><span data-slot="command-shortcut">⌘S</span></div>
+    </div>
+  </div>
+</div>

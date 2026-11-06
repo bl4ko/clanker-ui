@@ -1,0 +1,21 @@
+<div class="flex w-full max-w-md flex-col gap-4">
+  <a data-slot="item" href="#">
+    <div data-slot="item-content">
+      <div data-slot="item-title">Visit our documentation</div>
+      <p data-slot="item-description">Learn how to get started with our components.</p>
+    </div>
+    <div data-slot="item-actions">
+      <svg data-lucide="chevron-right" class="size-4"></svg>
+    </div>
+  </a>
+  <a data-slot="item" data-variant="outline" href="#" target="_blank" rel="noopener noreferrer">
+    <div data-slot="item-content">
+      <div data-slot="item-title">External resource</div>
+      <p data-slot="item-description">Opens in a new tab with security attributes.</p>
+    </div>
+    <div data-slot="item-actions">
+      <svg data-lucide="external-link" class="size-4"></svg>
+    </div>
+  </a>
+</div>
+

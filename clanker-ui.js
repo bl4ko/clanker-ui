@@ -16,7 +16,7 @@ const SCHEMES = [["neutral", "Neutral"], ["zinc", "Zinc"], ["stone", "Stone"], [
 const EDITOR_SCHEMES = [["tokyonight-night", "Tokyo Night"], ["tokyonight-storm", "Tokyo Night Storm"], ["tokyonight-moon", "Tokyo Night Moon"], ["catppuccin-mocha", "Catppuccin Mocha"], ["catppuccin-macchiato", "Catppuccin Macchiato"], ["catppuccin-frappe", "Catppuccin Frappé"], ["gruvbox", "Gruvbox"], ["nord", "Nord"], ["dracula", "Dracula"], ["rose-pine", "Rosé Pine"], ["rose-pine-moon", "Rosé Pine Moon"], ["solarized", "Solarized"], ["one", "One"], ["kanagawa-wave", "Kanagawa Wave"], ["kanagawa-dragon", "Kanagawa Dragon"], ["everforest", "Everforest"], ["github", "GitHub"]]
 const ACCENTS = [["amber", "Amber"], ["blue", "Blue"], ["cyan", "Cyan"], ["emerald", "Emerald"], ["fuchsia", "Fuchsia"], ["green", "Green"], ["indigo", "Indigo"], ["lime", "Lime"], ["orange", "Orange"], ["pink", "Pink"], ["purple", "Purple"], ["red", "Red"], ["rose", "Rose"], ["sky", "Sky"], ["teal", "Teal"], ["violet", "Violet"], ["yellow", "Yellow"]]
 const ICON_DEFAULTS = { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" }
-const ICON_ALIASES = { "alert-circle": "circle-alert", "alert-octagon": "octagon-alert", "alert-triangle": "triangle-alert", "align-center": "text-align-center", "align-left": "text-align-start", "align-right": "text-align-end", "area-chart": "chart-area", "bar-chart-3": "chart-column", "bar-chart-horizontal": "chart-bar", "check-circle": "circle-check-big", "check-circle-2": "circle-check", "check-square-2": "square-check", "circle-help": "circle-question-mark", "download-cloud": "cloud-download", edit: "square-pen", "file-edit": "file-pen", filter: "funnel", "fork-knife": "utensils", "git-commit": "git-commit-horizontal", "help-circle": "circle-question-mark", history: "rotate-ccw-clock", home: "house", "layers-3": "layers", "line-chart": "chart-line", "loader-2": "loader-circle", "minus-circle": "circle-minus", "more-horizontal": "ellipsis", "more-vertical": "ellipsis-vertical", "pen-box": "square-pen", "pen-square": "square-pen", "pie-chart": "chart-pie", "plus-circle": "circle-plus", sidebar: "panel-left", smile: "face-slightly-smiling", "sort-asc": "arrow-up-narrow-wide", "sort-desc": "arrow-down-wide-narrow", stars: "sparkles", text: "text-align-start", "trash-2": "trash", unlock: "lock-open", "upload-cloud": "cloud-upload", "user-x-2": "user-round-x", verified: "badge-check", "wrap-text": "text-wrap", "x-circle": "circle-x", "x-octagon": "octagon-x" }
+const ICON_ALIASES = { "alert-circle": "circle-alert", "alert-octagon": "octagon-alert", "alert-triangle": "triangle-alert", "align-center": "text-align-center", "align-left": "text-align-start", "align-right": "text-align-end", "area-chart": "chart-area", "bar-chart-3": "chart-column", "bar-chart-horizontal": "chart-bar", "check-circle": "circle-check-big", "check-circle-2": "circle-check", "check-square-2": "square-check", "circle-help": "circle-question-mark", "download-cloud": "cloud-download", edit: "square-pen", "file-edit": "file-pen", filter: "funnel", "fork-knife": "utensils", "git-commit": "git-commit-horizontal", "help-circle": "circle-question-mark", history: "rotate-ccw-clock", home: "house", "layers-3": "layers", layout: "panels-top-left", "line-chart": "chart-line", "loader-2": "loader-circle", "minus-circle": "circle-minus", "more-horizontal": "ellipsis", "more-vertical": "ellipsis-vertical", "pen-box": "square-pen", "pen-square": "square-pen", "pie-chart": "chart-pie", "plus-circle": "circle-plus", sidebar: "panel-left", smile: "face-slightly-smiling", "sort-asc": "arrow-up-narrow-wide", "sort-desc": "arrow-down-wide-narrow", stars: "sparkles", text: "text-align-start", "trash-2": "trash", unlock: "lock-open", "upload-cloud": "cloud-upload", "user-x-2": "user-round-x", verified: "badge-check", "wrap-text": "text-wrap", "x-circle": "circle-x", "x-octagon": "octagon-x" }
 const ICONS = {
   "activity": ["M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"],
   "archive": [["rect", {width: "20", height: "5", x: "2", y: "3", rx: "1"}], "M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8", "M10 12h4"],
@@ -30,6 +30,7 @@ const ICONS = {
   "arrow-up-narrow-wide": ["m3 8 4-4 4 4", "M7 4v16", "M11 12h4", "M11 16h7", "M11 20h10"],
   "arrow-up-right": ["M7 7h10v10", "M7 17 17 7"],
   "at-sign": [["circle", {cx: "12", cy: "12", r: "4"}], "M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"],
+  "audio-lines": ["M2 10v3", "M6 6v11", "M10 3v18", "M14 8v7", "M18 5v13", "M22 10v3"],
   "award": ["m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526", ["circle", {cx: "12", cy: "8", r: "6"}]],
   "badge-check": ["M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z", "m16 9-5.5 5.5L8 12"],
   "ban": [["circle", {cx: "12", cy: "12", r: "10"}], "M4.929 4.929 19.07 19.071"],
@@ -45,6 +46,7 @@ const ICONS = {
   "briefcase": ["M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", ["rect", {width: "20", height: "14", x: "2", y: "6", rx: "2"}]],
   "bug": ["M12 20v-9", "M14 7a4 4 0 0 1 4 4v3a6 6 0 0 1-12 0v-3a4 4 0 0 1 4-4z", "M14.12 3.88 16 2", "M21 21a4 4 0 0 0-3.81-4", "M21 5a4 4 0 0 1-3.55 3.97", "M22 13h-4", "M3 21a4 4 0 0 1 3.81-4", "M3 5a4 4 0 0 0 3.55 3.97", "M6 13H2", "m8 2 1.88 1.88", "M9 7.13V6a3 3 0 1 1 6 0v1.13"],
   "building": ["M12 10h.01", "M12 14h.01", "M12 6h.01", "M16 10h.01", "M16 14h.01", "M16 6h.01", "M8 10h.01", "M8 14h.01", "M8 6h.01", "M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3", ["rect", {x: "4", y: "2", width: "16", height: "20", rx: "2"}]],
+  "building-2": ["M10 12h4", "M10 8h4", "M14 21v-3a2 2 0 0 0-4 0v3", "M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2", "M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"],
   "calculator": [["rect", {width: "16", height: "20", x: "4", y: "2", rx: "2"}], ["line", {x1: "8", x2: "16", y1: "6", y2: "6"}], ["line", {x1: "16", x2: "16", y1: "14", y2: "18"}], "M16 10h.01", "M12 10h.01", "M8 10h.01", "M12 14h.01", "M8 14h.01", "M12 18h.01", "M8 18h.01"],
   "calendar": ["M8 2v3", "M16 2v3", ["rect", {x: "3", y: "3", width: "18", height: "18", rx: "2"}], "M3 9h18"],
   "calendar-check": ["M8 2v3", "M16 2v3", ["rect", {x: "3", y: "3", width: "18", height: "18", rx: "2"}], "M3 9h18", "m9 15 2 2 4-4"],
@@ -69,13 +71,16 @@ const ICONS = {
   "circle-alert": [["circle", {cx: "12", cy: "12", r: "10"}], ["line", {x1: "12", x2: "12", y1: "8", y2: "12"}], ["line", {x1: "12", x2: "12.01", y1: "16", y2: "16"}]],
   "circle-check": [["circle", {cx: "12", cy: "12", r: "10"}], "m16 9-5.5 5.5L8 12"],
   "circle-check-big": ["M21.801 10A10 10 0 1 1 17 3.335", "m9 11 3 3L22 4"],
+  "circle-dashed": ["M10.1 2.182a10 10 0 0 1 3.8 0", "M13.9 21.818a10 10 0 0 1-3.8 0", "M17.609 3.721a10 10 0 0 1 2.69 2.7", "M2.182 13.9a10 10 0 0 1 0-3.8", "M20.279 17.609a10 10 0 0 1-2.7 2.69", "M21.818 10.1a10 10 0 0 1 0 3.8", "M3.721 6.391a10 10 0 0 1 2.7-2.69", "M6.391 20.279a10 10 0 0 1-2.69-2.7"],
   "circle-dot": [["circle", {cx: "12", cy: "12", r: "1"}], ["circle", {cx: "12", cy: "12", r: "10"}]],
   "circle-fading-plus": ["M12 2a10 10 0 0 1 7.38 16.75", "M12 8v8", "M16 12H8", "M2.5 8.875a10 10 0 0 0-.5 3", "M2.83 16a10 10 0 0 0 2.43 3.4", "M4.636 5.235a10 10 0 0 1 .891-.857", "M8.644 21.42a10 10 0 0 0 7.631-.38"],
   "circle-minus": [["circle", {cx: "12", cy: "12", r: "10"}], "M8 12h8"],
   "circle-plus": [["circle", {cx: "12", cy: "12", r: "10"}], "M8 12h8", "M12 8v8"],
   "circle-question-mark": [["circle", {cx: "12", cy: "12", r: "10"}], "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", "M12 17h.01"],
   "circle-x": [["circle", {cx: "12", cy: "12", r: "10"}], "m15 9-6 6", "m9 9 6 6"],
+  "clipboard-paste": ["M11 14h10", "M16 4h2a2 2 0 0 1 2 2v1.344", "m17 18 4-4-4-4", "M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 1.793-1.113", ["rect", {width: "8", height: "4", x: "8", y: "2", rx: "1"}]],
   "clock": [["circle", {cx: "12", cy: "12", r: "10"}], "M12 6v6l4 2"],
+  "clock-2": [["circle", {cx: "12", cy: "12", r: "10"}], "M12 6v6l4-2"],
   "cloud": ["M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"],
   "cloud-download": ["M12 13v8l-4-4", "m12 21 4-4", "M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"],
   "cloud-upload": ["M12 13v8", "M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242", "m8 17 4-4 4 4"],
@@ -84,6 +89,7 @@ const ICONS = {
   "container": ["M22 7.7c0-.6-.4-1.2-.8-1.5l-6.3-3.9a1.72 1.72 0 0 0-1.7 0l-10.3 6c-.5.2-.9.8-.9 1.4v6.6c0 .5.4 1.2.8 1.5l6.3 3.9a1.72 1.72 0 0 0 1.7 0l10.3-6c.5-.3.9-1 .9-1.5Z", "M10 21.9V14L2.1 9.1", "m10 14 11.9-6.9", "M14 19.8v-8.1", "M18 17.5V9.4"],
   "contrast": [["circle", {cx: "12", cy: "12", r: "10"}], "M12 18a6 6 0 0 0 0-12v12z"],
   "copy": [["rect", {width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2"}], "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"],
+  "corner-down-left": ["M20 4v7a4 4 0 0 1-4 4H4", "m9 10-5 5 5 5"],
   "cpu": ["M12 20v2", "M12 2v2", "M17 20v2", "M17 2v2", "M2 12h2", "M2 17h2", "M2 7h2", "M20 12h2", "M20 17h2", "M20 7h2", "M7 20v2", "M7 2v2", ["rect", {x: "4", y: "4", width: "16", height: "16", rx: "2"}], ["rect", {x: "8", y: "8", width: "8", height: "8", rx: "1"}]],
   "credit-card": [["rect", {width: "20", height: "14", x: "2", y: "5", rx: "2"}], ["line", {x1: "2", x2: "22", y1: "10", y2: "10"}], "M6 14h2"],
   "database": [["ellipse", {cx: "12", cy: "5", rx: "9", ry: "3"}], "M3 5V19A9 3 0 0 0 21 19V5", "M3 12A9 3 0 0 0 21 12"],
@@ -106,6 +112,7 @@ const ICONS = {
   "file-text": ["M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z", "M14 2v5a1 1 0 0 0 1 1h5", "M10 9H8", "M16 13H8", "M16 17H8"],
   "film": [["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2"}], "M7 3v18", "M3 7.5h4", "M3 12h18", "M3 16.5h4", "M17 3v18", "M17 7.5h4", "M17 16.5h4"],
   "flag": ["M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"],
+  "flask-conical": ["M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2", "M6.453 15h11.094", "M8.5 2h7"],
   "folder": ["M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"],
   "folder-open": ["m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"],
   "folder-plus": ["M12 10v6", "M9 13h6", "M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"],
@@ -134,6 +141,7 @@ const ICONS = {
   "key-round": ["M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z", ["circle", {cx: "16.5", cy: "7.5", r: ".5", fill: "currentColor"}]],
   "keyboard": ["M10 8h.01", "M12 12h.01", "M14 8h.01", "M16 12h.01", "M18 8h.01", "M6 8h.01", "M7 16h10", "M8 12h.01", ["rect", {width: "20", height: "16", x: "2", y: "4", rx: "2"}]],
   "landmark": ["M10 18v-7", "M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z", "M14 18v-7", "M18 18v-7", "M3 22h18", "M6 18v-7"],
+  "languages": ["m5 8 6 6", "m4 14 6-6 2-3", "M2 5h12", "M7 2h1", "m22 22-5-10-5 10", "M14 18h6"],
   "laptop": ["M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z", "M20.054 15.987H3.946"],
   "layers": ["M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z", "M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12", "M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"],
   "layout-dashboard": [["rect", {width: "7", height: "9", x: "3", y: "3", rx: "1"}], ["rect", {width: "7", height: "5", x: "14", y: "3", rx: "1"}], ["rect", {width: "7", height: "9", x: "14", y: "12", rx: "1"}], ["rect", {width: "7", height: "5", x: "3", y: "16", rx: "1"}]],
@@ -146,6 +154,7 @@ const ICONS = {
   "list-checks": ["M13 5h8", "M13 12h8", "M13 19h8", "m3 17 2 2 4-4", "m3 7 2 2 4-4"],
   "list-filter": ["M2 5h20", "M6 12h12", "M9 19h6"],
   "list-ordered": ["M11 5h10", "M11 12h10", "M11 19h10", "M4 4h1v5", "M4 9h2", "M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"],
+  "list-todo": ["M13 5h8", "M13 12h8", "M13 19h8", "m3 17 2 2 4-4", ["rect", {x: "3", y: "4", width: "6", height: "6", rx: "1"}]],
   "loader": ["M12 2v4", "m16.2 7.8 2.9-2.9", "M18 12h4", "m16.2 16.2 2.9 2.9", "M12 18v4", "m4.9 19.1 2.9-2.9", "M2 12h4", "m4.9 4.9 2.9 2.9"],
   "loader-circle": ["M21 12a9 9 0 1 1-6.219-8.56"],
   "lock": [["rect", {width: "18", height: "11", x: "3", y: "11", rx: "2", ry: "2"}], "M7 11V7a5 5 0 0 1 10 0v4"],
@@ -160,6 +169,7 @@ const ICONS = {
   "maximize-2": ["M15 3h6v6", "m21 3-7 7", "m3 21 7-7", "M9 21H3v-6"],
   "menu": ["M4 5h16", "M4 12h16", "M4 19h16"],
   "message-circle": ["M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"],
+  "message-circle-dashed": ["M10.1 2.182a10 10 0 0 1 3.8 0", "M13.9 21.818a10 10 0 0 1-3.8 0", "M17.609 3.72a10 10 0 0 1 2.69 2.7", "M2.182 13.9a10 10 0 0 1 0-3.8", "M20.28 17.61a10 10 0 0 1-2.7 2.69", "M21.818 10.1a10 10 0 0 1 0 3.8", "M3.721 6.391a10 10 0 0 1 2.7-2.69", "m6.163 21.117-2.906.85a1 1 0 0 1-1.236-1.169l.965-2.98"],
   "message-square": ["M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"],
   "mic": ["M12 19v3", "M19 10v2a7 7 0 0 1-14 0v-2", ["rect", {x: "9", y: "2", width: "6", height: "13", rx: "3"}]],
   "minimize-2": ["m14 10 7-7", "M20 10h-6V4", "m3 21 7-7", "M4 14h6v6"],
@@ -173,6 +183,7 @@ const ICONS = {
   "palette": ["M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z", ["circle", {cx: "13.5", cy: "6.5", r: ".5", fill: "currentColor"}], ["circle", {cx: "17.5", cy: "10.5", r: ".5", fill: "currentColor"}], ["circle", {cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor"}], ["circle", {cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor"}]],
   "panel-left": [["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2"}], "M9 3v18"],
   "panel-right": [["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2"}], "M15 3v18"],
+  "panels-top-left": [["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2"}], "M3 9h18", "M9 21V9"],
   "paperclip": ["m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"],
   "pause": [["rect", {x: "14", y: "3", width: "5", height: "18", rx: "1"}], ["rect", {x: "5", y: "3", width: "5", height: "18", rx: "1"}]],
   "pencil": ["M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z", "m15 5 4 4"],
@@ -195,9 +206,11 @@ const ICONS = {
   "rotate-ccw": ["M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", "M3 3v5h5"],
   "rotate-ccw-clock": ["M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", "M3 3v5h5", "M12 7v5l4 2"],
   "rotate-cw": ["M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8", "M21 3v5h-5"],
+  "route": [["circle", {cx: "6", cy: "19", r: "3"}], "M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15", ["circle", {cx: "18", cy: "5", r: "3"}]],
   "router": [["rect", {width: "20", height: "8", x: "2", y: "14", rx: "2"}], "M6.01 18H6", "M10.01 18H10", "M15 10v4", "M17.84 7.17a4 4 0 0 0-5.66 0", "M20.66 4.34a8 8 0 0 0-11.31 0"],
   "rss": ["M4 11a9 9 0 0 1 9 9", "M4 4a16 16 0 0 1 16 16", ["circle", {cx: "5", cy: "19", r: "1"}]],
   "save": ["M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z", "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", "M7 3v4a1 1 0 0 0 1 1h7"],
+  "scissors": [["circle", {cx: "6", cy: "6", r: "3"}], "M8.12 8.12 12 12", "M20 4 8.12 15.88", ["circle", {cx: "6", cy: "18", r: "3"}], "M14.8 14.8 20 20"],
   "search": ["m21 21-4.34-4.34", ["circle", {cx: "11", cy: "11", r: "8"}]],
   "send": ["M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z", "m21.854 2.147-10.94 10.939"],
   "server": [["rect", {width: "20", height: "8", x: "2", y: "2", rx: "2", ry: "2"}], ["rect", {width: "20", height: "8", x: "2", y: "14", rx: "2", ry: "2"}], ["line", {"x1": "6", "x2": "6.01", "y1": "6", "y2": "6"}], ["line", {"x1": "6", "x2": "6.01", "y1": "18", "y2": "18"}]],
@@ -222,6 +235,7 @@ const ICONS = {
   "table": ["M12 3v18", ["rect", {width: "18", height: "18", x: "3", y: "3", rx: "2"}], "M3 9h18", "M3 15h18"],
   "tag": ["M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z", ["circle", {cx: "7.5", cy: "7.5", r: ".5", fill: "currentColor"}]],
   "target": [["circle", {cx: "12", cy: "12", r: "10"}], ["circle", {cx: "12", cy: "12", r: "6"}], ["circle", {cx: "12", cy: "12", r: "2"}]],
+  "telescope": ["m10.065 12.493-6.18 1.318a.934.934 0 0 1-1.108-.702l-.537-2.15a1.07 1.07 0 0 1 .691-1.265l13.504-4.44", "m13.56 11.747 4.332-.924", "m16 21-3.105-6.21", "M16.485 5.94a2 2 0 0 1 1.455-2.425l1.09-.272a1 1 0 0 1 1.212.727l1.515 6.06a1 1 0 0 1-.727 1.213l-1.09.272a2 2 0 0 1-2.425-1.455z", "m6.158 8.633 1.114 4.456", "m8 21 3.105-6.21", ["circle", {cx: "12", cy: "13", r: "2"}]],
   "terminal": ["M12 19h8", "m4 17 6-6-6-6"],
   "text-align-center": ["M21 5H3", "M17 12H7", "M19 19H5"],
   "text-align-end": ["M21 5H3", "M21 12H9", "M21 19H7"],
@@ -2023,6 +2037,7 @@ define("input-group-addon", {
   },
   click(event, el) {
     if (event.target.closest("button, a, input, textarea, select, label")) return
+    if (el.contains(event.target.closest("[popover], dialog"))) return
     el.parentElement?.querySelector("input, textarea")?.focus()
   },
 })

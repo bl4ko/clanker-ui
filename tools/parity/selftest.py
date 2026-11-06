@@ -209,6 +209,24 @@ def nova_page_checks():
     ]
 
 
+def style_page_checks():
+    parity.STYLES[:] = ["nova", "rhea"]
+    roots = [{"kind": "preview"}, {"kind": "preview"}, {"kind": "portal"}, {"kind": "preview"}]
+    pair = lambda style: {"part": "bubble", "state": "rest", "theme": "light", "scenario": "rest", "style": style, "visible": True, "props": 1, "meaningful": 1, "equal": 1, "meaningful_equal": 1, "diffs": []}
+    s = parity.summarize("bubble", [], {(1,): pair("nova"), (2,): pair("rhea"), (3,): pair("rhea"), (4,): pair("nova@rhea"), (5,): pair("luma")})
+    rows, pairs = [], {}
+    parity.compare_maps({"1": {"color": "a"}}, {"1": {"color": "a"}}, {1: {"style": "nova"}}, "rest", "rest", "light", rows, pairs, measured="rhea")
+    out = [
+        check("a page in one ported style is measured against that style", parity.page_style({"roots": roots, "styles": ["rhea", "rhea", "rhea", "nova"]}) == "rhea"),
+        check("a page in a style that the kit does not have is measured against Nova", parity.page_style({"roots": roots[:1], "styles": ["luma"]}) == "nova"),
+        check("each ported style has its own totals", s["pairs"] == 1 and s["styles"]["rhea"]["pairs"] == 2),
+        check("a preview measured against another style is not in any totals", s["other_style"]["pairs"] == 2 and sorted(s["other_style"]["styles"]) == ["luma", "nova@rhea"]),
+        check("a Nova preview on a Rhea page is marked as measured against Rhea", next(iter(pairs.values()))["style"] == "nova@rhea"),
+    ]
+    parity.STYLES[:] = ["nova"]
+    return out
+
+
 def report_checks():
     report = str(pathlib.Path(__file__).with_name("report.py"))
     with tempfile.TemporaryDirectory() as d:
@@ -224,17 +242,27 @@ def report_checks():
 
         repo = subprocess.run([sys.executable, "-I", report, str(out), "--strict"], capture_output=True, text=True)
         defined, z9, unchecked = strict("R2 reference"), strict("Z9 tool"), strict("to check")
+        out.joinpath("bubble.json").write_text(json.dumps({"component": "bubble", "parts": 1, "parts_equal": 1, "pairs": 1, "pairs_equal": 1, "meaningful": 1, "meaningful_equal": 1, "measured": 1, "equal": 1, "by_state": {"rest": [1, 1]}, "top": [], "differing_parts": [],
+                                                           "styles": {"rhea": {"parts": 1, "parts_equal": 0, "pairs": 1, "pairs_equal": 0, "meaningful": 1, "meaningful_equal": 0, "measured": 1, "equal": 0, "by_state": {"rest": [0, 1]}, "top": [], "differing_parts": [{"part": "bubble", "pairs": 1, "equal": 0, "states": {"rest": 1}, "props": {"color": 1}}]}}}))
+        out.joinpath("bubble.rows.json").write_text(json.dumps([{"scenario": "rest", "state": "rest", "theme": "light", "part": "bubble", "id": 1, "prop": "color", "shadcn": "a", "ours": "b", "style": "rhea"}]))
+        known.write_text("")
+        rhea = subprocess.run([sys.executable, "-I", report, str(out), "--strict", "--style", "rhea", "--known", str(known)], capture_output=True, text=True)
+        nova = subprocess.run([sys.executable, "-I", report, str(out), "--strict", "--known", str(known)], capture_output=True, text=True)
+        known.write_text("bubble\tbubble\tcolor\t1\tR2 reference\n")
+        rhea_known = subprocess.run([sys.executable, "-I", report, str(out), "--strict", "--style", "rhea", "--known", str(known)], capture_output=True, text=True)
     return [
         check("report.py fails on a directory without component results", r.returncode == 1),
         check("every cause key in known.tsv is in the DEVELOPMENT.md table", repo.returncode == 0),
         check("report.py --strict accepts a defined cause key", defined.returncode == 0),
         check("report.py --strict fails on the undefined cause key Z9", z9.returncode == 1 and "'Z9'" in z9.stdout),
         check("report.py --strict fails on a 'to check' cause", unchecked.returncode == 1),
+        check("report.py --style rhea gates the Rhea previews with their own known file", rhea.returncode == 1 and "bubble: 1 (part, property)" in rhea.stdout and nova.returncode == 0 and rhea_known.returncode == 0),
+        check("the known file of a style is known-<style>.tsv", pathlib.Path(report).with_name("known-rhea.tsv").exists()),
     ]
 
 
 def main():
-    results = tolerance_checks() + converter_checks() + style_checks() + nova_page_checks() + marker_checks() + source_checks() + report_checks()
+    results = tolerance_checks() + converter_checks() + style_checks() + nova_page_checks() + style_page_checks() + marker_checks() + source_checks() + report_checks()
     failed = results.count(False)
     print(f"{len(results) - failed} passed, {failed} failed")
     sys.exit(1 if failed else 0)

@@ -1,0 +1,58 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/terminal",
+  "note": "The docs example uses the base-rhea style; behavior does not depend on it, and no step compares sizes.",
+  "parts": {
+    "trigger": {
+      "role": "button",
+      "name": "Ran pnpm lint"
+    },
+    "build": {
+      "role": "button",
+      "name": "Ran pnpm build"
+    },
+    "content": {
+      "slot": "trace-collapsible-content",
+      "optional": true
+    }
+  },
+  "anchor": "trigger",
+  "positions": [],
+  "steps": [
+    {
+      "do": "tab_in"
+    },
+    {
+      "do": "press",
+      "key": "Enter",
+      "motion": "content"
+    },
+    {
+      "do": "press",
+      "key": "Space",
+      "motion": "content"
+    },
+    {
+      "do": "tab"
+    },
+    {
+      "do": "tab"
+    },
+    {
+      "do": "press",
+      "key": "Enter",
+      "motion": "content",
+      "label": "close the open build"
+    },
+    {
+      "do": "click",
+      "target": "trigger",
+      "motion": "content"
+    },
+    {
+      "do": "click",
+      "target": "trigger",
+      "motion": "content",
+      "label": "click again"
+    }
+  ]
+}

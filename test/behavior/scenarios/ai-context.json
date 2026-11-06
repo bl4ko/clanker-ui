@@ -1,0 +1,20 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/context",
+  "note": "AI Elements pattern: a hover card on a button with a progress bar. The live example uses the base-rhea style.",
+  "allowed": [
+    {"key": "ai-context.rhea-card-size", "match": "^card end size \\| (\\d+)x\\d+ \\| \\1x\\d+ ", "reason": "the live example is base-rhea: hover-card-content p-4 and progress h-2 (Nova p-2.5 and h-1) make the card 16 px taller; the kit is Nova"}
+  ],
+  "parts": {
+    "trigger": {"role": "button", "name": "8% context"},
+    "card": {"slot": "hover-card-content", "popup": true},
+    "bar": {"role": "progressbar", "in": "page"}
+  },
+  "steps": [
+    {"do": "hover", "target": "trigger", "motion": "card", "ms": 900},
+    {"do": "hover", "target": "card", "steps": 6, "motion": "card", "ms": 900},
+    {"do": "leave", "motion": "card", "ms": 900},
+    {"do": "tab_in", "motion": "card", "ms": 900},
+    {"do": "press", "key": "Escape", "motion": "card", "ms": 700},
+    {"do": "tab", "motion": "card", "ms": 900}
+  ]
+}

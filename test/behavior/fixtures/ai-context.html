@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>AI Context behavior fixture</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/test/behavior/fixtures/fixture.css">
+  <script type="module" src="/clanker-ui.js"></script>
+</head>
+<body>
+  <main data-behavior="page">
+    <div tabindex="0" data-behavior="sentinel">Before the example</div>
+    <div data-behavior="stage">
+      <div data-behavior="preview">
+        <div data-slot="hover-card">
+          <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-hover-card-trigger data-delay="10" data-close-delay="100">8% context</button>
+          <div data-slot="hover-card-content" data-behavior="w-64 col-gap-3">
+            <div data-behavior="row-between">
+              <span>Context</span>
+              <span data-behavior="muted">10.7k / 128k</span>
+            </div>
+            <div data-slot="progress" data-value="8" aria-label="Context used"></div>
+            <div data-behavior="col-gap-1">
+              <div data-behavior="row-between"><span data-behavior="muted">Input</span><span>8.4k</span></div>
+              <div data-behavior="row-between"><span data-behavior="muted">Output</span><span>1.3k</span></div>
+              <div data-behavior="row-between"><span data-behavior="muted">Reasoning</span><span>980</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div tabindex="0" data-behavior="sentinel">After the example</div>
+  </main>
+</body>
+</html>

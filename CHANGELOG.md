@@ -12,6 +12,13 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Added
 
+- AI Elements (shadcn/ui October 2026): docs pages at `/docs/ai-elements` with patterns for chat and agent pages, built only from kit components: Chat, Message, Prompt Input, Model Selector, Context, and Suggestion. Each page has the shadcn sections, live examples, and the module that plays the demo. `clanker-ui.json` has a `patterns` list (name, title, description, the components of the examples, docs links), and the skill has `references/ai-elements.md` (which pattern for which job).
+- AI Elements: Sources (a trace line that opens into the links of a reply, with a Replay demo), Inline Citation (hover cards in a sentence, all `span` parts), and File Tree (folders as collapsibles, a click selects a file).
+- AI Elements: Reasoning, Chain of Thought, Tool, Task, and Plan, the agent steps of a turn as `trace` lines, each with the shadcn examples (Tool also with its states, output in a sheet, and an approval item) and a Replay that streams the steps and the reply again.
+- AI Elements: Queue (todo sections that update as the agent works), Subagent (a run with its nested tool calls, running and details examples), Confirmation (approve or deny a tool call; the answer turns into a tool line), and Checkpoint (a marker with Restore that drops the later turns). Each demo plays its steps again from plain JavaScript.
+- AI Elements: Terminal, Stack Trace, and Test Results, the command, error, and test run lines of a turn, each with the shadcn examples and a Replay that streams the run again.
+- Lucide icons `circle-dashed`, `flask-conical`, `list-todo`, `message-circle-dashed`, `route`, and `telescope` (256 in total).
+- Icons `audio-lines`, `building-2`, `clipboard-paste`, `clock-2`, `corner-down-left`, `languages`, `panels-top-left` (alias `layout`), and `scissors` (Lucide 1.63.0), used by the shadcn docs examples.
 - Page parts: `data-size="lg"` on `page-header` (a 30 px detail title) and `page-meta` (a wrapping row of facts under the description). `data-orientation="horizontal"` on `card`: a first-child `cover` at the start and the other parts in a column next to it (a feature or record card). A `badge` in an `accordion-trigger` sits at the end, before the chevron.
 - Agent skill: one head for every page and block in `SKILL.md` (charset, CSP meta, the a11y CSS, the core `modulepreload`, the theme script), checked against every block by `go test`, with the block slots, the ghost `icon` theme toggle, and the footer button order. Recipes for an uptime strip with full code, a toast after a page change, a dropzone with a labeled file input, lists in cards, the status under the amount in phone tables, and a dashboard in the top-header shell; the scheme and accent names in `references/theming.md`; what `detail.group` of `dropdown-menu:change` holds; rules for one page width per app, one structure for KPI cards, one status per row, public pages, and balancing a side column.
 - Kit parts (core, CSS only): `card-grid` (a grid of record cards, `data-size="sm|lg"`), `cover` (placeholder art from tokens, `data-tone="1"`…`"5"`, `data-ratio="square|video"`), `rating` (read-only stars), and `data-layout="split"` on `page` (shadcn login-02: a form column and a `page-aside` art panel from 64rem).
@@ -52,6 +59,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Fixed
 
+- Input group: a click in a menu or another popup inside an addon (a model menu next to the field) no longer moves focus to the field; the menu returns focus to its trigger.
 - `sheet-body` and `drawer-body` are in the catalog and the component files.
 - `card-grid` block: the empty state uses `empty-icon` (it used `empty-media`, which has no style).
 - Alert: an `alert-action` wider than the 72 px that shadcn keeps free (for example "View incident" at 390 px) no longer covers the title and the description; the alert reserves the width of the action. A short action keeps the shadcn layout.

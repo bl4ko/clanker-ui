@@ -1,0 +1,24 @@
+<div data-slot="field-group" class="max-w-sm">
+  <div data-slot="field">
+    <label data-slot="field-label" for="block-start-input">Input</label>
+    <div data-slot="input-group" class="h-auto">
+      <input data-slot="input-group-control" id="block-start-input" placeholder="Enter your name">
+      <div data-slot="input-group-addon" data-align="block-start">
+        <span data-slot="input-group-text">Full Name</span>
+      </div>
+    </div>
+    <p data-slot="field-description">Header positioned above the input.</p>
+  </div>
+  <div data-slot="field">
+    <label data-slot="field-label" for="block-start-textarea">Textarea</label>
+    <div data-slot="input-group">
+      <textarea data-slot="input-group-control" id="block-start-textarea" placeholder="console.log('Hello, world!');" class="font-mono text-sm"></textarea>
+      <div data-slot="input-group-addon" data-align="block-start">
+        <svg data-lucide="file-code" class="text-muted-foreground"></svg>
+        <span data-slot="input-group-text" class="font-mono">script.js</span>
+        <button type="button" data-slot="button" data-input-group-button data-size="icon-xs" class="ml-auto"><svg data-lucide="copy"></svg><span class="sr-only">Copy</span></button>
+      </div>
+    </div>
+    <p data-slot="field-description">Header positioned above the textarea.</p>
+  </div>
+</div>

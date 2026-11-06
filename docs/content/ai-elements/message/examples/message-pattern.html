@@ -1,0 +1,52 @@
+<div class="mx-auto flex w-full max-w-md flex-col gap-8 py-6 text-sm" id="message-pattern">
+  <div data-slot="message" data-align="end">
+    <div data-slot="message-content" class="gap-2">
+      <div data-slot="bubble" data-align="end" data-variant="muted">
+        <div data-slot="bubble-content">How do I add a settings dialog? It should open from the gear icon in the header.</div>
+      </div>
+      <div data-slot="message-footer">
+        <div data-slot="tooltip">
+          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-tooltip-trigger aria-label="Copy"><svg data-lucide="copy"></svg></button>
+          <div data-slot="tooltip-content">Copy</div>
+        </div>
+        <div data-slot="tooltip">
+          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-tooltip-trigger aria-label="Edit"><svg data-lucide="pencil"></svg></button>
+          <div data-slot="tooltip-content">Edit</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-slot="message">
+    <div data-slot="message-content" class="gap-2">
+      <div class="flex flex-col gap-4" id="message-pattern-reply">
+        <p>Install Dialog, then open it from the gear button in <code class="rounded-sm bg-muted px-1 py-0.5 font-mono text-[0.9em]">site-header.tsx</code>.</p>
+        <div data-slot="code-block">
+          <div data-slot="code-block-header">
+            <div data-slot="code-block-title">bash</div>
+            <div data-slot="code-block-actions"><button type="button" data-slot="code-block-copy-button"></button></div>
+          </div>
+          <pre data-slot="code-block-content" data-numbered="true" data-language="bash"><code data-slot="code-block-code">npx shadcn@latest add dialog</code></pre>
+        </div>
+        <p>Wrap the button in a <code class="rounded-sm bg-muted px-1 py-0.5 font-mono text-[0.9em]">DialogTrigger</code> and put the settings form in <code class="rounded-sm bg-muted px-1 py-0.5 font-mono text-[0.9em]">DialogContent</code>. Focus moves into the dialog when it opens, and <strong>Esc</strong> closes it.</p>
+      </div>
+      <div data-slot="message-footer" class="px-0">
+        <div data-slot="tooltip">
+          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-tooltip-trigger aria-label="Copy" id="message-pattern-copy"><svg data-lucide="copy"></svg></button>
+          <div data-slot="tooltip-content">Copy</div>
+        </div>
+        <div data-slot="tooltip">
+          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-tooltip-trigger aria-label="Good response" aria-pressed="false" id="message-pattern-like"><svg data-lucide="thumbs-up"></svg></button>
+          <div data-slot="tooltip-content">Good response</div>
+        </div>
+        <div data-slot="tooltip">
+          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-tooltip-trigger aria-label="Bad response" aria-pressed="false" id="message-pattern-dislike"><svg data-lucide="thumbs-down"></svg></button>
+          <div data-slot="tooltip-content">Bad response</div>
+        </div>
+        <div data-slot="tooltip">
+          <button type="button" data-slot="button" data-variant="ghost" data-size="icon-sm" data-tooltip-trigger aria-label="Retry"><svg data-lucide="refresh-ccw"></svg></button>
+          <div data-slot="tooltip-content">Retry</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

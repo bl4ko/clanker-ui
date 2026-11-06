@@ -1,0 +1,22 @@
+<div class="w-full max-w-lg">
+  <form>
+    <fieldset data-slot="field-set">
+      <legend data-slot="field-legend">Profile</legend>
+      <p data-slot="field-description">Fill in your profile information.</p>
+      <div data-slot="field-group">
+        <div data-slot="field" data-orientation="responsive">
+          <div data-slot="field-content">
+            <label data-slot="field-label" for="name">Name</label>
+            <p data-slot="field-description">Provide your full name for identification</p>
+          </div>
+          <input data-slot="input" id="name" placeholder="Evil Rabbit" required>
+        </div>
+        <div data-slot="field" data-orientation="responsive">
+          <button type="submit" data-slot="button">Submit</button>
+          <button type="button" data-slot="button" data-variant="outline">Cancel</button>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+

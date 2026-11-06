@@ -1,0 +1,21 @@
+<div class="mx-auto flex w-full max-w-lg flex-col gap-6 py-6 text-sm" id="suggestion-demo">
+  <div class="flex flex-col gap-2">
+    <div class="flex scroll-fade-x scrollbar-none gap-2 overflow-x-auto overscroll-x-contain" id="suggestion-demo-list">
+      <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="shrink-0">Add a dark mode toggle</button>
+      <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="shrink-0">Fix the failing build</button>
+      <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="shrink-0">Write tests for the form</button>
+      <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="shrink-0">Upgrade to Next.js 16</button>
+      <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="shrink-0">Add a loading state</button>
+      <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="shrink-0">Find unused dependencies</button>
+    </div>
+    <form id="suggestion-demo-form">
+      <div data-slot="input-group">
+        <textarea data-slot="input-group-control" class="p-3" placeholder="Ask the agent to change your code..." aria-label="Message" id="suggestion-demo-text"></textarea>
+        <div data-slot="input-group-addon" data-align="block-end">
+          <button type="button" data-slot="button" data-input-group-button data-variant="outline" data-size="icon-sm" class="rounded-full" aria-label="Attach files"><svg data-lucide="plus"></svg></button>
+          <button type="submit" data-slot="button" data-input-group-button data-variant="default" data-size="icon-sm" class="ms-auto rounded-full" aria-label="Send" disabled id="suggestion-demo-send"><svg data-lucide="arrow-up"></svg></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

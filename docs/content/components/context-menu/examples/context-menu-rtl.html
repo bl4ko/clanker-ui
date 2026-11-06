@@ -1,0 +1,53 @@
+<div dir="rtl" lang="ar">
+  <div data-slot="context-menu">
+    <div data-slot="context-menu-trigger" tabindex="0" class="flex aspect-video w-full max-w-xs items-center justify-center rounded-xl border border-dashed text-sm">
+      <span class="hidden pointer-fine:inline-block">انقر بزر الماوس الأيمن هنا</span>
+      <span class="hidden pointer-coarse:inline-block">اضغط مطولاً هنا</span>
+    </div>
+    <div data-slot="context-menu-content" class="w-48">
+      <div data-slot="context-menu-group">
+        <div data-slot="context-menu-sub">
+          <div data-slot="context-menu-sub-trigger">التنقل</div>
+          <div data-slot="context-menu-sub-content" class="w-44">
+            <div data-slot="context-menu-group">
+              <div data-slot="context-menu-item"><svg data-lucide="arrow-left"></svg>رجوع<span data-slot="context-menu-shortcut">⌘[</span></div>
+              <div data-slot="context-menu-item" data-disabled><svg data-lucide="arrow-right"></svg>تقدم<span data-slot="context-menu-shortcut">⌘]</span></div>
+              <div data-slot="context-menu-item"><svg data-lucide="rotate-cw"></svg>إعادة تحميل<span data-slot="context-menu-shortcut">⌘R</span></div>
+            </div>
+          </div>
+        </div>
+        <div data-slot="context-menu-sub">
+          <div data-slot="context-menu-sub-trigger">المزيد من الأدوات</div>
+          <div data-slot="context-menu-sub-content" class="w-44">
+            <div data-slot="context-menu-group">
+              <div data-slot="context-menu-item">حفظ الصفحة...</div>
+              <div data-slot="context-menu-item">إنشاء اختصار...</div>
+              <div data-slot="context-menu-item">تسمية النافذة...</div>
+            </div>
+            <div data-slot="context-menu-separator"></div>
+            <div data-slot="context-menu-group">
+              <div data-slot="context-menu-item">أدوات المطور</div>
+            </div>
+            <div data-slot="context-menu-separator"></div>
+            <div data-slot="context-menu-group">
+              <div data-slot="context-menu-item" data-variant="destructive">حذف</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-slot="context-menu-separator"></div>
+      <div data-slot="context-menu-group">
+        <div data-slot="context-menu-checkbox-item" data-checked>إظهار الإشارات المرجعية</div>
+        <div data-slot="context-menu-checkbox-item">إظهار عناوين URL الكاملة</div>
+      </div>
+      <div data-slot="context-menu-separator"></div>
+      <div data-slot="context-menu-group">
+        <div data-slot="context-menu-radio-group" data-value="pedro">
+          <div data-slot="context-menu-label">الأشخاص</div>
+          <div data-slot="context-menu-radio-item" data-value="pedro">Pedro Duarte</div>
+          <div data-slot="context-menu-radio-item" data-value="colm">Colm Tuite</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

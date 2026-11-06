@@ -1,0 +1,21 @@
+<fieldset data-slot="field-set" class="w-full max-w-sm">
+  <legend data-slot="field-legend">Address Information</legend>
+  <p data-slot="field-description">We need your address to deliver your order.</p>
+  <div data-slot="field-group">
+    <div data-slot="field">
+      <label data-slot="field-label" for="street">Street Address</label>
+      <input data-slot="input" id="street" type="text" placeholder="123 Main St">
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div data-slot="field">
+        <label data-slot="field-label" for="city">City</label>
+        <input data-slot="input" id="city" type="text" placeholder="New York">
+      </div>
+      <div data-slot="field">
+        <label data-slot="field-label" for="zip">Postal Code</label>
+        <input data-slot="input" id="zip" type="text" placeholder="90502">
+      </div>
+    </div>
+  </div>
+</fieldset>
+

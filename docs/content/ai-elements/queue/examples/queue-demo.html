@@ -1,0 +1,31 @@
+<div class="flex min-h-72 w-full max-w-sm flex-col gap-4 py-6 text-sm" id="queue-demo">
+  <div data-slot="message" data-align="end">
+    <div data-slot="message-content">
+      <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Add dark mode to the settings page.</div></div>
+    </div>
+  </div>
+  <div data-slot="message">
+    <div data-slot="message-content" class="gap-4">
+      <div data-slot="trace">
+        <div data-slot="trace-collapsible" data-default-open>
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line">
+              <span data-slot="trace-icon"><svg data-lucide="list-checks"></svg></span>
+              <span data-slot="trace-title">4 completed</span>
+            </span>
+          </button>
+          <div data-slot="trace-collapsible-content">
+            <div data-slot="trace">
+              <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span><span data-slot="trace-title">Add a dark variant to the theme tokens</span></span>
+              <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span><span data-slot="trace-title">Read the theme from a cookie</span></span>
+              <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span><span data-slot="trace-title">Add a toggle to the settings page</span></span>
+              <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span><span data-slot="trace-title">Check contrast on the charts</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p>Dark mode is in. The toggle is under Settings, Appearance.</p>
+    </div>
+  </div>
+  <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="mt-auto self-start" id="queue-demo-replay">Replay</button>
+</div>

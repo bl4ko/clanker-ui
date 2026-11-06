@@ -25,7 +25,7 @@ const (
 var (
 	exampleName    = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 	previewHeights = []string{"auto", "24rem"}
-	docsAssets     = []string{"docs.css", "docs.js", "docs-sidebar.js", "examples.css"}
+	docsAssets     = []string{"docs.css", "docs.js", "docs-sidebar.js", "examples.css", "fonts.css", "geist-latin.woff2", "geist-mono-latin.woff2"}
 )
 
 type navItem struct {

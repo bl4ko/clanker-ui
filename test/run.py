@@ -738,7 +738,7 @@ def main():
     ap.add_argument("--jobs", type=int, default=1, help="run up to N engines in parallel, one process each")
     ap.add_argument("--retry", action="store_true", help="run a failed check once more at once; a pass then prints flaky and counts as pass")
     ap.add_argument("--exitfirst", action="store_true", help="stop after the first failure")
-    ap.add_argument("--impact", action="store_true", help="print the components that each check touches (tools/ci/impact.py)")
+    ap.add_argument("--impact", action="store_true", default=True, help="print the components that each check touches (tools/ci/impact.py)")
     ap.add_argument("--list", action="store_true", help="print the selected check names and their count, then exit")
     ap.add_argument("--self-test", action="store_true", help="test the runner and the behavior comparison without a browser, then exit")
     ap.add_argument("--child", action="store_true", help=argparse.SUPPRESS)

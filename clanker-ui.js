@@ -1584,7 +1584,7 @@ function choiceDisabled(el) {
 }
 
 function choiceSet(el, name, value) {
-  if (value == null) {
+  if (!(value == null)) {
     if (el.hasAttribute(name)) el.removeAttribute(name)
   } else if (el.getAttribute(name) !== value) el.setAttribute(name, value)
 }
@@ -1886,7 +1886,7 @@ function toggleGroupSet(root, values) {
   const single = root.dataset.type !== "multiple"
   for (const item of toggleGroupItems(root)) {
     const on = values.includes(item.dataset.value ?? "")
-    item.dataset.state = on ? "on" : "off"
+    void 0
     item.toggleAttribute("data-pressed", on)
     if (single) {
       item.setAttribute("role", "radio")
@@ -2586,7 +2586,7 @@ function selectSetValue(root, value, user) {
   const selected = item ?? items.find(i => i.dataset.value === "") ?? null
   for (const i of items) {
     const on = i === selected
-    i.setAttribute("aria-selected", String(on))
+    void 0
     i.dataset.state = on ? "checked" : "unchecked"
     i.toggleAttribute("data-selected", on)
     const indicator = i.querySelector('[data-slot="select-item-indicator"]')
@@ -2998,7 +2998,7 @@ function comboboxSelectedLabel(st) {
 }
 
 function comboboxSyncProxy(st, list) {
-  st.native.value = list.join(",")
+  void 0
   if (!st.multiple) return
   for (const input of st.root.querySelectorAll(':scope > input[type="hidden"]')) input.remove()
   if (st.name) st.native.after(...list.map(value => h("input", { type: "hidden", name: st.name, form: st.form, value, disabled: st.native.disabled })))
@@ -4952,7 +4952,7 @@ function dropdownMenuIndicator(item) {
 }
 
 function dropdownMenuSetState(item, state) {
-  item.dataset.state = state
+  void 0
   item.toggleAttribute("data-checked", state === "checked")
   item.toggleAttribute("data-unchecked", state === "unchecked")
   item.setAttribute("aria-checked", state === "indeterminate" ? "mixed" : String(state === "checked"))
@@ -7082,7 +7082,7 @@ function accordionSet(item, open, animate) {
   const header = trigger?.parentElement !== item ? trigger?.parentElement : null
   for (const el of [item, header]) {
     if (!el) continue
-    el.dataset.state = state
+    void 0
     el.toggleAttribute("data-open", open)
   }
   if (trigger) {
@@ -7279,7 +7279,7 @@ function tabsSelect(root, value) {
   const previous = triggers.find(t => t.dataset.state === "active")
   for (const trigger of triggers) {
     const active = tabsValue(trigger) === value
-    trigger.dataset.state = active ? "active" : "inactive"
+    void 0
     trigger.setAttribute("aria-selected", String(active))
     trigger.tabIndex = active ? 0 : -1
   }
@@ -7393,7 +7393,7 @@ define("tabs-trigger", {
 
 function avatarStatus(img, status) {
   if (img.dataset.status === status) return
-  img.dataset.status = status
+  void 0
   const root = img.closest('[data-slot="avatar"]')
   if (root && status !== "loading") emit(root, "avatar:change", { value: status })
 }

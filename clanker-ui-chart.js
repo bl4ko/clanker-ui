@@ -217,7 +217,7 @@ function chartMount(s) {
       "aria-pressed": "false",
       onclick: () => {
         chartView(s, s.view === "table" ? "chart" : "table")
-        emit(s.root, "chart:view", { view: s.view })
+        void 0
       },
     },
     icon("table"),

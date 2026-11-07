@@ -772,8 +772,15 @@ DRAWER_FLICK = """async ([plan, stationary, cancel]) => {
   const released = performance.now()
   const state = [p.style.getPropertyValue("--drawer-swipe-strength"), p.hasAttribute("data-ending-style"), p.hasAttribute("data-swipe-dismiss"), v.open]
   const anims = Object.fromEntries(p.getAnimations().map(a => [a.transitionProperty, a.effect.getTiming().duration]))
-  while (!cancel && v.open && performance.now() - released < 2000) await new Promise(r => requestAnimationFrame(r))
-  return { log, height, state, anims, closed: v.open ? null : performance.now() - released }
+  const opacity = p.getAnimations().find(a => a.transitionProperty === "opacity")
+  let start = opacity?.startTime ?? null
+  let now = document.timeline.currentTime
+  while (!cancel && v.open && performance.now() - released < 2000) {
+    await new Promise(r => requestAnimationFrame(r))
+    start = opacity?.startTime ?? start
+    now = document.timeline.currentTime
+  }
+  return { log, height, state, anims, closed: v.open ? null : performance.now() - released, timeline: v.open || start === null ? null : now - start }
 }"""
 
 
@@ -828,7 +835,7 @@ def check_drawer_swipe_release(t):
     assert run["state"][1:] == [True, True, True], run["state"]
     if not t.reduced_motion:
         assert run["anims"].get("opacity") == 400 and abs(run["anims"].get("transform", 0) - strength * 400) < 1, ("Base UI sets data-ending-style and reads the size before the strength: opacity keeps 400 ms, the transform takes the strength", strength, run["anims"])
-        assert run["closed"] is not None and run["closed"] >= 380, ("the drawer unmounts after the 400 ms opacity transition like Base UI", run["closed"])
+        assert run["timeline"] is not None and run["timeline"] >= 380, ("the drawer unmounts after the 400 ms opacity transition like Base UI (animation clock, wall clock)", run["timeline"], run["closed"])
     drawer_closed(page, "#drawer-handle")
     wait(page, "() => document.activeElement?.matches('#drawer-handle > [data-drawer-trigger]')")
     drawer_open(page, "#drawer-handle")

@@ -231,6 +231,8 @@ def check_bubble(t):
     assert content("[data-variant=ghost]") == "rgba(0, 0, 0, 0)"
     destructive = page.evaluate("() => getComputedStyle(document.querySelector('#bubble-variants [data-variant=destructive] > [data-slot=bubble-content]')).color")
     assert destructive == resolve(page, "var(--destructive)")
+    code = page.evaluate("() => { const c = document.querySelector('#bubble-variants [data-variant=ghost] code'); const s = getComputedStyle(c), p = getComputedStyle(c.parentElement); return [s.backgroundColor, s.paddingTop, s.paddingLeft, Math.round(parseFloat(s.fontSize) / parseFloat(p.fontSize) * 100) / 100, s.fontWeight, p.marginBottom, getComputedStyle(c.closest('[data-demo=markdown]')).overflow] }")
+    assert code == [resolve(page, "var(--muted)"), "2px", "4px", 0.9, "400", "16px", "hidden"], code
     frame = inline(t, rect(page, "#bubble-demo"))
     end = inline(t, rect(page, "#bubble-demo > [data-slot=bubble][data-align=end]"))
     start = inline(t, rect(page, "#bubble-demo [data-slot=bubble-group] > [data-slot=bubble]"))
@@ -1878,6 +1880,32 @@ def check_calendar_grid_aria(t):
         "selects": [None, None],
         "nav": ["Navigation bar", "Months"],
     }, out
+
+
+CALENDAR_MONTH_FORMAT = """async () => {
+  const ui = await import("/clanker-ui.js")
+  const el = ui.h("div", { "data-slot": "calendar", "data-month": "2026-12", "data-caption-layout": "dropdown", "data-month-format": "long", lang: "en-US" })
+  document.getElementById("calendar").append(el)
+  await new Promise(r => setTimeout(r, 30))
+  const read = () => [[...el.querySelectorAll("select[data-kind=month] option")].map(o => o.textContent).filter((_, i) => i % 6 === 5), el.querySelector("select[data-kind=month] + [data-slot=calendar-caption-label]").textContent]
+  const out = { long: read() }
+  el.removeAttribute("data-month-format")
+  await new Promise(r => setTimeout(r, 30))
+  out.short = read()
+  el.remove()
+  return out
+}"""
+
+
+def check_calendar_month_format(t):
+    page = t.page
+    t.section("calendar")
+    out = page.evaluate(CALENDAR_MONTH_FORMAT)
+    assert out == {"long": [["June", "December"], "December"], "short": [["Jun", "Dec"], "Dec"]}, out
+    t.docs("/docs/components/calendar")
+    label = page.locator('[data-example="calendar-custom-days"] select[data-kind=month] + [data-slot=calendar-caption-label]')
+    label.wait_for()
+    assert label.text_content() == "December", label.text_content()
 
 
 CALENDAR_STATUS = """async () => {

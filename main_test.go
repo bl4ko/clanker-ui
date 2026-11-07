@@ -354,6 +354,7 @@ func TestKitMinServesMinifiedFiles(t *testing.T) {
 		files[name] = string(b)
 	}
 	files["dist/clanker-ui.min.css"] = "min-css\n"
+	files["dist/clanker-ui-rhea.min.css"] = "min-rhea\n"
 	files["dist/clanker-ui-themes.min.css"] = "min-themes\n"
 	files["dist/clanker-ui-a11y.min.css"] = "min-a11y\n"
 	files["dist/clanker-ui-theme.min.js"] = "min-theme\n"
@@ -365,6 +366,7 @@ func TestKitMinServesMinifiedFiles(t *testing.T) {
 	h := newKitSite(dir, "min").routes()
 	for path, body := range map[string]string{
 		"/clanker-ui.css":         "min-css\n",
+		"/clanker-ui-rhea.css":    "min-rhea\n",
 		"/clanker-ui-themes.css":  "min-themes\n",
 		"/clanker-ui-a11y.css":    "min-a11y\n",
 		"/clanker-ui.js":          license + "\nexport * from \"./clanker-ui-core.min.js\"\nexport * from \"./clanker-ui.min.js\"\n",
@@ -494,5 +496,22 @@ func TestAccordionClosedPanelsHidden(t *testing.T) {
 	}
 	if found < 10 {
 		t.Fatalf("only %d accordion items found", found)
+	}
+}
+
+func TestBehaviorFixtureSentinels(t *testing.T) {
+	for _, f := range repoFiles(t, "test/behavior/fixtures/*.html") {
+		b, err := os.ReadFile(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		s := string(b)
+		i := strings.Index(s, `<div tabindex="0" data-behavior="sentinel">After the example</div>`)
+		if i < 0 {
+			continue
+		}
+		if open := strings.Count(s[:i], "<div ") + strings.Count(s[:i], "<div>") - strings.Count(s[:i], "</div>"); open != 0 {
+			t.Errorf("%s: the After sentinel is inside %d open div elements; it must follow the stage", f, open)
+		}
 	}
 }

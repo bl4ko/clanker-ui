@@ -1,0 +1,82 @@
+<div class="flex min-h-72 w-full max-w-sm flex-col gap-4 py-6 text-sm" id="test-results-demo">
+  <div data-slot="message" data-align="end">
+    <div data-slot="message-content">
+      <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Run the checkout tests.</div></div>
+    </div>
+  </div>
+  <div data-slot="message">
+    <div data-slot="message-content" class="gap-4">
+      <div data-slot="trace">
+        <div data-slot="trace-collapsible" data-default-open>
+          <button type="button" data-slot="trace-collapsible-trigger">
+            <span data-slot="trace-line" data-status="error">
+              <span data-slot="trace-icon"><svg data-lucide="flask-conical"></svg></span>
+              <span data-slot="trace-title">Ran 5 tests, 1 failed</span>
+            </span>
+          </button>
+          <div data-slot="trace-collapsible-content">
+            <div data-slot="trace">
+              <div data-slot="trace-collapsible">
+                <button type="button" data-slot="trace-collapsible-trigger">
+                  <span data-slot="trace-line">
+                    <span data-slot="trace-icon"><svg data-lucide="file-code"></svg></span>
+                    <span data-slot="trace-title">cart.test.ts, 3 tests</span>
+                  </span>
+                </button>
+                <div data-slot="trace-collapsible-content">
+                  <div data-slot="trace">
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="check"></svg></span>
+                      <span data-slot="trace-title">adds an item</span>
+                    </span>
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="check"></svg></span>
+                      <span data-slot="trace-title">removes an item</span>
+                    </span>
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="check"></svg></span>
+                      <span data-slot="trace-title">applies a discount code</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div data-slot="trace-collapsible" data-default-open>
+                <button type="button" data-slot="trace-collapsible-trigger">
+                  <span data-slot="trace-line" data-status="error">
+                    <span data-slot="trace-icon"><svg data-lucide="file-code"></svg></span>
+                    <span data-slot="trace-title">payment.test.ts, 2 tests, 1 failed</span>
+                  </span>
+                </button>
+                <div data-slot="trace-collapsible-content">
+                  <div data-slot="trace">
+                    <span data-slot="trace-line">
+                      <span data-slot="trace-icon"><svg data-lucide="check"></svg></span>
+                      <span data-slot="trace-title">charges the saved card</span>
+                    </span>
+                    <div data-slot="trace-collapsible" data-default-open>
+                      <button type="button" data-slot="trace-collapsible-trigger">
+                        <span data-slot="trace-line" data-status="error">
+                          <span data-slot="trace-icon"><svg data-lucide="x"></svg></span>
+                          <span data-slot="trace-title">retries a declined card</span>
+                        </span>
+                      </button>
+                      <div data-slot="trace-collapsible-content">
+                        <div data-slot="code-block" data-size="sm">
+                          <pre data-slot="code-block-content" data-wrap="true" class="max-h-64"><code data-slot="code-block-code">Expected 2 charge attempts, received 1
+
+  at Object.&lt;anonymous&gt; (src/payment.test.ts:58:22)</code></pre>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p>One test failed. The payment client does not retry a declined card, so the second charge attempt never happens.</p>
+    </div>
+  </div>
+  <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="mt-auto self-start" id="test-results-demo-replay" data-command="pnpm test checkout">Replay</button>
+</div>

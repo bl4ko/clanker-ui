@@ -1,0 +1,59 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/stack-trace",
+  "preview": 1,
+  "note": "The docs example uses the base-rhea style; behavior does not depend on it, and no step compares sizes.",
+  "parts": {
+    "trigger": {
+      "role": "button",
+      "name": "Failed: TypeError: Cannot read properties of undefined (reading 'total')"
+    },
+    "frames": {
+      "role": "button",
+      "name": "4 framework frames"
+    },
+    "content": {
+      "slot": "trace-collapsible-content",
+      "optional": true
+    }
+  },
+  "anchor": "trigger",
+  "positions": [],
+  "steps": [
+    {
+      "do": "tab_in"
+    },
+    {
+      "do": "tab",
+      "label": "first frame link"
+    },
+    {
+      "do": "tab"
+    },
+    {
+      "do": "tab",
+      "label": "framework frames"
+    },
+    {
+      "do": "press",
+      "key": "Enter",
+      "motion": "content"
+    },
+    {
+      "do": "press",
+      "key": "Enter",
+      "motion": "content",
+      "label": "close the frames"
+    },
+    {
+      "do": "click",
+      "target": "trigger",
+      "motion": "content"
+    },
+    {
+      "do": "click",
+      "target": "trigger",
+      "motion": "content",
+      "label": "click again"
+    }
+  ]
+}

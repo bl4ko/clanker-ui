@@ -164,6 +164,13 @@ apps/v4/registry/bases/base/ui/toggle-group.tsx	f2d9475eaaa1132ea00efd113a415dac
 apps/v4/registry/bases/base/ui/toggle.tsx	b058b4d0e74ccc7de2258b63a77f0136bb391b11
 apps/v4/registry/bases/base/ui/tooltip.tsx	8fbd22dacb65913e7e31cde7ad800dce6f889116
 apps/v4/registry/bases/base/ui/trace.tsx	dd8676567bd72d32ba695470e797eaf8c66af900
+apps/v4/registry/styles/style-luma.css	891fbb6e2e4ceb7c7865d77821a6472884393b07
+apps/v4/registry/styles/style-lyra.css	05342f268c86cf19d343e683eb29ba55e39fd155
+apps/v4/registry/styles/style-maia.css	ed13c6871a0bd6168f716b52f0a1aee15a903edc
+apps/v4/registry/styles/style-mira.css	1f6b9efe3700bcc6417c2fa5c09ac2411e2f0944
 apps/v4/registry/styles/style-nova.css	293204b2bf08ddfd86dbc49b75dc4749cd2135ed
+apps/v4/registry/styles/style-rhea.css	94bbca2a7f78845e7cfbcff68fb8f535e3848a98
+apps/v4/registry/styles/style-sera.css	6fb2c12894e0267973fefe9a2c5f496a4a44e44f
+apps/v4/registry/styles/style-vega.css	9f03b3c6dc5a803db963a81743d47d5b5f8f9fe0
 apps/v4/registry/themes.ts	80fdfba3a7d0dc2cb8ebe6234a608778b2ed8c07
 packages/shadcn/src/tailwind.css	067bfc56fc086420835582f469e2c78d3942c69a

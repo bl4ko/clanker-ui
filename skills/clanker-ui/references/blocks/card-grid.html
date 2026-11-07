@@ -81,6 +81,7 @@
     <div data-slot="tabs" data-default-value="all" id="shelf">
       <div data-slot="data-table-toolbar">
         <div>
+          <input data-slot="input" type="search" id="shelf-filter" placeholder="Search books" aria-label="Search title or author">
           <div data-slot="tabs-list" data-show-from="sm" aria-label="Status">
             <button data-slot="tabs-trigger" data-value="all">All <span data-slot="badge" data-variant="secondary">12</span></button>
             <button data-slot="tabs-trigger" data-value="reading">Reading <span data-slot="badge" data-variant="secondary">2</span></button>
@@ -98,7 +99,6 @@
           </div>
         </div>
         <div>
-          <input data-slot="input" type="search" id="shelf-filter" placeholder="Search books" aria-label="Search title or author">
           <div data-slot="select" data-value="added" id="shelf-sort">
             <button data-slot="select-trigger" aria-label="Sort by"><svg data-lucide="arrow-up-down"></svg><span data-slot="select-value">Recently added</span></button>
             <div data-slot="select-content" data-align="end">

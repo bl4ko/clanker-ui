@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"cmp"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -24,8 +25,8 @@ const (
 
 var (
 	exampleName    = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
-	previewHeights = []string{"auto", "24rem"}
-	docsAssets     = []string{"docs.css", "docs.js", "docs-sidebar.js", "examples.css"}
+	previewHeights = []string{"auto", "10rem", "12rem", "14rem", "16rem", "18rem", "20rem", "24rem", "24.5rem", "26rem", "30rem", "32rem", "34rem", "300px", "435px", "450px", "560px", "600px", "650px"}
+	docsAssets     = []string{"docs.css", "docs.js", "docs-sidebar.js", "examples.css", "fonts.css", "geist-latin.woff2", "geist-mono-latin.woff2"}
 )
 
 type navItem struct {
@@ -36,6 +37,8 @@ type navItem struct {
 	MobileOnly  bool   `json:"mobileOnly,omitempty"`
 	Readme      string `json:"readme,omitempty"`
 	Description string `json:"description,omitempty"`
+	Style       string `json:"style,omitempty"`
+	Scheme      string `json:"scheme,omitempty"`
 }
 
 type navGroup struct {
@@ -92,6 +95,8 @@ type docsSite struct {
 	anchors      map[string]string
 	sectionPage  map[string]string
 	blocks       map[string]*block
+	previews     map[string]navItem
+	styles       []string
 }
 
 type siteURLs struct {
@@ -159,6 +164,9 @@ func loadDocsAt(fsys fs.FS, urls siteURLs) (*docsSite, error) {
 		return nil, err
 	}
 	if err := d.loadCatalog(fsys); err != nil {
+		return nil, err
+	}
+	if err := d.loadStyles(fsys); err != nil {
 		return nil, err
 	}
 	if err := d.loadDemoAssets(fsys); err != nil {
@@ -376,13 +384,25 @@ func (d *docsSite) renderPage(p *docPage) error {
 				return "", fmt.Errorf("unknown example %q", name)
 			}
 			for key, value := range attrs {
-				ok := key == "align" && slices.Contains([]string{"center", "start", "end"}, value) || key == "height" && slices.Contains(previewHeights, value)
+				ok := key == "align" && slices.Contains([]string{"center", "start", "end"}, value) || key == "height" && slices.Contains(previewHeights, value) || key == "style" && slices.Contains(d.styles, value) || key == "scheme" && d.hasScheme(value)
 				if !ok {
 					return "", fmt.Errorf("example %q: bad attribute %s=%q", name, key, value)
 				}
 			}
 			p.Examples = append(p.Examples, name)
-			return d.exec("example", exampleView(ex, attrs))
+			v := exampleView(ex, attrs)
+			def := d.previews[p.Href]
+			v.Style, v.Scheme = cmp.Or(attrs["style"], def.Style), cmp.Or(attrs["scheme"], def.Scheme)
+			if len(d.styles) > 0 && v.Style == d.styles[0] {
+				v.Style = ""
+			}
+			if v.Scheme != "" && !slices.Contains(p.Styles, "clanker-ui-themes.css") {
+				p.Styles = append(p.Styles, "clanker-ui-themes.css")
+			}
+			if v.Style != "" && !slices.Contains(p.Styles, "style-"+v.Style+".css") {
+				p.Styles = append(p.Styles, "style-"+v.Style+".css")
+			}
+			return d.exec("example", v)
 		},
 		block: func(name string) (string, error) {
 			v, err := d.blockView(name)
@@ -431,6 +451,8 @@ type exampleData struct {
 	Name    string
 	Align   string
 	Height  string
+	Style   string
+	Scheme  string
 	Preview template.HTML
 	Teaser  []template.HTML
 	Code    codeView

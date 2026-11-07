@@ -1,0 +1,30 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/model-selector",
+  "note": "AI Elements pattern: two dropdown menus with radio items that close on click, in an input group. The live example uses the base-rhea style.",
+  "allowed": [
+    {"key": "ai-model-selector.textarea-label", "match": "^ARIA tree \\(root\\) \\| \\d+ nodes \\| \\d+ nodes \\| ours only: textbox \"Message\"; shadcn only: textbox \"Ask the agent to change your code\\.\\.\\.\"; ours only: /placeholder: Ask the agent to change your code\\.\\.\\.(; shadcn only: \\'button \"[^\"]+\"( \\[expanded\\])?\\'; ours only: \\'button \"[^\"]+\"( \\[expanded\\])?\\': [^;]+; shadcn only: text: [^;]+)*$", "reason": "the kit example names the textarea with aria-label=\"Message\" (the live demo has only a placeholder, which is not a label); the ARIA snapshot lists the text of a labelled trigger with the button on our side and as a separate text node on the live side, with the same name and text"},
+    {"key": "ai-model-selector.top-layer-opacity", "match": "^menu end opacity \\| 1 \\| 0\\.5 ", "reason": "Nova dims an input group with a disabled control (has-disabled:opacity-50, the empty send button); the tool multiplies the opacity of DOM ancestors, but the kit menu is in the top layer, which ancestor opacity does not paint; the live menu is in a portal"},
+    {"key": "ai-model-selector.rhea-menu-size", "match": "^menu end size \\| (\\d+)x\\d+( or (\\d+)x\\d+)? \\| \\1x\\d+( or \\3x\\d+)? ", "reason": "the live example is base-rhea: larger menu item padding makes the menu taller; the kit is Nova"},
+    {"key": "ai-model-selector.firefox-ring-close", "match": "^focus ring \\| none \\| painted \\|", "steps": [4, 6], "engines": ["firefox"], "reason": "Base UI moves focus back to the trigger after the key event, so Firefox paints no focus ring there; the kit keeps the keyboard focus ring, and the click of step 6 follows that key press"}
+  ],
+  "parts": {
+    "model": {"role": "button", "name": "Model:"},
+    "effort": {"role": "button", "name": "Effort:"},
+    "menu": {"role": "menu", "popup": true},
+    "sonnet": {"role": "menuitemradio", "name": "Claude Sonnet 4.5", "in": "page"},
+    "high": {"role": "menuitemradio", "name": "High", "in": "page"}
+  },
+  "positions": [],
+  "steps": [
+    {"do": "click", "target": "model", "motion": "menu"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "ArrowDown"},
+    {"do": "press", "key": "Enter", "motion": "menu"},
+    {"do": "click", "target": "model", "motion": "menu", "label": "open again"},
+    {"do": "click", "target": "sonnet", "motion": "menu"},
+    {"do": "tab"},
+    {"do": "press", "key": "Enter", "motion": "menu", "label": "open the effort menu"},
+    {"do": "click", "target": "high", "motion": "menu"},
+    {"do": "press", "key": "Escape"}
+  ]
+}

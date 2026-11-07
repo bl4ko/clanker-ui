@@ -37,3 +37,7 @@ bookForm.addEventListener("form:submit", event => {
   dialogClose("edit-book")
   toast.success("Details saved", { description: `${title} is up to date.` })
 })
+
+document.getElementById("rsvp").addEventListener("click", () => {
+  toast.success("See you on Nov 18", { description: "Café Moro at 19:00. We sent you a calendar invite." })
+})

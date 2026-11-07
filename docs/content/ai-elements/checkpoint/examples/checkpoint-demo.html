@@ -1,0 +1,25 @@
+<div class="flex min-h-72 w-full max-w-sm flex-col gap-4 py-6 text-sm" id="checkpoint-demo">
+  <div data-slot="message" data-align="end">
+    <div data-slot="message-content">
+      <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Rename the button component to action.</div></div>
+    </div>
+  </div>
+  <div data-slot="message">
+    <div data-slot="message-content"><p>Renamed Button to Action in components/ui/button.tsx.</p></div>
+  </div>
+  <div data-slot="marker" data-variant="separator" id="checkpoint-demo-rename">
+    <span data-slot="marker-content" class="inline-flex items-center gap-2">
+      Button renamed
+      <button type="button" data-slot="button" data-variant="outline" data-size="xs" aria-label="Restore to Button renamed" id="checkpoint-demo-restore">Restore</button>
+    </span>
+  </div>
+  <div data-slot="message" data-align="end">
+    <div data-slot="message-content">
+      <div data-slot="bubble" data-align="end" data-variant="muted"><div data-slot="bubble-content">Update the docs to match.</div></div>
+    </div>
+  </div>
+  <div data-slot="message">
+    <div data-slot="message-content"><p>Updated the Button page to say Action.</p></div>
+  </div>
+  <button type="button" data-slot="button" data-variant="outline" data-size="sm" class="mt-auto self-start" id="checkpoint-demo-continue" hidden>Continue</button>
+</div>

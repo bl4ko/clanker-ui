@@ -1,0 +1,30 @@
+<div data-slot="context-menu">
+  <div data-slot="context-menu-trigger" tabindex="0" class="flex aspect-video w-full max-w-xs items-center justify-center rounded-xl border border-dashed text-sm">
+    <span class="hidden pointer-fine:inline-block">Right click here</span>
+    <span class="hidden pointer-coarse:inline-block">Long press here</span>
+  </div>
+  <div data-slot="context-menu-content">
+    <div data-slot="context-menu-group">
+      <div data-slot="context-menu-label">File</div>
+      <div data-slot="context-menu-item">New File<span data-slot="context-menu-shortcut">⌘N</span></div>
+      <div data-slot="context-menu-item">Open File<span data-slot="context-menu-shortcut">⌘O</span></div>
+      <div data-slot="context-menu-item">Save<span data-slot="context-menu-shortcut">⌘S</span></div>
+    </div>
+    <div data-slot="context-menu-separator"></div>
+    <div data-slot="context-menu-group">
+      <div data-slot="context-menu-label">Edit</div>
+      <div data-slot="context-menu-item">Undo<span data-slot="context-menu-shortcut">⌘Z</span></div>
+      <div data-slot="context-menu-item">Redo<span data-slot="context-menu-shortcut">⇧⌘Z</span></div>
+    </div>
+    <div data-slot="context-menu-separator"></div>
+    <div data-slot="context-menu-group">
+      <div data-slot="context-menu-item">Cut<span data-slot="context-menu-shortcut">⌘X</span></div>
+      <div data-slot="context-menu-item">Copy<span data-slot="context-menu-shortcut">⌘C</span></div>
+      <div data-slot="context-menu-item">Paste<span data-slot="context-menu-shortcut">⌘V</span></div>
+    </div>
+    <div data-slot="context-menu-separator"></div>
+    <div data-slot="context-menu-group">
+      <div data-slot="context-menu-item" data-variant="destructive">Delete<span data-slot="context-menu-shortcut">⌫</span></div>
+    </div>
+  </div>
+</div>

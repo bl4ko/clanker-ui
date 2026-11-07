@@ -1,0 +1,152 @@
+<div class="w-full" data-js="payments">
+  <div class="flex items-center py-4">
+    <input data-slot="input" placeholder="Filter emails..." aria-label="Filter emails..." class="max-w-sm" data-js="filter">
+    <div data-slot="dropdown-menu" data-js="columns">
+      <button type="button" data-slot="button" data-variant="outline" data-dropdown-menu-trigger class="ml-auto">Columns<svg data-lucide="chevron-down"></svg></button>
+      <div data-slot="dropdown-menu-content" data-align="end" class="w-44">
+        <div data-slot="dropdown-menu-group">
+          <div data-slot="dropdown-menu-checkbox-item" data-value="status" data-checked class="capitalize">status</div>
+          <div data-slot="dropdown-menu-checkbox-item" data-value="email" data-checked class="capitalize">email</div>
+          <div data-slot="dropdown-menu-checkbox-item" data-value="amount" data-checked class="capitalize">amount</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="overflow-hidden rounded-md border">
+    <div data-slot="table-container">
+      <table data-slot="table">
+        <thead data-slot="table-header">
+          <tr data-slot="table-row">
+            <th data-slot="table-head" scope="col"><button type="button" data-slot="checkbox" aria-label="Select all" data-js="all"></button></th>
+            <th data-slot="table-head" scope="col" data-column="status">Status</th>
+            <th data-slot="table-head" scope="col" data-column="email" aria-sort="none"><button type="button" data-slot="button" data-variant="ghost" data-js="sort">Email<svg data-lucide="arrow-up-down"></svg></button></th>
+            <th data-slot="table-head" scope="col" data-column="amount"><div class="text-right">Amount</div></th>
+            <th data-slot="table-head" scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody data-slot="table-body">
+          <tr data-slot="table-row" data-id="m5gr84i9">
+            <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select row"></button></td>
+            <td data-slot="table-cell" data-column="status"><div class="capitalize">Success</div></td>
+            <td data-slot="table-cell" data-column="email"><div class="lowercase">ken99@example.com</div></td>
+            <td data-slot="table-cell" data-column="amount"><div class="text-right font-medium">$316.00</div></td>
+            <td data-slot="table-cell">
+              <div data-slot="dropdown-menu">
+                <button type="button" data-slot="button" data-variant="ghost" data-size="icon-xs" data-dropdown-menu-trigger><span class="sr-only">Open menu</span><svg data-lucide="ellipsis"></svg></button>
+                <div data-slot="dropdown-menu-content" data-align="end" class="w-44">
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-label">Actions</div>
+                    <div data-slot="dropdown-menu-item" data-js="copy">Copy payment ID</div>
+                  </div>
+                  <div data-slot="dropdown-menu-separator"></div>
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-item">View customer</div>
+                    <div data-slot="dropdown-menu-item">View payment details</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr data-slot="table-row" data-id="3u1reuv4">
+            <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select row"></button></td>
+            <td data-slot="table-cell" data-column="status"><div class="capitalize">Success</div></td>
+            <td data-slot="table-cell" data-column="email"><div class="lowercase">Abe45@example.com</div></td>
+            <td data-slot="table-cell" data-column="amount"><div class="text-right font-medium">$242.00</div></td>
+            <td data-slot="table-cell">
+              <div data-slot="dropdown-menu">
+                <button type="button" data-slot="button" data-variant="ghost" data-size="icon-xs" data-dropdown-menu-trigger><span class="sr-only">Open menu</span><svg data-lucide="ellipsis"></svg></button>
+                <div data-slot="dropdown-menu-content" data-align="end" class="w-44">
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-label">Actions</div>
+                    <div data-slot="dropdown-menu-item" data-js="copy">Copy payment ID</div>
+                  </div>
+                  <div data-slot="dropdown-menu-separator"></div>
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-item">View customer</div>
+                    <div data-slot="dropdown-menu-item">View payment details</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr data-slot="table-row" data-id="derv1ws0">
+            <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select row"></button></td>
+            <td data-slot="table-cell" data-column="status"><div class="capitalize">Processing</div></td>
+            <td data-slot="table-cell" data-column="email"><div class="lowercase">Monserrat44@example.com</div></td>
+            <td data-slot="table-cell" data-column="amount"><div class="text-right font-medium">$837.00</div></td>
+            <td data-slot="table-cell">
+              <div data-slot="dropdown-menu">
+                <button type="button" data-slot="button" data-variant="ghost" data-size="icon-xs" data-dropdown-menu-trigger><span class="sr-only">Open menu</span><svg data-lucide="ellipsis"></svg></button>
+                <div data-slot="dropdown-menu-content" data-align="end" class="w-44">
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-label">Actions</div>
+                    <div data-slot="dropdown-menu-item" data-js="copy">Copy payment ID</div>
+                  </div>
+                  <div data-slot="dropdown-menu-separator"></div>
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-item">View customer</div>
+                    <div data-slot="dropdown-menu-item">View payment details</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr data-slot="table-row" data-id="5kma53ae">
+            <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select row"></button></td>
+            <td data-slot="table-cell" data-column="status"><div class="capitalize">Success</div></td>
+            <td data-slot="table-cell" data-column="email"><div class="lowercase">Silas22@example.com</div></td>
+            <td data-slot="table-cell" data-column="amount"><div class="text-right font-medium">$874.00</div></td>
+            <td data-slot="table-cell">
+              <div data-slot="dropdown-menu">
+                <button type="button" data-slot="button" data-variant="ghost" data-size="icon-xs" data-dropdown-menu-trigger><span class="sr-only">Open menu</span><svg data-lucide="ellipsis"></svg></button>
+                <div data-slot="dropdown-menu-content" data-align="end" class="w-44">
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-label">Actions</div>
+                    <div data-slot="dropdown-menu-item" data-js="copy">Copy payment ID</div>
+                  </div>
+                  <div data-slot="dropdown-menu-separator"></div>
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-item">View customer</div>
+                    <div data-slot="dropdown-menu-item">View payment details</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr data-slot="table-row" data-id="bhqecj4p">
+            <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select row"></button></td>
+            <td data-slot="table-cell" data-column="status"><div class="capitalize">Failed</div></td>
+            <td data-slot="table-cell" data-column="email"><div class="lowercase">carmella@example.com</div></td>
+            <td data-slot="table-cell" data-column="amount"><div class="text-right font-medium">$721.00</div></td>
+            <td data-slot="table-cell">
+              <div data-slot="dropdown-menu">
+                <button type="button" data-slot="button" data-variant="ghost" data-size="icon-xs" data-dropdown-menu-trigger><span class="sr-only">Open menu</span><svg data-lucide="ellipsis"></svg></button>
+                <div data-slot="dropdown-menu-content" data-align="end" class="w-44">
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-label">Actions</div>
+                    <div data-slot="dropdown-menu-item" data-js="copy">Copy payment ID</div>
+                  </div>
+                  <div data-slot="dropdown-menu-separator"></div>
+                  <div data-slot="dropdown-menu-group">
+                    <div data-slot="dropdown-menu-item">View customer</div>
+                    <div data-slot="dropdown-menu-item">View payment details</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr data-slot="table-row" data-js="empty" hidden>
+            <td data-slot="table-cell" colspan="5" class="h-24 text-center">No results.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="flex items-center justify-end space-x-2 py-4">
+    <div class="flex-1 text-sm text-muted-foreground" data-js="selection" data-of="of" data-suffix="row(s) selected.">0 of 5 row(s) selected.</div>
+    <div class="space-x-2">
+      <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-js="previous" disabled>Previous</button>
+      <button type="button" data-slot="button" data-variant="outline" data-size="sm" data-js="next" disabled>Next</button>
+    </div>
+  </div>
+</div>

@@ -4,7 +4,7 @@ Group `overlays`. Needs `core`. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `calendar` (root) | `data-button-variant` any; `data-caption-layout` any; `data-disabled` any; `data-disabled-dates` any; `data-disabled-weekdays` any; `data-fixed-weeks` any; `data-label-next` any; `data-label-previous` any; `data-lang` any; `data-max` any; `data-min` any; `data-mode` `multiple`, `range`, `single`; `data-month` any; `data-months` any; `data-name` string; `data-outside-days` `false`, `true`; `data-required` any; `data-show-week-number` any; `data-today` any; `data-value` string; `data-week-start` any |  |
+| `calendar` (root) | `data-button-variant` any; `data-caption-layout` any; `data-disabled` any; `data-disabled-dates` any; `data-disabled-weekdays` any; `data-fixed-weeks` any; `data-label-next` any; `data-label-previous` any; `data-lang` any; `data-max` any; `data-min` any; `data-mode` `multiple`, `range`, `single`; `data-month` any; `data-month-format` any; `data-months` any; `data-name` string; `data-outside-days` `false`, `true`; `data-required` any; `data-show-week-number` any; `data-today` any; `data-value` string; `data-week-start` any |  |
 | `calendar-day` (kit adds) |  | `data-disabled`, `data-hidden`, `data-outside`, `data-range-end`, `data-range-middle`, `data-range-start`, `data-selected`, `data-today` |
 
 Kit adds: `calendar-button-next`, `calendar-button-previous`, `calendar-caption-label`, `calendar-dropdown`, `calendar-dropdown-root`, `calendar-dropdowns`, `calendar-month`, `calendar-month-caption`, `calendar-month-grid`, `calendar-months`, `calendar-nav`, `calendar-week`, `calendar-week-number`, `calendar-week-number-header`, `calendar-weekday`, `calendar-weekdays`, `calendar-weeks`.
@@ -36,6 +36,7 @@ Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clan
 | `data-min`, `data-max`, `data-disabled-dates`, `data-disabled-weekdays`, `data-disabled` | Limits. Ranges use `a/b`. Weekdays `0` (Sunday) to `6`. A change from code (for example `data-max` set to today when the page loads) renders the grid again. |
 | `data-week-start` | `0`–`6`, default `1` (Monday) |
 | `data-caption-layout` | `label`, `dropdown`, `dropdown-months`, `dropdown-years`; years from `data-start-year` to `data-end-year` (default: 100 years before today to this year, or the years of `data-min` and `data-max`). With a year dropdown, navigation stops at January of the first and December of the last year, as in react-day-picker; for future dates set `data-end-year` or `data-max`. A `data-min` in a later year extends the default end year, and a `data-max` in an earlier year extends the default start year. |
+| `data-month-format` | Month names in the month dropdown: `short` (default, `Dec`) or `long` (`December`, the shadcn `formatMonthDropdown` of `calendar-custom-days`) |
 | `data-button-variant` | Button variant of the previous and next buttons, default `ghost` |
 | `data-outside-days="false"`, `data-show-week-number`, `data-fixed-weeks`, `data-required` | rdp options (`data-show-week-number` is the shadcn `showWeekNumber` prop) |
 | `data-name` | Hidden input(s) for forms: one per date in `multiple`, `from/to` in `range` |

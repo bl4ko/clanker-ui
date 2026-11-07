@@ -12,6 +12,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Added
 
+- Calendar: `data-month-format="long"` shows long month names in the month dropdown, like the shadcn `calendar-custom-days` example (#91).
 - Rhea style: `clanker-ui-rhea.css` (and `dist/clanker-ui-rhea.min.css`, `dist/clanker-ui-rhea-<group>.min.css`) is the kit CSS generated from the shadcn `style-rhea.css`. Load it instead of `clanker-ui.css`; markup and JavaScript are the same. Nova stays the default and does not change. The catalog lists the styles in `files.styles`.
 - Docs: the Attachment, Bubble, Code Block, Drawer, Marker, Message, Message Scroller, and Trace previews and all AI Elements previews are in the Rhea style, like the shadcn docs (the blue scheme where shadcn uses `theme-blue`). The docs chrome stays Nova.
 - `data-variant="sticky"` on a last `page-aside`: the side column stays in view below the header from 64rem (the live summary of the `form` block).
@@ -54,6 +55,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Changed
 
+- Chart: in RTL a vertical bar, line, or area chart reverses the category axis (the first category at the right) and puts the value axis on the right, like the shadcn `chart-rtl` example; ArrowLeft goes to the next category, as Recharts (#82).
+- Progress: `progress-value` and `aria-valuetext` use `Intl.NumberFormat` with `style: "percent"` in the nearest `lang`, like Base UI `Progress.Value` (#84).
 - `clanker-ui-a11y.css`: the text of destructive buttons and badges is `--destructive` mixed with 25 % `--foreground`, 4.5:1 on the tinted background (shadcn 3.83:1 in light). Blocks have no `empty-region` or `low-contrast` warning: the `detail` block has a Files card and 4 activity rows, the `overlay-form` block has tags and a Next meeting card, and the `form` summary is sticky. The `card-grid` search is the first control of the toolbar, so it takes the first row on phones.
 - Blocks load `clanker-ui-a11y.min.css` and preload the core module, as `SKILL.md` says. The theme toggle is a ghost `icon` button (32 px, as the shadcn site header) everywhere. Footer order: Cancel first and the primary last in a dialog or alert dialog footer; the primary first in a sheet or drawer footer, a card footer, and a page form. A rating input is a `radio-group` with a `rating` in each label (block `overlay-form`), the only way in the skill. The `detail` and `overlay-form` blocks have a 30 px title with a meta row, and `overlay-form` and `card-grid` show their cover in a horizontal card; covers in the `card-grid` block carry no text. The `data-table` block has a New task page action. The CSP meta tag comes right after `<meta charset>` in the docs, as in the blocks.
 - Agent skill: load `clanker-ui-a11y.css` in every app (it was optional); the head example and the known lint results show it. The version line says that it is the last release and that a copy from `main` can be newer. The dropzone recipe uses `span` parts inside its `label`.

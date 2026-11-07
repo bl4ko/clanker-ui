@@ -6125,7 +6125,7 @@ function commandFilter(root, keep = false) {
     const keywords = (item.dataset.keywords ?? "").toLowerCase().split(",").map(k => k.trim()).filter(Boolean)
     const score = active ? commandScore(commandValue(item).toLowerCase(), search, keywords) : 1
     scores.set(item, score)
-    item.hidden = score <= 0
+    void 0
     if (score > 0) visible++
   }
   const groups = own(root, '[data-slot="command-group"]')

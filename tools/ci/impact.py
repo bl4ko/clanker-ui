@@ -8,8 +8,8 @@ from urllib.parse import urlsplit
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 ANCHOR = "scan(document.documentElement)"
 SPLIT = {"clanker-ui.js": "js", "clanker-ui.css": "css", "tools/gen/kit.css": "css"}
-KIT_SOURCES = {"clanker-ui.js", "clanker-ui.css", "tools/gen/kit.css", "clanker-ui-chart.js", "clanker-ui-code.js", "clanker-ui-theme.js", "clanker-ui-themes.css", "clanker-ui-a11y.css"}
-SERVED = ["clanker-ui-chart.js", "clanker-ui-code.js", "clanker-ui-theme.js", "clanker-ui-themes.css", "clanker-ui-a11y.css", "demo/demo.css", "demo/demo.js", "demo/assets/*", "docs/assets/*"]
+KIT_SOURCES = {*SPLIT, "clanker-ui-chart.js", "clanker-ui-code.js", "clanker-ui-theme.js", "clanker-ui-themes.css", "clanker-ui-a11y.css", "clanker-ui-rhea.css"}
+SERVED = [*KIT_SOURCES - set(SPLIT), "demo/demo.css", "demo/demo.js", "demo/assets/*", "docs/assets/*"]
 SITE = ["docs/nav.json", "docs/templates/*"]
 DOCS_ROUTE = re.compile(r"^/($|docs|view/|blocks/|404$)")
 
@@ -19,13 +19,12 @@ class Groups:
         names, camel = [], {}
         for line in text.splitlines():
             name = line.split("\t")[0]
-            if not name:
-                continue
             n = name.removeprefix("js:")
-            if n == name:
+            if n and n == name:
                 names.append(n)
-            parts = n.split("-")
-            camel[parts[0] + "".join(p[:1].upper() + p[1:] for p in parts[1:])] = n
+            if n:
+                parts = n.split("-")
+                camel[parts[0] + "".join(p[:1].upper() + p[1:] for p in parts[1:])] = n
         self.names = sorted(names, key=len, reverse=True)
         self.camel = sorted(camel.items(), key=lambda kv: (-len(kv[0]), kv[0]))
 
@@ -36,10 +35,7 @@ class Groups:
         return None if attr == "slot" else next((n for n in self.names if attr.startswith(n + "-")), None)
 
     def named(self, name):
-        for c, n in self.camel:
-            if name == c or name.startswith(c) and len(name) > len(c) and "A" <= name[len(c)] <= "Z":
-                return n
-        return None
+        return next((n for c, n in self.camel if name == c or name.startswith(c) and "A" <= name[len(c) : len(c) + 1] <= "Z"), None)
 
 
 def groups(root=ROOT):
@@ -171,8 +167,17 @@ def mask_js(src):
     return "".join(out)
 
 
-DECL = re.compile(r"^(export\s+)?(?:async\s+)?(?:function\s*\*?\s*([A-Za-z_$][\w$]*)|(?:const|let|var|class)\s+([A-Za-z_$][\w$]*))")
-DEFINE = re.compile(r'^(?:define|partDefaults)\("([a-z0-9-]+)"')
+DECL = re.compile(r"^(?:export\s+)?(?:async\s+)?(?:function\s*\*?\s*([A-Za-z_$][\w$]*)|(const|let|var|class)\s+([A-Za-z_$][\w$]*))")
+DEFINE = re.compile(r'^(define|partDefaults)\("([a-z0-9-]+)"')
+FUNCTION = re.compile(r"=>|\bfunction\b|^\s+(?:(?:async|get|set|static)\s+)*\*?[A-Za-z_$][\w$]*\s*\([^()]*\)\s*\{", re.M)
+IDENT = re.compile(r"(?<![\w$.])[A-Za-z_$][\w$]*")
+
+
+class Stmt:
+    def __init__(self, start, end, l0, l1, comp, id, name, code):
+        self.start, self.end, self.l0, self.l1, self.comp, self.id, self.name, self.code = start, end, l0, l1, comp, id, name, code
+        self.key = f"j:{comp}:{id}"
+        self.fn = not name or not DECL.match(code.lstrip()).group(2) or bool(FUNCTION.search(code))
 
 
 def js_spans(src, g):
@@ -183,177 +188,108 @@ def js_spans(src, g):
         if line_start and i >= first and depth == 0 and c not in " \n\t})]":
             starts.append(i)
         line_start = c == "\n"
-        if c in "([{":
-            depth += 1
-        elif c in ")]}":
-            depth -= 1
+        depth += (c in "([{") - (c in ")]}")
     if depth or not starts or starts[0] != first:
         raise ValueError("cannot split the kit script")
-    spans, core, prev = [], True, "*"
+    out, core, prev, n = [], True, ("*", "core"), 0
     for k, s in enumerate(starts):
         e = starts[k + 1] if k + 1 < len(starts) else len(src)
         line = src[s:].split("\n", 1)[0]
-        decl = DECL.match(line)
+        decl, define = DECL.match(line), DEFINE.match(line)
+        name = decl and (decl[1] or decl[3])
         if core:
-            comp = "*"
+            comp, id = "*", name or f"core+{k}"
             core = src[s:e].strip() != ANCHOR
-        elif m := DEFINE.match(line):
-            comp = g.component(m[1]) or "*"
-        elif decl:
-            comp = g.named(decl[2] or decl[3]) or "*"
+        elif define:
+            comp, id = g.component(define[2]) or "*", f"{define[1]}:{define[2]}"
+        elif name:
+            comp, id = g.named(name) or "*", name
         else:
-            comp = prev
-        prev = comp
-        spans.append(Stmt(s, e, src.count("\n", 0, s) + 1, src.count("\n", 0, e - 1) + 1, comp, decl and (decl[2] or decl[3]), bool(decl and decl[1]), masked[s:e]))
+            n += 1
+            comp, id = prev[0], f"{prev[1]}+{n}"
+        if name or define:
+            prev, n = (comp, id), 0
+        out.append(Stmt(s, e, src.count("\n", 0, s) + 1, src.count("\n", 0, e - 1) + 1, comp, id, name, masked[s:e]))
     if core:
         raise ValueError(f"no top-level {ANCHOR}")
-    return spans
+    return out
 
 
-TAGS = {"button", "input", "label", "table", "select", "dialog", "form", "textarea", "progress", "menu", "output", "item", "page", "part", "empty", "field", "message"}
-LITERAL = re.compile(r"""["'`]([a-z][a-z0-9-]*)["'`=\]]""")
-IDENT = re.compile(r"(?<![\w$])[A-Za-z_$][\w$]*")
-
-
-class Stmt:
-    def __init__(self, start, end, l0, l1, comp, name, exported, masked):
-        self.start, self.end, self.l0, self.l1, self.comp, self.name, self.exported, self.masked = start, end, l0, l1, comp, name, exported, masked
-
-    def ids(self):
-        out = set()
-        for m in IDENT.finditer(self.masked):
-            k = m.start() - 1
-            while k >= 0 and self.masked[k] in " \n":
-                k -= 1
-            if not (k >= 0 and self.masked[k] == "." and self.masked[k - 2 : k] != ".."):
-                out.add(m[0])
-        return out
-
-
-def js_closure(stmts, hit):
+def js_reqs(stmts, hit):
     users = {}
     for i, st in enumerate(stmts):
-        for name in st.ids():
+        for name in set(IDENT.findall(st.code)) - {st.name}:
             users.setdefault(name, set()).add(i)
-    seen, todo = set(hit), list(hit)
+    keys, seen, todo = set(), set(hit), list(hit)
     while todo:
-        st = stmts[todo.pop()]
-        for j in users.get(st.name, ()) if st.name else ():
-            if j not in seen:
-                seen.add(j)
-                todo.append(j)
-    return seen
+        i = todo.pop()
+        st = stmts[i]
+        if st.comp == "*":
+            return None
+        if st.fn:
+            keys.add(st.key)
+            continue
+        for j in users.get(st.name, set()) - seen:
+            seen.add(j)
+            todo.append(j)
+    return [frozenset({k}) for k in sorted(keys)]
 
 
-SLOT = re.compile(r"""\[data-(slot|backdrop-of)\s*[~|^$*]?=\s*["']?([a-z0-9-]+)["']?\s*\]""")
+SLOT = re.compile(r"""\[data-(?:slot|backdrop-of)\s*[~|^$*]?=\s*["']?([a-z0-9-]+)["']?\s*\]""")
 PART = re.compile(r"\[data-([a-z0-9-]+)\s*[\]=~|^$*]")
-GROUPED = ("not", "is", "where", "matches", "-webkit-any", "-moz-any")
-NESTING = ("media", "supports", "layer", "container", "scope", "starting-style", "document")
-
-
-def split_top(s, sep=","):
-    parts, depth, cur = [], 0, []
-    for c in s:
-        if c in "([":
-            depth += 1
-        elif c in ")]":
-            depth -= 1
-        if c == sep and depth == 0:
-            parts.append("".join(cur))
-            cur = []
-        else:
-            cur.append(c)
-    return parts + ["".join(cur)]
+GROUPED = re.compile(r":(?:not|is|where|matches|-webkit-any|-moz-any)\(")
 
 
 def strip_grouped(sel):
-    out, i = [], 0
-    while i < len(sel):
-        m = re.match(r":(" + "|".join(re.escape(x) for x in GROUPED) + r")\(", sel[i:])
-        if m:
-            depth, j = 1, i + len(m[0])
-            while j < len(sel) and depth:
-                depth += {"(": 1, ")": -1}.get(sel[j], 0)
-                j += 1
-            i = j
-            continue
-        out.append(sel[i])
-        i += 1
-    return "".join(out)
+    while m := GROUPED.search(sel):
+        depth, j = 1, m.end()
+        while j < len(sel) and depth:
+            depth += {"(": 1, ")": -1}.get(sel[j], 0)
+            j += 1
+        sel = sel[: m.start()] + sel[j:]
+    return sel
 
 
 def selector_req(prelude, g):
-    reqs = []
-    for alt in split_top(prelude):
-        need = set()
-        for kind, slot in SLOT.findall(strip_grouped(alt)):
-            c = g.component(slot)
-            if not c:
-                return None
-            need.add(c)
-        for attr in PART.findall(strip_grouped(alt)):
-            if c := g.part(attr):
-                need.add(c)
-        if not need:
+    reqs, depth, alts, cur = [], 0, [], ""
+    for c in prelude + ",":
+        depth += (c in "([") - (c in ")]")
+        if c == "," and depth == 0:
+            alts.append(cur)
+            cur = ""
+        else:
+            cur += c
+    for alt in map(strip_grouped, alts):
+        slots = [g.component(s) for s in SLOT.findall(alt)]
+        if not slots or None in slots:
             return None
-        reqs.append(frozenset("c:" + c for c in need))
+        reqs.append(frozenset("c:" + c for c in slots + [g.part(a) for a in PART.findall(alt)] if c))
     return reqs
 
 
 def css_spans(src, g):
-    text = re.sub(r"/\*.*?\*/", lambda m: re.sub(r"[^\n]", " ", m[0]), src, flags=re.S)
-    line_at = [0] * (len(text) + 1)
-    ln = 1
+    text = re.sub(r"/\*.*?\*/|\"[^\"\n]*\"|'[^'\n]*'", lambda m: re.sub(r"[^\n]" if m[0][0] == "/" else r"[{};]", "_", m[0]), src, flags=re.S)
+    spans, stack, seg, line = [], [], 0, 1
     for i, c in enumerate(text):
-        line_at[i] = ln
-        if c == "\n":
-            ln += 1
-    line_at[len(text)] = ln
-    spans, stack, seg, i, n = [], [], 0, 0, len(text)
-    while i < n:
-        c = text[i]
-        if c in "\"'":
-            j = text.find(c, i + 1)
-            i = (j if j >= 0 else n) + 1
-            continue
-        top = stack[-1] if stack else None
         if c == "{":
             prelude = text[seg:i].strip()
-            p0 = seg + len(text[seg:i]) - len(text[seg:i].lstrip())
-            if top and top["kind"] in ("leaf", "rule"):
-                top["depth"] += 1
-                if top["kind"] == "rule":
-                    r = selector_req(prelude, g)
-                    top["reqs"] = None if r is None or top["reqs"] is None else top["reqs"] + r
+            l0 = line - text[seg:i].lstrip().count("\n")
+            if stack and stack[-1][0] != "group" or prelude.startswith("@") and not re.match(r"@(media|supports|layer|container|scope|starting-style)\b", prelude):
+                stack.append(("leaf", l0, None))
             elif prelude.startswith("@"):
-                name = re.match(r"@([\w-]+)", prelude)
-                kind = "group" if name and name[1] in NESTING else "leaf"
-                stack.append({"kind": kind, "l0": line_at[p0], "l1": line_at[i], "reqs": [] if kind == "group" else None, "depth": 0})
+                stack.append(("group", l0, None))
             else:
-                stack.append({"kind": "rule", "l0": line_at[p0], "reqs": selector_req(prelude, g), "depth": 0})
+                stack.append(("rule", l0, selector_req(prelude, g)))
             seg = i + 1
         elif c == "}":
-            if top and top["kind"] in ("leaf", "rule") and top["depth"]:
-                top["depth"] -= 1
-            elif top:
-                stack.pop()
-                if top["kind"] == "group":
-                    spans.append((top["l0"], top["l1"], top["reqs"] or None))
-                    spans.append((line_at[i], line_at[i], top["reqs"] or None))
-                else:
-                    spans.append((top["l0"], line_at[i], top["reqs"]))
-                parent = stack[-1] if stack else None
-                if parent and parent["kind"] == "group" and parent["reqs"] is not None:
-                    parent["reqs"] = None if top["reqs"] is None else parent["reqs"] + top["reqs"]
+            kind, l0, req = stack.pop()
+            if kind == "rule":
+                spans.append((l0, line, req))
             seg = i + 1
         elif c == ";":
-            if not top or top["kind"] == "group":
-                p0 = seg + len(text[seg:i]) - len(text[seg:i].lstrip())
-                spans.append((line_at[p0], line_at[i], None))
-                if top:
-                    top["reqs"] = None
             seg = i + 1
-        i += 1
+        elif c == "\n":
+            line += 1
     if stack:
         raise ValueError("unbalanced braces")
     return spans
@@ -363,10 +299,9 @@ def changed_lines(old, new):
     a, b = old.splitlines(), new.splitlines()
     olds, news = set(), set()
     for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
-        if op == "equal":
-            continue
-        olds.update(k + 1 for k in range(i1, i2) if a[k].strip())
-        news.update(k + 1 for k in range(j1, j2) if b[k].strip())
+        if op != "equal":
+            olds.update(k + 1 for k in range(i1, i2) if a[k].strip())
+            news.update(k + 1 for k in range(j1, j2) if b[k].strip())
     return olds, news
 
 
@@ -376,55 +311,37 @@ def line_reqs(kind, text, lines, g):
     if kind == "js":
         stmts = js_spans(text, g)
         hit = {i for i, st in enumerate(stmts) for ln in lines if st.l0 <= ln <= st.l1}
-        if any(not any(st.l0 <= ln <= st.l1 for st in stmts) for ln in lines):
-            return None
-        closure = js_closure(stmts, hit)
-        comps = {stmts[i].comp for i in closure}
-        for i in closure:
-            st = stmts[i]
-            comps |= {c for s in LITERAL.findall(text[st.start : st.end]) if s not in TAGS and (c := g.component(s))}
-        return None if "*" in comps else [frozenset({"c:" + c}) for c in sorted(comps)]
-    spans = css_spans(text, g)
-    out = []
-    for ln in sorted(lines):
+        covered = {ln for st in stmts for ln in lines if st.l0 <= ln <= st.l1}
+        return js_reqs(stmts, hit) if covered == lines else None
+    spans, out = css_spans(text, g), []
+    for ln in lines:
         hit = [r for l0, l1, r in spans if l0 <= ln <= l1]
-        if not hit or any(r is None for r in hit):
+        if not hit or None in hit:
             return None
-        for r in hit:
-            out += r
+        out += [x for r in hit for x in r]
     return out
 
 
 def page_of(path):
     m = re.fullmatch(r"docs/content/(.+?)/(?:page\.md|examples/[a-z0-9-]+\.(?:html|js))", path)
-    if not m:
-        return None
-    return "/docs" if m[1] == "index" else "/docs/" + m[1]
+    return m and ("/docs" if m[1] == "index" else "/docs/" + m[1])
 
 
-def front_matter_lines(text):
-    lines = text.splitlines()
-    if not lines or lines[0] != "---":
-        return 0
-    return next((i + 1 for i, l in enumerate(lines[1:], 1) if l == "---"), len(lines))
+def front_matter(text):
+    lines = (text or "").splitlines()
+    return next((i + 1 for i, l in enumerate(lines[1:], 1) if l == "---"), len(lines)) if lines[:1] == ["---"] else 0
 
 
 def docs_reqs(path, old, new, pages):
     href = page_of(path)
     if path.endswith("page.md"):
         olds, news = changed_lines(old or "", new or "")
-        if not old or not new or any(l <= front_matter_lines(old) for l in olds) or any(l <= front_matter_lines(new) for l in news):
-            return [frozenset({"site:docs"})]
-        return [frozenset({"p:" + href})]
+        head = not old or not new or min(olds, default=1e9) <= front_matter(old) or min(news, default=1e9) <= front_matter(new)
+        return [frozenset({"site:docs" if head else "p:" + href})]
     ex = pathlib.PurePosixPath(path).stem
-    reqs = [frozenset({"p:" + href}), frozenset({"p:/view/" + ex})]
     quoted = re.compile(r'\{\{\s*example\s+"' + re.escape(ex) + '"')
-    for page, text in pages.items():
-        if quoted.search(text):
-            reqs.append(frozenset({"p:" + page_of(page)}))
-    if path.endswith(".js"):
-        reqs.append(frozenset({"f:" + path}))
-    return reqs
+    reqs = [frozenset({"p:" + p}) for p in [href, "/view/" + ex] + [page_of(f) for f, t in pages.items() if quoted.search(t)]]
+    return reqs + ([frozenset({"f:" + path})] if path.endswith(".js") else [])
 
 
 def file_reqs(path, old, new, g, pages=None):
@@ -448,88 +365,38 @@ def file_reqs(path, old, new, g, pages=None):
     return None
 
 
-def resolve(path, root=ROOT):
-    root = pathlib.Path(root)
-    p = path.lstrip("/")
-    m = re.fullmatch(r"assets/[^/]+/([^/]+)", p)
-    base = m[1] if m else p.rsplit("/", 1)[-1]
-    if m := re.fullmatch(r"blocks/([a-z0-9-]+)\.js", p):
-        return "p:/blocks/" + m[1]
-    for cand in ([p] if not m else []) + ["dist/" + base, "docs/assets/" + base, "demo/" + base, base]:
-        if cand and (root / cand).is_file():
-            return "f:" + cand
-    hits = sorted(root.glob("docs/content/**/examples/" + base)) if base else []
-    if hits:
-        return "f:" + hits[0].relative_to(root).as_posix()
-    return "u:" + path
-
-
-def route(path):
-    p = re.sub(r"(/index)?\.html$", "", path).rstrip("/") or "/"
-    return p
-
-
 def url_keys(path, document, root=ROOT):
     if document and not path.startswith("/test/"):
-        r = route(path)
+        r = re.sub(r"(/index)?\.html$", "", path).rstrip("/") or "/"
         return {"p:" + r} | ({"site:docs"} if DOCS_ROUTE.match(r) else set())
-    return {resolve(path, root)}
-
-
-class Coverage:
-    def __init__(self, g, root=ROOT):
-        self.g, self.root, self.cache = g, pathlib.Path(root), {}
-
-    def table(self, name):
-        if name not in self.cache:
-            src = (self.root / name).read_text()
-            units = [0]
-            for ch in src:
-                units.append(units[-1] + (2 if ord(ch) > 0xFFFF else 1))
-            spans = [(units[st.start], units[st.end], st.comp, st.exported) for st in js_spans(src, self.g)]
-            self.cache[name] = (units[-1], spans)
-        return self.cache[name]
-
-    def keys(self, name, length, starts, exported=False):
-        total, spans = self.table(name)
-        if length != total:
-            return set()
-        out, k = set(), 0
-        for s in sorted(starts):
-            while k < len(spans) and spans[k][1] <= s:
-                k += 1
-            if k < len(spans) and spans[k][0] <= s and spans[k][2] != "*" and (spans[k][3] or not exported):
-                out.add(spans[k][2])
-        return out
+    p = path.lstrip("/")
+    if m := re.fullmatch(r"blocks/([a-z0-9-]+)\.js", p):
+        return {"p:/blocks/" + m[1]}
+    base = p.rsplit("/", 1)[-1]
+    for cand in ([] if p.startswith("assets/") else [p]) + ["dist/" + base, "docs/assets/" + base, "demo/" + base, base]:
+        if base and (pathlib.Path(root) / cand).is_file():
+            return {"f:" + cand}
+    hits = sorted(pathlib.Path(root).glob("docs/content/**/examples/" + base)) if base else []
+    return {"f:" + hits[0].relative_to(root).as_posix() if hits else "u:" + path}
 
 
 SLOTS = """(() => {
   let seen
   try { seen = new Set(JSON.parse(sessionStorage.getItem("clanker-impact") || "[]")) } catch { seen = new Set() }
-  let dirty = false
-  const save = () => {
-    dirty = false
-    try { sessionStorage.setItem("clanker-impact", JSON.stringify([...seen])) } catch {}
-  }
+  const save = () => { try { sessionStorage.setItem("clanker-impact", JSON.stringify([...seen])) } catch {} }
   const shown = el => !el.closest("[hidden]")
   const add = el => {
     const s = el.getAttribute?.("data-slot")
-    if (s && !seen.has(s)) {
-      seen.add(s)
-      if (!dirty) {
-        dirty = true
-        queueMicrotask(save)
-      }
-    }
+    if (s) seen.add(s)
   }
   new MutationObserver(records => {
     for (const r of records) {
-      const roots = r.type === "childList" ? [...r.addedNodes] : r.attributeName === "hidden" || r.attributeName === "data-slot" ? [r.target] : []
-      for (const n of roots) if (n.nodeType === 1 && shown(n)) {
+      for (const n of r.type === "childList" ? r.addedNodes : [r.target]) if (n.nodeType === 1 && shown(n)) {
         add(n)
         n.querySelectorAll("[data-slot]").forEach(e => shown(e) && add(e))
       }
     }
+    queueMicrotask(save)
   }).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ["data-slot", "hidden"] })
   window.__clankerImpact = seen
 })()"""
@@ -542,12 +409,16 @@ class Recorder:
     def __init__(self, context, page, engine, base_url, root=ROOT):
         if root not in self.shared:
             g = groups(root)
-            self.shared[root] = (g, Coverage(g, root))
-        self.g, self.coverage = self.shared[root]
+            src = (pathlib.Path(root) / "clanker-ui.js").read_text()
+            units = [0]
+            for ch in src:
+                units.append(units[-1] + (2 if ord(ch) > 0xFFFF else 1))
+            self.shared[root] = (g, units[-1], [(units[st.start], units[st.end], st) for st in js_spans(src, g)])
+        self.g, self.total, self.stmts = self.shared[root]
         self.root, self.page = root, page
         split = urlsplit(base_url)
         self.origin, self.prefix = f"{split.scheme}://{split.netloc}", split.path.rstrip("/")
-        self.slots, self.urls, self.after, self.load, self.length, self.script = set(), set(), set(), set(), None, None
+        self.slots, self.urls, self.ran, self.script = set(), set(), set(), None
         context.add_init_script(SLOTS)
         context.on("request", lambda r: self.urls.add((r.url, r.resource_type == "document")))
         self.cdp = None
@@ -557,75 +428,75 @@ class Recorder:
             for name in ("goto", "reload", "go_back", "go_forward"):
                 setattr(page, name, self.wrap(getattr(page, name)))
 
+    def start(self):
+        try:
+            self.cdp.send("Profiler.enable")
+            self.cdp.send("Profiler.startPreciseCoverage", {"callCount": True, "detailed": False})
+        except Exception:
+            pass
+
     def wrap(self, navigate):
         def run(*args, **kwargs):
             self.flush()
             try:
                 return navigate(*args, **kwargs)
             finally:
-                self.loaded()
+                self.start()
         return run
 
-    def start(self):
-        self.cdp.send("Profiler.enable")
-        self.cdp.send("Profiler.startPreciseCoverage", {"callCount": True, "detailed": False})
-
-    def take(self, into):
+    def flush(self):
         try:
-            res = self.cdp.send("Profiler.takePreciseCoverage")["result"]
+            res = self.cdp.send("Profiler.takePreciseCoverage")["result"] if self.cdp else []
         except Exception:
             return
         for script in res:
-            if urlsplit(script["url"]).path.rsplit("/", 1)[-1] != "clanker-ui.js":
-                continue
-            for fn in script["functions"]:
-                r = fn["ranges"][0]
+            if urlsplit(script["url"]).path.rsplit("/", 1)[-1] == "clanker-ui.js":
                 self.script = script["url"]
-                if r["startOffset"] > 0 and r["count"] > 0:
-                    into.add(r["startOffset"])
-
-    def flush(self):
-        if self.cdp:
-            self.take(self.after)
-
-    def loaded(self):
-        if self.cdp:
-            self.take(self.load)
-            try:
-                self.start()
-            except Exception:
-                pass
+                self.ran |= {f["ranges"][0]["startOffset"] for f in script["functions"] if f["ranges"][0]["startOffset"] > 0 and f["ranges"][0]["count"] > 0}
 
     def finish(self):
         self.flush()
+        length = None
         try:
             self.slots.update(self.page.evaluate(FINAL))
             if self.script:
-                self.length = self.page.evaluate("u => fetch(u).then(r => r.text()).then(t => t.length)", self.script)
+                length = self.page.evaluate("u => fetch(u).then(r => r.text()).then(t => t.length)", self.script)
         except Exception:
             pass
-        keys = set()
-        for s in self.slots:
-            c = self.g.component(s)
-            keys.add("c:" + c if c else "s:" + s)
+        keys = {"c:" + c if (c := self.g.component(s)) else "s:" + s for s in self.slots}
         for url, document in self.urls:
             u = urlsplit(url)
             if f"{u.scheme}://{u.netloc}" == self.origin and u.path.startswith(self.prefix):
-                keys |= url_keys(u.path[len(self.prefix):] or "/", document, self.root)
-        if self.length is not None:
-            cov = self.coverage
-            keys |= {"c:" + c for c in cov.keys("clanker-ui.js", self.length, self.after) | cov.keys("clanker-ui.js", self.length, self.load, exported=True)}
-            keys |= {"l:" + c for c in cov.keys("clanker-ui.js", self.length, self.load)}
+                keys |= url_keys(u.path[len(self.prefix) :] or "/", document, self.root)
+        if length == self.total:
+            keys |= {st.key for a, b, st in self.stmts if st.comp != "*" and any(a <= s < b for s in self.ran)}
         return keys
 
 
+def ranges(idx):
+    out, idx = [], sorted(idx)
+    for i in idx:
+        if out and out[-1][1] == i - 1:
+            out[-1][1] = i
+        else:
+            out.append([i, i])
+    return ",".join(f"{a}" if a == b else f"{a}-{b}" for a, b in out)
+
+
 def read_impact(path):
-    impact = {}
     f = pathlib.Path(path)
-    for line in f.read_text().splitlines()[1:] if f.exists() else []:
-        check, _, keys = line.partition("\t")
-        impact[check] = frozenset(keys.split())
-    return impact
+    if not f.exists():
+        return {}
+    head, *rows = f.read_text().splitlines()
+    names = head.split("\t")[1].split()
+    impact = {n: set() for n in names}
+    for row in rows:
+        idx, keys = row.split("\t")
+        for part in idx.split(","):
+            a, _, b = part.partition("-")
+            for i in range(int(a), int(b or a) + 1):
+                impact[names[i]].update(keys.split())
+    return {n: frozenset(k) for n, k in impact.items()}
 
 
 IMPACT = re.compile(r"^impact \[[^]]+\] (\S+)\t(.*)$", re.M)
@@ -636,10 +507,18 @@ def build(out, *dirs):
     for d in dirs:
         for f in sorted(pathlib.Path(d).rglob("*.log")):
             for m in IMPACT.finditer(f.read_text(errors="replace")):
-                acc.setdefault(m[1], set()).update(m[2].split())
-    rows = [f"{c}\t{' '.join(sorted(k for k in keys if not k.startswith(('u:', 's:', 'l:'))))}\n" for c, keys in sorted(acc.items())]
-    pathlib.Path(out).write_text("check\tcomponents\n" + "".join(rows))
-    print(f"{len(rows)} checks, {len({k for keys in acc.values() for k in keys})} components")
+                acc.setdefault(m[1], set()).update(k for k in m[2].split() if not k.startswith(("u:", "s:")))
+    names = sorted(acc)
+    sets = {}
+    for i, n in enumerate(names):
+        for k in acc[n]:
+            sets.setdefault(k, set()).add(i)
+    rows = {}
+    for k, idx in sets.items():
+        rows.setdefault(ranges(idx), []).append(k)
+    text = "checks\t" + " ".join(names) + "\n" + "".join(f"{idx}\t{' '.join(sorted(ks))}\n" for idx, ks in sorted(rows.items(), key=lambda r: sorted(r[1])[0]))
+    pathlib.Path(out).write_text(text)
+    print(f"{len(names)} checks, {len(sets)} keys, {len(rows)} rows, {len(text)} bytes")
 
 
 if __name__ == "__main__":

@@ -130,7 +130,12 @@ def reduced(selected):
             if not g or cut(g["units"], g["jobs"])[1] <= JOB_TARGET:
                 break
             g["jobs"] += 1
-    return [j for _, j in emit(groups)] + ([job("chromium", "pages-light-dark", "", pages=True)] if pages else []) + [SMOKE]
+    d = durations()
+    smoke = [(n, weight(d, "chromium", "min", "light", n)) for m in sorted(NAMES) for n in (f"{m}.{x}" for x in NAMES[m]) if re.search(SMOKE["k"], n) and (m == "foundation" or n in selected)]
+    smoke = {"tier": "pr", "engine": "chromium", "theme": "light", "mode": "", "kit": "min", "mk": "min-smoke", "units": smoke, "jobs": 1}
+    while cut(smoke["units"], smoke["jobs"])[1] > JOB_TARGET and smoke["jobs"] < len(smoke["units"]):
+        smoke["jobs"] += 1
+    return [j for _, j in emit(groups + [smoke])] + [job("chromium", f"pages-{t}", "", themes=t, pages=True) for t in ("light", "dark") if pages]
 
 
 PAGES = [job("chromium", "pages", "", pages=True), job("webkit", "pages-light", "", themes="light", pages=True)]
@@ -166,6 +171,12 @@ def select(reqs, modules, impact):
     need = []
     for r in reqs:
         r = frozenset("site:docs" if k not in known and re.match(r"p:/(docs|view/)", k) else k for k in r)
+        if len(r) == 1 and (k := next(iter(r))).startswith("j:") and k not in known:
+            comp = k.split(":")[1]
+            need += [frozenset({"c:" + comp})] + [frozenset({j}) for j in known if j.startswith(f"j:{comp}:")]
+            if comp == "*" or "c:" + comp not in known:
+                return None
+            continue
         if not r <= known:
             return None
         need.append(r)
@@ -177,7 +188,7 @@ def git_read(f):
     def show(rev):
         r = subprocess.run(["git", "-C", str(ROOT), "show", f"{rev}:{f}"], capture_output=True, text=True)
         return r.stdout if r.returncode == 0 else None
-    return show("HEAD^1"), show("HEAD")
+    return show(os.environ.get("PLAN_BASE", "HEAD^1")), show("HEAD")
 
 
 def plan(event, full_label, files, read=None, impact=None):
@@ -295,17 +306,21 @@ def self_test():
         return plan("pull_request", False, files or [edits[n][0] for n in names_], reader(*names_), impact)
     tier, jobs = run(["carousel"])
     sel = {n for n in names if n.startswith("g3.carousel") or n == "g1.select"}
-    smoke = coverage([SMOKE])
-    got = {k: v - smoke.get(k, 0) for k, v in coverage(jobs).items() if v - smoke.get(k, 0)}
-    wanted = {k for k in coverage(PR) if k[3] in sel and k not in smoke}
-    check("carousel change runs its checks once in each pull request variant, plus unmeasured checks and min-smoke", tier == "impact" and SMOKE in jobs and set(got) == wanted and set(got.values()) == {1})
+    smoke = {k[3] for k in coverage([SMOKE])}
+    got = coverage(jobs)
+    base = {k: v for k, v in got.items() if k[2] != "min"}
+    wanted = {k for k in coverage(PR) if k[3] in sel and k[2] != "min"}
+    check("carousel change runs its checks once in each pull request variant, plus unmeasured checks", tier == "impact" and set(base) == wanted and set(base.values()) == {1})
+    check("min-smoke keeps foundation and only the selected rest", {k[3] for k in got if k[2] == "min"} == {n for n in smoke if n.startswith("foundation.") or n in sel} and set(v for k, v in got.items() if k[2] == "min") == {1})
     check("carousel change needs fewer jobs", len(jobs) < len(PR))
+    narrow = {**impact, "g3.carousel_motion": impact["g3.carousel_motion"] | {"j:carousel:carouselChange"}}
+    check("measured JS statement selects only the checks that ran it", {k[3] for k in coverage(plan("pull_request", False, ["clanker-ui.js"], reader("carousel"), narrow)[1]) if k[2] != "min"} == {"g3.carousel_motion", "g1.select"})
     check("core JS change is full", run(["core"]) == ("full", PR))
     check("token CSS change is full", run(["token"]) == ("full", PR))
     tier, jobs = run(["button"])
-    check("button CSS change runs the checks that touch button", tier == "impact" and {k[3] for k in coverage(jobs)} == {n for n in names if not n.startswith("g3.carousel")} | {k[3] for k in smoke})
+    check("button CSS change runs the checks that touch button", tier == "impact" and {k[3] for k in coverage(jobs) if k[2] != "min"} == {n for n in names if not n.startswith("g3.carousel")})
     tier, jobs = run(["page"])
-    check("docs page change runs docs and pages checks", tier == "impact" and {k[3].split(".")[0] for k in coverage(jobs) if k not in smoke} >= {"docs", "pages"} and any(j.get("pages") for j in jobs))
+    check("docs page change runs docs and pages checks", tier == "impact" and {k[3].split(".")[0] for k in coverage(jobs) if k[2] != "min"} >= {"docs", "pages"} and any(j.get("pages") for j in jobs))
     check("front matter change counts for all docs pages", classify(["docs/content/components/button/page.md"], reader("title"))[2] == [frozenset({"site:docs"})])
     check("kit change with dist is impact", run(["carousel"], ["clanker-ui.js", "dist/clanker-ui.min.js"])[0] == "impact")
     check("dist change alone is full", run([], ["dist/clanker-ui.min.js"])[0] == "full")

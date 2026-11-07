@@ -231,6 +231,8 @@ def check_bubble(t):
     assert content("[data-variant=ghost]") == "rgba(0, 0, 0, 0)"
     destructive = page.evaluate("() => getComputedStyle(document.querySelector('#bubble-variants [data-variant=destructive] > [data-slot=bubble-content]')).color")
     assert destructive == resolve(page, "var(--destructive)")
+    code = page.evaluate("() => { const c = document.querySelector('#bubble-variants [data-variant=ghost] code'); const s = getComputedStyle(c), p = getComputedStyle(c.parentElement); return [s.backgroundColor, s.paddingTop, s.paddingLeft, Math.round(parseFloat(s.fontSize) / parseFloat(p.fontSize) * 100) / 100, s.fontWeight, p.marginBottom, getComputedStyle(c.closest('[data-demo=markdown]')).overflow] }")
+    assert code == [resolve(page, "var(--muted)"), "2px", "4px", 0.9, "400", "16px", "hidden"], code
     frame = inline(t, rect(page, "#bubble-demo"))
     end = inline(t, rect(page, "#bubble-demo > [data-slot=bubble][data-align=end]"))
     start = inline(t, rect(page, "#bubble-demo [data-slot=bubble-group] > [data-slot=bubble]"))

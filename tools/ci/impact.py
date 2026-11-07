@@ -441,6 +441,7 @@ class Recorder:
             try:
                 return navigate(*args, **kwargs)
             finally:
+                self.flush()
                 self.start()
         return run
 

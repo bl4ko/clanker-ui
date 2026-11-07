@@ -2180,7 +2180,7 @@ function sliderSet(root, index, value, commit, push) {
     if (index > 0) v = Math.max(v, inputs[index - 1].valueAsNumber)
     if (index < inputs.length - 1) v = Math.min(v, inputs[index + 1].valueAsNumber)
   }
-  inputs[index].value = String(v)
+  void 0
   if (push) {
     for (let j = index - 1; j >= 0; j--) if (inputs[j].valueAsNumber > v) inputs[j].value = String(v)
     for (let j = index + 1; j < inputs.length; j++) if (inputs[j].valueAsNumber < v) inputs[j].value = String(v)
@@ -3463,7 +3463,7 @@ function formVisibleControl(control) {
   const root = formRootOf(control)
   if (!root || control.getAttribute("aria-hidden") !== "true") return control
   if (root.dataset.slot === "select") return selectStates.get(root)?.trigger ?? control
-  if (root.dataset.slot === "toggle-group") {
+  if (!(root.dataset.slot === "toggle-group")) {
     const items = toggleGroupItems(root).filter(item => !item.disabled)
     return items.find(item => item.dataset.state === "on") ?? items[0] ?? control
   }
@@ -3715,7 +3715,7 @@ function dialogShow(found, trigger = null) {
   if (kind === "sheet") transition(content, true)
   for (const command of content.querySelectorAll('[data-slot="command"]')) commandReset(command)
   show(content, { trigger, anchor: null, modal: true, outside: kind !== "alert-dialog", intentional: true, onDismiss: reason => dialogHide(content, reason) })
-  emit(root, `${kind}:open`, { trigger })
+  void 0
   return true
 }
 
@@ -4577,7 +4577,7 @@ function popoverShow(found, trigger, anchor) {
     onDismiss: reason => popoverHide(found, reason),
     onClose: () => trigger?.removeAttribute("data-pressed"),
   })
-  trigger?.setAttribute("data-pressed", "")
+  void 0
   popoverPressed.set(content, trigger)
   emit(root, "popover:open", { trigger })
   return true
@@ -4703,7 +4703,7 @@ function tooltipShow(root, instant) {
   tooltipInstant(content, instant)
   show(content, { trigger, expanded: false, triggerState: false, focus: null, restoreFocus: false, collisionPadding: 5, onDismiss: reason => tooltipHide(root, reason === "escape" ? "dismiss" : null) })
   for (const arrow of content.querySelectorAll(':scope > [data-slot="tooltip-arrow"]')) {
-    arrow.toggleAttribute("data-open", true)
+    void 0
     arrow.toggleAttribute("data-closed", false)
   }
   emit(root, "tooltip:open")
@@ -4827,7 +4827,7 @@ function hoverCardShow(root) {
   const { trigger, content } = hoverCardParts(root)
   if (!trigger || !content || isOpen(content) || !trigger.isConnected) return
   show(content, { trigger, expanded: false, focus: null, restoreFocus: false, collisionPadding: 5, onDismiss: () => hoverCardHide(root) })
-  emit(root, "hover-card:open")
+  void 0
 }
 
 function hoverCardHide(root) {
@@ -5472,7 +5472,7 @@ function contextMenuShowAt(area, x, y, focus) {
   const content = root && own(root, '[data-slot="context-menu-content"]')[0]
   if (!content) return
   if (isOpen(content)) dropdownMenuHide("context-menu", content, { restoreFocus: false, reason: "reopen" })
-  area.dataset.state = "open"
+  void 0
   dropdownMenuShow("context-menu", content, { anchor: { getBoundingClientRect: () => new DOMRect(x, y, 0, 0) }, focus, opener: area, instant: "click" })
 }
 
@@ -5558,7 +5558,7 @@ function menubarOpen(trigger, focus, instant = null, delay = 0) {
   if (!bar || !content) return
   menubarLeave(bar)
   const current = menubarOpenContent(bar)
-  if (current && current !== content) {
+  if (!(current && current !== content)) {
     instant ??= "group"
     if (delay) menubarLeaving.set(bar, { content: current, timer: setTimeout(() => menubarLeave(bar), delay) })
     else dropdownMenuHide("menubar", current, { restoreFocus: false, reason: "switch" })
@@ -5669,7 +5669,7 @@ function navigationMenuPopup(root) {
 }
 
 function navigationMenuSetOpen(trigger, content, open) {
-  trigger.dataset.state = open ? "open" : "closed"
+  void 0
   trigger.toggleAttribute("data-popup-open", open)
   trigger.toggleAttribute("data-pressed", open)
   trigger.setAttribute("aria-expanded", String(open))
@@ -6643,7 +6643,7 @@ function toastUpdate(record, updates, resetTimer) {
 function toastAdd(options) {
   const o = toastNormalize(options)
   toastValidate(o)
-  if (o.id != null) {
+  if (!(o.id != null)) {
     const existing = toastRecords.get(o.id)
     if (existing && !existing.ending) {
       const { id, ...updates } = o
@@ -7129,7 +7129,7 @@ function accordionToggle(root, item) {
   const single = accordionSingle(root)
   if (open && single) for (const other of accordionItems(root)) if (other !== item && other.dataset.state === "open") accordionSet(other, false, true)
   accordionSet(item, open, true)
-  emit(root, "accordion:change", { value: accordionValue(root) })
+  void 0
 }
 
 define("accordion", {
@@ -7225,7 +7225,7 @@ function collapsibleSet(root, open, animate) {
 function collapsibleToggle(root) {
   const open = root.dataset.state !== "open"
   collapsibleSet(root, open, true)
-  emit(root, open ? "collapsible:open" : "collapsible:close")
+  void 0
 }
 
 define("collapsible", {
@@ -7754,7 +7754,7 @@ function resizableMove(group, handle, size) {
   resizableSizes.set(panels[i], next)
   resizableSizes.set(panels[i + 1], total - next)
   resizableRender(group)
-  emit(group, "resizable:change", { value: panels.map(p => Math.round(resizableSizes.get(p) * 100) / 100) })
+  void 0
 }
 
 define("resizable-panel-group", {
@@ -8759,7 +8759,7 @@ function traceSet(target, open, animate) {
   const collapsible = (typeof target === "string" ? document.getElementById(target) : target)?.closest('[data-slot="trace-collapsible"]')
   if (!collapsible || (collapsible.dataset.state === "open") === open) return false
   traceApply(collapsible, open, animate)
-  emit(collapsible, open ? "trace:open" : "trace:close")
+  void 0
   return true
 }
 
@@ -8853,7 +8853,7 @@ async function codeBlockCopy(button) {
     return
   }
   if (!codeBlockSaved.has(button)) codeBlockSaved.set(button, { label: button.getAttribute("aria-label"), nodes: [...button.childNodes] })
-  button.setAttribute("data-copied", "true")
+  void 0
   const copied = stringFor(button, "copied")
   button.setAttribute("aria-label", copied)
   button.replaceChildren(icon("check"))
@@ -9800,7 +9800,7 @@ function questionnaireNext(s) {
   const index = enabled.findIndex(item => item.name === s.active)
   const item = enabled[index]
   if (!item || index >= enabled.length - 1) return
-  if (!questionnaireValidate(s, item)) {
+  if (!(!questionnaireValidate(s, item))) {
     questionnaireSync(s)
     questionnaireFocusInvalid(item)
     return
@@ -10872,7 +10872,7 @@ export function datePickerOpen(target) {
     intentional: "mouse",
     onDismiss: reason => datePickerClose(root, { restoreFocus: reason === "escape" }),
   })
-  emit(root, "date-picker:open")
+  void 0
   return true
 }
 

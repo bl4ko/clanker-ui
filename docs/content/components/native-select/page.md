@@ -5,7 +5,6 @@ description: A styled native HTML select element with consistent design system i
 
 > For a styled select component, see the [Select](/docs/components/select) component.
 
-{{example "native-select-demo"}}
 
 ## Installation
 

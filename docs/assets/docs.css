@@ -1422,3 +1422,7 @@ body[data-docs="view"] > [data-docs="preview"] {
 }
 [data-docs="block-tabs"] [data-slot="tabs-content"] > [data-docs="code-block"] + [data-docs="code-block"] { margin-top: 1rem; }
 [data-docs="block-tabs"] [data-slot="code-block-content"] { max-height: 40rem; overflow: auto; }
+
+[data-docs=preview] {
+  padding: 3px;
+}

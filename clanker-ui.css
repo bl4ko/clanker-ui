@@ -378,6 +378,7 @@
     display: flex;
   }
   [data-slot="accordion-trigger"] {
+    margin-top: 3px;
     border-radius: var(--radius);
     border-style: var(--tw-border-style);
     padding-block: calc(var(--spacing) * 2.5);
@@ -1885,6 +1886,7 @@
     outline-style: none;
   }
   [data-slot="textarea"] {
+    margin-top: 3px;
     field-sizing: content;
     min-height: calc(var(--spacing) * 16);
     border-radius: var(--radius);
@@ -5310,6 +5312,7 @@
     display: flex;
   }
   [data-slot="tabs-list"] {
+    margin-top: 3px;
     border-radius: var(--radius);
     width: fit-content;
     color: var(--muted-foreground);

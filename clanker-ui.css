@@ -405,6 +405,7 @@
     overflow: hidden;
   }
   [data-slot="button"] {
+    margin-top: 3px;
     border-style: var(--tw-border-style);
     --tw-font-weight: var(--font-weight-medium);
     font-weight: var(--font-weight-medium);

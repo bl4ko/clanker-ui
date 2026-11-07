@@ -755,9 +755,11 @@ function chartRender(s) {
     return
   }
   const f = chartFormats(s, m)
-  const family = getComputedStyle(s.root).fontFamily
+  const style = getComputedStyle(s.root)
+  const family = style.fontFamily
   const c = {
     s,
+    rtl: style.direction === "rtl",
     m,
     f,
     W,
@@ -789,6 +791,7 @@ function chartCartesian(c) {
   const bar = m.type === "bar"
   const area = m.type === "area"
   const horizontal = bar && !!o.horizontal
+  const reversed = c.rtl && !horizontal && !spark
   const stack = m.type === "line" ? false : m.expand ? "expand" : !!o.stack
   const curve = o.curve ?? "monotone"
   const joined = k => o.connectNulls === true || (Array.isArray(o.connectNulls) && o.connectNulls.includes(k))
@@ -892,6 +895,7 @@ function chartCartesian(c) {
     if (labels) top = 26
     if (labels && !bar) right = Math.max(right, labelW / 2 + 4)
   }
+  if (reversed) [left, right] = [right, left]
   const pl = left
   const pt = top
   const pw = Math.max(1, W - left - right)
@@ -903,8 +907,9 @@ function chartCartesian(c) {
   const band = clen / Math.max(1, n)
   const t0 = m.time ? m.times.reduce((a, t) => Math.min(a, t), Infinity) : 0
   const t1 = m.time ? m.times.reduce((a, t) => Math.max(a, t), -Infinity) : 0
-  const tpos = t => (t1 === t0 ? cstart + clen / 2 : cstart + ((t - t0) / (t1 - t0)) * clen)
-  const pos = bar ? i => cstart + band * (i + 0.5) : m.time ? i => tpos(m.times[i]) : i => (n === 1 ? cstart + clen / 2 : cstart + (clen * i) / (n - 1))
+  const at = reversed ? p => 2 * cstart + clen - p : p => p
+  const tpos = t => at(t1 === t0 ? cstart + clen / 2 : cstart + ((t - t0) / (t1 - t0)) * clen)
+  const pos = bar ? i => at(cstart + band * (i + 0.5)) : m.time ? i => tpos(m.times[i]) : i => at(n === 1 ? cstart + clen / 2 : cstart + (clen * i) / (n - 1))
   const nodes = []
   const defs = svg("defs")
   nodes.push(defs)
@@ -931,7 +936,7 @@ function chartCartesian(c) {
         "g",
         { "data-part": "axis", "data-axis": "value" },
         scale.ticks.map((v, i) => {
-          if (!horizontal) return svg("text", { x: chartRound(pl - 8), y: chartRound(v2p(v)), dy: "0.35em", "text-anchor": "end" }, tickText[i])
+          if (!horizontal) return svg("text", { x: chartRound(reversed ? pl + pw + 8 : pl - 8), y: chartRound(v2p(v)), dy: "0.35em", "text-anchor": reversed ? "start" : "end" }, tickText[i])
           const w = chartWidth(tickText[i], font.tick)
           return svg("text", { x: chartRound(Math.min(Math.max(v2p(v), w / 2), W - w / 2)), y: chartRound(pt + ph + 20), "text-anchor": "middle" }, tickText[i])
         }),
@@ -1142,12 +1147,13 @@ function chartCartesian(c) {
     subs: bar ? Math.max(1, keys.length) : 1,
     stacked: !!stack,
     horizontal,
+    reversed,
     snap: bar ? null : a => pos(a.index),
     row: a => a.index,
     hit(px, py) {
       if (!n || !keys.length) return null
       const along = horizontal ? py : px
-      let index = bar ? Math.floor((along - cstart) / band) : n === 1 ? 0 : Math.round(((along - cstart) / clen) * (n - 1))
+      let index = bar ? Math.floor((at(along) - cstart) / band) : n === 1 ? 0 : Math.round(((at(along) - cstart) / clen) * (n - 1))
       if (m.time) {
         let best = Infinity
         for (let i = 0; i < n; i++) {
@@ -1295,7 +1301,8 @@ function chartTimeAxis(c, t0, t1, tpos, clen) {
       const w = chartWidth(text, font.tick)
       return { t, text, w, x: Math.min(Math.max(tpos(t), w / 2), W - w / 2) }
     })
-    if (ticks.length && ticks.every((k, j) => !j || k.x - k.w / 2 - (ticks[j - 1].x + ticks[j - 1].w / 2) >= 24)) return ticks
+    const sorted = ticks.toSorted((a, b) => a.x - b.x)
+    if (ticks.length && sorted.every((k, j) => !j || k.x - k.w / 2 - (sorted[j - 1].x + sorted[j - 1].w / 2) >= 24)) return ticks
   }
   const text = f.timeTick(t0, m.dateOnly ? "day" : "minute")
   const w = chartWidth(text, font.tick)
@@ -1772,11 +1779,12 @@ function chartStep(g, a, key) {
   const n = g.count
   if (!a) return { index: key === "End" ? n - 1 : 0, sub: 0 }
   let { index, sub } = a
+  const back = g.reversed ? "ArrowRight" : "ArrowLeft"
   if (key === "Home") index = 0
   else if (key === "End") index = n - 1
-  else if (g.subs <= 1) index += key === "ArrowLeft" || key === "ArrowUp" ? -1 : 1
+  else if (g.subs <= 1) index += key === back || key === "ArrowUp" ? -1 : 1
   else {
-    const along = g.horizontal ? ["ArrowUp", "ArrowDown"] : ["ArrowLeft", "ArrowRight"]
+    const along = g.horizontal ? ["ArrowUp", "ArrowDown"] : g.reversed ? ["ArrowRight", "ArrowLeft"] : ["ArrowLeft", "ArrowRight"]
     if (along.includes(key)) index += key === along[0] ? -1 : 1
     else if (g.horizontal) sub += key === "ArrowRight" ? 1 : -1
     else if (g.stacked) sub += key === "ArrowUp" ? 1 : -1

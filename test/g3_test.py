@@ -1139,6 +1139,30 @@ def check_progress(t):
     t.shot("progress", section)
 
 
+def check_progress_value_locale(t):
+    page = t.page
+    t.section("progress")
+    out = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const make = lang => h("div", { "data-slot": "progress", "data-value": "56", "aria-label": "Upload", lang }, h("span", { "data-slot": "progress-value" }))
+          const bars = ["ar-u-nu-arab", "en-US", "de", "ar"].map(make)
+          document.getElementById("progress").append(...bars)
+          await new Promise(r => setTimeout(r, 30))
+          const out = bars.map(b => [b.querySelector("[data-slot=progress-value]").textContent, b.getAttribute("aria-valuetext"), new Intl.NumberFormat(b.lang, { style: "percent" }).format(0.56)])
+          for (const b of bars) b.remove()
+          return out
+        }"""
+    )
+    for text, valuetext, want in out:
+        assert text == valuetext == want, out
+    assert out[0][0].startswith("\u0665\u0666") and out[1][0] == "56%", out
+    t.docs("/docs/components/progress")
+    value = page.locator('[data-example="progress-rtl"] [data-slot="progress-value"]')
+    value.wait_for()
+    assert value.text_content() == out[0][2], value.text_content()
+
+
 def check_progress_zero(t):
     page = t.page
     t.section("progress")

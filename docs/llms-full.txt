@@ -1123,7 +1123,7 @@ Set `dir="rtl"` on `<html>` or a container. Kit styles use logical properties (`
 - Physical sides stay where a value names one: sheet `data-side`, drawer `data-swipe-direction`, popup `data-side="left|right"`, toast swipe directions, and parts that JavaScript places (popups, the tooltip arrow, the slider thumb, the chart tooltip).
 - Sidebar `data-side="left|right"` means inline start and inline end: in RTL a `left` sidebar sits on the right, and its rail, border, collapsed tooltip, inset margin, and mobile sheet follow.
 - The questionnaire keeps the upstream keys in RTL (ArrowLeft goes to the previous item).
-- Chart plots stay left to right (`direction: ltr` on the SVG, like Recharts), so axes, labels, and negative numbers read the same in every page; the legend, table, and tooltip follow the page direction.
+- Chart plots stay left to right (`direction: ltr` on the SVG, like Recharts), so labels and negative numbers read the same in every page; the legend, table, and tooltip follow the page direction. In a vertical bar, line, or area chart in RTL the category axis is reversed (the first category at the right) and the value axis is on the right, like the shadcn `chart-rtl` example (Recharts `reversed`); ArrowLeft moves to the next category, as in Recharts. Horizontal bar charts and sparklines keep the left-to-right layout.
 
 #### Pagination
 
@@ -1147,7 +1147,7 @@ Disabled Previous or Next (first or last page): `aria-disabled="true"` on the li
 
 #### Progress, Spinner
 
-- `<div data-slot="progress" data-value="60" data-max="100" aria-label="Upload"></div>`: the kit adds the Base UI parts `progress-track` > `progress-indicator` (width in percent), `role="progressbar"`, `aria-valuenow`, `aria-valuetext`, `data-state="loading|complete|indeterminate"`, and `data-progressing`, `data-complete`, or `data-indeterminate` on every part. Optional `progress-label` (it labels the bar) and `progress-value` (the kit writes the percent) go before the track. Change `data-value` to update it. At 0 and when indeterminate, the indicator has no width.
+- `<div data-slot="progress" data-value="60" data-max="100" aria-label="Upload"></div>`: the kit adds the Base UI parts `progress-track` > `progress-indicator` (width in percent), `role="progressbar"`, `aria-valuenow`, `aria-valuetext`, `data-state="loading|complete|indeterminate"`, and `data-progressing`, `data-complete`, or `data-indeterminate` on every part. Optional `progress-label` (it labels the bar) and `progress-value` (the kit writes the percent) go before the track. The percent in `progress-value` and `aria-valuetext` is `Intl.NumberFormat` with `style: "percent"` in the language of the nearest `lang` attribute, like Base UI `Progress.Value`. The digits follow the browser locale data: `lang="ar-u-nu-arab"` gives Arabic-Indic digits (`٥٦٪؜`) in every browser. Change `data-value` to update it. At 0 and when indeterminate, the indicator has no width.
 - `<svg data-slot="spinner" data-size="sm|lg|xl"></svg>` (sizes are a kit extension: 12, 24, 32 px; default 16 px): the kit fills the icon and adds `role="status"` and `aria-label="Loading"` (`strings.loading`). Use `role="none"` for a decorative spinner in a labelled control. Spinners keep turning under reduced motion.
 
 #### Resizable
@@ -1369,6 +1369,7 @@ One item at a time. The kit builds the native radio or checkbox, the indicator, 
 | `data-min`, `data-max`, `data-disabled-dates`, `data-disabled-weekdays`, `data-disabled` | Limits. Ranges use `a/b`. Weekdays `0` (Sunday) to `6`. A change from code (for example `data-max` set to today when the page loads) renders the grid again. |
 | `data-week-start` | `0`–`6`, default `1` (Monday) |
 | `data-caption-layout` | `label`, `dropdown`, `dropdown-months`, `dropdown-years`; years from `data-start-year` to `data-end-year` (default: 100 years before today to this year, or the years of `data-min` and `data-max`). With a year dropdown, navigation stops at January of the first and December of the last year, as in react-day-picker; for future dates set `data-end-year` or `data-max`. A `data-min` in a later year extends the default end year, and a `data-max` in an earlier year extends the default start year. |
+| `data-month-format` | Month names in the month dropdown: `short` (default, `Dec`) or `long` (`December`, the shadcn `formatMonthDropdown` of `calendar-custom-days`) |
 | `data-button-variant` | Button variant of the previous and next buttons, default `ghost` |
 | `data-outside-days="false"`, `data-show-week-number`, `data-fixed-weeks`, `data-required` | rdp options (`data-show-week-number` is the shadcn `showWeekNumber` prop) |
 | `data-name` | Hidden input(s) for forms: one per date in `multiple`, `from/to` in `range` |
@@ -2642,7 +2643,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 | Part | Write | State |
 | --- | --- | --- |
-| `calendar` (root) | `data-button-variant` any; `data-caption-layout` any; `data-disabled` any; `data-disabled-dates` any; `data-disabled-weekdays` any; `data-fixed-weeks` any; `data-label-next` any; `data-label-previous` any; `data-lang` any; `data-max` any; `data-min` any; `data-mode` `multiple`, `range`, `single`; `data-month` any; `data-months` any; `data-name` string; `data-outside-days` `false`, `true`; `data-required` any; `data-show-week-number` any; `data-today` any; `data-value` string; `data-week-start` any |  |
+| `calendar` (root) | `data-button-variant` any; `data-caption-layout` any; `data-disabled` any; `data-disabled-dates` any; `data-disabled-weekdays` any; `data-fixed-weeks` any; `data-label-next` any; `data-label-previous` any; `data-lang` any; `data-max` any; `data-min` any; `data-mode` `multiple`, `range`, `single`; `data-month` any; `data-month-format` any; `data-months` any; `data-name` string; `data-outside-days` `false`, `true`; `data-required` any; `data-show-week-number` any; `data-today` any; `data-value` string; `data-week-start` any |  |
 | `calendar-day` (kit adds) |  | `data-disabled`, `data-hidden`, `data-outside`, `data-range-end`, `data-range-middle`, `data-range-start`, `data-selected`, `data-today` |
 
 Kit adds: `calendar-button-next`, `calendar-button-previous`, `calendar-caption-label`, `calendar-dropdown`, `calendar-dropdown-root`, `calendar-dropdowns`, `calendar-month`, `calendar-month-caption`, `calendar-month-grid`, `calendar-months`, `calendar-nav`, `calendar-week`, `calendar-week-number`, `calendar-week-number-header`, `calendar-weekday`, `calendar-weekdays`, `calendar-weeks`.

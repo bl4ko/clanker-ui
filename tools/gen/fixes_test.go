@@ -573,9 +573,14 @@ func TestCvaOnAnotherPart(t *testing.T) {
 		t.Errorf("used cva key reported: %v", err)
 	}
 	var parts struct {
-		Parts []jsonPart `json:"parts"`
+		Parts  []jsonPart          `json:"parts"`
+		Groups map[string][]string `json:"groups"`
 	}
+	g.parts = append(g.parts, &part{slot: "menu-panel", groups: []string{"group/menu-panel"}})
 	json.Unmarshal(g.partsJSON(kitMap{}, []string{"menu"}), &parts)
+	if got := parts.Groups[`.group\/menu-panel`]; !slices.Equal(got, []string{`[data-slot="menu-panel"]`}) {
+		t.Errorf("parts.json gives the parity tool the kit selector of each named group: %v", parts.Groups)
+	}
 	found := false
 	for _, jp := range parts.Parts {
 		if jp.From == "menu/cva.triggerStyle" {

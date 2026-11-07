@@ -71,6 +71,10 @@ INK_CONTRAST = """() => {
 }"""
 
 
+def next_key(t):
+    return "ArrowLeft" if t.rtl else "ArrowRight"
+
+
 def tip(page, cid):
     return page.evaluate(READ_TIP, cid)
 
@@ -204,7 +208,7 @@ def check_chart_keyboard(t):
     ring = surface.evaluate("e => { const s = getComputedStyle(e); return [s.outlineStyle, s.outlineWidth] }")
     assert ring == ["solid", "3px"], ring
     assert tip(page, "chart-bar-multiple") == {"label": "January", "items": [["Desktop", "186", True], ["Mobile", "80", False]]}
-    page.keyboard.press("ArrowRight")
+    page.keyboard.press(next_key(t))
     assert tip(page, "chart-bar-multiple") == {"label": "February", "items": [["Desktop", "305", True], ["Mobile", "200", False]]}
     page.keyboard.press("ArrowDown")
     assert tip(page, "chart-bar-multiple")["items"][1] == ["Mobile", "200", True]
@@ -217,7 +221,7 @@ def check_chart_keyboard(t):
     page.keyboard.press("Escape")
     assert tip(page, "chart-bar-multiple") is None
     assert page.evaluate("document.activeElement === document.querySelector('#chart-bar-multiple [data-slot=chart-svg]')")
-    page.keyboard.press("ArrowRight")
+    page.keyboard.press(next_key(t))
     assert tip(page, "chart-bar-multiple")["label"] == "February"
     page.keyboard.press("Tab")
     assert tip(page, "chart-bar-multiple") is None
@@ -228,8 +232,8 @@ def check_chart_keyboard(t):
     t.section("chart-line")
     line = svg_of(page, "chart-line-multiple")
     line.focus()
-    page.keyboard.press("ArrowRight")
-    page.keyboard.press("ArrowRight")
+    page.keyboard.press(next_key(t))
+    page.keyboard.press(next_key(t))
     assert tip(page, "chart-line-multiple") == {"label": "March", "items": [["Desktop", "237", False], ["Mobile", "120", False]]}
     assert page.locator("#chart-line-multiple [data-part='crosshair']").get_attribute("data-active") == ""
 
@@ -762,7 +766,7 @@ CHART_REVERSED = """async () => {
   for (const dir of ["ltr", "rtl"]) {
     const wrap = document.createElement("div")
     wrap.dir = dir
-    wrap.style.width = "480px"
+    wrap.style.width = "360px"
     const box = document.createElement("div")
     box.id = `chart-reversed-${dir}`
     const line = document.createElement("div")
@@ -1220,7 +1224,7 @@ def check_chart_time_axis(t):
             const c = make(rows, { type: "line", x: "d", scale: "time", ...options }, width)
             const list = ticks(c.svg, "category")
             const w = +c.svg.getAttribute("width")
-            const boxes = list.map(e => { const x = +e.getAttribute("x"); const half = e.getComputedTextLength() / 2; return { x0: x - half, x1: x + half } })
+            const boxes = list.map(e => { const x = +e.getAttribute("x"); const half = e.getComputedTextLength() / 2; return { x0: x - half, x1: x + half } }).sort((a, b) => a.x0 - b.x0)
             const res = { ticks: list.map(e => e.textContent), inside: boxes.every(b => b.x0 >= -1 && b.x1 <= w + 1), apart: boxes.every((b, i) => !i || b.x0 - boxes[i - 1].x1 >= 8) }
             c.box.remove()
             return res
@@ -1276,7 +1280,7 @@ def check_chart_reference_demo(t):
     surface = svg_of(page, "chart-line-time")
     surface.focus()
     assert tip(page, "chart-line-time") == {"label": "Sep 1, 2026", "items": [["Actual", "84.2", False], ["Plan", "84", False]]}
-    page.keyboard.press("ArrowRight")
+    page.keyboard.press(next_key(t))
     assert tip(page, "chart-line-time") == {"label": "Sep 8, 2026", "items": [["Actual", "83.6", False], ["Plan", "–", False]]}
     page.keyboard.press("Escape")
     assert page.locator("#chart-line-time [data-part='reference-label']").all_text_contents() == ["Goal 78 kg"]

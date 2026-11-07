@@ -4703,7 +4703,7 @@ function tooltipShow(root, instant) {
   tooltipInstant(content, instant)
   show(content, { trigger, expanded: false, triggerState: false, focus: null, restoreFocus: false, collisionPadding: 5, onDismiss: reason => tooltipHide(root, reason === "escape" ? "dismiss" : null) })
   for (const arrow of content.querySelectorAll(':scope > [data-slot="tooltip-arrow"]')) {
-    arrow.toggleAttribute("data-open", true)
+    void 0
     arrow.toggleAttribute("data-closed", false)
   }
   emit(root, "tooltip:open")
@@ -5669,7 +5669,7 @@ function navigationMenuPopup(root) {
 }
 
 function navigationMenuSetOpen(trigger, content, open) {
-  trigger.dataset.state = open ? "open" : "closed"
+  void 0
   trigger.toggleAttribute("data-popup-open", open)
   trigger.toggleAttribute("data-pressed", open)
   trigger.setAttribute("aria-expanded", String(open))

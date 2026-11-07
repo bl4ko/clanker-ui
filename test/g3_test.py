@@ -1302,6 +1302,7 @@ def check_scroll_area(t):
     page.mouse.up()
     half = viewport.evaluate("e => e.scrollTop / (e.scrollHeight - e.clientHeight)")
     assert abs(half - 0.5) < 0.05, half
+    page.evaluate("() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))")
     page.evaluate("() => addEventListener('pointerdown', e => { const b = e.target.closest('[data-slot=scroll-area-scrollbar]'), t = b?.querySelector('[data-slot=scroll-area-thumb]'); if (b) window.__track = [e.clientY - b.getBoundingClientRect().top, b.offsetHeight, t.offsetHeight] }, { capture: true, once: true })")
     page.mouse.click(bb["x"] + bb["w"] / 2, bb["y"] + bb["h"] * 0.3)
     at, height, size = page.evaluate("window.__track")

@@ -445,16 +445,21 @@ func TestDemoOnly(t *testing.T) {
 		t.Fatalf("status %d, Content-Type %q", rec.Code, rec.Header().Get("Content-Type"))
 	}
 	checkSecurityHeaders(t, rec, "/demo?only=forms,dialog")
-	if regexp.MustCompile(`(data-demo="(?:section|hero)") hidden>`).ReplaceAllString(body, "$1>") != html {
-		t.Error("the filtered demo differs from demo/index.html in more than hidden attributes")
+	block := regexp.MustCompile(`(?ms)^      <section id="([a-z0-9-]+)" data-demo="[a-z]+">.*?\n      </section>\n\n?`)
+	if got, want := block.ReplaceAllString(body, ""), block.ReplaceAllString(html, ""); got != want {
+		t.Error("the filtered demo differs from demo/index.html outside the sections")
 	}
-	for id, hidden := range map[string]bool{"introduction": true, "button": false, "native-select": false, "dialog": false, "drawer": true, "chart-stat": true} {
-		if got := strings.Contains(body, `<section id="`+id+`" data-demo="section" hidden>`) || strings.Contains(body, `<section id="`+id+`" data-demo="hero" hidden>`); got != hidden {
-			t.Errorf("section %s hidden: %v, want %v", id, got, hidden)
+	sections := map[string]string{}
+	for _, m := range block.FindAllStringSubmatch(html, -1) {
+		sections[m[1]] = m[0]
+	}
+	for id, dropped := range map[string]bool{"introduction": true, "button": false, "native-select": false, "dialog": false, "drawer": true, "chart-stat": true} {
+		if got := !strings.Contains(body, sections[id]); sections[id] == "" || got != dropped {
+			t.Errorf("section %s dropped: %v, want %v", id, got, dropped)
 		}
 	}
-	if strings.Contains(body, `data-demo="category" hidden`) {
-		t.Error("a category heading is hidden")
+	if regexp.MustCompile(`data-demo="(?:section|hero|category)" hidden`).MatchString(body) || strings.Count(body, `data-demo="category"`) != strings.Count(html, `data-demo="category"`) {
+		t.Error("the filtered demo hides elements or drops a category heading")
 	}
 	for _, path := range []string{"/demo?only=nope", "/demo?only=forms,"} {
 		if rec := request(t, h, http.MethodGet, path); rec.Code != http.StatusBadRequest {

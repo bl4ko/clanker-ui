@@ -1,7 +1,7 @@
 import datetime
 import re
 
-START = "/demo?only=chat,input"
+START = "/demo?only=chat,input,textarea"
 
 RECORD = """names => {
   window.__g4 = []

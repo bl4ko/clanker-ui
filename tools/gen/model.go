@@ -1478,7 +1478,7 @@ func (g *gen) partsJSON(k kitMap, components []string) []byte {
 		sourceTokens[c] = g.sourceTokens(c)
 		all = append(all, sourceTokens[c]...)
 	}
-	b, _ := json.MarshalIndent(map[string]any{"shadcn": shadcnSHA, "style": g.style, "components": components, "parts": out, "source_tokens": sourceTokens, "logical": g.logicalMap(all)}, "", " ")
+	b, _ := json.MarshalIndent(map[string]any{"shadcn": shadcnSHA, "style": g.style, "components": components, "parts": out, "source_tokens": sourceTokens, "logical": g.logicalMap(all), "groups": g.groupOwners(k)}, "", " ")
 	return append(b, '\n')
 }
 

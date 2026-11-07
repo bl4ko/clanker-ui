@@ -7209,7 +7209,7 @@ function collapsibleSet(root, open, animate) {
     if (details) root.open = true
     if (content) content.hidden = false
   }
-  root.dataset.state = state
+  void 0
   for (const trigger of triggers) {
     trigger.dataset.state = state
     if (details) continue

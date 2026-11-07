@@ -68,6 +68,7 @@ def log(*a):
 class Parts:
     def __init__(self, data):
         self.logical = data.get("logical") or {}
+        self.groups = data.get("groups") or {}
         self.by_slot = collections.defaultdict(list)
         self.slotless = []
         for p in data["parts"]:
@@ -432,7 +433,7 @@ class Converter:
                 for x in slots:
                     self.by_slot[x] += sets
                     self.by_comp[component_of(x, self.names)] += inner
-                if not slots:
+                if not slots or tag[:1].isupper() and not self.parts.func_slots.get(tag) and slot not in self.parts.by_slot:
                     self.free_sets += sets + inner
         self.examples = example_sets([t for t in texts if t])
         self.example_tokens = set().union(*self.examples) if self.examples else set()
@@ -925,16 +926,22 @@ LOCAL_FN = re.compile(r"^function\s+([A-Z]\w*)", re.M)
 STYLE_IMPORT = re.compile(r"@/styles/base-([a-z]+)/")
 DOCS_EXAMPLES = "apps/v4/examples/base/"
 BASE_EXAMPLES = ("apps/v4/registry/bases/base/examples/", "apps/v4/registry/bases/base/components/")
+HELPERS = "apps/v4/components/"
+HELPER_IMPORT = re.compile(r'from\s+"@/components/([a-z0-9-]+)"')
 
 
 class Examples:
+    helpers = {}
+
     def __init__(self, src, cache, pin):
         tree = json.loads((pathlib.Path(src) / "tree.json").read_text())
-        files = {t["path"]: t["sha"] for t in tree["tree"] if t["path"].endswith(".tsx") and any(t["path"].startswith(d) and t["path"].count("/") == d.count("/") for d in (DOCS_EXAMPLES, *BASE_EXAMPLES))}
+        top = lambda path, d: path.endswith(".tsx") and path.startswith(d) and path.count("/") == d.count("/")
+        files = {t["path"]: t["sha"] for t in tree["tree"] if any(top(t["path"], d) for d in (DOCS_EXAMPLES, *BASE_EXAMPLES, HELPERS))}
         cache.mkdir(parents=True, exist_ok=True)
 
         def get(path):
-            dest = cache / (("" if path.startswith(DOCS_EXAMPLES) else "registry-") + path.rsplit("/", 1)[1])
+            prefix = "" if path.startswith(DOCS_EXAMPLES) else "component-" if path.startswith(HELPERS) else "registry-"
+            dest = cache / (prefix + path.rsplit("/", 1)[1])
             if not dest.exists():
                 subprocess.run(["curl", "-sSfL", "--proto", "=https", "--proto-redir", "=https", "--max-time", "60", "-o", str(dest), f"https://raw.githubusercontent.com/shadcn-ui/ui/{pin}/{path}"], capture_output=True)
             body = dest.read_bytes() if dest.exists() else b""
@@ -943,7 +950,9 @@ class Examples:
             return path, body.decode()
 
         with ThreadPoolExecutor(8) as pool:
-            texts = dict(pool.map(get, sorted(files)))
+            texts = dict(pool.map(get, sorted(p for p in files if not p.startswith(HELPERS))))
+            wanted = {HELPERS + n + ".tsx" for t in texts.values() for n in HELPER_IMPORT.findall(t)} & set(files)
+            self.helpers = {p.rsplit("/", 1)[1][:-4]: t for p, t in pool.map(get, sorted(wanted))}
         self.text = {p.rsplit("/", 1)[1][:-4]: t for p, t in texts.items() if p.startswith(DOCS_EXAMPLES)}
         self.nova = {p.rsplit("/", 1)[1][:-4]: t for p, t in texts.items() if not p.startswith(DOCS_EXAMPLES)}
         self.ui_fns = set()
@@ -964,10 +973,13 @@ class Examples:
 
     def of(self, name):
         if name in self.text:
-            return [self.text[name]]
+            return [self.text[name], *self.imported(self.text[name])]
         if name in self.nova:
-            return [self.nova[name], self.nova.get("example", "")]
+            return [self.nova[name], self.nova.get("example", ""), *self.imported(self.nova[name])]
         return []
+
+    def imported(self, text):
+        return [self.helpers[n] for n in dict.fromkeys(HELPER_IMPORT.findall(text)) if n in self.helpers]
 
     def name_of_code(self, code):
         for fn in EXAMPLE_FN.findall(code or ""):
@@ -1107,6 +1119,22 @@ def page_style(cap):
     return counts.most_common(1)[0][0] if counts else STYLES[0]
 
 
+GROUP_CLASS = re.compile(r"\.(?:group|peer)\\/[\w-]+")
+
+
+def group_owners(css, parts):
+    owners = collections.defaultdict(list)
+    for p in parts:
+        for name, sels in p.groups.items():
+            owners[name] += [s for s in sels if s not in owners[name]]
+
+    def sub(m):
+        sels = owners.get(m.group(0))
+        return ":is(" + ", ".join([m.group(0), *sels]) + ")" if sels else m.group(0)
+
+    return GROUP_CLASS.sub(sub, css)
+
+
 def measure_ours(comp, results, ours, parts, names, gen_css, src, out, docs, sources):
     if isinstance(parts, Parts):
         parts = {STYLES[0]: parts}
@@ -1127,6 +1155,7 @@ def measure_ours(comp, results, ours, parts, names, gen_css, src, out, docs, sou
     r = subprocess.run([GEN, "utilities", "-src", src, "-content", str(content / "classes.html"), "-out", str(consumer_css)], cwd=ROOT, capture_output=True, text=True)
     if r.returncode != 0:
         raise RuntimeError(f"utilities: {r.stderr}")
+    consumer_css.write_text(group_owners(consumer_css.read_text(), parts.values()))
     ours.files = {"consumer.css": consumer_css.read_text(), "font.css": FONT}
     ours.files.update({f"{k}.html": v for k, v in pages.items()})
     for res in results:

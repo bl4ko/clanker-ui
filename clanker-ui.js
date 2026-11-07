@@ -7440,12 +7440,22 @@ const progressWatch = new MutationObserver(records => {
   for (const record of records) progressRender(record.target)
 })
 
+function progressPercent(el, ratio) {
+  const options = { style: "percent" }
+  try {
+    return new Intl.NumberFormat(el.closest("[lang]")?.getAttribute("lang") || undefined, options).format(ratio)
+  } catch {
+    return new Intl.NumberFormat(undefined, options).format(ratio)
+  }
+}
+
 function progressRender(el) {
   const max = Number(el.dataset.max) > 0 ? Number(el.dataset.max) : 100
   const raw = el.dataset.value
   const value = raw != null && raw.trim() !== "" && Number.isFinite(Number(raw)) ? Math.min(Math.max(Number(raw), 0), max) : null
   const state = value == null ? "indeterminate" : value >= max ? "complete" : "loading"
   const percent = value == null ? 0 : (value / max) * 100
+  const formatted = value == null ? "" : progressPercent(el, value / max)
   el.setAttribute("role", "progressbar")
   el.setAttribute("aria-valuemin", "0")
   el.setAttribute("aria-valuemax", String(max))
@@ -7454,7 +7464,7 @@ function progressRender(el) {
     el.removeAttribute("aria-valuetext")
   } else {
     el.setAttribute("aria-valuenow", String(value))
-    el.setAttribute("aria-valuetext", `${Math.round(percent)}%`)
+    el.setAttribute("aria-valuetext", formatted)
   }
   let track = el.querySelector(':scope > [data-slot="progress-track"]')
   if (!track) {
@@ -7469,7 +7479,7 @@ function progressRender(el) {
   const label = el.querySelector(':scope > [data-slot="progress-label"]')
   if (label && !el.hasAttribute("aria-label") && !el.hasAttribute("aria-labelledby")) el.setAttribute("aria-labelledby", ensureId(label, "progress-label"))
   const text = el.querySelector(':scope > [data-slot="progress-value"]')
-  if (text) text.textContent = value == null ? "" : `${Math.round(percent)}%`
+  if (text) text.textContent = formatted
   for (const part of [el, track, indicator, label, text]) {
     if (!part) continue
     part.dataset.state = state
@@ -10019,7 +10029,7 @@ define("questionnaire", {
 
 const calendarStates = new WeakMap()
 const calendarFormatters = new Map()
-const calendarObserved = ["data-mode", "data-value", "data-month", "data-months", "data-min", "data-max", "data-disabled", "data-disabled-dates", "data-disabled-weekdays", "data-week-start", "data-caption-layout", "data-button-variant", "data-outside-days", "data-show-week-number", "data-fixed-weeks", "data-required", "data-name", "data-today", "data-lang", "data-start-year", "data-end-year"]
+const calendarObserved = ["data-mode", "data-value", "data-month", "data-months", "data-min", "data-max", "data-disabled", "data-disabled-dates", "data-disabled-weekdays", "data-week-start", "data-caption-layout", "data-month-format", "data-button-variant", "data-outside-days", "data-show-week-number", "data-fixed-weeks", "data-required", "data-name", "data-today", "data-lang", "data-start-year", "data-end-year"]
 const calendarFormatOptions = {
   caption: { month: "long", year: "numeric" },
   full: { weekday: "long", year: "numeric", month: "long", day: "numeric" },
@@ -10171,6 +10181,7 @@ function calendarConfig(el) {
     weekdays,
     disabledAll: flag(el, "data-disabled"),
     caption,
+    monthFormat: get("data-month-format") === "long" ? "monthLong" : "month",
     buttonVariant,
     outside: get("data-outside-days") !== "false",
     weekNumbers: flag(el, "data-show-week-number"),
@@ -10421,7 +10432,7 @@ function calendarSelect(s, kind, first, index) {
       const date = calendarDate(year, m, 1)
       const key = calendarMonthKey(date)
       const out = (s.navMin && key < s.navMin.slice(0, 7)) || (s.navMax && key > s.navMax.slice(0, 7))
-      options.push(h("option", { value: String(m), disabled: out || null }, calendarFormat(s, "month", date)))
+      options.push(h("option", { value: String(m), disabled: out || null }, calendarFormat(s, s.monthFormat, date)))
     }
   } else {
     const start = Math.min(s.startYear, year)
@@ -10436,7 +10447,7 @@ function calendarSelect(s, kind, first, index) {
     disabled: s.disabledAll || null,
   }, options)
   select.value = String(kind === "month" ? first.getMonth() : year)
-  const text = kind === "month" ? calendarFormat(s, "month", first) : calendarNumber(s, year)
+  const text = kind === "month" ? calendarFormat(s, s.monthFormat, first) : calendarNumber(s, year)
   return h("span", { "data-slot": "calendar-dropdown-root", "data-disabled": s.disabledAll ? "true" : null }, select, h("span", { "data-slot": "calendar-caption-label", "aria-hidden": "true" }, text, icon("chevron-down")))
 }
 

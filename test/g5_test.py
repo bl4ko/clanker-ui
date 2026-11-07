@@ -755,6 +755,77 @@ def check_chart_rtl(t):
     assert len(result["ticks"]) == 3 and all(right <= result["left"] for _, right in result["ticks"]), f"category labels stay left of the bars in RTL: {result}"
 
 
+CHART_REVERSED = """async () => {
+  const { chart } = await import("/clanker-ui-chart.js")
+  const frame = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+  const out = {}
+  for (const dir of ["ltr", "rtl"]) {
+    const wrap = document.createElement("div")
+    wrap.dir = dir
+    wrap.style.width = "480px"
+    const box = document.createElement("div")
+    box.id = `chart-reversed-${dir}`
+    const line = document.createElement("div")
+    wrap.append(box, line)
+    document.body.append(wrap)
+    const rows = [{ m: "January", a: 186, b: 80 }, { m: "February", a: 305, b: 200 }, { m: "March", a: 237, b: 120 }]
+    chart(box, { rows, config: { a: { label: "A" }, b: { label: "B" } } }, { type: "bar", x: "m", animate: false, height: 200, table: false })
+    const days = Array.from({ length: 30 }, (_, i) => ({ d: `2026-09-${String(i + 1).padStart(2, "0")}`, v: i }))
+    chart(line, days, { type: "line", x: "d", scale: "time", animate: false, height: 200, table: false })
+    await frame()
+    const svg = box.querySelector('[data-slot="chart-svg"]')
+    const cx = el => { const b = el.getBBox(); return Math.round(b.x + b.width / 2) }
+    const series = [...svg.querySelectorAll('[data-part="series"]')].map(g => [...g.querySelectorAll('[data-part="bar"]')].map(cx))
+    const cats = [...svg.querySelectorAll('[data-axis="category"] text')].map(e => [e.textContent, cx(e)])
+    const marks = svg.querySelector('[data-part="marks"]').getBBox()
+    const values = [...svg.querySelectorAll('[data-axis="value"] text')].map(e => { const b = e.getBBox(); return [Math.round(b.x), Math.round(b.x + b.width)] })
+    const ticks = [...line.querySelectorAll('[data-axis="category"] text')].map(cx)
+    out[dir] = { series, cats, marks: [Math.round(marks.x), Math.round(marks.x + marks.width)], values, ticks }
+    out[dir].wrap = wrap
+  }
+  window.__chartReversed = [out.ltr.wrap, out.rtl.wrap]
+  delete out.ltr.wrap
+  delete out.rtl.wrap
+  return out
+}"""
+
+
+def check_chart_rtl_reversed(t):
+    page = t.page
+    out = page.evaluate(CHART_REVERSED)
+    ltr, rtl = out["ltr"], out["rtl"]
+    assert [c for c, _ in rtl["cats"]] == MONTHS[:3], out
+    assert [x for _, x in ltr["cats"]] == sorted(x for _, x in ltr["cats"]), f"LTR keeps January at the left: {out}"
+    assert [x for _, x in rtl["cats"]] == sorted((x for _, x in rtl["cats"]), reverse=True), f"RTL puts January at the right: {out}"
+    for i in range(3):
+        a, b = rtl["series"][0][i], rtl["series"][1][i]
+        assert a < b, f"bars in a group keep the series order, as Recharts reversed: {out}"
+        assert abs((a + b) / 2 - rtl["cats"][i][1]) <= 2, f"each group sits over its category label: {out}"
+    assert all(right <= ltr["marks"][0] for _, right in ltr["values"]), f"LTR value axis at the left: {out}"
+    assert all(left >= rtl["marks"][1] for left, _ in rtl["values"]), f"RTL value axis at the right: {out}"
+    assert len(rtl["ticks"]) == len(ltr["ticks"]) > 1 and rtl["ticks"] == sorted(rtl["ticks"], reverse=True), f"RTL time ticks are reversed, not dropped: {out}"
+
+    surface = page.locator("#chart-reversed-rtl [data-slot='chart-svg']")
+    surface.scroll_into_view_if_needed()
+    page.keyboard.press("Shift")
+    surface.focus()
+    assert tip(page, "chart-reversed-rtl")["label"] == "January"
+    page.keyboard.press("ArrowLeft")
+    assert tip(page, "chart-reversed-rtl")["label"] == "February", "ArrowLeft goes to the next category in RTL, as Recharts"
+    page.keyboard.press("ArrowRight")
+    assert tip(page, "chart-reversed-rtl")["label"] == "January"
+    box = surface.bounding_box()
+    page.mouse.move(box["x"] + box["width"] - 60, box["y"] + box["height"] / 2)
+    assert tip(page, "chart-reversed-rtl")["label"] == "January", "the pointer at the right finds the first category"
+    page.mouse.move(box["x"] + 60, box["y"] + box["height"] / 2)
+    assert tip(page, "chart-reversed-rtl")["label"] == "March"
+    page.evaluate("() => { for (const w of window.__chartReversed) w.remove() }")
+
+    t.section("chart")
+    demo = page.evaluate("""() => [...document.querySelectorAll('#chart-rtl [data-axis="category"] text')].map(e => { const b = e.getBBox(); return [e.textContent, b.x] })""")
+    assert len(demo) == 6 and [x for _, x in demo] == sorted((x for _, x in demo), reverse=True), f"chart-rtl example starts at the right: {demo}"
+
+
 def check_chart_locale(t):
     result = t.page.evaluate(
         """async () => {

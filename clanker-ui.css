@@ -1283,6 +1283,7 @@
     inset-inline-end: calc(var(--spacing) * 3);
   }
   [data-slot="separator"] {
+    margin-top: 3px;
     background-color: var(--border);
     flex-shrink: 0;
   }
@@ -2236,6 +2237,7 @@
     transition-duration: .1s;
   }
   [data-slot="dialog-content"] {
+    margin-top: 3px;
     z-index: 50;
     --tw-translate-x: calc(calc(1 / 2 * 100%) * -1);
     --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
@@ -2355,6 +2357,7 @@
     height: 1px;
   }
   [data-slot="command-item"] {
+    margin-top: 3px;
     cursor: default;
     align-items: center;
     gap: calc(var(--spacing) * 2);
@@ -2967,6 +2970,7 @@
     container: field-group / inline-size;
   }
   [data-slot="field"] {
+    margin-top: 3px;
     gap: calc(var(--spacing) * 2);
     width: 100%;
     display: flex;

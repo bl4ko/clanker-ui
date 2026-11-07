@@ -1,0 +1,38 @@
+<div data-slot="table-container" data-js="checkbox-table">
+  <table data-slot="table">
+    <thead data-slot="table-header">
+      <tr data-slot="table-row">
+        <th data-slot="table-head" scope="col" class="w-8"><button type="button" data-slot="checkbox" id="select-all-checkbox" data-name="select-all-checkbox" aria-label="Select all"></button></th>
+        <th data-slot="table-head" scope="col">Name</th>
+        <th data-slot="table-head" scope="col">Email</th>
+        <th data-slot="table-head" scope="col">Role</th>
+      </tr>
+    </thead>
+    <tbody data-slot="table-body">
+        <tr data-slot="table-row" data-state="selected">
+          <td data-slot="table-cell"><button type="button" data-slot="checkbox" id="row-1-checkbox" data-name="row-1-checkbox" aria-label="Select Sarah Chen" data-checked></button></td>
+          <td data-slot="table-cell" class="font-medium">Sarah Chen</td>
+          <td data-slot="table-cell">sarah.chen@example.com</td>
+          <td data-slot="table-cell">Admin</td>
+        </tr>
+        <tr data-slot="table-row">
+          <td data-slot="table-cell"><button type="button" data-slot="checkbox" id="row-2-checkbox" data-name="row-2-checkbox" aria-label="Select Marcus Rodriguez"></button></td>
+          <td data-slot="table-cell" class="font-medium">Marcus Rodriguez</td>
+          <td data-slot="table-cell">marcus.rodriguez@example.com</td>
+          <td data-slot="table-cell">User</td>
+        </tr>
+        <tr data-slot="table-row">
+          <td data-slot="table-cell"><button type="button" data-slot="checkbox" id="row-3-checkbox" data-name="row-3-checkbox" aria-label="Select Priya Patel"></button></td>
+          <td data-slot="table-cell" class="font-medium">Priya Patel</td>
+          <td data-slot="table-cell">priya.patel@example.com</td>
+          <td data-slot="table-cell">User</td>
+        </tr>
+        <tr data-slot="table-row">
+          <td data-slot="table-cell"><button type="button" data-slot="checkbox" id="row-4-checkbox" data-name="row-4-checkbox" aria-label="Select David Kim"></button></td>
+          <td data-slot="table-cell" class="font-medium">David Kim</td>
+          <td data-slot="table-cell">david.kim@example.com</td>
+          <td data-slot="table-cell">Editor</td>
+        </tr>
+    </tbody>
+  </table>
+</div>

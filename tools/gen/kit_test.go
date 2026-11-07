@@ -16,18 +16,37 @@ func readRepo(t *testing.T, name string) string {
 }
 
 func TestKitCSSEndsWithKit(t *testing.T) {
-	if !strings.HasSuffix(readRepo(t, "clanker-ui.css"), "\n"+readRepo(t, "tools/gen/kit.css")) {
-		t.Error("clanker-ui.css does not end with tools/gen/kit.css; do not edit clanker-ui.css, run go run ./tools/gen -src \"$SHADCN_SRC\" -out clanker-ui.css")
+	for _, s := range kitStyles {
+		if !strings.HasSuffix(readRepo(t, s.file), "\n"+readRepo(t, "tools/gen/kit.css")) {
+			t.Errorf("%s does not end with tools/gen/kit.css; do not edit it, run go run ./tools/gen -src \"$SHADCN_SRC\" -out clanker-ui.css", s.file)
+		}
 	}
 }
 
 func TestKitCSSAllInLayers(t *testing.T) {
-	tree, err := parseCSS(readRepo(t, "clanker-ui.css"))
-	if err != nil {
-		t.Fatal(err)
+	for _, s := range kitStyles {
+		tree, err := parseCSS(readRepo(t, s.file))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if r := strayRule(tree); r != "" {
+			t.Errorf("%s: %q is outside @layer, @property, and @keyframes", s.file, r)
+		}
 	}
-	if s := strayRule(tree); s != "" {
-		t.Errorf("clanker-ui.css: %q is outside @layer, @property, and @keyframes", s)
+}
+
+func TestKitStyles(t *testing.T) {
+	nova, rhea := readRepo(t, "clanker-ui.css"), readRepo(t, "clanker-ui-rhea.css")
+	if kitStyles[0].name != "nova" || kitStyles[0].file != "clanker-ui.css" {
+		t.Errorf("the default style is %v, want nova in clanker-ui.css", kitStyles[0])
+	}
+	if nova == rhea || !strings.Contains(rhea, `[data-slot="code-block"]`) {
+		t.Error("clanker-ui-rhea.css must be its own style with the same parts")
+	}
+	for _, want := range []string{"--tw-ring-color: color-mix(in oklab, var(--ring) 30%, transparent)", "border-radius: calc(var(--radius) * 1.8)"} {
+		if !strings.Contains(rhea, want) || strings.Count(nova, want) >= strings.Count(rhea, want) {
+			t.Errorf("clanker-ui-rhea.css: want more %q than Nova (Rhea rules)", want)
+		}
 	}
 }
 

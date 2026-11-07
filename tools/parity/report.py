@@ -16,13 +16,13 @@ def pct(a, b):
     return f"{100 * a / max(b, 1):.1f}"
 
 
-def prop_counts(path, parts):
+def prop_counts(path, parts, style="nova"):
     counts = {}
     if not path.exists():
         return counts
     seen = set()
     for r in json.loads(path.read_text()):
-        if r.get("style", "nova") != "nova" or r["part"] not in parts:
+        if r.get("style", "nova") != style or r["part"] not in parts:
             continue
         key = (r["part"], r["prop"], r["scenario"], str(r["id"]), r["state"], r["theme"])
         if key in seen:
@@ -50,10 +50,12 @@ def main():
     ap.add_argument("out")
     ap.add_argument("--top", type=int, default=3)
     ap.add_argument("--strict", action="store_true", help="also fail when a (part, property) differs in more pairs than --known allows, a component has no measured part, or a cause key of --known is not in --causes")
-    ap.add_argument("--known", default=str(pathlib.Path(__file__).with_name("known.tsv")), help="reviewed known differences: component<TAB>part<TAB>property<TAB>pairs<TAB>cause")
+    ap.add_argument("--style", default="nova", help="the shadcn style to report (previews in that style, measured against its kit CSS)")
+    ap.add_argument("--known", default="", help="reviewed known differences: component<TAB>part<TAB>property<TAB>pairs<TAB>cause (default: known.tsv for nova, known-<style>.tsv for another style)")
     ap.add_argument("--causes", default=str(pathlib.Path(__file__).resolve().parents[2] / "DEVELOPMENT.md"), help="file with the '| Key | Cause |' table of the cause keys that --strict accepts in --known")
     ap.add_argument("--write-known", default="", help="write the differences of this run in the known.tsv format (causes from --known, else 'to check') to this file")
     args = ap.parse_args()
+    args.known = args.known or str(pathlib.Path(__file__).with_name("known.tsv" if args.style == "nova" else f"known-{args.style}.tsv"))
     known, bad_causes = {}, []
     kp = pathlib.Path(args.known)
     cp = pathlib.Path(args.causes)
@@ -82,6 +84,10 @@ def main():
             rows.append(f"| {s['component']} | failed | | | {s['error'][:80]} |")
             failures.append(f"{s['component']}: {s['error'][:120]}")
             continue
+        if args.style != "nova":
+            if args.style not in (s.get("styles") or {}):
+                continue
+            s = {"component": s["component"], "site": s.get("site"), **s["styles"][args.style]}
         for k in tot:
             tot[k] += s.get(k, 0)
         o = s.get("other_style") or {}
@@ -106,7 +112,7 @@ def main():
             parts_lines.append(f"| {s['component']} | {d['part']} | {d['pairs'] - d['equal']}/{d['pairs']} | {states_txt} | {props_txt} |")
         for slot, toks in sorted((s.get("kept_source") or {}).items()):
             kept_lines.append(f"| {s['component']} | {slot} | {' '.join(toks)} |")
-        counts = prop_counts(out / f"{s['component']}.rows.json", {d["part"] for d in s["differing_parts"]})
+        counts = prop_counts(out / f"{s['component']}.rows.json", {d["part"] for d in s["differing_parts"]}, args.style)
         for (part, prop), n in sorted(counts.items()):
             measured_known.append((s["component"], part, prop, n))
         if args.strict:
@@ -120,14 +126,14 @@ def main():
                     worse.append(f"{part} {prop} {n} pairs (known {allowed})")
             if worse:
                 failures.append(f"{s['component']}: {len(worse)} (part, property) entries differ more than {kp.name} allows: {'; '.join(worse)}")
-    print(f"Live site: {', '.join(sorted(sites)) or '?'}\n")
+    print(f"Live site: {', '.join(sorted(sites)) or '?'}. Style: {args.style}.\n")
     print(f"Parts with no difference in any state: {tot['parts_equal']}/{tot['parts']} ({pct(tot['parts_equal'], tot['parts'])} %).")
     print(f"(part, state, theme) pairs with no difference: {tot['pairs_equal']}/{tot['pairs']} ({pct(tot['pairs_equal'], tot['pairs'])} %).")
     print(f"Values not at their initial value, equal: {tot['meaningful_equal']}/{tot['meaningful']} ({pct(tot['meaningful_equal'], tot['meaningful'])} %).")
     print(f"All values, equal: {tot['equal']}/{tot['measured']} ({pct(tot['equal'], tot['measured'])} %).")
     print("Pairs by state: " + ", ".join(f"{k} {v[0]}/{v[1]} ({pct(*v)} %)" for k, v in sorted(states.items())) + "\n")
-    if other["pairs"]:
-        print(f"Not in the totals: previews whose example uses another shadcn style on ui.shadcn.com: parts {other['parts_equal']}/{other['parts']}, pairs {other['pairs_equal']}/{other['pairs']}. The totals include the Nova example page of each such component instead. Pages: {', '.join(other_comps)}.\n")
+    if other["pairs"] and args.style == "nova":
+        print(f"Not in the totals: previews in a shadcn style that the kit does not have, or in another style than the rest of their page (style@measured): parts {other['parts_equal']}/{other['parts']}, pairs {other['pairs_equal']}/{other['pairs']}. Each style has its own report (--style). Pages: {', '.join(other_comps)}.\n")
     print("| Component | Equal parts | Equal pairs | Values | Pairs by state (%) | Top differences (shadcn vs ours, count) |")
     print("| --- | --- | --- | --- | --- | --- |")
     print("\n".join(rows))
@@ -135,7 +141,7 @@ def main():
     print("| Component | Part | Differing pairs | States | Properties (pairs) |")
     print("| --- | --- | --- | --- | --- |")
     print("\n".join(parts_lines))
-    if other_lines:
+    if other_lines and args.style == "nova":
         print("\n## Parts on previews in another shadcn style (not in the totals)\n")
         print("| Component | Part | Differing pairs | Properties (pairs) |")
         print("| --- | --- | --- | --- |")

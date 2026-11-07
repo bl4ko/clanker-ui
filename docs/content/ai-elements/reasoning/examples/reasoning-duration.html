@@ -1,0 +1,12 @@
+<div data-slot="trace" class="max-w-sm">
+  <div data-slot="trace-collapsible">
+    <button type="button" data-slot="trace-collapsible-trigger">
+      <span data-slot="trace-line">
+        <span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span>
+        <span data-slot="trace-title">Thought</span>
+        <span data-slot="trace-description">12s</span>
+      </span>
+    </button>
+    <div data-slot="trace-collapsible-content" class="whitespace-pre-wrap">The build log shows install and compile finish in under a minute. Image optimization takes almost four, and it reruns on every deploy because the cache key includes the commit hash.</div>
+  </div>
+</div>

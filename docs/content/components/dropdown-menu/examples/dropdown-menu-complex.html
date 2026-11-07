@@ -1,0 +1,92 @@
+<div data-slot="dropdown-menu">
+  <button type="button" data-slot="button" data-variant="outline" data-dropdown-menu-trigger>Complex Menu</button>
+  <div data-slot="dropdown-menu-content" class="w-44">
+    <div data-slot="dropdown-menu-group">
+      <div data-slot="dropdown-menu-label">File</div>
+      <div data-slot="dropdown-menu-item"><svg data-lucide="file"></svg>New File<span data-slot="dropdown-menu-shortcut">⌘N</span></div>
+      <div data-slot="dropdown-menu-item"><svg data-lucide="folder"></svg>New Folder<span data-slot="dropdown-menu-shortcut">⇧⌘N</span></div>
+      <div data-slot="dropdown-menu-sub">
+        <div data-slot="dropdown-menu-sub-trigger"><svg data-lucide="folder-open"></svg>Open Recent</div>
+        <div data-slot="dropdown-menu-sub-content">
+          <div data-slot="dropdown-menu-group">
+            <div data-slot="dropdown-menu-label">Recent Projects</div>
+            <div data-slot="dropdown-menu-item"><svg data-lucide="file-code"></svg>Project Alpha</div>
+            <div data-slot="dropdown-menu-item"><svg data-lucide="file-code"></svg>Project Beta</div>
+            <div data-slot="dropdown-menu-sub">
+              <div data-slot="dropdown-menu-sub-trigger"><svg data-lucide="ellipsis"></svg>More Projects</div>
+              <div data-slot="dropdown-menu-sub-content">
+                <div data-slot="dropdown-menu-item"><svg data-lucide="file-code"></svg>Project Gamma</div>
+                <div data-slot="dropdown-menu-item"><svg data-lucide="file-code"></svg>Project Delta</div>
+              </div>
+            </div>
+          </div>
+          <div data-slot="dropdown-menu-separator"></div>
+          <div data-slot="dropdown-menu-group">
+            <div data-slot="dropdown-menu-item"><svg data-lucide="folder-search"></svg>Browse...</div>
+          </div>
+        </div>
+      </div>
+      <div data-slot="dropdown-menu-separator"></div>
+      <div data-slot="dropdown-menu-item"><svg data-lucide="save"></svg>Save<span data-slot="dropdown-menu-shortcut">⌘S</span></div>
+      <div data-slot="dropdown-menu-item"><svg data-lucide="download"></svg>Export<span data-slot="dropdown-menu-shortcut">⇧⌘E</span></div>
+    </div>
+    <div data-slot="dropdown-menu-separator"></div>
+    <div data-slot="dropdown-menu-group">
+      <div data-slot="dropdown-menu-label">View</div>
+      <div data-slot="dropdown-menu-checkbox-item" data-checked><svg data-lucide="eye"></svg>Show Sidebar</div>
+      <div data-slot="dropdown-menu-checkbox-item"><svg data-lucide="layout"></svg>Show Status Bar</div>
+      <div data-slot="dropdown-menu-sub">
+        <div data-slot="dropdown-menu-sub-trigger"><svg data-lucide="palette"></svg>Theme</div>
+        <div data-slot="dropdown-menu-sub-content">
+          <div data-slot="dropdown-menu-group">
+            <div data-slot="dropdown-menu-label">Appearance</div>
+            <div data-slot="dropdown-menu-radio-group" data-value="light">
+              <div data-slot="dropdown-menu-radio-item" data-value="light"><svg data-lucide="sun"></svg>Light</div>
+              <div data-slot="dropdown-menu-radio-item" data-value="dark"><svg data-lucide="moon"></svg>Dark</div>
+              <div data-slot="dropdown-menu-radio-item" data-value="system"><svg data-lucide="monitor"></svg>System</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-slot="dropdown-menu-separator"></div>
+    <div data-slot="dropdown-menu-group">
+      <div data-slot="dropdown-menu-label">Account</div>
+      <div data-slot="dropdown-menu-item"><svg data-lucide="user"></svg>Profile<span data-slot="dropdown-menu-shortcut">⇧⌘P</span></div>
+      <div data-slot="dropdown-menu-item"><svg data-lucide="credit-card"></svg>Billing</div>
+      <div data-slot="dropdown-menu-sub">
+        <div data-slot="dropdown-menu-sub-trigger"><svg data-lucide="settings"></svg>Settings</div>
+        <div data-slot="dropdown-menu-sub-content">
+          <div data-slot="dropdown-menu-group">
+            <div data-slot="dropdown-menu-label">Preferences</div>
+            <div data-slot="dropdown-menu-item"><svg data-lucide="keyboard"></svg>Keyboard Shortcuts</div>
+            <div data-slot="dropdown-menu-item"><svg data-lucide="languages"></svg>Language</div>
+            <div data-slot="dropdown-menu-sub">
+              <div data-slot="dropdown-menu-sub-trigger"><svg data-lucide="bell"></svg>Notifications</div>
+              <div data-slot="dropdown-menu-sub-content">
+                <div data-slot="dropdown-menu-group">
+                  <div data-slot="dropdown-menu-label">Notification Types</div>
+                  <div data-slot="dropdown-menu-checkbox-item" data-checked><svg data-lucide="bell"></svg>Push Notifications</div>
+                  <div data-slot="dropdown-menu-checkbox-item" data-checked><svg data-lucide="mail"></svg>Email Notifications</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-slot="dropdown-menu-separator"></div>
+          <div data-slot="dropdown-menu-group">
+            <div data-slot="dropdown-menu-item"><svg data-lucide="shield"></svg>Privacy &amp; Security</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-slot="dropdown-menu-separator"></div>
+    <div data-slot="dropdown-menu-group">
+      <div data-slot="dropdown-menu-item"><svg data-lucide="help-circle"></svg>Help &amp; Support</div>
+      <div data-slot="dropdown-menu-item"><svg data-lucide="file-text"></svg>Documentation</div>
+    </div>
+    <div data-slot="dropdown-menu-separator"></div>
+    <div data-slot="dropdown-menu-group">
+      <div data-slot="dropdown-menu-item" data-variant="destructive"><svg data-lucide="log-out"></svg>Sign Out<span data-slot="dropdown-menu-shortcut">⇧⌘Q</span></div>
+    </div>
+  </div>
+</div>

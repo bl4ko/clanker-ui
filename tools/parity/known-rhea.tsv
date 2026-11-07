@@ -1,0 +1,24 @@
+attachment	img in attachment-media	@h	2	T19 open, #93
+attachment	img in attachment-media	height	2	T19 open, #93
+bubble	code in bubble-content	@h	4	T19 open, #93
+bubble	code in bubble-content	background-color	4	T19 open, #93
+bubble	code in bubble-content	padding-bottom	4	T19 open, #93
+bubble	code in bubble-content	padding-top	4	T19 open, #93
+bubble	collapsible-trigger	@w	10	T7 tool
+bubble	collapsible-trigger	padding-right	10	T7 tool
+bubble	collapsible-trigger	width	10	T7 tool
+bubble	div in bubble-content	overflow-x	4	T19 open, #93
+bubble	div in bubble-content	overflow-y	4	T19 open, #93
+drawer	div in drawer-content	@h	2	T19 open, #93
+drawer	div in drawer-content	@visible	2	T19 open, #93
+drawer	div in drawer-content	height	2	T19 open, #93
+message-scroller	bubble-content	@h	42	T19 open, #93
+message-scroller	bubble-content	height	42	T19 open, #93
+message-scroller	bubble[variant=ghost]	@h	42	T19 open, #93
+message-scroller	bubble[variant=ghost]	height	42	T19 open, #93
+message-scroller	message	@h	42	T19 open, #93
+message-scroller	message	height	42	T19 open, #93
+message-scroller	message-content	@h	42	T19 open, #93
+message-scroller	message-content	height	42	T19 open, #93
+message-scroller	message-scroller-viewport	mask-image	36	T19 open, #93
+message-scroller	p in bubble-content	margin-bottom	78	T19 open, #93

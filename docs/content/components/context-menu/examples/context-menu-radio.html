@@ -1,0 +1,24 @@
+<div data-slot="context-menu">
+  <div data-slot="context-menu-trigger" tabindex="0" class="flex aspect-video w-full max-w-xs items-center justify-center rounded-xl border border-dashed text-sm">
+    <span class="hidden pointer-fine:inline-block">Right click here</span>
+    <span class="hidden pointer-coarse:inline-block">Long press here</span>
+  </div>
+  <div data-slot="context-menu-content">
+    <div data-slot="context-menu-group">
+      <div data-slot="context-menu-label">People</div>
+      <div data-slot="context-menu-radio-group" data-value="pedro">
+        <div data-slot="context-menu-radio-item" data-value="pedro">Pedro Duarte</div>
+        <div data-slot="context-menu-radio-item" data-value="colm">Colm Tuite</div>
+      </div>
+    </div>
+    <div data-slot="context-menu-separator"></div>
+    <div data-slot="context-menu-group">
+      <div data-slot="context-menu-label">Theme</div>
+      <div data-slot="context-menu-radio-group" data-value="light">
+        <div data-slot="context-menu-radio-item" data-value="light">Light</div>
+        <div data-slot="context-menu-radio-item" data-value="dark">Dark</div>
+        <div data-slot="context-menu-radio-item" data-value="system">System</div>
+      </div>
+    </div>
+  </div>
+</div>

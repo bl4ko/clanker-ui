@@ -81,7 +81,7 @@ def check_docs_sidebar(t):
     assert [s.strip() for s in sidebar.locator('[data-active="true"]').all_inner_texts()] == ["Components", "Button"]
     assert [s.strip() for s in sidebar.locator('[aria-current="page"]').all_inner_texts()] == ["Button"]
     labels = [s.strip() for s in sidebar.locator('[data-slot="sidebar-group-label"]').all_inner_texts()]
-    assert labels == ["Sections", "Components", "Blocks", "Get Started", "Utilities", "clanker-ui"]
+    assert labels == ["Sections", "Components", "AI Elements", "Blocks", "Get Started", "Utilities", "clanker-ui"]
     assert sidebar.locator('a[href="/docs"]').count() == 1
     styles = page.evaluate("""() => {
       const a = document.querySelector('[data-docs="sidebar"] [aria-current="page"]')
@@ -476,7 +476,7 @@ def check_docs_pages(t):
     t.shot("components", page)
     t.docs("/docs/components/accordion")
     assert "not ported yet" not in page.locator('[data-docs="article"]').inner_text()
-    assert page.locator('#accordion [data-docs="preview"] [data-slot="accordion"]').count() > 0
+    assert page.locator('[data-example="accordion-demo"] [data-docs="preview"] [data-slot="accordion"]').count() > 0
     assert page.locator('link[rel="alternate"][type="text/markdown"]').get_attribute("href") == "/docs/components/accordion.md"
     assert page.locator('link[rel="describedby"]').get_attribute("href") == "/llms.txt"
     t.docs("/docs/installation")
@@ -530,6 +530,8 @@ def check_docs_preview_keeps_kit_styles(t):
       document.head.append(link)
     })"""
     page.evaluate(load, "/clanker-ui.css")
+    page.evaluate(load, href.replace("/docs.css", "/fonts.css"))
+    page.evaluate("() => Promise.allSettled([...document.fonts].map(f => f.load())).then(() => document.fonts.ready).then(() => true)")
     t.settle(5000)
     before = page.evaluate(KIT_SNAPSHOT, KIT_PROPS)
     page.evaluate(load, href)
@@ -652,7 +654,48 @@ def check_docs_code_block_preview(t):
       const view = document.querySelector('[data-docs="code"] [data-slot="code-block-content"]')
       return [pad(demo), getComputedStyle(start).counterReset, pad(view)]
     }""")
-    assert got == ["12px", "none", "0px"], got
+    assert got == ["16px", "none", "0px"], got
+
+
+RHEA_PROPS = ["border-top-width", "border-top-left-radius", "padding-top", "padding-inline-start", "margin-top", "box-shadow", "background-color", "color", "font-size", "font-weight", "line-height", "gap", "display", "outline-width", "border-top-color", "fill", "stroke"]
+RHEA_SNAPSHOT = """props => [...document.querySelectorAll('[data-docs="preview"][data-docs-style="rhea"]')].map(root => [root, ...root.querySelectorAll("*")].map(el => {
+  const cs = getComputedStyle(el)
+  return [el.dataset.slot || el.tagName, ...props.map(p => cs.getPropertyValue(p))]
+}))"""
+RHEA_ONLY = """() => {
+  const d = document.documentElement.cloneNode(true)
+  d.querySelectorAll("script, meta[http-equiv]").forEach(e => e.remove())
+  for (const l of d.querySelectorAll("link[rel=stylesheet]")) {
+    const h = l.getAttribute("href")
+    if (h.endsWith("/style-rhea.css")) l.remove()
+    else if (h.endsWith("/clanker-ui.css")) l.setAttribute("href", h.slice(0, -"clanker-ui.css".length) + "clanker-ui-rhea.css")
+  }
+  return "<!doctype html>" + d.outerHTML
+}"""
+
+
+def check_docs_rhea_previews(t):
+    page = t.page
+    t.docs("/docs/components/button")
+    chrome = page.evaluate("""() => getComputedStyle(document.querySelector('[data-docs="search-trigger"]')).borderTopLeftRadius""")
+    for href in ("/docs/components/bubble", "/docs/components/code-block", "/docs/components/drawer"):
+        t.docs(href)
+        t.settle(3000)
+        assert page.evaluate("""() => getComputedStyle(document.querySelector('[data-docs="search-trigger"]')).borderTopLeftRadius""") == chrome, f"{href}: the docs chrome must stay Nova"
+        docs = page.evaluate(RHEA_SNAPSHOT, RHEA_PROPS)
+        assert docs, f"{href} has no Rhea preview"
+        html = page.evaluate(RHEA_ONLY)
+        other = page.context.new_page()
+        try:
+            other.route(t.base_url + "/__rhea-only", lambda r: r.fulfill(status=200, content_type="text/html", body=html))
+            other.goto(t.base_url + "/__rhea-only", wait_until="load")
+            other.emulate_media(color_scheme=t.theme)
+            other.wait_for_timeout(300)
+            only = other.evaluate(RHEA_SNAPSHOT, RHEA_PROPS)
+        finally:
+            other.close()
+        diffs = [(a[0], prop, a[1 + i], b[1 + i]) for x, y in zip(docs, only) for a, b in zip(x, y) for i, prop in enumerate(RHEA_PROPS) if a[1 + i] != b[1 + i]]
+        assert len(docs) == len(only) and not diffs, f"{href}: a Rhea preview differs from a page with only clanker-ui-rhea.css: {diffs[:5]}"
 
 
 def check_docs_component_demos(t):
@@ -666,8 +709,9 @@ def check_docs_component_demos(t):
     page.wait_for_function("""() => !document.querySelector('#dialog-demo dialog').open""")
     t.docs("/docs/components/chart")
     page.wait_for_function("""() => document.querySelectorAll('#chart [data-docs="preview"] [data-slot="chart"] svg').length >= 10""")
-    t.docs("/docs/components/table")
-    page.wait_for_function("""() => document.querySelectorAll('#table-data tbody tr[data-id]').length === 5""")
+    t.docs("/docs/components/data-table")
+    page.locator('[data-example="data-table-demo"] [data-js="filter"]').fill("ken")
+    page.wait_for_function("""() => document.querySelectorAll('[data-example="data-table-demo"] tbody tr[data-id]:not([hidden])').length === 1""")
     t.docs("/docs/components/stat-tile")
     page.wait_for_function("""() => document.querySelectorAll('#chart-stat [data-slot="chart-stat"]').length >= 7""")
     t.docs("/docs/components/sidebar")
@@ -724,6 +768,8 @@ def check_blocks_render(t):
     t.docs("/blocks/detail")
     stats = page.evaluate(BLOCK_LAYOUT)["stats"][:4]
     assert len({s["y"] for s in stats}) == (2 if t.mobile else 1), stats
+    side = page.evaluate("""() => { const a = document.querySelector('[data-slot=page-body] > [data-slot=page-aside]').getBoundingClientRect(); const m = document.querySelector('[data-slot=page-body] > :first-child').getBoundingClientRect(); return a.left >= m.right - 1 || a.right <= m.left + 1 }""")
+    assert side == (t.width >= 1024), "the detail aside is a side column from 64rem"
     t.docs("/blocks/settings")
     nav = page.evaluate(BLOCK_LAYOUT)["nav"]
     assert len({n["y"] for n in nav}) == (1 if t.mobile else len(nav)), nav
@@ -857,6 +903,15 @@ def check_blocks_card_grid(t):
     t.docs("/blocks/card-grid")
     cards = page.locator('#books > [data-slot="card"]:not([hidden])')
     assert cards.count() == 12
+    m = page.locator("#shelf [data-slot=data-table-toolbar]").evaluate("""bar => {
+      const r = s => bar.querySelector(s).getBoundingClientRect().toJSON()
+      const status = r('#shelf-select [data-slot=select-trigger]').width ? r('#shelf-select [data-slot=select-trigger]') : r('[data-slot=tabs-list]')
+      return { bar: bar.getBoundingClientRect().width, search: r('#shelf-filter'), status, sort: r('#shelf-sort [data-slot=select-trigger]') }
+    }""")
+    if t.mobile:
+        assert abs(m["search"]["width"] - m["bar"]) < 1 and abs(m["status"]["top"] - m["sort"]["top"]) < 1 and m["sort"]["top"] >= m["search"]["bottom"], m
+    else:
+        assert abs(m["search"]["top"] - m["sort"]["top"]) < 1, m
     if t.mobile:
         page.locator("#shelf-select [data-slot=select-trigger]").click()
         page.get_by_role("option", name="Read (6)").click()
@@ -911,6 +966,8 @@ def check_blocks_login_split(t):
     t.docs("/blocks/login-split")
     aside = page.locator('[data-slot="page-aside"]')
     assert aside.is_visible() == (t.width >= 1024)
+    step = """() => { const d = document.createElement('div'); d.hidden = true; document.querySelector('[data-layout=split] > :first-child').append(d); const v = getComputedStyle(d).display; d.remove(); return v }"""
+    assert page.evaluate(step) == "none", "a hidden step in the form column stays hidden"
     link = page.get_by_role("link", name="Forgot your password?")
     muted = page.evaluate("""() => { const p = document.createElement('p'); p.style.color = 'var(--muted-foreground)'; document.body.append(p); const c = getComputedStyle(p).color; p.remove(); return c }""")
     assert link.evaluate("a => getComputedStyle(a).color") == muted

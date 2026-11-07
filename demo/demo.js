@@ -812,6 +812,46 @@ const chartMonthData = { rows: chartMonths, config: chartDevices }
 const chartMonthOptions = { x: "month", xFormat: chartShort, label: "Visitors, January to June 2024" }
 
 chartMount("chart-demo", chartMonthData, { ...chartMonthOptions, type: "bar" })
+const chartBlue = { desktop: { label: "Desktop", color: "#2563eb" }, mobile: { label: "Mobile", color: "#60a5fa" } }
+const chartSteps = { x: "month", label: "Visitors, January to June 2024", type: "bar", table: false, valueAxis: false }
+chartMount("chart-example", { rows: chartMonths, config: chartBlue }, { ...chartSteps, grid: false, categoryAxis: false, legend: false })
+chartMount("chart-example-grid", { rows: chartMonths, config: chartBlue }, { ...chartSteps, categoryAxis: false, legend: false })
+chartMount("chart-example-axis", { rows: chartMonths, config: chartBlue }, { ...chartSteps, xFormat: chartShort, legend: false })
+chartMount("chart-example-tooltip", { rows: chartMonths, config: chartBlue }, { ...chartSteps, xFormat: chartShort, legend: false })
+chartMount("chart-example-legend", { rows: chartMonths, config: chartBlue }, { ...chartSteps, xFormat: chartShort })
+
+const chartArabicMonths = { January: "يناير", February: "فبراير", March: "مارس", April: "أبريل", May: "مايو", June: "يونيو" }
+chartMount(
+  "chart-rtl",
+  { rows: chartMonths, config: { desktop: { label: "سطح المكتب", color: "oklch(0.623 0.214 259.815)" }, mobile: { label: "الجوال", color: "oklch(0.809 0.105 251.813)" } } },
+  { ...chartSteps, xFormat: value => chartArabicMonths[value].slice(0, 3), labelFormat: value => chartArabicMonths[value], label: "الزوار" },
+)
+
+const chartInteractiveCard = document.getElementById("chart-interactive-card")
+if (chartInteractiveCard) {
+  const blue = { desktop: "oklch(0.623 0.214 259.815)", mobile: "oklch(0.809 0.105 251.813)" }
+  const label = { desktop: "Desktop", mobile: "Mobile" }
+  const day = value => new Date(`${value}T00:00:00`)
+  const days = chartDaily.slice(0, 30)
+  const show = key => {
+    for (const button of chartInteractiveCard.querySelectorAll("[data-chart-key]")) {
+      const on = button.dataset.chartKey === key
+      button.dataset.active = String(on)
+      button.setAttribute("aria-pressed", String(on))
+    }
+    return { rows: days.map(row => ({ date: row.date, [key]: row[key] })), config: { [key]: { label: label[key], color: blue[key] } } }
+  }
+  for (const key of ["desktop", "mobile"]) chartInteractiveCard.querySelector(`[data-chart-total="${key}"]`).textContent = days.reduce((sum, row) => sum + row[key], 0).toLocaleString("en-US")
+  const view = chartMount("chart-interactive", show("desktop"), {
+    type: "bar", x: "date", height: 250, legend: false, valueAxis: false, table: false, label: "Visitors for the last 3 months",
+    xFormat: value => day(value).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    labelFormat: value => day(value).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+  })
+  chartInteractiveCard.addEventListener("click", event => {
+    const button = event.target.closest("[data-chart-key]")
+    if (button && view) view.update(show(button.dataset.chartKey))
+  })
+}
 chartMount(
   "chart-colors",
   { rows: chartMonths, config: { desktop: { label: "Desktop", icon: "monitor", color: "chart-7" }, mobile: { label: "Mobile", icon: () => ui.icon("smartphone"), theme: { light: "#1baf7a", dark: "#199e70" } } } },

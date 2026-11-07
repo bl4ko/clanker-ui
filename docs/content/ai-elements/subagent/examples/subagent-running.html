@@ -1,0 +1,16 @@
+<div data-slot="trace" class="w-full max-w-sm">
+  <div data-slot="trace-collapsible" data-default-open>
+    <button type="button" data-slot="trace-collapsible-trigger">
+      <span data-slot="trace-line" data-status="running">
+        <span data-slot="trace-icon"><svg data-lucide="loader-circle" class="animate-spin"></svg></span>
+        <span data-slot="trace-title">Running the research agent</span>
+      </span>
+    </button>
+    <div data-slot="trace-collapsible-content">
+      <div data-slot="trace">
+        <span data-slot="trace-line"><span data-slot="trace-icon"><svg data-lucide="circle-check"></svg></span><span data-slot="trace-title">Ran grep -rn cacheKey scripts</span></span>
+        <span data-slot="trace-line" data-status="running"><span data-slot="trace-icon"><svg data-lucide="loader-circle" class="animate-spin"></svg></span><span data-slot="trace-title">Running sed -n 13,15p scripts/optimize-images.ts</span></span>
+      </div>
+    </div>
+  </div>
+</div>

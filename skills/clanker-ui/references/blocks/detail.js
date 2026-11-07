@@ -1,4 +1,4 @@
-import { toast } from "/vendor/clanker-ui/clanker-ui.min.js"
+import { h, toast } from "/vendor/clanker-ui/clanker-ui.min.js"
 
 document.getElementById("share").addEventListener("click", async () => {
   try {
@@ -20,4 +20,12 @@ document.getElementById("invite").addEventListener("click", async () => {
 
 document.getElementById("delete-project").addEventListener("click", () => {
   toast("Project deleted", { description: "Website redesign is in the trash for 30 days." })
+})
+
+const picker = h("input", { type: "file", multiple: true, hidden: true })
+document.getElementById("upload").addEventListener("click", () => picker.click())
+picker.addEventListener("change", () => {
+  const count = picker.files.length
+  if (count) toast.success(count === 1 ? "1 file uploaded" : `${count} files uploaded`, { description: "The team can open it in Files." })
+  picker.value = ""
 })

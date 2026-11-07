@@ -14,6 +14,12 @@ import (
 )
 
 type catalogData struct {
+	Files struct {
+		Styles []struct {
+			Name string `json:"name"`
+			CSS  string `json:"css"`
+		} `json:"styles"`
+	} `json:"files"`
 	Groups []struct {
 		Name string `json:"name"`
 		CSS  string `json:"css"`

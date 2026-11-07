@@ -1,0 +1,18 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/queue",
+  "parts": {
+    "trigger": {"role": "button", "name": "4 completed"},
+    "content": {"slot": "trace-collapsible-content", "optional": true, "size": true},
+    "replay": {"role": "button", "name": "Replay"}
+  },
+  "anchor": "trigger",
+  "positions": [],
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "Enter", "motion": "content"},
+    {"do": "press", "key": "Space", "motion": "content"},
+    {"do": "click", "target": "trigger", "motion": "content"},
+    {"do": "click", "target": "trigger", "motion": "content", "label": "click again"},
+    {"do": "tab"}
+  ]
+}

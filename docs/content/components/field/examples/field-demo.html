@@ -1,0 +1,89 @@
+<div class="w-full max-w-md">
+  <form>
+    <div data-slot="field-group">
+      <fieldset data-slot="field-set">
+        <legend data-slot="field-legend">Payment Method</legend>
+        <p data-slot="field-description">All transactions are secure and encrypted</p>
+        <div data-slot="field-group">
+          <div data-slot="field">
+            <label data-slot="field-label" for="checkout-7j9-card-name-43j">Name on Card</label>
+            <input data-slot="input" id="checkout-7j9-card-name-43j" placeholder="Evil Rabbit" required>
+          </div>
+          <div data-slot="field">
+            <label data-slot="field-label" for="checkout-7j9-card-number-uw1">Card Number</label>
+            <input data-slot="input" id="checkout-7j9-card-number-uw1" placeholder="1234 5678 9012 3456" required>
+            <p data-slot="field-description">Enter your 16-digit card number</p>
+          </div>
+          <div class="grid grid-cols-3 gap-4">
+            <div data-slot="field">
+              <label data-slot="field-label" for="checkout-exp-month-ts6">Month</label>
+              <div data-slot="select">
+                <button type="button" data-slot="select-trigger" id="checkout-exp-month-ts6"><span data-slot="select-value">MM</span></button>
+                <div data-slot="select-content">
+                  <div data-slot="select-group">
+                    <div data-slot="select-item" data-value="01">01</div>
+                    <div data-slot="select-item" data-value="02">02</div>
+                    <div data-slot="select-item" data-value="03">03</div>
+                    <div data-slot="select-item" data-value="04">04</div>
+                    <div data-slot="select-item" data-value="05">05</div>
+                    <div data-slot="select-item" data-value="06">06</div>
+                    <div data-slot="select-item" data-value="07">07</div>
+                    <div data-slot="select-item" data-value="08">08</div>
+                    <div data-slot="select-item" data-value="09">09</div>
+                    <div data-slot="select-item" data-value="10">10</div>
+                    <div data-slot="select-item" data-value="11">11</div>
+                    <div data-slot="select-item" data-value="12">12</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="field">
+              <label data-slot="field-label" for="checkout-7j9-exp-year-f59">Year</label>
+              <div data-slot="select">
+                <button type="button" data-slot="select-trigger" id="checkout-7j9-exp-year-f59"><span data-slot="select-value">YYYY</span></button>
+                <div data-slot="select-content">
+                  <div data-slot="select-group">
+                    <div data-slot="select-item" data-value="2024">2024</div>
+                    <div data-slot="select-item" data-value="2025">2025</div>
+                    <div data-slot="select-item" data-value="2026">2026</div>
+                    <div data-slot="select-item" data-value="2027">2027</div>
+                    <div data-slot="select-item" data-value="2028">2028</div>
+                    <div data-slot="select-item" data-value="2029">2029</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div data-slot="field">
+              <label data-slot="field-label" for="checkout-7j9-cvv">CVV</label>
+              <input data-slot="input" id="checkout-7j9-cvv" placeholder="123" required>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <div data-slot="field-separator"></div>
+      <fieldset data-slot="field-set">
+        <legend data-slot="field-legend">Billing Address</legend>
+        <p data-slot="field-description">The billing address associated with your payment method</p>
+        <div data-slot="field-group">
+          <div data-slot="field" data-orientation="horizontal">
+            <button type="button" data-slot="checkbox" id="checkout-7j9-same-as-shipping-wgm" data-checked></button>
+            <label data-slot="field-label" for="checkout-7j9-same-as-shipping-wgm" class="font-normal">Same as shipping address</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset data-slot="field-set">
+        <div data-slot="field-group">
+          <div data-slot="field">
+            <label data-slot="field-label" for="checkout-7j9-optional-comments">Comments</label>
+            <textarea data-slot="textarea" id="checkout-7j9-optional-comments" placeholder="Add any additional comments" class="resize-none"></textarea>
+          </div>
+        </div>
+      </fieldset>
+      <div data-slot="field" data-orientation="horizontal">
+        <button type="submit" data-slot="button">Submit</button>
+        <button type="button" data-slot="button" data-variant="outline">Cancel</button>
+      </div>
+    </div>
+  </form>
+</div>
+

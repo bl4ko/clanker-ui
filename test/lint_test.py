@@ -88,5 +88,5 @@ def check_lint_blocks(t):
     for name in sorted(p.stem for p in (HERE.parent / "skills/clanker-ui/references/blocks").glob("*.html")):
         t.docs(f"/blocks/{name}")
         inject(t)
-        errors = [f for f in lint(t) if f["severity"] == "error"]
-        assert errors == [], (name, short(errors))
+        found = [f for f in lint(t) if f["severity"] == "error" or f["rule"] in ("empty-region", "low-contrast")]
+        assert found == [], (name, short(found))

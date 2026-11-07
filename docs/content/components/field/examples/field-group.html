@@ -1,0 +1,31 @@
+<div data-slot="field-group" class="w-full max-w-xs">
+  <fieldset data-slot="field-set">
+    <label data-slot="field-label">Responses</label>
+    <p data-slot="field-description">Get notified when ChatGPT responds to requests that take time, like research or image generation.</p>
+    <div data-slot="checkbox-group">
+      <div data-slot="field" data-orientation="horizontal">
+        <button type="button" data-slot="checkbox" id="push" data-checked disabled></button>
+        <label data-slot="field-label" for="push" class="font-normal">Push notifications</label>
+      </div>
+    </div>
+  </fieldset>
+  <div data-slot="field-separator"></div>
+  <fieldset data-slot="field-set">
+    <label data-slot="field-label">Tasks</label>
+    <p data-slot="field-description">
+      Get notified when tasks you&#39;ve created have updates. 
+      <a href="#">Manage tasks</a>
+    </p>
+    <div data-slot="checkbox-group">
+      <div data-slot="field" data-orientation="horizontal">
+        <button type="button" data-slot="checkbox" id="push-tasks"></button>
+        <label data-slot="field-label" for="push-tasks" class="font-normal">Push notifications</label>
+      </div>
+      <div data-slot="field" data-orientation="horizontal">
+        <button type="button" data-slot="checkbox" id="email-tasks"></button>
+        <label data-slot="field-label" for="email-tasks" class="font-normal">Email notifications</label>
+      </div>
+    </div>
+  </fieldset>
+</div>
+

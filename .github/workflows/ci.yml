@@ -73,7 +73,7 @@ jobs:
       - run: go vet ./... && go test ./...
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          version: "0.13.6"
+          version: "0.13.7"
           python-version: "3.13"
           enable-cache: false
       - name: Tool self-tests
@@ -87,9 +87,9 @@ jobs:
         run: |
           go run ./tools/gen fetch -src "$RUNNER_TEMP/shadcn"
           go run ./tools/gen -src "$RUNNER_TEMP/shadcn" -out clanker-ui.css
-          git diff --exit-code clanker-ui.css
+          git diff --exit-code clanker-ui.css clanker-ui-rhea.css dist
           go run ./tools/gen docs-coverage -src "$RUNNER_TEMP/shadcn"
-          go run ./tools/gen utilities -src "$RUNNER_TEMP/shadcn" -content 'docs/content/**/examples/*.html' -out docs/assets/examples.css
+          go run ./tools/gen utilities -src "$RUNNER_TEMP/shadcn" -content 'docs/content/**/examples/*.{html,js}' -out docs/assets/examples.css
           git diff --exit-code docs/assets/examples.css
 
   gitleaks:
@@ -131,7 +131,7 @@ jobs:
           go-version-file: go.mod
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          version: "0.13.6"
+          version: "0.13.7"
           python-version: "3.13"
           enable-cache: false
       - name: Install browser

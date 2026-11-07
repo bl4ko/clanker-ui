@@ -1,0 +1,19 @@
+<div data-slot="dropdown-menu">
+  <button type="button" data-slot="button" data-variant="ghost" data-size="icon" class="rounded-full" aria-label="Account menu" data-dropdown-menu-trigger>
+    <span data-slot="avatar">
+      <img data-slot="avatar-image" src="demo/assets/g3-avatar-1.svg" alt="shadcn">
+      <span data-slot="avatar-fallback">CN</span>
+    </span>
+  </button>
+  <div data-slot="dropdown-menu-content" class="w-32">
+    <div data-slot="dropdown-menu-group">
+      <div data-slot="dropdown-menu-item">Profile</div>
+      <div data-slot="dropdown-menu-item">Billing</div>
+      <div data-slot="dropdown-menu-item">Settings</div>
+    </div>
+    <div data-slot="dropdown-menu-separator"></div>
+    <div data-slot="dropdown-menu-group">
+      <div data-slot="dropdown-menu-item" data-variant="destructive">Log out</div>
+    </div>
+  </div>
+</div>

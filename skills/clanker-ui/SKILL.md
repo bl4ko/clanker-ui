@@ -21,6 +21,7 @@ References in this skill:
 - [references/setup.md](references/setup.md): file checks, other ways to get the files, the group command for existing HTML, and which file exports which names.
 - [references/design.md](references/design.md): design rules for layout, spacing, type, buttons, color, forms, states, and phones. [references/choosing.md](references/choosing.md): which component for which job.
 - `references/blocks/<name>.html` (and `.js`): whole pages to start from.
+- [references/ai-elements.md](references/ai-elements.md): chat and agent patterns (message, prompt, steps, sources, code output) and which one to use.
 - [references/recipes.md](references/recipes.md): set values from code, forms in overlays, several rules per field, star rating, card grid, a shared header on static pages, breadcrumbs in the top header, category bar charts, uptime strips, long pages, a toast after a page change, a dropzone, lists in cards, phone tables, a dashboard in the top-header shell.
 - [references/events.md](references/events.md), [references/theming.md](references/theming.md), [references/testing.md](references/testing.md) (Playwright check and design lint), [references/clanker-ui.json](references/clanker-ui.json) (all component data as JSON).
 
@@ -43,6 +44,7 @@ Find the group of each component in [references/components.md](references/compon
 - A group module imports `clanker-ui-core.min.js` itself. Never mix readable and `.min` files, and never load `clanker-ui.min.js` with a group file. A missing group fails without a message; if you are not sure, use the one-file set.
 - Charts: module `clanker-ui-chart.min.js`. `clanker-ui.min.css` has the chart CSS; with group files also load `clanker-ui-chart.min.css`.
 - Syntax colors in a code block: module `clanker-ui-code.min.js` and `data-language` on `code-block-content`.
+- Style: Nova is the default. For the shadcn Rhea style, load `clanker-ui-rhea.min.css` (or `clanker-ui-rhea-<group>.min.css`) instead of the Nova CSS, never both. Markup and JS do not change.
 - Every kit file has a `.min` version: the theme script is `clanker-ui-theme.min.js` in the `.min` set and `clanker-ui-theme.js` in the readable set.
 - Always load `clanker-ui-a11y.min.css` after the kit CSS (every block does): the kit keeps the shadcn values, and status badges, the avatar fallback, muted text, and input borders are below WCAG 2.2 AA without it.
 

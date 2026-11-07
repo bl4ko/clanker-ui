@@ -1,0 +1,45 @@
+{
+  "url": "https://ui.shadcn.com/docs/ai-elements/base/task",
+  "note": "The docs example uses the base-rhea style; behavior does not depend on it, and no step compares sizes.",
+  "parts": {
+    "trigger": {
+      "role": "button",
+      "name": "Found the project files"
+    },
+    "update": {
+      "role": "button",
+      "name": "Updated the page metadata"
+    },
+    "content": {
+      "slot": "trace-collapsible-content",
+      "optional": true
+    }
+  },
+  "anchor": "trigger",
+  "positions": [],
+  "steps": [
+    {
+      "do": "tab_in"
+    },
+    {
+      "do": "press",
+      "key": "Enter",
+      "motion": "content"
+    },
+    {
+      "do": "tab"
+    },
+    {
+      "do": "press",
+      "key": "Space",
+      "motion": "content",
+      "label": "open the second task"
+    },
+    {
+      "do": "click",
+      "target": "trigger",
+      "motion": "content",
+      "label": "close the first task"
+    }
+  ]
+}

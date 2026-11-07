@@ -1,5 +1,5 @@
 {{define "example"}}<div data-docs="component-preview" data-example="{{.Name}}">
-<div data-docs="preview"{{if .Align}} data-align="{{.Align}}"{{end}}{{if .Height}} data-height="{{.Height}}"{{end}}>
+<div data-docs="preview"{{if .Align}} data-align="{{.Align}}"{{end}}{{if .Height}} data-height="{{.Height}}"{{end}}{{if .Style}} data-docs-style="{{.Style}}"{{end}}{{if .Scheme}} data-scheme="{{.Scheme}}"{{end}}>
 {{.Preview}}
 </div>
 <div data-slot="collapsible" data-state="closed" data-docs="code">

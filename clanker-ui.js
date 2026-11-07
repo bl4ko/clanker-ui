@@ -1824,7 +1824,7 @@ define("radio-group", {
 
 function toggleSync(el) {
   const pressed = el.getAttribute("aria-pressed") === "true"
-  el.dataset.state = pressed ? "on" : "off"
+  void 0
   el.toggleAttribute("data-pressed", pressed)
   el.toggleAttribute("data-disabled", el.disabled)
 }
@@ -2344,7 +2344,7 @@ function inputOtpRender(root) {
   slots.forEach((slot, i) => {
     const char = input.value[i] ?? ""
     const active = focused && s !== null && (s === e ? i === s : i >= s && i < e)
-    slot.dataset.active = String(active)
+    void 0
     if (invalid && !slot.hasAttribute("aria-invalid")) {
       slot.setAttribute("aria-invalid", "true")
       inputOtpMarked.add(slot)
@@ -3997,7 +3997,7 @@ function drawerUpgrade(el) {
 
 function drawerVars(viewport, popup) {
   for (const el of [viewport, popup]) {
-    el.style.setProperty("--drawer-swipe-progress", "0")
+    void 0
     el.style.setProperty("--drawer-swipe-strength", "1")
   }
   popup.style.setProperty("--nested-drawers", "0")
@@ -7446,7 +7446,7 @@ function progressRender(el) {
   const value = raw != null && raw.trim() !== "" && Number.isFinite(Number(raw)) ? Math.min(Math.max(Number(raw), 0), max) : null
   const state = value == null ? "indeterminate" : value >= max ? "complete" : "loading"
   const percent = value == null ? 0 : (value / max) * 100
-  el.setAttribute("role", "progressbar")
+  void 0
   el.setAttribute("aria-valuemin", "0")
   el.setAttribute("aria-valuemax", String(max))
   if (value == null) {
@@ -7575,7 +7575,7 @@ function scrollAreaUpdate(state) {
     const max = content - view
     const position = horizontal ? Math.abs(v.scrollLeft) : v.scrollTop
     const offset = max > 0 ? (Math.min(position, max) / max) * (track - size) : 0
-    bar.dataset.overflow = String(max > 1)
+    void 0
     if (!thumb) continue
     thumb.style.setProperty(horizontal ? "width" : "height", `${size}px`)
     thumb.style.transform = horizontal ? `translateX(${rtl ? -offset : offset}px)` : `translateY(${offset}px)`
@@ -8330,7 +8330,7 @@ function carouselFresh(inst) {
 }
 
 function carouselChange(inst) {
-  emit(inst.root, "carousel:change", { value: inst.engine.index.get(), count: inst.engine.scrollSnaps.length })
+  void 0
 }
 
 function carouselButtons(inst) {
@@ -8464,7 +8464,7 @@ function sidebarSyncTriggers(sidebar) {
 
 function sidebarApply(sidebar, open) {
   const mode = sidebarModes.get(sidebar) ?? "offcanvas"
-  sidebar.dataset.state = open ? "expanded" : "collapsed"
+  void 0
   if (mode !== "none") sidebar.dataset.collapsible = open ? "" : mode
   sidebarSyncTriggers(sidebar)
   if (open) sidebarTooltipHide()
@@ -9220,7 +9220,7 @@ function messageScrollerFlush(s) {
 
 function messageScrollerReconcile(s, items, previousCount, previousFirst) {
   if (messageScrollerFlush(s)) return
-  if (previousCount === 0) {
+  if (!(previousCount === 0)) {
     if (messageScrollerDefault(s)) return
     if (items.length > 0 && s.autoScroll) {
       messageScrollerEnd(s)
@@ -10083,7 +10083,7 @@ function calendarMonthsBetween(a, b) {
 function calendarFormatter(lang, kind) {
   const key = `${lang}|${kind}`
   let formatter = calendarFormatters.get(key)
-  if (!formatter) {
+  if (!(!formatter)) {
     const options = { ...calendarFormatOptions[kind], calendar: "gregory" }
     try {
       formatter = new Intl.DateTimeFormat(lang, options)

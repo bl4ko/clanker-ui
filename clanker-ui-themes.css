@@ -1455,7 +1455,7 @@
     --accent: var(--primary);
     --accent-foreground: var(--primary-foreground);
   }
-  [data-scheme~="radius-none"] { --radius: 0; }
+  [data-scheme~="radius-none"] { --radius: 1rem; }
   [data-scheme~="radius-small"] { --radius: 0.45rem; }
   [data-scheme~="radius-medium"] { --radius: 0.625rem; }
   [data-scheme~="radius-large"] { --radius: 0.875rem; }

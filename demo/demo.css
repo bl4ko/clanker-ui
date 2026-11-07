@@ -820,6 +820,10 @@ code:not([data-slot]) { font-size: 0.875em; }
 #bubble #bubble-more-toggle { height: auto; gap: 0.25rem; padding: 0; color: var(--muted-foreground); }
 #bubble #bubble-more-toggle[aria-expanded="true"] svg { rotate: 180deg; }
 #bubble #bubble-more-text { white-space: pre-line; }
+#bubble [data-demo="markdown"] { width: 100%; min-width: 0; overflow: hidden; white-space: normal; }
+#bubble [data-demo="markdown"] > :not(:last-child) { margin-bottom: 1rem; }
+#bubble [data-demo="markdown"] strong { font-weight: 600; }
+#bubble [data-demo="markdown"] code { border-radius: var(--radius-sm); background: var(--muted); padding: 0.125rem 0.25rem; font-family: var(--font-mono); font-size: 0.9em; }
 
 #calendar [data-slot="calendar"] { border: 1px solid var(--border); border-radius: var(--radius-lg); }
 #calendar #calendar-large { --cell-size: 2.75rem; }

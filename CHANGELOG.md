@@ -66,6 +66,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Fixed
 
+- Docs: the ghost bubble of the Bubble variants example has the shadcn Markdown text, paragraph spacing, and inline code look.
 - `data-layout="split"`: a child of the form column with `hidden` stays hidden (before, the layout made it `display: flex`).
 - Input group: a click in a menu or another popup inside an addon (a model menu next to the field) no longer moves focus to the field; the menu returns focus to its trigger.
 - `sheet-body` and `drawer-body` are in the catalog and the component files.

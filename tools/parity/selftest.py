@@ -131,11 +131,23 @@ def source_checks():
     wrapped = wrapper.node({"i": 10, "t": "div", "a": [["data-slot", "card"], ["class", "flex gap-4 rounded-xl"]], "c": [{"i": 11, "t": "span", "a": [["data-slot", "badge"], ["class", "inline-flex h-5 px-1"]], "c": ["A"]}]})
     adata = {"components": ["group"], "parts": [{"slot": "group", "selector": ':is([data-slot="group"], [data-slot="check-group"])', "from": "group/Group", "tokens": ["flex", "flex-col", "gap-5", "w-full", "data-[slot=check-group]:gap-3", "min-w-0"], "mapped": True}], "source_tokens": {"group": ["flex", "flex-col", "gap-5", "w-full", "min-w-0"]}}
     alias_out = parity.Converter(parity.Parts(adata), ["group"], "group").node({"i": 9, "t": "div", "a": [["data-slot", "check-group"], ["class", "flex flex-col gap-5 w-full min-w-0 data-[slot=check-group]:gap-3"]], "c": []})
+    hex_ = object.__new__(parity.Examples)
+    hex_.text = {"bubble-md": 'import { Markdown } from "@/components/markdown"\nexport function A() { return <BubbleContent><Markdown /></BubbleContent> }'}
+    hex_.helpers = {"markdown": 'function MarkdownCode({ className }) { return <code className={cn("rounded-sm bg-muted px-1", className)} /> }\nfunction Markdown() { return <BubbleContent className="space-y-2"><Streamdown data-slot="markdown" className={cn("w-full overflow-hidden", className)} /></BubbleContent> }'}
+    bdata = {"components": ["bubble"], "parts": [{"slot": "bubble-content", "selector": "[data-slot=\"bubble-content\"]", "from": "bubble/BubbleContent", "tokens": ["overflow-hidden", "rounded-3xl"], "mapped": True}], "source_tokens": {"bubble": ["overflow-hidden", "rounded-3xl", "rounded-sm", "bg-muted", "px-1", "space-y-2", "w-full"]}}
+    bconv = parity.Converter(parity.Parts(bdata), ["bubble"], "bubble")
+    bconv.use(hex_.of("bubble-md"))
+    btree = {"i": 20, "t": "div", "a": [["data-slot", "bubble-content"], ["class", "overflow-hidden rounded-3xl space-y-2"]], "c": [{"i": 21, "t": "div", "a": [["class", "w-full overflow-hidden"]], "c": [{"i": 22, "t": "code", "a": [["class", "rounded-sm bg-muted px-1"]], "c": ["x"]}]}]}
+    helper_out = bconv.node(btree)
+    groups = parity.Parts({"components": [], "parts": [], "groups": {".group\\/drawer-popup": ['[data-slot="drawer-popup"]']}})
+    grouped = parity.group_owners('.x:is(:where(.group\\/drawer-popup)[data-swipe-axis="x"] *), .y:is(:where(.group\\/other) *) {}', [groups])
     otp = parity.Converter(parts, PARTS["components"], "input-otp").node({"i": 3, "t": "div", "a": [["data-input-otp-container", "true"]], "c": [{"i": 4, "t": "input", "a": [["data-input-otp", "true"], ["data-slot", "input-otp"]], "c": []}]})
     return [
         check("a preview keeps only the classes of its own example file", 'data-pid="1" class="rounded-full"' in page),
         check("a preview without a known example keeps no definition class", 'data-pid="2">' in page),
         check("without a known example, classes of the part from another component file go too", parity.Converter(parity.Parts(odata), ["combobox", "input-group"], "combobox").keep(["data-pressed:bg-transparent", "my-x"], "input-group-button", {"input-group"}) == ["my-x"]),
+        check("a docs-site component that the example imports gives its classes (markdown inline code, message-animated space-y-2)", hex_.of("bubble-md")[1:] == [hex_.helpers["markdown"]] and 'data-pid="20" class="space-y-2"' in helper_out and 'data-pid="21" class="w-full overflow-hidden"' in helper_out and 'data-pid="22" class="rounded-sm bg-muted px-1"' in helper_out),
+        check("a named group of a part also matches the kit part in the example CSS (group/drawer-popup)", ':where(:is(.group\\/drawer-popup, [data-slot="drawer-popup"]))[data-swipe-axis="x"]' in grouped and ":where(.group\\/other)" in grouped),
         check("a wrapper className is no class set of a part (NB1)", 'data-pid="10">' in wrapped and 'data-pid="11" class="px-1"' in wrapped),
         check("a className from a const string counts like a literal (questionnaire itemClassName)", [sorted(x) for x in parity.jsx_elements('const itemClassName =\n  "data-active:animate-in motion-reduce:animate-none"\n\nfunction A() { return <QuestionnaireItem className={itemClassName} name="a" /> }')[0][2]] == [["data-active:animate-in", "motion-reduce:animate-none"]]),
         check("the render element of a part gives its className to that part", [sorted(x) for x in parity.jsx_elements('<Badge render={<button className="flex gap-1" />}>A</Badge>')[0][2]] == [["flex", "gap-1"]]),

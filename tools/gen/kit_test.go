@@ -74,3 +74,14 @@ func TestLayerStray(t *testing.T) {
 		t.Errorf("got\n%s", got)
 	}
 }
+
+func TestHasVariantLimitedToRenderers(t *testing.T) {
+	for _, s := range kitStyles {
+		css := readRepo(t, s.file)
+		for _, raw := range []string{`:has([data-variant=`, `:has( > [data-variant=`, `:has([data-size=`, `:has( > [data-size=`} {
+			if strings.Contains(css, raw) {
+				t.Errorf("%s has %q: kit buttons set data-variant and data-size, shadcn buttons do not; limit it to the parts that render the attribute", s.file, raw)
+			}
+		}
+	}
+}

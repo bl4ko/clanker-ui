@@ -214,6 +214,7 @@ uv run --no-project --with playwright python -I tools/parity/selftest.py
   | P6 | react-resizable-panels sets a global cursor by JavaScript on hover and drag. The source has no cursor class. |
   | P7 | Live JavaScript scrolls the message scroller viewport to the end, so the scroll-driven `scroll-fade-b` mask has no end fade. The copy is not scrolled. |
   | R2 | The Nova example page loads the `cn-*` rules in `@layer base` without `tailwind-merge`: file order decides, and a plain class beats a marker variant (`min-w-0` over `min-w-40`). An installed component resolves them with `tailwind-merge`, like the kit. |
+  | R5 | The difference is also on the Nova example page of the component, measured against Nova (`--page-style nova`): a limit of the example page (R2 file order, docs-site layout and images), not of the style. |
   | R3 | Docs-site CSS: the Nova code-block example puts the blocks in `.typeset` (prose margins), which is not a shadcn class. |
   | R4 | The input-group example puts `data-slot="input-group-control"` on a textarea of another library with its own classes, so the kit part rules apply only in the copy. Nothing visible changes. |
   | T7 | Example classes compile into a layer above the component rules. In shadcn, `tailwind-merge` keeps the part variant (`in-data-[slot=...]:p-0`, `dark:hover:`) and the variant wins. |
@@ -222,6 +223,8 @@ uv run --no-project --with playwright python -I tools/parity/selftest.py
   | T18 | react-resizable-panels focuses the handle by script on `pointerdown`. After an earlier key press, the live handle matches `:focus-visible` and the copy does not. |
   | T20 | The tool blocks image hosts other than ui.shadcn.com, so an image shows its alt text. The docs-site `overflow-wrap: break-word` wraps a long alt text and makes the live image taller; the copy has no page `overflow-wrap`. |
   | T21 | The kit has its own `scroll-fade` utility (`tools/gen/kit.css`, other animation names), so `tools/gen utilities` does not compile the shadcn one for example classes, and the tool loads the generated CSS without `kit.css`: the copy has no scroll fade (drawer demo body; both live fades are 0 px there). |
+  | T22 | The example passes a class through an expression that the tool does not read (`className={selectedSpacing?.className}` from an options array), so the copy has no class. Only styles whose part reads the property (`--card-spacing`) show it. |
+  | T23 | The example renders a part through another component (`render={<Label />}`, `render={<CardTitle />}`). The tool makes the element that component with the part as a boolean attribute (`data-button-group-text`), which the generated CSS selects only for parts that the source renders as another component; kit markup uses the part slot. Nova hides it where both parts have the same value. |
   | U1 | `InputOTPSeparator` spreads `{...props}` after `className`, so the `className` of an example replaces the part classes on the live page. The kit keeps the part classes of the source. |
   | U2 | The shadcn `scroll-fade-x` utility selects `[dir="rtl"] *`, so a `dir="ltr"` code block in an RTL example gets the RTL mask on the live page. The kit uses `:dir()`. |
   | U3 | The docs site does not apply the `cn-rtl-flip` transform (`rtl:rotate-180`) in RTL examples. The kit follows the shadcn `rtl` install option. |

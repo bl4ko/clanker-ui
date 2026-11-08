@@ -429,7 +429,7 @@ func (g *gen) rdpSelectors() map[string]string {
 
 var dirAttr = regexp.MustCompile(`:where\((?::dir\((?:rtl|ltr)\),\s*)?\[dir="?(rtl|ltr)"?\](?:,\s*\[dir="?(?:rtl|ltr)"?\]\s*\*)?\)`)
 
-var hasAttr = regexp.MustCompile(`:has\(\[(data-variant|data-size)=("[^"]*"|[^\]"]*)\]\)`)
+var hasAttr = regexp.MustCompile(`:has\(( > )?\[(data-variant|data-size)=("[^"]*"|[^\]"]*)\]\)`)
 
 func (g *gen) attrRenderers(attr string) []string {
 	var out []string
@@ -453,12 +453,12 @@ func postprocess(css string, owners map[string][]string, k kitMap, g *gen) strin
 	css = blockComment.ReplaceAllString(css, "")
 	css = hasAttr.ReplaceAllStringFunc(css, func(m string) string {
 		sub := hasAttr.FindStringSubmatch(m)
-		slots := g.attrRenderers(sub[1])
+		slots := g.attrRenderers(sub[2])
 		if len(slots) == 0 {
 			return m
 		}
 		g.note("has() of a variant attribute limited to the parts that render it in shadcn (kit buttons also set it)", "%s -> %d parts", m, len(slots))
-		return ":has(:is(" + strings.Join(slots, ", ") + ")[" + sub[1] + "=" + sub[2] + "])"
+		return ":has(" + sub[1] + ":is(" + strings.Join(slots, ", ") + ")[" + sub[2] + "=" + sub[3] + "])"
 	})
 	if n := len(dirAttr.FindAllString(css, -1)); n > 0 {
 		css = dirAttr.ReplaceAllString(css, ":where(:dir($1))")

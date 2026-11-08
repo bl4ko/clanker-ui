@@ -215,6 +215,7 @@ uv run --no-project --with playwright python -I tools/parity/selftest.py
   | P7 | Live JavaScript scrolls the message scroller viewport to the end, so the scroll-driven `scroll-fade-b` mask has no end fade. The copy is not scrolled. |
   | R2 | The Nova example page loads the `cn-*` rules in `@layer base` without `tailwind-merge`: file order decides, and a plain class beats a marker variant (`min-w-0` over `min-w-40`). An installed component resolves them with `tailwind-merge`, like the kit. |
   | R5 | The difference is also on the Nova example page of the component, measured against Nova (`--page-style nova`): a limit of the example page (R2 file order, docs-site layout and images), not of the style. |
+  | R6 | The example page applies the `cn-*` rules to markers in `classNames` props (calendar caption label, dropdown root). The shadcn install transform expands markers only in `className` and `cva`, so the installed component and the kit have no rule there (Generated CSS, `map.tsv`). |
   | R3 | Docs-site CSS: the Nova code-block example puts the blocks in `.typeset` (prose margins), which is not a shadcn class. |
   | R4 | The input-group example puts `data-slot="input-group-control"` on a textarea of another library with its own classes, so the kit part rules apply only in the copy. Nothing visible changes. |
   | T7 | Example classes compile into a layer above the component rules. In shadcn, `tailwind-merge` keeps the part variant (`in-data-[slot=...]:p-0`, `dark:hover:`) and the variant wins. |

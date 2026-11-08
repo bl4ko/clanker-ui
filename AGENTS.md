@@ -57,7 +57,7 @@ uv run --no-project --with playwright python -I tools/behavior gate --quick --ba
 
 ## Parity rule
 
-- The reference is the live site: `https://ui.shadcn.com/docs/components/base/<name>` and the Nova preview routes (a `base-rhea` docs preview is the Rhea reference: `tools/parity` measures it against `clanker-ui-rhea.css`, `report.py --style rhea`), at the shadcn commit in `tools/gen/main.go` (`shadcnSHA`) and Base UI 1.6.0.
+- The reference is the live site: `https://ui.shadcn.com/docs/components/base/<name>` and the Nova preview routes (a `base-rhea` docs preview is the Rhea reference: `tools/parity` measures it against `clanker-ui-rhea.css`, `report.py --style rhea`; the other styles have no docs previews, so their reference is the example page with the style preset: `parity.py --page-style <style>`, `report.py --style <style>`), at the shadcn commit in `tools/gen/main.go` (`shadcnSHA`) and Base UI 1.6.0.
 - Find the live behavior first (live bundle, `tools/behavior record`, or a measured probe), then match it. Do not guess values.
 - Exception: the kit keeps its better ARIA where the live site is weaker. Each such difference is an `allowed` entry with a reason in `test/behavior/scenarios/<component>.json`.
 - `tools/parity` (CSS) and `tools/behavior gate` (behavior) are merge gates for component changes. Both need the network only to record; the gate and the tests run offline.

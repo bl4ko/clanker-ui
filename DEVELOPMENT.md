@@ -190,6 +190,8 @@ go run ./tools/gen -src "$SHADCN_SRC" -out clanker-ui.css -tailwind "$TAILWIND"
 uv run --no-project --with playwright python -I tools/parity/parity.py --src "$SHADCN_SRC" --out "<dir>"
 uv run --no-project python -I tools/parity/report.py "<dir>"
 uv run --no-project python -I tools/parity/report.py "<dir>" --style rhea
+uv run --no-project --with playwright python -I tools/parity/parity.py --src "$SHADCN_SRC" --out "<dir>" --page-style luma
+uv run --no-project python -I tools/parity/report.py "<dir>" --style luma
 uv run --no-project --with playwright python -I tools/parity/selftest.py
 ```
 
@@ -225,7 +227,8 @@ uv run --no-project --with playwright python -I tools/parity/selftest.py
   | U3 | The docs site does not apply the `cn-rtl-flip` transform (`rtl:rotate-180`) in RTL examples. The kit follows the shadcn `rtl` install option. |
 
 - Self-test: `--drop-slot <slot>` removes every generated rule for that slot before it measures. `--only badge` gives 8/8 equal parts; `--only badge --drop-slot badge` gives 0/8, and `report.py --strict` exits 1. `--only card --drop-slot card-header`, `--only code-block --drop-slot trace-collapsible`, and `--only marker --drop-slot accordion` also fail `--strict` (a part keeps no class of its definition, also not from a wrapper). `selftest.py` checks the tolerances and the class rules without a browser.
-- Options: `--only a,b`, `--engine firefox|webkit`, `--quick` (rest and open only), `--max-open`, `--max-states`.
+- Options: `--only a,b`, `--engine firefox|webkit`, `--quick` (rest and open only), `--max-open`, `--max-states`, `--page-style <style>`.
+- `--page-style <style>` measures a ported style that the docs pages do not show (Luma, Lyra, Maia, Mira, Sera, Vega): for each component with an example page it loads only `/preview/base/<name>-example?preset=<code>` and measures it against that style. The preview route takes the style from the `preset` code of the shadcn create page (`b0` is Nova; a `?style=` parameter is ignored), so the tool encodes the style with all other fields at their default (`preset_code` in `parity.py`; Lyra and Sera also get `--radius: 0` there, which the tool copies with the other live tokens). The totals are in `styles.<style>`; `report.py --style <style>` gates them with `known-<style>.tsv`. The limit of the Nova example page (R2) applies.
 
 ### Behavior parity with shadcn
 

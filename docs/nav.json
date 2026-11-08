@@ -155,8 +155,8 @@
     {
       "title": "Utilities",
       "items": [
-        {"title": "scroll-fade", "href": "/docs/utils/scroll-fade", "readme": "css-rules-for-components", "description": "A mask that fades the edge of a scroll container where more content is."},
-        {"title": "shimmer", "href": "/docs/utils/shimmer", "readme": "css-rules-for-components", "description": "A text shimmer for loading and status text."}
+        {"title": "scroll-fade", "href": "/docs/utils/scroll-fade", "style": "rhea", "readme": "css-rules-for-components", "description": "A mask that fades the edge of a scroll container where more content is."},
+        {"title": "shimmer", "href": "/docs/utils/shimmer", "style": "rhea", "readme": "css-rules-for-components", "description": "A text shimmer for loading and status text."}
       ]
     },
     {

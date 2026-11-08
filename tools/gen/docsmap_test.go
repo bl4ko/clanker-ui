@@ -106,4 +106,14 @@ func TestCheckDocsMap(t *testing.T) {
 	if rep := docsReport(inv, good, map[string]string{"/docs/components/a": "rhea"}, false); !strings.Contains(rep, "another style than our page: 1\n  components/a#a-demo base-nova, ours base-rhea") {
 		t.Errorf("a rhea page shows its rhea examples:\n%s", rep)
 	}
+	if rep := docsReport(inv, good, map[string]string{"/docs/components/a": "nova", "demo-a-1": "rhea"}, false); !strings.Contains(rep, "another style than our page: 0\n") {
+		t.Errorf("an example with its own style is in that style:\n%s", rep)
+	}
+	o, err := loadOurs("../..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if o.styles["scroll-fade-rtl"] != "nova" || o.styles["/docs/utils/scroll-fade"] != "rhea" {
+		t.Errorf("scroll-fade-rtl style %q in a page of style %q, want nova in rhea like shadcn", o.styles["scroll-fade-rtl"], o.styles["/docs/utils/scroll-fade"])
+	}
 }

@@ -28,6 +28,7 @@ var docsDirs = []string{"components/base", "ai-elements/base", "utils", "forms",
 var (
 	demoSectionID = regexp.MustCompile(`<section id="([a-z0-9-]+)" data-demo="section">`)
 	demoExample   = regexp.MustCompile(`^demo-([a-z0-9-]+)-[0-9]+$`)
+	exampleStyle  = regexp.MustCompile(`\{\{example "([a-z0-9-]+)"[^}]*\bstyle="([a-z]+)"`)
 	exampleID     = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 	mdxTitle      = regexp.MustCompile(`(?m)^title:\s*(.+?)\s*$`)
 )
@@ -318,6 +319,15 @@ func loadOurs(root string) (*oursSide, error) {
 		if !e.IsDir() && filepath.Base(filepath.Dir(p)) == "examples" && filepath.Ext(p) == ".html" {
 			o.examples[strings.TrimSuffix(e.Name(), ".html")] = true
 		}
+		if !e.IsDir() && e.Name() == "page.md" {
+			b, err := os.ReadFile(p)
+			if err != nil {
+				return err
+			}
+			for _, m := range exampleStyle.FindAllStringSubmatch(string(b), -1) {
+				o.styles[m[1]] = m[2]
+			}
+		}
 		return nil
 	})
 	if err != nil {
@@ -450,7 +460,7 @@ func docsReport(inv []invItem, rows []mapRow, styleOf map[string]string, verbose
 					c.shared++
 				}
 			}
-			if ours := "base-" + cmp.Or(styleOf[byKey[it.page()].ours], "nova"); ok && it.style != ours {
+			if ours := "base-" + cmp.Or(styleOf[r.ours], styleOf[byKey[it.page()].ours], "nova"); ok && it.style != ours {
 				styles = append(styles, fmt.Sprintf("  %s %s, ours %s", it.key, it.style, ours))
 			}
 		}

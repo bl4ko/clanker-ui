@@ -75,4 +75,4 @@ The scroll-aware behavior uses CSS scroll-driven animations, with no JavaScript.
 
 `scroll-fade-x` follows the reading direction. At rest, the start edge is crisp and the end edge fades. In RTL that means a crisp right edge and a fade on the left.
 
-{{example "scroll-fade-rtl"}}
+{{example "scroll-fade-rtl" style="nova"}}

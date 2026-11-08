@@ -137,6 +137,11 @@ jobs:
           version: "0.13.7"
           python-version: "3.13"
           enable-cache: false
+      - if: runner.os == 'macOS'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/Library/Caches/ms-playwright
+          key: ms-playwright-${{ runner.os }}-${{ runner.arch }}-${{ env.PLAYWRIGHT_VERSION }}-${{ matrix.engine }}
       - name: Install browser
         run: uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" playwright install --with-deps "$ENGINE"
       - name: Start server

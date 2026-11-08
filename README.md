@@ -81,6 +81,12 @@ A smaller page can load only the component groups that it uses: see [Minified an
 | --- | --- |
 | `clanker-ui.css` | Tokens, reset, typography, all component styles. Generated from the shadcn source (Base UI base, Nova style) plus a small kit layer. It looks exactly like shadcn. |
 | `clanker-ui-rhea.css` | The same file in the shadcn Rhea style (rounder, fills and rings in place of borders). Load it instead of `clanker-ui.css`, never both; the markup and JavaScript are the same. |
+| `clanker-ui-luma.css` | The same file in the shadcn Luma style (rounded, soft elevation, breathable layouts). Load it instead of `clanker-ui.css`, never both. |
+| `clanker-ui-lyra.css` | The same file in the shadcn Lyra style (boxy and sharp, square corners; pairs well with mono fonts). Load it instead of `clanker-ui.css`, never both. |
+| `clanker-ui-maia.css` | The same file in the shadcn Maia style (soft and rounded, generous spacing). Load it instead of `clanker-ui.css`, never both. |
+| `clanker-ui-mira.css` | The same file in the shadcn Mira style (compact, for dense interfaces). Load it instead of `clanker-ui.css`, never both. |
+| `clanker-ui-sera.css` | The same file in the shadcn Sera style (minimal and editorial: underline controls, uppercase headings, square corners). Load it instead of `clanker-ui.css`, never both. |
+| `clanker-ui-vega.css` | The same file in the shadcn Vega style (the classic shadcn/ui look). Load it instead of `clanker-ui.css`, never both. |
 | `clanker-ui-a11y.css` | Optional accessibility layer. Load it after the kit: 3:1 form-control edges, a 3:1 focus outline and list keyboard highlight, stronger status borders and text, darker light muted text, and the dataviz-validated chart palette. See [Accessibility layer](#accessibility-layer). |
 | `clanker-ui.js` | ES module: core helpers and all component behavior |
 | `clanker-ui-chart.js` | ES module: SVG charts, stat tiles, sparklines. Imports `./clanker-ui.js` |
@@ -149,7 +155,7 @@ Put overrides in `app.css` after the kit files, without a layer.
 | --- | --- |
 | `clanker-ui.min.css` | All CSS: the group files below in group order |
 | `clanker-ui-<group>.min.css` | The CSS of one group. Each file starts with the layer order. |
-| `clanker-ui-rhea.min.css`, `clanker-ui-rhea-<group>.min.css` | The same files in the Rhea style. Use them instead of the Nova CSS files. |
+| `clanker-ui-<style>.min.css`, `clanker-ui-<style>-<group>.min.css` | The same files in another shadcn style (`rhea`, `luma`, `lyra`, `maia`, `mira`, `sera`, `vega`). Use them instead of the Nova CSS files. |
 | `clanker-ui-themes.min.css`, `clanker-ui-a11y.min.css`, `clanker-ui-theme.min.js` | Minified copies of the optional files (`clanker-ui-theme.min.js` is a classic script, like `clanker-ui-theme.js`) |
 | `clanker-ui-core.min.js` | Core helpers, icons, strings, theme, and the behavior of the core components |
 | `clanker-ui.min.js` | The behavior of all other components. Imports `./clanker-ui-core.min.js` |

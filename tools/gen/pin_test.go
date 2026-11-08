@@ -47,8 +47,11 @@ func pinnedDir(t *testing.T) (string, string) {
 	t.Helper()
 	dir := t.TempDir()
 	files := map[string]string{
-		styleFile("nova"): ".cn-button { @apply flex; }\n", styleFile("rhea"): ".cn-button { @apply flex; }\n", globalsFile: "@theme inline {\n}\n", twFile: "", themesFile: "",
+		globalsFile: "@theme inline {\n}\n", twFile: "", themesFile: "",
 		uiDir + "/button.tsx": "function Button() {}\n",
+	}
+	for _, s := range kitStyles {
+		files[styleFile(s.name)] = ".cn-button { @apply flex; }\n"
 	}
 	sums := map[string]string{}
 	for path, body := range files {

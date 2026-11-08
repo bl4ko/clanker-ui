@@ -213,17 +213,19 @@ def shards(jobs, n, mix=True, apart=(), coarse=False, min_secs=MIN_SHARD):
 PAGES = [job("chromium", "pages", "", pages=True), job("webkit", "pages-light", "", themes="light", pages=True)]
 
 DOCS = ["*.md", "docs/*.md", "docs/*.txt", "skills/*", "LICENSE*", "THIRD_PARTY_NOTICES", ".github/ISSUE_TEMPLATE/*", ".github/workflows/release.yml", ".github/workflows/pages.yml", "renovate.json"]
+GENERATED_STYLE = re.compile(r"clanker-ui-[a-z]+\.css")
 TEST_DIRS = {"test/behavior/": "behavior", "test/split/": "split", "test/spike/": "spike", "test/lint/": "lint,pages", "skills/clanker-ui/references/design-lint.js": "lint,pages"}
 
 
 def classify(files, read=None):
     modules, docs, reqs = set(), False, []
     kit = any(f in IMPACT.KIT_SOURCES for f in files)
+    derived = any(f in IMPACT.SPLIT and f != "clanker-ui.js" for f in files)
     g = IMPACT.groups(ROOT) if read else None
     pages = {str(p.relative_to(ROOT)): p.read_text() for p in ROOT.glob("docs/content/**/page.md")} if read else {}
     for f in files:
         m = re.fullmatch(r"test/([a-z0-9]+)_test\.py", f)
-        if f.endswith("_test.go") or f.startswith("dist/") and kit and read:
+        if f.endswith("_test.go") or (f.startswith("dist/") and kit or derived and GENERATED_STYLE.fullmatch(f) and f not in IMPACT.KIT_SOURCES) and read:
             continue
         if m:
             modules.add(m.group(1))
@@ -406,6 +408,8 @@ def self_test():
     check("front matter change counts for all docs pages", classify(["docs/content/components/button/page.md"], reader("title"))[2] == [frozenset({"site:docs"})])
     check("kit change with dist is impact", run(["carousel"], ["clanker-ui.js", "dist/clanker-ui.min.js"])[0] == "impact")
     check("dist change alone is full", run([], ["dist/clanker-ui.min.js"])[0] == "full")
+    check("kit CSS change with the generated style files is impact", run(["button"], ["clanker-ui.css", "clanker-ui-luma.css", "dist/clanker-ui-luma.min.css"])[0] == "impact")
+    check("generated style file change alone is full", run([], ["clanker-ui-luma.css"])[0] == "full" and run(["carousel"], ["clanker-ui.js", "clanker-ui-luma.css"])[0] == "full")
     check("plan, impact map, or harness change with a kit change is full", all(run(["carousel"], ["clanker-ui.js", f])[0] == "full" for f in ("tools/ci/plan.py", "tools/ci/impact.py", "tools/ci/impact.tsv", "test/run.py")))
     check("unmeasured component is full", plan("pull_request", False, ["clanker-ui.js"], reader("carousel"), {n: frozenset({"c:button"}) for n in names})[0] == "full")
     check("label still runs all with a kit change", plan("pull_request", True, ["clanker-ui.js"], reader("carousel"), impact)[1] == PR + FULL)

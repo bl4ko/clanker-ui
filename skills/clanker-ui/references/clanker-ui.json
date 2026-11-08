@@ -65,6 +65,48 @@
         "min": "clanker-ui-rhea.min.css",
         "groups": "clanker-ui-rhea-\u003cgroup\u003e.min.css",
         "use": "the shadcn Rhea style: load it instead of clanker-ui.css (or its .min and group files instead of the Nova ones), never both; same markup and JavaScript"
+      },
+      {
+        "name": "luma",
+        "css": "clanker-ui-luma.css",
+        "min": "clanker-ui-luma.min.css",
+        "groups": "clanker-ui-luma-\u003cgroup\u003e.min.css",
+        "use": "the shadcn Luma style: load it instead of clanker-ui.css (or its .min and group files instead of the Nova ones), never both; same markup and JavaScript"
+      },
+      {
+        "name": "lyra",
+        "css": "clanker-ui-lyra.css",
+        "min": "clanker-ui-lyra.min.css",
+        "groups": "clanker-ui-lyra-\u003cgroup\u003e.min.css",
+        "use": "the shadcn Lyra style: load it instead of clanker-ui.css (or its .min and group files instead of the Nova ones), never both; same markup and JavaScript"
+      },
+      {
+        "name": "maia",
+        "css": "clanker-ui-maia.css",
+        "min": "clanker-ui-maia.min.css",
+        "groups": "clanker-ui-maia-\u003cgroup\u003e.min.css",
+        "use": "the shadcn Maia style: load it instead of clanker-ui.css (or its .min and group files instead of the Nova ones), never both; same markup and JavaScript"
+      },
+      {
+        "name": "mira",
+        "css": "clanker-ui-mira.css",
+        "min": "clanker-ui-mira.min.css",
+        "groups": "clanker-ui-mira-\u003cgroup\u003e.min.css",
+        "use": "the shadcn Mira style: load it instead of clanker-ui.css (or its .min and group files instead of the Nova ones), never both; same markup and JavaScript"
+      },
+      {
+        "name": "sera",
+        "css": "clanker-ui-sera.css",
+        "min": "clanker-ui-sera.min.css",
+        "groups": "clanker-ui-sera-\u003cgroup\u003e.min.css",
+        "use": "the shadcn Sera style: load it instead of clanker-ui.css (or its .min and group files instead of the Nova ones), never both; same markup and JavaScript"
+      },
+      {
+        "name": "vega",
+        "css": "clanker-ui-vega.css",
+        "min": "clanker-ui-vega.min.css",
+        "groups": "clanker-ui-vega-\u003cgroup\u003e.min.css",
+        "use": "the shadcn Vega style: load it instead of clanker-ui.css (or its .min and group files instead of the Nova ones), never both; same markup and JavaScript"
       }
     ]
   },

@@ -630,7 +630,7 @@ class Docs:
     def load(self, comp, view=None):
         path = view or f"/docs/components/base/{comp}"
         resp = self.page.goto(SITE + path, wait_until="networkidle", timeout=120000)
-        if resp and not view and not self.meta:
+        if resp and not self.meta and (not view or view.startswith(NOVA_PAGE)):
             m = re.search(r'data-dpl-id="([\w-]+)"', resp.text())
             self.meta = {"deployment": m.group(1) if m else "", "etag": resp.headers.get("etag", ""), "age": resp.headers.get("age", ""), "url": resp.url}
         self.page.add_style_tag(content=FONT)
@@ -1043,6 +1043,30 @@ def measure_docs(comp, docs, args, examples):
     if page:
         docs.nova_page = page
         out += measure_view(comp, docs, args, page, "nova-", len(out), examples, "nova", f"{comp}-example")
+    return out
+
+
+PRESET_STYLES = ["nova", "vega", "maia", "lyra", "mira", "luma", "sera", "rhea"]
+BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+
+
+def preset_code(style):
+    n, out = PRESET_STYLES.index(style) * 2 ** 34, ""
+    while n:
+        n, r = divmod(n, 62)
+        out = BASE62[r] + out
+    return "b" + (out or "0")
+
+
+def style_page(comp, style, examples):
+    return f"{NOVA_PAGE}{comp}-example?preset={preset_code(style)}" if f"{comp}-example" in examples.nova else None
+
+
+def measure_style_page(comp, docs, args, examples, style):
+    page = style_page(comp, style, examples)
+    docs.preview_styles, docs.preview_names, docs.nova_page = [], [], page
+    out = measure_view(comp, docs, args, page, f"{style}-", 0, examples, style, f"{comp}-example")
+    docs.meta["date"] = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
     return out
 
 
@@ -1461,6 +1485,7 @@ def main():
     ap.add_argument("--keep-raw", action="store_true")
     ap.add_argument("--quick", action="store_true", help="rest and open only, no hover, press, or focus")
     ap.add_argument("--drop-slot", default="", help="self-test: remove every generated rule for this data-slot before measuring")
+    ap.add_argument("--page-style", default="", help="measure only the example pages /preview/base/<name>-example?preset=<code of the style> of a ported style (no docs page)")
     ap.add_argument("--examples", default="", help="cache of the pinned apps/v4/examples/base files (default: <src>/parity-examples)")
     args = ap.parse_args()
     if not args.src:
@@ -1484,13 +1509,17 @@ def main():
     comps = [c for c in (args.only.split(",") if args.only else names) if c and c not in EXCLUDED]
     args.names = names
     examples = Examples(args.src, pathlib.Path(args.examples or pathlib.Path(args.src) / "parity-examples"), data["shadcn"])
+    if args.page_style:
+        if args.page_style not in STYLES[1:]:
+            raise SystemExit(f"--page-style {args.page_style}: not a ported style other than {STYLES[0]} ({', '.join(STYLES[1:])})")
+        comps = [c for c in comps if style_page(c, args.page_style, examples)]
     with sync_playwright() as pw:
         browser = getattr(pw, args.engine).launch()
         for comp in comps:
             t0 = time.time()
             docs, ours = Docs(browser, args), Ours(browser, {}, args.drop_slot)
             try:
-                results = measure_docs(comp, docs, args, examples)
+                results = measure_style_page(comp, docs, args, examples, args.page_style) if args.page_style else measure_docs(comp, docs, args, examples)
                 conv = measure_ours(comp, results, ours, parts, names, gen_css, args.src, out, docs, examples)
                 rows, pairs = compare(comp, results)
                 summary = summarize(comp, rows, pairs)

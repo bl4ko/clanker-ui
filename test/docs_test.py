@@ -678,7 +678,7 @@ def check_docs_rhea_previews(t):
     page = t.page
     t.docs("/docs/components/button")
     chrome = page.evaluate("""() => getComputedStyle(document.querySelector('[data-docs="search-trigger"]')).borderTopLeftRadius""")
-    for href in ("/docs/components/bubble", "/docs/components/code-block", "/docs/components/drawer"):
+    for href in ("/docs/components/bubble", "/docs/components/code-block", "/docs/components/drawer", "/docs/utils/shimmer"):
         t.docs(href)
         t.settle(3000)
         assert page.evaluate("""() => getComputedStyle(document.querySelector('[data-docs="search-trigger"]')).borderTopLeftRadius""") == chrome, f"{href}: the docs chrome must stay Nova"

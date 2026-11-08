@@ -384,7 +384,7 @@ func (d *docsSite) renderPage(p *docPage) error {
 				return "", fmt.Errorf("unknown example %q", name)
 			}
 			for key, value := range attrs {
-				ok := key == "align" && slices.Contains([]string{"center", "start", "end"}, value) || key == "height" && slices.Contains(previewHeights, value) || key == "style" && slices.Contains(d.styles, value) || key == "scheme" && d.hasScheme(value)
+				ok := key == "align" && slices.Contains([]string{"center", "start", "end"}, value) || key == "height" && slices.Contains(previewHeights, value) || key == "style" && (len(d.styles) == 0 || slices.Contains(d.styles, value)) || key == "scheme" && d.hasScheme(value)
 				if !ok {
 					return "", fmt.Errorf("example %q: bad attribute %s=%q", name, key, value)
 				}
@@ -393,7 +393,7 @@ func (d *docsSite) renderPage(p *docPage) error {
 			v := exampleView(ex, attrs)
 			def := d.previews[p.Href]
 			v.Style, v.Scheme = cmp.Or(attrs["style"], def.Style), cmp.Or(attrs["scheme"], def.Scheme)
-			if len(d.styles) > 0 && v.Style == d.styles[0] {
+			if len(d.styles) == 0 || v.Style == d.styles[0] {
 				v.Style = ""
 			}
 			if v.Scheme != "" && !slices.Contains(p.Styles, "clanker-ui-themes.css") {

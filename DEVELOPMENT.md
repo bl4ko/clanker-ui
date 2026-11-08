@@ -69,7 +69,7 @@ go run ./tools/gen docs-coverage -src "$SHADCN_SRC"
 go run ./tools/gen docs-coverage -src "$SHADCN_SRC" -write
 ```
 
-The first command prints the totals, the mapped examples whose `styleName` is not the `style` of our page (`docs/nav.json`; `base-nova` when absent), and (`-v`) the items without a match. `-src` also checks `docs-shadcn.tsv` against the pinned files (CI does this); `-write` writes it and adds a `?` row for each new item. `go test` fails when an item has no row, a row has no item, the rows are out of order, or a target does not exist on the mapped page.
+The first command prints the totals, the mapped examples whose `styleName` is not the style of our example (its `style=` in `page.md`, else the `style` of the page in `docs/nav.json`, else `base-nova`), and (`-v`) the items without a match. `-src` also checks `docs-shadcn.tsv` against the pinned files (CI does this); `-write` writes it and adds a `?` row for each new item. `go test` fails when an item has no row, a row has no item, the rows are out of order, or a target does not exist on the mapped page.
 
 ### Add a page
 
@@ -164,7 +164,7 @@ go run ./tools/gen fetch -src "$SHADCN_SRC"
 go run ./tools/gen -src "$SHADCN_SRC" -out clanker-ui.css -tailwind "$TAILWIND"
 ```
 
-- Styles: `kitStyles` in `tools/gen/main.go` lists the ported shadcn styles (`apps/v4/registry/styles/style-<name>.css`); the first is the default. `-out clanker-ui.css` writes `clanker-ui.css` (Nova) and then one file per other style next to it (`clanker-ui-rhea.css`), each with the same parts and `kit.css`, then `dist` (`clanker-ui-<style>.min.css` and group files). `-style <name>` writes only that style. A pinned style that is not in `kitStyles` gets an `upstream style not ported` note. To port one: add `{name, file}` to `kitStyles` and run the generator.
+- Styles: `kitStyles` in `tools/gen/main.go` lists the ported shadcn styles (`apps/v4/registry/styles/style-<name>.css`); the first is the default. `-out clanker-ui.css` writes `clanker-ui.css` (Nova) and then one file per other style next to it (`clanker-ui-rhea.css`, `clanker-ui-luma.css`, ...), each with the same parts and `kit.css`, then `dist` (`clanker-ui-<style>.min.css` and group files). `-style <name>` writes only that style. A pinned style that is not in `kitStyles` gets an `upstream style not ported` note. To port one: add `{name, file}` to `kitStyles` and the name to `kitStyleNames` in `main.go` (server and export), and run the generator.
 - The generator needs the Tailwind CSS CLI of the version in `tailwindVersion` (`tools/gen/main.go`). Homebrew gives only the newest version, so download the standalone binary `tailwindcss-<os>-<arch>` of that version from the [Tailwind CSS releases](https://github.com/tailwindlabs/tailwindcss/releases) and pass `-tailwind PATH` (default: `tailwindcss` on `PATH`). Another version stops the run with this hint. The same version is `TAILWIND_VERSION` in `.github/workflows/ci.yml` (with the SHA-256 of the Linux binary) and in `THIRD_PARTY_NOTICES`; `go test` fails when they differ. To move it, change all of them and run the generator again.
 
 - `fetch` downloads the pinned inputs with `curl` (HTTPS only) into a new empty directory: `apps/v4/registry/bases/base/ui/*.tsx`, the docs `.mdx` files of Docs coverage, `apps/v4/registry/styles/style-*.css`, `apps/v4/registry/themes.ts`, `apps/v4/app/globals.css`, `packages/shadcn/src/tailwind.css` (all at the commit in `shadcnSHA`), and `tw-animate-css` from npm (version and SHA-512 pinned). It stops when the GitHub tree is truncated, when a file does not have the git blob hash of the tree, or when the tree does not agree with `tools/gen/pin.tsv`. It writes `manifest.tsv` (path, blob hash, size). Use only a directory that `fetch` made: other files in `ui/` that are not `.tsx` are ignored, but an older download without `tw-animate-css.tgz` stops with the `fetch` hint. To move the pin: change `shadcnSHA`, run `fetch -write-pin`, and review the diff of `pin.tsv`. A pinned component that is not in `tools/gen/groups.tsv` gets no CSS and an `upstream component not ported` note, so a pin move does not need a port. To port it, add the JS, the README section, and the catalog example, then a `<component><TAB><group>` line in `groups.tsv`; a `dist` error `data-slot "x" has no component in groups.tsv` names the same fix.
@@ -190,6 +190,8 @@ go run ./tools/gen -src "$SHADCN_SRC" -out clanker-ui.css -tailwind "$TAILWIND"
 uv run --no-project --with playwright python -I tools/parity/parity.py --src "$SHADCN_SRC" --out "<dir>"
 uv run --no-project python -I tools/parity/report.py "<dir>"
 uv run --no-project python -I tools/parity/report.py "<dir>" --style rhea
+uv run --no-project --with playwright python -I tools/parity/parity.py --src "$SHADCN_SRC" --out "<dir>" --page-style luma
+uv run --no-project python -I tools/parity/report.py "<dir>" --style luma
 uv run --no-project --with playwright python -I tools/parity/selftest.py
 ```
 
@@ -225,7 +227,8 @@ uv run --no-project --with playwright python -I tools/parity/selftest.py
   | U3 | The docs site does not apply the `cn-rtl-flip` transform (`rtl:rotate-180`) in RTL examples. The kit follows the shadcn `rtl` install option. |
 
 - Self-test: `--drop-slot <slot>` removes every generated rule for that slot before it measures. `--only badge` gives 8/8 equal parts; `--only badge --drop-slot badge` gives 0/8, and `report.py --strict` exits 1. `--only card --drop-slot card-header`, `--only code-block --drop-slot trace-collapsible`, and `--only marker --drop-slot accordion` also fail `--strict` (a part keeps no class of its definition, also not from a wrapper). `selftest.py` checks the tolerances and the class rules without a browser.
-- Options: `--only a,b`, `--engine firefox|webkit`, `--quick` (rest and open only), `--max-open`, `--max-states`.
+- Options: `--only a,b`, `--engine firefox|webkit`, `--quick` (rest and open only), `--max-open`, `--max-states`, `--page-style <style>`.
+- `--page-style <style>` measures a ported style that the docs pages do not show (Luma, Lyra, Maia, Mira, Sera, Vega): for each component with an example page it loads only `/preview/base/<name>-example?preset=<code>` and measures it against that style. The preview route takes the style from the `preset` code of the shadcn create page (`b0` is Nova; a `?style=` parameter is ignored), so the tool encodes the style with all other fields at their default (`preset_code` in `parity.py`; Lyra and Sera also get `--radius: 0` there, which the tool copies with the other live tokens). The totals are in `styles.<style>`; `report.py --style <style>` gates them with `known-<style>.tsv`. The limit of the Nova example page (R2) applies.
 
 ### Behavior parity with shadcn
 

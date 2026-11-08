@@ -34,11 +34,17 @@ var sourceFixes = []struct {
 	{regexp.MustCompile(`:not\(\[class\*='size-'\]\)`), ":not([class*='size-'],[data-slot])", "class adapted to the kit markup", "kit markup has no size classes; an icon with a data-slot gets its size from its own part"},
 }
 
-type kitStyle struct{ name, file string }
+type kitStyle struct{ name, file, radius string }
 
 var kitStyles = []kitStyle{
-	{"nova", "clanker-ui.css"},
-	{"rhea", "clanker-ui-rhea.css"},
+	{"nova", "clanker-ui.css", ""},
+	{"rhea", "clanker-ui-rhea.css", ""},
+	{"luma", "clanker-ui-luma.css", ""},
+	{"lyra", "clanker-ui-lyra.css", "0"},
+	{"maia", "clanker-ui-maia.css", ""},
+	{"mira", "clanker-ui-mira.css", ""},
+	{"sera", "clanker-ui-sera.css", "0"},
+	{"vega", "clanker-ui-vega.css", ""},
 }
 
 func kitStyleFiles() []string {
@@ -213,7 +219,7 @@ func run(o options) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	in, err := pinnedInputs(p)
+	in, err := pinnedInputs(p, o.style)
 	if err != nil {
 		return "", err
 	}
@@ -421,7 +427,7 @@ func (g *gen) staleErr() error {
 	return nil
 }
 
-func pinnedInputs(p *pinned) (inputs, error) {
+func pinnedInputs(p *pinned, style string) (inputs, error) {
 	themes, err := p.read(themesFile)
 	if err != nil {
 		return inputs{}, err
@@ -429,6 +435,16 @@ func pinnedInputs(p *pinned) (inputs, error) {
 	light, dark, err := parseTheme(themes, "neutral")
 	if err != nil {
 		return inputs{}, err
+	}
+	for _, s := range kitStyles {
+		if s.name != style || s.radius == "" {
+			continue
+		}
+		i := slices.IndexFunc(light, func(kv [2]string) bool { return kv[0] == "radius" })
+		if i < 0 {
+			return inputs{}, fmt.Errorf("%s: theme neutral has no radius for style %s", themesFile, style)
+		}
+		light[i][1] = s.radius
 	}
 	globals, err := p.read(globalsFile)
 	if err != nil {
@@ -467,7 +483,7 @@ func utilities(src, pinPath, content, out, tailwind string) error {
 	if err != nil {
 		return err
 	}
-	in, err := pinnedInputs(p)
+	in, err := pinnedInputs(p, "")
 	if err != nil {
 		return err
 	}

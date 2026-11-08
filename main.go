@@ -32,11 +32,20 @@ var cspMeta = strings.Replace(csp, " frame-ancestors 'none';", "", 1)
 
 var cspView = strings.Replace(csp, "frame-ancestors 'none'", "frame-ancestors 'self'", 1)
 
-var kitFiles = map[string]bool{"clanker-ui.css": true, "clanker-ui-a11y.css": true, "clanker-ui.js": true, "clanker-ui-chart.js": true, "clanker-ui-code.js": true, "clanker-ui-rhea.css": true, "clanker-ui-theme.js": true, "clanker-ui-themes.css": true}
+var kitStyleNames = []string{"rhea", "luma", "lyra", "maia", "mira", "sera", "vega"}
+
+var kitFiles = withStyles(map[string]bool{"clanker-ui.css": true, "clanker-ui-a11y.css": true, "clanker-ui.js": true, "clanker-ui-chart.js": true, "clanker-ui-code.js": true, "clanker-ui-theme.js": true, "clanker-ui-themes.css": true}, func(string) bool { return true })
 
 var distFile = regexp.MustCompile(`^clanker-ui[a-z0-9-]*\.min\.(css|js)$`)
 
-var minKit = map[string]string{"clanker-ui.css": "dist/clanker-ui.min.css", "clanker-ui-rhea.css": "dist/clanker-ui-rhea.min.css", "clanker-ui-themes.css": "dist/clanker-ui-themes.min.css", "clanker-ui-a11y.css": "dist/clanker-ui-a11y.min.css", "clanker-ui-theme.js": "dist/clanker-ui-theme.min.js"}
+var minKit = withStyles(map[string]string{"clanker-ui.css": "dist/clanker-ui.min.css", "clanker-ui-themes.css": "dist/clanker-ui-themes.min.css", "clanker-ui-a11y.css": "dist/clanker-ui-a11y.min.css", "clanker-ui-theme.js": "dist/clanker-ui-theme.min.js"}, func(s string) string { return "dist/clanker-ui-" + s + ".min.css" })
+
+func withStyles[V any](m map[string]V, v func(string) V) map[string]V {
+	for _, s := range kitStyleNames {
+		m["clanker-ui-"+s+".css"] = v(s)
+	}
+	return m
+}
 
 var minShims = map[string][]string{"clanker-ui.js": {"clanker-ui-core.min.js", "clanker-ui.min.js"}, "clanker-ui-chart.js": {"clanker-ui-chart.min.js"}, "clanker-ui-code.js": {"clanker-ui-code.min.js"}}
 

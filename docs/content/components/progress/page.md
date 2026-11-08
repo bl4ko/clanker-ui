@@ -41,6 +41,12 @@ Set `data-value` from your code, here from a [Slider](/docs/components/slider).
 
 {{example "progress-controlled"}}
 
+## Status
+
+A kit extension: `data-variant="success|warning|destructive|info"` on `progress` colors the indicator with the status fill tokens `--success-fill`, `--warning-fill`, `--error-fill`, and `--info-fill` (3:1 or more on the card in light and dark). For another color, set `--progress-indicator` on the root (default `var(--primary)`).
+
+{{example "progress-status" height="24rem"}}
+
 ## RTL
 
 The indicator grows from the start side. Set `dir="rtl"` on `<html>` or on a container. See [Direction](/docs/components/direction).
@@ -55,6 +61,9 @@ The indicator grows from the start side. Set `dir="rtl"` on `<html>` or on a con
 | --- | --- | --- |
 | `data-value` | A number from 0 to `data-max`; missing: indeterminate | |
 | `data-max` | A number | `100` |
+| `data-variant` | `"success" \| "warning" \| "destructive" \| "info"` (kit extension): the indicator color | |
+
+The custom property `--progress-indicator` on the root sets the indicator color (default `var(--primary)`).
 
 The kit sets `data-state="loading|complete|indeterminate"` and `data-progressing`, `data-complete`, or `data-indeterminate` on every part.
 

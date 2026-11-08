@@ -82,6 +82,10 @@ Use `aria-invalid="true"` on the `<select>` to show validation errors. In a [Fie
 - Use the native select for native browser behavior, better performance, or mobile-optimized dropdowns.
 - Use [Select](/docs/components/select) for custom styling, animations, or complex interactions.
 
+## Phones
+
+The select text is 14 px, as in shadcn. iOS Safari zooms the page when a control with text below 16 px gets focus. The accessibility layer `clanker-ui-a11y.css` (load it in every app) gives the native select 16 px text below 48rem and 14 px from 48rem, like the input, so the page does not zoom.
+
 ## RTL
 
 The native select uses logical properties: the icon moves to the left. Set `dir="rtl"` on `<html>` or on a container. See [Direction](/docs/components/direction).

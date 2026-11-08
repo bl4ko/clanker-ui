@@ -1146,3 +1146,124 @@ def check_kit_progress_status(t):
     ex.scroll_into_view_if_needed()
     t.shot("status", ex)
 
+
+def check_kit_card_action(t):
+    t.docs("/docs/components/card")
+    m = t.page.evaluate("""() => {
+      const r = el => el.getBoundingClientRect()
+      const group = document.querySelector('[data-example="card-action-group"] [data-slot="card-action"]')
+      const [badge, button] = [...group.children].map(r)
+      const one = document.querySelector('[data-example="card-demo"] [data-slot="card-action"]')
+      const wrap = document.querySelector('[data-example="card-action-wrap"]')
+      const head = wrap.querySelector('[data-slot="card-header"]'), cs = getComputedStyle(head)
+      return {
+        gap: Math.max(button.left - badge.right, badge.left - button.right), middle: Math.abs((badge.top + badge.bottom) - (button.top + button.bottom)) / 2,
+        single: getComputedStyle(one).display,
+        inner: head.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight), rem: parseFloat(getComputedStyle(document.documentElement).fontSize),
+        head: r(head), title: r(wrap.querySelector('[data-slot="card-title"]')), desc: r(wrap.querySelector('[data-slot="card-description"]')), action: r(wrap.querySelector('[data-slot="card-action"]')),
+        rtl: cs.direction === "rtl",
+      }
+    }""")
+    assert abs(m["gap"] - 8) < 0.5 and m["middle"] < 1, ("two children get an 8 px gap", m)
+    assert m["single"] == "block", ("one child keeps the shadcn placement", m)
+    narrow = m["inner"] < 24 * m["rem"]
+    assert narrow == t.mobile, ("the example header is narrow only on a phone", m)
+    below = m["action"]["top"] >= m["desc"]["bottom"] - 0.5
+    assert below == narrow, ("data-wrap moves the action under the title below 24rem", m)
+    start = (lambda b: b["right"]) if m["rtl"] else (lambda b: b["left"])
+    if below:
+        assert abs(start(m["action"]) - start(m["title"])) < 1 and m["title"]["width"] >= m["inner"] - 5, ("the action starts under the title, which keeps the width", m)
+    else:
+        assert m["action"]["top"] < m["desc"]["bottom"], m
+    c = t.page.evaluate("""() => {
+      const make = (tag, slot, text) => { const el = document.createElement(tag); el.dataset.slot = slot; if (text) el.textContent = text; return el }
+      const card = make('div', 'card'), head = make('div', 'card-header'), action = make('div', 'card-action'), button = make('button', 'button', 'Edit')
+      card.style.width = '22rem'
+      action.append(button)
+      head.append(make('div', 'card-title', 'Billing'), action)
+      card.append(head)
+      document.querySelector('[data-example="card-demo"] [data-docs="preview"]').append(card)
+      const mid = el => { const r = el.getBoundingClientRect(); return (r.top + r.bottom) / 2 }
+      const one = [mid(head.firstChild), mid(button), button.getBoundingClientRect().height]
+      head.insertBefore(make('div', 'card-description', 'Plan and invoices'), action)
+      const two = [head.firstChild.getBoundingClientRect().top, action.getBoundingClientRect().top]
+      card.remove()
+      return { one, two }
+    }""")
+    assert abs(c["one"][0] - c["one"][1]) < 1 and c["one"][2] > 30, ("a one-line title is centered on the action", c)
+    assert abs(c["two"][0] - c["two"][1]) < 1, ("with a description the action stays at the top", c)
+    for name in ("card-action-group", "card-action-wrap"):
+        ex = t.page.locator(f'[data-example="{name}"] [data-docs="preview"]')
+        ex.scroll_into_view_if_needed()
+        t.shot(name, ex)
+
+
+def check_kit_table_sticky_header(t):
+    t.docs("/docs/components/table")
+    sel = '[data-example="table-sticky-header"] [data-docs="preview"] > div'
+    box = t.page.locator(sel)
+    box.scroll_into_view_if_needed()
+    t.page.wait_for_function(f"""() => {{ const c = document.querySelector('{sel} [data-slot="table-container"]'); return c.hasAttribute("data-fits") === (c.querySelector("table").offsetWidth <= c.clientWidth + 1) }}""")
+    read = f"""() => {{
+      const box = document.querySelector('{sel}'), c = box.querySelector('[data-slot="table-container"]'), head = c.querySelector('thead')
+      box.scrollTop = 160
+      return {{ fits: c.hasAttribute("data-fits"), box: box.getBoundingClientRect().top, head: head.getBoundingClientRect().top, overflow: getComputedStyle(c).overflowX, card: getComputedStyle(box.querySelector('[data-slot="card"]')).overflowX, bg: getComputedStyle(head).backgroundColor, cardBg: getComputedStyle(box.querySelector('[data-slot="card"]')).backgroundColor }}
+    }}"""
+    m = t.page.evaluate(read)
+    if not t.mobile:
+        assert m["fits"], ("the example table fits at 1280", m)
+    if m["fits"]:
+        assert abs(m["head"] - m["box"]) < 1 and m["overflow"] == "clip" and m["card"] == "clip" and m["bg"] == m["cardBg"], ("the header sticks to the scroll box", m)
+    t.shot("sticky", box)
+    box.evaluate("b => { b.scrollTop = 0; b.style.width = '12rem' }")
+    t.page.wait_for_function(f"""() => !document.querySelector('{sel} [data-slot="table-container"]').hasAttribute("data-fits")""")
+    m = t.page.evaluate(read)
+    assert m["head"] < m["box"] - 20 and m["overflow"] == "auto" and m["card"] == "hidden", ("a wider table scrolls sideways with a normal header", m)
+    box.evaluate("b => { b.scrollTop = 0; b.style.width = '' }")
+    if not t.mobile:
+        t.page.wait_for_function(f"""() => document.querySelector('{sel} [data-slot="table-container"]').hasAttribute("data-fits")""")
+
+
+def check_kit_table_stack(t):
+    t.docs("/docs/components/table")
+    ex = t.page.locator('[data-example="table-stack"] [data-docs="preview"]')
+    ex.scroll_into_view_if_needed()
+    m = ex.evaluate("""ex => {
+      const c = ex.querySelector('[data-slot="table-container"]'), rows = [...c.querySelectorAll('tbody tr')]
+      const cell = rows[0].querySelector('[data-label="Price"]'), name = rows[0].querySelector('td'), r = el => el.getBoundingClientRect()
+      const range = document.createRange()
+      range.selectNodeContents(cell)
+      return {
+        head: r(c.querySelector('thead')).height, row: getComputedStyle(rows[0]).display, cell: r(cell), name: r(name), text: range.getBoundingClientRect(),
+        before: getComputedStyle(cell, '::before').content, rem: parseFloat(getComputedStyle(document.documentElement).fontSize), rtl: getComputedStyle(c).direction === "rtl",
+        roles: [c.querySelector('table').getAttribute('role'), c.querySelector('thead').getAttribute('role'), rows[0].getAttribute('role'), c.querySelector('th').getAttribute('role'), cell.getAttribute('role')],
+      }
+    }""")
+    assert m["roles"] == ["table", "rowgroup", "row", "columnheader", "cell"], m
+    table = t.page.get_by_role("table", name="Shopping list for the new kitchen.")
+    assert table.get_by_role("columnheader", name="Price").count() == 1 and table.get_by_role("cell", name="€42.50").count() == 1
+    if t.mobile:
+        assert m["head"] <= 1 and m["row"] == "block", m
+        assert "Price" in m["before"], m
+        offset = (m["cell"]["right"] - m["text"]["right"]) if m["rtl"] else (m["text"]["left"] - m["cell"]["left"])
+        assert abs(offset - (7 * m["rem"] + 24)) < 1, ("the value starts after the label column", offset, m)
+        assert abs(m["name"]["width"] - m["cell"]["width"]) < 1 and m["cell"]["top"] >= m["name"]["bottom"] - 0.5, ("cells stack in the row", m)
+        cut = ex.evaluate("ex => [...ex.querySelectorAll('td')].filter(td => td.scrollWidth > td.clientWidth + 1).length")
+        assert cut == 0, ("no stacked value is cut", cut)
+    else:
+        assert m["head"] > 30 and m["row"] == "table-row" and m["before"] in ("none", "normal"), m
+    added = ex.evaluate("""async ex => {
+      const row = document.createElement('tr'), cell = document.createElement('td')
+      row.dataset.slot = 'table-row'
+      cell.dataset.slot = 'table-cell'
+      cell.dataset.label = 'Price'
+      cell.textContent = '€1.00'
+      row.append(cell)
+      ex.querySelector('tbody').append(row)
+      await new Promise(r => setTimeout(r, 0))
+      const roles = [row.getAttribute('role'), cell.getAttribute('role')]
+      row.remove()
+      return roles
+    }""")
+    assert added == ["row", "cell"], ("rows added later get their roles", added)
+    t.shot("stack", ex)

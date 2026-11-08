@@ -69,6 +69,18 @@ Add an image before the card header to create a card with an image.
 
 A kit extension: `data-orientation="horizontal"` puts a first-child [Cover](/docs/components/cover) (6rem, 8rem from 48rem) at the start and the other parts in a `div` column next to it, with a wrapping `card-footer`. Use it for a hero or feature card.
 
+## Action group
+
+A `card-action` with two or more children (a badge and a button) lays them out in a row with an 8 px gap, aligned to the end, and wraps them when they do not fit. One child keeps the shadcn placement. shadcn has only the placement, and React code adds `className="flex gap-2"` for more children.
+
+{{example "card-action-group" height="16rem"}}
+
+## Action under the title
+
+A kit extension: `data-wrap` on `card-action` moves the action to its own row under the title and the description, at the start, when the `card-header` is narrower than 24rem (a phone, or a narrow column). Use it for a wide action (a text button or a select), so the title keeps the width. Without `data-wrap`, the action stays in the second column at every width, as in shadcn.
+
+{{example "card-action-wrap" height="16rem"}}
+
 ## RTL
 
 The card uses logical properties. Set `dir="rtl"` on `<html>` or on a container. See [Direction](/docs/components/direction).
@@ -102,7 +114,11 @@ The `card-description` part is the helper text under the title.
 
 ### Card Action
 
-The `card-action` part places content in the top-right of the header (for example, a button or a badge).
+The `card-action` part places content in the top-right of the header (for example, a button or a badge). Two or more children get a row with an 8 px gap. Without a `card-description`, the title and the action are centered on one line.
+
+| Attribute | Values | Default |
+| --- | --- | --- |
+| `data-wrap` | boolean (kit extension): under the title when the header is narrower than 24rem | |
 
 ### Card Content
 

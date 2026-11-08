@@ -58,6 +58,16 @@ PARTS = {
     "source_tokens": {"badge": ["inline-flex", "h-5", "rounded-4xl", "bg-primary", "border-border", "pr-2", "pe-2", "size-3", "sr-only"], "card": ["flex", "gap-4", "rounded-xl", "w-full", "cn-badge"]},
 }
 
+CVA_PARTS = {
+    "components": ["nav"],
+    "parts": [
+        {"slot": "nav-link", "selector": "[data-slot=\"nav-link\"]", "from": "nav/NavLink", "tokens": ["flex", "p-3", "rounded-lg"], "markers": ["cn-nav-link"], "mapped": True},
+        {"selector": "[data-slot=\"nav-link\"][data-variant=\"trigger\"]", "from": "nav/cva.navTriggerStyle", "element_slot": "nav-link", "set": {"data-variant": "trigger"}, "markers": ["cn-nav-trigger"],
+         "tokens": ["rounded-3xl", "px-4.5", "py-2.5", "text-sm", "font-medium", "inline-flex", "h-9", "w-max"], "own": ["rounded-3xl", "px-4.5", "py-2.5", "text-sm", "font-medium", "inline-flex", "h-9", "w-max"], "mapped": True},
+    ],
+    "source_tokens": {"nav": ["flex", "p-3", "inline-flex", "h-9"]},
+}
+
 
 def converter_checks():
     parts = parity.Parts(PARTS)
@@ -212,7 +222,9 @@ def nova_page_checks():
         check("a page with only Nova previews needs no Nova example page", parity.nova_page("badge", nova, ex) is None),
         check("a component without a Nova example page has none", parity.nova_page("card", rhea, ex) is None),
         check("a Nova example page scopes each example", "preview/base/" in parity.NOVA_PAGE),
+        check("a cn marker of a cva on another part sets the attribute of that part (example pages keep the markers)", parity.infer_attrs("cn-nav-trigger inline-flex h-9", parity.Parts(CVA_PARTS), "nav-link", {"nav"})[0] == {"data-variant": "trigger"} and parity.infer_attrs("cn-nav-link flex", parity.Parts(CVA_PARTS), "nav-link", {"nav"})[0] == {}),
         check("a style without docs previews is measured on its example page with the preset code of that style", parity.style_page("badge", "luma", ex) == "/preview/base/badge-example?preset=b1VlIttI" and parity.style_page("card", "luma", ex) is None),
+        check("an example class with the style variant of the measured style applies, other style variants do not", parity.style_classes(["rounded-lg", "style-luma:rounded-3xl", "style-lyra:rounded-none", "dark:style-luma:bg-muted"], "luma") == ["rounded-lg", "rounded-3xl", "dark:bg-muted"]),
         check("preset codes of the shadcn create page (style in bits 34 to 39, other fields at their default)", [parity.preset_code(st) for st in ("nova", "vega", "lyra", "sera", "rhea")] == ["b0", "bIkeymG", "buFywKm", "b1oVxsfY", "b27GcrRo"]),
         check("a cva marker class sets its variant", 'data-variant="outline" data-pid="2"' in out),
         check("a default cva marker sets no variant", 'data-slot="badge" data-pid="3">' in out),

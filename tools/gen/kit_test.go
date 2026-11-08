@@ -47,6 +47,13 @@ func TestKitStyles(t *testing.T) {
 			t.Errorf("%s must be its own style with the same parts (same bytes as %q)", s.file, other)
 		}
 		seen[css] = s.file
+		want := "\n    --radius: .625rem;\n"
+		if s.name == "lyra" || s.name == "sera" {
+			want = "\n    --radius: 0;\n"
+		}
+		if !strings.Contains(css, want) {
+			t.Errorf("%s: no token %q (the shadcn create preview sets radius none for Lyra and Sera only)", s.file, strings.TrimSpace(want))
+		}
 	}
 	for _, want := range []string{"--tw-ring-color: color-mix(in oklab, var(--ring) 30%, transparent)", "border-radius: calc(var(--radius) * 1.8)"} {
 		if !strings.Contains(rhea, want) || strings.Count(nova, want) >= strings.Count(rhea, want) {

@@ -1,129 +1,131 @@
-source	-
-checks	ai.ai_chain_of_thought_replay ai.ai_chat_turn ai.ai_checkpoint_restore ai.ai_confirmation_approve ai.ai_confirmation_deny ai.ai_file_tree_folders ai.ai_file_tree_select ai.ai_index ai.ai_inline_citation_card ai.ai_message_copy ai.ai_message_feedback ai.ai_model_selector_pick ai.ai_plan_replay ai.ai_prompt_input_attach ai.ai_queue_replay ai.ai_reasoning_choice_wins ai.ai_reasoning_replay ai.ai_sources_replay ai.ai_stack_trace_frames ai.ai_stack_trace_replay ai.ai_subagent_replay ai.ai_suggestion_send ai.ai_task_replay ai.ai_terminal_choice_wins ai.ai_terminal_error ai.ai_terminal_replay ai.ai_test_results_replay ai.ai_test_results_suites ai.ai_tool_approval ai.ai_tool_replay ai.ai_tool_sheet behavior.accordion behavior.ai_chain_of_thought behavior.ai_checkpoint behavior.ai_confirmation behavior.ai_context behavior.ai_file_tree behavior.ai_inline_citation behavior.ai_model_selector behavior.ai_plan behavior.ai_queue behavior.ai_reasoning behavior.ai_stack_trace behavior.ai_subagent behavior.ai_task behavior.ai_terminal behavior.ai_test_results behavior.ai_tool behavior.alert_dialog behavior.button behavior.calendar behavior.carousel behavior.checkbox behavior.collapsible behavior.combobox behavior.command behavior.context_menu behavior.dialog behavior.drawer behavior.dropdown_menu behavior.hover_card behavior.input_otp behavior.menubar behavior.navigation_menu behavior.popover behavior.radio_group behavior.resizable behavior.scroll_area behavior.select behavior.sheet behavior.slider behavior.switch behavior.tabs behavior.toast behavior.toggle behavior.toggle_group behavior.tooltip docs.blocks_card_grid docs.blocks_csp_meta docs.blocks_data_table docs.blocks_detail_header_and_hero docs.blocks_form_edit docs.blocks_form_fields docs.blocks_login_split docs.blocks_login_validation docs.blocks_overlay_form docs.blocks_render docs.blocks_section_cards_align docs.blocks_viewer docs.docs_code_block_preview docs.docs_component_demos docs.docs_copy_page docs.docs_layout docs.docs_markdown_route docs.docs_mobile_menu docs.docs_new_dot_has_text docs.docs_pages docs.docs_prev_next docs.docs_preview_keeps_kit_styles docs.docs_rhea_previews docs.docs_scroll_fade docs.docs_search docs.docs_section_active docs.docs_sidebar docs.docs_sidebar_scroll_restore docs.docs_text_metrics docs.docs_theme_toggle docs.docs_toc docs.docs_view_code docs.docs_view_csp docs.docs_view_page docs.kit_card_grid_rows docs.kit_cover_words docs.kit_item_actions_phone docs.kit_toolbar_phone docs.scroll_fade_options docs.scroll_fade_popup_closes foundation.button foundation.button_group_popup_roots foundation.code_token_contrast foundation.core_base_ui_states foundation.core_button_tabindex foundation.core_layers foundation.core_modal foundation.core_popover_reset foundation.core_popup foundation.core_popup_grow foundation.core_registry foundation.core_rove foundation.demo_nav foundation.focus_contrast foundation.forced_colors_item_focus foundation.icons foundation.icons_added foundation.icons_common foundation.icons_register foundation.input_contrast foundation.input_decorative foundation.item_media_cover foundation.page foundation.page_split_hidden foundation.reduced_motion foundation.runner foundation.safari_fallbacks foundation.safe_dom foundation.safe_dom_filters foundation.safe_dom_select foundation.scheme_contrast foundation.scheme_first_frame foundation.scheme_persist foundation.section_cards_value_wrap foundation.shimmer_fallback foundation.shimmer_modifiers foundation.status_fill_tokens foundation.strings foundation.theme foundation.theme_first_frame foundation.theme_key foundation.theme_meta_color foundation.theme_no_transitions foundation.theme_toggle foundation.toast_in_modal_layout foundation.trusted_types foundation.typography g1.button_group g1.checkbox g1.choice_disabled_focus g1.choice_forms g1.choice_old_input g1.choice_reenable g1.choice_reset_mixed g1.combobox g1.combobox_base_ui g1.combobox_filter_position g1.field g1.field_separator_line g1.flag_false g1.forced_colors g1.forced_colors_scheme g1.form g1.form_blur g1.form_blur_after_submit g1.form_reset_cancelled g1.form_reset_then_set g1.input g1.input_group g1.input_otp g1.input_otp_rtl g1.kbd g1.label g1.native_select g1.radio_group g1.select g1.select_keyboard_scroll g1.select_late_items g1.select_open_state g1.select_reinsert g1.select_required_native g1.select_trigger_toggle g1.slider g1.slider_pointer_focus g1.slider_programmatic g1.switch g1.text_entry_size g1.textarea g1.toggle g1.toggle_group g1.toggle_group_form g1.toggle_tab g2.alert_dialog g2.alert_dialog_action g2.alert_dialog_slots g2.button_tab_order g2.command g2.command_async g2.command_dom g2.command_list_focus g2.context_menu g2.dialog g2.dialog_disabled_trigger_focus g2.dialog_pointer_focus g2.drawer g2.drawer_detached g2.drawer_motion g2.drawer_nested g2.drawer_nested_outside g2.drawer_non_modal_outside g2.drawer_options g2.drawer_snap_options g2.drawer_snap_points g2.drawer_snap_resize g2.drawer_swipe_release g2.drawer_touch_listener g2.dropdown_menu g2.dropdown_menu_code_values g2.focus_return_ring g2.forced_colors_focus g2.hide_after_rejected g2.hover_card g2.hover_card_blur g2.hover_popup_leave g2.keyboard_highlight g2.keyboard_modality_keys g2.menu_base_ui_dom g2.menu_disabled_keys g2.menu_hide_others g2.menu_item_opens_dialog g2.menu_modal g2.menu_parent_close g2.menu_safe_polygon g2.menu_scroll_lock g2.menu_trigger_click_listener g2.menubar g2.menubar_icons g2.menubar_switch g2.navigation_menu g2.navigation_menu_active g2.navigation_menu_keys g2.navigation_menu_motion g2.navigation_menu_reinsert g2.navigation_menu_rtl g2.navigation_menu_sizes g2.overlay_button_types g2.overlay_form_layout g2.overlay_outside_press g2.overlay_tab_native g2.overlay_tab_order g2.popover g2.popover_outside_focus g2.popup_collision g2.popup_outside_press g2.select_fast_click_listener g2.select_trigger_release_outside g2.sheet g2.sheet_drawer_scroll g2.sheet_motion g2.sonner g2.toast g2.toast_above_popover g2.toast_detached g2.toast_dialog_focus g2.toast_dialog_replace g2.toast_in_modal g2.toast_options g2.toast_timers g2.toast_types g2.tooltip g2.tooltip_hover_card_settings g2.tooltip_instant g2.tooltip_scroll g2.tooltip_trigger_state g3.accordion g3.accordion_close_motion g3.accordion_reopen_height g3.alert g3.alert_action_room g3.alert_status g3.aspect_ratio g3.avatar g3.badge g3.badge_status g3.breadcrumb g3.card g3.carousel g3.carousel_disabled_focus g3.carousel_double_next g3.carousel_drag g3.carousel_drag_click g3.carousel_drag_edge g3.carousel_drag_rtl g3.carousel_drag_vertical g3.carousel_loop g3.carousel_loop_false g3.carousel_motion g3.carousel_resize g3.carousel_runtime_options g3.carousel_start_event g3.carousel_tab_focus g3.carousel_touch g3.collapsible g3.collapsible_close_motion g3.direction g3.empty g3.item g3.layout_focus_rings g3.layout_overflow g3.pagination g3.pagination_disabled g3.progress g3.progress_zero g3.resizable g3.scroll_area g3.scroll_area_children g3.separator g3.sidebar g3.sidebar_rtl g3.sidebar_sheet_mouse_focus g3.skeleton g3.spinner g3.strings_layout g3.table g3.tabs g3.tabs_change_scroll g3.tabs_overflow g3.tabs_overflow_selected g3.tabs_shared_panel g3.tabs_value_from_code g4.attachment g4.attachment_group_children g4.attachment_scroll_fade g4.bubble g4.calendar g4.calendar_caption_status g4.calendar_day_button g4.calendar_day_label_ordinal g4.calendar_form g4.calendar_grid_aria g4.calendar_lifecycle g4.calendar_limits_change g4.calendar_locale g4.calendar_range g4.calendar_range_flags g4.calendar_root_defaults g4.calendar_rtl_chevron g4.calendar_rules g4.calendar_show_week_number g4.calendar_year_bounds g4.calendar_year_bounds_follow_limits g4.code_block g4.code_block_demo g4.code_block_reinsert g4.code_block_scroll_fade g4.code_block_tokens g4.date_picker g4.date_picker_compositions g4.date_picker_disabled_nav g4.date_picker_field_width g4.date_picker_form g4.date_picker_typed g4.focus_ring_shared g4.g4_default_attributes g4.marker g4.marker_shimmer g4.message g4.message_scroller g4.message_scroller_demo_reset g4.message_scroller_follow g4.message_scroller_history g4.message_scroller_pending g4.message_scroller_scroll_cost g4.questionnaire g4.questionnaire_answers g4.questionnaire_choice_state g4.questionnaire_input_look g4.questionnaire_resume g4.strings_chat g4.trace g4.trace_base_ui g4.trace_close_motion g4.trace_reverse g4.trace_shimmer_fallback g5.chart_colors g5.chart_default_colors g5.chart_destroy g5.chart_errors g5.chart_extreme_values g5.chart_impossible_date g5.chart_keyboard g5.chart_legend g5.chart_lifecycle g5.chart_locale g5.chart_marks g5.chart_motion g5.chart_palette g5.chart_pointer g5.chart_reference_demo g5.chart_references g5.chart_render g5.chart_resize g5.chart_rtl g5.chart_scale g5.chart_stat g5.chart_stat_tile_format g5.chart_strings g5.chart_table g5.chart_time_axis g5.chart_time_zone g5.chart_update lint.lint_bad_cases lint.lint_blocks lint.lint_demo lint.lint_good_page pages.pages_components pages.pages_demo pages.pages_every_page pages.pages_home pages.pages_markdown pages.pages_not_found pages.pages_search_dialog pages.pages_theme_toggle spike.spike_button spike.spike_card_and_field spike.spike_dialog spike.spike_dropdown_menu split.chart split.chat split.chat_needs split.core split.double_load_stops split.fixtures_load_only_their_group split.forms split.forms_needs split.layout split.layout_needs split.overlays split.overlays_needs split.overlays_needs_date_picker
-31,80,94,96,98,101,121,129,139,159,291-346,430,432-434,436,449,452	c:accordion
-78,86,96,98,111-114,117-163,291-346,429-430,433-434,444-456	c:alert
-48,78,80-81,86,96,98,129,139,159,209-290,429-430,433-434,449,454	c:alert-dialog
-96,98,129,139,159,291-346,430,433-434,444-456	c:aspect-ratio
-13,96,98,129,137,139,141,159,347-400,430,433-434,445-446,449	c:attachment
-77-82,85-87,90,96,98,111-114,129,136,139,159,291-400,429-430,433-434,446,449,452-453	c:avatar
-0,20,32,77-81,85-87,90,96,98,111,117-163,291-346,429-430,432-439,444-456	c:badge
-77-87,96,98,111-114,129,139-140,159,429-430,433-434	c:brand c:page
-78,80-82,85-86,90,96,98,129,136,139,159,291-346,429-430,433-434,449,453	c:breadcrumb
-0-4,9-10,12,14-30,32-34,39-41,43-45,47,96,98-99,129,137,139,159,347-400,430,433-434,445-446,449	c:bubble
-0-30,32-41,43-45,47-50,53,57-60,64,69,73,76-456	c:button
-0-30,77-116,118,129,137,139,159,164-208,430,432-434,436,438-439,449-451	c:button-group
-50,78,81-82,86,96,98,129,136,139,159,182-183,209-290,347-400,429-430,433-434,449,454-456	c:calendar
-51,72,77-78,80-82,84-87,90,94,96,98,101,111-114,117-163,291-346,401-434,436,440-456	c:card
-77-78,80,86,96,98,111,129,139,159,429-430,433-434	c:card-grid
-51,96,98,121,129,139,159,291-346,430,433-434,449,452	c:carousel
-78,86-87,90,96,98,117-427,429-430,433-434,444,449	c:chart
-52,78-83,85-87,90,96,98,104,117-400,428-431,433-434,440-443,446,449-450	c:checkbox
-0-6,8-30,32,43,45-47,77-116,119,129,137,139,141,159,347-400,430,432-434,436,438-439,445,449	c:code-block
-0-6,8-30,36,53,77-116,121,129,136,139,159,291-346,430,432-434,436,438,449,452-453	c:collapsible
-54,96,98,104,129,136-137,139,159,164-290,430,433-434,449-450	c:combobox
-0-30,55,77-116,129,139,159,164-290,430,432-439,449,455-456	c:command
-56,96,98,129,139,159,209-290,430,433-434,449,454	c:context-menu
-77-78,80,85-86,96,98,112,129,138-139,159,429-430,433-434	c:cover
-77-80,86-87,90,96,98,114,129,139,159,428-431,433-434	c:data-table
-78,81-82,86,96,98,129,139,159,209-290,347-400,429-430,433-434,449,455-456	c:date-picker
-0-30,57,77-116,121,129,139,141,154,159,161,164-290,347-400,429-430,432-443,449,454-456	c:dialog
-58,96,98-99,129,139,159,209-290,430,433-434,449,454	c:drawer
-0-30,38,59,77-116,118,126,129,131,137,139,159,164-346,429-430,432-434,436,438-443,449,451,453-454	c:dropdown-menu
-1,77-79,86-87,96,98,111-114,129,139,159,291-346,429-430,433-434,449,452	c:empty
-52,57,78,80-86,90,96-98,104,117-290,347-400,428-434,436,440-443,449-451,455-456	c:field
-78,80-86,96,98,104,129,139,159,164-208,263,377,428-431,433-434,449-450	c:form
-8,35,37,60,96,98,121,129,139,159,209-290,430,433-434,449,454	c:hover-card
-57,64,69,77-86,90,96-98,104,114,117-400,428-434,436,440-443,449-451,454-456	c:input
-0-30,38,54-55,77-116,129,136-137,139,159,164-290,347-400,428-430,432-439,449-451,455-456	c:input-group
-61,96,98,104,129,136,139,159,164-208,430,433-434,449-450	c:input-otp
-3-4,28,34,78,80-82,85-86,96,98,113,129,138-139,159,291-346,428-431,433-434,449,452	c:item
-96,98,104,129,136,139,159,164-346,430,433-434,449-450,453-456	c:kbd
-52,57,64-65,69,71,78-79,86-87,90,96,98,121,129,136-137,139,159,161,164-290,347-400,429-430,432-434,436,440-443,446,448-450,454-456	c:label
-2,33,96,98,129,137,139,159,347-400,430,433-434,445-446,449	c:marker
-62,96,98,129,139,159,209-290,430,433-434,449,454	c:menubar
-0-4,9-10,12,14-30,32-34,39-41,43-45,47,96,98,129,137,139,159,347-400,430,433-434,445-446,449	c:message
-1,96,98,129,137,139,141,159,347-400,430,433-434,445,449	c:message-scroller
-96,98,117-428,430,433-434,449-450,455-456	c:native-select
-63,96,98,129,139,159,209-290,430,433-434,449,454	c:navigation-menu
-96,98,129,139,159,291-346,430,433-434,449,452	c:pagination
-0-30,64,77-116,118,129,137,139,159,164-290,347-400,429-430,432-439,449,451,455-456	c:popover
-35,77-78,80,85-86,96,98,129,139,159,291-346,429-430,433-434,444-456	c:progress
-96,98,129,136-137,139,159,209-290,347-400,430,433-434,445-446,449	c:questionnaire
-65,78,80-82,85-86,96,98,104,129,136,139,159,164-208,429-430,433-434,449-450	c:radio-group
-77-78,80,85-86,96,98,129,139,159,429-430,433-434	c:rating
-66,96,98,129,139,159,291-346,430,433-434,449,452	c:resizable
-67,96,98,129,139,159,291-346,430,433-434,449,452	c:scroll-area
-78,86-87,96,98,129,139,150,159,429-430,433-434	c:section-cards
-68,77-82,85-87,96-98,104,129,136-137,139,159,164-290,428-430,432-434,436,449-451	c:select
-0-30,67,77-116,129,136,139,159,164-208,291-346,429-430,432-456	c:separator
-30,69,78,80,85-86,96,98,121,129,139,159,209-290,334-336,429-430,433-434,449,454	c:sheet
-0-30,77-116,129,136,139,159,291-346,429-430,432-434,436-439,449,453	c:sidebar
-77-82,85-87,96,98,111-114,129,139,159,429-430,433-434	c:site-header c:text-stack
-78,86,90,96,98,111-114,129,136,139,159,291-346,429-430,433-434,444-456	c:skeleton
-70,96,98,129,139,159,164-208,430,433-434,449-450	c:slider
-77-116,129,139,141,159,291-346,429-430,432-434,436,438,444-456	c:spinner
-78,80,85-86,96,98,129,139,159,429-430,433-434	c:stat-grid
-71,78,86,96,98,113,117-290,428-431,433-434,448-450	c:switch
-78-80,86-87,90,96,98,111-114,129,139,159,291-346,429-430,433-434,444-456	c:table
-72,77-78,80,86-88,96,98,129,137,139,159,291-346,429-430,432-434,436,449,452	c:tabs
-78,80-82,85-86,96-98,104,129,136-137,139,159,164-208,429-430,432-434,436,440-443,449-451	c:textarea
-78,86,96,98,117-163,429-430,433-434	c:theme
-0-456	c:toast
-74,96,98,129,137,139,159,164-208,290,430,433-434,449-450	c:toggle
-75,78,86-88,96,98,120,129,139,159,164-208,290,428-431,433-434,449-450	c:toggle-group
-1,9-10,76,96-98,104,120-121,126,129,139,159,209-290,334-335,430,432-434,436,449,454	c:tooltip
-0-1,3-4,12,14-20,22-30,32,34,39-47,96,98,129,137,139,159,347-400,430,433-434,445,449	c:trace
-117,119,130-131,136-137,147,151,165,177-178,184-185,190-191,199,202,204-205,236,241-242,296,299-300,323-324,326,331,341,347,350,368,376,379,393,400,407,409,413	f:clanker-ui-a11y.css
-89-90,96,98-99,102,104,117-427,430,432-434,436,444	f:clanker-ui-chart.js
-1,9-10,89-90,96,98-99,102,104,117-427,430,432-434,436	f:clanker-ui-code.js
+source	32f8bf95e01a5f6c
+checks	ai.ai_chain_of_thought_replay ai.ai_chat_turn ai.ai_checkpoint_restore ai.ai_confirmation_approve ai.ai_confirmation_deny ai.ai_file_tree_folders ai.ai_file_tree_select ai.ai_index ai.ai_inline_citation_card ai.ai_message_copy ai.ai_message_feedback ai.ai_model_selector_pick ai.ai_plan_replay ai.ai_prompt_input_attach ai.ai_queue_replay ai.ai_reasoning_choice_wins ai.ai_reasoning_replay ai.ai_sources_replay ai.ai_stack_trace_frames ai.ai_stack_trace_replay ai.ai_subagent_replay ai.ai_suggestion_send ai.ai_task_replay ai.ai_terminal_choice_wins ai.ai_terminal_error ai.ai_terminal_replay ai.ai_test_results_replay ai.ai_test_results_suites ai.ai_tool_approval ai.ai_tool_replay ai.ai_tool_sheet behavior.accordion behavior.ai_chain_of_thought behavior.ai_checkpoint behavior.ai_confirmation behavior.ai_context behavior.ai_file_tree behavior.ai_inline_citation behavior.ai_model_selector behavior.ai_plan behavior.ai_queue behavior.ai_reasoning behavior.ai_stack_trace behavior.ai_subagent behavior.ai_task behavior.ai_terminal behavior.ai_test_results behavior.ai_tool behavior.alert_dialog behavior.button behavior.calendar behavior.carousel behavior.checkbox behavior.collapsible behavior.combobox behavior.command behavior.context_menu behavior.dialog behavior.drawer behavior.dropdown_menu behavior.hover_card behavior.input_otp behavior.menubar behavior.navigation_menu behavior.popover behavior.radio_group behavior.resizable behavior.scroll_area behavior.select behavior.sheet behavior.slider behavior.switch behavior.tabs behavior.toast behavior.toggle behavior.toggle_group behavior.tooltip docs.blocks_card_grid docs.blocks_csp_meta docs.blocks_data_table docs.blocks_detail_header_and_hero docs.blocks_form_edit docs.blocks_form_fields docs.blocks_login_split docs.blocks_login_validation docs.blocks_overlay_form docs.blocks_render docs.blocks_section_cards_align docs.blocks_viewer docs.docs_code_block_preview docs.docs_component_demos docs.docs_copy_page docs.docs_layout docs.docs_markdown_route docs.docs_mobile_menu docs.docs_new_dot_has_text docs.docs_pages docs.docs_prev_next docs.docs_preview_keeps_kit_styles docs.docs_rhea_previews docs.docs_scroll_fade docs.docs_search docs.docs_section_active docs.docs_sidebar docs.docs_sidebar_scroll_restore docs.docs_text_metrics docs.docs_theme_toggle docs.docs_toc docs.docs_view_code docs.docs_view_csp docs.docs_view_page docs.kit_card_grid_rows docs.kit_cover_words docs.kit_item_actions_phone docs.kit_toolbar_phone docs.scroll_fade_options docs.scroll_fade_popup_closes foundation.button foundation.button_group_popup_roots foundation.code_token_contrast foundation.core_base_ui_states foundation.core_button_tabindex foundation.core_layers foundation.core_modal foundation.core_popover_reset foundation.core_popup foundation.core_popup_grow foundation.core_registry foundation.core_rove foundation.demo_nav foundation.focus_contrast foundation.forced_colors_item_focus foundation.icons foundation.icons_added foundation.icons_common foundation.icons_register foundation.input_contrast foundation.input_decorative foundation.item_media_cover foundation.page foundation.page_split_hidden foundation.reduced_motion foundation.runner foundation.safari_fallbacks foundation.safe_dom foundation.safe_dom_filters foundation.safe_dom_select foundation.scheme_contrast foundation.scheme_first_frame foundation.scheme_persist foundation.section_cards_value_wrap foundation.shimmer_fallback foundation.shimmer_modifiers foundation.status_fill_tokens foundation.strings foundation.theme foundation.theme_first_frame foundation.theme_key foundation.theme_meta_color foundation.theme_no_transitions foundation.theme_toggle foundation.toast_in_modal_layout foundation.trusted_types foundation.typography g1.button_group g1.checkbox g1.choice_disabled_focus g1.choice_forms g1.choice_old_input g1.choice_reenable g1.choice_reset_mixed g1.combobox g1.combobox_base_ui g1.combobox_filter_position g1.field g1.field_separator_line g1.flag_false g1.forced_colors g1.forced_colors_scheme g1.form g1.form_blur g1.form_blur_after_submit g1.form_reset_cancelled g1.form_reset_then_set g1.input g1.input_group g1.input_otp g1.input_otp_rtl g1.kbd g1.label g1.native_select g1.radio_group g1.select g1.select_keyboard_scroll g1.select_late_items g1.select_open_state g1.select_reinsert g1.select_required_native g1.select_trigger_toggle g1.slider g1.slider_pointer_focus g1.slider_programmatic g1.switch g1.text_entry_size g1.textarea g1.toggle g1.toggle_group g1.toggle_group_form g1.toggle_tab g2.alert_dialog g2.alert_dialog_action g2.alert_dialog_slots g2.button_tab_order g2.command g2.command_async g2.command_dom g2.command_list_focus g2.context_menu g2.dialog g2.dialog_disabled_trigger_focus g2.dialog_pointer_focus g2.drawer g2.drawer_detached g2.drawer_motion g2.drawer_nested g2.drawer_nested_outside g2.drawer_non_modal_outside g2.drawer_options g2.drawer_snap_options g2.drawer_snap_points g2.drawer_snap_resize g2.drawer_swipe_release g2.drawer_touch_listener g2.dropdown_menu g2.dropdown_menu_code_values g2.focus_return_ring g2.forced_colors_focus g2.hide_after_rejected g2.hover_card g2.hover_card_blur g2.hover_popup_leave g2.keyboard_highlight g2.keyboard_modality_keys g2.menu_base_ui_dom g2.menu_disabled_keys g2.menu_hide_others g2.menu_item_opens_dialog g2.menu_modal g2.menu_parent_close g2.menu_safe_polygon g2.menu_scroll_lock g2.menu_trigger_click_listener g2.menubar g2.menubar_icons g2.menubar_switch g2.navigation_menu g2.navigation_menu_active g2.navigation_menu_keys g2.navigation_menu_motion g2.navigation_menu_reinsert g2.navigation_menu_rtl g2.navigation_menu_sizes g2.overlay_button_types g2.overlay_form_layout g2.overlay_outside_press g2.overlay_tab_native g2.overlay_tab_order g2.popover g2.popover_outside_focus g2.popup_collision g2.popup_outside_press g2.select_fast_click_listener g2.select_trigger_release_outside g2.sheet g2.sheet_drawer_scroll g2.sheet_motion g2.sonner g2.toast g2.toast_above_popover g2.toast_detached g2.toast_dialog_focus g2.toast_dialog_replace g2.toast_in_modal g2.toast_options g2.toast_timers g2.toast_types g2.tooltip g2.tooltip_hover_card_settings g2.tooltip_instant g2.tooltip_scroll g2.tooltip_trigger_state g3.accordion g3.accordion_close_motion g3.accordion_reopen_height g3.alert g3.alert_action_room g3.alert_status g3.aspect_ratio g3.avatar g3.badge g3.badge_status g3.breadcrumb g3.card g3.carousel g3.carousel_disabled_focus g3.carousel_double_next g3.carousel_drag g3.carousel_drag_click g3.carousel_drag_edge g3.carousel_drag_rtl g3.carousel_drag_vertical g3.carousel_loop g3.carousel_loop_false g3.carousel_motion g3.carousel_resize g3.carousel_runtime_options g3.carousel_start_event g3.carousel_tab_focus g3.carousel_touch g3.collapsible g3.collapsible_close_motion g3.direction g3.empty g3.item g3.layout_focus_rings g3.layout_overflow g3.pagination g3.pagination_disabled g3.progress g3.progress_value_locale g3.progress_zero g3.resizable g3.scroll_area g3.scroll_area_children g3.separator g3.sidebar g3.sidebar_rtl g3.sidebar_sheet_mouse_focus g3.skeleton g3.spinner g3.strings_layout g3.table g3.tabs g3.tabs_change_scroll g3.tabs_overflow g3.tabs_overflow_selected g3.tabs_shared_panel g3.tabs_value_from_code g4.attachment g4.attachment_group_children g4.attachment_scroll_fade g4.bubble g4.calendar g4.calendar_caption_status g4.calendar_day_button g4.calendar_day_label_ordinal g4.calendar_form g4.calendar_grid_aria g4.calendar_lifecycle g4.calendar_limits_change g4.calendar_locale g4.calendar_month_format g4.calendar_range g4.calendar_range_flags g4.calendar_root_defaults g4.calendar_rtl_chevron g4.calendar_rules g4.calendar_show_week_number g4.calendar_year_bounds g4.calendar_year_bounds_follow_limits g4.code_block g4.code_block_demo g4.code_block_reinsert g4.code_block_scroll_fade g4.code_block_tokens g4.date_picker g4.date_picker_compositions g4.date_picker_disabled_nav g4.date_picker_field_width g4.date_picker_form g4.date_picker_typed g4.focus_ring_shared g4.g4_default_attributes g4.marker g4.marker_shimmer g4.message g4.message_scroller g4.message_scroller_demo_reset g4.message_scroller_follow g4.message_scroller_history g4.message_scroller_pending g4.message_scroller_scroll_cost g4.questionnaire g4.questionnaire_answers g4.questionnaire_choice_state g4.questionnaire_input_look g4.questionnaire_resume g4.strings_chat g4.trace g4.trace_base_ui g4.trace_close_motion g4.trace_reverse g4.trace_shimmer_fallback g5.chart_colors g5.chart_default_colors g5.chart_destroy g5.chart_errors g5.chart_extreme_values g5.chart_impossible_date g5.chart_keyboard g5.chart_legend g5.chart_lifecycle g5.chart_locale g5.chart_marks g5.chart_motion g5.chart_palette g5.chart_pointer g5.chart_reference_demo g5.chart_references g5.chart_render g5.chart_resize g5.chart_rtl g5.chart_rtl_reversed g5.chart_scale g5.chart_stat g5.chart_stat_tile_format g5.chart_strings g5.chart_table g5.chart_time_axis g5.chart_time_zone g5.chart_update lint.lint_bad_cases lint.lint_blocks lint.lint_demo lint.lint_good_page pages.pages_components pages.pages_demo pages.pages_every_page pages.pages_home pages.pages_markdown pages.pages_not_found pages.pages_search_dialog pages.pages_theme_toggle spike.spike_button spike.spike_card_and_field spike.spike_dialog spike.spike_dropdown_menu split.chart split.chat split.chat_needs split.core split.double_load_stops split.fixtures_load_only_their_group split.forms split.forms_needs split.layout split.layout_needs split.overlays split.overlays_needs split.overlays_needs_date_picker
+31,80,94,96,98,101,121,129,139,159,291-347,433,435-437,439,452,455	c:accordion
+78,86,96,98,111-114,117-163,291-347,432-433,436-437,447-459	c:alert
+48,78,80-81,86,96,98,129,139,159,209-290,432-433,436-437,452,457	c:alert-dialog
+96,98,129,139,159,291-347,433,436-437,447-459	c:aspect-ratio
+13,96,98,129,137,139,141,159,348-402,433,436-437,448-449,452	c:attachment
+77-82,85-87,90,96,98,111-114,129,136,139,159,291-402,432-433,436-437,449,452,455-456	c:avatar
+0,20,32,77-81,85-87,90,96,98,111,117-163,291-347,432-433,435-442,447-459	c:badge
+77-87,96,98,111-114,129,139-140,159,432-433,436-437	c:brand c:page
+78,80-82,85-86,90,96,98,129,136,139,159,291-347,432-433,436-437,452,456	c:breadcrumb
+0-4,9-10,12,14-30,32-34,39-41,43-45,47,96,98-99,129,137,139,159,348-402,433,436-437,448-449,452	c:bubble
+0-30,32-41,43-45,47-50,53,57-60,64,69,73,76-459	c:button
+0-30,77-116,118,129,137,139,159,164-208,329,361,433,435-437,439,441-442,452-454	c:button-group
+50,78,81-82,86,96,98,129,136,139,159,182-183,209-290,348-402,432-433,436-437,452,457-459	c:calendar
+51,72,77-78,80-82,84-87,90,94,96,98,101,111-114,117-163,291-347,361,403-437,439,443-459	c:card
+77-78,80,86,96,98,111,129,139,159,432-433,436-437	c:card-grid
+51,96,98,121,129,139,159,291-347,433,436-437,452,455	c:carousel
+78,86-87,90,96,98,129,139,159,403-430,432-433,436-437,447,452	c:chart
+52,78-83,85-87,90,96,98,104,117-402,431-434,436-437,443-446,449,452-453	c:checkbox
+0-6,8-30,32,43,45-47,77-116,119,129,137,139,141,159,329,348-402,433,435-437,439,441-442,448,452	c:code-block
+0-6,8-30,36,53,77-116,121,129,136,139,159,291-347,361,433,435-437,439,441,452,455-456	c:collapsible
+54,96,98,104,129,136-137,139,159,164-290,433,436-437,452-453	c:combobox
+0-30,55,77-116,129,139,159,164-290,329,361,433,435-442,452,458-459	c:command
+56,96,98,129,139,159,209-290,433,436-437,452,457	c:context-menu
+77-78,80,85-86,96,98,112,129,138-139,159,432-433,436-437	c:cover
+77-80,86-87,90,96,98,114,129,139,159,431-434,436-437	c:data-table
+78,81-82,86,96,98,129,139,159,209-290,348-402,432-433,436-437,452,458-459	c:date-picker
+0-30,57,77-116,121,129,139,141,154,159,161,164-290,329,348-402,432-433,435-446,452,457-459	c:dialog
+58,96,98-99,129,139,159,209-290,433,436-437,452,457	c:drawer
+0-30,38,59,77-116,118,126,129,131,137,139,159,164-347,361,432-433,435-437,439,441-446,452,454,456-457	c:dropdown-menu
+1,77-79,86-87,96,98,111-114,129,139,159,291-347,432-433,436-437,452,455	c:empty
+52,57,78,80-86,90,96-98,104,117-290,348-402,431-437,439,443-446,452-454,458-459	c:field
+78,80-86,96,98,104,129,139,159,164-208,263,379,431-434,436-437,452-453	c:form
+8,35,37,60,96,98,121,129,139,159,209-290,433,436-437,452,457	c:hover-card
+57,64,69,77-86,90,96-98,104,114,117-402,431-437,439,443-446,452-454,457-459	c:input
+0-30,38,54-55,77-116,129,136-137,139,159,164-290,329,348-402,431-433,435-442,452-454,458-459	c:input-group
+61,96,98,104,129,136,139,159,164-208,433,436-437,452-453	c:input-otp
+3-4,28,34,78,80-82,85-86,96,98,113,129,138-139,159,291-347,431-434,436-437,452,455	c:item
+96,98,104,129,136,139,159,164-347,433,436-437,452-453,456-459	c:kbd
+52,57,64-65,69,71,78-79,86-87,90,96,98,121,129,136-137,139,159,161,164-290,348-402,432-433,435-437,439,443-446,449,451-453,457-459	c:label
+2,33,96,98,129,137,139,159,348-402,433,436-437,448-449,452	c:marker
+62,96,98,129,139,159,209-290,433,436-437,452,457	c:menubar
+0-4,9-10,12,14-30,32-34,39-41,43-45,47,96,98,129,137,139,159,348-402,433,436-437,448-449,452	c:message
+1,96,98,129,137,139,141,159,348-402,433,436-437,448,452	c:message-scroller
+96,98,117-431,433,436-437,452-453,458-459	c:native-select
+63,96,98,129,139,159,209-290,433,436-437,452,457	c:navigation-menu
+96,98,129,139,159,291-347,433,436-437,452,455	c:pagination
+0-30,64,77-116,118,129,137,139,159,164-290,329,348-402,432-433,435-442,452,454,458-459	c:popover
+35,77-78,80,85-86,96,98,129,139,159,291-347,432-433,436-437,447-459	c:progress
+96,98,129,136-137,139,159,209-290,348-402,433,436-437,448-449,452	c:questionnaire
+65,78,80-82,85-86,96,98,104,129,136,139,159,164-208,432-433,436-437,452-453	c:radio-group
+77-78,80,85-86,96,98,129,139,159,432-433,436-437	c:rating
+66,96,98,129,139,159,291-347,433,436-437,452,455	c:resizable
+67,96,98,129,139,159,291-347,433,436-437,452,455	c:scroll-area
+78,86-87,96,98,129,139,150,159,432-433,436-437	c:section-cards
+68,77-82,85-87,96-98,104,129,136-137,139,159,164-290,431-433,435-437,439,452-454	c:select
+0-30,67,77-116,129,136,139,159,164-208,291-347,361,432-433,435-459	c:separator
+30,69,78,80,85-86,96,98,121,129,139,159,209-290,335-337,432-433,436-437,452,457	c:sheet
+0-30,77-116,129,136,139,159,291-347,361,432-433,435-437,439-442,452,456	c:sidebar
+77-82,85-87,96,98,111-114,129,139,159,432-433,436-437	c:site-header c:text-stack
+78,86,90,96,98,111-114,129,136,139,159,291-347,432-433,436-437,447-459	c:skeleton
+70,96,98,129,139,159,164-208,329,433,436-437,452-453	c:slider
+77-116,129,139,141,159,291-347,432-433,435-437,439,441,447-459	c:spinner
+78,80,85-86,96,98,129,139,159,432-433,436-437	c:stat-grid
+71,78,86,96,98,113,117-290,431-434,436-437,451-453	c:switch
+78-80,86-87,90,96,98,111-114,129,139,159,291-347,432-433,436-437,447-459	c:table
+72,77-78,80,86-88,96,98,129,137,139,159,291-347,432-433,435-437,439,452,455	c:tabs
+78,80-82,85-86,96-98,104,129,136-137,139,159,164-208,348-402,432-433,435-437,439,443-446,452-454	c:textarea
+78,86,96,98,117-163,432-433,436-437	c:theme
+0-459	c:toast
+74,96,98,129,137,139,159,164-208,290,433,436-437,452-453	c:toggle
+75,78,86-88,96,98,120,129,139,159,164-208,290,431-434,436-437,452-453	c:toggle-group
+1,9-10,76,96-98,104,120-121,126,129,139,159,209-290,335-336,433,435-437,439,452,457	c:tooltip
+0-1,3-4,12,14-20,22-30,32,34,39-47,96,98,129,137,139,159,348-402,433,436-437,448,452	c:trace
+117,119,130-131,136-137,147,151,165,177-178,184-185,190-191,199,202,204-205,236,241-242,296,299-300,323-324,326,332,342,348,351,370,378,381,395,402,409,411,415	f:clanker-ui-a11y.css
+89-90,96,98-99,102,104,117-430,433,435-437,439,447	f:clanker-ui-chart.js
+1,9-10,89-90,96,98-99,102,104,117-430,433,435-437,439	f:clanker-ui-code.js
 99	f:clanker-ui-rhea.css p:/__rhea-only
-0-30,77-427,430,432-439	f:clanker-ui-theme.js
-1,96,98-99,117-427,430,433-434	f:clanker-ui-themes.css
-0-448,450-455	f:clanker-ui.css f:clanker-ui.js j:choice:choiceClick+3 j:choice:choiceSelector j:dialog:dialogTriggerSelector j:part:partDefaults j:toast:toastPortal j:toast:toastPortalSetup
-434	f:demo/assets/artwork-1.svg f:demo/assets/artwork-2.svg f:demo/assets/artwork-3.svg f:demo/assets/gradient.svg f:docs/content/components/calendar/examples/calendar-booked-dates.js f:docs/content/components/calendar/examples/calendar-custom-days.js f:docs/content/components/calendar/examples/calendar-demo.js f:docs/content/components/calendar/examples/calendar-presets.js f:docs/content/components/calendar/examples/calendar-range.js f:docs/content/components/calendar/examples/calendar-rtl.js f:docs/content/components/calendar/examples/calendar-time.js f:docs/content/components/calendar/examples/calendar-week-numbers.js f:docs/content/components/card/examples/card-spacing.js f:docs/content/components/checkbox/examples/checkbox-table.js f:docs/content/components/field/examples/field-slider.js f:docs/content/components/input-group/examples/input-group-button.js f:docs/content/components/input-otp/examples/input-otp-controlled.js f:docs/content/components/progress/examples/progress-controlled.js f:docs/content/components/progress/examples/progress-demo.js f:docs/content/utils/shimmer/examples/shimmer-once.js p:/docs/ai-elements/context p:/docs/blocks p:/docs/blocks/card-grid p:/docs/blocks/data-table p:/docs/blocks/detail p:/docs/blocks/form p:/docs/blocks/login p:/docs/blocks/login-split p:/docs/blocks/overlay-form p:/docs/blocks/settings p:/docs/blocks/states p:/docs/components/alert p:/docs/components/alert-dialog p:/docs/components/aspect-ratio p:/docs/components/attachment p:/docs/components/avatar p:/docs/components/badge p:/docs/components/brand p:/docs/components/breadcrumb p:/docs/components/calendar p:/docs/components/card p:/docs/components/card-grid p:/docs/components/carousel p:/docs/components/checkbox p:/docs/components/collapsible p:/docs/components/combobox p:/docs/components/command p:/docs/components/context-menu p:/docs/components/cover p:/docs/components/date-picker p:/docs/components/direction p:/docs/components/dropdown-menu p:/docs/components/empty p:/docs/components/field p:/docs/components/hover-card p:/docs/components/input p:/docs/components/input-group p:/docs/components/input-otp p:/docs/components/item p:/docs/components/kbd p:/docs/components/label p:/docs/components/marker p:/docs/components/menubar p:/docs/components/message p:/docs/components/message-scroller p:/docs/components/navigation-menu p:/docs/components/page p:/docs/components/pagination p:/docs/components/popover p:/docs/components/progress p:/docs/components/questionnaire p:/docs/components/radio-group p:/docs/components/rating p:/docs/components/resizable p:/docs/components/scroll-area p:/docs/components/section-cards p:/docs/components/select p:/docs/components/separator p:/docs/components/sheet p:/docs/components/site-header p:/docs/components/skeleton p:/docs/components/slider p:/docs/components/sonner p:/docs/components/spinner p:/docs/components/stat-grid p:/docs/components/switch p:/docs/components/table p:/docs/components/text-stack p:/docs/components/textarea p:/docs/components/theme-switch p:/docs/components/toast p:/docs/components/toggle p:/docs/components/toggle-group p:/docs/components/trace p:/docs/dark-mode p:/docs/javascript p:/docs/localization p:/docs/markup p:/docs/rtl p:/docs/security p:/docs/theming p:/docs/utils/scroll-fade p:/docs/utils/shimmer
-90,96,98,117-427,430,433-434,449,452-453	f:demo/assets/g3-avatar-1.svg
-96,98,117-427,430,433-434,449,452-453	f:demo/assets/g3-avatar-2.svg f:demo/assets/g3-avatar-3.svg f:demo/assets/g3-avatar-4.svg
-96,98,117-427,430,433,444-456	f:demo/assets/g3-photo-2.svg f:demo/assets/g3-photo.svg
-96,98,117-427,430,433-434,446,449	f:demo/assets/g4-avatar-1.svg f:demo/assets/g4-avatar-2.svg f:demo/assets/g4-avatar-3.svg
-96,98,117-427,430,433-434,445,449	f:demo/assets/g4-desk.svg f:demo/assets/g4-office.svg
-96,98,117-427,430,433-434,445-446,449	f:demo/assets/g4-workspace.svg
-89-90,96,98-99,102,104,117-427,430,432-434,436	f:demo/demo.css f:demo/demo.js
-77-88,111-114,429,434	f:dist/clanker-ui-a11y.min.css f:dist/clanker-ui-theme.min.js f:dist/clanker-ui.min.css
-444,449	f:dist/clanker-ui-chart.min.css f:test/split/chart.html f:test/split/chart.js
-78,86-88,117-163,192,218,303,351,401-427,429,434,444,449	f:dist/clanker-ui-chart.min.js
-445-446,449	f:dist/clanker-ui-chat.min.css f:dist/clanker-ui-chat.min.js
-117-163,192,218,303,351,401-427	f:dist/clanker-ui-code.min.js
-444-456	f:dist/clanker-ui-core.min.css f:test/split/core.html
-77-88,111-114,117-163,192,218,303,351,401-427,429,434,444-456	f:dist/clanker-ui-core.min.js
-446,449-451,455-456	f:dist/clanker-ui-forms.min.css
-446,448-451,455-456	f:dist/clanker-ui-forms.min.js
-446,449,452-453	f:dist/clanker-ui-layout.min.css f:dist/clanker-ui-layout.min.js
-446,449,451,453-456	f:dist/clanker-ui-overlays.min.css f:dist/clanker-ui-overlays.min.js
-77-88,111-114,117-163,192,218,303,351,401-427,429,434	f:dist/clanker-ui.min.js
-0-30,77-116,432,434,436-439	f:docs/assets/docs-sidebar.js
-0-30,33-34,40,43,77-116,432-439	f:docs/assets/docs.css
-0-30,77-116,432-439	f:docs/assets/docs.js f:docs/assets/examples.css f:docs/assets/fonts.css f:docs/assets/geist-latin.woff2 f:docs/assets/geist-mono-latin.woff2
-0,434	f:docs/content/ai-elements/chain-of-thought/examples/chain-of-thought-demo.js p:/docs/ai-elements/chain-of-thought
-1,434	f:docs/content/ai-elements/chat/examples/chat-demo.js p:/docs/ai-elements/chat
-2,33,434	f:docs/content/ai-elements/checkpoint/examples/checkpoint-demo.js
-3-4,34,434	f:docs/content/ai-elements/confirmation/examples/confirmation-demo.js
-5-6,434	f:docs/content/ai-elements/file-tree/examples/file-tree-demo.js p:/docs/ai-elements/file-tree
-9-10,434	f:docs/content/ai-elements/message/examples/message-pattern.js p:/docs/ai-elements/message
-11,434	f:docs/content/ai-elements/model-selector/examples/model-selector-demo.js p:/docs/ai-elements/model-selector
-12,434	f:docs/content/ai-elements/plan/examples/plan-demo.js p:/docs/ai-elements/plan
-13,434	f:docs/content/ai-elements/prompt-input/examples/prompt-input-demo.js p:/docs/ai-elements/prompt-input
-14,40,434	f:docs/content/ai-elements/queue/examples/queue-demo.js
-15-16,434	f:docs/content/ai-elements/reasoning/examples/reasoning-demo.js p:/docs/ai-elements/reasoning
-17,434	f:docs/content/ai-elements/sources/examples/sources-demo.js p:/docs/ai-elements/sources
-18-19,434	f:docs/content/ai-elements/stack-trace/examples/stack-trace-demo.js p:/docs/ai-elements/stack-trace
-20,43,434	f:docs/content/ai-elements/subagent/examples/subagent-demo.js
-21,434	f:docs/content/ai-elements/suggestion/examples/suggestion-demo.js p:/docs/ai-elements/suggestion
-22,434	f:docs/content/ai-elements/task/examples/task-demo.js p:/docs/ai-elements/task
-23-25,434	f:docs/content/ai-elements/terminal/examples/terminal-demo.js p:/docs/ai-elements/terminal
-26-27,434	f:docs/content/ai-elements/test-results/examples/test-results-demo.js p:/docs/ai-elements/test-results
-28-30,434	f:docs/content/ai-elements/tool/examples/tool-approval.js f:docs/content/ai-elements/tool/examples/tool-demo.js f:docs/content/ai-elements/tool/examples/tool-sheet.js p:/docs/ai-elements/tool
-97,432,434,436	f:docs/content/components/button-group/examples/button-group-input-group.js p:/docs/components/button-group
-90,434	f:docs/content/components/data-table/examples/data-table-demo.js f:docs/content/components/data-table/examples/data-table-rtl.js p:/docs/components/chart p:/docs/components/data-table p:/docs/components/icons p:/docs/components/sidebar p:/docs/components/stat-tile
+0-30,77-430,433,435-442	f:clanker-ui-theme.js
+1,96,98-99,117-430,433,436-437	f:clanker-ui-themes.css
+0-451,453-458	f:clanker-ui.css f:clanker-ui.js j:choice:choiceClick+3 j:choice:choiceSelector j:dialog:dialogTriggerSelector j:part:partDefaults j:toast:toastPortal j:toast:toastPortalSetup
+437	f:demo/assets/artwork-1.svg f:demo/assets/artwork-2.svg f:demo/assets/artwork-3.svg f:demo/assets/gradient.svg f:docs/content/components/card/examples/card-spacing.js f:docs/content/components/checkbox/examples/checkbox-table.js f:docs/content/components/field/examples/field-slider.js f:docs/content/components/input-group/examples/input-group-button.js f:docs/content/components/input-otp/examples/input-otp-controlled.js f:docs/content/utils/shimmer/examples/shimmer-once.js p:/docs/ai-elements/context p:/docs/blocks p:/docs/blocks/card-grid p:/docs/blocks/data-table p:/docs/blocks/detail p:/docs/blocks/form p:/docs/blocks/login p:/docs/blocks/login-split p:/docs/blocks/overlay-form p:/docs/blocks/settings p:/docs/blocks/states p:/docs/components/alert p:/docs/components/alert-dialog p:/docs/components/aspect-ratio p:/docs/components/attachment p:/docs/components/avatar p:/docs/components/badge p:/docs/components/brand p:/docs/components/breadcrumb p:/docs/components/card p:/docs/components/card-grid p:/docs/components/carousel p:/docs/components/checkbox p:/docs/components/collapsible p:/docs/components/combobox p:/docs/components/command p:/docs/components/context-menu p:/docs/components/cover p:/docs/components/date-picker p:/docs/components/direction p:/docs/components/dropdown-menu p:/docs/components/empty p:/docs/components/field p:/docs/components/hover-card p:/docs/components/input p:/docs/components/input-group p:/docs/components/input-otp p:/docs/components/item p:/docs/components/kbd p:/docs/components/label p:/docs/components/marker p:/docs/components/menubar p:/docs/components/message p:/docs/components/message-scroller p:/docs/components/navigation-menu p:/docs/components/page p:/docs/components/pagination p:/docs/components/popover p:/docs/components/questionnaire p:/docs/components/radio-group p:/docs/components/rating p:/docs/components/resizable p:/docs/components/scroll-area p:/docs/components/section-cards p:/docs/components/select p:/docs/components/separator p:/docs/components/sheet p:/docs/components/site-header p:/docs/components/skeleton p:/docs/components/slider p:/docs/components/sonner p:/docs/components/spinner p:/docs/components/stat-grid p:/docs/components/switch p:/docs/components/table p:/docs/components/text-stack p:/docs/components/textarea p:/docs/components/theme-switch p:/docs/components/toast p:/docs/components/toggle p:/docs/components/toggle-group p:/docs/components/trace p:/docs/dark-mode p:/docs/javascript p:/docs/localization p:/docs/markup p:/docs/rtl p:/docs/security p:/docs/theming p:/docs/utils/scroll-fade p:/docs/utils/shimmer
+90,96,98,129,136,139,159,291-347,433,436-437,452,455-456	f:demo/assets/g3-avatar-1.svg
+96,98,129,139,159,291-347,433,436-437,452,455-456	f:demo/assets/g3-avatar-2.svg f:demo/assets/g3-avatar-3.svg f:demo/assets/g3-avatar-4.svg
+96,98,129,139,159,291-347,433,436,447-459	f:demo/assets/g3-photo-2.svg f:demo/assets/g3-photo.svg
+96,98,129,139,159,348-402,433,436-437,449,452	f:demo/assets/g4-avatar-1.svg f:demo/assets/g4-avatar-2.svg f:demo/assets/g4-avatar-3.svg
+96,98,129,139,159,348-402,433,436-437,448,452	f:demo/assets/g4-desk.svg f:demo/assets/g4-office.svg
+96,98,129,139,159,348-402,433,436-437,448-449,452	f:demo/assets/g4-workspace.svg
+89-90,96,98-99,102,104,117-430,433,435-437,439	f:demo/demo.css f:demo/demo.js
+77-88,111-114,432,437	f:dist/clanker-ui-a11y.min.css f:dist/clanker-ui-theme.min.js f:dist/clanker-ui.min.css
+447,452	f:dist/clanker-ui-chart.min.css f:test/split/chart.html f:test/split/chart.js
+78,86-88,117-163,192,218,303,352,403-430,432,437,447,452	f:dist/clanker-ui-chart.min.js
+448-449,452	f:dist/clanker-ui-chat.min.css f:dist/clanker-ui-chat.min.js
+117-163,192,218,303,352,403-430	f:dist/clanker-ui-code.min.js
+447-459	f:dist/clanker-ui-core.min.css f:test/split/core.html
+77-88,111-114,117-163,192,218,303,352,403-430,432,437,447-459	f:dist/clanker-ui-core.min.js
+449,452-454,458-459	f:dist/clanker-ui-forms.min.css
+449,451-454,458-459	f:dist/clanker-ui-forms.min.js
+449,452,455-456	f:dist/clanker-ui-layout.min.css f:dist/clanker-ui-layout.min.js
+449,452,454,456-459	f:dist/clanker-ui-overlays.min.css f:dist/clanker-ui-overlays.min.js
+77-88,111-114,117-163,192,218,303,352,403-430,432,437	f:dist/clanker-ui.min.js
+0-30,77-116,329,361,435,437,439-442	f:docs/assets/docs-sidebar.js
+0-30,33-34,40,43,77-116,329,361,435-442	f:docs/assets/docs.css
+0-30,77-116,329,361,435-442	f:docs/assets/docs.js f:docs/assets/examples.css f:docs/assets/fonts.css f:docs/assets/geist-latin.woff2 f:docs/assets/geist-mono-latin.woff2
+0,437	f:docs/content/ai-elements/chain-of-thought/examples/chain-of-thought-demo.js p:/docs/ai-elements/chain-of-thought
+1,437	f:docs/content/ai-elements/chat/examples/chat-demo.js p:/docs/ai-elements/chat
+2,33,437	f:docs/content/ai-elements/checkpoint/examples/checkpoint-demo.js
+3-4,34,437	f:docs/content/ai-elements/confirmation/examples/confirmation-demo.js
+5-6,437	f:docs/content/ai-elements/file-tree/examples/file-tree-demo.js p:/docs/ai-elements/file-tree
+9-10,437	f:docs/content/ai-elements/message/examples/message-pattern.js p:/docs/ai-elements/message
+11,437	f:docs/content/ai-elements/model-selector/examples/model-selector-demo.js p:/docs/ai-elements/model-selector
+12,437	f:docs/content/ai-elements/plan/examples/plan-demo.js p:/docs/ai-elements/plan
+13,437	f:docs/content/ai-elements/prompt-input/examples/prompt-input-demo.js p:/docs/ai-elements/prompt-input
+14,40,437	f:docs/content/ai-elements/queue/examples/queue-demo.js
+15-16,437	f:docs/content/ai-elements/reasoning/examples/reasoning-demo.js p:/docs/ai-elements/reasoning
+17,437	f:docs/content/ai-elements/sources/examples/sources-demo.js p:/docs/ai-elements/sources
+18-19,437	f:docs/content/ai-elements/stack-trace/examples/stack-trace-demo.js p:/docs/ai-elements/stack-trace
+20,43,437	f:docs/content/ai-elements/subagent/examples/subagent-demo.js
+21,437	f:docs/content/ai-elements/suggestion/examples/suggestion-demo.js p:/docs/ai-elements/suggestion
+22,437	f:docs/content/ai-elements/task/examples/task-demo.js p:/docs/ai-elements/task
+23-25,437	f:docs/content/ai-elements/terminal/examples/terminal-demo.js p:/docs/ai-elements/terminal
+26-27,437	f:docs/content/ai-elements/test-results/examples/test-results-demo.js p:/docs/ai-elements/test-results
+28-30,437	f:docs/content/ai-elements/tool/examples/tool-approval.js f:docs/content/ai-elements/tool/examples/tool-demo.js f:docs/content/ai-elements/tool/examples/tool-sheet.js p:/docs/ai-elements/tool
+97,435,437,439	f:docs/content/components/button-group/examples/button-group-input-group.js p:/docs/components/button-group
+361,437	f:docs/content/components/calendar/examples/calendar-booked-dates.js f:docs/content/components/calendar/examples/calendar-custom-days.js f:docs/content/components/calendar/examples/calendar-demo.js f:docs/content/components/calendar/examples/calendar-presets.js f:docs/content/components/calendar/examples/calendar-range.js f:docs/content/components/calendar/examples/calendar-rtl.js f:docs/content/components/calendar/examples/calendar-time.js f:docs/content/components/calendar/examples/calendar-week-numbers.js p:/docs/components/calendar
+90,437	f:docs/content/components/data-table/examples/data-table-demo.js f:docs/content/components/data-table/examples/data-table-rtl.js p:/docs/components/chart p:/docs/components/data-table p:/docs/components/icons p:/docs/components/sidebar p:/docs/components/stat-tile
+329,437	f:docs/content/components/progress/examples/progress-controlled.js f:docs/content/components/progress/examples/progress-demo.js p:/docs/components/progress
 31	f:test/behavior/fixtures/accordion.html
 32	f:test/behavior/fixtures/ai-chain-of-thought.html
 33	f:test/behavior/fixtures/ai-checkpoint.html
@@ -172,177 +174,179 @@ checks	ai.ai_chain_of_thought_replay ai.ai_chat_turn ai.ai_checkpoint_restore ai
 75	f:test/behavior/fixtures/toggle-group.html
 74	f:test/behavior/fixtures/toggle.html
 76	f:test/behavior/fixtures/tooltip.html
-428	f:test/lint/bad.html
-428-431	f:test/lint/good.html f:test/lint/lint.css
-440-443	f:test/spike/index.html f:test/spike/page.css
-446,449	f:test/split/chat-needs.html
-445,449	f:test/split/chat.html
-449,451	f:test/split/forms-needs.html
-449-450	f:test/split/forms.html
-449,453	f:test/split/layout-needs.html
-449,452	f:test/split/layout.html
-449,455-456	f:test/split/overlays-needs.html f:test/split/toast.js
-449,454	f:test/split/overlays.html
-448	f:test/split/twice.html
+431	f:test/lint/bad.html
+431-434	f:test/lint/good.html f:test/lint/lint.css
+443-446	f:test/spike/index.html f:test/spike/page.css
+449,452	f:test/split/chat-needs.html
+448,452	f:test/split/chat.html
+452,454	f:test/split/forms-needs.html
+452-453	f:test/split/forms.html
+452,456	f:test/split/layout-needs.html
+452,455	f:test/split/layout.html
+452,458-459	f:test/split/overlays-needs.html f:test/split/toast.js
+452,457	f:test/split/overlays.html
+451	f:test/split/twice.html
 291	j:accordion:accordionClosing
-31,94,96,98,101,117-427,430,432-434,436,452	j:accordion:accordionContent j:accordion:accordionDisabled j:accordion:accordionItems j:accordion:accordionOf j:accordion:accordionSet j:accordion:accordionTrigger j:accordion:define:accordion
+31,94,96,98,101,121,129,139,159,291-347,433,435-437,439,455	j:accordion:accordionContent j:accordion:accordionDisabled j:accordion:accordionItems j:accordion:accordionOf j:accordion:accordionSet j:accordion:accordionTrigger j:accordion:define:accordion
 31,121,291-293	j:accordion:accordionSingle j:accordion:accordionToggle j:accordion:accordionValue
-96,98,117-427,430,433-434,447	j:alert:alertActionResize j:alert:define:alert-action
-96,98,117-427,430,433-434,447,452	j:aspect-ratio:aspectRatioParse j:aspect-ratio:define:aspect-ratio
-13,96,98,117-427,430,433-434,445-446	j:attachment:define:attachment-action
-96,98,117-427,430,433-434,445	j:attachment:define:attachment-trigger j:message-scroller:messageScrollerEnd
-90,96,98,117-427,430,433-434,446,452-453	j:avatar:avatarStatus j:avatar:define:avatar-image
-90,96,98,117-427,430,433-434,453	j:breadcrumb:define:breadcrumb j:sidebar:define:sidebar-menu-skeleton j:sidebar:define:sidebar-rail j:sidebar:define:sidebar-trigger j:sidebar:sidebarApply j:sidebar:sidebarKey j:sidebar:sidebarOf j:sidebar:sidebarStored j:sidebar:sidebarSyncTriggers j:sidebar:sidebarTriggers j:sidebar:sidebarWrapper
-0-30,32-41,43-45,47-50,53,57-60,64,69,73,76-443,445-447,450-455	j:button:define:button
-50,96,98,117-427,430,433-434,454-455	j:calendar:calendarAddDays j:calendar:calendarAddMonths j:calendar:calendarClampMonth j:calendar:calendarConfig j:calendar:calendarConnect j:calendar:calendarCopy j:calendar:calendarCreate j:calendar:calendarDate j:calendar:calendarDayCell j:calendar:calendarDayLabel j:calendar:calendarDisabled j:calendar:calendarDisplayed j:calendar:calendarFirst j:calendar:calendarFocusIso j:calendar:calendarFocusKey j:calendar:calendarFormat j:calendar:calendarFormatter j:calendar:calendarGrid j:calendar:calendarHead j:calendar:calendarHidden j:calendar:calendarIso j:calendar:calendarMonthKey j:calendar:calendarMonthView j:calendar:calendarMonthsBetween j:calendar:calendarNav j:calendar:calendarNormalize j:calendar:calendarNumber j:calendar:calendarOf j:calendar:calendarOrdinal j:calendar:calendarParse j:calendar:calendarRender j:calendar:calendarRestore j:calendar:calendarSelect j:calendar:calendarSelected j:calendar:calendarSelection j:calendar:calendarToday j:calendar:calendarUpdateMonth j:calendar:calendarWeekdayLabel j:calendar:calendarWeeks j:calendar:define:calendar
-50,182,351,355,357,360,364,373-374,377-378	j:calendar:calendarChanged
-50,351,355,357,360,364,373-374	j:calendar:calendarChoose
-183,357,378	j:calendar:calendarGetValue
-351,353,357,364,373-374	j:calendar:calendarMoveFocus j:calendar:calendarStep
-50,351-352,454	j:calendar:calendarNavigate
-50,96,98,117-427,430,433-434	j:calendar:calendarPicker j:calendar:calendarReconfigure
-355,360,373	j:calendar:calendarRange
-360	j:calendar:calendarSetMonth
-50,96,98,117-427,430,433,454	j:calendar:calendarSetMonthState
-96,98,117-427,430,433	j:calendar:calendarSetValue p:/demo
-96,98,117-427,430,433-434,454	j:calendar:calendarWeekNumber
-51,96,98,117-427,430,433-434,452	j:carousel:carouselAnimation j:carousel:carouselButtons j:carousel:carouselChange j:carousel:carouselCounter j:carousel:carouselEngine j:carousel:carouselLimit j:carousel:carouselMount j:carousel:carouselParts j:carousel:carouselRect j:carousel:carouselTranslate j:carousel:carouselVector j:carousel:define:carousel
-51,96,98,117-427,430,433-434	j:carousel:carouselFresh
+96,98,129,139,159,291-347,433,436-437,450	j:alert:alertActionResize j:alert:define:alert-action
+96,98,129,139,159,291-347,433,436-437,450,455	j:aspect-ratio:aspectRatioParse j:aspect-ratio:define:aspect-ratio
+13,96,98,129,139,159,348-402,433,436-437,448-449	j:attachment:define:attachment-action
+96,98,129,139,159,348-402,433,436-437,448	j:attachment:define:attachment-trigger
+90,96,98,129,136,139,159,291-402,433,436-437,449,455-456	j:avatar:avatarStatus j:avatar:define:avatar-image
+90,96,98,129,136,139,159,291-347,433,436-437,456	j:breadcrumb:define:breadcrumb j:sidebar:define:sidebar-menu-skeleton j:sidebar:define:sidebar-rail j:sidebar:define:sidebar-trigger j:sidebar:sidebarApply j:sidebar:sidebarKey j:sidebar:sidebarOf j:sidebar:sidebarStored j:sidebar:sidebarSyncTriggers j:sidebar:sidebarTriggers j:sidebar:sidebarWrapper
+0-30,32-41,43-45,47-50,53,57-60,64,69,73,76-446,448-450,453-458	j:button:define:button
+50,96,98,129,136,139,159,182-183,209-290,348-402,433,436-437,457-458	j:calendar:calendarAddDays j:calendar:calendarAddMonths j:calendar:calendarClampMonth j:calendar:calendarConfig j:calendar:calendarConnect j:calendar:calendarCopy j:calendar:calendarCreate j:calendar:calendarDate j:calendar:calendarDayCell j:calendar:calendarDayLabel j:calendar:calendarDisabled j:calendar:calendarDisplayed j:calendar:calendarFirst j:calendar:calendarFocusIso j:calendar:calendarFocusKey j:calendar:calendarFormat j:calendar:calendarFormatter j:calendar:calendarGrid j:calendar:calendarHidden j:calendar:calendarIso j:calendar:calendarMonthKey j:calendar:calendarMonthView j:calendar:calendarMonthsBetween j:calendar:calendarNav j:calendar:calendarNormalize j:calendar:calendarNumber j:calendar:calendarOf j:calendar:calendarOrdinal j:calendar:calendarParse j:calendar:calendarRender j:calendar:calendarRestore j:calendar:calendarSelected j:calendar:calendarSelection j:calendar:calendarToday j:calendar:calendarUpdateMonth j:calendar:calendarWeekdayLabel j:calendar:calendarWeeks j:calendar:define:calendar
+50,182,352,356,358,362,366,375-376,379-380	j:calendar:calendarChanged
+50,352,356,358,362,366,375-376	j:calendar:calendarChoose
+183,358,380	j:calendar:calendarGetValue
+50,96,98,129,136,139,159,209-290,348-402,433,436-437,457-458	j:calendar:calendarHead j:calendar:calendarSelect
+352,354,358,366,375-376	j:calendar:calendarMoveFocus j:calendar:calendarStep
+50,352-353,457	j:calendar:calendarNavigate
+50,96,98,129,136,139,159,182-183,209-290,348-402,433,436-437	j:calendar:calendarPicker
+356,362,375	j:calendar:calendarRange
+50,96,98,129,136,139,159,209-290,348-402,433,436-437	j:calendar:calendarReconfigure
+362	j:calendar:calendarSetMonth
+50,96,98,129,136,139,159,182-183,348-402,433,436,457	j:calendar:calendarSetMonthState
+96,98,129,136,139,159,182-183,348-402,433,436	j:calendar:calendarSetValue
+96,98,129,136,139,159,348-402,433,436-437,457	j:calendar:calendarWeekNumber
+51,96,98,121,129,139,159,291-347,433,436-437,455	j:carousel:carouselAnimation j:carousel:carouselButtons j:carousel:carouselChange j:carousel:carouselCounter j:carousel:carouselEngine j:carousel:carouselLimit j:carousel:carouselMount j:carousel:carouselParts j:carousel:carouselRect j:carousel:carouselTranslate j:carousel:carouselVector j:carousel:define:carousel
+51,96,98,129,139,159,303-305,311,313-315,321,336,433,436-437	j:carousel:carouselFresh
 51,303-305,311,313-315,321	j:carousel:carouselGo j:carousel:define:carousel-next
-260,314-316	j:carousel:carouselReInit
+314-316	j:carousel:carouselReInit
 51,303-306,309-311,313-315,317-318,321	j:carousel:carouselSelect
-0-6,8-30,32,43,45-47,77-427,430,432-434,436,438-439,445	j:carousel:carouselTabAt+1 j:code-block:codeBlockPrepare j:code-block:define:code-block-content
-1,5,13,18,21,30-33,35-76,90-91,101,106,116-117,121-123,125,128-131,157,161,164-165,171-174,177,179,181,184-187,190-193,195,199-200,202,204-206,208-209,211-225,227-233,235-236,238-246,249-255,257,259-267,270-271,275,277,279-280,282,286,288,291,298-299,301,303-304,317,319,321,323-324,326,330-331,334-336,340-344,347,350-351,353,357,364,368,373-375,378-379,381,383-384,386,390-391,393-394,396,403,407-408,414-415,424,428,431,433,440,442-443,452,454	j:carousel:carouselTabAt+2 j:sidebar:define:sidebar-menu-button+2 j:toast:define:toast-viewport+1 j:toast:define:toast-viewport+2
-0-6,8-90,94,96-99,101-102,104,106,110-114,117,121,129-131,136-137,139,148-149,155-157,159,161,173,222,232,284,317,334,428-434,436-443,450	j:carousel:carouselTabAt+3
-260,312,314-316,339	j:carousel:carouselUnmount
+0-6,8-30,32,43,45-47,77-116,129,137,139,159,187,199,260,315,329,336,348-402,433,435-437,439,441-442,448	j:carousel:carouselTabAt+1
+1,5,13,18,21,30-33,35-76,90-91,101,106,116-117,121-123,125,128-131,157,161,164-165,171-174,177,179,181,184-187,190-193,195,199-200,202,204-206,208-209,211-225,227-233,235-236,238-246,249-255,257,259-267,270-271,275,277,279-280,282,286,288,291,298-299,301,303-304,317,319,321,323-324,326,331-332,335-337,341-345,348,351-352,354,358,366,370,375-377,380-381,383,385-386,388,392-393,395-396,398,405,409-410,416-417,422,427,431,434,436,443,445-446,455,457	j:carousel:carouselTabAt+2 j:sidebar:define:sidebar-menu-button+2 j:toast:define:toast-viewport+1 j:toast:define:toast-viewport+2
+0-6,8-90,94,96-99,101-102,104,106,110-114,117,121,129-131,136-137,139,148-149,155-157,159,161,173,222,232,284,317,329,335,361,431-437,439-446,453	j:carousel:carouselTabAt+3
+312,314-316,340	j:carousel:carouselUnmount
 51,303,311,315	j:carousel:define:carousel-previous
-52,65,71,90,96,98,104,117-431,433-434,446,448,450	j:choice:choiceAttach j:choice:choiceDisabled j:choice:choiceRefresh j:choice:choiceSync
-52,65,71,165-170,174,179,189,191-192,202,340,394,448	j:choice:choiceClick
-1,13,21,52,54-55,61,65,68,70-71,90,149,157,164-174,176,179-184,186-187,189-192,195-202,204,207,212-214,340,351,373-374,377-378,384,386,390-394,428,431,448,450	j:choice:choiceClick+1
-0-6,9-76,88,90-91,101,106-108,116-117,121-123,125,128-131,139,149,155,157-158,160-161,164-166,171-174,179-181,184-187,189-193,195,197-200,202,204-233,235-236,238-255,257,259-268,270-277,279-282,284-286,288,290-291,293,298-299,301,303-311,314-315,317,319,321,323-324,326,328,330-331,334-336,340-344,347,350-351,353,355,357,360,364,368-370,373-375,377-379,381,383-384,386-387,390-394,396,403,407-409,411,415-416,421,423-424,427-428,431,433,439-440,442-443,445,448,450,452,454	j:choice:choiceClick+2 j:proxy:proxyInput+1 j:toast:define:toast-viewport+4
-52,65,71,90,96,98,104,117-431,433-434,440-443,446,448,450	j:choice:choiceClick+4 j:choice:choiceSetup
-52,65,71,165,174,191,202,340	j:choice:choiceKeydown
-52,65,71,165-167,169-170,174,179,189,191-192,202,340,394,448	j:choice:choiceReadonly
-52,71,90,96,98,104,117-431,433-434,446,448,450	j:choice:choiceSet
-52,65,71,96,98,104,117-427,430,433-434,448,450	j:choice:choiceWatch
-108,368,370	j:code-block:codeBlockCopy
-1,9-10,30,89,96,98-99,117-427,430,433-434,445	j:code-block:codeBlockLineContent
-1,368,370,395	j:code-block:codeBlockReset
-368-369	j:code-block:codeBlockSetWrap
-108,368-370	j:code-block:codeBlockText
-0-6,8-30,77-427,430,432-434,436,438-439,445	j:code-block:define:code-block-copy-button
-89,96,98-99,117-427,430,433-434	j:code-block:define:code-block-download-button
-89,96,98-99,117-427,430,433-434,445	j:code-block:define:code-block-wrap-button
-0-6,8-30,36,53,77-427,430,432-434,436,438,452-453	j:collapsible:collapsibleDisabled j:collapsible:collapsibleParts j:collapsible:collapsibleSet j:collapsible:define:collapsible
-5-6,36,53,108,319-320,334	j:collapsible:collapsibleToggle
-54,96,98,104,117-427,430,433-434,450	j:combobox:comboboxApply j:combobox:comboboxFilter j:combobox:comboboxItemSetup j:combobox:comboboxItems j:combobox:comboboxLabel j:combobox:comboboxSet j:combobox:comboboxSyncProxy j:combobox:comboboxValueOf j:combobox:comboboxValues j:combobox:define:combobox
-96,98,117-427,430,433-434,450	j:combobox:comboboxChip
+52,65,71,90,96,98,104,129,136-137,139,159,164-402,431-434,436-437,449,451,453	j:choice:choiceAttach j:choice:choiceDisabled j:choice:choiceRefresh j:choice:choiceSync
+52,65,71,165-170,174,179,189,191-192,202,341,396,451	j:choice:choiceClick
+1,13,21,52,54-55,61,65,68,70-71,90,149,157,164-174,176,179-184,186-187,189-192,195-202,204,207,212-214,341,352,375-376,379-380,386,388,392-396,431,434,451,453	j:choice:choiceClick+1
+0-6,9-76,88,90-91,101,106-108,116-117,121-123,125,128-131,139,149,155,157-158,160-161,164-166,171-174,179-181,184-187,189-193,195,197-200,202,204-233,235-236,238-255,257,259-268,270-277,279-282,284-286,288,290-291,293,298-299,301,303-311,314-315,317,319,321,323-324,326,328,331-332,335-337,341-345,348,351-352,354,356,358,362,366,370-372,375-377,379-381,383,385-386,388-389,392-396,398,405,409-411,413,417-418,422,424,426-427,430-431,434,436,442-443,445-446,448,451,453,455,457	j:choice:choiceClick+2 j:proxy:proxyInput+1 j:toast:define:toast-viewport+4
+52,65,71,90,96,98,104,117-402,431-434,436-437,443-446,449,451,453	j:choice:choiceClick+4 j:choice:choiceSetup
+52,65,71,165,174,191,202,341	j:choice:choiceKeydown
+52,65,71,165-167,169-170,174,179,189,191-192,202,341,396,451	j:choice:choiceReadonly
+52,71,90,96,98,104,129,136-137,139,159,164-402,431-434,436-437,449,451,453	j:choice:choiceSet
+52,65,71,96,98,104,129,139,159,164-208,341,396,433,436-437,451,453	j:choice:choiceWatch
+108,370,372	j:code-block:codeBlockCopy
+1,9-10,30,89,96,98-99,129,137,139,159,348-402,433,436-437,448	j:code-block:codeBlockLineContent
+0-6,8-30,32,43,45-47,77-116,129,137,139,159,329,348-402,433,435-437,439,441-442,448	j:code-block:codeBlockPrepare j:code-block:define:code-block-content
+1,370,372,397	j:code-block:codeBlockReset
+370-371	j:code-block:codeBlockSetWrap
+108,370-372	j:code-block:codeBlockText
+0-6,8-30,77-116,129,137,139,159,329,348-402,433,435-437,439,441-442,448	j:code-block:define:code-block-copy-button
+89,96,98-99,129,137,139,159,348-402,433,436-437	j:code-block:define:code-block-download-button
+89,96,98-99,129,137,139,159,348-402,433,436-437,448	j:code-block:define:code-block-wrap-button
+0-6,8-30,36,53,77-116,121,129,136,139,159,291-347,361,433,435-437,439,441,455-456	j:collapsible:collapsibleDisabled j:collapsible:collapsibleParts j:collapsible:collapsibleSet j:collapsible:define:collapsible
+5-6,36,53,108,319-320,335	j:collapsible:collapsibleToggle
+54,96,98,104,129,136-137,139,159,164-290,433,436-437,453	j:combobox:comboboxApply j:combobox:comboboxFilter j:combobox:comboboxItemSetup j:combobox:comboboxItems j:combobox:comboboxLabel j:combobox:comboboxSet j:combobox:comboboxSyncProxy j:combobox:comboboxValueOf j:combobox:comboboxValues j:combobox:define:combobox
+96,98,129,136-137,139,159,164-290,433,436-437,453	j:combobox:comboboxChip
 171	j:combobox:comboboxChipKey
 54,171-172,176,179,182-183,196	j:combobox:comboboxChoose
 54,171-173,176,179,182-183,196,241,270	j:combobox:comboboxClose
 54,171-173,179,241,270	j:combobox:comboboxHighlight j:combobox:comboboxOpen j:combobox:comboboxPressed j:combobox:comboboxVisible
 54,171-172,179,241	j:combobox:comboboxMove
-96,98,104,117-427,430,433-434,450	j:combobox:comboboxRenderChips
-54,96,98,117-427,430,433-434,450	j:combobox:comboboxSelectedLabel
-170,179,182-183,194,196,207,355,357,385	j:combobox:comboboxWatched
+96,98,104,129,136-137,139,159,164-290,433,436-437,453	j:combobox:comboboxRenderChips
+54,96,98,129,136-137,139,159,164-290,433,436-437,453	j:combobox:comboboxSelectedLabel
+170,179,182-183,194,196,207,356,358,387	j:combobox:comboboxWatched
 54,171,241,270	j:combobox:define:combobox-item
-0-30,55,77-427,430,432-439,455	j:command:commandFilter j:command:commandIndex j:command:commandInput j:command:commandRefresh j:command:commandSelect j:command:commandSelectable j:command:commandSort j:command:define:command j:command:define:command-item
+0-30,55,77-116,129,139,159,164-290,329,361,433,435-442,458	j:command:commandFilter j:command:commandIndex j:command:commandInput j:command:commandRefresh j:command:commandSelect j:command:commandSelectable j:command:commandSort j:command:define:command j:command:define:command-item
 101,213,215	j:command:commandReset
 55,213-214,216	j:command:commandRun j:command:commandValue
 55,213-214	j:command:commandScore
 56,217,241,243,245,248,270	j:context-menu:contextMenuClearPress j:context-menu:contextMenuShowAt
-56,96,98,117-427,430,433-434,454	j:context-menu:define:context-menu-trigger
-270,373-375	j:date-picker:datePickerClose j:date-picker:datePickerOf j:date-picker:datePickerOpen
-96,98,117-427,430,433-434,455	j:date-picker:datePickerLabel j:date-picker:datePickerParts j:date-picker:datePickerProxy j:date-picker:datePickerText j:date-picker:define:date-picker
-374,378	j:date-picker:datePickerMonth j:date-picker:datePickerOrder j:date-picker:datePickerParse
-57,90,96,98-99,117-427,430,432-434,436,440-443,454-455	j:dialog:define:dialog-footer
+56,96,98,129,139,159,209-290,433,436-437,457	j:context-menu:define:context-menu-trigger
+270,375-377	j:date-picker:datePickerClose j:date-picker:datePickerOf j:date-picker:datePickerOpen
+96,98,129,139,159,209-290,348-402,433,436-437,458	j:date-picker:datePickerLabel j:date-picker:datePickerParts j:date-picker:datePickerProxy j:date-picker:datePickerText j:date-picker:define:date-picker
+376,380	j:date-picker:datePickerMonth j:date-picker:datePickerOrder j:date-picker:datePickerParse
+57,90,96,98-99,121,129,139,159,161,209-290,348-402,433,435-437,439,443-446,457-458	j:dialog:define:dialog-footer
 213,224,281	j:dialog:dialogClose
-0-30,48,57-58,69,77-427,430,432-443,454-455	j:dialog:dialogClosers j:drawer:drawerTouchMove+2
-48,57,69,209-210,218,235,262,264,273-275,282,374	j:dialog:dialogContentClick
-0-30,38,48,57-59,64,69,77-427,430,432-434,436,438-443,451,453-455	j:dialog:dialogContentSlot j:dialog:dialogFromTrigger j:dialog:dialogInitTrigger j:dialog:dialogLocate
-218,374	j:dialog:dialogContentSubmit
-30,48,57-58,69,90,101,161,209-213,215,218-221,223-232,235,246,262-266,273-275,280-282,374,433,442,454	j:dialog:dialogHide
-0-30,48,57,69,77-427,430,432-443,454-455	j:dialog:dialogInitContent
-0-30,38,48,57-59,64,69,77-427,430,432-443,451,453-455	j:dialog:dialogInitRoot
+0-30,48,57-58,69,77-116,121,129,139,141,154,159,161,164-290,329,348-402,433,435-446,457-458	j:dialog:dialogClosers j:drawer:drawerTouchMove+2
+48,57,69,209-210,218,235,262,264,273-275,282,376	j:dialog:dialogContentClick
+0-30,38,48,57-59,64,69,77-116,118,121,129,131,137,139,159,161,164-402,433,435-437,439,441-446,454,456-458	j:dialog:dialogContentSlot j:dialog:dialogFromTrigger j:dialog:dialogInitTrigger j:dialog:dialogLocate
+218,376	j:dialog:dialogContentSubmit
+30,48,57-58,69,90,101,161,209-213,215,218-221,223-232,235,246,262-266,273-275,280-282,376,436,445,457	j:dialog:dialogHide
+0-30,48,57,69,77-116,121,129,139,141,154,159,161,164-290,329,348-402,433,435-446,457-458	j:dialog:dialogInitContent
+0-30,38,48,57-59,64,69,77-116,118,121,129,131,137,139,159,161,164-402,433,435-446,454,456-458	j:dialog:dialogInitRoot
 213,218-219,221,224,248,263,281	j:dialog:dialogOpen
-30,48,57-58,69,90,101,161,209-213,215,218-232,235,246,248,262-266,273-275,280-282,374,433,442,454	j:dialog:dialogShow
-321,334-335	j:direction:direction
+30,48,57-58,69,90,101,161,209-213,215,218-232,235,246,248,262-266,273-275,280-282,376,436,445,457	j:dialog:dialogShow
+321,335-336	j:direction:direction
 58,221,224-225,228-229,231,264,274	j:drawer:define:drawer-viewport j:drawer:drawerCanStart j:drawer:drawerViewportOf
 58,221-232,264,266,274	j:drawer:drawerAncestors j:drawer:drawerResize j:drawer:drawerShow j:drawer:drawerSnapActive j:drawer:drawerSnapApply j:drawer:drawerSnapLayout j:drawer:drawerSnapProgress j:drawer:drawerSnapRange j:drawer:drawerTrack
 224,264	j:drawer:drawerBackdropSwipe
 58,221,223-232,264,266,274	j:drawer:drawerCloseNested j:drawer:drawerHide j:drawer:drawerNestedSwipe j:drawer:drawerSwipeStop
 222	j:drawer:drawerDetached
-58,221-232,264,266,274,418,434	j:drawer:drawerMeasure j:drawer:drawerMeasureLater j:drawer:drawerStack
-58,96,98-99,117-427,430,433-434,454	j:drawer:drawerOptions j:drawer:drawerParts j:drawer:drawerRootOf j:drawer:drawerSnapValues j:drawer:drawerUpgrade j:drawer:drawerVars
+58,221-232,264,266,274,420	j:drawer:drawerMeasure j:drawer:drawerMeasureLater j:drawer:drawerStack
+58,96,98-99,129,139,159,209-290,433,436-437,457	j:drawer:drawerOptions j:drawer:drawerParts j:drawer:drawerRootOf j:drawer:drawerSnapValues j:drawer:drawerUpgrade j:drawer:drawerVars
 58,221	j:drawer:drawerScrollable
 228-230	j:drawer:drawerSnapHeight j:drawer:drawerSnapSet
 228-229	j:drawer:drawerSnapTo
 58,221,224,228-229,231,264	j:drawer:drawerSwipeBegin j:drawer:drawerSwipeEnd j:drawer:drawerSwipeMove j:drawer:drawerSwipeStyle
 58,221,226,264	j:drawer:drawerTouchMove
 51,58,66,70,73,221,226,264,270,318	j:drawer:drawerTouchMove+1
-0-30,38,59,77-427,430,432-434,436,438-443,451,453-454	j:dropdown-menu:define:dropdown-menu
-11,38,56,59,62,217,233,235,244,246-247,252,340	j:dropdown-menu:dropdownMenuClick
-11,38,56,59,62,217,233,235,246-247,252,340	j:dropdown-menu:dropdownMenuCloses j:dropdown-menu:dropdownMenuSelect
-11,38,56,59,217,233,235,246-247,252,340	j:dropdown-menu:dropdownMenuFinish
-11,38,56,59,62,91,116,131,164,217,233,235-236,241-254,262,270,298,301,340,443	j:dropdown-menu:dropdownMenuFocusIn j:dropdown-menu:dropdownMenuInstant j:dropdown-menu:dropdownMenuModal j:dropdown-menu:dropdownMenuOwnEvent j:dropdown-menu:dropdownMenuRoot j:dropdown-menu:dropdownMenuShow
-11,38,56,59,62,116,131,164,217,233,235-236,241-254,262,270,298,301,340,443	j:dropdown-menu:dropdownMenuFocusOut
+0-30,38,59,77-116,118,129,131,137,139,159,164-347,361,433,435-437,439,441-446,454,456-457	j:dropdown-menu:define:dropdown-menu
+11,38,56,59,62,217,233,235,244,246-247,252,341	j:dropdown-menu:dropdownMenuClick
+11,38,56,59,62,217,233,235,246-247,252,341	j:dropdown-menu:dropdownMenuCloses j:dropdown-menu:dropdownMenuSelect
+11,38,56,59,217,233,235,246-247,252,341	j:dropdown-menu:dropdownMenuFinish
+11,38,56,59,62,91,116,131,164,217,233,235-236,241-254,262,270,298,301,341,446	j:dropdown-menu:dropdownMenuFocusIn j:dropdown-menu:dropdownMenuInstant j:dropdown-menu:dropdownMenuModal j:dropdown-menu:dropdownMenuOwnEvent j:dropdown-menu:dropdownMenuRoot j:dropdown-menu:dropdownMenuShow
+11,38,56,59,62,116,131,164,217,233,235-236,241-254,262,270,298,301,341,446	j:dropdown-menu:dropdownMenuFocusOut
 217,249	j:dropdown-menu:dropdownMenuGraceClose j:dropdown-menu:dropdownMenuGraceStart
 249	j:dropdown-menu:dropdownMenuGraceMove
-11,38,56,59,62,91,116,164,217,233,235-236,241-247,249-254,262,270,298,301,340,443	j:dropdown-menu:dropdownMenuGraceStop j:dropdown-menu:dropdownMenuHide
-56,59,62,164,217,233,249,252,443	j:dropdown-menu:dropdownMenuHideSub j:dropdown-menu:dropdownMenuShowSub j:dropdown-menu:dropdownMenuSubOf j:dropdown-menu:dropdownMenuSubTrigger
-11,13,38,56,62,77-427,430,432-434,436,438,440-443,451,454	j:dropdown-menu:dropdownMenuIndicator j:dropdown-menu:dropdownMenuSetState
-0-30,38,56,59,62,77-427,430,432-434,436,438-443,451,453-454	j:dropdown-menu:dropdownMenuInitContent j:dropdown-menu:dropdownMenuInitItem j:dropdown-menu:dropdownMenuKind j:dropdown-menu:dropdownMenuSel
-11,13,38,56,59,90,96,98,117-427,430,433-434,440-443,454	j:dropdown-menu:dropdownMenuInitLabel
-1,11,13,38,56,59,62,77-427,430,432-434,436,438,440-443,451,453-454	j:dropdown-menu:dropdownMenuInitLabel+1
-11,13,38,56,59,62,77-427,430,432-434,436,438,451,454	j:dropdown-menu:dropdownMenuItemValue
-38,56,59,62,91,116,131,164,217,233,235-236,241-246,248-254,262,298,301,443	j:dropdown-menu:dropdownMenuItems
-38,56,59,62,91,116,131,164,217,233,235-236,241-246,249-254,262,298,301,443	j:dropdown-menu:dropdownMenuKeydown
+11,38,56,59,62,91,116,164,217,233,235-236,241-247,249-254,262,270,298,301,341,446	j:dropdown-menu:dropdownMenuGraceStop j:dropdown-menu:dropdownMenuHide
+56,59,62,164,217,233,249,252,446	j:dropdown-menu:dropdownMenuHideSub j:dropdown-menu:dropdownMenuShowSub j:dropdown-menu:dropdownMenuSubOf j:dropdown-menu:dropdownMenuSubTrigger
+11,13,38,56,62,77-116,129,131,137,139,159,164-347,433,435-437,439,441,443-446,454,457	j:dropdown-menu:dropdownMenuIndicator j:dropdown-menu:dropdownMenuSetState
+0-30,38,56,59,62,77-116,118,126,129,131,137,139,159,164-347,361,433,435-437,439,441-446,454,456-457	j:dropdown-menu:dropdownMenuInitContent j:dropdown-menu:dropdownMenuInitItem j:dropdown-menu:dropdownMenuKind j:dropdown-menu:dropdownMenuSel
+11,13,38,56,59,90,96,98,129,131,139,159,209-347,433,436-437,443-446,457	j:dropdown-menu:dropdownMenuInitLabel
+1,11,13,38,56,59,62,77-116,129,131,137,139,159,164-347,433,435-437,439,441,443-446,454,456-457	j:dropdown-menu:dropdownMenuInitLabel+1
+11,13,38,56,59,62,77-116,129,131,137,139,159,164-290,341,433,435-437,439,441,454,457	j:dropdown-menu:dropdownMenuItemValue
+38,56,59,62,91,116,131,164,217,233,235-236,241-246,248-254,262,298,301,446	j:dropdown-menu:dropdownMenuItems
+38,56,59,62,91,116,131,164,217,233,235-236,241-246,249-254,262,298,301,446	j:dropdown-menu:dropdownMenuKeydown
 56,59,62,217,233,235,246-247,252	j:dropdown-menu:dropdownMenuLabel
-11,38,56,59,62,164,217,233,235,241-242,246-247,249,252,270,340,443	j:dropdown-menu:dropdownMenuPointerMove
-11,38,56,59,62,164,217,233,235,241,246-247,249,252-254,270,340,443	j:dropdown-menu:dropdownMenuPointerOut
+11,38,56,59,62,164,217,233,235,241-242,246-247,249,252,270,341,446	j:dropdown-menu:dropdownMenuPointerMove
+11,38,56,59,62,164,217,233,235,241,246-247,249,252-254,270,341,446	j:dropdown-menu:dropdownMenuPointerOut
 11,38,56,217,233-234,252	j:dropdown-menu:dropdownMenuRadioItems
-11,38,56,59,62,217,233,235,246-247,252-254,340	j:dropdown-menu:dropdownMenuTop
-0-6,9-17,19-32,34,36,38-65,67-69,71-76,88,90-91,101,106-108,116,121,125,129,139,149,155,158,160,164-166,171-174,179-181,185-187,189,191-193,195,197-199,202,205-206,209-213,215-218,220-233,235,240-243,245-247,249-255,262,264-268,270-277,280,282,284-286,290-291,293,298,301,303-311,314-315,319,321,328,331,334-336,340-343,347,350-351,353,355,357,360,364,368-370,373-375,381,383-384,387,390-394,396,408,421,424,427,433,439-440,442-443,445,448,450,454	j:dropdown-menu:dropdownMenuTriggerOf j:dropdown-menu:dropdownMenuTriggerOf+2 j:dropdown-menu:dropdownMenuTriggerOf+3
-0-6,9-17,19-32,34,36,38-76,88,90-91,101,106-108,116,121,125,129,139,149,155,158,160,164-166,171-174,179-181,185-187,189,191-193,195,197-200,202,205-206,209-213,215-218,220-233,235,240-243,245-247,249-255,262,264-268,270-277,280,282,284-286,290-291,293,298,301,303-311,314-315,318-319,321,328,330-331,334-336,340-343,347,350-351,353,355,357,360,364,368-370,373-375,381,383-384,387,390-394,396,408,421,424,427,433,439-440,442-443,445,448,450,454	j:dropdown-menu:dropdownMenuTriggerOf+1 j:select:selectMouseUp+2 j:toast:define:toast-viewport+5
-0-6,9-34,36,38-76,88,90-91,101,106-108,116,121,123,125,127,129,131,139,144,149,155,158-161,164-174,176,179-183,185-187,189,191-193,195-200,202,205-207,209-213,215-218,220-233,235-236,240-255,257,259-262,264-268,270-277,280,282,284-286,290-293,298,301,303-311,313-315,319-321,327-328,330-331,334-336,340-343,345-347,350-353,355,357,360,364,368-370,373-375,381,383-385,387,390-394,396-399,408,411,421,424,427,433,439-440,442-443,445,448,450,452,454	j:dropdown-menu:dropdownMenuTriggerOf+4
+11,38,56,59,62,217,233,235,246-247,252-254,341	j:dropdown-menu:dropdownMenuTop
+0-6,9-17,19-32,34,36,38-65,67-69,71-76,88,90-91,101,106-108,116,121,125,129,139,149,155,158,160,164-166,171-174,179-181,185-187,189,191-193,195,197-199,202,205-206,209-213,215-218,220-233,235,240-243,245-247,249-255,262,264-268,270-277,280,282,284-286,290-291,293,298,301,303-311,314-315,319,321,328,332,335-337,341-344,348,351-352,354,356,358,362,366,370-372,375-377,383,385-386,389,392-396,398,410,424,427,430,436,442-443,445-446,448,451,453,457	j:dropdown-menu:dropdownMenuTriggerOf j:dropdown-menu:dropdownMenuTriggerOf+2 j:dropdown-menu:dropdownMenuTriggerOf+3
+0-6,9-17,19-32,34,36,38-76,88,90-91,101,106-108,116,121,125,129,139,149,155,158,160,164-166,171-174,179-181,185-187,189,191-193,195,197-200,202,205-206,209-213,215-218,220-233,235,240-243,245-247,249-255,262,264-268,270-277,280,282,284-286,290-291,293,298,301,303-311,314-315,318-319,321,328,331-332,335-337,341-344,348,351-352,354,356,358,362,366,370-372,375-377,383,385-386,389,392-396,398,410,424,427,430,436,442-443,445-446,448,451,453,457	j:dropdown-menu:dropdownMenuTriggerOf+1 j:select:selectMouseUp+2 j:toast:define:toast-viewport+5
+0-6,9-34,36,38-76,88,90-91,101,106-108,116,121,123,125,127,129,131,139,144,149,155,158-161,164-174,176,179-183,185-187,189,191-193,195-200,202,205-207,209-213,215-218,220-233,235-236,240-255,257,259-262,264-268,270-277,280,282,284-286,290-293,298,301,303-311,313-315,319-321,327-328,331-332,335-337,341-344,346-348,351-354,356,358,362,366,370-372,375-377,383,385-387,389,392-396,398-401,410,413,424,427,430,436,442-443,445-446,448,451,453,455,457	j:dropdown-menu:dropdownMenuTriggerOf+4
 38,56,59,62,131,217,233,235-236,243-244,246,248,251-252,254	j:dropdown-menu:dropdownMenuUsable
-11,38,56,62,217,233-234,252,340	j:dropdown-menu:dropdownMenuWatched
-52,57,90,96-98,104,117-434,436,440-443,450-451,455	j:field:define:field
-96,98,117-428,430,433-434,450,455	j:field:define:field+1
-96,98,104,117-427,430,433-434,440-443,450	j:field:define:field-legend
-96,98,117-427,430,433-434,440-443,450	j:field:define:field-separator
-96,98,104,117-431,433-434,450	j:form:define:form
-170,179,182-183,196,207,355,357,385	j:form:formAfterReset j:form:formAfterReset+1 j:toggle-group:toggleGroupWatched
-179-181,207,377,428,431	j:form:formDescribe j:form:formErrorOf j:form:formLive j:form:formMark j:form:formMessage j:form:formValidate
-179-181,207,263,377,428,431	j:form:formNativeFor
-179-181,197,207,377,428,431	j:form:formRootOf j:form:formVisibleControl
-8,35,37,60,96,98,117-427,430,433-434,454	j:hover-card:define:hover-card j:hover-card:define:hover-card-content j:hover-card:hoverCardParts
+11,38,56,62,217,233-234,252,341	j:dropdown-menu:dropdownMenuWatched
+52,57,90,96-98,104,117-290,348-402,431-437,439,443-446,453-454,458	j:field:define:field
+96,98,117-431,433,436-437,453,458	j:field:define:field+1
+96,98,104,120,129,136,139,159,164-208,433,436-437,443-446,453	j:field:define:field-legend
+96,98,129,139,159,164-208,433,436-437,443-446,453	j:field:define:field-separator
+96,98,104,129,139,159,164-208,263,379,431-434,436-437,453	j:form:define:form
+170,179,182-183,196,207,356,358,387	j:form:formAfterReset j:form:formAfterReset+1 j:toggle-group:toggleGroupWatched
+179-181,207,379,431,434	j:form:formDescribe j:form:formErrorOf j:form:formLive j:form:formMark j:form:formMessage j:form:formValidate
+179-181,207,263,379,431,434	j:form:formNativeFor
+179-181,197,207,379,431,434	j:form:formRootOf j:form:formVisibleControl
+8,35,37,60,96,98,121,129,139,159,209-290,433,436-437,457	j:hover-card:define:hover-card j:hover-card:define:hover-card-content j:hover-card:hoverCardParts
 8,35,37,60,238-240,270,287	j:hover-card:hoverCardHide j:hover-card:hoverCardInside j:hover-card:hoverCardSchedule j:hover-card:hoverCardShow
-0-30,38,54-55,77-428,430,432-439,450-451,455	j:input-group:define:input-group j:input-group:define:input-group-addon
-61,96,98,104,117-427,430,433-434,450	j:input-otp:define:input-otp j:input-otp:inputOtpParts j:input-otp:inputOtpRender j:input-otp:inputOtpResize
-1,13,21,51,54-59,61-64,68-69,90,96-98,101,117-428,430-434,436,440,442,450-451,455	j:input-otp:define:input-otp+1
+0-30,38,54-55,77-116,129,136-137,139,159,164-290,329,348-402,431,433,435-442,453-454,458	j:input-group:define:input-group j:input-group:define:input-group-addon
+61,96,98,104,129,136,139,159,164-208,433,436-437,453	j:input-otp:define:input-otp j:input-otp:inputOtpParts j:input-otp:inputOtpRender j:input-otp:inputOtpResize
+1,13,21,51,54-59,61-64,68-69,90,96-98,101,123,125,129-130,136-137,139,157,159,161,164-290,306-311,319,335,341,345,348-402,431,433-437,439,443,445,453-454,458	j:input-otp:define:input-otp+1
 61,179,186-187	j:input-otp:inputOtpChanged j:input-otp:inputOtpClean j:input-otp:inputOtpMax j:input-otp:inputOtpSelect
 179	j:input-otp:inputOtpWatch
-62,96,98,117-427,430,433-434,454	j:menubar:define:menubar j:menubar:define:menubar-trigger j:menubar:menubarContentOf j:menubar:menubarTriggers
+62,96,98,129,139,159,209-290,433,436-437,457	j:menubar:define:menubar j:menubar:define:menubar-trigger j:menubar:menubarContentOf j:menubar:menubarTriggers
 62,241,243-245,251-254,262,270	j:menubar:menubarLeave j:menubar:menubarOpen j:menubar:menubarOpenContent
 62,252-254	j:menubar:menubarStep
-1,96,98,117-427,430,433-434,445	j:message-scroller:define:message-scroller j:message-scroller:messageScrollerApplied j:message-scroller:messageScrollerBottom j:message-scroller:messageScrollerButton j:message-scroller:messageScrollerCapture j:message-scroller:messageScrollerChange j:message-scroller:messageScrollerCommit j:message-scroller:messageScrollerDefault j:message-scroller:messageScrollerEdges j:message-scroller:messageScrollerFlush j:message-scroller:messageScrollerItems j:message-scroller:messageScrollerNumber j:message-scroller:messageScrollerPadding j:message-scroller:messageScrollerPending j:message-scroller:messageScrollerReconcile j:message-scroller:messageScrollerReveal j:message-scroller:messageScrollerSetup j:message-scroller:messageScrollerSpacer j:message-scroller:messageScrollerSpacerLast j:message-scroller:messageScrollerTo
-384,387	j:message-scroller:define:message-scroller-button
-1,96,98,129,137,139,159,347-400,430,433-434	j:message-scroller:define:message-scroller-viewport j:message-scroller:messageScrollerBehavior
-96,98,129,137,139,159,347-400,430,433-434	j:message-scroller:messageScrollerAutoscrolling
-1,117-346,384,387,401-427	j:message-scroller:messageScrollerElement j:message-scroller:messageScrollerTarget
-387	j:message-scroller:messageScrollerFind j:message-scroller:messageScrollerScrollToMessage j:message-scroller:messageScrollerVisibility
-384,386	j:message-scroller:messageScrollerIntent
-384-387	j:message-scroller:messageScrollerOf
-1,96,98,117-427,430,433-434	j:message-scroller:messageScrollerResize j:message-scroller:messageScrollerTop
-387,389	j:message-scroller:messageScrollerRestore
-1,96,98,117,121,129,136-137,139,149,155,157,159,173,222,232,347-400,430,433-434	j:message-scroller:messageScrollerSchedule
-385,387	j:message-scroller:messageScrollerScrollToEnd
-386	j:message-scroller:messageScrollerScrollable
-1,387-388	j:message-scroller:messageScrollerStart
-1,117-346,384,387,389,401-427	j:message-scroller:messageScrollerViewportTop
-1,96,98,117-427,430,433-434,445-446	j:message:messageAttr
-63,96,98,117-427,430,433-434,454	j:navigation-menu:define:navigation-menu j:navigation-menu:define:navigation-menu-link j:navigation-menu:navigationMenuLinkActive j:navigation-menu:navigationMenuPlain j:navigation-menu:navigationMenuPopup
+1,96,98,129,137,139,159,348-402,433,436-437,448	j:message-scroller:define:message-scroller j:message-scroller:messageScrollerApplied j:message-scroller:messageScrollerBottom j:message-scroller:messageScrollerButton j:message-scroller:messageScrollerCapture j:message-scroller:messageScrollerChange j:message-scroller:messageScrollerCommit j:message-scroller:messageScrollerDefault j:message-scroller:messageScrollerEdges j:message-scroller:messageScrollerFlush j:message-scroller:messageScrollerItems j:message-scroller:messageScrollerNumber j:message-scroller:messageScrollerPadding j:message-scroller:messageScrollerPending j:message-scroller:messageScrollerReconcile j:message-scroller:messageScrollerReveal j:message-scroller:messageScrollerSetup j:message-scroller:messageScrollerSpacer j:message-scroller:messageScrollerSpacerLast j:message-scroller:messageScrollerTo
+386,389	j:message-scroller:define:message-scroller-button
+1,96,98,129,137,139,159,348-402,433,436-437	j:message-scroller:define:message-scroller-viewport j:message-scroller:messageScrollerBehavior j:message-scroller:messageScrollerResize j:message-scroller:messageScrollerSchedule j:message-scroller:messageScrollerTop
+96,98,129,137,139,159,348-402,433,436-437	j:message-scroller:messageScrollerAutoscrolling
+1,386,389	j:message-scroller:messageScrollerElement j:message-scroller:messageScrollerTarget
+96,98,129,137,139,159,348-402,433,436-437,448	j:message-scroller:messageScrollerEnd
+389	j:message-scroller:messageScrollerFind j:message-scroller:messageScrollerScrollToMessage j:message-scroller:messageScrollerVisibility
+386,388	j:message-scroller:messageScrollerIntent
+386-389	j:message-scroller:messageScrollerOf
+389,391	j:message-scroller:messageScrollerRestore
+387,389	j:message-scroller:messageScrollerScrollToEnd
+388	j:message-scroller:messageScrollerScrollable
+1,389-390	j:message-scroller:messageScrollerStart
+1,386,389,391	j:message-scroller:messageScrollerViewportTop
+1,96,98,129,136-137,139,159,209-290,348-402,433,436-437,448-449	j:message:messageAttr
+63,96,98,129,139,159,209-290,433,436-437,457	j:navigation-menu:define:navigation-menu j:navigation-menu:define:navigation-menu-link j:navigation-menu:navigationMenuLinkActive j:navigation-menu:navigationMenuPlain j:navigation-menu:navigationMenuPopup
 63,240,255,257-262,270	j:navigation-menu:navigationMenuClose
 63,240-241,255,257,259-261,270	j:navigation-menu:navigationMenuEnter
 63,240,255,257-261,270	j:navigation-menu:navigationMenuHome
@@ -351,141 +355,144 @@ checks	ai.ai_chain_of_thought_replay ai.ai_chat_turn ai.ai_checkpoint_restore ai
 63,240-241,255,257-261,270	j:navigation-menu:navigationMenuObserve j:navigation-menu:navigationMenuReset j:navigation-menu:navigationMenuSize
 63,240-241,255,257-258,261	j:navigation-menu:navigationMenuZone
 327	j:pagination:define:pagination-link
-0-30,64,77-427,430,432-439,451,455	j:popover:define:popover j:popover:define:popover-content
-0-6,9-34,36,38-76,88,90-91,101,106-108,116,121,123,125,127,129,131,139,144,149,155,158-161,164-174,176,179-183,185-187,189,191-193,195-200,202,205-207,209-213,215-218,220-233,235-236,240-255,257,259-262,264-268,270-277,280,282,284-286,290-293,298,301,303-307,309,311,313-315,319-321,327-328,330-331,334-336,340-343,345-347,350-353,355,357,360,364,368-370,373-375,381,383-385,387,390-394,396-399,408,411,421,424,427,433,439-440,442-443,445,448,450,452,454	j:popover:define:popover-content+1
+0-30,64,77-116,118,129,137,139,159,164-290,329,361,433,435-442,454,458	j:popover:define:popover
+0-30,64,77-116,118,129,137,139,159,164-290,329,348-402,433,435-442,454,458	j:popover:define:popover-content
+0-6,9-34,36,38-76,88,90-91,101,106-108,116,121,123,125,127,129,131,139,144,149,155,158-161,164-174,176,179-183,185-187,189,191-193,195-200,202,205-207,209-213,215-218,220-233,235-236,240-255,257,259-262,264-268,270-277,280,282,284-286,290-293,298,301,303-307,309,311,313-315,319-321,327-328,331-332,335-337,341-344,346-348,351-354,356,358,362,366,370-372,375-377,383,385-387,389,392-396,398-401,410,413,424,427,430,436,442-443,445-446,448,451,453,455,457	j:popover:define:popover-content+1
 76,217,249,286-290	j:popover:popoverGraceArea j:popover:popoverHull
 76,286-290	j:popover:popoverGraceMove j:popover:popoverGraceStart j:tooltip:tooltipLeave
 1,9-10,76,286-290	j:popover:popoverGraceStop j:tooltip:tooltipGrouped j:tooltip:tooltipHide j:tooltip:tooltipInstant j:tooltip:tooltipPointer j:tooltip:tooltipSchedule j:tooltip:tooltipSetting j:tooltip:tooltipShow
 64,164,262,267-268,270	j:popover:popoverHide j:popover:popoverParts j:popover:popoverShow
 76,249,286-290	j:popover:popoverInside
-0-30,35,37-38,56,59-60,62,64,76-427,430,432-443,451,453-455	j:popover:popoverPrepare
-35,96,98,117-427,430,433-434,447	j:progress:define:progress j:progress:progressRender
+0-30,35,37-38,56,59-60,62,64,76-116,118,120-121,126,129,131,137,139,159,164-402,433,435-446,454,456-458	j:popover:popoverPrepare
+35,96,98,129,139,159,291-347,433,436-437,450	j:progress:define:progress j:progress:progressPercent j:progress:progressRender
 328	j:progress:progressWatch
-54,68,96-98,104,117-428,430,432-434,436,450-451	j:proxy:proxyInput
-96,98,117-427,430,433-434,445-446	j:questionnaire:define:questionnaire j:questionnaire:questionnaireAnswers j:questionnaire:questionnaireBadInput j:questionnaire:questionnaireBuildChoice j:questionnaire:questionnaireControls j:questionnaire:questionnaireEnabled j:questionnaire:questionnaireFilled j:questionnaire:questionnaireInfo j:questionnaire:questionnaireInvalid j:questionnaire:questionnaireIsChoice j:questionnaire:questionnaireItems j:questionnaire:questionnaireKeys j:questionnaire:questionnaireSetup j:questionnaire:questionnaireShortcuts j:questionnaire:questionnaireStatus j:questionnaire:questionnaireSync j:questionnaire:questionnaireSyncItem
-212,385,390-391,393-394	j:questionnaire:questionnaireActive
-390-391	j:questionnaire:questionnaireConfirm
-390-391,393-394	j:questionnaire:questionnaireFocusInvalid
-212,385,390-391,394	j:questionnaire:questionnaireGo
-212,390-391,393-394	j:questionnaire:questionnaireNext j:questionnaire:questionnaireValid j:questionnaire:questionnaireValidate
-212,385,390-394	j:questionnaire:questionnaireOf j:questionnaire:questionnaireStatusChanged
-390,394	j:questionnaire:questionnairePrevious j:questionnaire:questionnaireRadio j:questionnaire:questionnaireTextEntry
-394	j:questionnaire:questionnaireRefresh
-390	j:questionnaire:questionnaireSkip
-390-391,394	j:questionnaire:questionnaireValues
-1,13,21,179-181,207,218,262,355,374,377,384,390-391,394	j:questionnaire:questionnaireValues+1
-65,96,98,104,117-427,430,433-434,450	j:radio-group:define:radio-group j:radio-group:radioGroupItems j:radio-group:radioGroupName j:radio-group:radioGroupOf j:radio-group:radioGroupSync
-66,321,330	j:resizable:define:resizable-handle j:resizable:resizableMove
-66,96,98,117-427,430,433-434,452	j:resizable:define:resizable-panel-group j:resizable:resizableLimit j:resizable:resizableParts j:resizable:resizableRange j:resizable:resizableRender
-67,96,98,117-427,430,433-434,452	j:scroll-area:define:scroll-area j:scroll-area:scrollAreaFlags j:scroll-area:scrollAreaUpdate
-67,331	j:scroll-area:define:scroll-area-viewport
-68,96-98,104,117-428,430,432-434,436,450-451	j:select:define:select j:select:selectItemSetup j:select:selectItems j:select:selectPopper j:select:selectSetValue
-68,164,174,179,192-193,195,198,241,270-272,450	j:select:define:select-content j:select:define:select-trigger j:select:selectEnabled j:select:selectHeight j:select:selectOpen j:select:selectPressed j:select:selectScrollButtons
-68,164,174,176,179,182-183,192-193,195-198,241,270,272,450	j:select:define:select-item
-230,418,434	j:select:define:select-scroll-down-button+1 j:toast:toastResize
+54,68,96-98,104,129,136-137,139,159,164-290,431,433,435-437,439,453-454	j:proxy:proxyInput
+96,98,129,136-137,139,159,209-290,348-402,433,436-437,448-449	j:questionnaire:define:questionnaire j:questionnaire:questionnaireAnswers j:questionnaire:questionnaireBadInput j:questionnaire:questionnaireBuildChoice j:questionnaire:questionnaireControls j:questionnaire:questionnaireEnabled j:questionnaire:questionnaireFilled j:questionnaire:questionnaireInfo j:questionnaire:questionnaireInvalid j:questionnaire:questionnaireIsChoice j:questionnaire:questionnaireItems j:questionnaire:questionnaireKeys j:questionnaire:questionnaireSetup j:questionnaire:questionnaireShortcuts j:questionnaire:questionnaireStatus j:questionnaire:questionnaireSync j:questionnaire:questionnaireSyncItem
+212,387,392-393,395-396	j:questionnaire:questionnaireActive
+392-393	j:questionnaire:questionnaireConfirm
+392-393,395-396	j:questionnaire:questionnaireFocusInvalid
+212,387,392-393,396	j:questionnaire:questionnaireGo
+212,392-393,395-396	j:questionnaire:questionnaireNext j:questionnaire:questionnaireValid j:questionnaire:questionnaireValidate
+212,387,392-396	j:questionnaire:questionnaireOf j:questionnaire:questionnaireStatusChanged
+392,396	j:questionnaire:questionnairePrevious j:questionnaire:questionnaireRadio j:questionnaire:questionnaireTextEntry
+396	j:questionnaire:questionnaireRefresh
+392	j:questionnaire:questionnaireSkip
+392-393,396	j:questionnaire:questionnaireValues
+1,13,21,179-181,207,218,262,356,376,379,386,392-393,396	j:questionnaire:questionnaireValues+1
+65,96,98,104,129,136,139,159,164-208,433,436-437,453	j:radio-group:define:radio-group j:radio-group:radioGroupItems j:radio-group:radioGroupName j:radio-group:radioGroupOf j:radio-group:radioGroupSync
+66,321,331	j:resizable:define:resizable-handle j:resizable:resizableMove
+66,96,98,129,139,159,291-347,433,436-437,455	j:resizable:define:resizable-panel-group j:resizable:resizableLimit j:resizable:resizableParts j:resizable:resizableRange j:resizable:resizableRender
+67,96,98,129,139,159,291-347,433,436-437,455	j:scroll-area:define:scroll-area j:scroll-area:scrollAreaFlags j:scroll-area:scrollAreaUpdate
+67,332	j:scroll-area:define:scroll-area-viewport
+68,96-98,104,129,136-137,139,159,164-290,431,433,435-437,439,453-454	j:select:define:select j:select:selectItemSetup j:select:selectItems j:select:selectPopper j:select:selectSetValue
+68,164,174,179,192-193,195,198,241,270-272,453	j:select:define:select-content j:select:define:select-trigger j:select:selectEnabled j:select:selectHeight j:select:selectOpen j:select:selectPressed j:select:selectScrollButtons
+68,164,174,176,179,182-183,192-193,195-198,241,270,272,453	j:select:define:select-item
+230,420	j:select:define:select-scroll-down-button+1 j:toast:toastResize
 192-193	j:select:define:select-viewport
-68,174,192-193,195,198,241,270-272,450	j:select:selectAlign j:select:selectOffset
+68,174,192-193,195,198,241,270-272,453	j:select:selectAlign j:select:selectOffset
 192	j:select:selectAutoScroll j:select:selectEndAutoScroll
-68,164,174,176,179,182-183,192,195-198,450	j:select:selectChoose
-68,96,98,104,117-428,430,433-434,450	j:select:selectClone
-68,164,174,176,179,182-183,192-193,195-198,241,270-272,450	j:select:selectClose
+68,164,174,176,179,182-183,192,195-198,453	j:select:selectChoose
+68,96,98,104,129,136-137,139,159,164-290,431,433,436-437,453	j:select:selectClone
+68,164,174,176,179,182-183,192-193,195-198,241,270-272,453	j:select:selectClose
 68,192-193,195,241,270-271	j:select:selectDismiss
 68,192,195	j:select:selectLabel
 192,271-272	j:select:selectMouseUp
-0-6,8-17,19-76,88,90-91,101,103,106-108,116,121,125,129,139,149,155,158,160,164-166,171-174,179-181,185-187,189,191-193,195,197-200,202,205-206,209-213,215-218,220-233,235,238,240-243,245-247,249-255,257-258,261-262,264-268,270,272-277,280,282,284-291,293,298,300-301,303-311,314-315,318-319,321,326,328,330-331,334-336,340-343,347,350-351,353,355,357,360,364,368-370,373-375,381,383-384,386-387,390-394,396,408,414,421,424-425,427-429,431,433,439-448,450-455	j:select:selectMouseUp+1
-54,68,164,171-172,174,179,192-193,195,198,241,270-272,450	j:select:selectReveal
-68,164,174,176,179,192-196,198,241,270-272,450	j:select:selectStopScroll
-68,96,98,117-428,430,433-434,450	j:select:selectText
-68,164,170,174,176,179,182-183,192,194-198,207,355,357,385,450	j:select:selectWatched
-0-30,67,77-427,430,432-443,447,450,452-453	j:separator:separatorInit
-0-30,77-427,430,432-434,436-439,453	j:sidebar:define:sidebar
-103,324,334-336	j:sidebar:define:sidebar-menu-button j:sidebar:sidebarTooltipShow
-230,434	j:sidebar:define:sidebar-menu-button+1
-334-336	j:sidebar:sidebarCloseSheet j:sidebar:sidebarOpenSheet j:sidebar:sidebarToggle
-334-335	j:sidebar:sidebarStore
-90,96,98,103,117-427,430,433-434,453	j:sidebar:sidebarTooltipHide
-70,96,98,117-427,430,433-434,450	j:slider:define:slider j:slider:sliderBounds j:slider:sliderPosition j:slider:sliderRender j:slider:sliderResize j:slider:sliderSetup
+0-6,8-17,19-76,88,90-91,101,103,106-108,116-166,168-200,202-235,237-255,257-270,272-277,279-294,296,298-311,313-328,330-333,335-348,351-354,356,358-362,365-366,368-377,379-386,388-389,391-400,402-434,436,439-440,442-443,445-451,453-458	j:select:selectMouseUp+1
+54,68,164,171-172,174,179,192-193,195,198,241,270-272,453	j:select:selectReveal
+68,164,174,176,179,192-196,198,241,270-272,453	j:select:selectStopScroll
+68,96,98,129,136,139,159,164-290,431,433,436-437,453	j:select:selectText
+68,164,170,174,176,179,182-183,192,194-198,207,356,358,387,453	j:select:selectWatched
+0-30,67,77-116,129,136,139,159,164-208,291-347,361,433,435-446,450,453,455-456	j:separator:separatorInit
+0-30,77-116,129,136,139,159,291-347,361,433,435-437,439-442,456	j:sidebar:define:sidebar
+103,324,335-337	j:sidebar:define:sidebar-menu-button j:sidebar:sidebarTooltipShow
+230	j:sidebar:define:sidebar-menu-button+1
+335-337	j:sidebar:sidebarCloseSheet j:sidebar:sidebarOpenSheet j:sidebar:sidebarToggle
+335-336	j:sidebar:sidebarStore
+90,96,98,103,129,136,139,159,230,291-347,433,436-437,456	j:sidebar:sidebarTooltipHide
+70,96,98,129,139,159,164-208,329,433,436-437,453	j:slider:define:slider j:slider:sliderBounds j:slider:sliderPosition j:slider:sliderRender j:slider:sliderResize j:slider:sliderSetup
 70,174,199-200	j:slider:sliderActive j:slider:sliderSet j:slider:sliderSnap
 70,199-200	j:slider:sliderEnd j:slider:sliderFromPointer
 70,174,199-201	j:slider:sliderInputs j:slider:sliderSync
 201	j:slider:sliderWatch
-77-427,430,432-434,436,438,447,452	j:spinner:define:spinner
-72,88,96,98,117-427,430,432-434,436,452	j:tabs:define:tabs j:tabs:tabsListResize j:tabs:tabsParts j:tabs:tabsReveal j:tabs:tabsSelect j:tabs:tabsValue
-72,88,321,341-346,452	j:tabs:define:tabs-trigger
-346	j:tabs:tabsWatch
+77-116,129,139,141,159,291-347,433,435-437,439,441,450,455	j:spinner:define:spinner
+72,88,96,98,129,137,139,159,291-347,433,435-437,439,455	j:tabs:define:tabs j:tabs:tabsListResize j:tabs:tabsParts j:tabs:tabsReveal j:tabs:tabsSelect j:tabs:tabsValue
+72,88,321,342-347,455	j:tabs:define:tabs-trigger
+347	j:tabs:tabsWatch
 73,265,276-277,282,284-285	j:toast:define:toast j:toast:define:toast-viewport j:toast:toastPause j:toast:toastSet
-0-4,6,10-16,19-23,25-26,28-76,88,90-91,101,107-108,116,121-123,125,128-129,131,139,155,157-158,160-161,164-166,171-172,174,179-181,184-186,189-193,195,197-200,202,204-213,215,217-233,235-236,238-255,257,259-268,270-277,280-282,284-286,288,290-291,298,301,303-305,311,315,317,319,321,324,330-331,334-336,340-344,347,350-351,353,355,357,360,364,368-370,373-375,377,379,381,383-384,386-387,390-394,396,403,407-409,411,416,423-424,427-428,431,433,440,442-443,450,452,454	j:toast:define:toast-viewport+3
-121,154,161,213,265,276-278,280-284,334,340,455	j:toast:toast
+0-4,6,10-16,19-23,25-26,28-76,88,90-91,101,107-108,116,121-123,125,128-129,131,139,155,157-158,160-161,164-166,171-172,174,179-181,184-186,189-193,195,197-200,202,204-213,215,217-233,235-236,238-255,257,259-268,270-277,280-282,284-286,288,290-291,298,301,303-305,311,315,317,319,321,324,331-332,335-337,341-345,348,351-352,354,356,358,362,366,370-372,375-377,379,381,383,385-386,388-389,392-396,398,405,409-411,413,418,422,426-427,430-431,434,436,443,445-446,453,455,457	j:toast:define:toast-viewport+3
+121,154,161,213,265,276-278,280-284,335,341,458	j:toast:toast
 73,277,279,283,285	j:toast:toast+1
 276,285	j:toast:toast+10 j:toast:toastPromiseOptions
-121,130,154,161,265,276-277,282,334	j:toast:toast+11
+121,130,154,161,265,276-277,282,335	j:toast:toast+11
 279,283	j:toast:toast+12
 276,283,285	j:toast:toast+2
-73,121,130,154,161,265,276-278,280-283,285,334	j:toast:toast+3
-130,218,276-277,455	j:toast:toast+5
+73,121,130,154,161,265,276-278,280-283,285,335	j:toast:toast+3
+130,218,276-277,458	j:toast:toast+5
 130,276	j:toast:toast+6 j:toast:toast+7 j:toast:toast+8
 277	j:toast:toast+9
-73,121,130,154,161,213,218,265,276-285,334,340,455	j:toast:toastAdd j:toast:toastAnnounce j:toast:toastConfig j:toast:toastCreate j:toast:toastExpanded j:toast:toastFill j:toast:toastLayout j:toast:toastMeasure j:toast:toastNormalize j:toast:toastOutOfFocus j:toast:toastPrune j:toast:toastRaise j:toast:toastText j:toast:toastValidate j:toast:toastViewport
-121,130,154,161,213,218,265,276-278,280-284,334,340,455	j:toast:toastCall
-73,121,130,154,161,265,276-285,334	j:toast:toastClearTimer j:toast:toastClose
+73,121,130,154,161,213,218,265,276-285,335,341,458	j:toast:toastAdd j:toast:toastAnnounce j:toast:toastConfig j:toast:toastCreate j:toast:toastExpanded j:toast:toastFill j:toast:toastLayout j:toast:toastMeasure j:toast:toastNormalize j:toast:toastOutOfFocus j:toast:toastPrune j:toast:toastRaise j:toast:toastText j:toast:toastValidate j:toast:toastViewport
+121,130,154,161,213,218,265,276-278,280-284,335,341,458	j:toast:toastCall
+73,121,130,154,161,265,276-285,335	j:toast:toastClearTimer j:toast:toastClose
 58,73,221,224,228-229,231,264,277,284	j:toast:toastDisplacement j:toast:toastTransform
-73,121,154,161,265,276-285,334	j:toast:toastDrop
+73,121,154,161,265,276-285,335	j:toast:toastDrop
 73,277,279,284	j:toast:toastFire
-73,121,154,161,265,276-278,280-285,334	j:toast:toastFlushLeave j:toast:toastIdle
-73,121,130,154,161,265,276-278,280-285,334	j:toast:toastFocusAway
-30,48,57-58,69,90,101,122-123,161,209-213,215,218-225,227-232,235,246,248,262-266,273-275,280-282,374,433,442,454	j:toast:toastHome
+73,121,154,161,265,276-278,280-285,335	j:toast:toastFlushLeave j:toast:toastIdle
+73,121,130,154,161,265,276-278,280-285,335	j:toast:toastFocusAway
+30,48,57-58,69,90,101,122-123,161,209-213,215,218-225,227-232,235,246,248,262-266,273-275,280-282,376,436,445,457	j:toast:toastHome
 283	j:toast:toastPublic
-30,48,57-58,69,90,101,122-123,161,209-213,215,218-232,235,246,248,262-266,273-275,280-282,374,433,442,454	j:toast:toastRehome
-1,8-11,30,35,37-38,48,54,56-60,62,64,68-69,76,90-91,101,116,120,122-123,125-126,131,161,164,171-174,179,192-193,195,198,209-213,215,217-233,235-255,260,262-268,270-275,280-282,286-290,298,301,334-336,340,373-375,433,442-443,450,454	j:toast:toastRehome+1
+30,48,57-58,69,90,101,122-123,161,209-213,215,218-232,235,246,248,262-266,273-275,280-282,376,436,445,457	j:toast:toastRehome
+1,8-11,30,35,37-38,48,54,56-60,62,64,68-69,76,90-91,101,116,120,122-123,125-126,131,161,164,171-174,179,192-193,195,198,209-213,215,217-233,235-255,260,262-268,270-275,280-282,286-290,298,301,335-337,341,375-377,436,445-446,453,457	j:toast:toastRehome+1
 265,277,282	j:toast:toastRestoreFocus
 73,121,277,280-282,284-285	j:toast:toastResume j:toast:toastViewportInside
-73,154,213,218,276-277,279,284-285,340	j:toast:toastSchedule
+73,154,213,218,276-277,279,284-285,341	j:toast:toastSchedule
 73,276-277,282,284-285	j:toast:toastSwipeEnd
 73,277,284	j:toast:toastSwipeStyle
 73,154,276-277,279,284-285	j:toast:toastTimersSettled
 276-277,283,285	j:toast:toastUpdate
-75,88,96,98,117-431,433-434,450	j:toggle-group:define:toggle-group j:toggle-group:define:toggle-group-item j:toggle-group:toggleGroupApply j:toggle-group:toggleGroupContext j:toggle-group:toggleGroupItems j:toggle-group:toggleGroupList j:toggle-group:toggleGroupParse j:toggle-group:toggleGroupSet
+75,88,96,98,120,129,139,159,164-208,290,431-434,436-437,453	j:toggle-group:define:toggle-group j:toggle-group:define:toggle-group-item j:toggle-group:toggleGroupApply j:toggle-group:toggleGroupContext j:toggle-group:toggleGroupItems j:toggle-group:toggleGroupList j:toggle-group:toggleGroupParse j:toggle-group:toggleGroupSet
 75,88,183,206-207,290	j:toggle-group:toggleGroupValue
-74,96,98,117-427,430,433-434,450	j:toggle:define:toggle j:toggle:toggleSync
-1,9-10,76,96-98,104,117-427,430,432-434,436,454	j:tooltip:define:tooltip j:tooltip:define:tooltip-content j:tooltip:tooltipParts
+74,96,98,129,137,139,159,164-208,290,433,436-437,453	j:toggle:define:toggle j:toggle:toggleSync
+1,9-10,76,96-98,104,121,129,139,159,209-290,433,435-437,439,457	j:tooltip:define:tooltip j:tooltip:tooltipParts
+1,9-10,76,96-98,104,120-121,126,129,139,159,209-290,335-336,433,435-437,439,457	j:tooltip:define:tooltip-content
 1,9-10,76,121,286-290	j:tooltip:tooltipClear
 1,8-10,35,37,60,76,238-240,270,286-290	j:tooltip:tooltipNumber
-0-1,3-4,12,14-20,22-30,32,34,39-47,96,98,117-427,430,433-434,445	j:trace:define:trace-collapsible j:trace:traceApply j:trace:traceParts
-15,17-19,23-24,27,29,32,39-47,396-399,445	j:trace:define:trace-collapsible-trigger
-0-1,3-4,16,22-23,25,28,34,396	j:trace:traceClose
-1,23,25,396	j:trace:traceOpen
-0-1,3-4,15-19,22-25,27-29,32,34,39-47,396-399,445	j:trace:traceSet
-52,54,65,68,70-71,90,96-98,104,117-434,436,446,448,450-451	j:visually:visuallyHidden
-96,432-439	p:/
-437	p:/404
-77-78,80,86,429,434	p:/blocks/card-grid
-78,86-88,429,434	p:/blocks/dashboard
-78-79,86,429,434	p:/blocks/data-table
-78,80,86,429,434	p:/blocks/detail
-78,81-82,86,429,434	p:/blocks/form
-78,84,86,429,434	p:/blocks/login
-78,83,86,429,434	p:/blocks/login-split
-78,80,85-86,429,434	p:/blocks/overlay-form
-78,86,429,434	p:/blocks/settings
-78,86,111-114,429,434	p:/blocks/states
-96,434,438-439	p:/docs
-0-30,434	p:/docs/ai-elements
-2,434	p:/docs/ai-elements/checkpoint
-3-4,434	p:/docs/ai-elements/confirmation
-8,434	p:/docs/ai-elements/inline-citation
-14,434	p:/docs/ai-elements/queue
-20,434	p:/docs/ai-elements/subagent
-88,434	p:/docs/blocks/dashboard
-96-97,432,434	p:/docs/components
-94,96,101,432,434,436	p:/docs/components/accordion
-99,434	p:/docs/components/bubble p:/docs/components/drawer
-77-116,432,434,436,438	p:/docs/components/button
-89,99,434	p:/docs/components/code-block
-90,432,434,436	p:/docs/components/dialog
-104,434	p:/docs/components/form p:/docs/components/tooltip
-96,434	p:/docs/components/native-select p:/docs/installation
-432,434,436	p:/docs/components/tabs
+0-1,3-4,12,14-20,22-30,32,34,39-47,96,98,129,137,139,159,348-402,433,436-437,448	j:trace:define:trace-collapsible j:trace:traceApply j:trace:traceParts
+15,17-19,23-24,27,29,32,39-47,398-401,448	j:trace:define:trace-collapsible-trigger
+0-1,3-4,16,22-23,25,28,34,398	j:trace:traceClose
+1,23,25,398	j:trace:traceOpen
+0-1,3-4,15-19,22-25,27-29,32,34,39-47,398-401,448	j:trace:traceSet
+52,54,65,68,70-71,90,96-98,104,129,136-137,139,159,164-402,431-437,439,449,451,453-454	j:visually:visuallyHidden
+96,435-442	p:/
+440	p:/404
+77-78,80,86,432,437	p:/blocks/card-grid
+78,86-88,432,437	p:/blocks/dashboard
+78-79,86,432,437	p:/blocks/data-table
+78,80,86,432,437	p:/blocks/detail
+78,81-82,86,432,437	p:/blocks/form
+78,84,86,432,437	p:/blocks/login
+78,83,86,432,437	p:/blocks/login-split
+78,80,85-86,432,437	p:/blocks/overlay-form
+78,86,432,437	p:/blocks/settings
+78,86,111-114,432,437	p:/blocks/states
+96,98,117-430,433,436	p:/demo
+96,437,441-442	p:/docs
+0-30,437	p:/docs/ai-elements
+2,437	p:/docs/ai-elements/checkpoint
+3-4,437	p:/docs/ai-elements/confirmation
+8,437	p:/docs/ai-elements/inline-citation
+14,437	p:/docs/ai-elements/queue
+20,437	p:/docs/ai-elements/subagent
+88,437	p:/docs/blocks/dashboard
+96-97,435,437	p:/docs/components
+94,96,101,435,437,439	p:/docs/components/accordion
+99,437	p:/docs/components/bubble p:/docs/components/drawer
+77-116,435,437,439,441	p:/docs/components/button
+89,99,437	p:/docs/components/code-block
+90,435,437,439	p:/docs/components/dialog
+104,437	p:/docs/components/form p:/docs/components/tooltip
+96,437	p:/docs/components/native-select p:/docs/installation
+435,437,439	p:/docs/components/tabs
 102	p:/docs/components/typography
-102,434	p:/docs/typography
+102,437	p:/docs/typography
 110	p:/view/button-demo
-0-30,77-116,429,432-439	site:docs
+0-30,77-116,329,361,432,435-442	site:docs

@@ -217,6 +217,7 @@ def nova_page_checks():
         {"i": 3, "t": "span", "a": [["data-slot", "badge"], ["class", "cn-badge inline-flex h-5 cn-badge-variant-default"]], "c": ["B"]}]}
     out = conv.node(tree)
     meta, ids, _, _ = parity.scenario_info({"roots": [{"kind": "preview", "tree": tree}]}, PARTS["components"])
+    wide = parity.Parts({**PARTS, "parts": [PARTS["parts"][0], {**PARTS["parts"][1], "tokens": ["flex", "flex-col", "gap-2", "w-full", "min-w-0", "p-2"]}]})
     return [
         check("a page with a preview in another style is measured on its Nova example page", parity.nova_page("bubble", rhea, ex) == "/preview/base/bubble-example?style=nova"),
         check("a page with only Nova previews needs no Nova example page", parity.nova_page("badge", nova, ex) is None),
@@ -231,6 +232,7 @@ def nova_page_checks():
         check("a slot that is no kit part keeps its layout classes", 'data-pid="1" class="flex flex-col gap-4"' in out),
         check("a slot that is no kit part is not measured, its parts are", 1 not in ids and 2 in ids and 3 in ids),
         check("a part rendered as another component (its root marker) gets that slot", parity.composed("cn-card cn-badge flex", parts, "badge", PARTS["components"]) == "card"),
+        check("an element with its own part marker is that part, whatever its example classes look like", parity.composed("flex flex-col gap-2 w-full min-w-0 p-2", wide, "badge", PARTS["components"]) == "card" and parity.composed("cn-badge flex flex-col gap-2 w-full min-w-0 p-2", wide, "badge", PARTS["components"]) is None),
         check("a marker in the part's own definition is no composition", parity.composed("cn-badge cn-card flex", parts, "card", PARTS["components"]) is None),
     ]
 

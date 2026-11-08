@@ -177,6 +177,8 @@ def composed(cls, parts, slot, names=(), parent=None, ancestors=()):
         host = t.removeprefix("cn-")
         if t.startswith("cn-") and host in parts.tokens and host != slot and component_of(host, names) not in ("", component_of(slot, names)) and not parts.uses_marker(slot, t):
             return host
+    if slot and "cn-" + slot in cls.split():
+        return None
     toks = set(parts.canon(cls.split())) - {t for t in cls.split() if t.startswith("lucide")}
     if len(toks) < 6:
         return None

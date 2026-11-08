@@ -39,6 +39,12 @@ type kitStyle struct{ name, file string }
 var kitStyles = []kitStyle{
 	{"nova", "clanker-ui.css"},
 	{"rhea", "clanker-ui-rhea.css"},
+	{"luma", "clanker-ui-luma.css"},
+	{"lyra", "clanker-ui-lyra.css"},
+	{"maia", "clanker-ui-maia.css"},
+	{"mira", "clanker-ui-mira.css"},
+	{"sera", "clanker-ui-sera.css"},
+	{"vega", "clanker-ui-vega.css"},
 }
 
 func kitStyleFiles() []string {

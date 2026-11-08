@@ -212,6 +212,7 @@ def nova_page_checks():
         check("a page with only Nova previews needs no Nova example page", parity.nova_page("badge", nova, ex) is None),
         check("a component without a Nova example page has none", parity.nova_page("card", rhea, ex) is None),
         check("a Nova example page scopes each example", "preview/base/" in parity.NOVA_PAGE),
+        check("a style without docs previews is measured on its example page with that style", parity.style_page("badge", "luma", ex) == "/preview/base/badge-example?style=luma" and parity.style_page("card", "luma", ex) is None),
         check("a cva marker class sets its variant", 'data-variant="outline" data-pid="2"' in out),
         check("a default cva marker sets no variant", 'data-slot="badge" data-pid="3">' in out),
         check("a slot that is no kit part keeps its layout classes", 'data-pid="1" class="flex flex-col gap-4"' in out),

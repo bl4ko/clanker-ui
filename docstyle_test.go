@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -44,11 +45,21 @@ func TestDocsPageStyles(t *testing.T) {
 	if len(d.styles) < 2 || d.styles[0] != "nova" || d.styles[1] != "rhea" || len(d.assets["style-rhea.css"]) == 0 {
 		t.Fatalf("styles %v, style-rhea.css %d bytes", d.styles, len(d.assets["style-rhea.css"]))
 	}
+	if !slices.Equal(d.styles[1:], kitStyleNames) {
+		t.Errorf("catalog styles %v, server kitStyleNames %v", d.styles[1:], kitStyleNames)
+	}
+	for _, s := range d.catalog.Files.Styles[1:] {
+		if !kitFiles[s.CSS] || minKit[s.CSS] != "dist/"+strings.TrimSuffix(s.CSS, ".css")+".min.css" || len(d.assets["style-"+s.Name+".css"]) == 0 {
+			t.Errorf("style %s: kit file %v, KIT=min file %q, docs style %d bytes", s.Name, kitFiles[s.CSS], minKit[s.CSS], len(d.assets["style-"+s.Name+".css"]))
+		}
+	}
 	h := newSite("").routes()
 	shadcn := map[string]string{"components/attachment": "blue", "components/bubble": "blue", "components/code-block": "", "components/drawer": "", "components/marker": "blue", "components/message": "blue", "components/message-scroller": "blue", "components/trace": "", "ai-elements/chat": "blue"}
 	for _, name := range []string{"chain-of-thought", "checkpoint", "confirmation", "context", "file-tree", "inline-citation", "message", "model-selector", "plan", "prompt-input", "queue", "reasoning", "sources", "stack-trace", "subagent", "suggestion", "task", "terminal", "test-results", "tool"} {
 		shadcn["ai-elements/"+name] = ""
 	}
+	shadcn["utils/scroll-fade"], shadcn["utils/shimmer"] = "", ""
+	nova := map[string]int{"utils/scroll-fade": 1}
 	for name, scheme := range shadcn {
 		href := "/docs/" + name
 		body := request(t, h, http.MethodGet, href).Body.String()
@@ -56,10 +67,18 @@ func TestDocsPageStyles(t *testing.T) {
 		if len(tags) == 0 {
 			t.Errorf("%s has no preview", href)
 		}
+		n := 0
 		for _, tag := range tags {
+			if !strings.Contains(tag, "data-docs-style") && !strings.Contains(tag, "data-scheme") {
+				n++
+				continue
+			}
 			if !strings.Contains(tag, ` data-docs-style="rhea"`) || scheme != "" && !strings.Contains(tag, ` data-scheme="`+scheme+`"`) || scheme == "" && strings.Contains(tag, "data-scheme") {
 				t.Errorf("%s: preview %s, want style rhea and scheme %q like shadcn", href, tag, scheme)
 			}
+		}
+		if n != nova[name] {
+			t.Errorf("%s: %d Nova previews, want %d like shadcn", href, n, nova[name])
 		}
 		if !strings.Contains(body, "/style-rhea.css\"") || scheme != "" && !strings.Contains(body, "/clanker-ui-themes.css\"") {
 			t.Errorf("%s does not load the Rhea preview CSS or the themes file", href)

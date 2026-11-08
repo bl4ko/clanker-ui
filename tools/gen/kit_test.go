@@ -40,8 +40,13 @@ func TestKitStyles(t *testing.T) {
 	if kitStyles[0].name != "nova" || kitStyles[0].file != "clanker-ui.css" {
 		t.Errorf("the default style is %v, want nova in clanker-ui.css", kitStyles[0])
 	}
-	if nova == rhea || !strings.Contains(rhea, `[data-slot="code-block"]`) {
-		t.Error("clanker-ui-rhea.css must be its own style with the same parts")
+	seen := map[string]string{}
+	for _, s := range kitStyles {
+		css := readRepo(t, s.file)
+		if other, ok := seen[css]; ok || !strings.Contains(css, `[data-slot="code-block"]`) {
+			t.Errorf("%s must be its own style with the same parts (same bytes as %q)", s.file, other)
+		}
+		seen[css] = s.file
 	}
 	for _, want := range []string{"--tw-ring-color: color-mix(in oklab, var(--ring) 30%, transparent)", "border-radius: calc(var(--radius) * 1.8)"} {
 		if !strings.Contains(rhea, want) || strings.Count(nova, want) >= strings.Count(rhea, want) {

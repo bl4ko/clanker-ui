@@ -32,9 +32,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 2
           sparse-checkout: |
             tools/ci
+            tools/gen
             test
+            docs/content
       - id: plan
         env:
           EVENT: ${{ github.event_name }}
@@ -134,6 +137,11 @@ jobs:
           version: "0.13.7"
           python-version: "3.13"
           enable-cache: false
+      - if: runner.os == 'macOS'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/Library/Caches/ms-playwright
+          key: ms-playwright-${{ runner.os }}-${{ runner.arch }}-${{ env.PLAYWRIGHT_VERSION }}-${{ matrix.engine }}
       - name: Install browser
         run: uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" playwright install --with-deps "$ENGINE"
       - name: Start server

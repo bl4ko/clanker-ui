@@ -718,6 +718,10 @@ def plain(x):
     case(compare(motion(350), allowed=[dict(rule, steps=[2])])[0][2] is None, "compare: an allowed entry for another step does not match")
     case(compare(motion(350), allowed=[dict(rule, platforms=["other"])])[0][2] is None, "compare: an allowed entry for another platform does not match")
     case(compare(motion(350), allowed=[rule], engine="webkit")[0][2] is None, "compare: an allowed entry for another engine does not match")
+    spec = importlib.util.spec_from_file_location("clanker_ci_plan", ROOT / "tools" / "ci" / "plan.py")
+    P = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(P)
+    case({f"{m}.{n}" for m, checks, _ in discover([]) for n, _ in checks} == {f"{m}.{n}" for m, ns in P.NAMES.items() for n in ns}, "tools/ci/plan.py finds the same checks as the runner")
     print(f"self-test: {count} checks passed in {time.monotonic() - started:.2f}s")
     return 0
 

@@ -1,7 +1,9 @@
 import difflib
 import fnmatch
+import hashlib
 import pathlib
 import re
+import subprocess
 import sys
 from urllib.parse import urlsplit
 
@@ -11,6 +13,7 @@ SPLIT = {"clanker-ui.js": "js", "clanker-ui.css": "css", "tools/gen/kit.css": "c
 KIT_SOURCES = {*SPLIT, "clanker-ui-chart.js", "clanker-ui-code.js", "clanker-ui-theme.js", "clanker-ui-themes.css", "clanker-ui-a11y.css", "clanker-ui-rhea.css"}
 SERVED = [*KIT_SOURCES - set(SPLIT), "demo/demo.css", "demo/demo.js", "demo/assets/*", "docs/assets/*"]
 SITE = ["docs/nav.json", "docs/templates/*"]
+SOURCE = ["test", "demo", *sorted(KIT_SOURCES)]
 DOCS_ROUTE = re.compile(r"^/($|docs|view/|blocks/|404$)")
 
 
@@ -484,11 +487,16 @@ def ranges(idx):
     return ",".join(f"{a}" if a == b else f"{a}-{b}" for a, b in out)
 
 
+def source_hash(root, rev):
+    r = subprocess.run(["git", "-C", str(root), "rev-parse", *(f"{rev}:{p}" for p in SOURCE)], capture_output=True, text=True)
+    return hashlib.sha256(r.stdout.encode()).hexdigest()[:16] if r.returncode == 0 else ""
+
+
 def read_impact(path):
     f = pathlib.Path(path)
     if not f.exists():
-        return {}
-    head, *rows = f.read_text().splitlines()
+        return {}, ""
+    source, head, *rows = f.read_text().splitlines()
     names = head.split("\t")[1].split()
     impact = {n: set() for n in names}
     for row in rows:
@@ -497,13 +505,13 @@ def read_impact(path):
             a, _, b = part.partition("-")
             for i in range(int(a), int(b or a) + 1):
                 impact[names[i]].update(keys.split())
-    return {n: frozenset(k) for n, k in impact.items()}
+    return {n: frozenset(k) for n, k in impact.items()}, source.split("\t")[1]
 
 
 IMPACT = re.compile(r"^impact \[[^]]+\] (\S+)\t(.*)$", re.M)
 
 
-def build(out, *dirs):
+def build(out, rev, *dirs):
     acc = {}
     for d in dirs:
         for f in sorted(pathlib.Path(d).rglob("*.log")):
@@ -517,7 +525,7 @@ def build(out, *dirs):
     rows = {}
     for k, idx in sets.items():
         rows.setdefault(ranges(idx), []).append(k)
-    text = "checks\t" + " ".join(names) + "\n" + "".join(f"{idx}\t{' '.join(sorted(ks))}\n" for idx, ks in sorted(rows.items(), key=lambda r: sorted(r[1])[0]))
+    text = f"source\t{source_hash(ROOT, rev)}\n" + "checks\t" + " ".join(names) + "\n" + "".join(f"{idx}\t{' '.join(sorted(ks))}\n" for idx, ks in sorted(rows.items(), key=lambda r: sorted(r[1])[0]))
     pathlib.Path(out).write_text(text)
     print(f"{len(names)} checks, {len(sets)} keys, {len(rows)} rows, {len(text)} bytes")
 

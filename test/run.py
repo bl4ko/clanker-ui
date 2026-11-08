@@ -297,6 +297,14 @@ def drop_webkit_noise(problems, selects):
     return kept
 
 
+@functools.cache
+def impact_module():
+    spec = importlib.util.spec_from_file_location("clanker_ci_impact", ROOT / "tools" / "ci" / "impact.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def aborted_prefetch(request):
     purpose = " ".join(request.headers.get(h, "") for h in ("sec-purpose", "purpose", "x-moz"))
     return request.failure in ("NS_BINDING_ABORTED", "net::ERR_ABORTED") and "prefetch" in purpose
@@ -313,6 +321,7 @@ def run_check(browser, args, engine, theme, width, module, name, fn, start):
     if args.rtl:
         context.add_init_script(RTL)
     page = context.new_page()
+    recorder = impact_module().Recorder(context, page, engine, args.base_url) if args.impact else None
     problems = []
     page.on("console", lambda m: problems.append(f"console.{m.type}: {m.text}") if m.type in ("error", "warning", "assert") else None)
     page.on("pageerror", lambda e: problems.append(f"pageerror: {e}"))
@@ -354,6 +363,8 @@ def run_check(browser, args, engine, theme, width, module, name, fn, start):
         problems += watch["violations"] + [f"window error: {m}" for m in watch["errors"]]
     except PlaywrightError:
         pass
+    if recorder:
+        print(f"impact [{engine} {theme} {width}] {module}.{name}\t{' '.join(sorted(recorder.finish()))}", flush=True)
     context.close()
     if engine == "webkit":
         problems = drop_webkit_noise(problems, watch["selects"])
@@ -507,7 +518,7 @@ def child_args(args):
     out = ["--base-url", args.base_url, "--themes", args.themes, "--widths", args.widths, "--only", args.only, "--out", str(args.out)]
     if args.k:
         out += ["-k", args.k]
-    return out + [f"--{name.replace('_', '-')}" for name in ("reduced_motion", "rtl", "headed", "shots", "retry", "exitfirst") if getattr(args, name)]
+    return out + [f"--{name.replace('_', '-')}" for name in ("reduced_motion", "rtl", "headed", "shots", "retry", "exitfirst", "impact") if getattr(args, name)]
 
 
 def run_parallel(args, engines, tally):
@@ -727,6 +738,7 @@ def main():
     ap.add_argument("--jobs", type=int, default=1, help="run up to N engines in parallel, one process each")
     ap.add_argument("--retry", action="store_true", help="run a failed check once more at once; a pass then prints flaky and counts as pass")
     ap.add_argument("--exitfirst", action="store_true", help="stop after the first failure")
+    ap.add_argument("--impact", action="store_true", help="print the components that each check touches (tools/ci/impact.py)")
     ap.add_argument("--list", action="store_true", help="print the selected check names and their count, then exit")
     ap.add_argument("--self-test", action="store_true", help="test the runner and the behavior comparison without a browser, then exit")
     ap.add_argument("--child", action="store_true", help=argparse.SUPPRESS)

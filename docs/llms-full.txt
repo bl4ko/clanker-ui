@@ -866,6 +866,8 @@ Toggle group: one tab stop, arrows (RTL aware), Home, End. A group is not labela
 
 The kit adds missing ARIA and decorations (close buttons, item indicators, sub-menu chevrons, the drawer handle, the tooltip arrow). Placement: `data-side`, `data-align`, `data-side-offset`, `data-align-offset` on the content.
 
+Until the kit script runs, popup content without a `popover` attribute (`popover-content`, `hover-card-content`, `tooltip-content`, the `-content` and `-sub-content` of dropdown, context, and menubar menus, `select-content`, `combobox-content`) and a `navigation-menu-content` without `data-state` have `display: none` (`@media (scripting: enabled)`), so the page does not move when the script makes them popups. Without script they stay in the page flow.
+
 Overlays inside a shadow root are not supported: event delegation and focus tracking see only the shadow host, so outside presses, focus traps, and Tab order do not work there. Put overlays in the light DOM.
 
 The kit sets `type="button"` on dialog, alert dialog, sheet, drawer, popover, dropdown menu, menubar, and navigation menu triggers and on close, action, and cancel buttons (at init and again on click), so they never submit a form.
@@ -892,6 +894,7 @@ The kit sets `type="button"` on dialog, alert dialog, sheet, drawer, popover, dr
 - Dialog and sheet add a close button unless `data-show-close-button="false"`. `<div data-slot="dialog-footer" data-show-close-button>` adds an outline Close button. A `<form method="dialog">` inside closes with an exit animation.
 - Alert dialog: `data-size="sm"`, `alert-dialog-media`. The footer buttons are `<button data-slot="alert-dialog-cancel" data-variant="outline">` and `<button data-slot="alert-dialog-action">` (`data-variant="destructive"` for a red action), as in shadcn (`data-alert-dialog-cancel` and `data-alert-dialog-action` on a `button` part also work). Cancel closes it. The action is a plain button, as in shadcn: it does not close the dialog, so the app closes it with `dialogClose()` when its work is done, or the action gets `data-alert-dialog-close`. Like Base UI, the first tabbable element gets the initial focus (usually Cancel).
 - Sheet: `data-side="top|right|bottom|left"` (default `right`). It opens with `data-starting-style` (set before `showModal()`, removed after one frame) and closes with `data-ending-style` until its transition ends, as Base UI; the backdrop follows the same attributes.
+- Long dialog content: put the middle of the dialog in a `dialog-body` (kit part, like the shadcn `-mx-4 max-h-[50vh] overflow-y-auto px-4` wrapper of the Scrollable Content and Sticky Footer examples). The `dialog-content` is then a column of at most the window height less 2rem: the body takes the free space and scrolls, and the header and the footer stay in view. The body reaches the dialog edges with the scrollbar and has 4 px of padding at the top and the bottom for focus rings. A dialog without a body that is taller than the window scrolls as a whole (the kit gives `dialog-content` `max-height: calc(100dvh - 2rem)` and `overflow-y: auto`; in shadcn the top and the end of such a dialog are out of reach).
 - Long sheet and drawer content does not scroll by itself, as in shadcn: put it in a `sheet-body` or `drawer-body` (kit parts, like the shadcn `flex-1 overflow-y-auto px-4` wrapper): it fills the space between the header and the footer, scrolls, and holds its children in a column with a 1.5rem gap.
 - A form in a dialog, alert dialog, sheet, or drawer: put `<form data-slot="form">` (or a plain `<form>`) as the direct child of the content around the header, the body, and the footer. It is `display: contents`, so the parts keep the content layout (gap, sticky footer).
 
@@ -2248,7 +2251,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | `dialog-content` |  | `data-closed`, `data-open`, `data-state` |
 | `dialog-footer` | `data-show-close-button` boolean |  |
 
-Other parts: `dialog` (root), `dialog-close`, `dialog-description`, `dialog-header`, `dialog-title`.
+Other parts: `dialog` (root), `dialog-body`, `dialog-close`, `dialog-description`, `dialog-header`, `dialog-title`.
 
 Part attributes: `data-dialog-close` boolean; `data-dialog-trigger` id.
 

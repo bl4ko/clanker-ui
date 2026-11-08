@@ -25,7 +25,7 @@ Block: `overlay-form`. `<form data-slot="form">` is the direct child of `dialog-
 
 The sheet footer is a column: the primary first, Cancel under it (dialog footers are a row: Cancel first). A `field-group data-columns="2"` stacks to one column in a narrow sheet; that is expected.
 
-Sheet with a long form: the fields go in a `sheet-body` (drawer: `drawer-body`) between the header and the footer. Only the body scrolls; the footer stays in view:
+Long form: the fields go in a `sheet-body` (drawer: `drawer-body`, dialog: `dialog-body`) between the header and the footer. Only the body scrolls; the footer stays in view:
 
 ```html
 <dialog data-slot="sheet-content" data-side="right">

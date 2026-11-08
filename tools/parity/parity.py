@@ -1046,8 +1046,20 @@ def measure_docs(comp, docs, args, examples):
     return out
 
 
+PRESET_STYLES = ["nova", "vega", "maia", "lyra", "mira", "luma", "sera", "rhea"]
+BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+
+
+def preset_code(style):
+    n, out = PRESET_STYLES.index(style) * 2 ** 34, ""
+    while n:
+        n, r = divmod(n, 62)
+        out = BASE62[r] + out
+    return "b" + (out or "0")
+
+
 def style_page(comp, style, examples):
-    return f"{NOVA_PAGE}{comp}-example?style={style}" if f"{comp}-example" in examples.nova else None
+    return f"{NOVA_PAGE}{comp}-example?preset={preset_code(style)}" if f"{comp}-example" in examples.nova else None
 
 
 def measure_style_page(comp, docs, args, examples, style):
@@ -1473,7 +1485,7 @@ def main():
     ap.add_argument("--keep-raw", action="store_true")
     ap.add_argument("--quick", action="store_true", help="rest and open only, no hover, press, or focus")
     ap.add_argument("--drop-slot", default="", help="self-test: remove every generated rule for this data-slot before measuring")
-    ap.add_argument("--page-style", default="", help="measure only the example pages /preview/base/<name>-example?style=<style> of a ported style (no docs page)")
+    ap.add_argument("--page-style", default="", help="measure only the example pages /preview/base/<name>-example?preset=<code of the style> of a ported style (no docs page)")
     ap.add_argument("--examples", default="", help="cache of the pinned apps/v4/examples/base files (default: <src>/parity-examples)")
     args = ap.parse_args()
     if not args.src:

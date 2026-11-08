@@ -224,7 +224,7 @@ def nova_page_checks():
         check("a Nova example page scopes each example", "preview/base/" in parity.NOVA_PAGE),
         check("a cn marker of a cva on another part sets the attribute of that part (example pages keep the markers)", parity.infer_attrs("cn-nav-trigger inline-flex h-9", parity.Parts(CVA_PARTS), "nav-link", {"nav"})[0] == {"data-variant": "trigger"} and parity.infer_attrs("cn-nav-link flex", parity.Parts(CVA_PARTS), "nav-link", {"nav"})[0] == {}),
         check("a style without docs previews is measured on its example page with the preset code of that style", parity.style_page("badge", "luma", ex) == "/preview/base/badge-example?preset=b1VlIttI" and parity.style_page("card", "luma", ex) is None),
-        check("an example class with the style variant of the measured style applies, other style variants do not", parity.style_classes(["rounded-lg", "style-luma:rounded-3xl", "style-lyra:rounded-none", "dark:style-luma:bg-muted"], "luma") == ["rounded-lg", "rounded-3xl", "dark:bg-muted"]),
+        check("an example class with the style variant of the measured style applies, other style variants do not", parity.style_classes(["rounded-lg", "style-luma:rounded-3xl", "style-lyra:rounded-none", "dark:style-luma:bg-muted"], "luma") == ["rounded-lg", "[&]:rounded-3xl", "dark:[&]:bg-muted"]),
         check("preset codes of the shadcn create page (style in bits 34 to 39, other fields at their default)", [parity.preset_code(st) for st in ("nova", "vega", "lyra", "sera", "rhea")] == ["b0", "bIkeymG", "buFywKm", "b1oVxsfY", "b27GcrRo"]),
         check("a cva marker class sets its variant", 'data-variant="outline" data-pid="2"' in out),
         check("a default cva marker sets no variant", 'data-slot="badge" data-pid="3">' in out),

@@ -417,7 +417,7 @@ def style_classes(classes, style):
         if not m:
             out.append(c)
         elif m[2] == style:
-            out.append(c[:m.start()] + m[1] + c[m.end():] if m[1] else c[m.end():])
+            out.append(c[:m.start()] + m[1] + "[&]:" + c[m.end():])
     return out
 
 

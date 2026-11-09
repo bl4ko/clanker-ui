@@ -27,7 +27,7 @@ var (
 
 func parseStyles(text string) map[string]string {
 	out := map[string]string{}
-	for _, m := range novaRule.FindAllStringSubmatch(text, -1) {
+	for _, m := range novaRule.FindAllStringSubmatch(blockComment.ReplaceAllString(text, ""), -1) {
 		var classes []string
 		for _, a := range applyLine.FindAllStringSubmatch(m[2], -1) {
 			classes = append(classes, strings.TrimSpace(a[1]))

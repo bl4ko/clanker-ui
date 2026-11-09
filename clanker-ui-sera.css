@@ -8202,12 +8202,6 @@
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
-  [data-slot="input-group-addon"]:where(:is(:not([data-align]), [data-align="inline-start"])):has( > button), [data-slot="input-group-addon"]:where(:is(:not([data-align]), [data-align="inline-start"])):has( > kbd) {
-    margin-inline-start: calc(var(--spacing) * -1);
-  }
-  [data-slot="input-group-addon"]:where([data-align="inline-end"]):has( > button), [data-slot="input-group-addon"]:where([data-align="inline-end"]):has( > kbd) {
-    margin-inline-end: calc(var(--spacing) * -1);
-  }
   [data-slot="input-group-addon"]:where([data-align="block-start"]):is(:where(:is([data-slot="input-group"], [data-slot="input-group"]:where([data-combobox-input]))):has( > input) *) {
     padding-top: calc(var(--spacing) * 3.5);
   }

@@ -85,3 +85,10 @@ func TestHasVariantLimitedToRenderers(t *testing.T) {
 		}
 	}
 }
+
+func TestParseStylesSkipsComments(t *testing.T) {
+	got := parseStyles(".style-x {\n  .cn-a {\n    @apply p-2;\n  }\n\n  /* .cn-b {\n    @apply -ml-1;\n  } */\n}\n")
+	if got["cn-a"] != "p-2" || got["cn-b"] != "" {
+		t.Errorf("parseStyles = %v, want only cn-a (a commented rule is not a rule)", got)
+	}
+}

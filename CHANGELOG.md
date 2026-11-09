@@ -12,6 +12,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Added
 
+- Parity of the Luma, Lyra, and Maia styles against the live shadcn preview of each style (`tools/parity --page-style`, `known-<style>.tsv`).
 - Calendar: `data-month-format="long"` shows long month names in the month dropdown, like the shadcn `calendar-custom-days` example (#91).
 - Rhea style: `clanker-ui-rhea.css` (and `dist/clanker-ui-rhea.min.css`, `dist/clanker-ui-rhea-<group>.min.css`) is the kit CSS generated from the shadcn `style-rhea.css`. Load it instead of `clanker-ui.css`; markup and JavaScript are the same. Nova stays the default and does not change. The catalog lists the styles in `files.styles`.
 - Luma, Lyra, Maia, Mira, Sera, and Vega styles: `clanker-ui-<style>.css` (and `dist/clanker-ui-<style>.min.css`, `dist/clanker-ui-<style>-<group>.min.css`), generated from the shadcn `style-<style>.css` like Rhea. All 8 shadcn styles are in the kit; load one style file only.
@@ -66,6 +67,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Chart colors: the kit `--chart-1`…`--chart-5` are the validated categorical hues of the accessibility layer, not the shadcn gray ramp, so a chart with several series is readable without app tokens. The shadcn base schemes of `clanker-ui-themes.css` still set the exact shadcn values.
 
 ### Fixed
+
+- Rhea, Luma, and Sera: a button group with an outline button no longer gives its input, input group, or select trigger the border color; shadcn buttons do not render `data-variant`, so the shadcn rule `has-[>[data-variant=outline]]` matches only parts that render it, like the descendant form already did.
 
 - Docs: the ghost bubble of the Bubble variants example has the shadcn Markdown text, paragraph spacing, and inline code look.
 - `data-layout="split"`: a child of the form column with `hidden` stays hidden (before, the layout made it `display: flex`).

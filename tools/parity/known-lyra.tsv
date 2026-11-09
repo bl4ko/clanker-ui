@@ -1,0 +1,597 @@
+accordion	accordion-trigger[orientation=vertical]	border-bottom-color	6	R5 also on the Nova example page against Nova
+accordion	accordion-trigger[orientation=vertical]	border-left-color	6	R5 also on the Nova example page against Nova
+accordion	accordion-trigger[orientation=vertical]	border-right-color	6	R5 also on the Nova example page against Nova
+accordion	accordion-trigger[orientation=vertical]	border-top-color	6	R5 also on the Nova example page against Nova
+attachment	attachment[orientation=horizontal,size=default]	min-width	108	R5 also on the Nova example page against Nova
+attachment	attachment[orientation=horizontal,size=sm]	min-width	12	R5 also on the Nova example page against Nova
+attachment	attachment[orientation=horizontal,size=xs]	min-width	4	R5 also on the Nova example page against Nova
+badge	badge[variant=destructive]	box-shadow	2	R5 also on the Nova example page against Nova
+button-group	button-group	@w	56	R5 also on the Nova example page against Nova
+button-group	button-group	width	56	R5 also on the Nova example page against Nova
+button-group	button-group-text	@w	8	R5 also on the Nova example page against Nova
+button-group	button-group-text	background-color	8	R5 also on the Nova example page against Nova
+button-group	button-group-text	border-bottom-width	8	R5 also on the Nova example page against Nova
+button-group	button-group-text	border-left-width	8	R5 also on the Nova example page against Nova
+button-group	button-group-text	border-right-width	8	R5 also on the Nova example page against Nova
+button-group	button-group-text	border-top-width	8	R5 also on the Nova example page against Nova
+button-group	button-group-text	font-weight	8	T23 ButtonGroupText render={<Label />}
+button-group	button-group-text	padding-left	8	R5 also on the Nova example page against Nova
+button-group	button-group-text	padding-right	8	R5 also on the Nova example page against Nova
+button-group	button-group-text	width	8	R5 also on the Nova example page against Nova
+button-group	button-group[orientation=vertical]	@w	8	R5 also on the Nova example page against Nova
+button-group	button-group[orientation=vertical]	width	8	R5 also on the Nova example page against Nova
+button-group	div in select-item	@w	12	R5 also on the Nova example page against Nova
+button-group	div in select-item	column-gap	12	R5 also on the Nova example page against Nova
+button-group	div in select-item	display	12	R5 also on the Nova example page against Nova
+button-group	div in select-item	flex-basis	12	R5 also on the Nova example page against Nova
+button-group	div in select-item	flex-grow	12	R5 also on the Nova example page against Nova
+button-group	div in select-item	flex-shrink	12	R5 also on the Nova example page against Nova
+button-group	div in select-item	row-gap	12	R5 also on the Nova example page against Nova
+button-group	div in select-item	white-space	12	R5 also on the Nova example page against Nova
+button-group	div in select-item	width	12	R5 also on the Nova example page against Nova
+button-group	input	@w	8	R5 also on the Nova example page against Nova
+button-group	input	width	8	R5 also on the Nova example page against Nova
+button-group	path in select-trigger	color	16	R5 also on the Nova example page against Nova
+button-group	path in select-trigger	stroke	16	R5 also on the Nova example page against Nova
+button-group	select-trigger[size=default]	background-color	1	R5 also on the Nova example page against Nova
+button-group	span in select-item	bottom	2	R5 also on the Nova example page against Nova
+button-group	span in select-item	justify-content	2	R5 also on the Nova example page against Nova
+button-group	span in select-item	left	2	R5 also on the Nova example page against Nova
+button-group	span in select-item	min-height	2	R5 also on the Nova example page against Nova
+button-group	span in select-item	min-width	2	R5 also on the Nova example page against Nova
+button-group	span in select-item	pointer-events	2	R5 also on the Nova example page against Nova
+button-group	span in select-item	position	2	R5 also on the Nova example page against Nova
+button-group	span in select-item	right	2	R5 also on the Nova example page against Nova
+button-group	span in select-item	top	2	R5 also on the Nova example page against Nova
+button-group	svg in select-trigger	color	16	R5 also on the Nova example page against Nova
+button-group	svg in select-trigger	stroke	16	R5 also on the Nova example page against Nova
+calendar	button in calendar	border-bottom-color	6	R5 also on the Nova example page against Nova
+calendar	button in calendar	border-left-color	6	R5 also on the Nova example page against Nova
+calendar	button in calendar	border-right-color	6	R5 also on the Nova example page against Nova
+calendar	button in calendar	border-top-color	6	R5 also on the Nova example page against Nova
+calendar	button in calendar	box-shadow	6	R5 also on the Nova example page against Nova
+calendar	card-footer	@h	8	R5 also on the Nova example page against Nova
+calendar	card-footer	height	8	R5 also on the Nova example page against Nova
+calendar	card[size=sm]	@h	8	R5 also on the Nova example page against Nova
+calendar	card[size=sm]	height	8	R5 also on the Nova example page against Nova
+calendar	field-group	@h	8	R5 also on the Nova example page against Nova
+calendar	field-group	height	8	R5 also on the Nova example page against Nova
+calendar	field-label	@h	40	R5 also on the Nova example page against Nova
+calendar	field-label	height	40	R5 also on the Nova example page against Nova
+calendar	field-label	line-height	40	R5 also on the Nova example page against Nova
+calendar	field[orientation=vertical]	@h	40	R5 also on the Nova example page against Nova
+calendar	field[orientation=vertical]	height	40	R5 also on the Nova example page against Nova
+calendar	select in calendar	@h	44	R5 also on the Nova example page against Nova
+calendar	select in calendar	@w	44	R5 also on the Nova example page against Nova
+calendar	select in calendar	height	44	R5 also on the Nova example page against Nova
+calendar	select in calendar	width	44	R5 also on the Nova example page against Nova
+calendar	span in calendar	@h	64	R5 also on the Nova example page against Nova
+calendar	span in calendar	@w	64	R5 also on the Nova example page against Nova
+calendar	span in calendar	border-bottom-color	16	R5 also on the Nova example page against Nova
+calendar	span in calendar	border-bottom-width	32	R5 also on the Nova example page against Nova
+calendar	span in calendar	border-left-color	16	R5 also on the Nova example page against Nova
+calendar	span in calendar	border-left-width	32	R5 also on the Nova example page against Nova
+calendar	span in calendar	border-right-color	16	R5 also on the Nova example page against Nova
+calendar	span in calendar	border-right-width	32	R5 also on the Nova example page against Nova
+calendar	span in calendar	border-top-color	16	R5 also on the Nova example page against Nova
+calendar	span in calendar	border-top-width	32	R5 also on the Nova example page against Nova
+calendar	span in calendar	height	64	R5 also on the Nova example page against Nova
+calendar	span in calendar	padding-left	32	R5 also on the Nova example page against Nova
+calendar	span in calendar	padding-right	32	R5 also on the Nova example page against Nova
+calendar	span in calendar	width	64	R5 also on the Nova example page against Nova
+card	card-content	@h	2	R5 also on the Nova example page against Nova
+card	card-content	height	2	R5 also on the Nova example page against Nova
+card	card[size=default]	@h	2	R5 also on the Nova example page against Nova
+card	card[size=default]	height	2	R5 also on the Nova example page against Nova
+card	field-group	@h	2	R5 also on the Nova example page against Nova
+card	field-group	height	2	R5 also on the Nova example page against Nova
+card	field-label	@h	4	R5 also on the Nova example page against Nova
+card	field-label	height	4	R5 also on the Nova example page against Nova
+card	field-label	line-height	4	R5 also on the Nova example page against Nova
+card	field[orientation=vertical]	@h	2	R5 also on the Nova example page against Nova
+card	field[orientation=vertical]	height	2	R5 also on the Nova example page against Nova
+card	form in card-content	@h	2	R5 also on the Nova example page against Nova
+card	form in card-content	height	2	R5 also on the Nova example page against Nova
+checkbox	checkbox	line-height	4	R5 also on the Nova example page against Nova
+checkbox	checkbox-indicator	line-height	2	R5 also on the Nova example page against Nova
+checkbox	field-content	@h	2	R5 also on the Nova example page against Nova
+checkbox	field-content	height	2	R5 also on the Nova example page against Nova
+checkbox	field-label	@h	18	R5 also on the Nova example page against Nova
+checkbox	field-label	height	18	R5 also on the Nova example page against Nova
+checkbox	field-label	line-height	22	R5 also on the Nova example page against Nova
+checkbox	field[orientation=horizontal]	@h	2	R5 also on the Nova example page against Nova
+checkbox	field[orientation=horizontal]	height	2	R5 also on the Nova example page against Nova
+checkbox	field[orientation=horizontal]	line-height	4	R5 also on the Nova example page against Nova
+checkbox	field[orientation=vertical]	@h	2	R5 also on the Nova example page against Nova
+checkbox	field[orientation=vertical]	height	2	R5 also on the Nova example page against Nova
+checkbox	input in field	line-height	4	R5 also on the Nova example page against Nova
+checkbox	path in checkbox-indicator	line-height	2	R5 also on the Nova example page against Nova
+checkbox	svg in checkbox-indicator	line-height	2	R5 also on the Nova example page against Nova
+code-block	code-block-content	mask-image	4	R5 also on the Nova example page against Nova
+code-block	code-block[size=default,variant=default]	margin-top	8	R5 also on the Nova example page against Nova
+collapsible	collapsible-trigger	transition-duration	48	R5 also on the Nova example page against Nova
+collapsible	field-label	@w	16	R5 also on the Nova example page against Nova
+collapsible	field-label	bottom	16	R5 also on the Nova example page against Nova
+collapsible	field-label	left	16	R5 also on the Nova example page against Nova
+collapsible	field-label	line-height	16	R5 also on the Nova example page against Nova
+collapsible	field-label	right	16	R5 also on the Nova example page against Nova
+collapsible	field-label	top	16	R5 also on the Nova example page against Nova
+collapsible	field-label	width	16	R5 also on the Nova example page against Nova
+combobox	card-content	@h	6	R5 also on the Nova example page against Nova
+combobox	card-content	height	6	R5 also on the Nova example page against Nova
+combobox	card[size=sm]	@h	6	R5 also on the Nova example page against Nova
+combobox	card[size=sm]	height	6	R5 also on the Nova example page against Nova
+combobox	field-group	@h	6	R5 also on the Nova example page against Nova
+combobox	field-group	height	6	R5 also on the Nova example page against Nova
+combobox	field-label	@h	18	R5 also on the Nova example page against Nova
+combobox	field-label	height	18	R5 also on the Nova example page against Nova
+combobox	field-label	line-height	18	R5 also on the Nova example page against Nova
+combobox	field[orientation=vertical]	@h	18	R5 also on the Nova example page against Nova
+combobox	field[orientation=vertical]	height	18	R5 also on the Nova example page against Nova
+combobox	form in card-content	@h	6	R5 also on the Nova example page against Nova
+combobox	form in card-content	height	6	R5 also on the Nova example page against Nova
+combobox	input-group	@w	60	R5 also on the Nova example page against Nova
+combobox	input-group	width	60	R5 also on the Nova example page against Nova
+combobox	input-group-button[size=icon-xs]	background-color	2	R5 also on the Nova example page against Nova
+combobox	input-group-control	@w	66	R5 also on the Nova example page against Nova
+combobox	input-group-control	width	66	R5 also on the Nova example page against Nova
+combobox	path in combobox-trigger	color	6	R5 also on the Nova example page against Nova
+combobox	path in combobox-trigger	stroke	6	R5 also on the Nova example page against Nova
+combobox	path in input-group-button	color	2	R5 also on the Nova example page against Nova
+combobox	path in input-group-button	stroke	2	R5 also on the Nova example page against Nova
+combobox	span in combobox-item	align-items	2	R5 also on the Nova example page against Nova
+combobox	span in combobox-item	bottom	2	R5 also on the Nova example page against Nova
+combobox	span in combobox-item	display	2	R5 also on the Nova example page against Nova
+combobox	span in combobox-item	justify-content	2	R5 also on the Nova example page against Nova
+combobox	span in combobox-item	left	2	R5 also on the Nova example page against Nova
+combobox	span in combobox-item	min-height	2	R5 also on the Nova example page against Nova
+combobox	span in combobox-item	min-width	2	R5 also on the Nova example page against Nova
+combobox	span in combobox-item	pointer-events	2	R5 also on the Nova example page against Nova
+combobox	span in combobox-item	position	2	R5 also on the Nova example page against Nova
+combobox	span in combobox-item	right	2	R5 also on the Nova example page against Nova
+combobox	span in combobox-item	top	2	R5 also on the Nova example page against Nova
+combobox	svg in combobox-item	min-height	2	R5 also on the Nova example page against Nova
+combobox	svg in combobox-item	min-width	2	R5 also on the Nova example page against Nova
+combobox	svg in combobox-trigger	color	6	R5 also on the Nova example page against Nova
+combobox	svg in combobox-trigger	stroke	6	R5 also on the Nova example page against Nova
+combobox	svg in input-group-button	color	2	R5 also on the Nova example page against Nova
+combobox	svg in input-group-button	stroke	2	R5 also on the Nova example page against Nova
+command	input-group	border-bottom-color	2	R5 also on the Nova example page against Nova
+command	input-group	border-left-color	2	R5 also on the Nova example page against Nova
+command	input-group	border-right-color	2	R5 also on the Nova example page against Nova
+command	input-group	border-top-color	2	R5 also on the Nova example page against Nova
+dialog	dialog-close	@h	6	R5 also on the Nova example page against Nova
+dialog	dialog-close	@w	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	align-items	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	background-color	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	border-bottom-color	8	R5 also on the Nova example page against Nova
+dialog	dialog-close	border-bottom-width	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	border-left-color	8	R5 also on the Nova example page against Nova
+dialog	dialog-close	border-left-width	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	border-right-color	8	R5 also on the Nova example page against Nova
+dialog	dialog-close	border-right-width	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	border-top-color	8	R5 also on the Nova example page against Nova
+dialog	dialog-close	border-top-width	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	bottom	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	box-shadow	4	R5 also on the Nova example page against Nova
+dialog	dialog-close	column-gap	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	display	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	flex-shrink	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	font-weight	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	height	6	R5 also on the Nova example page against Nova
+dialog	dialog-close	justify-content	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	line-height	12	T23 DialogClose render={<Button variant="outline" />}
+dialog	dialog-close	outline-style	4	R5 also on the Nova example page against Nova
+dialog	dialog-close	padding-left	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	padding-right	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	row-gap	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	transition-duration	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	user-select	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	white-space	12	R5 also on the Nova example page against Nova
+dialog	dialog-close	width	12	R5 also on the Nova example page against Nova
+dialog	dialog-content	@h	12	R5 also on the Nova example page against Nova
+dialog	dialog-content	bottom	12	R5 also on the Nova example page against Nova
+dialog	dialog-content	grid-template-rows	12	R5 also on the Nova example page against Nova
+dialog	dialog-content	height	12	R5 also on the Nova example page against Nova
+dialog	dialog-footer	@h	2	R5 also on the Nova example page against Nova
+dialog	dialog-footer	height	2	R5 also on the Nova example page against Nova
+dialog	field-group	@h	2	R5 also on the Nova example page against Nova
+dialog	field-group	height	2	R5 also on the Nova example page against Nova
+dialog	field-label	@h	4	R5 also on the Nova example page against Nova
+dialog	field-label	height	4	R5 also on the Nova example page against Nova
+dialog	field-label	line-height	4	R5 also on the Nova example page against Nova
+dialog	field[orientation=vertical]	@h	4	R5 also on the Nova example page against Nova
+dialog	field[orientation=vertical]	height	4	R5 also on the Nova example page against Nova
+empty	empty	@h	4	R5 also on the Nova example page against Nova
+empty	empty	height	4	R5 also on the Nova example page against Nova
+field	checkbox	line-height	8	R5 also on the Nova example page against Nova
+field	div in field	column-gap	48	R5 also on the Nova example page against Nova
+field	div in field	row-gap	48	R5 also on the Nova example page against Nova
+field	div in select-item	@w	24	R5 also on the Nova example page against Nova
+field	div in select-item	column-gap	24	R5 also on the Nova example page against Nova
+field	div in select-item	display	24	R5 also on the Nova example page against Nova
+field	div in select-item	flex-basis	24	R5 also on the Nova example page against Nova
+field	div in select-item	flex-grow	24	R5 also on the Nova example page against Nova
+field	div in select-item	flex-shrink	24	R5 also on the Nova example page against Nova
+field	div in select-item	row-gap	24	R5 also on the Nova example page against Nova
+field	div in select-item	white-space	24	R5 also on the Nova example page against Nova
+field	div in select-item	width	24	R5 also on the Nova example page against Nova
+field	field-content	@h	96	R5 also on the Nova example page against Nova
+field	field-content	height	96	R5 also on the Nova example page against Nova
+field	field-group	@h	88	R5 also on the Nova example page against Nova
+field	field-group	height	88	R5 also on the Nova example page against Nova
+field	field-label	@h	568	R5 also on the Nova example page against Nova
+field	field-label	height	568	R5 also on the Nova example page against Nova
+field	field-label	line-height	592	R5 also on the Nova example page against Nova
+field	field-set	@h	40	R5 also on the Nova example page against Nova
+field	field-set	height	40	R5 also on the Nova example page against Nova
+field	field[orientation=horizontal]	@h	88	R5 also on the Nova example page against Nova
+field	field[orientation=horizontal]	height	88	R5 also on the Nova example page against Nova
+field	field[orientation=horizontal]	line-height	16	R5 also on the Nova example page against Nova
+field	field[orientation=vertical]	@h	312	R5 also on the Nova example page against Nova
+field	field[orientation=vertical]	height	312	R5 also on the Nova example page against Nova
+field	input in field	line-height	16	R5 also on the Nova example page against Nova
+field	radio-group	@h	40	R5 also on the Nova example page against Nova
+field	radio-group	grid-template-rows	8	R5 also on the Nova example page against Nova
+field	radio-group	height	40	R5 also on the Nova example page against Nova
+field	radio-group-item	line-height	8	R5 also on the Nova example page against Nova
+field	select-trigger[size=default]	background-color	1	R5 also on the Nova example page against Nova
+field	span in field-label	@h	8	R5 also on the Nova example page against Nova
+field	span in field-label	height	8	R5 also on the Nova example page against Nova
+field	span in field-label	line-height	8	R5 also on the Nova example page against Nova
+field	span in select-item	bottom	6	R5 also on the Nova example page against Nova
+field	span in select-item	justify-content	6	R5 also on the Nova example page against Nova
+field	span in select-item	left	6	R5 also on the Nova example page against Nova
+field	span in select-item	min-height	6	R5 also on the Nova example page against Nova
+field	span in select-item	min-width	6	R5 also on the Nova example page against Nova
+field	span in select-item	pointer-events	6	R5 also on the Nova example page against Nova
+field	span in select-item	position	6	R5 also on the Nova example page against Nova
+field	span in select-item	right	6	R5 also on the Nova example page against Nova
+field	span in select-item	top	6	R5 also on the Nova example page against Nova
+input-group	card-content	@h	6	R5 also on the Nova example page against Nova
+input-group	card-content	height	6	R5 also on the Nova example page against Nova
+input-group	card[size=default]	@h	6	R5 also on the Nova example page against Nova
+input-group	card[size=default]	height	6	R5 also on the Nova example page against Nova
+input-group	field-group	@h	48	R5 also on the Nova example page against Nova
+input-group	field-group	grid-template-rows	6	R5 also on the Nova example page against Nova
+input-group	field-group	height	48	R5 also on the Nova example page against Nova
+input-group	field-label	@h	204	R5 also on the Nova example page against Nova
+input-group	field-label	height	204	R5 also on the Nova example page against Nova
+input-group	field-label	line-height	204	R5 also on the Nova example page against Nova
+input-group	field[orientation=vertical]	@h	198	R5 also on the Nova example page against Nova
+input-group	field[orientation=vertical]	height	198	R5 also on the Nova example page against Nova
+input-group	input-group-addon	@h	6	R5 also on the Nova example page against Nova
+input-group	input-group-addon	height	6	R5 also on the Nova example page against Nova
+input-group	polyline in input-group-addon	@h	12	R5 also on the Nova example page against Nova
+input-group	polyline in input-group-addon	@w	12	R5 also on the Nova example page against Nova
+input-group	polyline in input-group-addon	pointer-events	12	R5 also on the Nova example page against Nova
+input-group	span in input-group-addon	@h	6	R5 also on the Nova example page against Nova
+input-group	span in input-group-addon	column-gap	60	R5 also on the Nova example page against Nova
+input-group	span in input-group-addon	height	6	R5 also on the Nova example page against Nova
+input-group	span in input-group-addon	row-gap	60	R5 also on the Nova example page against Nova
+input-group	svg in input-group-addon	@h	6	R5 also on the Nova example page against Nova
+input-group	svg in input-group-addon	@w	6	R5 also on the Nova example page against Nova
+input-group	svg in input-group-addon	height	6	R5 also on the Nova example page against Nova
+input-group	svg in input-group-addon	pointer-events	6	R5 also on the Nova example page against Nova
+input-group	svg in input-group-addon	width	6	R5 also on the Nova example page against Nova
+input-otp	button	@w	8	R5 also on the Nova example page against Nova
+input-otp	button	width	8	R5 also on the Nova example page against Nova
+input-otp	card-content	@w	2	R5 also on the Nova example page against Nova
+input-otp	card-content	width	2	R5 also on the Nova example page against Nova
+input-otp	card-description	@w	2	R5 also on the Nova example page against Nova
+input-otp	card-description	width	2	R5 also on the Nova example page against Nova
+input-otp	card-footer	@w	2	R5 also on the Nova example page against Nova
+input-otp	card-footer	width	2	R5 also on the Nova example page against Nova
+input-otp	card-header	@w	2	R5 also on the Nova example page against Nova
+input-otp	card-header	grid-template-columns	2	R5 also on the Nova example page against Nova
+input-otp	card-header	width	2	R5 also on the Nova example page against Nova
+input-otp	card-title	@w	2	R5 also on the Nova example page against Nova
+input-otp	card-title	width	2	R5 also on the Nova example page against Nova
+input-otp	card[size=default]	@w	2	R5 also on the Nova example page against Nova
+input-otp	card[size=default]	margin-left	2	R5 also on the Nova example page against Nova
+input-otp	card[size=default]	margin-right	2	R5 also on the Nova example page against Nova
+input-otp	card[size=default]	width	2	R5 also on the Nova example page against Nova
+input-otp	div in field	@w	6	R5 also on the Nova example page against Nova
+input-otp	div in field	column-gap	16	R5 also on the Nova example page against Nova
+input-otp	div in field	row-gap	16	R5 also on the Nova example page against Nova
+input-otp	div in field	width	6	R5 also on the Nova example page against Nova
+input-otp	field-description	@w	2	R5 also on the Nova example page against Nova
+input-otp	field-description	margin-top	4	R5 also on the Nova example page against Nova
+input-otp	field-description	width	2	R5 also on the Nova example page against Nova
+input-otp	field-label	@h	16	R5 also on the Nova example page against Nova
+input-otp	field-label	height	16	R5 also on the Nova example page against Nova
+input-otp	field-label	line-height	16	R5 also on the Nova example page against Nova
+input-otp	field[orientation=vertical]	@h	10	R5 also on the Nova example page against Nova
+input-otp	field[orientation=vertical]	@w	2	R5 also on the Nova example page against Nova
+input-otp	field[orientation=vertical]	height	10	R5 also on the Nova example page against Nova
+input-otp	field[orientation=vertical]	width	2	R5 also on the Nova example page against Nova
+input-otp	form in card-content	@w	2	R5 also on the Nova example page against Nova
+input-otp	form in card-content	width	2	R5 also on the Nova example page against Nova
+input-otp	input-otp	@w	8	R5 also on the Nova example page against Nova
+input-otp	input-otp	width	8	R5 also on the Nova example page against Nova
+input	div in field-group	@h	6	R5 also on the Nova example page against Nova
+input	div in field-group	grid-template-rows	6	R5 also on the Nova example page against Nova
+input	div in field-group	height	6	R5 also on the Nova example page against Nova
+input	div in select-item	@w	12	R5 also on the Nova example page against Nova
+input	div in select-item	column-gap	12	R5 also on the Nova example page against Nova
+input	div in select-item	display	12	R5 also on the Nova example page against Nova
+input	div in select-item	flex-basis	12	R5 also on the Nova example page against Nova
+input	div in select-item	flex-grow	12	R5 also on the Nova example page against Nova
+input	div in select-item	flex-shrink	12	R5 also on the Nova example page against Nova
+input	div in select-item	row-gap	12	R5 also on the Nova example page against Nova
+input	div in select-item	white-space	12	R5 also on the Nova example page against Nova
+input	div in select-item	width	12	R5 also on the Nova example page against Nova
+input	field-group	@h	6	R5 also on the Nova example page against Nova
+input	field-group	height	6	R5 also on the Nova example page against Nova
+input	field-label	@h	96	R5 also on the Nova example page against Nova
+input	field-label	height	96	R5 also on the Nova example page against Nova
+input	field-label	line-height	96	R5 also on the Nova example page against Nova
+input	field[orientation=vertical]	@h	96	R5 also on the Nova example page against Nova
+input	field[orientation=vertical]	height	96	R5 also on the Nova example page against Nova
+input	path in select-trigger	color	12	R5 also on the Nova example page against Nova
+input	path in select-trigger	stroke	12	R5 also on the Nova example page against Nova
+input	span in select-item	bottom	4	R5 also on the Nova example page against Nova
+input	span in select-item	justify-content	4	R5 also on the Nova example page against Nova
+input	span in select-item	left	4	R5 also on the Nova example page against Nova
+input	span in select-item	min-height	4	R5 also on the Nova example page against Nova
+input	span in select-item	min-width	4	R5 also on the Nova example page against Nova
+input	span in select-item	pointer-events	4	R5 also on the Nova example page against Nova
+input	span in select-item	position	4	R5 also on the Nova example page against Nova
+input	span in select-item	right	4	R5 also on the Nova example page against Nova
+input	span in select-item	top	4	R5 also on the Nova example page against Nova
+input	svg in select-trigger	color	12	R5 also on the Nova example page against Nova
+input	svg in select-trigger	stroke	12	R5 also on the Nova example page against Nova
+marker	accordion-trigger[orientation=vertical]	border-bottom-color	2	R5 also on the Nova example page against Nova
+marker	accordion-trigger[orientation=vertical]	border-left-color	2	R5 also on the Nova example page against Nova
+marker	accordion-trigger[orientation=vertical]	border-right-color	2	R5 also on the Nova example page against Nova
+marker	accordion-trigger[orientation=vertical]	border-top-color	2	R5 also on the Nova example page against Nova
+message	attachment[orientation=horizontal,size=default]	min-width	8	R5 also on the Nova example page against Nova
+native-select	field-label	@h	2	R5 also on the Nova example page against Nova
+native-select	field-label	height	2	R5 also on the Nova example page against Nova
+native-select	field-label	line-height	2	R5 also on the Nova example page against Nova
+native-select	field[orientation=vertical]	@h	2	R5 also on the Nova example page against Nova
+native-select	field[orientation=vertical]	height	2	R5 also on the Nova example page against Nova
+native-select	native-select-icon	left	8	R5 also on the Nova example page against Nova
+native-select	native-select-wrapper[size=default]	@w	8	R5 also on the Nova example page against Nova
+native-select	native-select-wrapper[size=default]	width	8	R5 also on the Nova example page against Nova
+native-select	native-select[size=default]	@w	14	R5 also on the Nova example page against Nova
+native-select	native-select[size=default]	width	14	R5 also on the Nova example page against Nova
+navigation-menu	circle in navigation-menu-link	color	6	R5 also on the Nova example page against Nova
+navigation-menu	circle in navigation-menu-link	stroke	6	R5 also on the Nova example page against Nova
+navigation-menu	div in navigation-menu-link	color	36	R5 also on the Nova example page against Nova
+navigation-menu	li in navigation-menu-content	color	20	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu	@w	8	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu	width	8	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu-content	color	6	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu-item	@w	8	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu-item	width	8	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu-link	@w	14	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu-link	color	24	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu-link	padding-bottom	14	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu-link	padding-left	14	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu-link	padding-right	14	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu-link	padding-top	14	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu-link	width	14	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu-list	@w	8	R5 also on the Nova example page against Nova
+navigation-menu	navigation-menu-list	width	8	R5 also on the Nova example page against Nova
+navigation-menu	svg in navigation-menu-link	color	6	R5 also on the Nova example page against Nova
+navigation-menu	svg in navigation-menu-link	stroke	6	R5 also on the Nova example page against Nova
+navigation-menu	ul in navigation-menu-content	color	6	R5 also on the Nova example page against Nova
+pagination	div in select-item	@w	8	R5 also on the Nova example page against Nova
+pagination	div in select-item	column-gap	8	R5 also on the Nova example page against Nova
+pagination	div in select-item	display	8	R5 also on the Nova example page against Nova
+pagination	div in select-item	flex-basis	8	R5 also on the Nova example page against Nova
+pagination	div in select-item	flex-grow	8	R5 also on the Nova example page against Nova
+pagination	div in select-item	flex-shrink	8	R5 also on the Nova example page against Nova
+pagination	div in select-item	row-gap	8	R5 also on the Nova example page against Nova
+pagination	div in select-item	white-space	8	R5 also on the Nova example page against Nova
+pagination	div in select-item	width	8	R5 also on the Nova example page against Nova
+pagination	field-label	@h	4	R5 also on the Nova example page against Nova
+pagination	field-label	height	4	R5 also on the Nova example page against Nova
+pagination	field-label	line-height	4	R5 also on the Nova example page against Nova
+pagination	path in select-trigger	color	4	R5 also on the Nova example page against Nova
+pagination	path in select-trigger	stroke	4	R5 also on the Nova example page against Nova
+pagination	select-trigger[size=default]	background-color	1	R5 also on the Nova example page against Nova
+pagination	span in select-item	bottom	2	R5 also on the Nova example page against Nova
+pagination	span in select-item	justify-content	2	R5 also on the Nova example page against Nova
+pagination	span in select-item	left	2	R5 also on the Nova example page against Nova
+pagination	span in select-item	min-height	2	R5 also on the Nova example page against Nova
+pagination	span in select-item	min-width	2	R5 also on the Nova example page against Nova
+pagination	span in select-item	pointer-events	2	R5 also on the Nova example page against Nova
+pagination	span in select-item	position	2	R5 also on the Nova example page against Nova
+pagination	span in select-item	right	2	R5 also on the Nova example page against Nova
+pagination	span in select-item	top	2	R5 also on the Nova example page against Nova
+pagination	svg in select-trigger	color	4	R5 also on the Nova example page against Nova
+pagination	svg in select-trigger	stroke	4	R5 also on the Nova example page against Nova
+progress	input in slider-thumb	outline-style	2	R5 also on the Nova example page against Nova
+progress	input in slider-thumb	outline-width	2	R5 also on the Nova example page against Nova
+questionnaire	card-footer	@h	4	R5 also on the Nova example page against Nova
+questionnaire	card-footer	height	4	R5 also on the Nova example page against Nova
+questionnaire	card[size=default]	@h	4	R5 also on the Nova example page against Nova
+questionnaire	card[size=default]	height	4	R5 also on the Nova example page against Nova
+questionnaire	dialog-close	bottom	6	R5 also on the Nova example page against Nova
+questionnaire	dialog-content	@h	6	R5 also on the Nova example page against Nova
+questionnaire	dialog-content	bottom	6	R5 also on the Nova example page against Nova
+questionnaire	dialog-content	grid-template-rows	6	R5 also on the Nova example page against Nova
+questionnaire	dialog-content	height	6	R5 also on the Nova example page against Nova
+questionnaire	dialog-footer	@h	2	R5 also on the Nova example page against Nova
+questionnaire	dialog-footer	height	2	R5 also on the Nova example page against Nova
+questionnaire	questionnaire	@h	18	R5 also on the Nova example page against Nova
+questionnaire	questionnaire	height	18	R5 also on the Nova example page against Nova
+questionnaire	questionnaire-actions	@h	18	R5 also on the Nova example page against Nova
+questionnaire	questionnaire-actions	grid-template-rows	18	R5 also on the Nova example page against Nova
+questionnaire	questionnaire-actions	height	18	R5 also on the Nova example page against Nova
+questionnaire	questionnaire-actions	min-height	26	R5 also on the Nova example page against Nova
+questionnaire	questionnaire-item	@h	4	R5 also on the Nova example page against Nova
+questionnaire	questionnaire-item	height	4	R5 also on the Nova example page against Nova
+radio-group	div in field	@h	8	R5 also on the Nova example page against Nova
+radio-group	div in field	height	8	R5 also on the Nova example page against Nova
+radio-group	div in field	line-height	8	R5 also on the Nova example page against Nova
+radio-group	field-description	margin-top	4	R5 also on the Nova example page against Nova
+radio-group	field-label	@h	24	R5 also on the Nova example page against Nova
+radio-group	field-label	height	24	R5 also on the Nova example page against Nova
+radio-group	field-label	line-height	38	R5 also on the Nova example page against Nova
+radio-group	field[orientation=horizontal]	line-height	14	R5 also on the Nova example page against Nova
+radio-group	input in field	line-height	14	R5 also on the Nova example page against Nova
+radio-group	radio-group	@h	10	R5 also on the Nova example page against Nova
+radio-group	radio-group	height	10	R5 also on the Nova example page against Nova
+radio-group	radio-group-indicator	line-height	4	R5 also on the Nova example page against Nova
+radio-group	radio-group-item	line-height	14	R5 also on the Nova example page against Nova
+radio-group	span in radio-group-indicator	line-height	4	R5 also on the Nova example page against Nova
+resizable	div in resizable-panel	@h	8	R5 also on the Nova example page against Nova
+resizable	div in resizable-panel	height	8	R5 also on the Nova example page against Nova
+resizable	resizable-handle	@h	2	R5 also on the Nova example page against Nova
+resizable	resizable-handle	box-shadow	2	R5 also on the Nova example page against Nova
+resizable	resizable-handle	cursor	4	R5 also on the Nova example page against Nova
+resizable	resizable-handle	height	2	R5 also on the Nova example page against Nova
+resizable	resizable-handle::after	height	2	R5 also on the Nova example page against Nova
+resizable	resizable-panel	@h	4	R5 also on the Nova example page against Nova
+resizable	resizable-panel	height	4	R5 also on the Nova example page against Nova
+resizable	resizable-panel-group	@h	2	R5 also on the Nova example page against Nova
+resizable	resizable-panel-group	height	2	R5 also on the Nova example page against Nova
+select	div in select-item	@h	8	R5 also on the Nova example page against Nova
+select	div in select-item	@w	28	R5 also on the Nova example page against Nova
+select	div in select-item	column-gap	28	R5 also on the Nova example page against Nova
+select	div in select-item	display	28	R5 also on the Nova example page against Nova
+select	div in select-item	flex-basis	28	R5 also on the Nova example page against Nova
+select	div in select-item	flex-grow	28	R5 also on the Nova example page against Nova
+select	div in select-item	flex-shrink	28	R5 also on the Nova example page against Nova
+select	div in select-item	height	8	R5 also on the Nova example page against Nova
+select	div in select-item	row-gap	28	R5 also on the Nova example page against Nova
+select	div in select-item	white-space	28	R5 also on the Nova example page against Nova
+select	div in select-item	width	28	R5 also on the Nova example page against Nova
+select	field-label	@h	16	R5 also on the Nova example page against Nova
+select	field-label	height	16	R5 also on the Nova example page against Nova
+select	field-label	line-height	16	R5 also on the Nova example page against Nova
+select	field[orientation=vertical]	@h	16	R5 also on the Nova example page against Nova
+select	field[orientation=vertical]	height	16	R5 also on the Nova example page against Nova
+select	path in select-item	white-space	20	R5 also on the Nova example page against Nova
+select	path in select-trigger	color	8	R5 also on the Nova example page against Nova
+select	path in select-trigger	stroke	8	R5 also on the Nova example page against Nova
+select	select-group	@h	2	R5 also on the Nova example page against Nova
+select	select-group	height	2	R5 also on the Nova example page against Nova
+select	select-item	@h	12	R5 also on the Nova example page against Nova
+select	select-item	height	12	R5 also on the Nova example page against Nova
+select	select-trigger[size=default]	background-color	3	R5 also on the Nova example page against Nova
+select	select-trigger[size=sm]	background-color	1	R5 also on the Nova example page against Nova
+select	span in select-item	bottom	6	R5 also on the Nova example page against Nova
+select	span in select-item	justify-content	6	R5 also on the Nova example page against Nova
+select	span in select-item	left	6	R5 also on the Nova example page against Nova
+select	span in select-item	min-height	6	R5 also on the Nova example page against Nova
+select	span in select-item	min-width	6	R5 also on the Nova example page against Nova
+select	span in select-item	pointer-events	6	R5 also on the Nova example page against Nova
+select	span in select-item	position	6	R5 also on the Nova example page against Nova
+select	span in select-item	right	6	R5 also on the Nova example page against Nova
+select	span in select-item	top	6	R5 also on the Nova example page against Nova
+select	svg in select-item	min-height	8	R5 also on the Nova example page against Nova
+select	svg in select-item	min-width	8	R5 also on the Nova example page against Nova
+select	svg in select-item	white-space	8	R5 also on the Nova example page against Nova
+select	svg in select-trigger	color	8	R5 also on the Nova example page against Nova
+select	svg in select-trigger	stroke	8	R5 also on the Nova example page against Nova
+sheet	div in sheet-content	@h	2	R5 also on the Nova example page against Nova
+sheet	div in sheet-content	height	2	R5 also on the Nova example page against Nova
+sheet	field-group	@h	2	R5 also on the Nova example page against Nova
+sheet	field-group	height	2	R5 also on the Nova example page against Nova
+sheet	field-label	@h	4	R5 also on the Nova example page against Nova
+sheet	field-label	height	4	R5 also on the Nova example page against Nova
+sheet	field-label	line-height	4	R5 also on the Nova example page against Nova
+sheet	field[orientation=vertical]	@h	4	R5 also on the Nova example page against Nova
+sheet	field[orientation=vertical]	height	4	R5 also on the Nova example page against Nova
+sheet	sheet-content	outline-style	2	R5 also on the Nova example page against Nova
+sheet	sheet-content	outline-width	2	R5 also on the Nova example page against Nova
+sheet	sheet-footer	margin-top	2	R5 also on the Nova example page against Nova
+sheet	span in sheet-portal	outline-style	2	R5 also on the Nova example page against Nova
+sheet	span in sheet-portal	outline-width	2	R5 also on the Nova example page against Nova
+slider	input in slider-thumb	outline-style	2	R5 also on the Nova example page against Nova
+slider	input in slider-thumb	outline-width	2	R5 also on the Nova example page against Nova
+spinner	field-label	@h	2	R5 also on the Nova example page against Nova
+spinner	field-label	height	2	R5 also on the Nova example page against Nova
+spinner	field-label	line-height	2	R5 also on the Nova example page against Nova
+spinner	field[orientation=vertical]	@h	2	R5 also on the Nova example page against Nova
+spinner	field[orientation=vertical]	height	2	R5 also on the Nova example page against Nova
+switch	field-label	@h	2	R5 also on the Nova example page against Nova
+switch	field-label	height	2	R5 also on the Nova example page against Nova
+switch	field-label	line-height	4	R5 also on the Nova example page against Nova
+switch	field[orientation=horizontal]	line-height	2	R5 also on the Nova example page against Nova
+switch	input in field	line-height	2	R5 also on the Nova example page against Nova
+switch	switch-thumb	line-height	2	R5 also on the Nova example page against Nova
+switch	switch[size=default]	line-height	2	R5 also on the Nova example page against Nova
+table	div in select-item	@w	16	R5 also on the Nova example page against Nova
+table	div in select-item	column-gap	16	R5 also on the Nova example page against Nova
+table	div in select-item	display	16	R5 also on the Nova example page against Nova
+table	div in select-item	flex-basis	16	R5 also on the Nova example page against Nova
+table	div in select-item	flex-grow	16	R5 also on the Nova example page against Nova
+table	div in select-item	flex-shrink	16	R5 also on the Nova example page against Nova
+table	div in select-item	row-gap	16	R5 also on the Nova example page against Nova
+table	div in select-item	white-space	16	R5 also on the Nova example page against Nova
+table	div in select-item	width	16	R5 also on the Nova example page against Nova
+table	path in select-trigger	color	24	R5 also on the Nova example page against Nova
+table	path in select-trigger	stroke	24	R5 also on the Nova example page against Nova
+table	select-trigger[size=sm]	background-color	1	R5 also on the Nova example page against Nova
+table	span in select-item	bottom	4	R5 also on the Nova example page against Nova
+table	span in select-item	justify-content	4	R5 also on the Nova example page against Nova
+table	span in select-item	left	4	R5 also on the Nova example page against Nova
+table	span in select-item	min-height	4	R5 also on the Nova example page against Nova
+table	span in select-item	min-width	4	R5 also on the Nova example page against Nova
+table	span in select-item	pointer-events	4	R5 also on the Nova example page against Nova
+table	span in select-item	position	4	R5 also on the Nova example page against Nova
+table	span in select-item	right	4	R5 also on the Nova example page against Nova
+table	span in select-item	top	4	R5 also on the Nova example page against Nova
+table	svg in select-trigger	color	24	R5 also on the Nova example page against Nova
+table	svg in select-trigger	stroke	24	R5 also on the Nova example page against Nova
+textarea	field-label	@h	6	R5 also on the Nova example page against Nova
+textarea	field-label	height	6	R5 also on the Nova example page against Nova
+textarea	field-label	line-height	6	R5 also on the Nova example page against Nova
+textarea	field[orientation=vertical]	@h	6	R5 also on the Nova example page against Nova
+textarea	field[orientation=vertical]	height	6	R5 also on the Nova example page against Nova
+toggle-group	div in select-item	@w	6	R5 also on the Nova example page against Nova
+toggle-group	div in select-item	column-gap	6	R5 also on the Nova example page against Nova
+toggle-group	div in select-item	display	6	R5 also on the Nova example page against Nova
+toggle-group	div in select-item	flex-basis	6	R5 also on the Nova example page against Nova
+toggle-group	div in select-item	flex-grow	6	R5 also on the Nova example page against Nova
+toggle-group	div in select-item	flex-shrink	6	R5 also on the Nova example page against Nova
+toggle-group	div in select-item	row-gap	6	R5 also on the Nova example page against Nova
+toggle-group	div in select-item	white-space	6	R5 also on the Nova example page against Nova
+toggle-group	div in select-item	width	6	R5 also on the Nova example page against Nova
+toggle-group	field-label	@h	4	R5 also on the Nova example page against Nova
+toggle-group	field-label	height	4	R5 also on the Nova example page against Nova
+toggle-group	field-label	line-height	4	R5 also on the Nova example page against Nova
+toggle-group	field[orientation=vertical]	@h	4	R5 also on the Nova example page against Nova
+toggle-group	field[orientation=vertical]	height	4	R5 also on the Nova example page against Nova
+toggle-group	path in select-trigger	color	4	R5 also on the Nova example page against Nova
+toggle-group	path in select-trigger	stroke	4	R5 also on the Nova example page against Nova
+toggle-group	select-trigger[size=default]	background-color	1	R5 also on the Nova example page against Nova
+toggle-group	svg in select-trigger	color	4	R5 also on the Nova example page against Nova
+toggle-group	svg in select-trigger	stroke	4	R5 also on the Nova example page against Nova
+toggle-group	toggle-group-item[size=default,variant=default]	@w	12	R5 also on the Nova example page against Nova
+toggle-group	toggle-group-item[size=default,variant=default]	width	12	R5 also on the Nova example page against Nova
+toggle-group	toggle-group-item[size=sm,variant=default]	@w	16	R5 also on the Nova example page against Nova
+toggle-group	toggle-group-item[size=sm,variant=default]	width	16	R5 also on the Nova example page against Nova
+toggle-group	toggle-group-item[size=sm,variant=outline]	@w	28	R5 also on the Nova example page against Nova
+toggle-group	toggle-group-item[size=sm,variant=outline]	width	28	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=horizontal,size=sm,variant=outline]	@w	20	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=horizontal,size=sm,variant=outline]	width	20	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=horizontal,size=sm]	@w	4	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=horizontal,size=sm]	width	4	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=horizontal,variant=outline]	@w	4	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=horizontal,variant=outline]	width	4	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=horizontal]	@w	4	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=horizontal]	width	4	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=vertical,size=sm,variant=outline]	@w	8	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=vertical,size=sm,variant=outline]	width	8	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=vertical,size=sm]	@w	4	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=vertical,size=sm]	width	4	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=vertical]	@w	4	R5 also on the Nova example page against Nova
+toggle-group	toggle-group[orientation=vertical]	width	4	R5 also on the Nova example page against Nova
+tooltip	div in tooltip-content	@h	6	R5 also on the Nova example page against Nova
+tooltip	div in tooltip-content	@visible	6	R5 also on the Nova example page against Nova
+tooltip	div in tooltip-content	@w	6	R5 also on the Nova example page against Nova
+tooltip	div in tooltip-content	background-color	6	R5 also on the Nova example page against Nova
+tooltip	div in tooltip-content	fill	6	R5 also on the Nova example page against Nova
+tooltip	div in tooltip-content	height	6	R5 also on the Nova example page against Nova
+tooltip	div in tooltip-content	left	4	R5 also on the Nova example page against Nova
+tooltip	div in tooltip-content	rotate	6	R5 also on the Nova example page against Nova
+tooltip	div in tooltip-content	top	6	R5 also on the Nova example page against Nova
+tooltip	div in tooltip-content	translate	6	R5 also on the Nova example page against Nova
+tooltip	div in tooltip-content	width	6	R5 also on the Nova example page against Nova
+tooltip	div in tooltip-content	z-index	6	R5 also on the Nova example page against Nova

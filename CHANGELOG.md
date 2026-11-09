@@ -56,6 +56,9 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - `dialog-body`: the scrolling middle of a dialog between the header and the footer; the dialog is at most the window height less 2rem, and the header and the footer stay in view (#104).
 - Progress: `data-variant="success|warning|destructive|info"` colors the indicator with the status fill tokens, and `--progress-indicator` on the root sets any color (#105).
 - `clanker-ui-a11y.css`: the native select has 16 px text below 48rem, like the input, so iOS Safari does not zoom the page on focus (#108).
+- `data-wrap` on `card-action`: the action moves under the title and the description when the card header is narrower than 24rem (#107).
+- `data-sticky-header` on `table-container`: the header row sticks to the page scroll when the table fits its box; the kit sets `data-fits`, and the box and its card clip instead of scrolling (#103).
+- `data-layout="stack"` on `table-container` with `data-label` on `table-cell`: below 40rem each row is a block of label and value lines, with the table roles set by the kit (#109).
 
 ### Changed
 
@@ -98,6 +101,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Form: after a submit, leaving a control does not validate it; only a change does, as in React Hook Form. Before, a field that the app cleared after a valid send showed its error on blur, and the layout shift could move the next click target.
 - Popup content (popover, hover card, tooltip, dropdown, context, and menubar menus, select, combobox, navigation menu) no longer shows in the page flow until the kit script runs, so the page does not move at load (#102).
 - Dialog: a dialog taller than the window scrolls; before, its top and end were out of reach (#104).
+- Card: a `card-action` with two or more children (a badge and a button) has an 8 px gap between them; before, they touched (#106).
+- Card: in a header with a `card-action` and no `card-description`, the title is centered on the action line; before, a one-line title sat about 6 px above the center of a default button (#110).
 
 ## 0.2.1 - 2026-11-04
 

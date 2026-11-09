@@ -7436,6 +7436,43 @@ define("alert-action", {
   },
 })
 
+const tableFitResize = new ResizeObserver(entries => {
+  for (const { target } of entries) {
+    const container = target.closest('[data-slot="table-container"]')
+    const table = container?.querySelector(':scope > [data-slot="table"]')
+    if (table) container.toggleAttribute("data-fits", table.offsetWidth <= container.clientWidth + 1)
+  }
+})
+
+function tableRole(el) {
+  if (el.closest('[data-slot="table-container"]')?.getAttribute("data-layout") !== "stack" || el.hasAttribute("role")) return
+  const slot = el.getAttribute("data-slot")
+  const head = el.getAttribute("scope") === "row" || !el.closest("thead") ? "rowheader" : "columnheader"
+  el.setAttribute("role", slot === "table" ? "table" : slot === "table-row" ? "row" : slot === "table-cell" ? "cell" : slot === "table-head" ? head : "rowgroup")
+}
+
+define("table-container", {
+  init(el) {
+    if (!el.hasAttribute("data-sticky-header")) return
+    const table = el.querySelector(':scope > [data-slot="table"]')
+    tableFitResize.observe(el)
+    if (table) tableFitResize.observe(table)
+    return () => {
+      tableFitResize.unobserve(el)
+      if (table) tableFitResize.unobserve(table)
+      el.removeAttribute("data-fits")
+    }
+  },
+})
+
+define("table", { init: tableRole })
+define("table-header", { init: tableRole })
+define("table-body", { init: tableRole })
+define("table-footer", { init: tableRole })
+define("table-row", { init: tableRole })
+define("table-head", { init: tableRole })
+define("table-cell", { init: tableRole })
+
 const progressWatch = new MutationObserver(records => {
   for (const record of records) progressRender(record.target)
 })

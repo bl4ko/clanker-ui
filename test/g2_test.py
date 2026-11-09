@@ -142,6 +142,67 @@ def check_dialog(t):
     t.shot()
 
 
+def check_dialog_body(t):
+    page = t.page
+    section = t.section("dialog")
+    section.get_by_role("button", name="Sticky Footer").click()
+    dialog = page.get_by_role("dialog", name="Sticky Footer")
+    body = dialog.locator("[data-slot=dialog-body]")
+    t.settle()
+    t.shot("dialog-body-demo", page)
+    assert body.evaluate("b => getComputedStyle(b).overflowY === 'auto' && b.scrollHeight > b.clientHeight")
+    body.evaluate("b => { b.removeAttribute('data-demo'); for (const p of [...b.children]) b.append(p.cloneNode(true)) }")
+    width, height = viewport(page)
+    c, head, foot, b = box(dialog), box(dialog.locator("[data-slot=dialog-header]")), box(dialog.locator("[data-slot=dialog-footer]")), box(body)
+    assert abs(c["y"] - 16) <= 1 and abs(c["y"] + c["height"] - (height - 16)) <= 1, (c, height)
+    assert abs(foot["y"] + foot["height"] - (c["y"] + c["height"])) <= 1, (foot, c)
+    assert head["y"] >= c["y"] and b["y"] >= head["y"] + head["height"] and b["y"] + b["height"] <= foot["y"] + 1, (head, b, foot)
+    assert abs(b["x"] - c["x"]) <= 1 and abs(b["width"] - c["width"]) <= 1, (b, c)
+    assert dialog.evaluate("d => d.scrollHeight <= d.clientHeight")
+    body.evaluate("b => { b.scrollTop = b.scrollHeight }")
+    assert body.evaluate("b => b.scrollTop > 0")
+    assert box(dialog.locator("[data-slot=dialog-footer]")) == foot
+    t.shot("dialog-body-window", page)
+    page.keyboard.press("Escape")
+    wait(page, "() => [...document.querySelectorAll('#dialog dialog')].every(d => !d.open)")
+    section.get_by_role("button", name="Scrollable Content").click()
+    other = page.get_by_role("dialog", name="Scrollable Content")
+    other.locator("[data-slot=dialog-body]").evaluate("b => { b.removeAttribute('data-slot'); b.removeAttribute('data-demo'); for (const p of [...b.children]) b.append(p.cloneNode(true)) }")
+    c = box(other)
+    assert c["y"] >= 15 and c["y"] + c["height"] <= height - 15, (c, height)
+    assert other.evaluate("d => getComputedStyle(d).overflowY === 'auto' && d.scrollHeight > d.clientHeight")
+    page.keyboard.press("Escape")
+    wait(page, "() => [...document.querySelectorAll('#dialog dialog')].every(d => !d.open)")
+
+
+def check_popup_content_hidden_until_init(t):
+    found = t.page.evaluate("""() => {
+      const slots = ['popover-content', 'hover-card-content', 'tooltip-content', 'dropdown-menu-content', 'dropdown-menu-sub-content', 'context-menu-content', 'context-menu-sub-content', 'menubar-content', 'menubar-sub-content', 'select-content', 'combobox-content', 'navigation-menu-content']
+      const out = {}
+      for (const slot of slots) {
+        const el = document.createElement('div')
+        el.dataset.slot = slot
+        el.textContent = 'Content'
+        document.body.append(el)
+        out[slot] = getComputedStyle(el).display
+        el.remove()
+      }
+      return out
+    }""")
+    assert all(v == "none" for v in found.values()), found
+    shown = t.page.evaluate("""() => {
+      const el = document.createElement('div')
+      el.dataset.slot = 'popover-content'
+      el.setAttribute('popover', 'manual')
+      document.body.append(el)
+      el.showPopover()
+      const display = getComputedStyle(el).display
+      el.remove()
+      return display
+    }""")
+    assert shown != "none", shown
+
+
 def check_alert_dialog(t):
     page = t.page
     section = t.section("alert-dialog")

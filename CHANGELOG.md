@@ -54,6 +54,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Agent skill: a design lint, `references/design-lint.js` (plain JavaScript, no dependencies). A Playwright test loads it into the page and calls `clankerDesignLint()` to find design mistakes that a screenshot shows: buttons of two sizes in one row, two primary buttons, cut text, a page wider than the viewport, small targets, low contrast, colors that are not tokens, missing labels, skipped headings, near-miss alignment, and a card with a large empty area. `clankerDesignLint.watchShift()` finds controls that move during an interaction. `references/testing.md` tells how to run it and lists the rules. The server and the docs site serve the file.
 - Agent skill: `references/recipes.md`: set values from code, a form in a dialog or a sheet with a scrolling body, several custom rules on one field, an accessible star rating, a card grid, a shared header on static pages without a build step, a breadcrumb or back link in the top-header shell, a category bar chart, status strips with keyboard access, and long pages.
 - Docs: design rules from the second agent evaluation: one identity move per app, realistic data and complete pages, phone tables that keep status and the main value, chart height and status fills, condensed long pages, muted secondary links, and phone navigation with every primary link. Also kit radius and display sizes for app parts, a `python3 -m http.server` test recipe, the CSP meta tag in the head example, which pagination a table uses, badge or icon and word in tables, toggle group labels, the `item-description` two-line clamp, list spacing with separators, and where `dropdown-menu:change` is emitted.
+- `dialog-body`: the scrolling middle of a dialog between the header and the footer; the dialog is at most the window height less 2rem, and the header and the footer stay in view (#104).
 
 ### Changed
 
@@ -96,6 +97,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Code block: the wrap button has the ghost `icon-xs` button look of the copy button (it had no button styles), and a pressed wrap button has the foreground color.
 - Docs: a code block in a component preview keeps its inline padding and its start line; a docs rule for the View Code panel had removed both.
 - Form: after a submit, leaving a control does not validate it; only a change does, as in React Hook Form. Before, a field that the app cleared after a valid send showed its error on blur, and the layout shift could move the next click target.
+- Popup content (popover, hover card, tooltip, dropdown, context, and menubar menus, select, combobox, navigation menu) no longer shows in the page flow until the kit script runs, so the page does not move at load (#102).
+- Dialog: a dialog taller than the window scrolls; before, its top and end were out of reach (#104).
 
 ## 0.2.1 - 2026-11-04
 

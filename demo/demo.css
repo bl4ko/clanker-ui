@@ -440,14 +440,13 @@ code:not([data-slot]) { font-size: 0.875em; }
 #dialog [data-slot="dialog-content"] > form[method="dialog"] { display: contents; }
 #dialog [data-demo~="justify-start"] { justify-content: flex-start; }
 #dialog [data-demo~="row"] > input { flex: 1; }
-#dialog [data-demo="scroll"], #drawer [data-demo="scroll"], #sheet [data-demo="scroll"] {
+#dialog [data-demo="scroll"] { max-height: calc(50vh + 0.5rem); scrollbar-width: none; }
+#drawer [data-demo="scroll"], #sheet [data-demo="scroll"] {
   max-height: 50vh;
   overflow-y: auto;
-  margin-inline: -1rem;
   padding-inline: 1rem;
   scrollbar-width: none;
 }
-#drawer [data-demo="scroll"], #sheet [data-demo="scroll"] { margin-inline: 0; }
 #dialog [data-demo="scroll"] p, #drawer [data-demo="scroll"] p, #sheet [data-demo="scroll"] p { margin-bottom: 1rem; line-height: 1.5; }
 
 #drawer [data-demo="drawer-fill"] { flex: 1; padding: 1rem; }

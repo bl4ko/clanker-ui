@@ -132,10 +132,11 @@ class Parts:
         self.markers = collections.defaultdict(list)
         self.marker_all = {p["marker"]: set(p["tokens"]) for p in data["parts"] if p.get("marker")}
         for s, ps in self.by_slot.items():
+            common = set().union(*(set(p.get("markers") or []) for p in ps if not p.get("marker") and not p.get("set")))
             for p in ps:
                 if (p.get("marker") or p.get("set")) and p.get("own"):
                     distinct = set(p["own"]) - self.free.get(s, set())
-                    self.markers[s].append((p.get("marker"), distinct or set(p["own"]), p.get("set") or {}))
+                    self.markers[s].append((p.get("marker"), distinct or set(p["own"]), p.get("set") or {}, set(p.get("markers") or []) - common))
         for p in self.slotless:
             p["set"] = set(p["tokens"])
             p["component"] = p["from"].split("/")[0]
@@ -176,6 +177,8 @@ def composed(cls, parts, slot, names=(), parent=None, ancestors=()):
         host = t.removeprefix("cn-")
         if t.startswith("cn-") and host in parts.tokens and host != slot and component_of(host, names) not in ("", component_of(slot, names)) and not parts.uses_marker(slot, t):
             return host
+    if slot and "cn-" + slot in cls.split():
+        return None
     toks = set(parts.canon(cls.split())) - {t for t in cls.split() if t.startswith("lucide")}
     if len(toks) < 6:
         return None
@@ -220,8 +223,8 @@ def infer_attrs(cls, parts, slot, owners, page=None):
                 found[attr] = best[1]
                 if not best[2]:
                     attrs[attr] = best[1]
-        for marker, mt, fixed in parts.markers.get(slot, []):
-            if mt and len(mt & tokset) / len(mt) >= 0.6:
+        for marker, mt, fixed, own_markers in parts.markers.get(slot, []):
+            if mt and len(mt & tokset) / len(mt) >= 0.6 or own_markers & set(toks):
                 if marker:
                     attrs[marker] = ""
                 for k, v in fixed.items():
@@ -406,9 +409,23 @@ def component_of(slot, names):
     return best
 
 
+STYLE_VARIANT = re.compile(r"(^|:)style-([a-z]+):")
+
+
+def style_classes(classes, style):
+    out = []
+    for c in classes:
+        m = STYLE_VARIANT.search(c)
+        if not m:
+            out.append(c)
+        elif m[2] == style:
+            out.append(c[:m.start()] + m[1] + "[&]:" + c[m.end():])
+    return out
+
+
 class Converter:
-    def __init__(self, parts, names, comp, examples=(), fallback=True):
-        self.parts, self.names, self.comp = parts, names, comp
+    def __init__(self, parts, names, comp, examples=(), fallback=True, style="nova"):
+        self.parts, self.names, self.comp, self.style = parts, names, comp, style
         self.examples, self.fallback = list(examples), fallback
         self.example_tokens = set().union(*self.examples) if self.examples else set()
         self.by_slot = collections.defaultdict(list)
@@ -550,7 +567,7 @@ class Converter:
         if "data-slot" in extra and not slot:
             slot = extra["data-slot"]
             attrs["data-slot"] = slot
-        keep = self.keep(cls.split(), slot, owners, orig if orig != slot else None)
+        keep = style_classes(self.keep(cls.split(), slot, owners, orig if orig != slot else None), self.style)
         self.hits.update(hits)
         for h in hits:
             pa = dict(parent["a"]) if parent else {}
@@ -1162,7 +1179,7 @@ def group_owners(css, parts):
 def measure_ours(comp, results, ours, parts, names, gen_css, src, out, docs, sources):
     if isinstance(parts, Parts):
         parts = {STYLES[0]: parts}
-    convs = {st: Converter(p, names, comp) for st, p in parts.items()}
+    convs = {st: Converter(p, names, comp, style=st) for st, p in parts.items()}
     pages, used = {}, collections.Counter()
     for r in results:
         r["style"] = page_style(r["cap"])
@@ -1510,8 +1527,8 @@ def main():
     args.names = names
     examples = Examples(args.src, pathlib.Path(args.examples or pathlib.Path(args.src) / "parity-examples"), data["shadcn"])
     if args.page_style:
-        if args.page_style not in STYLES[1:]:
-            raise SystemExit(f"--page-style {args.page_style}: not a ported style other than {STYLES[0]} ({', '.join(STYLES[1:])})")
+        if args.page_style not in STYLES:
+            raise SystemExit(f"--page-style {args.page_style}: not a ported style ({', '.join(STYLES)})")
         comps = [c for c in comps if style_page(c, args.page_style, examples)]
     with sync_playwright() as pw:
         browser = getattr(pw, args.engine).launch()

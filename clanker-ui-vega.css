@@ -7293,6 +7293,11 @@
     font-size: var(--text-sm);
     line-height: var(--tw-leading, var(--text-sm--line-height));
   }
+  [data-slot="card-content"]:has( > [data-slot="questionnaire-choices"]) {
+    gap: calc(var(--spacing) * 3);
+    flex-direction: column;
+    display: flex;
+  }
   [data-slot="card-footer"].border-t {
     padding-top: var(--card-spacing);
   }

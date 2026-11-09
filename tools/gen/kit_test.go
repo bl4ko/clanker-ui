@@ -74,3 +74,21 @@ func TestLayerStray(t *testing.T) {
 		t.Errorf("got\n%s", got)
 	}
 }
+
+func TestHasVariantLimitedToRenderers(t *testing.T) {
+	for _, s := range kitStyles {
+		css := readRepo(t, s.file)
+		for _, raw := range []string{`:has([data-variant=`, `:has( > [data-variant=`, `:has([data-size=`, `:has( > [data-size=`} {
+			if strings.Contains(css, raw) {
+				t.Errorf("%s has %q: kit buttons set data-variant and data-size, shadcn buttons do not; limit it to the parts that render the attribute", s.file, raw)
+			}
+		}
+	}
+}
+
+func TestParseStylesSkipsComments(t *testing.T) {
+	got := parseStyles(".style-x {\n  .cn-a {\n    @apply p-2;\n  }\n\n  /* .cn-b {\n    @apply -ml-1;\n  } */\n\n  .cn-a:has(> [data-slot=x]) {\n    @apply flex;\n  }\n}\n")
+	if got["cn-a"] != "[&:has(>_[data-slot=x])]:flex p-2" || got["cn-b"] != "" {
+		t.Errorf("parseStyles = %v, want cn-a with the classes of its compound rule under their condition, and no commented rule", got)
+	}
+}

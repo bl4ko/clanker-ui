@@ -15,7 +15,8 @@ import (
 const license = "/*! clanker-ui | MIT | includes shadcn/ui (MIT, shadcn), Tailwind CSS (MIT, Tailwind Labs), tw-animate-css (MIT, Luca Bosin), and Lucide icons (ISC); see THIRD_PARTY_NOTICES */"
 
 var (
-	novaRule     = regexp.MustCompile(`(?s)\.(cn-[a-z0-9-]+)\s*\{(.*?)\}`)
+	styleRule    = regexp.MustCompile(`([^{}]+)\{([^{}]*)\}`)
+	cnClass      = regexp.MustCompile(`\.(cn-[a-z0-9-]+)`)
 	applyLine    = regexp.MustCompile(`@apply\s+([^;]+);`)
 	unknownClass = regexp.MustCompile("Cannot apply (?:unknown )?utility class `([^`]+)`")
 	groupClass   = regexp.MustCompile(`\.(group|peer)(\\/[A-Za-z0-9_-]+)?`)
@@ -27,7 +28,7 @@ var (
 
 func parseStyles(text string) map[string]string {
 	out := map[string]string{}
-	for _, m := range novaRule.FindAllStringSubmatch(text, -1) {
+	for _, m := range styleRule.FindAllStringSubmatch(blockComment.ReplaceAllString(text, ""), -1) {
 		var classes []string
 		for _, a := range applyLine.FindAllStringSubmatch(m[2], -1) {
 			classes = append(classes, strings.TrimSpace(a[1]))
@@ -35,11 +36,27 @@ func parseStyles(text string) map[string]string {
 		if len(classes) == 0 {
 			continue
 		}
-		joined := strings.Join(classes, " ")
-		if prev, ok := out[m[1]]; ok {
-			joined += " " + prev
+		for _, sel := range strings.Split(m[1], ",") {
+			cn := cnClass.FindAllStringSubmatch(sel, -1)
+			if len(cn) == 0 {
+				continue
+			}
+			last := cnClass.FindAllStringIndex(sel, -1)[len(cn)-1]
+			name := cn[len(cn)-1][1]
+			joined := strings.Join(classes, " ")
+			if pre, post := strings.TrimSpace(sel[:last[0]]), strings.TrimSpace(sel[last[1]:]); pre != "" || post != "" {
+				variant := "[" + strings.ReplaceAll(strings.TrimSpace(pre+" &"+post), " ", "_") + "]:"
+				var vs []string
+				for _, c := range strings.Fields(joined) {
+					vs = append(vs, variant+c)
+				}
+				joined = strings.Join(vs, " ")
+			}
+			if prev, ok := out[name]; ok {
+				joined += " " + prev
+			}
+			out[name] = joined
 		}
-		out[m[1]] = joined
 	}
 	return out
 }
@@ -429,7 +446,7 @@ func (g *gen) rdpSelectors() map[string]string {
 
 var dirAttr = regexp.MustCompile(`:where\((?::dir\((?:rtl|ltr)\),\s*)?\[dir="?(rtl|ltr)"?\](?:,\s*\[dir="?(?:rtl|ltr)"?\]\s*\*)?\)`)
 
-var hasAttr = regexp.MustCompile(`:has\(\[(data-variant|data-size)=("[^"]*"|[^\]"]*)\]\)`)
+var hasAttr = regexp.MustCompile(`:has\(( > )?\[(data-variant|data-size)=("[^"]*"|[^\]"]*)\]\)`)
 
 func (g *gen) attrRenderers(attr string) []string {
 	var out []string
@@ -453,12 +470,12 @@ func postprocess(css string, owners map[string][]string, k kitMap, g *gen) strin
 	css = blockComment.ReplaceAllString(css, "")
 	css = hasAttr.ReplaceAllStringFunc(css, func(m string) string {
 		sub := hasAttr.FindStringSubmatch(m)
-		slots := g.attrRenderers(sub[1])
+		slots := g.attrRenderers(sub[2])
 		if len(slots) == 0 {
 			return m
 		}
 		g.note("has() of a variant attribute limited to the parts that render it in shadcn (kit buttons also set it)", "%s -> %d parts", m, len(slots))
-		return ":has(:is(" + strings.Join(slots, ", ") + ")[" + sub[1] + "=" + sub[2] + "])"
+		return ":has(" + sub[1] + ":is(" + strings.Join(slots, ", ") + ")[" + sub[2] + "=" + sub[3] + "])"
 	})
 	if n := len(dirAttr.FindAllString(css, -1)); n > 0 {
 		css = dirAttr.ReplaceAllString(css, ":where(:dir($1))")

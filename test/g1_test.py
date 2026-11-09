@@ -1912,6 +1912,14 @@ def check_text_entry_size(t):
     assert sizes == ["14px", "14px", "14px", entry, entry], sizes
 
 
+def check_native_select_phone_text(t):
+    read = """() => { const s = getComputedStyle(document.querySelector('#native-select [data-slot=native-select]')); return [s.fontSize, s.lineHeight] }"""
+    assert t.page.evaluate(read) == ["14px", "20px"], "the kit keeps the shadcn 14 px"
+    t.a11y()
+    want = ["16px", "24px"] if t.width < 768 else ["14px", "20px"]
+    assert t.page.evaluate(read) == want, (t.page.evaluate(read), want)
+
+
 def check_forced_colors(t):
     page = t.page
     page.emulate_media(forced_colors="active")

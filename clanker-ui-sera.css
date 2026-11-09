@@ -15668,6 +15668,11 @@
   [data-slot="alert"][data-variant="info"] { border-color: var(--info-border); background-color: var(--info-bg); color: var(--info-text); }
   [data-slot="alert"]:is([data-variant="success"], [data-variant="warning"], [data-variant="info"]) > [data-slot="alert-description"] { color: var(--foreground); }
   [data-slot="alert"]:has(> [data-slot="alert-action"]) { padding-inline-end: max(calc(var(--spacing) * 18), calc(var(--alert-action-width, 0px) + var(--spacing) * 3)); }
+  [data-slot="progress-indicator"] { background-color: var(--progress-indicator, var(--primary)); }
+  [data-slot="progress"][data-variant="success"] { --progress-indicator: var(--success-fill); }
+  [data-slot="progress"][data-variant="warning"] { --progress-indicator: var(--warning-fill); }
+  [data-slot="progress"][data-variant="destructive"] { --progress-indicator: var(--error-fill); }
+  [data-slot="progress"][data-variant="info"] { --progress-indicator: var(--info-fill); }
   [data-slot="badge"][data-variant="success"] { border-color: var(--success-border); background-color: var(--success-bg); color: var(--success-text); }
   [data-slot="badge"][data-variant="warning"] { border-color: var(--warning-border); background-color: var(--warning-bg); color: var(--warning-text); }
   [data-slot="badge"][data-variant="info"] { border-color: var(--info-border); background-color: var(--info-bg); color: var(--info-text); }

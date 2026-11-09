@@ -16126,6 +16126,57 @@
     [data-slot="data-table-pagination"] > :last-child { margin-inline-start: auto; }
   }
 
+  [data-slot="card-action"]:has(> * + *) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: calc(var(--spacing) * 2);
+  }
+  [data-slot="card-header"]:has(> [data-slot="card-action"]):not(:has(> [data-slot="card-description"])) { align-items: center; }
+  [data-slot="card-header"]:not(:has(> [data-slot="card-description"])) > [data-slot="card-action"] { grid-row: 1; align-self: center; }
+  @container card-header (width < 24rem) {
+    [data-slot="card-header"] > [data-slot="card-action"][data-wrap] { grid-column: 1 / -1; grid-row: auto; justify-self: start; }
+    [data-slot="card-header"]:has(> [data-slot="card-action"][data-wrap]) > :is([data-slot="card-title"], [data-slot="card-description"]) { grid-column: 1 / -1; }
+    [data-slot="card-action"][data-wrap]:has(> * + *) { justify-content: flex-start; }
+  }
+  [data-slot="table-container"][data-sticky-header][data-fits], [data-slot="card"]:has([data-slot="table-container"][data-sticky-header][data-fits]) { overflow: clip; }
+  [data-slot="table-container"][data-sticky-header][data-fits] > [data-slot="table"] > [data-slot="table-header"] { position: sticky; top: var(--table-header-top, 0px); z-index: 1; }
+  :where([data-slot="table-container"][data-sticky-header][data-fits] > [data-slot="table"] > [data-slot="table-header"]) { background-color: var(--background); }
+  :where([data-slot="card"] [data-slot="table-container"][data-sticky-header][data-fits] > [data-slot="table"] > [data-slot="table-header"]) { background-color: var(--card); }
+  @media (width < 40rem) {
+    [data-slot="table-container"][data-layout="stack"] > [data-slot="table"] { display: flex; flex-direction: column; }
+    [data-slot="table-container"][data-layout="stack"] > [data-slot="table"] > [data-slot="table-caption"] { display: block; order: 1; }
+    [data-slot="table-container"][data-layout="stack"] > [data-slot="table"] > [data-slot="table-header"] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    [data-slot="table-container"][data-layout="stack"] > [data-slot="table"] > :is([data-slot="table-body"], [data-slot="table-footer"]) { display: block; }
+    [data-slot="table-container"][data-layout="stack"] :is([data-slot="table-body"], [data-slot="table-footer"]) > [data-slot="table-row"] { display: block; padding-block: calc(var(--spacing) * 2); }
+    [data-slot="table-container"][data-layout="stack"] :is([data-slot="table-body"], [data-slot="table-footer"]) > [data-slot="table-row"] > :is([data-slot="table-cell"], [data-slot="table-head"]) {
+      display: flow-root;
+      height: auto;
+      padding: var(--spacing) calc(var(--spacing) * 2);
+      text-align: start;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    [data-slot="table-container"][data-layout="stack"] :is([data-slot="table-body"], [data-slot="table-footer"]) > [data-slot="table-row"] > [data-label] { padding-inline-start: calc(var(--table-label-width, 7rem) + var(--spacing) * 6); }
+    [data-slot="table-container"][data-layout="stack"] :is([data-slot="table-body"], [data-slot="table-footer"]) > [data-slot="table-row"] > [data-label]::before {
+      content: attr(data-label);
+      content: attr(data-label) / "";
+      float: inline-start;
+      width: var(--table-label-width, 7rem);
+      margin-inline-start: calc(-1 * (var(--table-label-width, 7rem) + var(--spacing) * 4));
+      overflow-wrap: break-word;
+      font-weight: 400;
+      color: var(--muted-foreground);
+    }
+  }
   [data-slot="card-footer"] > [data-slot="card-description"]:not(:last-child) { flex: 1 1 auto; }
   [data-slot="card-footer"]:has(> [data-slot="card-description"]:not(:last-child)) { flex-wrap: wrap; gap: calc(var(--spacing) * 2) calc(var(--spacing) * 4); }
   [data-slot="field-group"][data-columns] { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: start; }

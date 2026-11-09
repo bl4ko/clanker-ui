@@ -282,6 +282,19 @@ At 390 px a table keeps identity, status, amount, and action. When the status co
 
 Block `data-table` does the same with the title and status.
 
+When no column can go (a shop list with quantity, price, link, and action), use stacked rows: `data-layout="stack"` on the `table-container` and a `data-label` on each value cell. Below 40rem each row is a block of label and value lines; the kit keeps the table roles:
+
+```html
+<div data-slot="table-container" data-layout="stack">
+  <table data-slot="table">
+    <thead data-slot="table-header"><tr data-slot="table-row"><th data-slot="table-head" scope="col">Item</th><th data-slot="table-head" scope="col" data-align="end">Price</th></tr></thead>
+    <tbody data-slot="table-body"><tr data-slot="table-row"><td data-slot="table-cell">Chef's knife</td><td data-slot="table-cell" data-label="Price" data-align="end">€79.00</td></tr></tbody>
+  </table>
+</div>
+```
+
+A long table in a card: `data-sticky-header` on the `table-container` keeps the header row in view on the page scroll, without a second scroll box.
+
 ## Dashboard in the top-header shell
 
 The `dashboard` content (section cards, chart, table) without a sidebar: the `site-header data-size="lg"` of `data-table` (brand, nav, actions), then `<main data-slot="page">` with a `page-header` ("Overview" and its actions) and the `dashboard` sections in the same order. The `site-header-title` rule of the sidebar shell does not apply: the `page-title` is the `h1`.

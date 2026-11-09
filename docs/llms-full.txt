@@ -1062,7 +1062,7 @@ A count or status in a trigger: a `badge` after the text (`<button type="button"
 - Kit extension to shadcn: `data-variant="success|warning|info"` on `alert` and `badge`. CSS only. Border, background, and text use the status tokens (see [CSS rules for components](#css-rules-for-components)); the alert description uses `--foreground`. A status `<a data-slot="badge">` shows an underline on hover.
 - `<div data-slot="aspect-ratio" data-ratio="16/9">` (any ratio, `"4/3"`, `"2.4"`): the kit sets `--ratio`, like shadcn. Children are not positioned; give an image `position: absolute; inset: 0; width: 100%; height: 100%` (the shadcn examples use `fill`).
 - `badge` (`data-variant="secondary|destructive|outline|ghost|link"`, or `<a data-slot="badge">`). Icons and spinners inside are 12 px.
-- `card` with `card-header` (`card-title`, `card-description`, `card-action`), `card-content`, `card-footer`. `data-size="sm"`; override `--card-spacing`. A first-child `<img>` sits flush with the top. Kit extension: `data-orientation="horizontal"` puts a first-child `cover` (6rem, 8rem from 48rem) at the start and the other parts in a `div` column next to it, with a wrapping `card-footer` (a hero or feature card: art left, text and actions right).
+- `card` with `card-header` (`card-title`, `card-description`, `card-action`), `card-content`, `card-footer`. `data-size="sm"`; override `--card-spacing`. A first-child `<img>` sits flush with the top. Kit extension: `data-orientation="horizontal"` puts a first-child `cover` (6rem, 8rem from 48rem) at the start and the other parts in a `div` column next to it, with a wrapping `card-footer` (a hero or feature card: art left, text and actions right). A `card-action` with two or more children (a badge and a button) is a row with an 8 px gap, aligned to the end, that wraps. In a `card-header` with a `card-action` and no `card-description`, the title and the action are centered on one line (shadcn aligns them at the top, so a one-line title sits above the center of a 36 px button). Kit extension: `data-wrap` on `card-action` moves it to its own row under the title and the description, at the start, when the `card-header` is narrower than 24rem (for a text button or a select that would leave the title too narrow on a phone).
 - `empty` with `empty-header` (`empty-icon` with `data-variant="icon"`, `empty-title`, `empty-description`) and `empty-content`. Kit extension: `data-variant="outline"` adds the 1 px dashed border.
 - `item` (`data-variant="outline|muted"`, `data-size="sm|xs"`, or `<a data-slot="item">`) with `item-media` (`data-variant="icon|image"`), `item-content` (`item-title`, `item-description`), `item-actions`, `item-header`, `item-footer`; `item-group` (`role="list"`) and `item-separator`. As in shadcn, `item-title` is one line and `item-description` at most two lines (`line-clamp`): give a cut text a `title`, or for long text (a timeline update) use a `p` in `item-content`, not `item-description`. A `cover` in `item-media` is 40 px wide (32 px in a `sm` item, 24 px in `xs`) with its ratio and without its text; in `data-variant="image"` it fills the square. `item-group` has a 16 px gap and `item-separator` adds 8 px above and below: in a list with separators set the group gap to 0 in app CSS (`.list { gap: 0 }`), so the rows are as close as without them. Below 40rem, `item-actions` with a text button (not an `icon` size button, a switch, or a badge) goes to its own line under the content.
 - `separator` (`data-orientation="vertical"`): decorative (`role="none"`) unless you add `role="separator"`.
@@ -1221,6 +1221,11 @@ The viewport is the real scroll container; the kit makes it focusable, hides the
 #### Table
 
 `table-container` > `table` > `table-caption`, `table-header`, `table-body`, `table-footer`, `table-row` (`data-state="selected"`), `table-head`, `table-cell`. Sorting, filtering, selection, column visibility, and paging are app code; the demo builds a data table with `h()`, `aria-sort`, a row actions `dropdown-menu`, a column `dropdown-menu`, and `toast`.
+
+Kit extensions on `table-container`:
+
+- `data-sticky-header`: the header row stays in view while the page scrolls. The kit measures the table (`ResizeObserver`) and sets `data-fits` when it fits its box; then the box and a `card` around it use `overflow: clip` instead of a scroll box, so the `table-header` sticks to the page (`top: var(--table-header-top, 0px)`, the page or card background). A wider table keeps its sideways scroll and a normal header. Below a sticky `site-header`, set `--table-header-top` to its height.
+- `data-layout="stack"`: below 40rem each row is a block of label and value lines for phone tables where no column can go. The label is the `data-label` of each `table-cell` (a `--table-label-width` column, default 7rem, hidden from screen readers); a cell without `data-label` takes the full width. The header row is visually hidden, and the kit sets the roles `table`, `rowgroup`, `row`, `columnheader`, `rowheader`, and `cell` (CSS `display` changes drop the table semantics in some browsers). Set it in the markup; rows added later get their roles too.
 
 #### Tabs
 
@@ -1771,8 +1776,11 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 | Part | Write | State |
 | --- | --- | --- |
 | `card` (root) | `data-orientation` `horizontal`; `data-size` `sm` |  |
+| `card-action` |  | `data-wrap` |
 
-Other parts: `card-action`, `card-content`, `card-description`, `card-footer`, `card-header`, `card-title`.
+Other parts: `card-content`, `card-description`, `card-footer`, `card-header`, `card-title`.
+
+Other options named in the docs: `data-wrap` any.
 
 ```html
 <div data-slot="card" data-size="sm">
@@ -1793,6 +1801,8 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 | Part | Write | State |
 | --- | --- | --- |
 | `badge` (root) | `data-variant` `default`, `destructive`, `ghost`, `info`, `link`, `outline`, `secondary`, `success`, `warning` |  |
+
+Other options named in the docs: `data-size` `sm`.
 
 ```html
 <span data-slot="badge">Badge</span>
@@ -1821,13 +1831,16 @@ Other parts: `alert-action`, `alert-description`, `alert-title`.
 
 #### Table (`table`)
 
-Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/table/.
+Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/table/.
 
 | Part | Write | State |
 | --- | --- | --- |
+| `table-container` |  | `data-fits`, `data-sticky-header` |
 | `table-row` | `data-state` string |  |
 
-Other parts: `table` (root), `table-body`, `table-caption`, `table-cell`, `table-container`, `table-footer`, `table-head`, `table-header`.
+Other parts: `table` (root), `table-body`, `table-caption`, `table-cell`, `table-footer`, `table-head`, `table-header`.
+
+Other options named in the docs: `data-label` any; `data-layout` string.
 
 ```html
 <div data-slot="table-container">

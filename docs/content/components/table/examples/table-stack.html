@@ -1,0 +1,44 @@
+<div data-slot="table-container" data-layout="stack">
+  <table data-slot="table">
+    <caption data-slot="table-caption">Shopping list for the new kitchen.</caption>
+    <thead data-slot="table-header">
+      <tr data-slot="table-row">
+        <th data-slot="table-head" scope="col">Item</th>
+        <th data-slot="table-head" scope="col" data-align="end">Quantity</th>
+        <th data-slot="table-head" scope="col" data-align="end">Price</th>
+        <th data-slot="table-head" scope="col">Shop</th>
+        <th data-slot="table-head" scope="col" data-align="end"><span class="sr-only">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody data-slot="table-body">
+        <tr data-slot="table-row">
+          <td data-slot="table-cell" class="font-medium">Bamboo cutting board</td>
+          <td data-slot="table-cell" data-label="Quantity" data-align="end">2</td>
+          <td data-slot="table-cell" data-label="Price" data-align="end">€18.90</td>
+          <td data-slot="table-cell" data-label="Shop"><a href="#" class="underline underline-offset-4">Shop page</a></td>
+          <td data-slot="table-cell" data-align="end"><button type="button" data-slot="button" data-variant="outline" data-size="sm">Bought</button></td>
+        </tr>
+        <tr data-slot="table-row">
+          <td data-slot="table-cell" class="font-medium">Cast iron skillet, 26 cm</td>
+          <td data-slot="table-cell" data-label="Quantity" data-align="end">1</td>
+          <td data-slot="table-cell" data-label="Price" data-align="end">€42.50</td>
+          <td data-slot="table-cell" data-label="Shop"><a href="#" class="underline underline-offset-4">Shop page</a></td>
+          <td data-slot="table-cell" data-align="end"><button type="button" data-slot="button" data-variant="outline" data-size="sm">Bought</button></td>
+        </tr>
+        <tr data-slot="table-row">
+          <td data-slot="table-cell" class="font-medium">Linen tea towels (set of 3)</td>
+          <td data-slot="table-cell" data-label="Quantity" data-align="end">1</td>
+          <td data-slot="table-cell" data-label="Price" data-align="end">€24.00</td>
+          <td data-slot="table-cell" data-label="Shop"><a href="#" class="underline underline-offset-4">Shop page</a></td>
+          <td data-slot="table-cell" data-align="end"><button type="button" data-slot="button" data-variant="outline" data-size="sm">Bought</button></td>
+        </tr>
+        <tr data-slot="table-row">
+          <td data-slot="table-cell" class="font-medium">Ceramic mixing bowl</td>
+          <td data-slot="table-cell" data-label="Quantity" data-align="end">3</td>
+          <td data-slot="table-cell" data-label="Price" data-align="end">€15.20</td>
+          <td data-slot="table-cell" data-label="Shop"><a href="#" class="underline underline-offset-4">Shop page</a></td>
+          <td data-slot="table-cell" data-align="end"><button type="button" data-slot="button" data-variant="outline" data-size="sm">Bought</button></td>
+        </tr>
+    </tbody>
+  </table>
+</div>

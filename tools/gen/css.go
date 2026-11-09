@@ -15,7 +15,8 @@ import (
 const license = "/*! clanker-ui | MIT | includes shadcn/ui (MIT, shadcn), Tailwind CSS (MIT, Tailwind Labs), tw-animate-css (MIT, Luca Bosin), and Lucide icons (ISC); see THIRD_PARTY_NOTICES */"
 
 var (
-	novaRule     = regexp.MustCompile(`(?s)\.(cn-[a-z0-9-]+)\s*\{(.*?)\}`)
+	styleRule    = regexp.MustCompile(`([^{}]+)\{([^{}]*)\}`)
+	cnClass      = regexp.MustCompile(`\.(cn-[a-z0-9-]+)`)
 	applyLine    = regexp.MustCompile(`@apply\s+([^;]+);`)
 	unknownClass = regexp.MustCompile("Cannot apply (?:unknown )?utility class `([^`]+)`")
 	groupClass   = regexp.MustCompile(`\.(group|peer)(\\/[A-Za-z0-9_-]+)?`)
@@ -27,7 +28,7 @@ var (
 
 func parseStyles(text string) map[string]string {
 	out := map[string]string{}
-	for _, m := range novaRule.FindAllStringSubmatch(blockComment.ReplaceAllString(text, ""), -1) {
+	for _, m := range styleRule.FindAllStringSubmatch(blockComment.ReplaceAllString(text, ""), -1) {
 		var classes []string
 		for _, a := range applyLine.FindAllStringSubmatch(m[2], -1) {
 			classes = append(classes, strings.TrimSpace(a[1]))
@@ -35,11 +36,18 @@ func parseStyles(text string) map[string]string {
 		if len(classes) == 0 {
 			continue
 		}
-		joined := strings.Join(classes, " ")
-		if prev, ok := out[m[1]]; ok {
-			joined += " " + prev
+		for _, sel := range strings.Split(m[1], ",") {
+			cn := cnClass.FindAllStringSubmatch(sel, -1)
+			if len(cn) == 0 {
+				continue
+			}
+			name := cn[len(cn)-1][1]
+			joined := strings.Join(classes, " ")
+			if prev, ok := out[name]; ok {
+				joined += " " + prev
+			}
+			out[name] = joined
 		}
-		out[m[1]] = joined
 	}
 	return out
 }

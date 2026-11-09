@@ -1363,7 +1363,10 @@
     place-self: flex-start flex-end;
   }
   [data-slot="card-content"] {
+    gap: calc(var(--spacing) * 3);
     padding-inline: var(--card-spacing);
+    flex-direction: column;
+    display: flex;
   }
   [data-slot="card-footer"] {
     border-bottom-right-radius: calc(var(--radius) * 1.4);

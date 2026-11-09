@@ -1113,3 +1113,36 @@ def check_kit_toolbar_phone(t):
             assert abs(end) < 1, ("the actions stay at the end", i, m)
         else:
             assert abs(m["search"]["top"] - m["status"]["top"]) < 1 and len(tops) == 1, ("one row from 40rem", i, m)
+
+
+def check_kit_progress_status(t):
+    t.docs("/docs/components/progress")
+    m = t.page.evaluate("""() => {
+      const color = value => {
+        const probe = document.createElement('div')
+        probe.style.backgroundColor = value
+        document.body.append(probe)
+        const c = getComputedStyle(probe).backgroundColor
+        probe.remove()
+        return c
+      }
+      const bar = el => getComputedStyle(el.querySelector('[data-slot="progress-indicator"]')).backgroundColor
+      const bars = [...document.querySelectorAll('[data-example="progress-status"] [data-slot="progress"]')]
+      const custom = document.querySelector('[data-example="progress-demo"] [data-slot="progress"]')
+      const plain = bar(custom)
+      custom.querySelector('[data-slot="progress-indicator"]').style.transition = 'none'
+      custom.style.setProperty('--progress-indicator', 'rgb(1, 2, 3)')
+      const set = bar(custom)
+      custom.style.removeProperty('--progress-indicator')
+      return {
+        variants: bars.map(b => b.dataset.variant), got: bars.map(bar), want: ['--success-fill', '--warning-fill', '--error-fill', '--info-fill'].map(v => color(`var(${v})`)),
+        plain, primary: color('var(--primary)'), set,
+      }
+    }""")
+    assert m["variants"] == ["success", "warning", "destructive", "info"] and m["got"] == m["want"], m
+    assert len(set(m["want"])) == 4 and m["primary"] not in m["want"], m
+    assert m["plain"] == m["primary"] and m["set"] == "rgb(1, 2, 3)", m
+    ex = t.page.locator('[data-example="progress-status"] [data-docs="preview"]')
+    ex.scroll_into_view_if_needed()
+    t.shot("status", ex)
+

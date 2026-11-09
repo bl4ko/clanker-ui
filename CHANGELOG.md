@@ -54,6 +54,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Agent skill: `references/recipes.md`: set values from code, a form in a dialog or a sheet with a scrolling body, several custom rules on one field, an accessible star rating, a card grid, a shared header on static pages without a build step, a breadcrumb or back link in the top-header shell, a category bar chart, status strips with keyboard access, and long pages.
 - Docs: design rules from the second agent evaluation: one identity move per app, realistic data and complete pages, phone tables that keep status and the main value, chart height and status fills, condensed long pages, muted secondary links, and phone navigation with every primary link. Also kit radius and display sizes for app parts, a `python3 -m http.server` test recipe, the CSP meta tag in the head example, which pagination a table uses, badge or icon and word in tables, toggle group labels, the `item-description` two-line clamp, list spacing with separators, and where `dropdown-menu:change` is emitted.
 - `dialog-body`: the scrolling middle of a dialog between the header and the footer; the dialog is at most the window height less 2rem, and the header and the footer stay in view (#104).
+- Progress: `data-variant="success|warning|destructive|info"` colors the indicator with the status fill tokens, and `--progress-indicator` on the root sets any color (#105).
+- `clanker-ui-a11y.css`: the native select has 16 px text below 48rem, like the input, so iOS Safari does not zoom the page on focus (#108).
 
 ### Changed
 

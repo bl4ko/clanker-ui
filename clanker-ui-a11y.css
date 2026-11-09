@@ -72,6 +72,9 @@
     border-color: var(--input-edge);
   }
   [data-slot="button"][data-variant="outline"][data-date-picker-trigger] { border-color: var(--input-edge); }
+  @media (width < 48rem) {
+    [data-slot="native-select"] { font-size: var(--text-base); line-height: var(--text-base--line-height); }
+  }
   :is([data-slot="button"], [data-slot="badge"], [data-slot="alert-dialog-action"], [data-slot="alert-dialog-cancel"], [data-slot="pagination-link"]):where([data-variant="destructive"]) {
     color: color-mix(in oklab, var(--destructive), var(--foreground) 25%);
   }

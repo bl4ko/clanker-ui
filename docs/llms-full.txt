@@ -623,6 +623,7 @@ show(content, { trigger, anchor = trigger, side, align, sideOffset = 4, alignOff
 - Keyboard highlight in item lists (select, combobox, and command items, dropdown, context, and menubar items, menubar triggers, and links in navigation menu content): a 2 px `--focus-ring` outline inside the item (`outline-offset: -2px`), only while `<html>` has `data-keyboard` (the kit sets it during keyboard use). Pointer hover shows only the `--accent` background, like shadcn.
 - Status tokens: borders reach 3:1 on `--background` (in dark also on `--card`) and light text reaches 4.5:1 on its background (success `hsl(140 100% 25%)`, info `hsl(210 92% 43%)`, warning `hsl(31 92% 35%)`, error `hsl(360 100% 43%)`).
 - Destructive buttons and badges (the tinted shadcn `destructive` variant): the text is `--destructive` mixed with 25 % `--foreground`, so it has 4.5:1 on its tinted background, also on hover. The background keeps the shadcn value.
+- Native select: 16 px text below 48rem and 14 px from 48rem, like `input` (shadcn `text-base md:text-sm`), so iOS Safari does not zoom the page when the select gets focus. shadcn and the kit without the layer use 14 px at every width.
 - Light `--muted-foreground` is `oklch(0.54 0 0)` (shadcn 0.556), so it has 4.6:1 on `--muted`.
 - `--chart-1`…`--chart-8` is the categorical palette validated with the dataviz `validate_palette.js` in light and dark: all checks pass. In light, slots 3, 4, and 5 are below 3:1 contrast; every chart and sparkline has a tooltip and a table view as relief, and charts with two or more series also have a legend. The kit tokens have the same palette; the layer also gives it to the shadcn base schemes, which set a gray ramp.
 - Shimmer text (`.shimmer`, running trace titles, uploading or processing attachment titles): when the shimmer color cannot be computed (an invalid `--shimmer-color`, or a browser without relative color syntax), the text stays plain and visible. Without the layer, the text is transparent then, as in shadcn.
@@ -1156,7 +1157,7 @@ Disabled Previous or Next (first or last page): `aria-disabled="true"` on the li
 
 #### Progress, Spinner
 
-- `<div data-slot="progress" data-value="60" data-max="100" aria-label="Upload"></div>`: the kit adds the Base UI parts `progress-track` > `progress-indicator` (width in percent), `role="progressbar"`, `aria-valuenow`, `aria-valuetext`, `data-state="loading|complete|indeterminate"`, and `data-progressing`, `data-complete`, or `data-indeterminate` on every part. Optional `progress-label` (it labels the bar) and `progress-value` (the kit writes the percent) go before the track. The percent in `progress-value` and `aria-valuetext` is `Intl.NumberFormat` with `style: "percent"` in the language of the nearest `lang` attribute, like Base UI `Progress.Value`. The digits follow the browser locale data: `lang="ar-u-nu-arab"` gives Arabic-Indic digits (`٥٦٪؜`) in every browser. Change `data-value` to update it. At 0 and when indeterminate, the indicator has no width.
+- `<div data-slot="progress" data-value="60" data-max="100" aria-label="Upload"></div>`: the kit adds the Base UI parts `progress-track` > `progress-indicator` (width in percent), `role="progressbar"`, `aria-valuenow`, `aria-valuetext`, `data-state="loading|complete|indeterminate"`, and `data-progressing`, `data-complete`, or `data-indeterminate` on every part. Optional `progress-label` (it labels the bar) and `progress-value` (the kit writes the percent) go before the track. The percent in `progress-value` and `aria-valuetext` is `Intl.NumberFormat` with `style: "percent"` in the language of the nearest `lang` attribute, like Base UI `Progress.Value`. The digits follow the browser locale data: `lang="ar-u-nu-arab"` gives Arabic-Indic digits (`٥٦٪؜`) in every browser. Change `data-value` to update it. At 0 and when indeterminate, the indicator has no width. Kit extension: `data-variant="success|warning|destructive|info"` colors the indicator with `--success-fill`, `--warning-fill`, `--error-fill`, or `--info-fill`; `--progress-indicator` on the root sets any other color (default `var(--primary)`).
 - `<svg data-slot="spinner" data-size="sm|lg|xl"></svg>` (sizes are a kit extension: 12, 24, 32 px; default 16 px): the kit fills the icon and adds `role="status"` and `aria-label="Loading"` (`strings.loading`). Use `role="none"` for a decorative spinner in a labelled control. Spinners keep turning under reduced motion.
 
 #### Resizable
@@ -1898,7 +1899,7 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 | Part | Write | State |
 | --- | --- | --- |
-| `progress` (root) | `data-max` number; `data-value` number |  |
+| `progress` (root) | `data-max` number; `data-value` number; `data-variant` `destructive`, `info`, `success`, `warning` |  |
 
 Other parts: `progress-label`, `progress-value`.
 

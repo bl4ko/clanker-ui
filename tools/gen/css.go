@@ -41,8 +41,17 @@ func parseStyles(text string) map[string]string {
 			if len(cn) == 0 {
 				continue
 			}
+			last := cnClass.FindAllStringIndex(sel, -1)[len(cn)-1]
 			name := cn[len(cn)-1][1]
 			joined := strings.Join(classes, " ")
+			if pre, post := strings.TrimSpace(sel[:last[0]]), strings.TrimSpace(sel[last[1]:]); pre != "" || post != "" {
+				variant := "[" + strings.ReplaceAll(strings.TrimSpace(pre+" &"+post), " ", "_") + "]:"
+				var vs []string
+				for _, c := range strings.Fields(joined) {
+					vs = append(vs, variant+c)
+				}
+				joined = strings.Join(vs, " ")
+			}
 			if prev, ok := out[name]; ok {
 				joined += " " + prev
 			}

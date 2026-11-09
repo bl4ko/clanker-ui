@@ -1363,10 +1363,7 @@
     place-self: flex-start flex-end;
   }
   [data-slot="card-content"] {
-    gap: calc(var(--spacing) * 3);
     padding-inline: var(--card-spacing);
-    flex-direction: column;
-    display: flex;
   }
   [data-slot="card-footer"] {
     border-bottom-right-radius: calc(var(--radius) * 1.4);
@@ -7295,6 +7292,11 @@
   [data-slot="card-title"]:is(:where([data-slot="card"])[data-size="sm"] *) {
     font-size: var(--text-sm);
     line-height: var(--tw-leading, var(--text-sm--line-height));
+  }
+  [data-slot="card-content"]:has( > [data-slot="questionnaire-choices"]) {
+    gap: calc(var(--spacing) * 3);
+    flex-direction: column;
+    display: flex;
   }
   [data-slot="card-footer"].border-t {
     padding-top: var(--card-spacing);

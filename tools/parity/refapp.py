@@ -22,7 +22,7 @@ UI = "apps/v4/registry/bases/base/ui/"
 WRAPPER = "apps/v4/registry/bases/base/components/example.tsx"
 HELPERS = {"apps/v4/lib/ai.ts": "src/lib/ai.ts", "apps/v4/components/message-parts.tsx": "src/components/message-parts.tsx"}
 IMPORT = re.compile(r'(?:\bfrom|^import)\s+"([^".][^"]*)"', re.M)
-BUILTIN = {"react", "react-dom"}
+SHIMMED = {"next"}
 STRING = re.compile(r'"(?:[^"\\\n]|\\.)*"|`[^`]*`')
 SHIMS = {
     "next-image.tsx": 'import * as React from "react"\n\nexport default function Image({ src, fill, priority, quality, placeholder, blurDataURL, unoptimized, loader, style, ...props }: any) {\n  return <img {...props} src={typeof src === "string" ? src : src?.src} loading={priority ? undefined : "lazy"} decoding="async" data-nimg={fill ? "fill" : "1"} style={{ color: "transparent", ...(fill ? { position: "absolute", height: "100%", width: "100%", inset: 0 } : {}), ...style }} />\n}\n',
@@ -82,8 +82,10 @@ def pin_versions(src, pin):
             name = line.strip().rstrip(":").strip("'")
         elif line.strip().startswith("version:") and name:
             v = line.split(":", 1)[1].strip().split("(")[0]
-            if not v.startswith("link:"):
-                out[name] = v
+            if v.startswith("link:../../"):
+                path = v.removeprefix("link:../../") + "/package.json"
+                v = json.loads(raw(pin, path, src / "refapp-pin" / path).read_text())["version"]
+            out[name] = v
     return out
 
 
@@ -98,9 +100,11 @@ def update_lock(app, src, pin):
     used = set()
     for f in (app / "src").rglob("*.ts*"):
         used |= {package_of(m) for m in IMPORT.findall(f.read_text()) if not m.startswith(("@/", "node:"))}
-    deps = set(pkg["dependencies"]) | used
+    deps = (set(pkg["dependencies"]) | used) - SHIMMED
 
     def version(name):
+        if name.startswith("@tailwindcss/"):
+            return versions["tailwindcss"]
         if name in versions:
             return versions[name]
         installed = app / "node_modules" / name / "package.json"
@@ -221,7 +225,7 @@ def build(style, args, src, pin, examples):
     reg = check_registry(app, style, src, names, examples)
     if reg["drift"] and not args.allow_drift:
         raise SystemExit(f"{style}: the live registry differs from the shadcn pin {pin} for {', '.join(reg['drift'])} (--allow-drift to build anyway)")
-    write_shell(app, style, [n for n in examples if n != "example"])
+    write_shell(app, style, [n for n, f in examples.items() if "export default" in f.read_text()])
     for path, dest in HELPERS.items():
         shutil.copy(raw(pin, path, src / "refapp-pin" / path), app / dest)
     if args.update_lock:

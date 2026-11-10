@@ -14,7 +14,7 @@ Add the [agent skill](skills/clanker-ui/SKILL.md) to a project with the [skills 
 pnpm dlx skills add bl4ko/clanker-ui
 ```
 
-- Pin the skill to a release: `pnpm dlx skills add https://github.com/bl4ko/clanker-ui/tree/v0.2.1/skills/clanker-ui`.
+- Pin the skill to a release: `pnpm dlx skills add https://github.com/bl4ko/clanker-ui/tree/v0.3.0/skills/clanker-ui`.
 - Without the CLI: copy `skills/clanker-ui/` from the release zip to `.agents/skills/` (Codex, Cursor, GitHub Copilot, Gemini CLI, Cline, OpenCode), `.claude/skills/` (Claude Code), or `.windsurf/skills/` (Windsurf). It is a portable [Agent Skill](https://agentskills.io) and works without network access.
 - Chat tools without skills: give the agent [`llms.txt`](https://bl4ko.github.io/clanker-ui/llms.txt). [`llms-full.txt`](https://bl4ko.github.io/clanker-ui/llms-full.txt) is the full text in one file.
 - Catalog: [`clanker-ui.json`](skills/clanker-ui/references/clanker-ui.json) lists each component with its group file, parts, attributes and allowed values, state attributes, events, keys, and a minimal example ([schema](skills/clanker-ui/references/clanker-ui.schema.json)). `go run ./tools/gen catalog` makes it; the skill has a Markdown file for each component.
@@ -1721,4 +1721,4 @@ clanker-ui is not affiliated with shadcn/ui, Base UI, or Vercel.
 
 ## License
 
-MIT, see [LICENSE](LICENSE). The notices and licenses of the third-party parts are in [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES). Each kit file starts with a one-line license comment that names them; keep it when you copy or minify the file.
+MIT, see [LICENSE](LICENSE). The notices and licenses of the third-party parts are in [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES). Each kit file starts with a one-line license comment that names them; keep it when you copy or minify the file. In a file from a release, that comment names the version: `head -n 1 clanker-ui.css` shows `/*! clanker-ui v<version> | MIT | ...`. A file from the repository has no version.

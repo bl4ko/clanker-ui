@@ -19,7 +19,6 @@ WIDTHS = ((1280, 800), (390, 844))
 DYNAMIC = ("hover", "active", "focus", "focus-visible", "focus-within")
 FORCED = (["hover"], ["hover", "active"], ["focus", "focus-visible", "focus-within"])
 SKIP = {"data-slot", "data-theme", "class", "id", "style", "href", "src"}
-PUBLIC_TW = re.compile(r"--tw-(enter|exit)-")
 SELECTOR = re.compile(r"([^{};]+)\{")
 CUSTOM = re.compile(r"[{;\s](--[\w-]+)\s*:")
 KEYFRAMES = re.compile(r"@(keyframes\s+[\w-]+|font-face)\s*\{((?:[^{}]|\{[^{}]*\})*)\}")
@@ -136,7 +135,7 @@ def profile(texts):
     selectors, custom = set(), set()
     for text in texts:
         text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
-        custom.update(m for m in CUSTOM.findall(text) if not m.startswith("--tw-") or PUBLIC_TW.match(m))
+        custom.update(CUSTOM.findall(text))
         for prelude in SELECTOR.findall(text):
             if not prelude.lstrip().startswith("@"):
                 selectors.update(split_top(prelude, ","))

@@ -23,52 +23,25 @@ type oOr struct {
 
 type oAlt struct {
 	c    *oCompound
-	anc  string
 	spec [3]int
 	rank int
 }
 
 type oRule struct {
-	r      *cssRule
-	parent *cssRule
-	layer  int
-	conds  []string
-	alts   []*oAlt
-	order  int
-	ro     bool
-}
-
-type oProp struct {
-	initial string
-	has     bool
-	typed   bool
+	r    *cssRule
+	alts []*oAlt
+	ro   bool
 }
 
 type optimizer struct {
-	rules    []*oRule
-	props    map[string]oProp
-	skip     map[string]bool
-	defs     map[string][]*oRule
-	byRule   map[*cssRule]*oRule
-	resolved int
-	dead     int
+	rules  []*oRule
+	byRule map[*cssRule]*oRule
 }
 
 var (
-	twVar      = regexp.MustCompile(`var\(\s*(--tw-[\w-]+)`)
-	attrExact  = regexp.MustCompile(`^\[([\w-]+)=["']?([^"'\]]*)["']?\]$`)
-	attrHead   = regexp.MustCompile(`^\[([\w-]+)`)
-	zeroCalc   = regexp.MustCompile(`calc\(((?:\d+\.?\d*|\.\d+)[a-z]+) \+ 0px\)`)
-	spaces     = regexp.MustCompile(`\s+`)
-	publicTw   = []string{"--tw-enter-", "--tw-exit-"}
-	layerRanks = func() map[string]int {
-		m := map[string]int{}
-		list := strings.TrimSuffix(strings.TrimPrefix(strings.TrimSpace(layerOrder), "@layer "), ";")
-		for i, n := range strings.Split(list, ",") {
-			m[strings.TrimSpace(n)] = i + 1
-		}
-		return m
-	}()
+	twName    = regexp.MustCompile(`--tw-[\w-]+`)
+	attrExact = regexp.MustCompile(`^\[([\w-]+)=["']?([^"'\]]*)["']?\]$`)
+	attrHead  = regexp.MustCompile(`^\[([\w-]+)`)
 )
 
 func simpleSelectors(s string) []string {
@@ -233,41 +206,6 @@ func disjointCore(a, b *oCompound) bool {
 	return false
 }
 
-func implies(a, b *oCompound) bool {
-	return a.pseudo == b.pseudo && impliesCore(a, b)
-}
-
-func impliesCore(a, b *oCompound) bool {
-	if b.tag != "" && a.tag != b.tag {
-		return false
-	}
-	for k := range b.pos {
-		if !a.pos[k] {
-			return false
-		}
-	}
-	for k := range b.neg {
-		if a.neg[k] {
-			continue
-		}
-		if m := attrExact.FindStringSubmatch(k); m != nil {
-			if v, ok := a.attr[m[1]]; ok && v != m[2] || a.neg["["+m[1]+"]"] {
-				continue
-			}
-		}
-		return false
-	}
-	for _, or := range b.ors {
-		if slices.ContainsFunc(a.ors, func(o oOr) bool { return o.raw == or.raw }) {
-			continue
-		}
-		if !slices.ContainsFunc(or.branches, func(br *oCompound) bool { return impliesCore(a, br) }) {
-			return false
-		}
-	}
-	return true
-}
-
 func specificity(sel string) [3]int {
 	var s [3]int
 	add := func(o [3]int) {
@@ -357,30 +295,19 @@ func specificity(sel string) [3]int {
 }
 
 func (o *optimizer) collect(root *cssRule, t *groupTable, ro bool) {
-	var walk func(r *cssRule, layer string, conds []string)
-	walk = func(r *cssRule, layer string, conds []string) {
+	var walk func(r *cssRule)
+	walk = func(r *cssRule) {
 		for _, it := range r.items {
 			if it.rule == nil {
 				continue
 			}
 			p := it.rule.prelude
 			switch {
-			case strings.HasPrefix(p, "@property "):
-				o.property(it.rule)
-			case strings.HasPrefix(p, "@keyframes"), strings.HasPrefix(p, "@font-face"):
-				for _, m := range twVar.FindAllStringSubmatch(it.rule.String(), -1) {
-					o.skip[m[1]] = true
-				}
-			case strings.HasPrefix(p, "@layer "):
-				name := strings.TrimSpace(strings.TrimPrefix(p, "@layer "))
-				if layer != "" {
-					name = layer + "." + name
-				}
-				walk(it.rule, name, conds)
+			case strings.HasPrefix(p, "@property "), strings.HasPrefix(p, "@keyframes"), strings.HasPrefix(p, "@font-face"):
 			case strings.HasPrefix(p, "@"):
-				walk(it.rule, layer, append(slices.Clone(conds), p))
+				walk(it.rule)
 			default:
-				or := &oRule{r: it.rule, parent: r, layer: layerRanks[layer], conds: conds, order: len(o.rules), ro: ro}
+				or := &oRule{r: it.rule, ro: ro}
 				for _, a := range splitTop(p, ',') {
 					c := newCompound()
 					subj := subjectCompound(a)
@@ -391,286 +318,13 @@ func (o *optimizer) collect(root *cssRule, t *groupTable, ro bool) {
 					if g, err := t.selectorGroup(a); err == nil {
 						rank = t.rank(g)
 					}
-					or.alts = append(or.alts, &oAlt{c: c, anc: strings.TrimSpace(strings.TrimSuffix(a, subj)), spec: specificity(a), rank: rank})
+					or.alts = append(or.alts, &oAlt{c: c, spec: specificity(a), rank: rank})
 				}
 				o.rules = append(o.rules, or)
 			}
 		}
 	}
-	walk(root, "", nil)
-}
-
-func (o *optimizer) property(r *cssRule) {
-	name := strings.TrimSpace(strings.TrimPrefix(r.prelude, "@property "))
-	var p oProp
-	inherits, syntax := true, ""
-	for _, it := range r.items {
-		k, v, _ := strings.Cut(it.decl, ":")
-		v = strings.TrimSpace(v)
-		switch strings.TrimSpace(k) {
-		case "inherits":
-			inherits = v != "false"
-		case "initial-value":
-			p.initial, p.has = v, true
-		case "syntax":
-			syntax = strings.Trim(v, `"'`)
-		}
-	}
-	p.typed = syntax != "*"
-	if syntax == "<length>" && p.initial == "0" {
-		p.initial = "0px"
-	}
-	if inherits {
-		o.skip[name] = true
-	}
-	o.props[name] = p
-}
-
-func declValue(d string) string {
-	_, v, _ := strings.Cut(d, ":")
-	return strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(v), "!important"))
-}
-
-func important(d string) bool { return strings.HasSuffix(d, "!important") }
-
-func wins(x *oRule, xa *oAlt, xd string, y *oRule, yd string) bool {
-	if important(xd) != important(yd) {
-		return important(xd)
-	}
-	return !important(xd) && beats(x, xa, y)
-}
-
-func (o *optimizer) index() {
-	o.defs = map[string][]*oRule{}
-	for _, r := range o.rules {
-		seen := map[string]bool{}
-		for _, it := range r.r.items {
-			p := declProp(it.decl)
-			if it.rule != nil || !strings.HasPrefix(p, "--tw-") {
-				continue
-			}
-			if seen[p] {
-				o.skip[p] = true
-			}
-			if !seen[p] {
-				o.defs[p] = append(o.defs[p], r)
-			}
-			seen[p] = true
-		}
-	}
-}
-
-func (r *oRule) decl(prop string) (string, bool) {
-	for i := len(r.r.items) - 1; i >= 0; i-- {
-		if it := r.r.items[i]; it.rule == nil && declProp(it.decl) == prop {
-			return it.decl, true
-		}
-	}
-	return "", false
-}
-
-func before(x, y *oRule, xa, ya *oAlt) bool {
-	return x.order < y.order && xa.rank >= 0 && xa.rank <= ya.rank
-}
-
-func beats(x *oRule, xa *oAlt, y *oRule) bool {
-	if x.layer == 0 || y.layer == 0 {
-		return false
-	}
-	if x.layer != y.layer {
-		return x.layer > y.layer
-	}
-	for _, ya := range y.alts {
-		if disjoint(xa.c, ya.c) {
-			continue
-		}
-		switch c := slices.Compare(xa.spec[:], ya.spec[:]); {
-		case c < 0, c == 0 && !before(y, x, ya, xa):
-			return false
-		}
-	}
-	return true
-}
-
-func impliesRule(r *oRule, a *oAlt, c *oRule, ca *oAlt) bool {
-	for _, cond := range c.conds {
-		if !slices.Contains(r.conds, cond) {
-			return false
-		}
-	}
-	return (ca.anc == "" || ca.anc == a.anc) && implies(a.c, ca.c)
-}
-
-func (o *optimizer) value(r *oRule, a *oAlt, v, prop, fallback string, hasFallback bool) (string, bool) {
-	type cand struct {
-		r *oRule
-		a *oAlt
-		d string
-	}
-	var cands, bases []cand
-	for _, c := range o.defs[v] {
-		d, _ := c.decl(v)
-		for _, ca := range c.alts {
-			if c == r && ca == a {
-				bases = []cand{{c, ca, d}}
-			} else if c != r && !disjoint(a.c, ca.c) {
-				cands = append(cands, cand{c, ca, d})
-			}
-		}
-	}
-	base, ok := "", false
-	if len(bases) == 0 {
-		for _, c := range cands {
-			if impliesRule(r, a, c.r, c.a) {
-				bases = append(bases, c)
-			}
-		}
-	}
-	for _, b := range bases {
-		if declValue(b.d) != declValue(bases[0].d) {
-			return "", false
-		}
-	}
-	switch p := o.props[v]; {
-	case len(bases) > 0:
-		base, ok = declValue(bases[0].d), true
-	case p.has:
-		base, ok = p.initial, true
-	case hasFallback:
-		base, ok = fallback, true
-	}
-	if !ok {
-		return "", false
-	}
-	own, _ := r.decl(prop)
-	for _, c := range cands {
-		if declValue(c.d) == base {
-			continue
-		}
-		if slices.ContainsFunc(bases, func(b cand) bool { return wins(b.r, b.a, b.d, c.r, c.d) }) {
-			continue
-		}
-		if other, has := c.r.decl(prop); has && wins(c.r, c.a, other, r, own) {
-			continue
-		}
-		return "", false
-	}
-	return base, true
-}
-
-func varRefs(value string) [][2]int {
-	var out [][2]int
-	for _, loc := range twVar.FindAllStringIndex(value, -1) {
-		depth, j := 0, loc[0]+3
-		for ; j < len(value); j++ {
-			if value[j] == '(' {
-				depth++
-			} else if value[j] == ')' {
-				if depth--; depth == 0 {
-					break
-				}
-			}
-		}
-		if len(out) > 0 && loc[0] < out[len(out)-1][1] {
-			continue
-		}
-		out = append(out, [2]int{loc[0], j + 1})
-	}
-	return out
-}
-
-func (o *optimizer) public(v string) bool {
-	return o.skip[v] || slices.ContainsFunc(publicTw, func(p string) bool { return strings.HasPrefix(v, p) })
-}
-
-func (o *optimizer) resolve() bool {
-	changed := false
-	for _, r := range o.rules {
-		if r.ro {
-			continue
-		}
-		for i, it := range r.r.items {
-			if it.rule != nil || !strings.Contains(it.decl, "var(--tw-") {
-				continue
-			}
-			prop, value := declProp(it.decl), declValue(it.decl)
-			refs := varRefs(value)
-			out := value
-			for k := len(refs) - 1; k >= 0; k-- {
-				ref := value[refs[k][0]:refs[k][1]]
-				name, fallback, hasFallback := strings.Cut(ref[4:len(ref)-1], ",")
-				name, fallback = strings.TrimSpace(name), strings.TrimSpace(fallback)
-				if _, registered := o.props[name]; !registered || o.public(name) || len(o.defs[name]) > 0 && (o.props[name].typed || strings.HasPrefix(prop, "--tw-") && !o.public(prop)) {
-					continue
-				}
-				val, ok := "", true
-				for n, a := range r.alts {
-					v, good := o.value(r, a, name, prop, fallback, hasFallback)
-					if !good || n > 0 && v != val {
-						ok = false
-						break
-					}
-					val = v
-				}
-				if !ok || hasFallback && val != fallback && strings.Contains(val, "var(--tw-") {
-					continue
-				}
-				head, tail := out[:refs[k][0]], out[refs[k][1]:]
-				if head != "" && !strings.ContainsRune(" (,", rune(head[len(head)-1])) {
-					val = " " + val
-				}
-				if tail != "" && !strings.ContainsRune(" ),", rune(tail[0])) {
-					val += " "
-				}
-				out = head + val + tail
-			}
-			out = strings.TrimSpace(spaces.ReplaceAllString(zeroCalc.ReplaceAllString(out, "$1"), " "))
-			if out == value || out == "" {
-				continue
-			}
-			r.r.items[i].decl = prop + ": " + out
-			o.resolved++
-			changed = true
-		}
-	}
-	return changed
-}
-
-func (o *optimizer) sweep() bool {
-	readers := map[string][]*oRule{}
-	for _, r := range o.rules {
-		seen := map[string]bool{}
-		for _, it := range r.r.items {
-			if it.rule != nil {
-				continue
-			}
-			for _, m := range twVar.FindAllStringSubmatch(it.decl, -1) {
-				if !seen[m[1]] {
-					readers[m[1]] = append(readers[m[1]], r)
-				}
-				seen[m[1]] = true
-			}
-		}
-	}
-	changed := false
-	for v, rules := range o.defs {
-		if _, registered := o.props[v]; !registered || o.public(v) {
-			continue
-		}
-		for _, r := range rules {
-			if r.ro || slices.ContainsFunc(readers[v], func(q *oRule) bool {
-				return slices.ContainsFunc(q.alts, func(qa *oAlt) bool {
-					return slices.ContainsFunc(r.alts, func(ra *oAlt) bool { return !disjoint(qa.c, ra.c) })
-				})
-			}) {
-				continue
-			}
-			r.r.items = slices.DeleteFunc(r.r.items, func(it cssItem) bool { return it.rule == nil && declProp(it.decl) == v })
-			o.dead++
-			changed = true
-		}
-	}
-	return changed
+	walk(root)
 }
 
 func dedupeDecls(r *cssRule) {
@@ -818,41 +472,36 @@ func (o *optimizer) mergeEqual(parent *cssRule) int {
 	return n
 }
 
-func optimizePass(tree, kit *cssRule, t *groupTable) [4]int {
-	o := &optimizer{props: map[string]oProp{}, skip: map[string]bool{}, byRule: map[*cssRule]*oRule{}}
-	o.collect(tree, t, false)
-	o.collect(kit, t, true)
-	for range 50 {
-		o.index()
-		r := o.resolve()
-		o.index()
-		if s := o.sweep(); !r && !s {
-			break
-		}
-	}
-	o.index()
+func dropProperties(tree *cssRule, kitCSS string) int {
 	used := map[string]bool{}
-	for _, r := range o.rules {
-		for _, it := range r.r.items {
+	for _, m := range twName.FindAllString(kitCSS, -1) {
+		used[m] = true
+	}
+	var walk func(r *cssRule)
+	walk = func(r *cssRule) {
+		for _, it := range r.items {
 			if it.rule == nil {
-				for _, m := range twVar.FindAllStringSubmatch(it.decl, -1) {
-					used[m[1]] = true
+				for _, m := range twName.FindAllString(it.decl, -1) {
+					used[m] = true
 				}
+			} else if !strings.HasPrefix(it.rule.prelude, "@property ") {
+				walk(it.rule)
 			}
 		}
 	}
-	dropped := 0
+	walk(tree)
+	n := len(tree.items)
 	tree.items = slices.DeleteFunc(tree.items, func(it cssItem) bool {
-		if it.rule == nil || !strings.HasPrefix(it.rule.prelude, "@property --tw-") {
-			return false
-		}
-		v := strings.TrimSpace(strings.TrimPrefix(it.rule.prelude, "@property "))
-		if used[v] || len(o.defs[v]) > 0 || o.public(v) {
-			return false
-		}
-		dropped++
-		return true
+		return it.rule != nil && strings.HasPrefix(it.rule.prelude, "@property --tw-") && !used[strings.TrimSpace(strings.TrimPrefix(it.rule.prelude, "@property "))]
 	})
+	return n - len(tree.items)
+}
+
+func optimizePass(tree, kit *cssRule, kitCSS string, t *groupTable) [2]int {
+	o := &optimizer{byRule: map[*cssRule]*oRule{}}
+	o.collect(tree, t, false)
+	o.collect(kit, t, true)
+	dropped := dropProperties(tree, kitCSS)
 	dedupeDecls(tree)
 	pruneEmpty(tree, true)
 	for _, r := range o.rules {
@@ -869,7 +518,7 @@ func optimizePass(tree, kit *cssRule, t *groupTable) [4]int {
 		}
 	}
 	dedupeDecls(tree)
-	return [4]int{o.resolved, o.dead, dropped, merged}
+	return [2]int{dropped, merged}
 }
 
 func (g *gen) optimize(tree *cssRule, kitCSS string, t *groupTable) error {
@@ -877,19 +526,17 @@ func (g *gen) optimize(tree *cssRule, kitCSS string, t *groupTable) error {
 	if err != nil {
 		return fmt.Errorf("kit CSS: %w", err)
 	}
-	var sum [4]int
+	var sum [2]int
 	for range 20 {
-		n := optimizePass(tree, kit, t)
-		if n == [4]int{} {
+		n := optimizePass(tree, kit, kitCSS, t)
+		if n == [2]int{} {
 			break
 		}
 		for i := range sum {
 			sum[i] += n[i]
 		}
 	}
-	g.note("Tailwind variable resolved (no other rule changes it on the same element)", "%d declarations", sum[0])
-	g.note("Tailwind variable definition removed (nothing reads it on the same element)", "%d definitions", sum[1])
-	g.note("@property removed (the variable has no definition and no read)", "%d rules", sum[2])
-	g.note("rules with the same selector, or the same condition and part, merged (no rule between them sets a related property on the same element with the same specificity)", "%d rules", sum[3])
+	g.note("@property removed (the variable has no definition and no read)", "%d rules", sum[0])
+	g.note("rules with the same selector, or the same condition and part, merged (no rule between them sets a related property on the same element with the same specificity)", "%d rules", sum[1])
 	return nil
 }

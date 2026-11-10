@@ -144,7 +144,7 @@ Put overrides in `app.css` after the kit files, without a layer.
 - Change tokens, not properties. `.brand { --primary: oklch(0.55 0.2 260); --primary-foreground: oklch(0.985 0 0) }` on a button keeps the kit hover, focus, and dark states. A `background-color` on the button also wins, but then the hover shows no change.
 - A wider dialog or sheet: set `max-width` (`.wide { max-width: 50rem }` on `dialog-content`). The kit sets `max-width`, so a `width` alone does not make it wider.
 - Fonts: set `--font-sans` and `--font-mono` on `:root`. The body, the controls, and the popups use them.
-- Tailwind or other layered CSS: load a first stylesheet that has only `@layer theme, base, clanker, components, utilities;`. Without it, layers that come after the kit layers win over the kit: the Tailwind reset in `base` removes the background and the radius of the buttons. A Tailwind utility on a kit part sets its own property and does not compose with the kit value (`shadow-md` on a part with a kit ring replaces the ring); the kit keeps only the `--tw-enter-*` and `--tw-exit-*` variables.
+- Tailwind or other layered CSS: load a first stylesheet that has only `@layer theme, base, clanker, components, utilities;`. Without it, layers that come after the kit layers win over the kit: the Tailwind reset in `base` removes the background and the radius of the buttons.
 - Kit `!important` declarations (for example the 12 px icon in a badge) win over `app.css`, also over `!important` in `app.css`. Put `@layer app-important, clanker;` in that first stylesheet, and put the override in `@layer app-important { ... }` with `!important`.
 
 ### Minified and group files

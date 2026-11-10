@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -28,63 +29,58 @@ func optimizeFile(t *testing.T, css, kit string) string {
 	return lic + "\n" + layerOrder + strings.TrimSuffix(tree.String(), "\n") + "\n" + kit
 }
 
-func TestOptimize(t *testing.T) {
+var innerVar = regexp.MustCompile(`var\((--[\w-]+)\s*(?:,([^()]*))?\)`)
+
+func substitute(value string, vars map[string]string) string {
+	for innerVar.MatchString(value) {
+		value = innerVar.ReplaceAllStringFunc(value, func(ref string) string {
+			m := innerVar.FindStringSubmatch(ref)
+			if v, ok := vars[m[1]]; ok {
+				return v
+			}
+			return strings.TrimSpace(m[2])
+		})
+	}
+	return strings.Join(strings.Fields(value), " ")
+}
+
+func TestOptimizeComposition(t *testing.T) {
 	prop := func(name, more string) string {
 		return "@property " + name + " {\n  syntax: \"*\";\n  inherits: false;" + more + "\n}\n"
 	}
-	in := "/*! lic */\n" + layerOrder + `@layer clanker.components {
-  [data-slot="button"] {
-    --tw-leading: 1;
-    line-height: 1;
-    --tw-shadow: 0 1px red;
-    box-shadow: var(--tw-ring-shadow), var(--tw-shadow);
-    --tw-duration: .1s;
-    animation: enter var(--tw-duration, .2s)var(--tw-ease, ease)var(--tw-gone,);
-    --tw-enter-scale: .95;
-  }
-  [data-slot="button"]:focus-visible {
-    --tw-ring-shadow: 0 0 0 3px blue;
-    box-shadow: var(--tw-ring-shadow), var(--tw-shadow);
-  }
-  [data-slot="button"][data-variant="ghost"] {
-    --tw-shadow: 0 0 #0000;
-  }
-  [data-slot="badge"] {
-    --tw-shadow: 0 2px red;
-    box-shadow: var(--tw-ring-shadow), var(--tw-shadow);
-  }
-  [data-slot="card"] {
-    --tw-shadow: 0 3px red;
-    box-shadow: var(--tw-ring-shadow), var(--tw-shadow);
-  }
-}
-` + prop("--tw-leading", "") + prop("--tw-shadow", "\n  initial-value: 0 0 #0000;") + prop("--tw-ring-shadow", "\n  initial-value: 0 0 #0000;") + prop("--tw-duration", "") + prop("--tw-ease", "") + prop("--tw-gone", "") + prop("--tw-enter-scale", "\n  initial-value: 1;")
-	kit := "@layer clanker.components {\n  [data-x] > [data-slot=\"card\"] {\n    --tw-shadow: 0 4px red;\n  }\n}\n"
-	want := "/*! lic */\n" + layerOrder + `@layer clanker.components {
-  [data-slot="button"] {
-    line-height: 1;
-    --tw-shadow: 0 1px red;
-    box-shadow: 0 0 #0000, var(--tw-shadow);
-    animation: enter .1s ease;
-    --tw-enter-scale: .95;
-  }
-  [data-slot="button"]:focus-visible {
-    box-shadow: 0 0 0 3px blue, var(--tw-shadow);
-  }
-  [data-slot="button"][data-variant="ghost"] {
-    --tw-shadow: 0 0 #0000;
-  }
-  [data-slot="badge"] {
-    box-shadow: 0 0 #0000, 0 2px red;
-  }
-  [data-slot="card"] {
-    --tw-shadow: 0 3px red;
-    box-shadow: 0 0 #0000, var(--tw-shadow);
-  }
-}
-` + prop("--tw-shadow", "\n  initial-value: 0 0 #0000;") + prop("--tw-enter-scale", "\n  initial-value: 1;")
-	if got := optimizeFile(t, in+kit, kit); got != want+kit {
-		t.Errorf("got:\n%s\nwant:\n%s", got, want+kit)
+	null := "\n  initial-value: 0 0 #0000;"
+	stack := "var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)"
+	focus := "  [data-slot=\"button\"]:focus-visible {\n    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);\n    box-shadow: " + stack + ";\n  }\n"
+	head := "/*! lic */\n" + layerOrder + "@layer clanker.components {\n  [data-slot=\"button\"] {\n    --tw-duration: .1s;\n    transition-duration: .1s;\n"
+	props := prop("--tw-shadow", null) + prop("--tw-ring-shadow", null) + prop("--tw-ring-inset", "") + prop("--tw-ring-color", "") + prop("--tw-ring-offset-width", "\n  initial-value: 0px;") +
+		prop("--tw-ring-offset-shadow", null) + prop("--tw-inset-shadow", null) + prop("--tw-inset-ring-shadow", null) + prop("--tw-duration", "")
+	in := head + "  }\n" + focus + "  [data-slot=\"button\"] {\n    animation: enter var(--tw-duration, .2s);\n  }\n}\n" + prop("--tw-gone", "") + props
+	want := head + "    animation: enter var(--tw-duration, .2s);\n  }\n" + focus + "}\n" + props
+	got := optimizeFile(t, in, "")
+	if got != want {
+		t.Fatalf("got:\n%s\nwant:\n%s", got, want)
+	}
+	tree, err := parseCSS(strings.SplitN(got, layerOrder, 2)[1])
+	if err != nil {
+		t.Fatal(err)
+	}
+	vars := map[string]string{"--tw-shadow": "0 4px 6px -1px #0000001a", "--tw-ring-offset-width": "0px"}
+	for _, name := range []string{"--tw-ring-shadow", "--tw-ring-offset-shadow", "--tw-inset-shadow", "--tw-inset-ring-shadow"} {
+		vars[name] = "0 0 #0000"
+	}
+	kit := ""
+	for _, it := range tree.items[0].rule.items[1].rule.items {
+		if p := declProp(it.decl); strings.HasPrefix(p, "--tw-") {
+			vars[p] = strings.TrimSpace(strings.TrimPrefix(it.decl, p+":"))
+		} else {
+			kit = strings.TrimSpace(strings.TrimPrefix(it.decl, p+":"))
+		}
+	}
+	both := "0 0 #0000, 0 0 #0000, 0 0 #0000, 0 0 0 calc(3px + 0px) currentcolor, 0 4px 6px -1px #0000001a"
+	for _, boxShadow := range []string{stack, kit} {
+		if got := substitute(boxShadow, vars); got != both {
+			t.Errorf("shadow-md on a part with a kit ring: box-shadow %q, want %q", got, both)
+		}
 	}
 }
 

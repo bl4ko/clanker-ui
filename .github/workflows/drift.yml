@@ -1,0 +1,75 @@
+name: behavior-drift
+
+on:
+  schedule:
+    - cron: "41 4 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+env:
+  # renovate: datasource=pypi depName=playwright
+  PLAYWRIGHT_VERSION: "1.64.1"
+
+jobs:
+  drift:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.7"
+          python-version: "3.13"
+          enable-cache: false
+      - name: Install browsers
+        run: uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" playwright install --with-deps chromium firefox
+      - name: Record and compare
+        run: |
+          set +e
+          OUT="$RUNNER_TEMP/drift"
+          uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I -u tools/behavior drift --engines chromium,firefox --out "$OUT"
+          code=$?
+          if [ -f "$OUT/drift.md" ]; then cat "$OUT/drift.md" >> "$GITHUB_STEP_SUMMARY"; fi
+          exit "$code"
+      - name: Open or update issues
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          json="$RUNNER_TEMP/drift/drift.json"
+          [ -f "$json" ] || exit 0
+          issues="$RUNNER_TEMP/issues.json"
+          body="$RUNNER_TEMP/body.md"
+          gh issue list --repo "$GITHUB_REPOSITORY" --state all --limit 1000 --json number,state,body > "$issues"
+          jq -c '.components[] | select(.status == "drift")' "$json" | while read -r c; do
+            title=$(jq -r .title <<< "$c")
+            marker=$(jq -r .marker <<< "$c")
+            fp="<!-- behavior-drift-fingerprint:$(jq -r .fingerprint <<< "$c") -->"
+            jq -r .body <<< "$c" > "$body"
+            open=$(jq -r --arg m "$marker" 'map(select(.state == "OPEN" and ((.body // "") | contains($m)))) | .[0].number // empty' "$issues")
+            if [ -n "$open" ]; then
+              gh issue edit "$open" --repo "$GITHUB_REPOSITORY" --body-file "$body"
+              echo "updated #$open: $title"
+            elif jq -e --arg f "$fp" 'any(.[]; (.body // "") | contains($f))' "$issues" > /dev/null; then
+              echo "closed issue has the same drift: $title"
+            else
+              gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body-file "$body"
+            fi
+          done
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: behavior-drift
+          path: ${{ runner.temp }}/drift
+          retention-days: 30
+          if-no-files-found: ignore

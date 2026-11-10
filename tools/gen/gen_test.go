@@ -493,6 +493,12 @@ func TestRulesOrder(t *testing.T) {
 	if len(got) != 3 || got[1].cond != ":not("+cond+")" || !slices.Equal(got[2].classes, []string{"rounded-md"}) {
 		t.Errorf("a later variant class wins where it applies: %+v", got)
 	}
+	g.props = map[string][]string{"size-6": {"width", "height"}, "w-full": {"width"}}
+	p.layers = []layer{{classes: []string{"size-6"}}, {cond: cond, classes: []string{"w-full"}}}
+	got = g.rules(p, map[string]string{"size-6": "width", "w-full": "width"}, nil)
+	if len(got) != 2 || !slices.Equal(got[0].classes, []string{"size-6"}) || !slices.Equal(got[1].classes, []string{"w-full"}) {
+		t.Errorf("a later variant class that sets fewer properties does not remove the base class: %+v", got)
+	}
 }
 
 func TestStaleSourceFixes(t *testing.T) {

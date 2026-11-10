@@ -21,6 +21,7 @@ from playwright.sync_api import sync_playwright
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 SITE = "https://ui.shadcn.com"
 LOCAL = "http://parity.invalid"
+REF = "http://shadcn-ref.invalid"
 FONT = "*, *::before, *::after { font-family: Arial, Helvetica, sans-serif !important; }"
 PROPS = [
     "display", "position", "top", "right", "bottom", "left", "width", "height", "min-width", "min-height", "max-width", "max-height",
@@ -637,19 +638,50 @@ PREVIEW_TEXTS = """() => [...document.querySelectorAll('[data-slot="preview"]')]
 class Docs:
     def __init__(self, browser, args):
         self.ctx = browser.new_context(viewport={"width": 1280, "height": 800}, color_scheme="light", reduced_motion="no-preference")
-        self.ctx.route("**/*", lambda r: r.continue_() if r.request.url.startswith(SITE + "/") else r.abort())
+        self.ctx.route("**/*", self.serve)
         self.page = self.ctx.new_page()
         self.url = None
         self.meta = {}
+        self.ref = pathlib.Path(args.ref) if getattr(args, "ref", "") else None
+        self.ref_style = None
         self.nova_page = None
         self.preview_styles = []
 
+    def serve(self, route):
+        url = route.request.url
+        if url.startswith(SITE + "/"):
+            return route.continue_()
+        if not url.startswith(REF + "/") or not self.ref_style:
+            return route.abort()
+        path = url[len(REF) + 1:].split("?")[0].split("#")[0]
+        dist = self.ref / self.ref_style / "dist"
+        f = (dist / path).resolve()
+        if path and f.is_file() and f.is_relative_to(dist.resolve()):
+            ctype = {".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp"}.get(f.suffix, "application/octet-stream")
+            return route.fulfill(status=200, body=f.read_bytes(), headers={"content-type": ctype})
+        if "." in path.rsplit("/", 1)[-1]:
+            try:
+                return route.fulfill(response=route.fetch(url=SITE + "/" + url[len(REF) + 1:]))
+            except Exception:
+                return route.abort()
+        return route.fulfill(status=200, body=(dist / "index.html").read_bytes(), headers={"content-type": "text/html; charset=utf-8"})
+
+    def ref_meta(self):
+        m = json.loads((self.ref / self.ref_style / "manifest.json").read_text())
+        return {"reference": "app", "style": m.get("style"), "shadcn": m.get("shadcn"), "cli": m.get("cli"), "registry": m.get("registry"), "date": m.get("date", "")}
+
     def load(self, comp, view=None):
         path = view or f"/docs/components/base/{comp}"
-        resp = self.page.goto(SITE + path, wait_until="networkidle", timeout=120000)
-        if resp and not self.meta and (not view or view.startswith(NOVA_PAGE)):
+        ref = self.ref is not None and view is not None and view.startswith(NOVA_PAGE)
+        if ref:
+            style = re.search(r"[?&]ref=([a-z]+)", view)
+            self.ref_style = style.group(1) if style else "nova"
+        resp = self.page.goto((REF if ref else SITE) + path, wait_until="networkidle", timeout=120000)
+        if ref:
+            self.meta.setdefault("ref", self.ref_meta())
+        elif resp and "deployment" not in self.meta and (not view or view.startswith(NOVA_PAGE)):
             m = re.search(r'data-dpl-id="([\w-]+)"', resp.text())
-            self.meta = {"deployment": m.group(1) if m else "", "etag": resp.headers.get("etag", ""), "age": resp.headers.get("age", ""), "url": resp.url}
+            self.meta.update({"deployment": m.group(1) if m else "", "etag": resp.headers.get("etag", ""), "age": resp.headers.get("age", ""), "url": resp.url})
         self.page.add_style_tag(content=FONT)
         scope = '[data-slot="preview"]'
         if view and view.startswith(NOVA_PAGE):
@@ -1056,7 +1088,7 @@ def measure_docs(comp, docs, args, examples):
         name = view.rstrip("/").split("/")[-1] if view else None
         style = examples.style(name) if view else None
         out += measure_view(comp, docs, args, view, f"v{k + 1}-" if view else "", len(out), examples, style, name if name in examples.text else None)
-    page = nova_page(comp, out, examples)
+    page = nova_page(comp, out, examples, docs.ref is not None)
     if page:
         docs.nova_page = page
         out += measure_view(comp, docs, args, page, "nova-", len(out), examples, "nova", f"{comp}-example")
@@ -1075,21 +1107,23 @@ def preset_code(style):
     return "b" + (out or "0")
 
 
-def style_page(comp, style, examples):
-    return f"{NOVA_PAGE}{comp}-example?preset={preset_code(style)}" if f"{comp}-example" in examples.nova else None
+def style_page(comp, style, examples, ref=False):
+    if f"{comp}-example" not in examples.nova:
+        return None
+    return f"{NOVA_PAGE}{comp}-example?ref={style}" if ref else f"{NOVA_PAGE}{comp}-example?preset={preset_code(style)}"
 
 
 def measure_style_page(comp, docs, args, examples, style):
-    page = style_page(comp, style, examples)
+    page = style_page(comp, style, examples, docs.ref is not None)
     docs.preview_styles, docs.preview_names, docs.nova_page = [], [], page
     out = measure_view(comp, docs, args, page, f"{style}-", 0, examples, style, f"{comp}-example")
     docs.meta["date"] = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
     return out
 
 
-def nova_page(comp, results, examples):
+def nova_page(comp, results, examples, ref=False):
     other = any(st != "nova" for r in results for st in r["cap"].get("styles") or [])
-    return f"{NOVA_PAGE}{comp}-example?style=nova" if other and f"{comp}-example" in examples.nova else None
+    return f"{NOVA_PAGE}{comp}-example?{'ref' if ref else 'style'}=nova" if other and f"{comp}-example" in examples.nova else None
 
 
 def root_names(roots, preview_names, view_name=None):
@@ -1503,6 +1537,7 @@ def main():
     ap.add_argument("--quick", action="store_true", help="rest and open only, no hover, press, or focus")
     ap.add_argument("--drop-slot", default="", help="self-test: remove every generated rule for this data-slot before measuring")
     ap.add_argument("--page-style", default="", help="measure only the example pages /preview/base/<name>-example?preset=<code of the style> of a ported style (no docs page)")
+    ap.add_argument("--ref", default="", help="directory of the reference apps (tools/parity/refapp.py): the example pages load from <ref>/<style>/dist instead of ui.shadcn.com")
     ap.add_argument("--examples", default="", help="cache of the pinned apps/v4/examples/base files (default: <src>/parity-examples)")
     args = ap.parse_args()
     if not args.src:
@@ -1530,6 +1565,10 @@ def main():
         if args.page_style not in STYLES:
             raise SystemExit(f"--page-style {args.page_style}: not a ported style ({', '.join(STYLES)})")
         comps = [c for c in comps if style_page(c, args.page_style, examples)]
+    if args.ref:
+        for st in [args.page_style] if args.page_style else ["nova"]:
+            if not (pathlib.Path(args.ref) / st / "dist" / "index.html").exists():
+                raise SystemExit(f"--ref {args.ref}: no reference app for {st} (tools/parity/refapp.py --styles {st})")
     with sync_playwright() as pw:
         browser = getattr(pw, args.engine).launch()
         for comp in comps:

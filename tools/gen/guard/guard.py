@@ -349,7 +349,8 @@ class Guard:
         a = self.a
         todo = [p for p in (docs_pages(a.base_url) if a.docs else pages(a.root)) if re.search(a.pages, p)]
         index, count = (int(x) for x in a.shard.split("/"))
-        todo = todo[index - 1 :: count]
+        todo = todo[index - 1 :: count][a.skip :]
+        start, left = time.time(), 0
         out, failed = [], self.static()
         for line in failed:
             print("STATIC", line, flush=True)
@@ -357,7 +358,10 @@ class Guard:
             browser = getattr(p, a.browser).launch()
             ctx = browser.new_context()
             ctx.route("**/__guard/**", self.serve)
-            for url in todo:
+            for i, url in enumerate(todo):
+                if a.budget and time.time() - start > a.budget:
+                    left = len(todo) - i
+                    break
                 page = ctx.new_page()
                 cdp = ctx.new_cdp_session(page) if a.browser == "chromium" else None
                 if cdp:
@@ -378,15 +382,15 @@ class Guard:
                     print("  ", d["phase"], d.get("state", "base"), d["config"], d["n"], json.dumps(d["out"][:2]), flush=True)
             browser.close()
         if a.out:
-            a.out.write_text(json.dumps({"browser": a.browser, "styles": a.styles, "tier": a.tier, "min": a.min, "groups": a.groups, "pages": out}, indent=1))
-        print(f"{a.browser}: {len(todo)} pages, {sum(r.get('sweeps', 0) for r in out)} comparisons, {sum(r.get('states', 0) for r in out)} states, {len(failed)} failed", flush=True)
+            a.out.write_text(json.dumps({"browser": a.browser, "styles": a.styles, "tier": a.tier, "min": a.min, "groups": a.groups, "left": left, "pages": out}, indent=1))
+        print(f"{a.browser}: {len(out)} pages, {left} left, {sum(r.get('sweeps', 0) for r in out)} comparisons, {sum(r.get('states', 0) for r in out)} states, {len(failed)} failed", flush=True)
         if a.expect:
             seen = {(d["config"].split("/")[0], p[0]) for r in out for d in r["diffs"] for o in d["out"] for p in o["props"]}
             want = {tuple(e.split(":", 1)) for e in a.expect}
             missing, extra = sorted(want - seen), sorted({s for s, _ in seen} - {s for s, _ in want})
             print(f"expect: {len(want) - len(missing)} of {len(want)} found, missing {missing}, other styles with a difference {extra}", flush=True)
             return 1 if missing or extra or any("error" in r for r in out) else 0
-        return 1 if failed else 0
+        return 1 if failed else 3 if left else 0
 
 
 def main():
@@ -399,6 +403,8 @@ def main():
     ap.add_argument("--styles", default=",".join(STYLES), type=lambda s: s.split(","))
     ap.add_argument("--pages", default=".")
     ap.add_argument("--shard", default="1/1")
+    ap.add_argument("--skip", type=int, default=0)
+    ap.add_argument("--budget", type=int, default=0)
     ap.add_argument("--tier", type=int, default=1, choices=(0, 1, 2))
     ap.add_argument("--big", type=int, default=1500)
     ap.add_argument("--min", action="store_true")

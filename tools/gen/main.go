@@ -109,6 +109,12 @@ func main() {
 		}
 		return
 	}
+	if len(os.Args) > 1 && os.Args[1] == "stamp" {
+		if err := stampMain(os.Args[2:]); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
 	if len(os.Args) > 1 && os.Args[1] == "catalog" {
 		if err := catalogMain(os.Args[2:]); err != nil {
 			log.Fatal(err)

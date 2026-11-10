@@ -4,7 +4,7 @@ Reference for the tools, the dev server, and the tests. Start with [CONTRIBUTING
 
 ## Comments and license lines
 
-No comments anywhere in the repo. The only exception is the first-line license comment in each kit file. It names the third-party parts of the file and `THIRD_PARTY_NOTICES`. `go test` checks the line of each kit file and of each `dist/` file (esbuild keeps `/*!` comments):
+No comments anywhere in the repo. The only exception is the first-line license comment in each kit file. It names the third-party parts of the file and `THIRD_PARTY_NOTICES`. `go test` checks the line of each kit file and of each `dist/` file (`dist` copies the line of the source file and minifies only the code after it). The files in git have no version; `release.yml` stamps the release copies with `go run ./tools/gen stamp -version X.Y.Z DIR...` (`/*! clanker-ui vX.Y.Z | MIT | ...`):
 
 ```text
 /*! clanker-ui | MIT | includes shadcn/ui (MIT, shadcn) and Lucide icons (ISC); see THIRD_PARTY_NOTICES */

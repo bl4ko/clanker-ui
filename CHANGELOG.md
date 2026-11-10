@@ -6,12 +6,19 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ## Unreleased
 
+### Changed
+
+- Smaller kit CSS with the same computed styles: `dist/clanker-ui.min.css` 633,913 to 599,236 bytes (gzip 58,092 to 55,841, brotli 40,356 to 38,985), `dist/clanker-ui-core.min.css` 90,748 to 87,543 bytes, and the same for the other styles. The generator merges rules with the same selector and `@media` blocks with the same condition and parts where the cascade order permits, and drops `@property` rules that nothing uses. All `--tw-*` definitions and reads stay, so a Tailwind utility on a kit part composes with the kit value as before. `tools/gen/guard` compares every computed style of the old and the new CSS in Chromium, Firefox, and WebKit.
+
+## 0.3.0 - 2026-11-10
+
 ### Breaking
 
 - `calendar` and `date-picker` move from the `chat` group to the `overlays` group, so a form with a date picker needs only `forms` and `overlays`. The one-file set does not change. To upgrade with group files: load `clanker-ui-overlays.min.css` and `.js` (and `forms` for the date picker) instead of `chat` for these components.
 
 ### Added
 
+- Each kit and `dist/` file of a release names its version in the first-line license comment: `/*! clanker-ui v0.3.0 | MIT | ...`. `head -n 1 <file>` shows which release a copied file is from. The files in the repository have no version.
 - Parity of the Luma, Lyra, Maia, Mira, Sera, and Vega styles against the live shadcn preview of each style (`tools/parity --page-style`, `known-<style>.tsv`).
 - Calendar: `data-month-format="long"` shows long month names in the month dropdown, like the shadcn `calendar-custom-days` example (#91).
 - Rhea style: `clanker-ui-rhea.css` (and `dist/clanker-ui-rhea.min.css`, `dist/clanker-ui-rhea-<group>.min.css`) is the kit CSS generated from the shadcn `style-rhea.css`. Load it instead of `clanker-ui.css`; markup and JavaScript are the same. Nova stays the default and does not change. The catalog lists the styles in `files.styles`.
@@ -63,7 +70,6 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Changed
 
-- Smaller kit CSS with the same computed styles: `dist/clanker-ui.min.css` 633,913 to 599,236 bytes (gzip 58,092 to 55,841, brotli 40,356 to 38,985), `dist/clanker-ui-core.min.css` 90,748 to 87,543 bytes, and the same for the other styles. The generator merges rules with the same selector and `@media` blocks with the same condition and parts where the cascade order permits, and drops `@property` rules that nothing uses. All `--tw-*` definitions and reads stay, so a Tailwind utility on a kit part composes with the kit value as before. `tools/gen/guard` compares every computed style of the old and the new CSS in Chromium, Firefox, and WebKit.
 - Chart: in RTL a vertical bar, line, or area chart reverses the category axis (the first category at the right) and puts the value axis on the right, like the shadcn `chart-rtl` example; ArrowLeft goes to the next category, as Recharts (#82).
 - Progress: `progress-value` and `aria-valuetext` use `Intl.NumberFormat` with `style: "percent"` in the nearest `lang`, like Base UI `Progress.Value` (#84).
 - `clanker-ui-a11y.css`: the text of destructive buttons and badges is `--destructive` mixed with 25 % `--foreground`, 4.5:1 on the tinted background (shadcn 3.83:1 in light). Blocks have no `empty-region` or `low-contrast` warning: the `detail` block has a Files card and 4 activity rows, the `overlay-form` block has tags and a Next meeting card, and the `form` summary is sticky. The `card-grid` search is the first control of the toolbar, so it takes the first row on phones.

@@ -61,7 +61,8 @@ jobs:
           cp "${kit[@]}" LICENSE THIRD_PARTY_NOTICES "$stage/"
           cp -R dist "$stage/"
           cp -R skills/clanker-ui "$stage/skills/"
-          cp "${kit[@]}" dist/* "$out/"
+          go run ./tools/gen stamp -version "$version" "$stage" "$stage/dist" > /dev/null
+          (cd "$stage" && cp "${kit[@]}" dist/* "$out/")
           epoch=$(git log -1 --format=%ct)
           chmod -R u=rwX,go=rX "$stage"
           find "$stage" -exec touch -h -d "@$epoch" {} +

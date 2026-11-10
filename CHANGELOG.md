@@ -12,6 +12,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Added
 
+- Behavior drift check: `tools/behavior drift` records the live shadcn pages again and lists the behavior changes against the committed references (a difference counts only when two records have it), and the weekly `behavior-drift` workflow opens one issue `behavior drift: <component>` per changed component.
 - Parity of the Luma, Lyra, Maia, Mira, Sera, and Vega styles against the live shadcn preview of each style (`tools/parity --page-style`, `known-<style>.tsv`).
 - Calendar: `data-month-format="long"` shows long month names in the month dropdown, like the shadcn `calendar-custom-days` example (#91).
 - Rhea style: `clanker-ui-rhea.css` (and `dist/clanker-ui-rhea.min.css`, `dist/clanker-ui-rhea-<group>.min.css`) is the kit CSS generated from the shadcn `style-rhea.css`. Load it instead of `clanker-ui.css`; markup and JavaScript are the same. Nova stays the default and does not change. The catalog lists the styles in `files.styles`.

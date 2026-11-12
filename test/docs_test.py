@@ -156,7 +156,15 @@ def check_docs_sidebar_scroll_restore(t):
         t.skip("the docs sidebar shows from 1024 px")
     page = t.page
     content = page.locator("[data-docs-sidebar-content]")
-    stored = content.evaluate("el => { el.scrollTop = 900; return el.scrollTop }")
+    stored = content.evaluate("""async el => {
+      el.scrollTop = 400
+      const step = document.createElement("div")
+      step.style.height = "0.5px"
+      el.firstElementChild.prepend(step)
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+      el.scrollTop = 900
+      return el.scrollTop
+    }""")
     assert stored > 0
     page.wait_for_function("n => JSON.parse(sessionStorage.getItem('docs-sidebar-scroll') || '{}').scrollTop === n", arg=stored)
     href = page.evaluate("""() => {
@@ -178,16 +186,16 @@ def check_docs_sidebar_scroll_restore(t):
     old_frames = [f for f in frames if f[0] != href]
     new_frames = [f for f in frames if f[0] == href]
     assert old_frames and new_frames, frames
-    assert {f[1] for f in frames} == {stored}, frames
+    assert all(abs(f[1] - stored) < 1 for f in frames), (stored, frames)
     assert {f[2] for f in new_frames} == {href}, new_frames
-    assert content.evaluate("el => el.scrollTop") == stored
+    assert abs(content.evaluate("el => el.scrollTop") - stored) < 1
     assert page.locator('[data-docs="sidebar"] [aria-current="page"]').first.get_attribute("href") == href
     t.docs("/docs/components/tooltip")
     assert active_visible(page)
     top = content.evaluate("el => el.scrollTop")
-    assert top != stored
+    assert abs(top - stored) >= 1
     page.reload(wait_until="load")
-    assert content.evaluate("el => el.scrollTop") == top
+    assert abs(content.evaluate("el => el.scrollTop") - top) < 1
 
 
 def check_docs_scroll_fade(t):

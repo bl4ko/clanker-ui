@@ -387,7 +387,8 @@
       for (const parent of all) {
         const d = cs(parent).display
         if (!/grid|flex/.test(d) || d.includes("flex") && /column/.test(cs(parent).flexDirection) || !vis(parent)) continue
-        const items = [...parent.children].filter(el => vis(el) && !/absolute|fixed|sticky/.test(cs(el).position) && box(el).width >= 120 && /normal|stretch|start/.test(cs(el).alignSelf === "auto" ? cs(parent).alignItems : cs(el).alignSelf))
+        const align = el => (cs(el).alignSelf === "auto" ? cs(parent).alignItems : cs(el).alignSelf)
+        const items = [...parent.children].filter(el => vis(el) && !/absolute|fixed|sticky/.test(cs(el).position) && box(el).width >= 120 && /normal|stretch|start/.test(align(el)))
         const rows = []
         for (const el of items) {
           const r = box(el)
@@ -416,7 +417,9 @@
           })
           const fullest = Math.min(...empty)
           row.forEach((el, i) => {
-            if (empty[i] >= 96 && empty[i] >= height * 0.25 && fullest <= 32) report("empty-region", "warn", el, `${Math.round(empty[i])} px empty below the content while ${sel(row[empty.indexOf(fullest)])} fills the ${Math.round(height)} px row; move content into it, span it over fewer rows, or align the row to start`)
+            const start = !/^(normal|stretch)$/.test(align(el))
+            if (start && row.length > 2) return
+            if (empty[i] >= 96 && empty[i] >= height * 0.25 && fullest <= 32) report("empty-region", "warn", el, `${Math.round(empty[i])} px empty below the content while ${sel(row[empty.indexOf(fullest)])} fills the ${Math.round(height)} px row; ${start ? "move content into it or span it over fewer rows" : "move content into it, span it over fewer rows, or align the row to start"}`)
           })
         }
       }

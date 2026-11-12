@@ -1195,8 +1195,13 @@ function chartCartesian(c) {
         return horizontal ? { x: mk.dir === "left" ? mk.x : mk.x + mk.w, y: mk.y + mk.h / 2 } : { x: mk.x + mk.w / 2, y: mk.dir === "down" ? mk.y + mk.h : mk.y }
       }
       let y = pt + ph
-      for (const list of pts) if (list[a.index]) y = Math.min(y, list[a.index].y)
-      return { x: pos(a.index), y }
+      let low = pt
+      for (const list of pts) {
+        if (!list[a.index]) continue
+        y = Math.min(y, list[a.index].y)
+        low = Math.max(low, list[a.index].y)
+      }
+      return { x: pos(a.index), y, low: Math.max(y, low) }
     },
     tip(a) {
       let total = 0
@@ -1806,9 +1811,10 @@ function chartShowTip(s, a, source, point) {
   const opening = tip.hidden
   tip.hidden = false
   tip.dataset.state = "open"
-  const at = point ?? g.anchor(s.active)
+  const mark = g.anchor(s.active)
+  const at = point ?? mark
   if (opening) tip.style.transition = "none"
-  chartPlaceTip(s, at.x, at.y)
+  chartPlaceTip(s, at.x, at.y, mark)
   if (opening) {
     void tip.offsetWidth
     tip.style.transition = ""
@@ -1849,16 +1855,22 @@ function chartSpeak(data) {
   return data.label ? `${data.label}: ${items}` : items
 }
 
-function chartPlaceTip(s, x, y) {
+function chartPlaceTip(s, x, y, mark) {
   const tip = s.els.tip
   const pw = s.width
   const ph = s.height
   const tw = tip.offsetWidth
   const th = tip.offsetHeight
+  const clamp = v => Math.max(Math.min(0, ph - th), Math.min(v, ph - th))
   let left = x + 12
   if (left + tw > pw) left = x - 12 - tw
-  if (left < 0) left = Math.max(0, Math.min(pw - tw, x - tw / 2))
-  const top = Math.max(Math.min(0, ph - th), Math.min(y - th / 2, ph - th))
+  let top = clamp(y - th / 2)
+  if (left < 0) {
+    left = Math.max(0, Math.min(pw - tw, x - tw / 2))
+    const high = mark.y - 12
+    const low = (mark.low ?? mark.y) + 12
+    top = high - th >= 0 || high > ph - low ? clamp(high - th) : clamp(low)
+  }
   tip.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`
 }
 

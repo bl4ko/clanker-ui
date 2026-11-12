@@ -14,8 +14,8 @@ cfg => {
   }
   const FIXED = { "::placeholder": "input,textarea", "::backdrop": "dialog,[popover]", "::file-selector-button": 'input[type="file"]' }
   const PSEUDO = cfg.pseudo.map(([pe, sels]) => [pe, FIXED[pe] ?? sels.filter(valid).join(",")]).filter(p => p[1])
-  const TESTS = cfg.tests.map(([name, op, value, keys]) => [name, value, op ? `[${name}${op}"${CSS.escape(value)}"]` : `[${name}]`, new Set(keys)]).filter(t => valid(t[2]))
-  const NAMES = cfg.names.map(([name, keys]) => [name, new Set(keys)])
+  const TESTS = cfg.tests.map(([name, op, value, keys, aff]) => [name, value, op ? `[${name}${op}"${CSS.escape(value)}"]` : `[${name}]`, new Set(keys), new Set(aff)]).filter(t => valid(t[2]))
+  const NAMES = cfg.names.map(([name, keys, aff]) => [name, new Set(keys), new Set(aff)])
   const DYN = Object.fromEntries(Object.entries(cfg.dyn).map(([p, keys]) => [p, new Set(keys)]))
   let near = new Map()
   const index = els => {
@@ -93,9 +93,46 @@ cfg => {
       }
     }
   }
-  const use = (style, which) => {
-    for (const s of G.sheets) s.sheet.disabled = !(s.style === style && s.which === which)
+  const kill = new CSSStyleSheet()
+  kill.replaceSync("*, *::before, *::after { transition: none !important }")
+  const quiet = (change, els = []) => {
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, kill]
+    change()
+    void document.body.offsetWidth
+    for (const e of els) void getComputedStyle(e).opacity
+    document.adoptedStyleSheets = document.adoptedStyleSheets.filter(s => s !== kill)
     settle()
+  }
+  const theme = t => (t ? html.setAttribute("data-theme", t) : html.removeAttribute("data-theme"))
+  const run = (configs, states) => {
+    const before = html.getAttribute("data-theme"), styles = new Map(), res = { sweeps: 0, retried: 0, diffs: [] }
+    for (const [style, t] of configs) styles.set(style, [...(styles.get(style) ?? []), t])
+    for (const [style, themes] of styles) {
+      const pass = (which, list, ts) => {
+        quiet(() => G.sheets.forEach(s => (s.sheet.disabled = !(s.style === style && s.which === which))))
+        return list.map(st => {
+          const r = ts.map((t, j) => {
+            quiet(() => {
+              if (!j) st.apply?.()
+              theme(t)
+            }, st.els)
+            return st.els.map(one)
+          })
+          st.undo?.()
+          return r
+        })
+      }
+      const got = ["old", "new"].map(which => pass(which, states, themes))
+      states.forEach((st, i) => themes.forEach((t, j) => {
+        res.sweeps++
+        if (!diff(st.els, got[0][i][j], got[1][i][j]).n) return
+        const d = diff(st.els, pass("old", [st], [t])[0][0], pass("new", [st], [t])[0][0])
+        if (d.n) res.diffs.push({ config: style + "/" + (t ?? "auto"), ...(st.label ? { state: st.label, targets: st.targets } : {}), ...d })
+        else res.retried++
+      }))
+    }
+    quiet(() => theme(before))
+    return res
   }
   G.load = async files => {
     const links = [...document.querySelectorAll('link[rel="stylesheet"]')]
@@ -117,52 +154,49 @@ cfg => {
     for (const s of G.sheets) s.sheet.disabled = true
     return PROPS.length
   }
+  const region = (els, targets, aff) => {
+    if (aff.has("*")) return els
+    const roots = new Set(targets.map(e => e.parentElement ?? e))
+    for (const e of els) if (aff.has(e.getAttribute("data-slot"))) roots.add(e.parentElement ?? e)
+    if (roots.has(html) || roots.has(document.body)) return els
+    return els.filter(e => {
+      for (let a = e; a; a = a.parentElement) if (roots.has(a)) return true
+      return false
+    })
+  }
   G.sweep = configs => {
-    const els = all(), out = []
-    const theme = html.getAttribute("data-theme")
-    for (const [style, t] of configs) {
-      if (t) html.setAttribute("data-theme", t)
-      else html.removeAttribute("data-theme")
-      use(style, "old")
-      const a = els.map(one)
-      use(style, "new")
-      const d = diff(els, a, els.map(one))
-      if (d.n) out.push({ config: style + "/" + (t ?? "auto"), ...d })
-    }
-    if (theme === null) html.removeAttribute("data-theme")
-    else html.setAttribute("data-theme", theme)
-    return { elements: els.length, sweeps: configs.length, diffs: out }
+    const els = all()
+    return { elements: els.length, ...run(configs, [{ els }]) }
   }
-  const state = (label, targets, apply, undo, configs, res) => {
-    if (!targets.length) return
-    for (const e of targets) apply(e)
-    const r = G.sweep(configs)
-    for (const e of targets) undo(e)
-    res.states++
-    res.sweeps += r.sweeps
-    for (const d of r.diffs) res.diffs.push({ state: label, targets: targets.length, ...d })
-  }
-  G.attrs = (configs, from = 0, to = 1e9) => {
-    const els = all(), res = { states: 0, sweeps: 0, diffs: [], total: TESTS.length + NAMES.length }
+  G.attrs = (configs, from, cap) => {
+    const els = all(), states = []
     index(els)
     const jobs = []
-    for (const [name, value, sel, keys] of TESTS) jobs.push([sel, e => hit(e, keys) && !e.matches(sel), e => e.setAttribute(name, value ?? ""), name])
-    for (const [name, keys] of NAMES) jobs.push([`-[${name}]`, e => e.hasAttribute(name) && hit(e, keys), e => e.removeAttribute(name), name])
-    for (const [label, want, apply, name] of jobs.slice(from, to)) {
+    for (const [name, value, sel, keys, aff] of TESTS) jobs.push([sel, e => hit(e, keys) && !e.matches(sel), e => e.setAttribute(name, value ?? ""), name, aff])
+    for (const [name, keys, aff] of NAMES) jobs.push([`-[${name}]`, e => e.hasAttribute(name) && hit(e, keys), e => e.removeAttribute(name), name, aff])
+    let next = from
+    for (let reads = 0; next < jobs.length && reads < cap; next++) {
+      const [label, want, apply, name, aff] = jobs[next]
       const targets = els.filter(want)
+      if (!targets.length) continue
       const prev = new Map(targets.map(e => [e, e.getAttribute(name)]))
-      state(label, targets, apply, e => (prev.get(e) === null ? e.removeAttribute(name) : e.setAttribute(name, prev.get(e))), configs, res)
+      const undo = e => (prev.get(e) === null ? e.removeAttribute(name) : e.setAttribute(name, prev.get(e)))
+      states.push({ label, targets: targets.length, els: region(els, targets, aff), apply: () => targets.forEach(apply), undo: () => targets.forEach(undo) })
+      reads += states.at(-1).els.length
     }
-    return res
+    return { states: states.length, total: jobs.length, next, ...run(configs, states) }
   }
   G.app = configs => {
-    const res = { states: 0, sweeps: 0, diffs: [] }
-    const tokens = Object.entries(cfg.tokens)
-    state("app tokens", [html], e => tokens.forEach(([k, v]) => e.style.setProperty(k, v)), e => tokens.forEach(([k]) => e.style.removeProperty(k)), configs, res)
+    const tokens = Object.entries(cfg.tokens), els = all()
     const sheet = new CSSStyleSheet()
     sheet.replaceSync(cfg.appCss)
-    state("app css", [html], () => (document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]), () => (document.adoptedStyleSheets = document.adoptedStyleSheets.filter(x => x !== sheet)), configs, res)
-    return res
+    return {
+      states: 2,
+      ...run(configs, [
+        { label: "app tokens", targets: 1, els, apply: () => tokens.forEach(([k, v]) => html.style.setProperty(k, v)), undo: () => tokens.forEach(([k]) => html.style.removeProperty(k)) },
+        { label: "app css", targets: 1, els, apply: () => (document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]), undo: () => (document.adoptedStyleSheets = document.adoptedStyleSheets.filter(x => x !== sheet)) },
+      ]),
+    }
   }
   const own = el => el.localName + cfg.attrNames.map(a => (el.hasAttribute(a) ? `[${a}=${el.getAttribute(a)}]` : "")).join("") + (el.previousElementSibling ? "" : "^") + (el.nextElementSibling ? "" : "$")
   const sig = el => {

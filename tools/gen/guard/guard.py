@@ -139,15 +139,17 @@ def profile(texts):
         for prelude in SELECTOR.findall(text):
             if not prelude.lstrip().startswith("@"):
                 selectors.update(split_top(prelude, ","))
-    tests, dyn, pseudo = {}, {}, {}
+    tests, dyn, pseudo, aff = {}, {}, {}, {}
     for sel in sorted(selectors):
         groups = []
         groups.extend(analyze(c, groups) for c in split_top(sel, COMBINATORS))
-        near = {"^" + s for g in groups for s in g["slots"]} or {"*"}
+        slots = {s for g in groups for s in g["slots"]}
+        near = {"^" + s for s in slots} or {"*"}
         for g in groups:
             keys = g["slots"] or {"@" + t for t in g["tags"]} or near
             for t in g["tests"]:
                 tests.setdefault(t, set()).update(keys)
+                aff.setdefault(t[0], set()).update(slots or {"*"})
             for d in g["dyn"]:
                 dyn.setdefault(d, set()).update(keys)
         m = PSEUDO_ELEMENT.search(sel)
@@ -158,6 +160,7 @@ def profile(texts):
             pseudo.setdefault("::" + m[1], set()).add(rest)
     tests.setdefault(("disabled", None, None), set()).update({"@button", "@input", "@select", "@textarea", "@fieldset"})
     tests.setdefault(("dir", "=", "rtl"), set()).add("@html")
+    aff["disabled"] = aff["dir"] = {"*"}
     names = {}
     for (name, _, _), keys in tests.items():
         names.setdefault(name, set()).update(keys)
@@ -165,8 +168,8 @@ def profile(texts):
     return {
         "custom": sorted(custom),
         "pseudo": [[p, sorted(s)] for p, s in sorted(pseudo.items())],
-        "tests": [[n, op, v, sorted(tests[(n, op, v)])] for n, op, v in order],
-        "names": [[n, sorted(k)] for n, k in sorted(names.items())],
+        "tests": [[n, op, v, sorted(tests[(n, op, v)]), sorted(aff[n])] for n, op, v in order],
+        "names": [[n, sorted(k), sorted(aff[n])] for n, k in sorted(names.items())],
         "dyn": {p: sorted(k) for p, k in dyn.items()},
         "attrNames": sorted(set(names) | {"data-slot"}),
         "cap": 6,
@@ -197,7 +200,8 @@ class Guard:
         for style in a.styles:
             old, new = css_text(a.old, style, a), css_text(a.new, style, a)
             for m in a.mutate:
-                s, find, repl = m.split("::", 2)
+                s, rest = m.split("::", 1)
+                find, repl = rest.rsplit("::", 1)
                 if s == style:
                     new, n = re.subn(find, repl, new, count=1)
                     if n != 1:
@@ -218,17 +222,52 @@ class Guard:
         key = route.request.url.split("/__guard/", 1)[1].removesuffix(".css")
         route.fulfill(status=200, content_type="text/css; charset=utf-8", body=self.css[key])
 
-    def page(self, page, cdp, url):
-        a, rec = self.a, {"page": url, "elements": 0, "sweeps": 0, "states": 0, "skipped": 0, "diffs": []}
+    def page(self, page, cdp, url, index):
+        a, rec = self.a, {"page": url, "elements": 0, "sweeps": 0, "states": 0, "skipped": 0, "retried": 0, "cut": [], "t": {}, "diffs": []}
+        end = time.time() + a.page_seconds if a.page_seconds else 0
+        step = max(1, len(a.styles) // a.state_styles)
+        some = list(dict.fromkeys(a.styles[(index + j * step) % len(a.styles)] for j in range(a.state_styles)))
+        rec["state_styles"] = some
+
+        def over(phase):
+            if end and time.time() > end:
+                if phase not in rec["cut"]:
+                    rec["cut"].append(phase)
+                return True
+            return False
 
         def add(phase, r, state=None):
             rec["sweeps"] += r["sweeps"]
+            rec["retried"] += r["retried"]
             rec["elements"] = max(rec["elements"], r.get("elements", 0))
-            rec["states"] += r.get("states", 1 if state else 0)
+            rec["states"] += r.get("states", 0)
             rec["diffs"] += [{"phase": phase, **({"state": state} if state else {}), **d} for d in r["diffs"]]
 
-        def sweep(configs):
-            return page.evaluate("c => __guard.sweep(c)", configs)
+        def sweep(phase, configs, state=None):
+            for i in range(0, len(configs), 4):
+                if over(phase):
+                    return False
+                add(phase, page.evaluate("c => __guard.sweep(c)", configs[i : i + 4]), state)
+            rec["states"] += 1 if state else 0
+            return True
+
+        def timed(name, fn):
+            t = time.time()
+            fn()
+            rec["t"][name] = round(rec["t"].get(name, 0) + time.time() - t, 1)
+
+        def attrs(configs):
+            at, stop = 0, time.time() + a.page_seconds * 0.4
+            while not over("attrs"):
+                if a.page_seconds and time.time() > stop:
+                    rec["cut"].append("attrs")
+                    break
+                r = page.evaluate("([c, i]) => __guard.attrs(c, i, 1500)", [configs, at])
+                add("attrs", r)
+                at = r["next"]
+                if at >= r["total"]:
+                    add("app", page.evaluate("c => __guard.app(c)", configs))
+                    break
 
         page.set_viewport_size({"width": 1280, "height": 800})
         page.emulate_media(color_scheme="light")
@@ -237,34 +276,28 @@ class Guard:
         page.evaluate(self.js, self.cfg)
         rec["props"] = page.evaluate("f => __guard.load(f)", self.files + self.scoped(page, rec))
         for width, height in WIDTHS:
-            page.set_viewport_size({"width": width, "height": height})
             for media in ("light", "dark"):
+                page.set_viewport_size({"width": width, "height": height})
                 page.emulate_media(color_scheme=media)
                 page.wait_for_timeout(150)
-                configs = [[s, t] for s in a.styles for t in ((None, "dark") if media == "light" else (None, "light"))]
-                phase = f"{width}/{media}"
-                base = sweep(configs)
-                add(phase, base)
-                if a.tier < 1:
-                    continue
-                main = width == 1280 and media == "light"
-                small = base["elements"] <= a.big
-                if main:
-                    part, at = (configs if small else configs[:2]), 0
-                    while True:
-                        r = page.evaluate("([c, i, j]) => __guard.attrs(c, i, j)", [part, at, at + 25])
-                        add(phase, r)
-                        at += 25
-                        if at >= r["total"]:
-                            break
-                    add(phase, page.evaluate("c => __guard.app(c)", part))
-                if cdp:
-                    self.forced(page, cdp, configs if small else configs[:2], phase, add, main and small and a.tier > 1)
-                if main and a.tier > 1:
-                    part = configs if small else configs[:2]
-                    if not cdp:
-                        self.real(page, part, phase, add, rec)
-                    self.triggers(page, part, phase, add, rec)
+                themes = (None, "dark") if media == "light" else (None, "light") if width == 1280 else (None,)
+                timed("base", lambda: sweep(f"{width}/{media}", [[s, t] for s in a.styles for t in themes]))
+        if a.tier < 1:
+            return rec
+        page.set_viewport_size({"width": 1280, "height": 800})
+        page.emulate_media(color_scheme="light")
+        page.wait_for_timeout(150)
+        every = [[s, t] for s in a.styles for t in (None, "dark")]
+        part = [[s, t] for s in some for t in (None, "dark")]
+        timed("attrs", lambda: attrs(part))
+        if cdp:
+            timed("forced", lambda: self.forced(page, cdp, every, sweep, False))
+        if a.tier > 1:
+            timed("triggers", lambda: self.triggers(page, every, sweep, over))
+            if cdp:
+                timed("deep", lambda: self.forced(page, cdp, part, sweep, True))
+            else:
+                timed("real", lambda: self.real(page, part, sweep, over, rec))
         return rec
 
     def scoped(self, page, rec):
@@ -277,7 +310,8 @@ class Guard:
             if f"old/{name}" not in self.css:
                 old, new = (urllib.request.urlopen(u + path).read().decode() for u in (a.old_url, a.base_url))
                 for m in a.mutate:
-                    key, find, repl = m.split("::", 2)
+                    key, rest = m.split("::", 1)
+                    find, repl = rest.rsplit("::", 1)
                     if key == name:
                         new, n = re.subn(find, repl, new, count=1)
                         if n != 1:
@@ -286,7 +320,7 @@ class Guard:
             files += [{"style": "nova", "which": w, "href": f"/__guard/{w}/{name}.css", "anchor": f"/{name}\\.css$"} for w in ("old", "new")]
         return files
 
-    def forced(self, page, cdp, configs, phase, add, deep):
+    def forced(self, page, cdp, configs, sweep, deep):
         root = cdp.send("DOM.getDocument", {"depth": 0})["root"]["nodeId"]
         ids = cdp.send("DOM.querySelectorAll", {"nodeId": root, "selector": "html, body, body *"})["nodeIds"]
 
@@ -297,22 +331,26 @@ class Guard:
         for classes in FORCED:
             c = page.evaluate("p => __guard.candidates(p)", classes)
             label = ":" + ":".join(classes)
-            if c["all"]:
+            if c["all"] and not deep:
                 force(c["all"], classes)
-                add(phase, page.evaluate("c => __guard.sweep(c)", configs), label + " all")
+                sweep("forced", configs, label + " all")
                 force(c["all"], [])
             for k, chain in enumerate(c["picked"] if deep else []):
                 focus = "focus" in classes
                 force(chain[1:], ["focus-within"] if focus else classes)
                 force(chain[:1], classes)
-                add(phase, page.evaluate("c => __guard.sweep(c)", configs), f"{label} #{k}")
+                done = sweep("deep", configs, f"{label} #{k}")
                 force(chain, [])
+                if not done:
+                    return
 
-    def real(self, page, configs, phase, add, rec):
+    def real(self, page, configs, sweep, over, rec):
         page.evaluate("() => { __guard.swallow = e => { e.preventDefault(); e.stopImmediatePropagation() } }")
         for classes, sel in ((["focus", "focus-visible", "focus-within"], ":focus"), (["hover"], ":hover"), (["active"], ":active")):
             n = len(page.evaluate("p => __guard.candidates(p)", classes)["picked"])
             for k in range(n):
+                if over("real"):
+                    break
                 down = False
                 if sel == ":focus":
                     page.evaluate("k => __guard.picked[k].focus()", k)
@@ -325,7 +363,7 @@ class Guard:
                             page.mouse.down()
                             down = True
                 if page.evaluate("([k, s]) => __guard.is(k, s)", [k, sel]):
-                    add(phase, page.evaluate("c => __guard.sweep(c)", configs), f"real {sel} #{k}")
+                    sweep("real", configs, f"real {sel} #{k}")
                 else:
                     rec["skipped"] += 1
                 if down:
@@ -335,11 +373,13 @@ class Guard:
             page.evaluate("() => document.activeElement && document.activeElement.blur()")
             page.mouse.move(0, 0)
 
-    def triggers(self, page, configs, phase, add, rec):
+    def triggers(self, page, configs, sweep, over):
         for k in range(page.evaluate("() => __guard.triggers()")):
+            if over("triggers"):
+                return
             page.evaluate("k => { const e = __guard.picked[k]; if (e.isConnected && !(e.form && e.type === 'submit')) e.click() }", k)
             page.wait_for_timeout(250)
-            add(phase, page.evaluate("c => __guard.sweep(c)", configs), f"click #{k}")
+            sweep("triggers", configs, f"click #{k}")
             page.keyboard.press("Escape")
             page.wait_for_timeout(150)
             page.evaluate("k => { const e = __guard.picked[k]; if (e.isConnected && e.getAttribute('aria-expanded') === 'true') e.click() }", k)
@@ -349,7 +389,7 @@ class Guard:
         a = self.a
         todo = [p for p in (docs_pages(a.base_url) if a.docs else pages(a.root)) if re.search(a.pages, p)]
         index, count = (int(x) for x in a.shard.split("/"))
-        todo = todo[index - 1 :: count][a.skip :]
+        todo = list(enumerate(todo))[index - 1 :: count][a.skip :]
         start, left = time.time(), 0
         out, failed = [], self.static()
         for line in failed:
@@ -358,7 +398,7 @@ class Guard:
             browser = getattr(p, a.browser).launch()
             ctx = browser.new_context()
             ctx.route("**/__guard/**", self.serve)
-            for i, url in enumerate(todo):
+            for i, (n, url) in enumerate(todo):
                 if a.budget and time.time() - start > a.budget:
                     left = len(todo) - i
                     break
@@ -369,7 +409,7 @@ class Guard:
                     cdp.send("CSS.enable")
                 t = time.time()
                 try:
-                    rec = self.page(page, cdp, url)
+                    rec = self.page(page, cdp, url, n)
                 except PlaywrightError as e:
                     rec = {"page": url, "error": str(e).splitlines()[0], "diffs": []}
                 rec["seconds"] = round(time.time() - t, 1)
@@ -377,20 +417,20 @@ class Guard:
                 out.append(rec)
                 bad = rec.get("error") or rec["diffs"]
                 failed += [url] if bad else []
-                print("FAIL" if bad else "ok", url, rec.get("error", ""), f'{rec.get("elements", 0)} el {rec.get("sweeps", 0)} sweeps {rec.get("states", 0)} states {rec.get("skipped", 0)} skipped {len(rec["diffs"])} diffs {rec["seconds"]}s', flush=True)
+                print("FAIL" if bad else "ok", url, rec.get("error", ""), f'{rec.get("elements", 0)} el {rec.get("sweeps", 0)} sweeps {rec.get("states", 0)} states {rec.get("skipped", 0)} skipped {rec.get("retried", 0)} retried {len(rec["diffs"])} diffs {rec["seconds"]}s {rec.get("t", "")} cut {rec.get("cut", "")}', flush=True)
                 for d in rec["diffs"][: a.show]:
                     print("  ", d["phase"], d.get("state", "base"), d["config"], d["n"], json.dumps(d["out"][:2]), flush=True)
             browser.close()
         if a.out:
             a.out.write_text(json.dumps({"browser": a.browser, "styles": a.styles, "tier": a.tier, "min": a.min, "groups": a.groups, "left": left, "pages": out}, indent=1))
-        print(f"{a.browser}: {len(out)} pages, {left} left, {sum(r.get('sweeps', 0) for r in out)} comparisons, {sum(r.get('states', 0) for r in out)} states, {len(failed)} failed", flush=True)
+        print(f"{a.browser}: {len(out)} pages, {left} left, {sum(1 for r in out if r.get('cut'))} cut, {sum(r.get('sweeps', 0) for r in out)} comparisons, {sum(r.get('states', 0) for r in out)} states, {sum(r.get('retried', 0) for r in out)} retried, {len(failed)} failed", flush=True)
         if a.expect:
             seen = {(d["config"].split("/")[0], p[0]) for r in out for d in r["diffs"] for o in d["out"] for p in o["props"]}
             want = {tuple(e.split(":", 1)) for e in a.expect}
             missing, extra = sorted(want - seen), sorted({s for s, _ in seen} - {s for s, _ in want})
             print(f"expect: {len(want) - len(missing)} of {len(want)} found, missing {missing}, other styles with a difference {extra}", flush=True)
             return 1 if missing or extra or any("error" in r for r in out) else 0
-        return 1 if failed else 3 if left else 0
+        return 1 if failed else 3 if left or any(r.get("cut") for r in out) else 0
 
 
 def main():
@@ -406,7 +446,8 @@ def main():
     ap.add_argument("--skip", type=int, default=0)
     ap.add_argument("--budget", type=int, default=0)
     ap.add_argument("--tier", type=int, default=1, choices=(0, 1, 2))
-    ap.add_argument("--big", type=int, default=1500)
+    ap.add_argument("--page-seconds", type=int, default=0)
+    ap.add_argument("--state-styles", type=int, default=8)
     ap.add_argument("--min", action="store_true")
     ap.add_argument("--groups", action="store_true")
     ap.add_argument("--docs", action="store_true")
@@ -418,6 +459,7 @@ def main():
     a = ap.parse_args()
     if a.docs:
         a.styles = ["nova"]
+    a.state_styles = max(1, min(a.state_styles, len(a.styles)))
     sys.exit(Guard(a).run())
 
 

@@ -36,9 +36,9 @@ cfg => {
   const all = () => [html, document.body, ...document.body.querySelectorAll("*")]
   const read = (el, pe) => {
     const cs = getComputedStyle(el, pe)
-    let s = ""
-    for (let i = 0; i < PROPS.length; i++) s += cs.getPropertyValue(PROPS[i]) + SEP
-    return s
+    const v = new Array(PROPS.length)
+    for (let i = 0; i < PROPS.length; i++) v[i] = cs.getPropertyValue(PROPS[i])
+    return v.join(SEP)
   }
   const one = el => {
     const out = [["", read(el)]]
@@ -113,6 +113,7 @@ cfg => {
         quiet(on(which))
         return list.map(st => {
           const r = ts.map((t, j) => {
+            if (again) quiet(() => theme(t), st.els)
             quiet(() => {
               if (!j) st.apply?.()
               theme(t)

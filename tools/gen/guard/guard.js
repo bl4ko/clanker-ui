@@ -108,14 +108,19 @@ cfg => {
     const before = html.getAttribute("data-theme"), styles = new Map(), res = { sweeps: 0, retried: 0, diffs: [] }
     for (const [style, t] of configs) styles.set(style, [...(styles.get(style) ?? []), t])
     for (const [style, themes] of styles) {
-      const pass = (which, list, ts) => {
-        quiet(() => G.sheets.forEach(s => (s.sheet.disabled = !(s.style === style && s.which === which))))
+      const pass = (which, list, ts, again) => {
+        const on = w => () => G.sheets.forEach(s => (s.sheet.disabled = !(s.style === style && s.which === w)))
+        quiet(on(which))
         return list.map(st => {
           const r = ts.map((t, j) => {
             quiet(() => {
               if (!j) st.apply?.()
               theme(t)
             }, st.els)
+            if (again) {
+              quiet(on(which === "old" ? "new" : "old"))
+              quiet(on(which), st.els)
+            }
             return st.els.map(one)
           })
           st.undo?.()
@@ -126,7 +131,7 @@ cfg => {
       states.forEach((st, i) => themes.forEach((t, j) => {
         res.sweeps++
         if (!diff(st.els, got[0][i][j], got[1][i][j]).n) return
-        const d = diff(st.els, pass("old", [st], [t])[0][0], pass("new", [st], [t])[0][0])
+        const d = diff(st.els, pass("old", [st], [t], true)[0][0], pass("new", [st], [t], true)[0][0])
         if (d.n) res.diffs.push({ config: style + "/" + (t ?? "auto"), ...(st.label ? { state: st.label, targets: st.targets } : {}), ...d })
         else res.retried++
       }))

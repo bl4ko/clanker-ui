@@ -21,6 +21,7 @@ FORCED = (["hover"], ["hover", "active"], ["focus", "focus-visible", "focus-with
 SKIP = {"data-slot", "data-theme", "class", "id", "style", "href", "src"}
 SELECTOR = re.compile(r"([^{};]+)\{")
 CUSTOM = re.compile(r"[{;\s](--[\w-]+)\s*:")
+SELECTION = re.compile(r"([^{};]*::selection[^{}]*)\{([^{}]*)\}")
 KEYFRAMES = re.compile(r"@(keyframes\s+[\w-]+|font-face)\s*\{((?:[^{}]|\{[^{}]*\})*)\}")
 ATTR = re.compile(r"""\[\s*([\w-]+)\s*(?:([~|^$*]?=)\s*(?:"([^"]*)"|'([^']*)'|([^\]\s]+)))?[^\]]*\]""")
 NAME = re.compile(r"[\w-]+")
@@ -179,7 +180,11 @@ def profile(texts):
 
 
 def fixed_rules(text):
-    return {m[1]: re.sub(r"\s+", "", m[2]) for m in KEYFRAMES.finditer(re.sub(r"/\*.*?\*/", "", text, flags=re.S))}
+    text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+    out = {"@" + m[1]: re.sub(r"\s+", "", m[2]) for m in KEYFRAMES.finditer(text)}
+    for m in SELECTION.finditer(text):
+        out.setdefault(" ".join(m[1].split()), {}).update(d.split(":", 1) for d in re.sub(r"\s+", "", m[2]).split(";") if d)
+    return out
 
 
 def pages(root):
@@ -215,7 +220,7 @@ class Guard:
         out = []
         for style in self.a.styles:
             old, new = fixed_rules(self.css[f"old/{style}"]), fixed_rules(self.css[f"new/{style}"])
-            out += [f"{style}: @{k} differs" for k in sorted(set(old) | set(new)) if old.get(k) != new.get(k)]
+            out += [f"{style}: {k} differs" for k in sorted(set(old) | set(new)) if old.get(k) != new.get(k)]
         return out
 
     def serve(self, route):

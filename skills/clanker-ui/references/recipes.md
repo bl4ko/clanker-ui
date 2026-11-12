@@ -54,6 +54,69 @@ receipt.addEventListener("change", () => {
 
 Block: `overlay-form`. Input: a `radio-group` with `data-name`, `data-required`, and `data-error-value-missing`; one horizontal `field` per score, highest first, each label a read-only `rating` (`role="img"`, `aria-label="4 of 5 stars"`) and a word ("Liked it"). No app CSS. A read-only score: the `rating` part with the number as text next to it (`4.5`).
 
+## Board (columns of cards)
+
+Tickets per stage or tasks per person, as in a Kanban board: a `card-grid` (columns of at least 13rem that fill the width and stack on a phone), one `card` per column, and an `item-group` of outline `sm` items in it. The only app CSS is `.board { align-items: start; }`, so each column is as high as its cards (the design lint does not report a start-aligned row of three or more columns).
+
+```html
+<div data-slot="card-grid" class="board">
+  <section data-slot="card" data-size="sm" aria-labelledby="stage-todo">
+    <div data-slot="card-header">
+      <h2 data-slot="card-title" id="stage-todo">To do</h2>
+      <div data-slot="card-action"><span data-slot="badge" data-variant="secondary" aria-label="2 tickets">2</span></div>
+    </div>
+    <div data-slot="card-content">
+      <div data-slot="item-group" role="list">
+        <div data-slot="item" data-variant="outline" data-size="sm" role="listitem">
+          <div data-slot="item-content">
+            <div data-slot="item-title" title="Fix the redirect after sign-in">Fix the redirect after sign-in</div>
+            <div data-slot="item-description">OPS-142 · Ana</div>
+          </div>
+          <div data-slot="item-actions"><span data-slot="badge" data-variant="outline">High</span></div>
+        </div>
+        <div data-slot="item" data-variant="outline" data-size="sm" role="listitem">
+          <div data-slot="item-content">
+            <div data-slot="item-title">Export to CSV</div>
+            <div data-slot="item-description">OPS-150 · Luka</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section data-slot="card" data-size="sm" aria-labelledby="stage-doing">
+    <div data-slot="card-header">
+      <h2 data-slot="card-title" id="stage-doing">In progress</h2>
+      <div data-slot="card-action"><span data-slot="badge" data-variant="secondary" aria-label="1 ticket">1</span></div>
+    </div>
+    <div data-slot="card-content">
+      <div data-slot="item-group" role="list">
+        <div data-slot="item" data-variant="outline" data-size="sm" role="listitem">
+          <div data-slot="item-content">
+            <div data-slot="item-title">Rate limits per client</div>
+            <div data-slot="item-description">OPS-139 · Maja</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section data-slot="card" data-size="sm" aria-labelledby="stage-done">
+    <div data-slot="card-header">
+      <h2 data-slot="card-title" id="stage-done">Done</h2>
+      <div data-slot="card-action"><span data-slot="badge" data-variant="secondary" aria-label="0 tickets">0</span></div>
+    </div>
+    <div data-slot="card-content">
+      <div data-slot="empty" data-variant="outline">
+        <div data-slot="empty-header"><div data-slot="empty-description">No tickets</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+```
+
+- The column count in the header is a `secondary` badge in `card-action` with an `aria-label`. An empty column keeps its card with a small outline `empty`.
+- A ticket title is one line: give it a `title` with the full text. The full ticket opens in a `sheet` or a `dialog` from a link or button in the item (`<a data-slot="item">` for a link), not in an app-made card.
+- More columns than fit: the columns wrap into the next row; on a phone they stack. Do not make a sideways-scrolling board.
+
 ## Card grid
 
 Block: `card-grid`. Records with an image or a preview: the `card-grid` part with one `card` per record, the image or a `cover` first, then the `card-header` with the title and a muted detail line, and the status `badge` in the `card-footer`. A `cover` is placeholder art from tokens (`data-tone`, an `svg` drawn with `currentColor`, `aria-hidden="true"`), never a flat gray box and never text on the art: the title and author go in the card body. Keep icons and badges out of the card title, so long titles wrap. A feature card above the grid ("This month's pick"): `card data-orientation="horizontal"` with the `cover` first and a `div` with the header, the content, and a `card-footer` row of actions.

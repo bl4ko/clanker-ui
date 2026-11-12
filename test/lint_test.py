@@ -93,3 +93,15 @@ def check_lint_blocks(t):
         inject(t)
         found = [f for f in lint(t) if f["severity"] == "error" or f["rule"] in ("empty-region", "low-contrast")]
         assert found == [], (name, short(found))
+
+
+def check_lint_board_recipe(t):
+    recipes = (HERE.parent / "skills/clanker-ui/references/recipes.md").read_text()
+    board = recipes.split("## Board (columns of cards)", 1)[1].split("```html\n", 1)[1].split("\n```", 1)[0]
+    page = (HERE / "lint/good.html").read_text()
+    assert "\n".join("      " + line if line else line for line in board.split("\n")) in page, "the board recipe is in test/lint/good.html"
+    assert ".board { align-items: start; }" in (HERE / "lint/lint.css").read_text() and ".board { align-items: start; }" in recipes
+    t.docs(START)
+    columns = t.page.locator("#board-recipe .board > [data-slot=card]").evaluate_all("cards => cards.map(c => Math.round(c.getBoundingClientRect().height))")
+    assert len(columns) == 3 and (t.mobile or columns[0] > columns[1]), ("each column is as high as its cards", columns)
+

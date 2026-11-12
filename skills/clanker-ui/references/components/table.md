@@ -4,7 +4,7 @@ Group `core`. Needs none. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `table-container` |  | `data-fits`, `data-sticky-header` |
+| `table-container` | `data-sticky-header` any | `data-fits` |
 | `table-row` | `data-state` string |  |
 
 Other parts: `table` (root), `table-body`, `table-caption`, `table-cell`, `table-footer`, `table-head`, `table-header`.

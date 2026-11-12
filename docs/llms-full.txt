@@ -1836,7 +1836,7 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 | Part | Write | State |
 | --- | --- | --- |
-| `table-container` |  | `data-fits`, `data-sticky-header` |
+| `table-container` | `data-sticky-header` any | `data-fits` |
 | `table-row` | `data-state` string |  |
 
 Other parts: `table` (root), `table-body`, `table-caption`, `table-cell`, `table-footer`, `table-head`, `table-header`.
@@ -1946,13 +1946,11 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 | Part | Write | State |
 | --- | --- | --- |
-| `page` (root) | `data-size` `lg`, `md`, `sm` | `data-layout` |
+| `page` (root) | `data-layout` any; `data-size` `lg`, `md`, `sm` |  |
 | `page-aside` | `data-variant` `sticky` |  |
 | `page-header` | `data-size` `lg` |  |
 
 Other parts: `page-actions`, `page-body`, `page-description`, `page-meta`, `page-nav`, `page-title`.
-
-Other options named in the docs: `data-layout` string.
 
 #### Site Header (`site-header`)
 

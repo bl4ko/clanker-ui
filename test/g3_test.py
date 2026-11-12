@@ -1617,6 +1617,37 @@ def check_sidebar(t):
     t.shot("sidebar", section)
 
 
+def check_sidebar_icon_group_label(t):
+    page = t.page
+    if t.mobile:
+        t.skip("the icon mode is a desktop layout")
+    out = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const group = (label, n) => h("div", { "data-slot": "sidebar-group" },
+            h("div", { "data-slot": "sidebar-group-label" }, label),
+            h("ul", { "data-slot": "sidebar-menu" }, Array.from({ length: n }, (_, i) =>
+              h("li", { "data-slot": "sidebar-menu-item" }, h("button", { "data-slot": "sidebar-menu-button", type: "button", "data-tooltip": `${label} ${i}` }, h("span", `${label} ${i}`))))))
+          const wrap = h("div", { "data-slot": "sidebar-wrapper", id: "sidebar-icon-labels" },
+            h("div", { "data-slot": "sidebar", "data-side": "left", "data-collapsible": "icon", "data-state": "collapsed" },
+              h("div", { "data-slot": "sidebar-gap" }),
+              h("div", { "data-slot": "sidebar-container" }, h("div", { "data-slot": "sidebar-inner" }, h("div", { "data-slot": "sidebar-content" }, group("One", 2), group("Two", 2))))),
+            h("main", { "data-slot": "sidebar-inset" }))
+          document.body.append(wrap)
+          await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+          const last = wrap.querySelectorAll('[data-slot="sidebar-group"]')[0].querySelectorAll('[data-slot="sidebar-menu-button"]')[1]
+          last.scrollIntoView({ block: "center" })
+          const r = last.getBoundingClientRect()
+          const hits = [0.5, 0.75, 0.9].map(f => last.contains(document.elementFromPoint(r.left + r.width / 2, r.top + r.height * f)))
+          const state = wrap.querySelector('[data-slot="sidebar"]').getAttribute("data-collapsible")
+          wrap.remove()
+          return { hits, state, height: r.height }
+        }"""
+    )
+    assert out["state"] == "icon" and out["height"] > 0, out
+    assert out["hits"] == [True, True, True], ("the hidden label of the next group does not take clicks from the last menu button", out)
+
+
 def check_sidebar_rtl(t):
     page = t.page
     t.section("sidebar")

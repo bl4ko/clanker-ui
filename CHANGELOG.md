@@ -11,6 +11,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Chart: the active dots of line, area, and radar charts no longer fade in again on every pointer move; only the first draw animates (#119).
 - Chart: a tooltip that is too wide for either side of the pointer goes above the hovered points (or below them when there is more room), so it no longer covers them (#120).
 - Chart tooltip: the editor schemes where `--background` equals `--card` (Catppuccin, Dracula, Everforest, GitHub, Gruvbox, Kanagawa, Nord, One, Solarized, Tokyo Night) give the tooltip the full `--border` in dark mode, so it has an edge on a card. New token `--chart-tooltip-border` (default: `--border` at 50 %) (#121).
+- Sidebar: in icon mode the hidden `sidebar-group-label` (moved up 32 px, `opacity: 0`) no longer takes the clicks of the last menu button of the group above (`pointer-events: none`) (#125). shadcn has the same gap.
 
 ## 0.3.0 - 2026-11-10
 

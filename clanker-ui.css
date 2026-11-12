@@ -16412,6 +16412,7 @@
   }
   [data-slot="sidebar"][data-mobile] [data-slot="sidebar-inner"] { border: 0; border-radius: 0; box-shadow: none; }
   [data-slot="sidebar"][data-mobile] [data-slot="sidebar-rail"] { display: none; }
+  [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-group-label"] { pointer-events: none; }
 
   [data-slot="resizable-panel-group"][data-orientation="vertical"] { flex-direction: column; }
   [data-slot="resizable-panel"] { min-width: 0; min-height: 0; overflow: hidden; }

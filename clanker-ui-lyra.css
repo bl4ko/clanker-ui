@@ -16555,6 +16555,8 @@
     [data-slot="table-row"]:has(> [data-slot="table-cell"] > [data-slot="empty"]):hover { background-color: transparent; }
   }
   :is([data-slot="table-head"], [data-slot="table-cell"])[data-align="end"] { text-align: end; font-variant-numeric: tabular-nums; }
+  [data-slot="table-head"]:is([data-sort=""], [data-sort="auto"], [data-sort="text"], [data-sort="number"], [data-sort="date"]) > [data-slot="button"] { margin-inline: calc(var(--spacing) * -2.5); }
+  [data-slot="table-head"]:is([data-sort=""], [data-sort="auto"], [data-sort="text"], [data-sort="number"], [data-sort="date"])[data-align="end"] > [data-slot="button"] { flex-direction: row-reverse; }
   :is([data-slot="table-head"], [data-slot="table-cell"])[data-align="center"] { text-align: center; }
   [data-slot="data-table-pagination"] {
     display: flex;

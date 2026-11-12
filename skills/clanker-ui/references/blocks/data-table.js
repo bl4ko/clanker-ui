@@ -1,4 +1,4 @@
-import { icon, toast } from "/vendor/clanker-ui/clanker-ui.min.js"
+import { toast } from "/vendor/clanker-ui/clanker-ui.min.js"
 
 const root = document.getElementById("tasks")
 const body = root.querySelector("tbody")
@@ -86,18 +86,12 @@ document.getElementById("task-view").addEventListener("dropdown-menu:change", ev
   for (const cell of root.querySelectorAll(`[data-column="${event.detail.value}"]`)) cell.hidden = !event.detail.checked
 })
 
-for (const button of root.querySelectorAll("[data-sort]")) {
-  button.addEventListener("click", () => {
-    const key = button.dataset.sort
-    sort = sort.key !== key ? { key, dir: 1 } : sort.dir === 1 ? { key, dir: -1 } : { key: "", dir: 1 }
-    for (const other of root.querySelectorAll("[data-sort]")) {
-      const active = other.dataset.sort === sort.key
-      other.closest("th").setAttribute("aria-sort", active ? (sort.dir === 1 ? "ascending" : "descending") : "none")
-      other.lastElementChild.replaceWith(icon(active ? (sort.dir === 1 ? "arrow-up" : "arrow-down") : "chevrons-up-down"))
-    }
-    render()
-  })
-}
+root.addEventListener("table:sort", event => {
+  event.preventDefault()
+  const key = event.target.tHead.rows[0].cells[event.detail.column].dataset.column
+  sort = event.detail.dir === "none" ? { key: "", dir: 1 } : { key, dir: event.detail.dir === "ascending" ? 1 : -1 }
+  render()
+})
 
 root.addEventListener("checkbox:change", event => {
   if (event.target === all) {

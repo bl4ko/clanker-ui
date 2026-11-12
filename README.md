@@ -448,6 +448,7 @@ Only the components below export functions; every name starts with the component
 | `calendarGetValue` | `calendarGetValue(el) → value` | `"2026-10-28"`, an array (`multiple`), `{ from, to }` (`range`), or `null`. |
 | `calendarSetValue` | `calendarSetValue(el, value, { emit = false, month = true }?) → boolean` | `month` shows the month of the first selected date. |
 | `calendarSetMonth` | `calendarSetMonth(el, "2026-10") → boolean` | |
+| `tableSort` | `tableSort(head, dir = "ascending")` | `head` is a `table-head` with `data-sort` (or its id); `dir` is `ascending`, `descending`, or `none`. Same as a click: sets `aria-sort` and the icons, fires `table:sort`, and moves the rows. |
 | `messageScrollerScrollToEnd` | `messageScrollerScrollToEnd(el, { behavior }?) → boolean` | |
 | `messageScrollerScrollToStart` | `messageScrollerScrollToStart(el, { behavior }?) → boolean` | |
 | `messageScrollerScrollToMessage` | `messageScrollerScrollToMessage(el, id, { align, behavior, scrollMargin }?) → boolean` | Waits for the row if the list is still empty. |
@@ -513,6 +514,7 @@ Components dispatch bubbling, composed `CustomEvent`s named `<component>:<action
 | `calendar:change` | `calendar` | `{ value, mode, source }`: `day`, `api`, `reset` |
 | `calendar:navigate` | `calendar` | `{ value: "YYYY-MM" }` |
 | `date-picker:open`, `date-picker:close` | `date-picker` | — |
+| `table:sort` | `table` | `{ column, dir }` (`column` is the cell index of the head; `dir`: `ascending`, `descending`, `none`). Cancelable: `preventDefault()` keeps the rows where they are (sort on the server or in your own paged view); `aria-sort` and the icons still change. |
 | `chart:active` | chart element | `{ index, key, row }`, or `null` when the tooltip closes |
 | `chart:legend` | chart element | `{ key, visible, hidden }` |
 | `chart:view` | chart element | `{ view }`: `chart` or `table` |
@@ -1222,7 +1224,15 @@ The viewport is the real scroll container; the kit makes it focusable, hides the
 
 #### Table
 
-`table-container` > `table` > `table-caption`, `table-header`, `table-body`, `table-footer`, `table-row` (`data-state="selected"`), `table-head`, `table-cell`. Sorting, filtering, selection, column visibility, and paging are app code; the demo builds a data table with `h()`, `aria-sort`, a row actions `dropdown-menu`, a column `dropdown-menu`, and `toast`.
+`table-container` > `table` > `table-caption`, `table-header`, `table-body`, `table-footer`, `table-row` (`data-state="selected"`), `table-head`, `table-cell`. Filtering, selection, column visibility, and paging are app code; the demo builds a data table with `h()`, a row actions `dropdown-menu`, a column `dropdown-menu`, and `toast`.
+
+Sorting (kit extension, opt-in): `data-sort` on a `table-head` in the `table-header`. The kit puts the head content in a ghost `button` (or uses the `button` that is already there), adds the sort icon (`chevrons-up-down`, `arrow-up`, `arrow-down`), and sets `aria-sort="none"`. A click (Enter and Space are the native button keys) goes ascending, descending, and back to the first order; the other sortable heads of the row go back to `none`. Then the kit fires `table:sort` and, unless the listener calls `preventDefault()`, moves the rows of each `tbody`:
+
+- The value of a cell is its `data-value`, else its text. Empty values (no text, `-`, `–`, `—`) go last in both directions.
+- `data-sort="number"` reads numbers in the language of the nearest `lang` (`1.234,56 €` in `sl`, `12.5 %` in `en`); `data-sort="date"` reads ISO dates and the day, month, and year order of that language (`3. 11. 2026`); `data-sort="text"` compares with `Intl.Collator` of that language (č, š, ž in their place), numbers in text by value. An empty `data-sort` (or `auto`) is `number` when every value is a number without letters, else `text`. Other values are left to app code, so an older app sort with its own `data-sort` keys keeps working.
+- The sort is stable, and the third click restores the first order. Rows added later go after the known rows in the first order.
+- `data-align="end"` on the head puts the icon before the label, so the label ends at the cell edge.
+- `data-sort-icon` on an `svg` in an authored head `button` marks the sort icon; its `data-lucide` is the icon of the unsorted state (shadcn uses `arrow-up-down`).
 
 Kit extensions on `table-container`:
 
@@ -1634,7 +1644,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 - The frame of the shadcn data table (tasks example and `dashboard-01`): a toolbar, the table in a bordered, rounded `table-container` with a muted header, and the pagination row. Sorting, filtering, and paging are app code.
 - `data-table-toolbar` has two `div` groups: filters at the start (the first grows; a text input in it is 150 to 250 px) and actions at the end. Both wrap. Small buttons in it are 32 px high, as high as the input (shadcn `h-8`). Below 40rem, when the first control of the start group is an `input` or `input-group` (the search), the search takes the whole first row, and the filters and the end group share the next row, with the end group at the end.
 - `data-table-pagination` is a row of `div` groups at the end, 14 px, weight 500. `data-table-selection` is the muted selection text that fills the start.
-- `data-table-text` is the text of a cell: one line, cut with an ellipsis at 32rem (or 60 % of the table width). With an icon first it is an icon and label row (the icon is muted). A sort button: a ghost `button` alone in the `table-head`, with `aria-sort` on the head.
+- `data-table-text` is the text of a cell: one line, cut with an ellipsis at 32rem (or 60 % of the table width). With an icon first it is an icon and label row (the icon is muted). A sort button: `data-sort` on the `table-head` (see [Table](#table)).
 - `data-align="end"` on a `table-head` or `table-cell` aligns numbers to the end with tabular figures; `data-align="center"` centers. A cell with only a `checkbox` is 2rem wide. A cell with an `empty` has no padding: use it with `colspan` for the empty state.
 
 #### Brand

@@ -1673,6 +1673,70 @@ def check_sidebar_inset_overflow(t):
     assert out["table"][1] > out["table"][0], out
 
 
+TABLE_SORT = """async () => {
+  const { h, tableSort } = await import("/clanker-ui.js")
+  const rows = [["Žan", "1.234,50 €", "3. 11. 2026", "b"], ["Cene", "–", "1. 2. 2025", "a"], ["Čarli", "12,00 €", "", "c"], ["Ana", "300,25 €", "15. 6. 2026", "d"], ["ana", "12,00 €", "2. 2. 2025", "e"]]
+  const table = h("table", { "data-slot": "table", lang: "sl" },
+    h("thead", { "data-slot": "table-header" }, h("tr", { "data-slot": "table-row" },
+      h("th", { "data-slot": "table-head", "data-sort": "text" }, "Name"),
+      h("th", { "data-slot": "table-head", "data-sort": "", "data-align": "end" }, "Amount"),
+      h("th", { "data-slot": "table-head", "data-sort": "date" }, "Date"),
+      h("th", { "data-slot": "table-head", "data-sort": "id_desc" }, h("button", { type: "button", class: "app-sort" }, "Id")))),
+    h("tbody", { "data-slot": "table-body" }, rows.map(r => h("tr", { "data-slot": "table-row" }, r.map(c => h("td", { "data-slot": "table-cell" }, c))))))
+  const box = h("div", { "data-slot": "table-container", id: "table-sort-probe" }, table)
+  document.body.append(box)
+  await new Promise(r => requestAnimationFrame(r))
+  const heads = [...table.tHead.rows[0].cells]
+  const ids = () => [...table.tBodies[0].rows].map(r => r.cells[3].textContent).join("")
+  const state = () => heads.slice(0, 3).map(th => [th.getAttribute("aria-sort"), th.querySelector("[data-sort-icon]")?.getAttribute("data-lucide")])
+  const events = []
+  table.addEventListener("table:sort", e => events.push([e.detail.column, e.detail.dir]))
+  const out = { start: state(), plain: [heads[3].getAttribute("aria-sort"), heads[3].querySelectorAll("button").length, heads[3].querySelector("[data-sort-icon]")] }
+  const button = heads[0].querySelector('[data-slot="button"]')
+  out.button = [button.localName, button.getAttribute("data-variant"), button.textContent, getComputedStyle(button).marginInlineStart]
+  out.end = getComputedStyle(heads[1].querySelector('[data-slot="button"]')).flexDirection
+  button.click()
+  out.text = [ids(), state()]
+  button.click()
+  out.textDown = ids()
+  button.click()
+  out.none = [ids(), state()[0]]
+  heads[1].querySelector("button").click()
+  out.number = ids()
+  heads[1].querySelector("button").click()
+  out.numberDown = ids()
+  out.reset = state()[0]
+  tableSort(heads[2])
+  out.date = ids()
+  tableSort(heads[2], "descending")
+  out.dateDown = ids()
+  const keep = e => e.preventDefault()
+  table.addEventListener("table:sort", keep)
+  heads[0].querySelector("button").click()
+  out.prevented = [ids(), state()[0][0]]
+  table.removeEventListener("table:sort", keep)
+  out.events = events
+  try { tableSort(heads[3]) } catch (e) { out.error = e instanceof TypeError }
+  box.remove()
+  return out
+}"""
+
+
+def check_table_sort(t):
+    out = t.page.evaluate(TABLE_SORT)
+    assert out["start"] == [["none", "chevrons-up-down"]] * 3 and out["plain"] == [None, 1, None], ("an app data-sort key is left to app code", out)
+    assert out["button"] == ["button", "ghost", "Name", "-10px"], out["button"]
+    assert out["end"] == "row-reverse", out["end"]
+    assert out["text"] == ["deacb", [["ascending", "arrow-up"], ["none", "chevrons-up-down"], ["none", "chevrons-up-down"]]], ("Collator sl: a = A (stable), č after c, ž last", out["text"])
+    assert out["textDown"] == "bcade" and out["none"] == ["bacde", ["none", "chevrons-up-down"]], out
+    assert out["number"] == "cedba" and out["numberDown"] == "bdcea", ("locale numbers, empty last in both directions, stable ties", out)
+    assert out["reset"] == ["none", "chevrons-up-down"], out
+    assert out["date"] == "aedbc" and out["dateDown"] == "bdeac", ("dates in the sl order, empty last", out)
+    assert out["prevented"] == ["bdeac", "ascending"], ("preventDefault keeps the rows, the head state changes", out)
+    assert out["events"][:3] == [[0, "ascending"], [0, "descending"], [0, "none"]] and out["events"][-1] == [0, "ascending"], out["events"]
+    assert out["error"] is True, out
+
+
 def check_sidebar_rtl(t):
     page = t.page
     t.section("sidebar")

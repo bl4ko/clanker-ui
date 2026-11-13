@@ -19,6 +19,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Fixed
 
+- Vega style: `card-content` is a flex column with a 12 px gap, like a shadcn install. The generator now reads a compound `.cn-*` style rule like the shadcn style map: its classes go to the plain part, without the condition (#143).
 - Navigation menu: in Firefox 159 a menu opened by hover closes again after a press on a link that is dragged out of the menu and released, as on the live shadcn site; the close timer now also starts on `mouseout`, because Firefox 159 sends no `pointerout` after the release (#145).
 - Card grid: `card-grid` has `width: 100%`, so it keeps its columns in a parent that sizes it to its content (a centering flex or grid container). Before, it was one 24 px column with cards, and with covers in Firefox 159; with covers in Chromium and WebKit it was as wide as the content of the covers (2 columns in the Cover section of the demo) and now has as many columns as fit (#146).
 - Chart: the active dots of line, area, and radar charts no longer fade in again on every pointer move; only the first draw animates (#119).

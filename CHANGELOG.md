@@ -26,6 +26,10 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Design lint `empty-region`: a start-aligned row of three or more columns (a board) is not checked, and a start-aligned item no longer gets the hint "align the row to start" (#131).
 - Catalog: an attribute that the kit JavaScript only reads (`data-sticky-header` of `table-container`, `data-layout` of `page`) is a Write attribute, not State, so agents that follow the skill write it (#128).
 
+### Docs
+
+- Recipe "Board (columns of cards)": a Kanban board from `card-grid`, `card`, `item-group`, `badge`, and `empty`, with one line of app CSS. A dedicated board part waits until after 1.0 (#130).
+
 ## 0.3.0 - 2026-11-10
 
 ### Breaking

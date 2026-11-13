@@ -391,6 +391,65 @@ def check_code_token_contrast(t):
     assert not result["failures"], f"{len(result['failures'])} code token contrast failures: {result['failures'][:20]}"
 
 
+DESTRUCTIVE_TINT = r"""async () => {
+  const { theme, h, icon } = await import("/clanker-ui.js")
+  const root = document.documentElement
+  const saved = ["data-scheme", "data-theme"].map(n => [n, root.getAttribute(n)])
+  const host = document.body.appendChild(h("div"))
+  Object.assign(host.style, { position: "fixed", left: "-2000px", top: "0", width: "600px" })
+  const probe = host.appendChild(h("span"))
+  const parse = s => {
+    const m = s.match(/color\(srgb ([-\d.e]+) ([-\d.e]+) ([-\d.e]+)(?: \/ ([\d.]+))?\)/)
+    return [+m[1], +m[2], +m[3], m[4] === undefined ? 1 : +m[4]].map(x => Math.min(1, Math.max(0, x)))
+  }
+  const srgb = v => { probe.style.color = `color-mix(in srgb, ${v} 100%, transparent)`; return parse(getComputedStyle(probe).color) }
+  const over = (f, b) => [0, 1, 2].map(i => f[3] * f[i] + (1 - f[3]) * b[i]).concat(1)
+  const lum = c => { const [x, y, z] = c.slice(0, 3).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); return 0.2126 * x + 0.7152 * y + 0.0722 * z }
+  const ratio = (f, b) => { const p = lum(over(f, b)), q = lum(b); return (Math.max(p, q) + 0.05) / (Math.min(p, q) + 0.05) }
+  const parts = ["background", "card", "popover"].map(bg => {
+    const box = host.appendChild(h("div", h("span", { "data-slot": "badge", "data-variant": "destructive" }, icon("clock"), "Overdue"), h("button", { "data-slot": "button", "data-variant": "destructive", type: "button" }, "Delete")))
+    box.style.backgroundColor = `var(--${bg})`
+    return [bg, box]
+  })
+  const failures = [], untokened = []
+  let worst = 99
+  for (const scheme of theme.schemes.filter(s => s.group !== "accent").map(s => s.value)) {
+    theme.setScheme(scheme)
+    for (const mode of ["light", "dark"]) {
+      theme.set(mode)
+      const dark = getComputedStyle(root).colorScheme === "dark"
+      for (const [bg, box] of parts) {
+        const surface = srgb(`var(--${bg})`)
+        for (const el of box.children) {
+          const text = srgb(getComputedStyle(el).color)
+          probe.style.color = "color-mix(in srgb, var(--destructive-text) 100%, transparent)"
+          const token = /color\(srgb/.test(getComputedStyle(probe).color) ? parse(getComputedStyle(probe).color) : null
+          if (!token || text.some((v, i) => Math.abs(v - token[i]) > 0.002)) untokened.push(`${scheme} ${mode} ${el.dataset.slot}`)
+          for (const tint of dark ? [20, 30] : [10, 20]) {
+            const r = ratio(text, over(srgb(`color-mix(in oklab, var(--destructive) ${tint}%, transparent)`), surface))
+            worst = Math.min(worst, r)
+            if (r < 4.5) failures.push(`${scheme} ${mode} ${el.dataset.slot} on ${bg} + ${tint} %: ${r.toFixed(2)}`)
+          }
+        }
+      }
+    }
+  }
+  host.remove()
+  for (const [n, v] of saved) v === null ? root.removeAttribute(n) : root.setAttribute(n, v)
+  return { failures, untokened, worst: +worst.toFixed(2) }
+}"""
+
+
+def check_scheme_destructive_text(t):
+    if t.mobile:
+        t.skip("colors do not depend on the viewport width")
+    page = t.page
+    t.a11y()
+    result = page.evaluate(DESTRUCTIVE_TINT)
+    assert result["failures"] == [], (f"{len(result['failures'])} destructive text failures, worst {result['worst']}:1", result["failures"][:20])
+    assert result["untokened"] == [], ("destructive text is --destructive-text", result["untokened"][:10])
+
+
 def check_scheme_persist(t):
     page = t.page
     root = page.locator("html")

@@ -105,6 +105,8 @@ func docsStyleCSS(name string, base, style []byte, extra ...[]byte) ([]byte, err
 	var baseTokens, tokens []string
 	props := map[string]bool{}
 	baseAt := map[string]bool{}
+	baseHead := map[string]bool{}
+	var hoist []string
 	for _, r := range baseTop {
 		head, body := cssBlock(r)
 		switch {
@@ -116,6 +118,7 @@ func docsStyleCSS(name string, base, style []byte, extra ...[]byte) ([]byte, err
 			}
 		case strings.HasPrefix(head, "@property") || strings.HasPrefix(head, "@keyframes"):
 			baseAt[r] = true
+			baseHead[head] = true
 		}
 	}
 	var b strings.Builder
@@ -147,7 +150,10 @@ func docsStyleCSS(name string, base, style []byte, extra ...[]byte) ([]byte, err
 		switch {
 		case strings.HasPrefix(head, "@property") || strings.HasPrefix(head, "@keyframes"):
 			if i < own && !baseAt[r] {
-				return nil, fmt.Errorf("docs style %s: %s is not in the default style", name, head)
+				if baseHead[head] || !strings.HasPrefix(head, "@property") {
+					return nil, fmt.Errorf("docs style %s: %s is not in the default style", name, head)
+				}
+				hoist = append(hoist, r)
 			}
 		case head == "@layer clanker.tokens":
 			tokens = append(tokens, r)
@@ -177,6 +183,9 @@ func docsStyleCSS(name string, base, style []byte, extra ...[]byte) ([]byte, err
 		fmt.Fprintf(&b, "@layer clanker.tokens {\n%s {\n:scope { %s }\n}\n}\n", scope, strings.Join(add, " "))
 	}
 	b.WriteString("}\n")
+	for _, r := range hoist {
+		b.WriteString(r + "\n")
+	}
 	return []byte(b.String()), nil
 }
 

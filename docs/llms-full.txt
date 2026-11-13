@@ -610,7 +610,7 @@ show(content, { trigger, anchor = trigger, side, align, sideOffset = 4, alignOff
 - Utilities: `.sr-only`; `.shimmer` (text shimmer, override `--shimmer-color`, `--shimmer-duration`, `--shimmer-spread`, `--shimmer-angle`); `.scroll-fade` and `.scroll-fade-x` (see below).
 - `.scroll-fade` goes on a vertical scroll container, `.scroll-fade-x` on a horizontal one. A mask fades the edge where more content is: at rest only the end edge fades, in the middle both edges fade, at the end only the start edge fades. Without overflow, nothing fades. `.scroll-fade-x` mirrors in RTL. It uses scroll-driven animations (`animation-timeline: scroll()`); browsers without them (Firefox today) show no fade. Override `--scroll-fade-size` (default `min(12%, 2.5rem)`), one edge with `--scroll-fade-t-size`, `--scroll-fade-b-size`, `--scroll-fade-s-size`, or `--scroll-fade-e-size`, the whole mask with `--scroll-fade-mask` (`none` turns it off), and `--scroll-fade-reveal` (scroll distance until the fade is full, default `6rem`; `ease-in-out`). The class sets `animation`, so put it on an inner scroller, not on an element with its own enter or exit animation. It follows the shadcn `scroll-fade` utility, with one difference: without scroll-driven animations shadcn shows a fixed fade on both edges, the kit shows none (a fixed fade covers content that does not scroll).
 - shadcn tokens: `--background`, `--foreground`, `--card`, `--card-foreground`, `--popover`, `--popover-foreground`, `--primary`, `--primary-foreground`, `--secondary`, `--secondary-foreground`, `--muted`, `--muted-foreground`, `--accent`, `--accent-foreground`, `--destructive`, `--border`, `--input`, `--ring`, `--chart-1`…`--chart-5`, `--sidebar`, `--sidebar-foreground`, `--sidebar-primary`, `--sidebar-primary-foreground`, `--sidebar-accent`, `--sidebar-accent-foreground`, `--sidebar-border`, `--sidebar-ring`, `--radius`.
-- Kit tokens: `--radius-sm`…`--radius-4xl`, `--shadow-2xs`…`--shadow-2xl`, `--ease-in`, `--ease-out`, `--ease-in-out`, `--font-sans`, `--font-mono`, `--spacing`; status tokens `--success-bg`, `--success-border`, `--success-text`, and the same for `info`, `warning`, and `error` (the `success`, `warning`, and `info` variants of `alert` and `badge` use them); status fills `--success-fill`, `--warning-fill`, `--error-fill`, `--info-fill` for marks such as bars, dots, and meters (3:1 or more against the card, the same hue in light and dark), and `--neutral-fill` (gray, 3:1 or more against the card) for "no data" marks; chart tokens `--chart-6`…`--chart-8`, `--chart-other`, `--chart-negative`, `--chart-good`, `--chart-bad`, `--chart-surface`, `--chart-grid`, `--chart-axis`, `--chart-area-opacity`, `--chart-ink-light`, `--chart-ink-dark` (label ink inside a fill, set on `[data-slot="chart"]`).
+- Kit tokens: `--radius-sm`…`--radius-4xl`, `--shadow-2xs`…`--shadow-2xl`, `--ease-in`, `--ease-out`, `--ease-in-out`, `--font-sans`, `--font-mono`, `--spacing`; status tokens `--success-bg`, `--success-border`, `--success-text`, and the same for `info`, `warning`, and `error` (the `success`, `warning`, and `info` variants of `alert` and `badge` use them); status fills `--success-fill`, `--warning-fill`, `--error-fill`, `--info-fill` for marks such as bars, dots, and meters (3:1 or more against the card, the same hue in light and dark), and `--neutral-fill` (gray, 3:1 or more against the card) for "no data" marks; chart tokens `--chart-6`…`--chart-8`, `--chart-other`, `--chart-negative`, `--chart-good`, `--chart-bad`, `--chart-surface`, `--chart-tooltip-border`, `--chart-grid`, `--chart-axis`, `--chart-area-opacity`, `--chart-ink-light`, `--chart-ink-dark` (label ink inside a fill, set on `[data-slot="chart"]`).
 
 ### Accessibility layer
 
@@ -622,7 +622,7 @@ show(content, { trigger, anchor = trigger, side, align, sideOffset = 4, alignOff
 - Focus: every `:focus-visible` element gets `outline: 3px solid var(--focus-ring)`. `--focus-ring` mixes `--ring` with 25 % `--foreground` (at least 3:1 on `--background`; the shadcn ring at 50 % is below 2:1). `aria-invalid="true"` and destructive buttons use `--focus-ring-invalid` (`--destructive`). Composite fields (input group, OTP slot, combobox chips, calendar dropdown, code block, questionnaire choice, slider thumb) draw the outline on the field, not on the inner control. Sidebar items use a 2 px outline of `--sidebar-ring` mixed with 25 % `--sidebar-foreground`; the resizable handle a 1 px outline.
 - Keyboard highlight in item lists (select, combobox, and command items, dropdown, context, and menubar items, menubar triggers, and links in navigation menu content): a 2 px `--focus-ring` outline inside the item (`outline-offset: -2px`), only while `<html>` has `data-keyboard` (the kit sets it during keyboard use). Pointer hover shows only the `--accent` background, like shadcn.
 - Status tokens: borders reach 3:1 on `--background` (in dark also on `--card`) and light text reaches 4.5:1 on its background (success `hsl(140 100% 25%)`, info `hsl(210 92% 43%)`, warning `hsl(31 92% 35%)`, error `hsl(360 100% 43%)`).
-- Destructive buttons and badges (the tinted shadcn `destructive` variant): the text is `--destructive` mixed with 25 % `--foreground`, so it has 4.5:1 on its tinted background, also on hover. The background keeps the shadcn value.
+- Destructive buttons and badges (the tinted shadcn `destructive` variant): the text is the token `--destructive-text`, `--destructive` mixed with 25 % `--foreground`; the editor schemes mix `--destructive` with black (light) or white (dark) instead. It has 4.5:1 on its tinted background on `--background`, `--card`, and `--popover`, also on hover, in every scheme. The background keeps the shadcn value.
 - Native select: 16 px text below 48rem and 14 px from 48rem, like `input` (shadcn `text-base md:text-sm`), so iOS Safari does not zoom the page when the select gets focus. shadcn and the kit without the layer use 14 px at every width.
 - Light `--muted-foreground` is `oklch(0.54 0 0)` (shadcn 0.556), so it has 4.6:1 on `--muted`.
 - `--chart-1`…`--chart-8` is the categorical palette validated with the dataviz `validate_palette.js` in light and dark: all checks pass. In light, slots 3, 4, and 5 are below 3:1 contrast; every chart and sparkline has a tooltip and a table view as relief, and charts with two or more series also have a legend. The kit tokens have the same palette; the layer also gives it to the shadcn base schemes, which set a gray ramp.
@@ -1457,12 +1457,13 @@ view.destroy()
 | Pie and donut | `labels: "value" \| "percent" \| "name"`, `labelPosition: "inside"`, `innerRadius`, `center`, `highlight` |
 | Radar | `grid: "polygon" \| "circle" \| "none"`, `fill: false`, `dots`, `max` |
 | Radial | `stacked`, `startAngle`, `endAngle`, `max`, `track`, `grid`, `labels`, `center`, `innerRadius` |
-| `tooltip` | `{ indicator: "line" \| "dot" \| "dashed", hideLabel, hideIndicator }` |
+| `tooltip` | `{ indicator: "line" \| "dot" \| "dashed", hideLabel, hideIndicator, hideEmpty }`. `hideEmpty: true` leaves out the series without a value at the hovered point (like Recharts `filterNull`); `"zero"` also leaves out 0. Default: every series, `–` for no value. |
 | `view`, `animate` | `"chart"` or `"table"`; `animate: false` skips the entrance animation |
 
 - The SVG is `role="application"` with `tabindex="0"`, so screen readers pass the arrow keys to it. Its accessible name is an automatic summary; the marks inside are hidden from assistive technology, and the table view has every value. Pointer: crosshair for line and area, per-mark tooltip otherwise. Keyboard: arrows move between points, Home, End, Escape. A polite live region reads the readout. The legend is a toolbar of toggle buttons with one tab stop. The table button switches to an accessible `<table>`.
 - Colors: `--chart-1`…`--chart-8` is a categorical palette with 8 distinct hues, validated with the dataviz `validate_palette.js` in light and dark. shadcn's own `--chart-1`…`--chart-5` are a gray ramp (the base color), which does not separate series; the kit uses the validated hues by default. The shadcn base schemes of `clanker-ui-themes.css` (`data-scheme="neutral"`, `zinc`, ...) set the exact shadcn gray ramp; the accessibility layer and the editor schemes keep hues. Brand colors: override `--chart-1`… in `app.css` (light and dark), or give a series `color` in `config`.
 - `--chart-surface` is the gap and dot ring color (default `--card`); set it to the background the chart sits on.
+- The tooltip sits next to the pointer. When it is too wide for either side, it goes above the hovered points, or below them when there is more room. `--chart-tooltip-border` is its border color (default `--border` at 50 %, like shadcn); the editor schemes where `--background` equals `--card` set it to the full `--border` in dark mode.
 - A label inside a fill uses `--chart-ink-light` (`#fff`) or `--chart-ink-dark` (`#0b0b0b`), whichever has the higher WCAG contrast against the fill. Override both on `[data-slot="chart"]`.
 - Charts redraw on `theme:change` while they are in the document. A removed chart closes its tooltip, is not tracked, and redraws when it is inserted again. A destroyed chart never redraws.
 - Fixed labels (chart names, legend, table button, table header, summary sentences) come from `strings` (see [Localization](#localization)); `data-string-<key>` on the chart element or an ancestor overrides one chart.
@@ -1835,7 +1836,7 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 | Part | Write | State |
 | --- | --- | --- |
-| `table-container` |  | `data-fits`, `data-sticky-header` |
+| `table-container` | `data-sticky-header` any | `data-fits` |
 | `table-row` | `data-state` string |  |
 
 Other parts: `table` (root), `table-body`, `table-caption`, `table-cell`, `table-footer`, `table-head`, `table-header`.
@@ -1945,13 +1946,11 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 | Part | Write | State |
 | --- | --- | --- |
-| `page` (root) | `data-size` `lg`, `md`, `sm` | `data-layout` |
+| `page` (root) | `data-layout` any; `data-size` `lg`, `md`, `sm` |  |
 | `page-aside` | `data-variant` `sticky` |  |
 | `page-header` | `data-size` `lg` |  |
 
 Other parts: `page-actions`, `page-body`, `page-description`, `page-meta`, `page-nav`, `page-title`.
-
-Other options named in the docs: `data-layout` string.
 
 #### Site Header (`site-header`)
 

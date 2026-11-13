@@ -220,15 +220,6 @@ func (g *gen) groupOwners(k kitMap) map[string][]string {
 	return owners
 }
 
-func sortedPairs(m map[[2]string][]string) [][2]string {
-	var out [][2]string
-	for k := range m {
-		out = append(out, k)
-	}
-	slices.SortFunc(out, func(a, b [2]string) int { return strings.Compare(a[0]+"="+a[1], b[0]+"="+b[1]) })
-	return out
-}
-
 func parseTheme(src, name string) ([][2]string, [][2]string, error) {
 	i := strings.Index(src, `name: "`+name+`"`)
 	if i < 0 {

@@ -7,6 +7,7 @@
   <title>clanker-ui design lint: good cases</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/clanker-ui.css">
+  <link rel="stylesheet" href="/clanker-ui-a11y.css">
   <link rel="stylesheet" href="/test/lint/lint.css">
   <script type="module" src="/clanker-ui.js"></script>
 </head>
@@ -106,6 +107,18 @@
             <div data-slot="card-content"><div class="side-chart"></div></div>
           </div>
         </div>
+      </div>
+    </section>
+    <section id="destructive-tokens">
+      <h2>Overdue</h2>
+      <p><span data-slot="badge" data-variant="destructive">Overdue</span> <button type="button" data-slot="button" data-variant="destructive">Delete</button></p>
+    </section>
+    <section id="board-start-aligned">
+      <h2>Board</h2>
+      <div class="columns-start">
+        <div><div class="column-tall"></div></div>
+        <div><div class="column-short"></div></div>
+        <div><div class="column-short"></div></div>
       </div>
     </section>
     <section id="hw-central-layout-shift">

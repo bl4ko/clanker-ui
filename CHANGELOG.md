@@ -11,6 +11,10 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Chart: `tooltip: { hideEmpty: true }` leaves out the series without a value at the hovered point, like Recharts `filterNull`; `hideEmpty: "zero"` also leaves out 0. The keyboard readout uses the same rows. Default unchanged (#124).
 - Table: opt-in sortable column heads. `data-sort` (`number`, `date`, `text`, or empty for auto) on a `table-head` makes it a ghost button with the sort icon and `aria-sort`; a click sorts the rows ascending, descending, and back to the first order. Numbers and dates follow the `lang` of the table, text uses `Intl.Collator`, empty values go last, and the sort is stable. `table:sort` (`{ column, dir }`, cancelable for server or paged sorting) and the export `tableSort(head, dir)`. The head button lines up with the cells in any table, and `data-align="end"` puts the icon before the label. The data-table block and the docs data-table example use it instead of their own sort code (#126).
 
+### Changed
+
+- Smaller kit CSS with the same computed styles: `dist/clanker-ui.min.css` 634,103 to 599,426 bytes (gzip 58,122 to 55,868, brotli 40,363 to 39,023), `dist/clanker-ui-core.min.css` 90,748 to 87,543 bytes, and the same for the other styles. The generator merges rules with the same selector and `@media` blocks with the same condition and parts where the cascade order permits, and drops `@property` rules that nothing uses. All `--tw-*` definitions and reads stay, so a Tailwind utility on a kit part composes with the kit value as before. `tools/gen/guard` compares every computed style of the old and the new CSS in Chromium, Firefox, and WebKit.
+
 ### Fixed
 
 - Chart: the active dots of line, area, and radar charts no longer fade in again on every pointer move; only the first draw animates (#119).

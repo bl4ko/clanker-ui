@@ -300,10 +300,11 @@ def drift_try(browser, engine, sc, width, ref):
 
 def drift_run(browser, engine, sc, width, ref):
     tries = [drift_try(browser, engine, sc, width, ref)]
-    if tries[0].get("dated"):
-        return {"tries": 1, "deploy": tries[0]["deploy"], "status": "stale", "reason": tries[0]["dated"], "differences": [], "unconfirmed": []}
-    if tries[0].get("error") or tries[0]["found"] or tries[0]["busy"]:
+    if not tries[0].get("dated") and (tries[0].get("error") or tries[0]["found"] or tries[0]["busy"]):
         tries.append(drift_try(browser, engine, sc, width, ref))
+    dated = next((t for t in tries if t.get("dated")), None)
+    if dated:
+        return {"tries": len(tries), "deploy": dated["deploy"], "status": "stale", "reason": dated["dated"], "differences": [], "unconfirmed": []}
     ok = [t for t in tries if not t.get("error")]
     out = {"tries": len(tries), "deploy": next((t["deploy"] for t in ok if t.get("deploy")), None)}
     if not ok:

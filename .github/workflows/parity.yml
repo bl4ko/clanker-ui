@@ -22,7 +22,7 @@ env:
 jobs:
   parity:
     name: parity ${{ matrix.run }}
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'parity')
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'parity-ci')
     runs-on: ubuntu-26.04
     timeout-minutes: 240
     strategy:

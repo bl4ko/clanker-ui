@@ -1,0 +1,154 @@
+bubble	bubble-content	border-bottom-color	12	T7 the bubble variant (*:data-[slot=bubble-content]) beats the example border class by specificity
+bubble	bubble-content	border-left-color	12	T7 the bubble variant (*:data-[slot=bubble-content]) beats the example border class by specificity
+bubble	bubble-content	border-right-color	12	T7 the bubble variant (*:data-[slot=bubble-content]) beats the example border class by specificity
+bubble	bubble-content	border-top-color	12	T7 the bubble variant (*:data-[slot=bubble-content]) beats the example border class by specificity
+bubble	collapsible-trigger	@w	8	T7 the button has-data-[icon] padding beats the example p-0
+bubble	collapsible-trigger	padding-right	8	T7 the button has-data-[icon] padding beats the example p-0
+bubble	collapsible-trigger	width	8	T7 the button has-data-[icon] padding beats the example p-0
+button-group	button-group	@w	48	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+button-group	button-group	width	48	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+button-group	button-group-text	user-select	8	T23 the button group text renders a Label (render={<Label />})
+button-group	button-group[orientation=vertical]	@w	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+button-group	button-group[orientation=vertical]	width	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+button-group	input	@w	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+button-group	input	width	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+button-group	select-trigger[size=default]	background-color	1	P3 the Base UI select opens on pointerdown and covers the trigger, so the live trigger has no :hover in the press state
+calendar	button in calendar	border-bottom-color	6	T10 Base UI focuses the popup by script, so the live day button has no :focus-visible
+calendar	button in calendar	border-left-color	6	T10 Base UI focuses the popup by script, so the live day button has no :focus-visible
+calendar	button in calendar	border-right-color	6	T10 Base UI focuses the popup by script, so the live day button has no :focus-visible
+calendar	button in calendar	border-top-color	6	T10 Base UI focuses the popup by script, so the live day button has no :focus-visible
+calendar	button in calendar	box-shadow	6	T10 Base UI focuses the popup by script, so the live day button has no :focus-visible
+calendar	popover-trigger	@w	8	T7 the button has-data-[icon] padding beats the example px-2.5
+calendar	popover-trigger	padding-left	38	T7 the button has-data-[icon] padding beats the example px-2.5
+calendar	popover-trigger	width	8	T7 the button has-data-[icon] padding beats the example px-2.5
+calendar	svg in popover-trigger	margin-left	8	T7 the button has-data-[icon] padding beats the example px-2.5
+code-block	code-block-content	mask-image	4	U2 the shadcn scroll-fade-x utility selects [dir=rtl] *
+collapsible	collapsible-trigger	background-color	2	T7 dark:hover:bg-muted/50 of the ghost button beats the example hover:bg-accent by specificity
+collapsible	collapsible-trigger	transition-duration	48	T25 tailwind-merge drops transition-all for the example transition-none, so the duration is 0s; nothing animates on either side
+collapsible	field-label	@w	16	U4 sr-only with the part classes flex and w-fit: Tailwind orders w-fit after sr-only, so the clipped shadcn label keeps its width
+collapsible	field-label	bottom	16	U4 sr-only with the part classes flex and w-fit: Tailwind orders w-fit after sr-only, so the clipped shadcn label keeps its width
+collapsible	field-label	left	16	U4 sr-only with the part classes flex and w-fit: Tailwind orders w-fit after sr-only, so the clipped shadcn label keeps its width
+collapsible	field-label	right	16	U4 sr-only with the part classes flex and w-fit: Tailwind orders w-fit after sr-only, so the clipped shadcn label keeps its width
+collapsible	field-label	top	16	U4 sr-only with the part classes flex and w-fit: Tailwind orders w-fit after sr-only, so the clipped shadcn label keeps its width
+collapsible	field-label	width	16	U4 sr-only with the part classes flex and w-fit: Tailwind orders w-fit after sr-only, so the clipped shadcn label keeps its width
+combobox	input-group	@w	60	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+combobox	input-group	width	60	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+combobox	input-group-control	@w	66	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+combobox	input-group-control	width	66	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+empty	empty	@h	4	T26 the copy measures each example alone, so a flex-1 part does not get the height of a taller example in the same grid row
+empty	empty	height	4	T26 the copy measures each example alone, so a flex-1 part does not get the height of a taller example in the same grid row
+field	select-trigger[size=default]	background-color	1	P3 the Base UI select opens on pointerdown and covers the trigger, so the live trigger has no :hover in the press state
+hover-card	div in hover-card-portal	isolation	6	P2 the Base UI positioner (isolate z-50) of the hover card
+hover-card	div in hover-card-portal	z-index	6	P2 the Base UI positioner (isolate z-50) of the hover card
+input-group	dropdown-menu-trigger[size=xs]	color	2	T27 tailwind-merge removed the classes that the tool needs to find the input group button (no cn-* markers in an install)
+input-group	path in dropdown-menu-trigger	color	2	T27 tailwind-merge removed the classes that the tool needs to find the input group button (no cn-* markers in an install)
+input-group	path in dropdown-menu-trigger	stroke	2	T27 tailwind-merge removed the classes that the tool needs to find the input group button (no cn-* markers in an install)
+input-group	svg in dropdown-menu-trigger	color	2	T27 tailwind-merge removed the classes that the tool needs to find the input group button (no cn-* markers in an install)
+input-group	svg in dropdown-menu-trigger	stroke	2	T27 tailwind-merge removed the classes that the tool needs to find the input group button (no cn-* markers in an install)
+input-otp	field-description	margin-top	4	C the field description after the label has margin-top 0 in shadcn (nth-last-2:-mt-1 does not apply there) and -4px in the kit; not explained
+input-otp	field[orientation=vertical]	@h	4	C the field description after the label has margin-top 0 in shadcn (nth-last-2:-mt-1 does not apply there) and -4px in the kit; not explained
+input-otp	field[orientation=vertical]	height	4	C the field description after the label has margin-top 0 in shadcn (nth-last-2:-mt-1 does not apply there) and -4px in the kit; not explained
+message-scroller	button[size=icon-sm]	margin-left	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-content	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-content	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-content	height	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-content	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-description	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-description	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-footer	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-footer	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-header	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-header	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-header	grid-template-columns	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-header	grid-template-rows	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-header	height	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-header	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-title	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-title	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-title	height	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-title	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card[size=default]	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card[size=default]	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	form in card-footer	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	form in card-footer	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	input-group	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	input-group	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	input-group-addon	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	input-group-addon	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	input-group-control	@w	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	input-group-control	width	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller	height	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-button[size=icon-sm,variant=secondary]	left	6	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-button[size=icon-sm,variant=secondary]	right	6	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-button[size=icon-sm,variant=secondary]	top	6	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-content	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-content	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-content	height	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-content	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-viewport	@h	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-viewport	@w	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-viewport	height	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-viewport	width	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+native-select	native-select-icon	left	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+native-select	native-select-wrapper[size=default]	@w	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+native-select	native-select-wrapper[size=default]	width	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+native-select	native-select[size=default]	@w	14	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+native-select	native-select[size=default]	width	14	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+pagination	select-trigger[size=default]	background-color	1	P3 the Base UI select opens on pointerdown and covers the trigger, so the live trigger has no :hover in the press state
+progress	input in slider-thumb	outline-style	2	T11 the hidden range input keeps focus only in the copy
+progress	input in slider-thumb	outline-width	2	T11 the hidden range input keeps focus only in the copy
+resizable	div in resizable-panel	@h	8	C the panel group is 2 px taller in shadcn (202 px with min-h-[200px] and a 1 px border); not explained
+resizable	div in resizable-panel	height	8	C the panel group is 2 px taller in shadcn (202 px with min-h-[200px] and a 1 px border); not explained
+resizable	resizable-handle	@h	2	C the panel group is 2 px taller in shadcn (202 px with min-h-[200px] and a 1 px border); not explained
+resizable	resizable-handle	box-shadow	2	T18 react-resizable-panels focuses the handle by script on pointerdown
+resizable	resizable-handle	cursor	4	P6 react-resizable-panels sets the cursor by JavaScript
+resizable	resizable-handle	height	2	C the panel group is 2 px taller in shadcn (202 px with min-h-[200px] and a 1 px border); not explained
+resizable	resizable-handle::after	height	2	C the panel group is 2 px taller in shadcn (202 px with min-h-[200px] and a 1 px border); not explained
+resizable	resizable-panel	@h	4	C the panel group is 2 px taller in shadcn (202 px with min-h-[200px] and a 1 px border); not explained
+resizable	resizable-panel	height	4	C the panel group is 2 px taller in shadcn (202 px with min-h-[200px] and a 1 px border); not explained
+resizable	resizable-panel-group	@h	2	C the panel group is 2 px taller in shadcn (202 px with min-h-[200px] and a 1 px border); not explained
+resizable	resizable-panel-group	height	2	C the panel group is 2 px taller in shadcn (202 px with min-h-[200px] and a 1 px border); not explained
+select	item-content	@h	8	T25 tailwind-merge drops leading-normal of the item description when the example passes text-xs
+select	item-content	height	8	T25 tailwind-merge drops leading-normal of the item description when the example passes text-xs
+select	item-description	@h	8	T25 tailwind-merge drops leading-normal of the item description when the example passes text-xs
+select	item-description	height	8	T25 tailwind-merge drops leading-normal of the item description when the example passes text-xs
+select	item-description	line-height	8	T25 tailwind-merge drops leading-normal of the item description when the example passes text-xs
+select	item[size=xs,variant=default]	@h	8	T25 tailwind-merge drops leading-normal of the item description when the example passes text-xs
+select	item[size=xs,variant=default]	height	8	T25 tailwind-merge drops leading-normal of the item description when the example passes text-xs
+select	select-trigger[size=default]	@h	14	T25 tailwind-merge drops leading-normal of the item description when the example passes text-xs
+select	select-trigger[size=default]	background-color	3	P3 the Base UI select opens on pointerdown and covers the trigger, so the live trigger has no :hover in the press state
+select	select-trigger[size=default]	height	14	T25 tailwind-merge drops leading-normal of the item description when the example passes text-xs
+select	select-trigger[size=sm]	background-color	1	P3 the Base UI select opens on pointerdown and covers the trigger, so the live trigger has no :hover in the press state
+select	select-value	@h	8	T25 tailwind-merge drops leading-normal of the item description when the example passes text-xs
+select	select-value	height	8	T25 tailwind-merge drops leading-normal of the item description when the example passes text-xs
+sheet	sheet-content	outline-style	2	T10 Base UI focuses the popup by script, so the live popup has no :focus-visible
+sheet	sheet-content	outline-width	2	T10 Base UI focuses the popup by script, so the live popup has no :focus-visible
+sheet	span in sheet-portal	outline-style	2	T11 a Base UI focus guard keeps focus only in the copy
+sheet	span in sheet-portal	outline-width	2	T11 a Base UI focus guard keeps focus only in the copy
+slider	input in slider-thumb	outline-style	2	T11 the hidden range input keeps focus only in the copy
+slider	input in slider-thumb	outline-width	2	T11 the hidden range input keeps focus only in the copy
+table	select-trigger[size=sm]	background-color	1	P3 the Base UI select opens on pointerdown and covers the trigger, so the live trigger has no :hover in the press state
+toggle-group	select-trigger[size=default]	background-color	1	P3 the Base UI select opens on pointerdown and covers the trigger, so the live trigger has no :hover in the press state
+toggle-group	toggle-group-item[size=default,variant=default]	@w	12	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group-item[size=default,variant=default]	width	12	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group-item[size=sm,variant=default]	@w	16	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group-item[size=sm,variant=default]	width	16	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group-item[size=sm,variant=outline]	@w	28	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group-item[size=sm,variant=outline]	width	28	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=horizontal,size=sm,variant=outline]	@w	20	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=horizontal,size=sm,variant=outline]	width	20	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=horizontal,size=sm]	@w	4	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=horizontal,size=sm]	width	4	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=horizontal,variant=outline]	@w	4	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=horizontal,variant=outline]	width	4	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=horizontal]	@w	4	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=horizontal]	width	4	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=vertical,size=sm,variant=outline]	@w	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=vertical,size=sm,variant=outline]	width	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=vertical,size=sm]	@w	4	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=vertical,size=sm]	width	4	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=vertical]	@w	4	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+toggle-group	toggle-group[orientation=vertical]	width	4	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)

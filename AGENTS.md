@@ -62,10 +62,10 @@ uv run --no-project --with playwright python -I tools/behavior gate --quick --ba
 
 ## Parity rule
 
-- The reference is the live site: `https://ui.shadcn.com/docs/components/base/<name>` and the Nova preview routes (a `base-rhea` docs preview is the Rhea reference: `tools/parity` measures it against `clanker-ui-rhea.css`, `report.py --style rhea`; the other styles have no docs previews, so their reference is the example page with the style preset: `parity.py --page-style <style>`, `report.py --style <style>`), at the shadcn commit in `tools/gen/main.go` (`shadcnSHA`) and Base UI 1.6.0.
+- The reference is shadcn at the commit in `tools/gen/main.go` (`shadcnSHA`) and Base UI 1.6.0. The docs previews come from the live site `https://ui.shadcn.com/docs/components/base/<name>` (a `base-rhea` docs preview is the Rhea reference: `report.py --style rhea`). The example pages `<name>-example` of every style come from the reference app, a real shadcn install of that style made by `tools/parity/refapp.py` (shadcn CLI, the pinned registry items and package versions): `parity.py --page-style <style> --ref <dir>`, `report.py --style <style>` (Nova: `--known tools/parity/known-nova.tsv`). The `parity` workflow runs all of them on a pull request with the label `parity-ci`.
 - Find the live behavior first (live bundle, `tools/behavior record`, or a measured probe), then match it. Do not guess values.
 - Exception: the kit keeps its better ARIA where the live site is weaker. Each such difference is an `allowed` entry with a reason in `test/behavior/scenarios/<component>.json`.
-- `tools/parity` (CSS) and `tools/behavior gate` (behavior) are merge gates for component changes. Both need the network only to record; the gate and the tests run offline.
+- `tools/parity` (CSS) and `tools/behavior gate` (behavior) are merge gates for component changes. Both need the network only to record (`tools/parity` also to build the reference app); the gate and the tests run offline.
 - Each fix gets a check that fails when only that fix is reverted.
 - Test scope: a fix in one component runs that component's tests in Chromium, Firefox, and WebKit, light, at 1280 and 390 px (add dark, `--rtl`, or `--reduced-motion` when the fix touches color, direction, or motion). A shared core change runs its group tests and `foundation`. The full matrix runs before a release.
 

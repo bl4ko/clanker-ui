@@ -1,0 +1,145 @@
+name: parity
+
+on:
+  pull_request:
+    types: [labeled, synchronize]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # renovate: datasource=pypi depName=playwright
+  PLAYWRIGHT_VERSION: "1.64.1"
+  TAILWIND_VERSION: "4.3.3"
+  TAILWIND_SHA256: dc61b3ac6b8c9ca874c0cc4c57b2409791a64c5540404ca5f5367360babc313a
+  PARITY_ONLY: ""
+  PARITY_RUNS: docs nova luma lyra maia mira sera vega
+  PARITY_RAW: ""
+  NO_COLOR: "1"
+
+jobs:
+  fetch:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'parity-ci')
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    outputs:
+      runs: ${{ steps.runs.outputs.runs }}
+    steps:
+      - id: runs
+        run: echo "runs=$(printf '%s\n' $PARITY_RUNS | jq -Rsc 'split("\n") | map(select(length > 0))')" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+      - run: go run ./tools/gen fetch -src "$RUNNER_TEMP/shadcn"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: shadcn
+          path: ${{ runner.temp }}/shadcn
+          retention-days: 1
+
+  parity:
+    name: parity ${{ matrix.run }}
+    needs: fetch
+    runs-on: ubuntu-26.04
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        run: ${{ fromJSON(needs.fetch.outputs.runs) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+      - name: Install Tailwind CLI
+        run: |
+          bin="$RUNNER_TEMP/bin"
+          mkdir -p "$bin"
+          curl -fsSLo "$bin/tailwindcss" "https://github.com/tailwindlabs/tailwindcss/releases/download/v${TAILWIND_VERSION}/tailwindcss-linux-x64"
+          echo "$TAILWIND_SHA256  $bin/tailwindcss" | sha256sum -c -
+          chmod +x "$bin/tailwindcss"
+          echo "$bin" >> "$GITHUB_PATH"
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.7"
+          python-version: "3.13"
+          enable-cache: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+      - name: Install pnpm
+        run: |
+          corepack enable pnpm
+          corepack install -g pnpm@12.18.0
+          pnpm --version
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: shadcn
+          path: ${{ runner.temp }}/shadcn
+      - name: Reference app
+        env:
+          RUN: ${{ matrix.run }}
+        run: |
+          style="$RUN"
+          [ "$RUN" = docs ] && style=nova
+          start=$(date +%s)
+          uv run --no-project python -I tools/parity/refapp.py --src "$RUNNER_TEMP/shadcn" --out "$RUNNER_TEMP/ref" --styles "$style"
+          echo "refapp $style: $(( $(date +%s) - start )) s, dist $(du -sh "$RUNNER_TEMP/ref/$style/dist" | cut -f1), app $(du -sh "$RUNNER_TEMP/ref/$style" | cut -f1)" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Install Chromium
+        run: uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" playwright install --with-deps chromium
+      - name: Measure
+        env:
+          RUN: ${{ matrix.run }}
+        run: |
+          out="$RUNNER_TEMP/parity"
+          set -- --src "$RUNNER_TEMP/shadcn" --out "$out" --ref "$RUNNER_TEMP/ref"
+          [ "$RUN" = docs ] || set -- "$@" --page-style "$RUN"
+          [ -z "$PARITY_ONLY" ] || set -- "$@" --only "$PARITY_ONLY"
+          [ -z "$PARITY_RAW" ] || set -- "$@" --keep-raw
+          start=$(date +%s)
+          uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I tools/parity/parity.py "$@"
+          echo "parity $RUN: $(( $(date +%s) - start )) s" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Gate
+        env:
+          RUN: ${{ matrix.run }}
+        run: |
+          out="$RUNNER_TEMP/parity"
+          gate() {
+            name=$1
+            shift
+            rc=0
+            uv run --no-project python -I tools/parity/report.py "$out" --strict --write-known "$out/known-$name.tsv" "$@" > "$out/report-$name.md" || rc=$?
+            grep -m1 '^(part, state' "$out/report-$name.md" | sed "s/^/$name: /" >> "$GITHUB_STEP_SUMMARY"
+            sed -n '/^## Gate failed/,$p' "$out/report-$name.md" | cut -c1-400 >> "$GITHUB_STEP_SUMMARY"
+            return $rc
+          }
+          a=0
+          b=0
+          case "$RUN" in
+            docs) gate nova || a=$?; gate rhea --style rhea || b=$? ;;
+            nova) gate nova-page --known tools/parity/known-nova.tsv || a=$? ;;
+            *) gate "$RUN" --style "$RUN" || a=$? ;;
+          esac
+          exit $(( a | b ))
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: parity-${{ matrix.run }}
+          path: |
+            ${{ runner.temp }}/parity/*.json
+            ${{ runner.temp }}/parity/*.md
+            ${{ runner.temp }}/parity/*.tsv
+            ${{ runner.temp }}/ref/*/manifest.json
+            ${{ env.PARITY_RAW && format('{0}/parity/pages', runner.temp) || '' }}
+          if-no-files-found: ignore
+          retention-days: 14

@@ -13,6 +13,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Chart tooltip: the editor schemes where `--background` equals `--card` (Catppuccin, Dracula, Everforest, GitHub, Gruvbox, Kanagawa, Nord, One, Solarized, Tokyo Night) give the tooltip the full `--border` in dark mode, so it has an edge on a card. New token `--chart-tooltip-border` (default: `--border` at 50 %) (#121).
 - Sidebar: in icon mode the hidden `sidebar-group-label` (moved up 32 px, `opacity: 0`) no longer takes the clicks of the last menu button of the group above (`pointer-events: none`) (#125). shadcn has the same gap.
 - Sidebar: `sidebar-inset` has `min-width: 0`, so a wide table scrolls inside its `table-container` and the page no longer scrolls sideways (#123). shadcn `SidebarInset` has the same gap.
+- Accessibility layer: the text of destructive badges, buttons, alert-dialog actions, and pagination links is the new token `--destructive-text`. The editor schemes (Tokyo Night, Catppuccin, Gruvbox, Nord, Dracula, Rosé Pine, Solarized, One, Kanagawa, Everforest) mix `--destructive` with black (light) or white (dark), so the text has 4.5:1 on its tinted background, also on hover (#129). The design lint finds the token, so `non-token-color` no longer warns on these parts (#127).
 
 ## 0.3.0 - 2026-11-10
 

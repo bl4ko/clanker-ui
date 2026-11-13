@@ -1116,7 +1116,7 @@ def preset_code(style):
 
 
 def style_page(comp, style, examples, ref=False):
-    if f"{comp}-example" not in examples.nova:
+    if "<Example" not in examples.nova.get(f"{comp}-example", ""):
         return None
     return f"{NOVA_PAGE}{comp}-example?ref={style}" if ref else f"{NOVA_PAGE}{comp}-example?preset={preset_code(style)}"
 

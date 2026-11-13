@@ -1648,6 +1648,31 @@ def check_sidebar_icon_group_label(t):
     assert out["hits"] == [True, True, True], ("the hidden label of the next group does not take clicks from the last menu button", out)
 
 
+def check_sidebar_inset_overflow(t):
+    page = t.page
+    out = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const cells = Array.from({ length: 30 }, (_, i) => h("td", { "data-slot": "table-cell" }, `column value ${i}`))
+          const wrap = h("div", { "data-slot": "sidebar-wrapper", id: "sidebar-wide" },
+            h("div", { "data-slot": "sidebar", "data-side": "left", "data-collapsible": "offcanvas" },
+              h("div", { "data-slot": "sidebar-gap" }),
+              h("div", { "data-slot": "sidebar-container" }, h("div", { "data-slot": "sidebar-inner" }, h("div", { "data-slot": "sidebar-content" })))),
+            h("main", { "data-slot": "sidebar-inset" },
+              h("div", { "data-slot": "table-container" }, h("table", { "data-slot": "table" }, h("tbody", { "data-slot": "table-body" }, h("tr", { "data-slot": "table-row" }, ...cells))))))
+          document.body.append(wrap)
+          await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+          const inset = wrap.querySelector('[data-slot="sidebar-inset"]').getBoundingClientRect()
+          const table = wrap.querySelector('[data-slot="table-container"]')
+          const out = { wrap: [wrap.clientWidth, wrap.scrollWidth], inset: [inset.left, inset.right], box: wrap.getBoundingClientRect().right, table: [table.clientWidth, table.scrollWidth] }
+          wrap.remove()
+          return out
+        }"""
+    )
+    assert out["wrap"][1] <= out["wrap"][0] + 1 and out["inset"][1] <= out["box"] + 1, ("a wide table scrolls in its container, not the page", out)
+    assert out["table"][1] > out["table"][0], out
+
+
 def check_sidebar_rtl(t):
     page = t.page
     t.section("sidebar")

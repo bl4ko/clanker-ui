@@ -18,6 +18,7 @@ env:
   TAILWIND_VERSION: "4.3.3"
   TAILWIND_SHA256: dc61b3ac6b8c9ca874c0cc4c57b2409791a64c5540404ca5f5367360babc313a
   PARITY_ONLY: "badge,card,select"
+  NO_COLOR: "1"
 
 jobs:
   fetch:

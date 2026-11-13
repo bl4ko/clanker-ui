@@ -17,7 +17,7 @@ env:
   PLAYWRIGHT_VERSION: "1.64.1"
   TAILWIND_VERSION: "4.3.3"
   TAILWIND_SHA256: dc61b3ac6b8c9ca874c0cc4c57b2409791a64c5540404ca5f5367360babc313a
-  PARITY_ONLY: "badge,card,select"
+  PARITY_ONLY: ""
   NO_COLOR: "1"
 
 jobs:
@@ -43,7 +43,7 @@ jobs:
     name: parity ${{ matrix.run }}
     needs: fetch
     runs-on: ubuntu-26.04
-    timeout-minutes: 240
+    timeout-minutes: 350
     strategy:
       fail-fast: false
       matrix:

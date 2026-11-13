@@ -14710,6 +14710,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-grid-min)), 1fr));
     gap: calc(var(--spacing) * 4);
+    width: 100%;
   }
   [data-slot="card-grid"][data-size="sm"] { --card-grid-min: 10rem; }
   [data-slot="card-grid"][data-size="lg"] { --card-grid-min: 18rem; }

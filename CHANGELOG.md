@@ -18,6 +18,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Fixed
 
+- Navigation menu: in Firefox 159 a menu opened by hover closes again after a press on a link that is dragged out of the menu and released, as on the live shadcn site; the close timer now also starts on `mouseout`, because Firefox 159 sends no `pointerout` after the release (#145).
+- Card grid: `card-grid` has `width: 100%`, so it keeps its columns in a parent that sizes it to its content (a centering flex or grid container). Before, it was one 24 px column with cards, and with covers in Firefox 159; with covers in Chromium and WebKit it was as wide as the content of the covers (2 columns in the Cover section of the demo) and now has as many columns as fit (#146).
 - Chart: the active dots of line, area, and radar charts no longer fade in again on every pointer move; only the first draw animates (#119).
 - Chart: a tooltip that is too wide for either side of the pointer goes above the hovered points (or below them when there is more room), so it no longer covers them (#120).
 - Chart tooltip: the editor schemes where `--background` equals `--card` (Catppuccin, Dracula, Everforest, GitHub, Gruvbox, Kanagawa, Nord, One, Solarized, Tokyo Night) give the tooltip the full `--border` in dark mode, so it has an edge on a card. New token `--chart-tooltip-border` (default: `--border` at 50 %) (#121).

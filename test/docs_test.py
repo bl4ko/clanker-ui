@@ -1069,6 +1069,17 @@ def check_kit_card_grid_rows(t):
     assert abs(feet[0]["bottom"] - feet[1]["bottom"]) < 1 and abs(feet[0]["bottom"] - cards[0]["bottom"]) < 1, ("footers sit at the bottom", feet[:2], cards[:2])
 
 
+def check_kit_card_grid_centered(t):
+    card = lambda i: ["div", {"data-slot": "card", "id": f"fx-fit-cards-{i}"}, ["div", {"data-slot": "card-header"}, ["div", {"data-slot": "card-title"}, "Circe"]]]
+    cover = lambda i: ["div", {"data-slot": "cover", "id": f"fx-fit-covers-{i}"}, ["span", {}, "Sea of Tranquility"]]
+    row = lambda name, make: ["div", {"style": {"display": "flex", "justifyContent": "center", "width": "680px"}}, ["div", {"data-slot": "card-grid", "data-size": "sm", "id": f"fx-fit-{name}"}, make(1), make(2), make(3)]]
+    kit_fixture(t, ["div", {}, row("cards", card), row("covers", cover)])
+    for name in ("cards", "covers"):
+        grid, items = rect(t, f"#fx-fit-{name}"), [rect(t, f"#fx-fit-{name}-{i}") for i in range(1, 4)]
+        assert abs(grid["width"] - 680) < 1, ("a card grid in a centering parent takes the full width", name, grid)
+        assert all(abs(i["top"] - items[0]["top"]) < 1 and abs(i["width"] - 216) < 1 for i in items), ("three columns fit in 680 px", name, items)
+
+
 def check_kit_cover_words(t):
     words = lambda text: [["span", {}, w + " "] for w in text.split(" ")]
     kit_fixture(t, ["div", {},

@@ -1180,6 +1180,7 @@ def check_progress_zero(t):
           }
           const control = h("div", { id: "progress-zero-control", "data-slot": "progress", "data-value": "50", "aria-label": "Half" })
           control.style.width = "200px"
+          control.style.marginTop = "8px"
           const box = h("div", zero, control)
           Object.assign(box.style, { position: "fixed", insetInlineStart: "0", top: "1rem", zIndex: "2147483647", width: "15rem", padding: "4px", background: "var(--background)" })
           document.body.append(box)

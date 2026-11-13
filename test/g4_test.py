@@ -885,7 +885,8 @@ def check_message(t):
     with_footer = section.locator("#message-demo [data-slot=message]:has([data-slot=message-footer]) [data-slot=message-avatar]")
     assert with_footer.evaluate("e => getComputedStyle(e).translate") == "0px -32px"
     footer = section.locator("#message-demo [data-slot=message-footer]")
-    assert footer.evaluate("e => getComputedStyle(e).justifyContent") == "flex-end"
+    flex_end = page.evaluate("() => { const e = document.createElement('div'); e.style.justifyContent = 'flex-end'; document.body.append(e); const v = getComputedStyle(e).justifyContent; e.remove(); return v }")
+    assert footer.evaluate("e => getComputedStyle(e).justifyContent") == flex_end, ("the footer of an end message has justify-content: flex-end, as the engine reports that keyword (flow-end in Chromium 158)", flex_end)
     assert footer.evaluate("e => getComputedStyle(e).color") == resolve(page, "var(--muted-foreground)")
     avatar = section.locator("#message-demo [data-slot=message-avatar]").first.bounding_box()
     assert round(avatar["width"]) == 32 and round(avatar["height"]) == 32

@@ -5893,6 +5893,13 @@ function navigationMenuEnter(root, item) {
   tabbables(navigationMenuParts(item).content)[0]?.focus()
 }
 
+function navigationMenuLeave(event, root) {
+  const state = navigationMenuState(root)
+  if (!state.item || state.sticky || pointerCancelled || navigationMenuZone(root, event.relatedTarget) || !navigationMenuZone(root, event.target)) return
+  clearTimeout(state.closeTimer)
+  state.closeTimer = setTimeout(() => navigationMenuClose(root), Number(root.dataset.closeDelay ?? 50))
+}
+
 define("navigation-menu", {
   init(root) {
     const plain = navigationMenuPlain(root)
@@ -5983,13 +5990,11 @@ define("navigation-menu", {
   },
   pointerout(event, root) {
     if (event.pointerType === "touch") return
-    const state = navigationMenuState(root)
     const trigger = navigationMenuTrigger(root, event.target)
-    if (trigger && !(event.relatedTarget instanceof Node && trigger.contains(event.relatedTarget))) clearTimeout(state.openTimer)
-    if (!state.item || state.sticky || pointerCancelled || navigationMenuZone(root, event.relatedTarget) || !navigationMenuZone(root, event.target)) return
-    clearTimeout(state.closeTimer)
-    state.closeTimer = setTimeout(() => navigationMenuClose(root), Number(root.dataset.closeDelay ?? 50))
+    if (trigger && !(event.relatedTarget instanceof Node && trigger.contains(event.relatedTarget))) clearTimeout(navigationMenuState(root).openTimer)
+    navigationMenuLeave(event, root)
   },
+  mouseout: navigationMenuLeave,
   click(event, root) {
     const trigger = navigationMenuTrigger(root, event.target)
     if (trigger) {

@@ -8,7 +8,15 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Changed
 
-- Smaller kit CSS with the same computed styles: `dist/clanker-ui.min.css` 633,913 to 599,236 bytes (gzip 58,092 to 55,841, brotli 40,356 to 38,985), `dist/clanker-ui-core.min.css` 90,748 to 87,543 bytes, and the same for the other styles. The generator merges rules with the same selector and `@media` blocks with the same condition and parts where the cascade order permits, and drops `@property` rules that nothing uses. All `--tw-*` definitions and reads stay, so a Tailwind utility on a kit part composes with the kit value as before. `tools/gen/guard` compares every computed style of the old and the new CSS in Chromium, Firefox, and WebKit.
+- Smaller kit CSS with the same computed styles: `dist/clanker-ui.min.css` 634,103 to 599,426 bytes (gzip 58,122 to 55,868, brotli 40,363 to 39,023), `dist/clanker-ui-core.min.css` 90,748 to 87,543 bytes, and the same for the other styles. The generator merges rules with the same selector and `@media` blocks with the same condition and parts where the cascade order permits, and drops `@property` rules that nothing uses. All `--tw-*` definitions and reads stay, so a Tailwind utility on a kit part composes with the kit value as before. `tools/gen/guard` compares every computed style of the old and the new CSS in Chromium, Firefox, and WebKit.
+
+### Fixed
+
+- Chart: the active dots of line, area, and radar charts no longer fade in again on every pointer move; only the first draw animates (#119).
+- Chart: a tooltip that is too wide for either side of the pointer goes above the hovered points (or below them when there is more room), so it no longer covers them (#120).
+- Chart tooltip: the editor schemes where `--background` equals `--card` (Catppuccin, Dracula, Everforest, GitHub, Gruvbox, Kanagawa, Nord, One, Solarized, Tokyo Night) give the tooltip the full `--border` in dark mode, so it has an edge on a card. New token `--chart-tooltip-border` (default: `--border` at 50 %) (#121).
+- Sidebar: in icon mode the hidden `sidebar-group-label` (moved up 32 px, `opacity: 0`) no longer takes the clicks of the last menu button of the group above (`pointer-events: none`) (#125). shadcn has the same gap.
+- Sidebar: `sidebar-inset` has `min-width: 0`, so a wide table scrolls inside its `table-container` and the page no longer scrolls sideways (#123). shadcn `SidebarInset` has the same gap.
 
 ## 0.3.0 - 2026-11-10
 

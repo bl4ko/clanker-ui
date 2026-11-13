@@ -442,15 +442,17 @@ def drift_write(out):
         for r in c["runs"].values():
             if len(failed) > 10 and r in failed:
                 r["status"] = "error"
+            if r["status"] == "drift" and all(f["class"] == "timing" for f in r["differences"]):
+                r["status"] = "timing"
         if c.get("skip"):
             c["status"] = "stale" if c["skip"].startswith("stale") else "skip"
             c["reason"] = c["skip"]
         else:
             st = {r["status"] for r in c["runs"].values()}
-            c["status"] = "drift" if "drift" in st else "error" if "error" in st else "stale" if "stale" in st else "noise" if "noise" in st else "same" if st else "skip"
+            c["status"] = "drift" if "drift" in st else "error" if "error" in st else "stale" if "stale" in st else "timing" if "timing" in st else "noise" if "noise" in st else "same" if st else "skip"
             c["reason"] = next((r["reason"] for r in c["runs"].values() if r.get("reason")), "")
         if c["status"] == "drift":
-            sigs = sorted({f["sig"] for r in c["runs"].values() for f in r["differences"]})
+            sigs = sorted({f["sig"] for r in c["runs"].values() if r["status"] == "drift" for f in r["differences"]})
             c["fingerprint"] = hashlib.sha256("\n".join(sigs).encode()).hexdigest()[:12]
             c["title"] = f"behavior drift: {c['component']}"
             c["marker"] = f"<!-- behavior-drift:{c['component']} -->"
@@ -463,7 +465,7 @@ def drift_write(out):
     result = {"generated": slices[-1]["generated"], "site": E.SITE, "deploy": deploys, "base_ui_main": slices[-1]["base_ui_main"], "shadcn_pin": PIN, "runs": keys, "seconds": seconds, "slices": slices, "drift": drifting, "errors": errors, "components": [comps[n] for n in sorted(comps)]}
     (out / "drift.json").write_text(json.dumps(result, indent=1, ensure_ascii=False) + "\n")
     lines = ["# Behavior drift of the live shadcn site", "", f"Generated {result['generated']} in {len(slices)} slices ({seconds} s): live `{E.SITE}` (deploy {', '.join(deploys)}, `@base-ui/react` {result['base_ui_main'] or '?'} on shadcn main) against `test/behavior/golden/` (shadcn pin `{PIN}`). Runs: {', '.join(keys)}.", ""]
-    lines.append("A run that differs from its reference is recorded a second time. Drift is a broken or visible difference in both records; a difference in one record only is noise and does not fail. The React render time of click and key steps is not compared, and timing is not compared when a CSS animation painted in one frame (a busy page). A run whose live page shows other dates than the record (a new build day) is stale.")
+    lines.append("A run that differs from its reference is recorded a second time. Drift is a broken or visible difference in both records; a difference in one record only is noise and does not fail. The React render time of click and key steps is not compared, and timing is not compared when a CSS animation painted in one frame (a busy page). A run whose live page shows other dates than the record (a new build day) is stale. A run with only timing differences is `timing` and does not fail.")
     lines += ["", "| Component | Status | Runs with drift | Unconfirmed | Note |", "| --- | --- | --- | --- | --- |"]
     for n in sorted(comps):
         c = comps[n]
@@ -473,6 +475,10 @@ def drift_write(out):
     lines += ["", f"{len(drifting)} of {len(comps)} components drift; {sum(1 for c in comps.values() if c['status'] == 'stale')} stale." + (f" {len(failed)} runs could not run on the live page in two tries: the site or the network failed, so status `error`, not drift." if len(failed) > 10 else ""), ""]
     for n in drifting:
         lines += [f"## {n}", ""] + drift_section(comps[n]) + [""]
+    slow = [(n, k, r) for n in sorted(comps) for k, r in comps[n]["runs"].items() if r["status"] == "timing"]
+    if slow:
+        lines += ["## Timing only (not failing)", "", "Timing differences in both records, with no other difference in the run. A slow runner can delay hover and focus intent in both records, so they open no issue.", "", "| Component | Run | Step | What | recorded | live now |", "| --- | --- | --- | --- | --- | --- |"]
+        lines += [f"| {n} | {k} | {esc(f['step'])} | {esc(f['what'])} | {esc(f['shadcn'])} | {esc(f['ours'])} |" for n, k, r in slow for f in r["differences"]] + [""]
     noisy = [(n, k, r) for n in sorted(comps) for k, r in comps[n]["runs"].items() if r["unconfirmed"] or r.get("error") or r.get("busy")]
     if noisy:
         lines += ["## Noise (not drift)", "", "| Component | Run | Step | What | recorded | live now |", "| --- | --- | --- | --- | --- | --- |"]

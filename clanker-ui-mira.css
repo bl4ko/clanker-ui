@@ -5525,9 +5525,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="button"]:not(:where(:is(:not([data-size]), [data-size="default"])):where(:not([data-input-group-button])), :where([data-size="xs"]):where(:not([data-input-group-button])), :where([data-size="sm"]):where(:not([data-input-group-button])), :where([data-size="lg"]):where(:not([data-input-group-button])), :where([data-size="icon"]):where(:not([data-input-group-button])), :where([data-size="icon-xs"]):where(:not([data-input-group-button])), :where([data-size="icon-sm"]):where(:not([data-input-group-button])), :where([data-size="icon-lg"]):where(:not([data-input-group-button]))) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="button"]:where([data-size="xs"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 2.5);
+    height: calc(var(--spacing) * 2.5);
   }
   [data-slot="button"]:not(:where([data-variant="destructive"])):focus-visible {
     border-color: var(--ring);
@@ -5611,9 +5611,9 @@
   [data-slot="button"]:where(:is(:not([data-size]), [data-size="default"])):where(:not([data-input-group-button])):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="button"]:where(:is(:not([data-size]), [data-size="default"])):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  [data-slot="button"]:where([data-size="icon-xs"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 2.5);
+    height: calc(var(--spacing) * 2.5);
   }
   [data-slot="button"]:where([data-size="xs"]):where(:not([data-input-group-button])):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -5621,7 +5621,7 @@
   [data-slot="button"]:where([data-size="xs"]):where(:not([data-input-group-button])):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="button"]:where([data-size="xs"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="alert-dialog-action"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 2.5);
     height: calc(var(--spacing) * 2.5);
   }
@@ -5631,9 +5631,9 @@
   [data-slot="button"]:where([data-size="sm"]):where(:not([data-input-group-button])):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="button"]:where([data-size="sm"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="alert-dialog-action"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 2.5);
+    height: calc(var(--spacing) * 2.5);
   }
   [data-slot="button"]:where([data-size="lg"]):where(:not([data-input-group-button])):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
@@ -5641,25 +5641,9 @@
   [data-slot="button"]:where([data-size="lg"]):where(:not([data-input-group-button])):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  [data-slot="button"]:where([data-size="lg"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="button"]:where([data-size="icon"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
-  [data-slot="button"]:where([data-size="icon-xs"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="alert-dialog-cancel"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]), [data-slot="alert-dialog-cancel"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]), [data-slot="attachment-action"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]), [data-slot="attachment-action"]:where(:is(:not([data-size]), [data-size="icon-xs"])) svg:not([class*="size-"], [data-slot]), [data-slot="carousel-previous"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 2.5);
     height: calc(var(--spacing) * 2.5);
-  }
-  [data-slot="button"]:where([data-size="icon-sm"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
-  [data-slot="button"]:where([data-size="icon-lg"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
   }
   @supports ((-webkit-backdrop-filter: var(--tw)) or (backdrop-filter: var(--tw))) {
     [data-slot="alert-dialog-content"]::backdrop {
@@ -5788,9 +5772,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="alert-dialog-action"]:not(:where(:is(:not([data-size]), [data-size="default"])), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="carousel-previous"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 2.5);
+    height: calc(var(--spacing) * 2.5);
   }
   [data-slot="alert-dialog-action"]:not(:where([data-variant="destructive"])):focus-visible {
     border-color: var(--ring);
@@ -5874,9 +5858,9 @@
   [data-slot="alert-dialog-action"]:where(:is(:not([data-size]), [data-size="default"])):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="alert-dialog-action"]:where(:is(:not([data-size]), [data-size="default"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  [data-slot="carousel-next"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 2.5);
+    height: calc(var(--spacing) * 2.5);
   }
   [data-slot="alert-dialog-action"]:where([data-size="xs"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -5884,7 +5868,7 @@
   [data-slot="alert-dialog-action"]:where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="alert-dialog-action"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="carousel-next"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 2.5);
     height: calc(var(--spacing) * 2.5);
   }
@@ -5894,9 +5878,9 @@
   [data-slot="alert-dialog-action"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="alert-dialog-action"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 2.5);
+    height: calc(var(--spacing) * 2.5);
   }
   [data-slot="alert-dialog-action"]:where([data-size="lg"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
@@ -5904,25 +5888,9 @@
   [data-slot="alert-dialog-action"]:where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  [data-slot="alert-dialog-action"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="alert-dialog-action"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
-  [data-slot="alert-dialog-action"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where(:is(:not([data-size]), [data-size="icon-xs"])) svg:not([class*="size-"], [data-slot]), [data-slot="combobox-chip-remove"] svg:not([class*="size-"], [data-slot]), [data-slot="message-scroller-button"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]), [data-slot="message-scroller-button"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]), [data-slot="pagination-link"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 2.5);
     height: calc(var(--spacing) * 2.5);
-  }
-  [data-slot="alert-dialog-action"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
-  [data-slot="alert-dialog-action"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
   }
   [data-slot="alert-dialog-cancel"]:focus-visible {
     --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
@@ -5956,9 +5924,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="alert-dialog-cancel"]:not(:where(:is(:not([data-size]), [data-size="default"])), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="pagination-link"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 2.5);
+    height: calc(var(--spacing) * 2.5);
   }
   [data-slot="alert-dialog-cancel"]:not(:where([data-variant="destructive"])):focus-visible {
     border-color: var(--ring);
@@ -6042,9 +6010,9 @@
   [data-slot="alert-dialog-cancel"]:where(:is(:not([data-size]), [data-size="default"])):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="alert-dialog-cancel"]:where(:is(:not([data-size]), [data-size="default"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  [data-slot="questionnaire-previous"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 2.5);
+    height: calc(var(--spacing) * 2.5);
   }
   [data-slot="alert-dialog-cancel"]:where([data-size="xs"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -6052,7 +6020,7 @@
   [data-slot="alert-dialog-cancel"]:where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="alert-dialog-cancel"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="questionnaire-previous"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 2.5);
     height: calc(var(--spacing) * 2.5);
   }
@@ -6062,9 +6030,9 @@
   [data-slot="alert-dialog-cancel"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="alert-dialog-cancel"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="questionnaire-skip"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 2.5);
+    height: calc(var(--spacing) * 2.5);
   }
   [data-slot="alert-dialog-cancel"]:where([data-size="lg"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
@@ -6072,25 +6040,9 @@
   [data-slot="alert-dialog-cancel"]:where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  [data-slot="alert-dialog-cancel"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="alert-dialog-cancel"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
-  [data-slot="alert-dialog-cancel"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="questionnaire-skip"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]), [data-slot="questionnaire-next"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]), [data-slot="questionnaire-next"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]), [data-slot="questionnaire-submit"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]), [data-slot="questionnaire-submit"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 2.5);
     height: calc(var(--spacing) * 2.5);
-  }
-  [data-slot="alert-dialog-cancel"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
-  [data-slot="alert-dialog-cancel"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
   }
   [data-slot="alert"]:has([data-slot="alert-action"]) {
     padding-inline-end: calc(var(--spacing) * 18);
@@ -6199,10 +6151,6 @@
   [data-slot="attachment-media"] svg {
     pointer-events: none;
   }
-  [data-slot="attachment-media"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
   [data-slot="attachment-media"]:is(:where([data-slot="attachment"])[data-orientation="vertical"] *) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 6);
     height: calc(var(--spacing) * 6);
@@ -6210,6 +6158,10 @@
   [data-slot="attachment-media"]:is(:where([data-slot="attachment"])[data-size="xs"] *) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
+  }
+  [data-slot="button"]:where([data-size="sm"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   [data-slot="attachment-media"]:where([data-variant="image"]):is(:where([data-slot="attachment"]):is([data-state="done"], :not([data-state])) *), [data-slot="attachment-media"]:where([data-variant="image"]):is(:where([data-slot="attachment"])[data-state="idle"] *) {
     opacity: 1;
@@ -6323,9 +6275,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="attachment-action"]:not(:where([data-size="default"]), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where(:is(:not([data-size]), [data-size="icon-xs"])), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="button"]:where([data-size="icon-sm"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   [data-slot="attachment-action"]:not(:where([data-variant="destructive"])):focus-visible {
     border-color: var(--ring);
@@ -6409,9 +6361,9 @@
   [data-slot="attachment-action"]:where([data-size="default"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="attachment-action"]:where([data-size="default"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  [data-slot="alert-dialog-action"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   [data-slot="attachment-action"]:where([data-size="xs"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -6419,9 +6371,9 @@
   [data-slot="attachment-action"]:where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="attachment-action"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
+  [data-slot="alert-dialog-action"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   [data-slot="attachment-action"]:where([data-size="sm"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -6429,7 +6381,7 @@
   [data-slot="attachment-action"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="attachment-action"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="alert-dialog-cancel"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
   }
@@ -6439,25 +6391,9 @@
   [data-slot="attachment-action"]:where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  [data-slot="attachment-action"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="attachment-action"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
-  [data-slot="attachment-action"]:where(:is(:not([data-size]), [data-size="icon-xs"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
-  }
-  [data-slot="attachment-action"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="alert-dialog-cancel"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]), [data-slot="attachment-action"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]), [data-slot="attachment-action"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]), [data-slot="carousel-previous"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]), [data-slot="carousel-previous"]:where(:is(:not([data-size]), [data-size="icon-sm"])) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
-  }
-  [data-slot="attachment-action"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
   }
   :is([data-slot="attachment-group"] > *)[data-slot="attachment"] {
     scroll-snap-align: start;
@@ -6799,9 +6735,9 @@
   [data-slot="button-group-text"] svg {
     pointer-events: none;
   }
-  [data-slot="button-group-text"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="carousel-next"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   [data-slot="button-group-separator"]:where([data-orientation="horizontal"]) {
     width: auto;
@@ -6872,9 +6808,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="carousel-previous"]:not(:where([data-size="default"]), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where(:is(:not([data-size]), [data-size="icon-sm"])), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="carousel-next"]:where(:is(:not([data-size]), [data-size="icon-sm"])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   [data-slot="carousel-previous"]:not(:where([data-variant="destructive"])):focus-visible {
     border-color: var(--ring);
@@ -6958,9 +6894,9 @@
   [data-slot="carousel-previous"]:where([data-size="default"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="carousel-previous"]:where([data-size="default"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   [data-slot="carousel-previous"]:where([data-size="xs"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -6968,9 +6904,9 @@
   [data-slot="carousel-previous"]:where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="carousel-previous"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   [data-slot="carousel-previous"]:where([data-size="sm"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -6978,7 +6914,7 @@
   [data-slot="carousel-previous"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="carousel-previous"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="kbd"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
   }
@@ -6988,25 +6924,9 @@
   [data-slot="carousel-previous"]:where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  [data-slot="carousel-previous"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="carousel-previous"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
-  [data-slot="carousel-previous"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
-  }
-  [data-slot="carousel-previous"]:where(:is(:not([data-size]), [data-size="icon-sm"])) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="message-scroller-button"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]), [data-slot="message-scroller-button"]:where(:is(:not([data-size]), [data-size="icon-sm"])) svg:not([class*="size-"], [data-slot]), [data-slot="pagination-link"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]), [data-slot="pagination-link"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]), [data-slot="questionnaire-previous"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
-  }
-  [data-slot="carousel-previous"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
   }
   [data-slot="carousel-previous"]:not(:where([data-slot="carousel"]:is(:not([data-orientation]), [data-orientation="horizontal"]) *)):where(:dir(rtl)) {
     --tw-translate-x: calc(1 / 2 * 100%);
@@ -7044,9 +6964,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="carousel-next"]:not(:where([data-size="default"]), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where(:is(:not([data-size]), [data-size="icon-sm"])), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="questionnaire-previous"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   [data-slot="carousel-next"]:not(:where([data-variant="destructive"])):focus-visible {
     border-color: var(--ring);
@@ -7130,9 +7050,9 @@
   [data-slot="carousel-next"]:where([data-size="default"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="carousel-next"]:where([data-size="default"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  [data-slot="questionnaire-skip"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   [data-slot="carousel-next"]:where([data-size="xs"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -7140,9 +7060,9 @@
   [data-slot="carousel-next"]:where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="carousel-next"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
+  [data-slot="questionnaire-skip"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   [data-slot="carousel-next"]:where([data-size="sm"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -7150,7 +7070,7 @@
   [data-slot="carousel-next"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="carousel-next"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="questionnaire-next"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
   }
@@ -7160,25 +7080,9 @@
   [data-slot="carousel-next"]:where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  [data-slot="carousel-next"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="carousel-next"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
-  [data-slot="carousel-next"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
-  }
-  [data-slot="carousel-next"]:where(:is(:not([data-size]), [data-size="icon-sm"])) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="questionnaire-next"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]), [data-slot="questionnaire-submit"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]), [data-slot="questionnaire-submit"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]), [data-slot="sidebar-trigger"] svg:not([class*="size-"], [data-slot]), [data-slot="toast-action"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
-  }
-  [data-slot="carousel-next"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
   }
   [data-slot="carousel-next"]:not(:where([data-slot="carousel"]:is(:not([data-orientation]), [data-orientation="horizontal"]) *)):where(:dir(rtl)) {
     --tw-translate-x: calc(1 / 2 * 100%);
@@ -7297,12 +7201,12 @@
     vertical-align: middle;
     display: inline-block;
   }
-  [data-slot="code-block-title"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
   :is([data-slot="code-block-title"] > *):is(svg) {
     margin-inline-end: calc(var(--spacing) * 1.5);
+  }
+  [data-slot="toast-close"] svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   [data-slot="code-block"] > [data-slot="code-block-actions"] {
     inset-inline-end: calc(var(--spacing) * 2);
@@ -7370,9 +7274,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):not(:where([data-size="default"]), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where(:is(:not([data-size]), [data-size="icon-xs"])), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="toggle"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):not(:where([data-variant="destructive"])):focus-visible {
     border-color: var(--ring);
@@ -7456,9 +7360,9 @@
   :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="default"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="default"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  [data-slot="toggle-group-item"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
   }
   :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="xs"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -7466,9 +7370,9 @@
   :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
+  [data-slot="button"]:where(:is(:not([data-size]), [data-size="default"])):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="sm"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -7476,9 +7380,9 @@
   :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="button"]:where([data-size="icon"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="lg"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
@@ -7486,25 +7390,9 @@
   :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="alert-dialog-action"]:where(:is(:not([data-size]), [data-size="default"])) svg:not([class*="size-"], [data-slot]), [data-slot="alert-dialog-action"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]), [data-slot="alert-dialog-cancel"]:where(:is(:not([data-size]), [data-size="default"])) svg:not([class*="size-"], [data-slot]), [data-slot="alert-dialog-cancel"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]), [data-slot="attachment-action"]:where([data-size="default"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
-  }
-  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where(:is(:not([data-size]), [data-size="icon-xs"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
-  }
-  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
-  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
   }
   [data-slot="code-block-content"]:is(:where([data-slot="code-block"]):has([data-slot="code-block-footer"]) *) {
     padding-bottom: calc(var(--spacing) * 2);
@@ -7862,7 +7750,7 @@
     border-color: color-mix(in oklab, var(--destructive) 50%, transparent);
     --tw-ring-color: color-mix(in oklab, var(--destructive) 40%, transparent);
   }
-  [data-slot="combobox-trigger"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="attachment-action"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -7927,7 +7815,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="combobox-clear"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="carousel-previous"]:where([data-size="default"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -8001,7 +7889,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="combobox-item"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="carousel-previous"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -8114,7 +8002,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="input-group-button"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="carousel-next"]:where([data-size="default"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -8171,9 +8059,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="combobox-chip-remove"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
+  [data-slot="carousel-next"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   @supports ((-webkit-backdrop-filter: var(--tw)) or (backdrop-filter: var(--tw))) {
     [data-slot="dialog-content"]::backdrop {
@@ -8255,11 +8143,14 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="command-item"] svg:not([class*="size-"], [data-slot]) {
+  :is([data-slot="command-item"]:where([data-selected="true"]) > *):is(svg) {
+    color: var(--foreground);
+  }
+  [data-slot="code-block-title"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
-  :is([data-slot="command-item"]:where([data-selected="true"]) > *):is(svg), [data-slot="command-shortcut"]:is(:where([data-slot="command-item"]):where([data-selected="true"]) *) {
+  [data-slot="command-shortcut"]:is(:where([data-slot="command-item"]):where([data-selected="true"]) *) {
     color: var(--foreground);
   }
   [data-slot="context-menu-content"][data-side="bottom"] {
@@ -8329,12 +8220,12 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="context-menu-item"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
   :is([data-slot="context-menu-item"][data-variant="destructive"] > *):is(svg) {
     color: var(--destructive);
+  }
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="default"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="context-menu-sub-trigger"]:focus {
     background-color: var(--accent);
@@ -8354,7 +8245,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="context-menu-sub-trigger"] svg:not([class*="size-"], [data-slot]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -8407,7 +8298,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="context-menu-checkbox-item"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="combobox-trigger"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -8429,7 +8320,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="context-menu-radio-item"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="combobox-clear"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -8717,12 +8608,12 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="dropdown-menu-item"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
   :is([data-slot="dropdown-menu-item"][data-variant="destructive"] > *):is(svg) {
     color: var(--destructive);
+  }
+  [data-slot="combobox-item"] svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="dropdown-menu-sub-trigger"]:focus {
     background-color: var(--accent);
@@ -8742,7 +8633,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="dropdown-menu-sub-trigger"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="input-group-button"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -8796,7 +8687,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="dropdown-menu-checkbox-item"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="command-item"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -8818,7 +8709,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="dropdown-menu-radio-item"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="context-menu-item"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -8829,9 +8720,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="empty-icon"]:where([data-variant="icon"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="context-menu-sub-trigger"] svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="empty-description"] > a {
     text-underline-offset: 4px;
@@ -9060,9 +8951,9 @@
   [data-slot="input-otp-slot"]:is([data-theme="dark"] *)[data-active="true"][aria-invalid="true"] {
     --tw-ring-color: color-mix(in oklab, var(--destructive) 40%, transparent);
   }
-  [data-slot="input-otp-separator"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="context-menu-checkbox-item"] svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="item-group"]:has(:is([data-slot="alert-dialog-content"], [data-slot="attachment"], [data-slot="avatar"], [data-slot="card"], [data-slot="code-block"], [data-slot="item"], [data-slot="message-scroller-button"], [data-slot="native-select"], [data-slot="native-select-wrapper"], [data-slot="questionnaire-next"], [data-slot="questionnaire-previous"], [data-slot="questionnaire-skip"], [data-slot="questionnaire-submit"], [data-slot="select-trigger"], [data-slot="sidebar-menu-button"], [data-slot="sidebar-menu-sub-button"], [data-slot="switch"], [data-slot="toggle-group"], [data-slot="toggle-group-item"])[data-size="sm"]) {
     gap: calc(var(--spacing) * 2.5);
@@ -9105,9 +8996,9 @@
   [data-slot="item-media"] svg {
     pointer-events: none;
   }
-  [data-slot="item-media"]:where([data-variant="icon"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="context-menu-radio-item"] svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="item-media"]:where([data-variant="image"]):is(:where([data-slot="item"])[data-size="sm"] *) {
     width: calc(var(--spacing) * 8);
@@ -9147,11 +9038,7 @@
       background-color: color-mix(in oklab, var(--background) 10%, transparent);
     }
   }
-  [data-slot="kbd"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
-  [data-slot="marker"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="dropdown-menu-item"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -9163,6 +9050,10 @@
     [data-slot="marker"]:is(a):hover {
       color: var(--foreground);
     }
+  }
+  [data-slot="dropdown-menu-sub-trigger"] svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="marker"]:where([data-variant="separator"]):before {
     content: var(--tw-content);
@@ -9180,7 +9071,7 @@
     flex: 1;
     margin-inline-start: var(--spacing);
   }
-  [data-slot="marker-icon"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="dropdown-menu-checkbox-item"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -9268,13 +9159,13 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="menubar-item"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
   :is([data-slot="menubar-item"][data-variant="destructive"] > *):is(svg) {
     color: var(--destructive);
     color: var(--destructive) !important;
+  }
+  [data-slot="dropdown-menu-radio-item"] svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="menubar-checkbox-item"]:focus {
     background-color: var(--accent);
@@ -9312,7 +9203,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="menubar-radio-item"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="marker"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -9340,7 +9231,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="menubar-sub-trigger"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="marker-icon"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -9475,9 +9366,9 @@
   [data-slot="message-scroller-button"][data-direction="start"] svg {
     rotate: 180deg;
   }
-  [data-slot="message-scroller-button"]:not(:where([data-size="default"]), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where(:is(:not([data-size]), [data-size="icon-sm"])), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="menubar-item"] svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="message-scroller-button"]:not(:where([data-variant="destructive"])):focus-visible {
     border-color: var(--ring);
@@ -9533,7 +9424,7 @@
   [data-slot="message-scroller-button"]:where([data-size="default"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="message-scroller-button"]:where([data-size="default"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="menubar-radio-item"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -9543,9 +9434,9 @@
   [data-slot="message-scroller-button"]:where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="message-scroller-button"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
+  [data-slot="menubar-sub-trigger"] svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="message-scroller-button"]:where([data-size="sm"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -9553,9 +9444,9 @@
   [data-slot="message-scroller-button"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="message-scroller-button"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="message-scroller-button"]:where([data-size="default"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="message-scroller-button"]:where([data-size="lg"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
@@ -9563,25 +9454,9 @@
   [data-slot="message-scroller-button"]:where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  [data-slot="message-scroller-button"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="message-scroller-button"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="message-scroller-button"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]), [data-slot="pagination-link"]:where([data-size="default"]) svg:not([class*="size-"], [data-slot]), [data-slot="pagination-link"]:where(:is(:not([data-size]), [data-size="icon"])) svg:not([class*="size-"], [data-slot]), [data-slot="pagination-ellipsis"] svg:not([class*="size-"], [data-slot]), [data-slot="questionnaire-previous"]:where(:is(:not([data-size]), [data-size="default"])) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
-  }
-  [data-slot="message-scroller-button"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
-  }
-  [data-slot="message-scroller-button"]:where(:is(:not([data-size]), [data-size="icon-sm"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
-  [data-slot="message-scroller-button"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
   }
   [data-slot="message"][data-align="end"] {
     flex-direction: row-reverse;
@@ -9802,9 +9677,9 @@
   [data-slot="navigation-menu-link"][data-active="true"]:focus {
     background-color: var(--muted);
   }
-  [data-slot="navigation-menu-link"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="questionnaire-previous"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="navigation-menu-indicator"][data-state="hidden"] {
     animation: exit var(--tw-animation-duration, var(--tw-duration, .15s))var(--tw-ease, ease)var(--tw-animation-delay, 0s)var(--tw-animation-iteration-count, 1)var(--tw-animation-direction, normal)var(--tw-animation-fill-mode, none);
@@ -9846,9 +9721,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="pagination-link"]:not(:where([data-size="default"]), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where(:is(:not([data-size]), [data-size="icon"])), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="questionnaire-skip"]:where(:is(:not([data-size]), [data-size="default"])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="pagination-link"]:not(:where([data-variant="destructive"])):focus-visible {
     border-color: var(--ring);
@@ -9932,7 +9807,7 @@
   [data-slot="pagination-link"]:where([data-size="default"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="pagination-link"]:where([data-size="default"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="questionnaire-skip"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -9942,9 +9817,9 @@
   [data-slot="pagination-link"]:where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="pagination-link"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
+  [data-slot="questionnaire-next"]:where(:is(:not([data-size]), [data-size="default"])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="pagination-link"]:where([data-size="sm"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -9952,9 +9827,9 @@
   [data-slot="pagination-link"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="pagination-link"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="questionnaire-next"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="pagination-link"]:where([data-size="lg"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
@@ -9962,27 +9837,7 @@
   [data-slot="pagination-link"]:where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  [data-slot="pagination-link"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="pagination-link"]:where(:is(:not([data-size]), [data-size="icon"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
-  [data-slot="pagination-link"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
-  }
-  [data-slot="pagination-link"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
-  [data-slot="pagination-link"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="pagination-ellipsis"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="questionnaire-submit"]:where(:is(:not([data-size]), [data-size="default"])) svg:not([class*="size-"], [data-slot]), [data-slot="questionnaire-submit"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]), [data-slot="select-trigger"] svg:not([class*="size-"], [data-slot]), [data-slot="select-item"] svg:not([class*="size-"], [data-slot]), [data-slot="select-scroll-up-button"] svg:not([class*="size-"], [data-slot]), [data-slot="select-scroll-down-button"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -10140,9 +9995,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="questionnaire-previous"]:not(:where(:is(:not([data-size]), [data-size="default"])), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
+  [data-slot="tabs-trigger"] svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   [data-slot="questionnaire-previous"]:not(:where([data-variant="destructive"])):focus-visible {
     border-color: var(--ring);
@@ -10226,7 +10081,7 @@
   [data-slot="questionnaire-previous"]:where(:is(:not([data-size]), [data-size="default"])):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="questionnaire-previous"]:where(:is(:not([data-size]), [data-size="default"])) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="trace-icon"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 3.5);
     height: calc(var(--spacing) * 3.5);
   }
@@ -10236,9 +10091,9 @@
   [data-slot="questionnaire-previous"]:where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="questionnaire-previous"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
+  [data-slot="button"]:not(:where(:is(:not([data-size]), [data-size="default"])):where(:not([data-input-group-button])), :where([data-size="xs"]):where(:not([data-input-group-button])), :where([data-size="sm"]):where(:not([data-input-group-button])), :where([data-size="lg"]):where(:not([data-input-group-button])), :where([data-size="icon"]):where(:not([data-input-group-button])), :where([data-size="icon-xs"]):where(:not([data-input-group-button])), :where([data-size="icon-sm"]):where(:not([data-input-group-button])), :where([data-size="icon-lg"]):where(:not([data-input-group-button]))) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="questionnaire-previous"]:where([data-size="sm"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -10246,9 +10101,9 @@
   [data-slot="questionnaire-previous"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="questionnaire-previous"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="button"]:where([data-size="lg"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="questionnaire-previous"]:where([data-size="lg"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
@@ -10256,23 +10111,7 @@
   [data-slot="questionnaire-previous"]:where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  [data-slot="questionnaire-previous"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="questionnaire-previous"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
-  [data-slot="questionnaire-previous"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
-  }
-  [data-slot="questionnaire-previous"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
-  [data-slot="questionnaire-previous"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="button"]:where([data-size="icon-lg"]):where(:not([data-input-group-button])) svg:not([class*="size-"], [data-slot]), [data-slot="alert-dialog-action"]:not(:where(:is(:not([data-size]), [data-size="default"])), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]), [data-slot="alert-dialog-action"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]), [data-slot="alert-dialog-action"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]), [data-slot="alert-dialog-cancel"]:not(:where(:is(:not([data-size]), [data-size="default"])), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
@@ -10313,7 +10152,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="questionnaire-skip"]:not(:where(:is(:not([data-size]), [data-size="default"])), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="alert-dialog-cancel"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
@@ -10399,9 +10238,9 @@
   [data-slot="questionnaire-skip"]:where(:is(:not([data-size]), [data-size="default"])):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="questionnaire-skip"]:where(:is(:not([data-size]), [data-size="default"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  [data-slot="alert-dialog-cancel"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="questionnaire-skip"]:where([data-size="xs"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -10409,9 +10248,9 @@
   [data-slot="questionnaire-skip"]:where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="questionnaire-skip"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
+  [data-slot="attachment-media"] svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="questionnaire-skip"]:where([data-size="sm"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -10419,9 +10258,9 @@
   [data-slot="questionnaire-skip"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="questionnaire-skip"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="attachment-action"]:not(:where([data-size="default"]), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where(:is(:not([data-size]), [data-size="icon-xs"])), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="questionnaire-skip"]:where([data-size="lg"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
@@ -10429,23 +10268,7 @@
   [data-slot="questionnaire-skip"]:where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  [data-slot="questionnaire-skip"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="questionnaire-skip"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
-  [data-slot="questionnaire-skip"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
-  }
-  [data-slot="questionnaire-skip"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
-  [data-slot="questionnaire-skip"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="attachment-action"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]), [data-slot="attachment-action"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]), [data-slot="button-group-text"] svg:not([class*="size-"], [data-slot]), [data-slot="carousel-previous"]:not(:where([data-size="default"]), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where(:is(:not([data-size]), [data-size="icon-sm"])), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]), [data-slot="carousel-previous"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
@@ -10486,7 +10309,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="questionnaire-next"]:not(:where(:is(:not([data-size]), [data-size="default"])), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="carousel-previous"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
@@ -10572,9 +10395,9 @@
   [data-slot="questionnaire-next"]:where(:is(:not([data-size]), [data-size="default"])):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="questionnaire-next"]:where(:is(:not([data-size]), [data-size="default"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  [data-slot="carousel-next"]:not(:where([data-size="default"]), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where(:is(:not([data-size]), [data-size="icon-sm"])), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="questionnaire-next"]:where([data-size="xs"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -10582,9 +10405,9 @@
   [data-slot="questionnaire-next"]:where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="questionnaire-next"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
+  [data-slot="carousel-next"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="questionnaire-next"]:where([data-size="sm"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -10592,9 +10415,9 @@
   [data-slot="questionnaire-next"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="questionnaire-next"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="carousel-next"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="questionnaire-next"]:where([data-size="lg"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
@@ -10602,23 +10425,7 @@
   [data-slot="questionnaire-next"]:where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  [data-slot="questionnaire-next"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="questionnaire-next"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
-  [data-slot="questionnaire-next"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
-  }
-  [data-slot="questionnaire-next"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
-  [data-slot="questionnaire-next"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
+  :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):not(:where([data-size="default"]), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where(:is(:not([data-size]), [data-size="icon-xs"])), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]), :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="lg"]) svg:not([class*="size-"], [data-slot]), :is([data-slot="code-block-copy-button"], [data-slot="code-block-wrap-button"], [data-slot="code-block-download-button"]):where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]), [data-slot="empty-icon"]:where([data-variant="icon"]) svg:not([class*="size-"], [data-slot]), [data-slot="input-otp-separator"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
@@ -10659,7 +10466,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="questionnaire-submit"]:not(:where(:is(:not([data-size]), [data-size="default"])), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="item-media"]:where([data-variant="icon"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
@@ -10745,9 +10552,9 @@
   [data-slot="questionnaire-submit"]:where(:is(:not([data-size]), [data-size="default"])):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="questionnaire-submit"]:where(:is(:not([data-size]), [data-size="default"])) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  [data-slot="message-scroller-button"]:not(:where([data-size="default"]), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where(:is(:not([data-size]), [data-size="icon-sm"])), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="questionnaire-submit"]:where([data-size="xs"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -10755,9 +10562,9 @@
   [data-slot="questionnaire-submit"]:where([data-size="xs"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="questionnaire-submit"]:where([data-size="xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
+  [data-slot="message-scroller-button"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="questionnaire-submit"]:where([data-size="sm"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 1.5);
@@ -10765,9 +10572,9 @@
   [data-slot="questionnaire-submit"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="questionnaire-submit"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="message-scroller-button"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="questionnaire-submit"]:where([data-size="lg"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
@@ -10775,23 +10582,7 @@
   [data-slot="questionnaire-submit"]:where([data-size="lg"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 2);
   }
-  [data-slot="questionnaire-submit"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  [data-slot="questionnaire-submit"]:where([data-size="icon"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
-  [data-slot="questionnaire-submit"]:where([data-size="icon-xs"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 2.5);
-    height: calc(var(--spacing) * 2.5);
-  }
-  [data-slot="questionnaire-submit"]:where([data-size="icon-sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
-  [data-slot="questionnaire-submit"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="navigation-menu-link"] svg:not([class*="size-"], [data-slot]), [data-slot="pagination-link"]:not(:where([data-size="default"]), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where(:is(:not([data-size]), [data-size="icon"])), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]), [data-slot="pagination-link"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]), [data-slot="pagination-link"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]), [data-slot="questionnaire-previous"]:not(:where(:is(:not([data-size]), [data-size="default"])), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
@@ -11037,9 +10828,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="select-trigger"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  [data-slot="questionnaire-previous"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="select-content"][data-align-trigger="true"] {
     animation: none;
@@ -11090,18 +10881,14 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="select-item"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
   :is([data-slot="select-item"] > *):is(span):last-child {
     align-items: center;
     gap: calc(var(--spacing) * 2);
     display: flex;
   }
-  [data-slot="select-scroll-up-button"] svg:not([class*="size-"], [data-slot]), [data-slot="select-scroll-down-button"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  [data-slot="questionnaire-previous"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]), [data-slot="questionnaire-skip"]:not(:where(:is(:not([data-size]), [data-size="default"])), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]), [data-slot="questionnaire-skip"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="sheet-content"][data-ending-style]::backdrop, [data-slot="sheet-content"][data-starting-style]::backdrop {
     opacity: 0;
@@ -11270,9 +11057,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="sidebar-trigger"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="questionnaire-skip"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="sidebar-rail"]:is(:where([data-slot="sidebar"][data-state])[data-collapsible="offcanvas"] *) {
     --tw-translate-x: 0px;
@@ -11997,9 +11784,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="tabs-trigger"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+  [data-slot="questionnaire-next"]:not(:where(:is(:not([data-size]), [data-size="default"])), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   @media (min-width: 40rem) {
     [data-slot="toast-viewport"] {
@@ -12111,9 +11898,9 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="toast-action"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="questionnaire-next"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="toast-close"]:after {
     inset: calc(var(--spacing) * -2);
@@ -12173,14 +11960,14 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="toast-close"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="questionnaire-next"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="toast-icon"] svg {
     pointer-events: none;
   }
-  [data-slot="toast-icon"] svg:not([class*="size-"], [data-slot]) {
+  [data-slot="questionnaire-submit"]:not(:where(:is(:not([data-size]), [data-size="default"])), :where([data-size="xs"]), :where([data-size="sm"]), :where([data-size="lg"]), :where([data-size="icon"]), :where([data-size="icon-xs"]), :where([data-size="icon-sm"]), :where([data-size="icon-lg"])) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
@@ -12221,7 +12008,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="toggle"]:not(:where([data-size="sm"])) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="questionnaire-submit"]:where([data-size="lg"]) svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
@@ -12237,9 +12024,9 @@
   [data-slot="toggle"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="toggle"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="questionnaire-submit"]:where([data-size="icon-lg"]) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="toggle"]:where([data-size="lg"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
@@ -12340,7 +12127,7 @@
     pointer-events: none;
     flex-shrink: 0;
   }
-  [data-slot="toggle-group-item"]:not(:where([data-size="sm"])) svg:not([class*="size-"], [data-slot]) {
+  [data-slot="toast-icon"] svg:not([class*="size-"], [data-slot]) {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
@@ -12356,9 +12143,9 @@
   [data-slot="toggle-group-item"]:where([data-size="sm"]):has([data-icon="inline-start"]) {
     padding-inline-start: calc(var(--spacing) * 1.5);
   }
-  [data-slot="toggle-group-item"]:where([data-size="sm"]) svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
+  [data-slot="toggle"]:not(:where([data-size="sm"])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   [data-slot="toggle-group-item"]:where([data-size="lg"]):has([data-icon="inline-end"]) {
     padding-inline-end: calc(var(--spacing) * 2);
@@ -12431,12 +12218,12 @@
   [data-slot="trace-icon"] svg {
     pointer-events: none;
   }
-  [data-slot="trace-icon"] svg:not([class*="size-"], [data-slot]) {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
-  }
   [data-slot="trace-title"] ~ [data-slot="trace-icon"] {
     margin-inline-start: calc(var(--spacing) * -1);
+  }
+  [data-slot="toggle-group-item"]:not(:where([data-size="sm"])) svg:not([class*="size-"], [data-slot]) {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   @media (hover: hover) {
     [data-slot="trace-collapsible-trigger"]:hover {

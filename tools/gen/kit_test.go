@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -111,5 +112,24 @@ func TestVegaCardContentFlex(t *testing.T) {
 	}
 	if strings.Contains(css, `[data-slot="card-content"]:has( > [data-slot="questionnaire-choices"])`) {
 		t.Error("Vega card-content keeps the :has() condition that the shadcn style map drops")
+	}
+}
+
+func TestIconSizeTailwindOrder(t *testing.T) {
+	b, err := os.ReadFile("../../clanker-ui-lyra.css")
+	if err != nil {
+		t.Fatal(err)
+	}
+	css := string(b)
+	marker := strings.Index(css, "\n  [data-slot=\"marker\"] svg:not([class*=\"size-\"], [data-slot]) {")
+	button := regexp.MustCompile(`\n  \[data-slot="button"\]:not\(:where\(\[data-size="xs"\]\)[^\n]*\) svg:not\(\[class\*="size-"\], \[data-slot\]\) \{`).FindStringIndex(css)
+	if button == nil {
+		t.Fatal("no default button icon rule in clanker-ui-lyra.css")
+	}
+	if marker < 0 || marker > button[0] {
+		t.Errorf("Lyra: the 14 px marker icon rule (%d) must come before the 16 px button icon rule (%d), like Tailwind orders size-3.5 before size-4", marker, button[0])
+	}
+	if !iconSize.MatchString("[&_svg:not([class*='size-'],[data-slot])]:size-3.5") || iconSize.MatchString("data-[size=sm]:[&_svg:not([class*='size-'])]:size-3") {
+		t.Error("iconSize matches only the plain icon size utility")
 	}
 }

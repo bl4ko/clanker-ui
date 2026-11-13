@@ -109,6 +109,12 @@ func main() {
 		}
 		return
 	}
+	if len(os.Args) > 1 && os.Args[1] == "stamp" {
+		if err := stampMain(os.Args[2:]); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
 	if len(os.Args) > 1 && os.Args[1] == "catalog" {
 		if err := catalogMain(os.Args[2:]); err != nil {
 			log.Fatal(err)
@@ -357,6 +363,13 @@ func run(o options) (string, error) {
 	g.layerStray(tree)
 	if s := strayRule(tree); s != "" {
 		return "", fmt.Errorf("generated CSS: %q is not in a layer", s)
+	}
+	table, err := readGroups(o.groups)
+	if err != nil {
+		return "", err
+	}
+	if err := g.optimize(tree, kitCSS, table); err != nil {
+		return "", err
 	}
 	css = license + "\n" + layerOrder + tree.String()
 	if kitCSS != "" {

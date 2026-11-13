@@ -195,6 +195,114 @@ def check_chart_pointer(t):
     assert tip(page, "chart-radar-multiple") == {"label": "January", "items": [["Desktop", "186", False], ["Mobile", "80", False]]}, tip(page, "chart-radar-multiple")
 
 
+HOVER_PROBE = """([id, width]) => {
+  const rows = Array.from({ length: 12 }, (_, i) => ({ m: `M${i + 1}`, a: 1250000 + i * 900, b: 1240000 + i * 700, c: 1235000 + i * 500, d: 1230000 + i * 300 }))
+  const config = Object.fromEntries(["a", "b", "c", "d"].map((k, i) => [k, { label: `Account number ${i + 1} with a long name` }]))
+  return [id, width, { rows, config }, { type: "line", x: "m", format: { style: "currency", currency: "EUR" } }]
+}"""
+
+ACTIVE_DOTS = """id => [...document.querySelectorAll(`#${id} [data-part="active"] [data-part="dot"]`)].map(d => {
+  const r = d.getBoundingClientRect()
+  return { x: r.x + r.width / 2, y: r.y + r.height / 2, animation: getComputedStyle(d).animationName, running: d.getAnimations().length }
+})"""
+
+
+def hover_probe(t, cid):
+    page = t.page
+    width = min(520, page.viewport_size["width"] - 24)
+    page.evaluate(PROBE, page.evaluate(HOVER_PROBE, [cid, width]))
+    t.settle()
+    return box_of(page, cid)
+
+
+def check_chart_active_dots(t):
+    page = t.page
+    box = hover_probe(t, "chart-probe-dots")
+    assert page.evaluate("() => document.querySelector('#chart-probe-dots [data-slot=chart-svg]').hasAttribute('data-animate')")
+    x, y = box["x"] + box["width"] * 0.55, box["y"] + box["height"] * 0.6
+    for dx in range(8):
+        page.mouse.move(x + dx, y)
+    dots = page.evaluate(ACTIVE_DOTS, "chart-probe-dots")
+    assert len(dots) == 4 and all(d["animation"] == "none" and d["running"] == 0 for d in dots), ("active dots show at once, also after more pointer moves", dots)
+    page.evaluate("() => { window.__chartProbe.destroy(); document.getElementById('chart-probe-dots').remove() }")
+
+
+def check_chart_tooltip_clear(t):
+    page = t.page
+    box = hover_probe(t, "chart-probe-tip")
+    x = box["x"] + box["width"] / 2
+    page.mouse.move(x, box["y"] + box["height"] / 2)
+    dots = page.evaluate(ACTIVE_DOTS, "chart-probe-tip")
+    page.mouse.move(x + 1, min(d["y"] for d in dots))
+    t.settle()
+    tip_box = page.locator("#chart-probe-tip [data-slot='chart-tooltip']").bounding_box()
+    plot = page.locator("#chart-probe-tip [data-slot='chart-plot']").bounding_box()
+    dots = page.evaluate(ACTIVE_DOTS, "chart-probe-tip")
+    assert tip_box["width"] > box["width"] / 2 + 12, ("the tooltip is too wide for either side of the pointer", tip_box, box)
+    covered = [d for d in dots if tip_box["x"] - 5 <= d["x"] <= tip_box["x"] + tip_box["width"] + 5 and tip_box["y"] - 5 <= d["y"] <= tip_box["y"] + tip_box["height"] + 5]
+    assert len(dots) == 4 and not covered, ("a wide tooltip does not cover the hovered points", covered, tip_box)
+    assert plot["x"] - 1 <= tip_box["x"] and tip_box["x"] + tip_box["width"] <= plot["x"] + plot["width"] + 1 or tip_box["width"] > plot["width"], (tip_box, plot)
+    page.evaluate("() => { window.__chartProbe.destroy(); document.getElementById('chart-probe-tip').remove() }")
+
+
+TIP_EDGE = """async scheme => {
+  const { theme } = await import("/clanker-ui.js")
+  theme.setScheme(scheme)
+  theme.set("dark")
+  const box = document.querySelector("#chart-probe-edge")
+  const probe = document.createElement("span")
+  probe.style.color = "var(--border)"
+  box.append(probe)
+  const border = getComputedStyle(probe).color
+  probe.remove()
+  return { scheme, tip: getComputedStyle(box.querySelector('[data-slot="chart-tooltip"]')).borderTopColor, border }
+}"""
+
+SAME_SURFACE = ["catppuccin-frappe", "catppuccin-macchiato", "catppuccin-mocha", "dracula", "everforest", "github", "gruvbox", "kanagawa-dragon", "kanagawa-wave", "nord", "one", "solarized", "tokyonight-moon", "tokyonight-night", "tokyonight-storm"]
+
+
+def check_chart_tooltip_edge(t):
+    page = t.page
+    page.evaluate(PROBE, ["chart-probe-edge", 320, [{"m": "a", "v": 1}, {"m": "b", "v": 3}], {"type": "bar", "x": "m", "animate": False}])
+    page.locator("#chart-probe-edge [data-part='bar']").nth(1).hover()
+    assert tip(page, "chart-probe-edge"), "tooltip"
+    edges = [page.evaluate(TIP_EDGE, scheme) for scheme in SAME_SURFACE]
+    page.evaluate("async () => { const { theme } = await import('/clanker-ui.js'); theme.setScheme(''); theme.set('system') }")
+    assert all(e["tip"] == e["border"] for e in edges), ("dark schemes with --background = --card: the tooltip has the full --border, as cards there", edges)
+    page.evaluate("() => { window.__chartProbe.destroy(); document.getElementById('chart-probe-edge').remove() }")
+
+
+def check_chart_tooltip_hide_empty(t):
+    page = t.page
+    rows = [{"d": "Mon", "a": 4, "b": None, "c": 0}, {"d": "Tue", "a": None, "b": 2, "c": 1}]
+    out = page.evaluate(
+        """async rows => {
+          const { chart } = await import("/clanker-ui-chart.js")
+          const box = document.createElement("div")
+          box.id = "chart-probe-empty"
+          box.style.width = "320px"
+          document.body.append(box)
+          const read = () => [...box.querySelectorAll('[data-slot="chart-tooltip-name"]')].map(e => e.textContent)
+          const out = {}
+          for (const [name, hideEmpty] of [["all", undefined], ["empty", true], ["zero", "zero"]]) {
+            const view = chart(box, rows, { type: "bar", x: "d", stack: true, animate: false, tooltip: { hideEmpty } })
+            box.querySelector('[data-slot="chart-svg"]').focus()
+            box.querySelector('[data-slot="chart-svg"]').dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true }))
+            out[name] = { tip: read(), live: box.querySelector('[data-slot="chart-live"]').textContent }
+            view.destroy()
+          }
+          try { chart(box, rows, { tooltip: { hideEmpty: "yes" } }) } catch (e) { out.error = e instanceof TypeError }
+          box.remove()
+          return out
+        }""",
+        rows,
+    )
+    assert out["all"] == {"tip": ["A", "B", "C", "Total"], "live": "Mon: A 4, B –, C 0, Total 4"}, out
+    assert out["empty"] == {"tip": ["A", "C", "Total"], "live": "Mon: A 4, C 0, Total 4"}, out
+    assert out["zero"] == {"tip": ["A", "Total"], "live": "Mon: A 4, Total 4"}, out
+    assert out["error"] is True, out
+
+
 def check_chart_keyboard(t):
     page = t.page
     page.evaluate(LISTEN)

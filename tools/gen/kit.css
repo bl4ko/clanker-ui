@@ -335,6 +335,7 @@
   }
   [data-slot="sidebar"][data-mobile] [data-slot="sidebar-inner"] { border: 0; border-radius: 0; box-shadow: none; }
   [data-slot="sidebar"][data-mobile] [data-slot="sidebar-rail"] { display: none; }
+  [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-group-label"] { pointer-events: none; }
 
   [data-slot="resizable-panel-group"][data-orientation="vertical"] { flex-direction: column; }
   [data-slot="resizable-panel"] { min-width: 0; min-height: 0; overflow: hidden; }
@@ -548,6 +549,7 @@
     [data-slot="site-header"] { gap: calc(var(--spacing) * 2); padding-inline: calc(var(--spacing) * 6); }
   }
   [data-slot="site-header"][data-size="lg"] { height: var(--header-height, calc(var(--spacing) * 14)); }
+  [data-slot="sidebar-inset"] { min-width: 0; }
   [data-slot="sidebar-inset"] > [data-slot="site-header"] { border-start-start-radius: inherit; border-start-end-radius: inherit; }
   [data-slot="site-header"] > [data-slot="sidebar-trigger"] { margin-inline-start: calc(var(--spacing) * -1); }
   [data-slot="site-header"] > [data-slot="separator"][data-orientation="vertical"] { align-self: center; height: calc(var(--spacing) * 4); margin-inline: calc(var(--spacing) * 2); }
@@ -802,6 +804,8 @@
     [data-slot="table-row"]:has(> [data-slot="table-cell"] > [data-slot="empty"]):hover { background-color: transparent; }
   }
   :is([data-slot="table-head"], [data-slot="table-cell"])[data-align="end"] { text-align: end; font-variant-numeric: tabular-nums; }
+  [data-slot="table-head"]:is([data-sort=""], [data-sort="auto"], [data-sort="text"], [data-sort="number"], [data-sort="date"]) > [data-slot="button"] { margin-inline: calc(var(--spacing) * -2.5); }
+  [data-slot="table-head"]:is([data-sort=""], [data-sort="auto"], [data-sort="text"], [data-sort="number"], [data-sort="date"])[data-align="end"] > [data-slot="button"] { flex-direction: row-reverse; }
   :is([data-slot="table-head"], [data-slot="table-cell"])[data-align="center"] { text-align: center; }
   [data-slot="data-table-pagination"] {
     display: flex;
@@ -1176,7 +1180,7 @@
     stroke-dasharray: 1;
     animation: clanker-chart-draw 700ms var(--ease-out) backwards;
   }
-  [data-slot="chart-svg"][data-animate] :is([data-part="area"], [data-part="shape"], [data-part="slice"], [data-part="arc"], [data-part="dot"], [data-part="labels"], [data-part="center"], [data-part="references"], [data-part="reference-labels"]) {
+  [data-slot="chart-svg"][data-animate] :is([data-part="area"], [data-part="shape"], [data-part="slice"], [data-part="arc"], [data-part="dot"], [data-part="labels"], [data-part="center"], [data-part="references"], [data-part="reference-labels"]):not([data-part="active"] > *) {
     animation: clanker-chart-fade 500ms var(--ease-out) backwards;
   }
   [data-slot="chart-tooltip"] {
@@ -1189,7 +1193,7 @@
     align-items: start;
     gap: 0.375rem;
     padding: 0.375rem 0.625rem;
-    border: 1px solid color-mix(in oklab, var(--border) 50%, transparent);
+    border: 1px solid var(--chart-tooltip-border, color-mix(in oklab, var(--border) 50%, transparent));
     border-radius: var(--radius-lg);
     background-color: var(--background);
     color: var(--foreground);

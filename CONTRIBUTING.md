@@ -2,6 +2,10 @@
 
 Thank you for your help. Bug reports with a small page that shows the problem are the most useful. For a difference from shadcn, give the component, the browser, and the shadcn page that shows the correct behavior.
 
+## Scope until 1.0
+
+Before 1.0 the kit takes no new styles and no new components. Pull requests fix bugs, close shadcn differences, make files smaller, improve the docs, or make the markup stable. Open an issue first for a change that breaks existing markup (a slot, attribute, value, event, or export), with the reason and the upgrade steps.
+
 ## Setup
 
 - [Go](https://go.dev) (the version in `go.mod`). The server and the generator use only the Go standard library and esbuild (Go API). No Node.js, npm, or pnpm is necessary.

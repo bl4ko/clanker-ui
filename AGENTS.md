@@ -4,6 +4,11 @@ Instructions for coding agents that change this repository. To use clanker-ui in
 
 clanker-ui is a dependency-free port of shadcn/ui (Base UI base, Nova style) to plain HTML, CSS, and JavaScript, with a Go standard-library docs and demo server. Components must look and work exactly like the live shadcn site.
 
+## Scope until 1.0
+
+- No new styles and no new components. Work is fixes, shadcn parity, size, docs, and markup stability.
+- A breaking markup change (a slot, attribute, value, event, or export that existing pages use) needs an issue first, with the reason and the upgrade steps.
+
 ## Repository map
 
 | Path | Contents |

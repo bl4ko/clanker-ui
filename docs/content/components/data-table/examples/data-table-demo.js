@@ -6,7 +6,6 @@ export function paymentsTable(root) {
   const empty = root.querySelector('[data-js="empty"]')
   const all = root.querySelector('[data-js="all"]')
   const selection = root.querySelector('[data-js="selection"]')
-  const sortHead = root.querySelector('[data-js="sort"]').closest("th")
   const email = row => row.querySelector('[data-column="email"]').textContent.trim()
   let dir = 0
 
@@ -29,9 +28,9 @@ export function paymentsTable(root) {
   }
 
   filter.addEventListener("input", render)
-  root.querySelector('[data-js="sort"]').addEventListener("click", () => {
-    dir = dir === 1 ? -1 : 1
-    sortHead.setAttribute("aria-sort", dir === 1 ? "ascending" : "descending")
+  root.addEventListener("table:sort", event => {
+    event.preventDefault()
+    dir = { ascending: 1, descending: -1 }[event.detail.dir] ?? 0
     render()
   })
   root.addEventListener("checkbox:change", event => {

@@ -156,6 +156,7 @@ function chartIngest(s, data, options) {
   if (!TYPES.includes(o.type ?? "bar")) throw new TypeError(`clanker-ui chart: unknown type "${o.type}"`)
   if (!CURVES.includes(o.curve ?? "monotone")) throw new TypeError(`clanker-ui chart: unknown curve "${o.curve}"`)
   if (!INDICATORS.includes(o.tooltip?.indicator ?? "line")) throw new TypeError(`clanker-ui chart: unknown tooltip indicator "${o.tooltip.indicator}"`)
+  if (![undefined, false, true, "zero"].includes(o.tooltip?.hideEmpty)) throw new TypeError('clanker-ui chart: tooltip hideEmpty must be true, false, or "zero"')
   if (o.domain != null && !(Array.isArray(o.domain) && o.domain.every(v => v == null || Number.isFinite(v)))) throw new TypeError("clanker-ui chart: domain must be [min, max] with finite numbers or null")
   const cartesian = ["area", "bar", "line"].includes(o.type ?? "bar")
   if (!SCALES.includes(o.scale ?? "category")) throw new TypeError(`clanker-ui chart: unknown scale "${o.scale}"`)
@@ -1195,8 +1196,13 @@ function chartCartesian(c) {
         return horizontal ? { x: mk.dir === "left" ? mk.x : mk.x + mk.w, y: mk.y + mk.h / 2 } : { x: mk.x + mk.w / 2, y: mk.dir === "down" ? mk.y + mk.h : mk.y }
       }
       let y = pt + ph
-      for (const list of pts) if (list[a.index]) y = Math.min(y, list[a.index].y)
-      return { x: pos(a.index), y }
+      let low = pt
+      for (const list of pts) {
+        if (!list[a.index]) continue
+        y = Math.min(y, list[a.index].y)
+        low = Math.max(low, list[a.index].y)
+      }
+      return { x: pos(a.index), y, low: Math.max(y, low) }
     },
     tip(a) {
       let total = 0
@@ -1537,7 +1543,7 @@ function chartRadar(c) {
       return { x: best[0], y: best[1] }
     },
     tip(a) {
-      return { label: f.xLabel(a.index), key: null, items: keys.map((key, k) => { const e = m.byKey.get(key); const v = vals[k][a.index]; return { key, label: e.label, icon: e.icon, color: e.color, value: v == null ? "–" : f.value(v) } }) }
+      return { label: f.xLabel(a.index), key: null, items: keys.map((key, k) => { const e = m.byKey.get(key); const v = vals[k][a.index]; return { key, label: e.label, icon: e.icon, color: e.color, value: v == null ? "–" : f.value(v), v } }) }
     },
     activate(a) {
       deactivate()
@@ -1802,13 +1808,16 @@ function chartShowTip(s, a, source, point) {
   s.source = source
   g.activate(s.active)
   const data = g.tip(s.active)
+  const hide = s.opts.tooltip?.hideEmpty
+  if (hide) data.items = data.items.filter(it => it.total || !(it.v == null || (hide === "zero" && it.v === 0)))
   chartTipContent(s, data)
   const opening = tip.hidden
   tip.hidden = false
   tip.dataset.state = "open"
-  const at = point ?? g.anchor(s.active)
+  const mark = g.anchor(s.active)
+  const at = point ?? mark
   if (opening) tip.style.transition = "none"
-  chartPlaceTip(s, at.x, at.y)
+  chartPlaceTip(s, at.x, at.y, mark)
   if (opening) {
     void tip.offsetWidth
     tip.style.transition = ""
@@ -1849,16 +1858,22 @@ function chartSpeak(data) {
   return data.label ? `${data.label}: ${items}` : items
 }
 
-function chartPlaceTip(s, x, y) {
+function chartPlaceTip(s, x, y, mark) {
   const tip = s.els.tip
   const pw = s.width
   const ph = s.height
   const tw = tip.offsetWidth
   const th = tip.offsetHeight
+  const clamp = v => Math.max(Math.min(0, ph - th), Math.min(v, ph - th))
   let left = x + 12
   if (left + tw > pw) left = x - 12 - tw
-  if (left < 0) left = Math.max(0, Math.min(pw - tw, x - tw / 2))
-  const top = Math.max(Math.min(0, ph - th), Math.min(y - th / 2, ph - th))
+  let top = clamp(y - th / 2)
+  if (left < 0) {
+    left = Math.max(0, Math.min(pw - tw, x - tw / 2))
+    const high = mark.y - 12
+    const low = (mark.low ?? mark.y) + 12
+    top = high - th >= 0 || high > ph - low ? clamp(high - th) : clamp(low)
+  }
   tip.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`
 }
 

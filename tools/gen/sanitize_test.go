@@ -168,7 +168,7 @@ func TestEndToEnd(t *testing.T) {
 	os.WriteFile(kit, []byte(kitText), 0o644)
 	var outs []string
 	for i := range 3 {
-		o := options{src: src, pin: filepath.Join(root, "tools/gen/pin.tsv"), out: filepath.Join(dir, "run"+string(rune('a'+i)), "gen.css"), notes: filepath.Join(dir, "notes.txt"), kit: kit, tailwind: "tailwindcss", mapFile: filepath.Join(root, "tools/gen/map.tsv"), components: []string{"button", "badge"}}
+		o := options{src: src, pin: filepath.Join(root, "tools/gen/pin.tsv"), out: filepath.Join(dir, "run"+string(rune('a'+i)), "gen.css"), notes: filepath.Join(dir, "notes.txt"), kit: kit, tailwind: "tailwindcss", mapFile: filepath.Join(root, "tools/gen/map.tsv"), components: []string{"button", "badge"}, groups: filepath.Join(root, "tools/gen/groups.tsv")}
 		if i == 2 {
 			o.kit = filepath.Join(dir, "no-kit.css")
 		}

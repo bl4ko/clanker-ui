@@ -1617,6 +1617,126 @@ def check_sidebar(t):
     t.shot("sidebar", section)
 
 
+def check_sidebar_icon_group_label(t):
+    page = t.page
+    if t.mobile:
+        t.skip("the icon mode is a desktop layout")
+    out = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const group = (label, n) => h("div", { "data-slot": "sidebar-group" },
+            h("div", { "data-slot": "sidebar-group-label" }, label),
+            h("ul", { "data-slot": "sidebar-menu" }, Array.from({ length: n }, (_, i) =>
+              h("li", { "data-slot": "sidebar-menu-item" }, h("button", { "data-slot": "sidebar-menu-button", type: "button", "data-tooltip": `${label} ${i}` }, h("span", `${label} ${i}`))))))
+          const wrap = h("div", { "data-slot": "sidebar-wrapper", id: "sidebar-icon-labels" },
+            h("div", { "data-slot": "sidebar", "data-side": "left", "data-collapsible": "icon", "data-state": "collapsed" },
+              h("div", { "data-slot": "sidebar-gap" }),
+              h("div", { "data-slot": "sidebar-container" }, h("div", { "data-slot": "sidebar-inner" }, h("div", { "data-slot": "sidebar-content" }, group("One", 2), group("Two", 2))))),
+            h("main", { "data-slot": "sidebar-inset" }))
+          document.body.append(wrap)
+          await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+          const last = wrap.querySelectorAll('[data-slot="sidebar-group"]')[0].querySelectorAll('[data-slot="sidebar-menu-button"]')[1]
+          last.scrollIntoView({ block: "center" })
+          const r = last.getBoundingClientRect()
+          const hits = [0.5, 0.75, 0.9].map(f => last.contains(document.elementFromPoint(r.left + r.width / 2, r.top + r.height * f)))
+          const state = wrap.querySelector('[data-slot="sidebar"]').getAttribute("data-collapsible")
+          wrap.remove()
+          return { hits, state, height: r.height }
+        }"""
+    )
+    assert out["state"] == "icon" and out["height"] > 0, out
+    assert out["hits"] == [True, True, True], ("the hidden label of the next group does not take clicks from the last menu button", out)
+
+
+def check_sidebar_inset_overflow(t):
+    page = t.page
+    out = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const cells = Array.from({ length: 30 }, (_, i) => h("td", { "data-slot": "table-cell" }, `column value ${i}`))
+          const wrap = h("div", { "data-slot": "sidebar-wrapper", id: "sidebar-wide" },
+            h("div", { "data-slot": "sidebar", "data-side": "left", "data-collapsible": "offcanvas" },
+              h("div", { "data-slot": "sidebar-gap" }),
+              h("div", { "data-slot": "sidebar-container" }, h("div", { "data-slot": "sidebar-inner" }, h("div", { "data-slot": "sidebar-content" })))),
+            h("main", { "data-slot": "sidebar-inset" },
+              h("div", { "data-slot": "table-container" }, h("table", { "data-slot": "table" }, h("tbody", { "data-slot": "table-body" }, h("tr", { "data-slot": "table-row" }, ...cells))))))
+          document.body.append(wrap)
+          await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+          const inset = wrap.querySelector('[data-slot="sidebar-inset"]').getBoundingClientRect()
+          const table = wrap.querySelector('[data-slot="table-container"]')
+          const out = { wrap: [wrap.clientWidth, wrap.scrollWidth], inset: [inset.left, inset.right], box: wrap.getBoundingClientRect().right, table: [table.clientWidth, table.scrollWidth] }
+          wrap.remove()
+          return out
+        }"""
+    )
+    assert out["wrap"][1] <= out["wrap"][0] + 1 and out["inset"][1] <= out["box"] + 1, ("a wide table scrolls in its container, not the page", out)
+    assert out["table"][1] > out["table"][0], out
+
+
+TABLE_SORT = """async () => {
+  const { h, tableSort } = await import("/clanker-ui.js")
+  const rows = [["Žan", "1.234,50 €", "3. 11. 2026", "b"], ["Cene", "–", "1. 2. 2025", "a"], ["Čarli", "12,00 €", "", "c"], ["Ana", "300,25 €", "15. 6. 2026", "d"], ["ana", "12,00 €", "2. 2. 2025", "e"]]
+  const table = h("table", { "data-slot": "table", lang: "sl" },
+    h("thead", { "data-slot": "table-header" }, h("tr", { "data-slot": "table-row" },
+      h("th", { "data-slot": "table-head", "data-sort": "text" }, "Name"),
+      h("th", { "data-slot": "table-head", "data-sort": "", "data-align": "end" }, "Amount"),
+      h("th", { "data-slot": "table-head", "data-sort": "date" }, "Date"),
+      h("th", { "data-slot": "table-head", "data-sort": "id_desc" }, h("button", { type: "button", class: "app-sort" }, "Id")))),
+    h("tbody", { "data-slot": "table-body" }, rows.map(r => h("tr", { "data-slot": "table-row" }, r.map(c => h("td", { "data-slot": "table-cell" }, c))))))
+  const box = h("div", { "data-slot": "table-container", id: "table-sort-probe" }, table)
+  document.body.append(box)
+  await new Promise(r => requestAnimationFrame(r))
+  const heads = [...table.tHead.rows[0].cells]
+  const ids = () => [...table.tBodies[0].rows].map(r => r.cells[3].textContent).join("")
+  const state = () => heads.slice(0, 3).map(th => [th.getAttribute("aria-sort"), th.querySelector("[data-sort-icon]")?.getAttribute("data-lucide")])
+  const events = []
+  table.addEventListener("table:sort", e => events.push([e.detail.column, e.detail.dir]))
+  const out = { start: state(), plain: [heads[3].getAttribute("aria-sort"), heads[3].querySelectorAll("button").length, heads[3].querySelector("[data-sort-icon]")] }
+  const button = heads[0].querySelector('[data-slot="button"]')
+  out.button = [button.localName, button.getAttribute("data-variant"), button.textContent, getComputedStyle(button).marginInlineStart]
+  out.end = getComputedStyle(heads[1].querySelector('[data-slot="button"]')).flexDirection
+  button.click()
+  out.text = [ids(), state()]
+  button.click()
+  out.textDown = ids()
+  button.click()
+  out.none = [ids(), state()[0]]
+  heads[1].querySelector("button").click()
+  out.number = ids()
+  heads[1].querySelector("button").click()
+  out.numberDown = ids()
+  out.reset = state()[0]
+  tableSort(heads[2])
+  out.date = ids()
+  tableSort(heads[2], "descending")
+  out.dateDown = ids()
+  const keep = e => e.preventDefault()
+  table.addEventListener("table:sort", keep)
+  heads[0].querySelector("button").click()
+  out.prevented = [ids(), state()[0][0]]
+  table.removeEventListener("table:sort", keep)
+  out.events = events
+  try { tableSort(heads[3]) } catch (e) { out.error = e instanceof TypeError }
+  box.remove()
+  return out
+}"""
+
+
+def check_table_sort(t):
+    out = t.page.evaluate(TABLE_SORT)
+    assert out["start"] == [["none", "chevrons-up-down"]] * 3 and out["plain"] == [None, 1, None], ("an app data-sort key is left to app code", out)
+    assert out["button"] == ["button", "ghost", "Name", "-10px"], out["button"]
+    assert out["end"] == "row-reverse", out["end"]
+    assert out["text"] == ["deacb", [["ascending", "arrow-up"], ["none", "chevrons-up-down"], ["none", "chevrons-up-down"]]], ("Collator sl: a = A (stable), č after c, ž last", out["text"])
+    assert out["textDown"] == "bcade" and out["none"] == ["bacde", ["none", "chevrons-up-down"]], out
+    assert out["number"] == "cedba" and out["numberDown"] == "bdcea", ("locale numbers, empty last in both directions, stable ties", out)
+    assert out["reset"] == ["none", "chevrons-up-down"], out
+    assert out["date"] == "aedbc" and out["dateDown"] == "bdeac", ("dates in the sl order, empty last", out)
+    assert out["prevented"] == ["bdeac", "ascending"], ("preventDefault keeps the rows, the head state changes", out)
+    assert out["events"][:3] == [[0, "ascending"], [0, "descending"], [0, "none"]] and out["events"][-1] == [0, "ascending"], out["events"]
+    assert out["error"] is True, out
+
+
 def check_sidebar_rtl(t):
     page = t.page
     t.section("sidebar")

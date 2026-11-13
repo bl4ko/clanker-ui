@@ -4,13 +4,11 @@ Group `core`. Needs none. CSS only.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `page` (root) | `data-size` `lg`, `md`, `sm` | `data-layout` |
+| `page` (root) | `data-layout` any; `data-size` `lg`, `md`, `sm` |  |
 | `page-aside` | `data-variant` `sticky` |  |
 | `page-header` | `data-size` `lg` |  |
 
 Other parts: `page-actions`, `page-body`, `page-description`, `page-meta`, `page-nav`, `page-title`.
-
-Other options named in the docs: `data-layout` string.
 
 ## Full text
 

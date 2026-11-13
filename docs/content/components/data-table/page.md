@@ -41,7 +41,7 @@ root.addEventListener("dropdown-menu:select", event => {
 
 ## Sorting
 
-Put a ghost button in the header cell. On click, sort the rows, move them in the `tbody`, and set `aria-sort` on the `th`.
+Put `data-sort` on the header cell (see [Table](/docs/components/table)). The kit makes the head a ghost button with the sort icon, sets `aria-sort`, and sorts the rows. With filtering and paging, call `preventDefault()` on `table:sort` and sort your own list, as this example does.
 
 ## Filtering
 

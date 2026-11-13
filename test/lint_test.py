@@ -65,6 +65,9 @@ def check_lint_bad_cases(t):
             want = []
         assert sorted((f["severity"], f["selector"]) for f in got) == sorted(want), (rule, short(got))
         assert all(f["message"] for f in got)
+        if rule == "empty-region":
+            hints = {f["selector"]: f["message"].endswith("align the row to start") for f in got}
+            assert hints == ({} if t.mobile else {"#printhub-side": False, "#printhub-stretched": True}), ("only a stretched item gets the align-to-start hint", hints)
     coarse = t.page.evaluate("() => clankerDesignLint({ rules: ['small-target'], root: document.querySelector('#bad-small-target'), coarse: true }).findings")
     assert ("warn", "#bad-touch") in [(f["severity"], f["selector"]) for f in coarse]
     ignored = t.page.evaluate("() => clankerDesignLint({ rules: ['missing-label'], ignore: ['#bad-missing-label'] }).findings")
@@ -90,3 +93,15 @@ def check_lint_blocks(t):
         inject(t)
         found = [f for f in lint(t) if f["severity"] == "error" or f["rule"] in ("empty-region", "low-contrast")]
         assert found == [], (name, short(found))
+
+
+def check_lint_board_recipe(t):
+    recipes = (HERE.parent / "skills/clanker-ui/references/recipes.md").read_text()
+    board = recipes.split("## Board (columns of cards)", 1)[1].split("```html\n", 1)[1].split("\n```", 1)[0]
+    page = (HERE / "lint/good.html").read_text()
+    assert "\n".join("      " + line if line else line for line in board.split("\n")) in page, "the board recipe is in test/lint/good.html"
+    assert ".board { align-items: start; }" in (HERE / "lint/lint.css").read_text() and ".board { align-items: start; }" in recipes
+    t.docs(START)
+    columns = t.page.locator("#board-recipe .board > [data-slot=card]").evaluate_all("cards => cards.map(c => Math.round(c.getBoundingClientRect().height))")
+    assert len(columns) == 3 and (t.mobile or columns[0] > columns[1]), ("each column is as high as its cards", columns)
+

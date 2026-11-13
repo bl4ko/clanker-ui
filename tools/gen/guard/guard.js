@@ -40,16 +40,39 @@ cfg => {
     for (let i = 0; i < PROPS.length; i++) v[i] = cs.getPropertyValue(PROPS[i])
     return v.join(SEP)
   }
-  const one = el => {
-    const out = [["", read(el)]]
+  const hash = s => {
+    let a = 0xdeadbeef, b = 0x41c6ce57
+    for (let i = 0; i < s.length; i++) {
+      const c = s.charCodeAt(i)
+      a = Math.imul(a ^ c, 2654435761)
+      b = Math.imul(b ^ c, 1597334677)
+    }
+    a = Math.imul(a ^ (a >>> 16), 2246822507) ^ Math.imul(b ^ (b >>> 13), 3266489909)
+    b = Math.imul(b ^ (b >>> 16), 2246822507) ^ Math.imul(a ^ (a >>> 13), 3266489909)
+    return 4294967296 * (2097151 & b) + (a >>> 0)
+  }
+  const NOBOX = [["", "-"]]
+  const noBox = el => {
+    if (el === html || el.checkVisibility()) return false
+    for (let a = el.parentElement; a; a = a.parentElement) {
+      if (a.checkVisibility()) return false
+      if (getComputedStyle(a).display !== "contents") return true
+    }
+    return false
+  }
+  const one = (el, full) => {
+    if (cfg.skipNoBox && noBox(el)) return NOBOX
+    const get = full ? read : (e, pe) => hash(read(e, pe))
+    const out = [["", get(el)]]
     for (const pe of ["::before", "::after"]) {
       const c = getComputedStyle(el, pe).content
-      out.push([pe, c === "none" || c === "normal" || c === "" ? "-" : read(el, pe)])
+      out.push([pe, c === "none" || c === "normal" || c === "" ? "-" : get(el, pe)])
     }
-    if (getComputedStyle(el).display === "list-item") out.push(["::marker", read(el, "::marker")])
-    for (const [pe, sel] of PSEUDO) if (el.matches(sel)) out.push([pe, read(el, pe)])
+    if (getComputedStyle(el).display === "list-item") out.push(["::marker", get(el, "::marker")])
+    for (const [pe, sel] of PSEUDO) if (el.matches(sel)) out.push([pe, get(el, pe)])
     return out
   }
+  const same = (a, b) => a.every((x, i) => x.length === b[i].length && x.every((p, j) => p[0] === b[i][j][0] && p[1] === b[i][j][1]))
   const path = el => {
     const p = []
     for (let e = el; e && e !== html; e = e.parentElement) {
@@ -122,7 +145,7 @@ cfg => {
               quiet(on(which === "old" ? "new" : "old"))
               quiet(on(which), st.els)
             }
-            return st.els.map(one)
+            return st.els.map(e => one(e, again))
           })
           st.undo?.()
           return r
@@ -131,7 +154,7 @@ cfg => {
       const got = ["old", "new"].map(which => pass(which, states, themes))
       states.forEach((st, i) => themes.forEach((t, j) => {
         res.sweeps++
-        if (!diff(st.els, got[0][i][j], got[1][i][j]).n) return
+        if (same(got[0][i][j], got[1][i][j])) return
         const d = diff(st.els, pass("old", [st], [t], true)[0][0], pass("new", [st], [t], true)[0][0])
         if (d.n) res.diffs.push({ config: style + "/" + (t ?? "auto"), ...(st.label ? { state: st.label, targets: st.targets } : {}), ...d })
         else res.retried++

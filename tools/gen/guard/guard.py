@@ -195,7 +195,7 @@ def pages(root):
 
 def docs_pages(base):
     html = urllib.request.urlopen(base + "/docs").read().decode()
-    return sorted(set(re.findall(r'href="(/docs[^"#?]*)"', html)))
+    return sorted(p for p in set(re.findall(r'href="(/docs[^"#?]*)"', html)) if not p.endswith(".md"))
 
 
 class Guard:
@@ -213,6 +213,7 @@ class Guard:
                         raise SystemExit(f"mutation does not apply: {m}")
             self.css[f"old/{style}"], self.css[f"new/{style}"] = old, new
         self.cfg = profile(list(self.css.values()) + ([css_text(a.new, s, a) for s in STYLES] if a.docs else []))
+        self.cfg["skipNoBox"] = a.browser == "webkit"
         self.files = [{"style": s, "which": w, "href": f"/__guard/{w}/{s}.css"} for s in a.styles for w in ("old", "new")]
         self.js = (HERE / "guard.js").read_text()
 
@@ -260,6 +261,8 @@ class Guard:
             t = time.time()
             fn()
             rec["t"][name] = round(rec["t"].get(name, 0) + time.time() - t, 1)
+            if time.time() - t > 300:
+                print("  ", url, name, round(time.time() - t), "s", flush=True)
 
         def attrs(configs):
             at, stop = 0, time.time() + a.page_seconds * 0.4
@@ -276,7 +279,7 @@ class Guard:
 
         page.set_viewport_size({"width": 1280, "height": 800})
         page.emulate_media(color_scheme="light")
-        page.goto(a.base_url + url, wait_until="load")
+        page.goto(a.base_url + url, wait_until="load", timeout=180000)
         page.wait_for_timeout(400)
         page.evaluate(self.js, self.cfg)
         rec["props"] = page.evaluate("f => __guard.load(f)", self.files + self.scoped(page, rec))
@@ -296,11 +299,11 @@ class Guard:
         part = [[s, t] for s in some for t in (None, "dark")]
         timed("attrs", lambda: attrs(part))
         if cdp:
-            timed("forced", lambda: self.forced(page, cdp, every, sweep, False))
+            timed("forced", lambda: self.forced(page, cdp, every, sweep, over, False))
         if a.tier > 1:
             timed("triggers", lambda: self.triggers(page, every, sweep, over))
             if cdp:
-                timed("deep", lambda: self.forced(page, cdp, part, sweep, True))
+                timed("deep", lambda: self.forced(page, cdp, part, sweep, over, True))
             else:
                 timed("real", lambda: self.real(page, part, sweep, over, rec))
         return rec
@@ -325,21 +328,27 @@ class Guard:
             files += [{"style": "nova", "which": w, "href": f"/__guard/{w}/{name}.css", "anchor": f"/{name}\\.css$"} for w in ("old", "new")]
         return files
 
-    def forced(self, page, cdp, configs, sweep, deep):
+    def forced(self, page, cdp, configs, sweep, over, deep):
         root = cdp.send("DOM.getDocument", {"depth": 0})["root"]["nodeId"]
         ids = cdp.send("DOM.querySelectorAll", {"nodeId": root, "selector": "html, body, body *"})["nodeIds"]
 
         def force(nodes, classes):
-            for n in nodes:
+            for i, n in enumerate(nodes):
+                if classes and i % 100 == 99 and over("forced"):
+                    return i
                 cdp.send("CSS.forcePseudoState", {"nodeId": ids[n], "forcedPseudoClasses": classes})
+            return len(nodes)
 
         for classes in FORCED:
+            if over("deep" if deep else "forced"):
+                return
             c = page.evaluate("p => __guard.candidates(p)", classes)
             label = ":" + ":".join(classes)
             if c["all"] and not deep:
-                force(c["all"], classes)
-                sweep("forced", configs, label + " all")
-                force(c["all"], [])
+                n = force(c["all"], classes)
+                if n == len(c["all"]):
+                    sweep("forced", configs, label + " all")
+                force(c["all"][:n], [])
             for k, chain in enumerate(c["picked"] if deep else []):
                 focus = "focus" in classes
                 force(chain[1:], ["focus-within"] if focus else classes)

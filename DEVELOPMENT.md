@@ -222,7 +222,6 @@ uv run --no-project --with playwright python -I tools/parity/selftest.py
   | P3 | The Base UI select opens on `pointerdown` and puts the popup over the trigger, so the live trigger has no `:hover` in the press state. |
   | P6 | react-resizable-panels sets a global cursor by JavaScript on hover and drag. The source has no cursor class. |
   | P7 | Live JavaScript scrolls the message scroller viewport to the end, so the scroll-driven `scroll-fade-b` mask has no end fade. The copy is not scrolled. |
-  | R3 | Docs-site CSS: the Nova code-block example puts the blocks in `.typeset` (prose margins), which is not a shadcn class. |
   | R4 | The input-group example puts `data-slot="input-group-control"` on a textarea of another library with its own classes, so the kit part rules apply only in the copy. Nothing visible changes. |
   | R7 | The example layout widens its direct children by a class substring test (`*:[div:not([class*='w-'])]:w-full`). The class attribute of an installed component has `w-` in `w-fit`, `min-w-0`, or `overflow-hidden`, so shadcn keeps the part narrow; kit markup has no such class, so the copy part gets the full width (and its children follow). |
   | T7 | Example classes compile into a layer above the component rules. In shadcn, `tailwind-merge` keeps the part variant (`in-data-[slot=...]:p-0`, `dark:hover:`) and the variant wins. |

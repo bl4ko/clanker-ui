@@ -65,6 +65,9 @@ def check_lint_bad_cases(t):
             want = []
         assert sorted((f["severity"], f["selector"]) for f in got) == sorted(want), (rule, short(got))
         assert all(f["message"] for f in got)
+        if rule == "empty-region":
+            hints = {f["selector"]: f["message"].endswith("align the row to start") for f in got}
+            assert hints == ({} if t.mobile else {"#printhub-side": False, "#printhub-stretched": True}), ("only a stretched item gets the align-to-start hint", hints)
     coarse = t.page.evaluate("() => clankerDesignLint({ rules: ['small-target'], root: document.querySelector('#bad-small-target'), coarse: true }).findings")
     assert ("warn", "#bad-touch") in [(f["severity"], f["selector"]) for f in coarse]
     ignored = t.page.evaluate("() => clankerDesignLint({ rules: ['missing-label'], ignore: ['#bad-missing-label'] }).findings")

@@ -1457,7 +1457,7 @@ view.destroy()
 | Pie and donut | `labels: "value" \| "percent" \| "name"`, `labelPosition: "inside"`, `innerRadius`, `center`, `highlight` |
 | Radar | `grid: "polygon" \| "circle" \| "none"`, `fill: false`, `dots`, `max` |
 | Radial | `stacked`, `startAngle`, `endAngle`, `max`, `track`, `grid`, `labels`, `center`, `innerRadius` |
-| `tooltip` | `{ indicator: "line" \| "dot" \| "dashed", hideLabel, hideIndicator }` |
+| `tooltip` | `{ indicator: "line" \| "dot" \| "dashed", hideLabel, hideIndicator, hideEmpty }`. `hideEmpty: true` leaves out the series without a value at the hovered point (like Recharts `filterNull`); `"zero"` also leaves out 0. Default: every series, `–` for no value. |
 | `view`, `animate` | `"chart"` or `"table"`; `animate: false` skips the entrance animation |
 
 - The SVG is `role="application"` with `tabindex="0"`, so screen readers pass the arrow keys to it. Its accessible name is an automatic summary; the marks inside are hidden from assistive technology, and the table view has every value. Pointer: crosshair for line and area, per-mark tooltip otherwise. Keyboard: arrows move between points, Home, End, Escape. A polite live region reads the readout. The legend is a toolbar of toggle buttons with one tab stop. The table button switches to an accessible `<table>`.

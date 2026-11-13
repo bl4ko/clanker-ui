@@ -272,6 +272,37 @@ def check_chart_tooltip_edge(t):
     page.evaluate("() => { window.__chartProbe.destroy(); document.getElementById('chart-probe-edge').remove() }")
 
 
+def check_chart_tooltip_hide_empty(t):
+    page = t.page
+    rows = [{"d": "Mon", "a": 4, "b": None, "c": 0}, {"d": "Tue", "a": None, "b": 2, "c": 1}]
+    out = page.evaluate(
+        """async rows => {
+          const { chart } = await import("/clanker-ui-chart.js")
+          const box = document.createElement("div")
+          box.id = "chart-probe-empty"
+          box.style.width = "320px"
+          document.body.append(box)
+          const read = () => [...box.querySelectorAll('[data-slot="chart-tooltip-name"]')].map(e => e.textContent)
+          const out = {}
+          for (const [name, hideEmpty] of [["all", undefined], ["empty", true], ["zero", "zero"]]) {
+            const view = chart(box, rows, { type: "bar", x: "d", stack: true, animate: false, tooltip: { hideEmpty } })
+            box.querySelector('[data-slot="chart-svg"]').focus()
+            box.querySelector('[data-slot="chart-svg"]').dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true }))
+            out[name] = { tip: read(), live: box.querySelector('[data-slot="chart-live"]').textContent }
+            view.destroy()
+          }
+          try { chart(box, rows, { tooltip: { hideEmpty: "yes" } }) } catch (e) { out.error = e instanceof TypeError }
+          box.remove()
+          return out
+        }""",
+        rows,
+    )
+    assert out["all"] == {"tip": ["A", "B", "C", "Total"], "live": "Mon: A 4, B –, C 0, Total 4"}, out
+    assert out["empty"] == {"tip": ["A", "C", "Total"], "live": "Mon: A 4, C 0, Total 4"}, out
+    assert out["zero"] == {"tip": ["A", "Total"], "live": "Mon: A 4, Total 4"}, out
+    assert out["error"] is True, out
+
+
 def check_chart_keyboard(t):
     page = t.page
     page.evaluate(LISTEN)

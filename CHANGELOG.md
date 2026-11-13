@@ -8,6 +8,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Added
 
+- Behavior drift check: `tools/behavior drift` records the live shadcn pages again and lists the behavior changes against the committed references (a difference counts only when two records have it), and the weekly `behavior-drift` workflow opens one issue `behavior drift: <component>` per changed component.
 - Chart: `tooltip: { hideEmpty: true }` leaves out the series without a value at the hovered point, like Recharts `filterNull`; `hideEmpty: "zero"` also leaves out 0. The keyboard readout uses the same rows. Default unchanged (#124).
 - Table: opt-in sortable column heads. `data-sort` (`number`, `date`, `text`, or empty for auto) on a `table-head` makes it a ghost button with the sort icon and `aria-sort`; a click sorts the rows ascending, descending, and back to the first order. Numbers and dates follow the `lang` of the table, text uses `Intl.Collator`, empty values go last, and the sort is stable. `table:sort` (`{ column, dir }`, cancelable for server or paged sorting) and the export `tableSort(head, dir)`. The head button lines up with the cells in any table, and `data-align="end"` puts the icon before the label. The data-table block and the docs data-table example use it instead of their own sort code (#126).
 

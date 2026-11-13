@@ -4,6 +4,7 @@ sys.dont_write_bytecode = True
 
 import argparse
 import datetime
+import hashlib
 import importlib.util
 import json
 import os
@@ -100,19 +101,18 @@ def open_live(browser, sc, width, hosts, reduced_motion):
         pass
     page.add_style_tag(content=E.SHADCN_FONT)
     nth = sc.get("preview", 0)
-    ok = page.evaluate(
-        """([sel, n]) => {
+    mark = """([sel, n, scroll]) => {
           const p = document.querySelectorAll(sel)[n]
           if (!p) return false
           p.setAttribute("data-bh-preview", "")
-          p.scrollIntoView({ block: "center" })
+          if (scroll) p.scrollIntoView({ block: "center" })
           return true
-        }""",
-        [root, nth],
-    )
-    if not ok:
+        }"""
+    if not page.evaluate(mark, [root, nth, True]):
         raise E.StepError(f"{root} {nth} not found on {url}")
     page.wait_for_timeout(sc.get("wait", 800))
+    if not page.evaluate(mark, [root, nth, False]):
+        raise E.StepError(f"{root} {nth} not found on {url} after the wait")
     return ctx, page, url, deploy, ("%04d-%02d-%02d" % day if day else None)
 
 
@@ -280,6 +280,221 @@ def status(args):
     return 1 if stale else 0
 
 
+def drift_sig(f):
+    num = (lambda s: re.sub(r"-?\d+(\.\d+)?", "#", str(s))) if f["class"] in ("timing", "geometry") else str
+    return "|".join([str(E.step_no(f)), f["what"], f["class"], num(f["shadcn"]), num(f["ours"])])
+
+
+def drift_try(browser, engine, sc, width, ref):
+    try:
+        run = record_one(browser, engine, sc, width, False, {})
+    except Exception as e:
+        return {"error": "".join(traceback.format_exception_only(e)).strip().splitlines()[0]}
+    if (ref.get("clock"), ref.get("dates")) != (run.get("clock"), run.get("dates")):
+        return {"dated": f"the live page shows other dates ({ref.get('dates')} recorded, {run.get('dates')} now): a new build day; record again to compare", "deploy": run.get("deploy")}
+    busy = starved(run)
+    found = [f for f in E.compare(sc, ref["rows"], run["rows"], engine) if E.failing(f) and not react_noise(sc, f) and not (busy and f["class"] == "timing")]
+    return {"found": found, "busy": busy, "deploy": run.get("deploy")}
+
+
+def drift_run(browser, engine, sc, width, ref):
+    tries = [drift_try(browser, engine, sc, width, ref)]
+    if not tries[0].get("dated") and (tries[0].get("error") or tries[0]["found"] or tries[0]["busy"]):
+        tries.append(drift_try(browser, engine, sc, width, ref))
+    dated = next((t for t in tries if t.get("dated")), None)
+    if dated:
+        return {"tries": len(tries), "deploy": dated["deploy"], "status": "stale", "reason": dated["dated"], "differences": [], "unconfirmed": []}
+    ok = [t for t in tries if not t.get("error")]
+    out = {"tries": len(tries), "deploy": next((t["deploy"] for t in ok if t.get("deploy")), None)}
+    if not ok:
+        out["error"] = tries[-1]["error"]
+        out["differences"] = [dict(E.diff("-", "run", "ok", tries[-1]["error"], "state", "broken", "the scenario could not run on the live page in any try"), sig="run")]
+        out["unconfirmed"] = []
+        out["status"] = "drift"
+        return out
+    sigs = [{drift_sig(f) for f in t["found"]} for t in ok]
+    both = set.intersection(*sigs) if len(ok) == len(tries) else set()
+    out["differences"] = [dict(f, sig=drift_sig(f)) for f in ok[0]["found"] if drift_sig(f) in both]
+    seen = set(both)
+    out["unconfirmed"] = []
+    for t in ok:
+        for f in t["found"]:
+            s = drift_sig(f)
+            if s not in seen:
+                seen.add(s)
+                out["unconfirmed"].append(dict(f, sig=s))
+    out["busy"] = sorted({b for t in ok for b in t["busy"]})
+    if len(ok) < len(tries):
+        out["error"] = next(t["error"] for t in tries if t.get("error"))
+    out["status"] = "drift" if out["differences"] else "noise" if out["unconfirmed"] or out.get("error") else "same"
+    return out
+
+
+def drift_table(diffs):
+    rows = ["| Step | What | recorded | live now | Class | Severity |", "| --- | --- | --- | --- | --- | --- |"]
+    for f in diffs:
+        what = f["what"] + (f" (also steps {', '.join(f['also'][:8])})" if f.get("also") else "")
+        note = f"<br>{esc(f['note'])}" if f.get("note") else ""
+        rows.append(f"| {esc(f['step'])} | {esc(what)}{note} | {esc(f['shadcn'])} | {esc(f['ours'])} | {f['class']} | {f['severity']} |")
+    return rows
+
+
+def drift_section(c):
+    name = c["component"]
+    lines = [f"Live page: {c['url']}", f"Recorded {c['golden']['recorded']} on deploy {', '.join(c['golden']['deploy'] or ['?'])} (`@base-ui/react` {c['golden']['base_ui']}); live deploy {c.get('deploy') or '?'}.", ""]
+    for key, r in c["runs"].items():
+        if r["status"] != "drift":
+            continue
+        lines += [f"#### {key}", ""] + drift_table(r["differences"]) + [""]
+    lines += [
+        "Scenario: `test/behavior/scenarios/%s.json` (step numbers count from 1; 0 is the page at rest). Reference: `test/behavior/golden/%s.json`." % (name, name),
+        "",
+        "Next steps: open the live page and run the scenario steps by hand to confirm the change. A real upstream change: `tools/behavior record --only %s`, then `tools/behavior gate`, then port the change to the kit in one pull request. A false difference: fix the scenario or `tools/behavior`." % name,
+    ]
+    return lines
+
+
+def drift_merge(out, dirs):
+    (out / "components").mkdir(parents=True, exist_ok=True)
+    slices = []
+    for d in map(pathlib.Path, dirs):
+        if not (d / "slices.json").exists():
+            continue
+        slices += json.loads((d / "slices.json").read_text())
+        for f in sorted((d / "components").glob("*.json")):
+            c = json.loads(f.read_text())
+            dst = out / "components" / f.name
+            if dst.exists():
+                old = json.loads(dst.read_text())
+                c["runs"] = {**old["runs"], **c["runs"]}
+                c["deploy"] = c.get("deploy") or old.get("deploy")
+                if old.get("skip") and not c.get("skip"):
+                    c["skip"] = old["skip"]
+            dst.write_text(json.dumps(c, indent=1, ensure_ascii=False) + "\n")
+    if not slices:
+        print(f"no drift results in {', '.join(dirs)}")
+        return 2
+    (out / "slices.json").write_text(json.dumps(slices, indent=1) + "\n")
+    return drift_write(out)
+
+
+def drift(args):
+    if args.merge:
+        return drift_merge(pathlib.Path(args.out), args.merge)
+    names = [n for n in args.only.split(",") if n] or E.scenario_names()
+    engines = [e for e in args.engines.split(",") if e]
+    widths = [int(w) for w in args.widths.split(",") if w]
+    out = pathlib.Path(args.out)
+    (out / "components").mkdir(parents=True, exist_ok=True)
+    started = time.time()
+    with sync_playwright() as pw:
+        deploy = live_deploy(pw)
+        if not deploy:
+            print(f"no deploy id from {E.SITE}: the live site did not answer; no report")
+            return 2
+        base_ui = base_ui_version(pw, "main")
+        comps = {}
+        for name in names:
+            sc = E.load_scenario(name)
+            gold = E.load_golden(name)
+            path = out / "components" / f"{name}.json"
+            c = comps[name] = {"component": name, "url": sc.get("url") or f"{E.SITE}/docs/components/base/{sc.get('page', name)}", "runs": json.loads(path.read_text())["runs"] if path.exists() else {}}
+            if sc.get("not_recorded") or not gold:
+                c["skip"] = sc.get("not_recorded") or "no reference"
+                continue
+            c["golden"] = {k: gold.get(k) for k in ("recorded", "deploy", "base_ui", "shadcn_pin")}
+            if gold.get("scenario") != E.scenario_hash(sc):
+                c["skip"] = "stale: the scenario changed after the record; record it again"
+        for engine in engines:
+            browser = launch(pw, engine)
+            for name in names:
+                c = comps[name]
+                if c.get("skip"):
+                    continue
+                sc = E.load_scenario(name)
+                sc["allowed"] = [a for a in sc.get("allowed", []) if "platforms" in a]
+                gold = E.load_golden(name)
+                for width in widths:
+                    key = E.run_key(engine, width)
+                    if key not in gold["runs"]:
+                        continue
+                    t = time.time()
+                    r = c["runs"][key] = drift_run(browser, engine, sc, width, gold["runs"][key])
+                    c["deploy"] = r.get("deploy") or c.get("deploy")
+                    print(f"[{key}] {name}: {r['status']}" + (f", {len(r['differences'])} differences" if r["differences"] else "") + (f", {len(r['unconfirmed'])} unconfirmed" if r["unconfirmed"] else "") + (f", error {r['error']}" if r.get("error") else "") + f" ({r['tries']} tries, {time.time() - t:.0f}s)", flush=True)
+                (out / "components" / f"{name}.json").write_text(json.dumps(c, indent=1, ensure_ascii=False) + "\n")
+            browser.close()
+    for c in comps.values():
+        if c.get("skip"):
+            (out / "components" / f"{c['component']}.json").write_text(json.dumps(c, indent=1, ensure_ascii=False) + "\n")
+    slices = out / "slices.json"
+    done = json.loads(slices.read_text()) if slices.exists() else []
+    done.append({"generated": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "deploy": deploy, "base_ui_main": base_ui, "only": names if args.only else "all", "engines": engines, "widths": widths, "seconds": round(time.time() - started)})
+    slices.write_text(json.dumps(done, indent=1) + "\n")
+    return drift_write(out)
+
+
+def drift_write(out):
+    slices = json.loads((out / "slices.json").read_text())
+    comps = {f.stem: json.loads(f.read_text()) for f in sorted((out / "components").glob("*.json"))}
+    failed = [r for c in comps.values() for r in c["runs"].values() if r["status"] == "drift" and r["differences"][0]["sig"] == "run"]
+    for c in comps.values():
+        for r in c["runs"].values():
+            if len(failed) > 10 and r in failed:
+                r["status"] = "error"
+            if r["status"] == "drift" and all(f["class"] == "timing" for f in r["differences"]):
+                r["status"] = "timing"
+        if c.get("skip"):
+            c["status"] = "stale" if c["skip"].startswith("stale") else "skip"
+            c["reason"] = c["skip"]
+        else:
+            st = {r["status"] for r in c["runs"].values()}
+            c["status"] = "drift" if "drift" in st else "error" if "error" in st else "stale" if "stale" in st else "timing" if "timing" in st else "noise" if "noise" in st else "same" if st else "skip"
+            c["reason"] = next((r["reason"] for r in c["runs"].values() if r.get("reason")), "")
+        if c["status"] == "drift":
+            sigs = sorted({f["sig"] for r in c["runs"].values() if r["status"] == "drift" for f in r["differences"]})
+            c["fingerprint"] = hashlib.sha256("\n".join(sigs).encode()).hexdigest()[:12]
+            c["title"] = f"behavior drift: {c['component']}"
+            c["marker"] = f"<!-- behavior-drift:{c['component']} -->"
+            c["body"] = "\n".join([c["marker"], f"<!-- behavior-drift-fingerprint:{c['fingerprint']} -->", "", f"The live shadcn page of `{c['component']}` behaves differently from the committed reference. Each difference below occurred in two records in a row."] + [""] + drift_section(c)) + "\n"
+    drifting = sorted(n for n, c in comps.items() if c["status"] == "drift")
+    errors = sorted(n for n, c in comps.items() if c["status"] == "error")
+    deploys = sorted({x["deploy"] for x in slices})
+    keys = sorted({k for c in comps.values() for k in c["runs"]})
+    seconds = sum(x["seconds"] for x in slices)
+    result = {"generated": slices[-1]["generated"], "site": E.SITE, "deploy": deploys, "base_ui_main": slices[-1]["base_ui_main"], "shadcn_pin": PIN, "runs": keys, "seconds": seconds, "slices": slices, "drift": drifting, "errors": errors, "components": [comps[n] for n in sorted(comps)]}
+    (out / "drift.json").write_text(json.dumps(result, indent=1, ensure_ascii=False) + "\n")
+    lines = ["# Behavior drift of the live shadcn site", "", f"Generated {result['generated']} in {len(slices)} slices ({seconds} s): live `{E.SITE}` (deploy {', '.join(deploys)}, `@base-ui/react` {result['base_ui_main'] or '?'} on shadcn main) against `test/behavior/golden/` (shadcn pin `{PIN}`). Runs: {', '.join(keys)}.", ""]
+    lines.append("A run that differs from its reference is recorded a second time. Drift is a broken or visible difference in both records; a difference in one record only is noise and does not fail. The React render time of click and key steps is not compared, and timing is not compared when a CSS animation painted in one frame (a busy page). A run whose live page shows other dates than the record (a new build day) is stale. A run with only timing differences is `timing` and does not fail.")
+    lines += ["", "| Component | Status | Runs with drift | Unconfirmed | Note |", "| --- | --- | --- | --- | --- |"]
+    for n in sorted(comps):
+        c = comps[n]
+        runs = [k for k, r in c["runs"].items() if r["status"] == "drift"]
+        unc = sum(len(r["unconfirmed"]) for r in c["runs"].values())
+        lines.append(f"| {n} | {c['status']} | {', '.join(runs)} | {unc or ''} | {esc(c.get('reason', ''))} |")
+    lines += ["", f"{len(drifting)} of {len(comps)} components drift; {sum(1 for c in comps.values() if c['status'] == 'stale')} stale." + (f" {len(failed)} runs could not run on the live page in two tries: the site or the network failed, so status `error`, not drift." if len(failed) > 10 else ""), ""]
+    for n in drifting:
+        lines += [f"## {n}", ""] + drift_section(comps[n]) + [""]
+    slow = [(n, k, r) for n in sorted(comps) for k, r in comps[n]["runs"].items() if r["status"] == "timing"]
+    if slow:
+        lines += ["## Timing only (not failing)", "", "Timing differences in both records, with no other difference in the run. A slow runner can delay hover and focus intent in both records, so they open no issue.", "", "| Component | Run | Step | What | recorded | live now |", "| --- | --- | --- | --- | --- | --- |"]
+        lines += [f"| {n} | {k} | {esc(f['step'])} | {esc(f['what'])} | {esc(f['shadcn'])} | {esc(f['ours'])} |" for n, k, r in slow for f in r["differences"]] + [""]
+    noisy = [(n, k, r) for n in sorted(comps) for k, r in comps[n]["runs"].items() if r["unconfirmed"] or r.get("error") or r.get("busy")]
+    if noisy:
+        lines += ["## Noise (not drift)", "", "| Component | Run | Step | What | recorded | live now |", "| --- | --- | --- | --- | --- | --- |"]
+        for n, k, r in noisy:
+            for f in r["unconfirmed"]:
+                lines.append(f"| {n} | {k} | {esc(f['step'])} | {esc(f['what'])} | {esc(f['shadcn'])} | {esc(f['ours'])} |")
+            if r.get("error") and r["status"] != "error":
+                lines.append(f"| {n} | {k} | - | run error in one try | | {esc(r['error'])} |")
+            for b in r.get("busy") or []:
+                lines.append(f"| {n} | {k} | - | busy page, timing not compared | | {esc(b)} |")
+        lines.append("")
+    (out / "drift.md").write_text("\n".join(lines))
+    print(f"{out / 'drift.md'}\n{len(drifting)} components drift: {', '.join(drifting) or 'none'}" + (f"; {len(errors)} could not run: {', '.join(errors)}" if errors else "") + f" ({seconds}s in {len(slices)} slices)")
+    return 2 if errors else 1 if drifting else 0
+
+
 def gate(args):
     engines = ["chromium", "webkit"] if args.quick else [e for e in args.engines.split(",") if e]
     widths = "1280" if args.quick else args.widths
@@ -407,10 +622,16 @@ def main():
     g.add_argument("--quick", action="store_true", help="Chromium and WebKit at 1280 only")
     g.add_argument("-k", default="", help="regex on check names, as in test/run.py")
     g.add_argument("--queue", default="", help="script that runs test/run.py in a shared queue (also BEHAVIOR_QUEUE)")
+    d = sub.add_parser("drift", help="record the live pages again and compare them with test/behavior/golden/ without a change to it; write <out>/drift.md and <out>/drift.json; exit 1 on drift (needs the network)")
+    d.add_argument("--out", required=True)
+    d.add_argument("--only", default="", help="comma-separated scenario names")
+    d.add_argument("--engines", default="chromium,firefox,webkit")
+    d.add_argument("--widths", default="1280,390")
+    d.add_argument("--merge", nargs="+", metavar="DIR", help="record nothing: add the results of other drift directories to --out and write the report")
     sub.add_parser("stamp", help="write the live deploy id and the @base-ui/react version into reference files that have none (needs the network)")
     sub.add_parser("status", help="list references to record again: changed scenario, pin, @base-ui/react on shadcn main, or live deploy (needs the network)")
     args = ap.parse_args()
-    return {"record": record, "report": report, "gate": gate, "stamp": stamp, "status": status}[args.cmd](args)
+    return {"record": record, "report": report, "gate": gate, "drift": drift, "stamp": stamp, "status": status}[args.cmd](args)
 
 
 if __name__ == "__main__":

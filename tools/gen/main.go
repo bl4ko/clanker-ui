@@ -364,6 +364,13 @@ func run(o options) (string, error) {
 	if s := strayRule(tree); s != "" {
 		return "", fmt.Errorf("generated CSS: %q is not in a layer", s)
 	}
+	table, err := readGroups(o.groups)
+	if err != nil {
+		return "", err
+	}
+	if err := g.optimize(tree, kitCSS, table); err != nil {
+		return "", err
+	}
 	css = license + "\n" + layerOrder + tree.String()
 	if kitCSS != "" {
 		fmt.Fprintf(os.Stderr, "kit CSS appended: %s (%d bytes)\n", o.kit, len(kitCSS))

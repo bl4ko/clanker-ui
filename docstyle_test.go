@@ -33,6 +33,13 @@ func TestDocsStyleCSS(t *testing.T) {
 	if _, err := docsStyleCSS("rhea", []byte(base), []byte(style+"@keyframes other { to { opacity: 0; } }\n")); err == nil || !strings.Contains(err.Error(), "@keyframes other") {
 		t.Errorf("a keyframes rule that the default style does not have: %v", err)
 	}
+	own := "@property --tw-own { syntax: \"*\"; inherits: false; }"
+	if got, err := docsStyleCSS("rhea", []byte(base+"@property --tw-a { syntax: \"*\"; inherits: false; }\n"), []byte(style+own+"\n")); err != nil || !strings.HasSuffix(string(got), "}\n"+own+"\n") {
+		t.Errorf("a property rule that only the style registers goes after the layer: %v\n%s", err, got)
+	}
+	if _, err := docsStyleCSS("rhea", []byte(base+"@property --tw-own { syntax: \"<length>\"; inherits: false; initial-value: 0px; }\n"), []byte(style+own+"\n")); err == nil {
+		t.Error("a property rule that differs from the default style must stop the docs style")
+	}
 	if _, err := docsStyleCSS("rhea", []byte(base), []byte(style+".x { color: red; }\n")); err == nil {
 		t.Error("a rule outside a layer must stop the docs style")
 	}

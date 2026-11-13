@@ -184,13 +184,14 @@ go run ./tools/gen -src "$SHADCN_SRC" -out clanker-ui.css -tailwind "$TAILWIND"
 
 ### Parity with shadcn
 
-`tools/parity` measures how close the generated CSS is to `https://ui.shadcn.com/docs/components/base/<name>`. It needs the network and the Tailwind CLI, so it is not part of `test/run.py`.
+`tools/parity` measures how close the generated CSS is to shadcn: the docs previews of `https://ui.shadcn.com/docs/components/base/<name>`, and the example pages `<name>-example` in a reference app, a real shadcn install of each style. It needs the network and the Tailwind CLI, so it is not part of `test/run.py`.
 
 ```sh
-uv run --no-project --with playwright python -I tools/parity/parity.py --src "$SHADCN_SRC" --out "<dir>"
+uv run --no-project python -I tools/parity/refapp.py --src "$SHADCN_SRC" --out "<ref>" --styles nova,luma
+uv run --no-project --with playwright python -I tools/parity/parity.py --src "$SHADCN_SRC" --out "<dir>" --ref "<ref>"
 uv run --no-project python -I tools/parity/report.py "<dir>"
 uv run --no-project python -I tools/parity/report.py "<dir>" --style rhea
-uv run --no-project --with playwright python -I tools/parity/parity.py --src "$SHADCN_SRC" --out "<dir>" --page-style luma
+uv run --no-project --with playwright python -I tools/parity/parity.py --src "$SHADCN_SRC" --out "<dir>" --page-style luma --ref "<ref>"
 uv run --no-project python -I tools/parity/report.py "<dir>" --style luma
 uv run --no-project --with playwright python -I tools/parity/selftest.py
 ```
@@ -232,8 +233,10 @@ uv run --no-project --with playwright python -I tools/parity/selftest.py
   | U3 | The docs site does not apply the `cn-rtl-flip` transform (`rtl:rotate-180`) in RTL examples. The kit follows the shadcn `rtl` install option. |
 
 - Self-test: `--drop-slot <slot>` removes every generated rule for that slot before it measures. `--only badge` gives 8/8 equal parts; `--only badge --drop-slot badge` gives 0/8, and `report.py --strict` exits 1. `--only card --drop-slot card-header`, `--only code-block --drop-slot trace-collapsible`, and `--only marker --drop-slot accordion` also fail `--strict` (a part keeps no class of its definition, also not from a wrapper). `selftest.py` checks the tolerances and the class rules without a browser.
-- Options: `--only a,b`, `--engine firefox|webkit`, `--quick` (rest and open only), `--max-open`, `--max-states`, `--page-style <style>`.
-- `--page-style <style>` measures a ported style that the docs pages do not show (Luma, Lyra, Maia, Mira, Sera, Vega): for each component with an example page it loads only `/preview/base/<name>-example?preset=<code>` and measures it against that style. The preview route takes the style from the `preset` code of the shadcn create page (`b0` is Nova; a `?style=` parameter is ignored), so the tool encodes the style with all other fields at their default (`preset_code` in `parity.py`; Lyra and Sera also get `--radius: 0` there, which the tool copies with the other live tokens). The totals are in `styles.<style>`; `report.py --style <style>` gates them with `known-<style>.tsv`. The limit of the Nova example page (R2) applies.
+- Options: `--only a,b`, `--engine firefox|webkit`, `--quick` (rest and open only), `--max-open`, `--max-states`, `--page-style <style>`, `--ref <dir>`.
+- Reference app (`tools/parity/refapp.py`, network): for each style, `shadcn init -t vite -b base -p <style>` makes a Vite app, and `shadcn add` installs every component of the pinned `registry/bases/base/ui/` and every pinned `registry/bases/base/examples/*-example.tsx` with the CLI. So the components have the classes of the style, and `cn()` (`tailwind-merge`) resolves the conflicts, as in a user's app. The CLI is the `shadcn` version of the pin, and `refapp/package.json` and `refapp/pnpm-lock.yaml` pin every package to the version of the pin's `apps/v4` lockfile (Base UI 1.6.0, `cn` 0.2.2, Tailwind 4.3.0, react-day-picker 9.8.1; `refapp.py --update-lock` writes them again after a pin change). The live registry has the items: before the build, the tool compares the class strings of each item (as sets of classes) with `transformStyle` of the pinned source and the pinned `style-<style>.css` (`refapp/transform.mjs`), and stops when one differs (`--allow-drift`). The app adds what the example pages need and a real install does not have: the `style-<name>:` variants of the docs site, `next/image` and `next/link` as plain `img` and `a`, and the docs-site helpers `lib/ai.ts` and `components/message-parts.tsx` of the pin (message and message scroller examples). Each route `/preview/base/<name>-example` renders one example (66 pages; `component-example` has no default export). The output is `<ref>/<style>/dist` (about 4 MB; the app with `node_modules` is about 800 MB) and `manifest.json` (pin, CLI, registry check, lockfile hash). Neither goes into git.
+- `--ref <ref>`: the example pages load from `<ref>/<style>/dist` (a Playwright route serves them; an image or other file that is not in `dist` comes from ui.shadcn.com) instead of the live preview route. This applies to `--page-style` and to the Nova example page of a docs run. The docs previews (`apps/v4/examples/base`) are not registry items, so they stay on the live site. `site.ref` of `<component>.json` holds the manifest, and `report.py` prints it.
+- `--page-style <style>` measures a ported style that the docs pages do not show (Luma, Lyra, Maia, Mira, Sera, Vega): for each component with an example page it loads only `/preview/base/<name>-example?preset=<code>` and measures it against that style. The preview route takes the style from the `preset` code of the shadcn create page (`b0` is Nova; a `?style=` parameter is ignored), so the tool encodes the style with all other fields at their default (`preset_code` in `parity.py`; Lyra and Sera also get `--radius: 0` there, which the tool copies with the other live tokens). The totals are in `styles.<style>`; `report.py --style <style>` gates them with `known-<style>.tsv`. Without `--ref`, the limit of the Nova example page (R2) applies.
 
 ### Behavior parity with shadcn
 

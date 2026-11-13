@@ -94,24 +94,32 @@ def package_of(spec):
     return "/".join(parts[:2]) if spec.startswith("@") else parts[0]
 
 
-def update_lock(app, src, pin):
+def update_lock(apps, src, pin):
     versions = pin_versions(src, pin)
+    app = apps[0]
     pkg = json.loads((app / "package.json").read_text())
-    used = set()
-    for f in (app / "src").rglob("*.ts*"):
-        used |= {package_of(m) for m in IMPORT.findall(f.read_text()) if not m.startswith(("@/", "node:"))}
-    deps = (set(pkg["dependencies"]) | used) - SHIMMED
+    deps, dev = set(), set()
+    for a in apps:
+        p = json.loads((a / "package.json").read_text())
+        deps |= set(p["dependencies"])
+        dev |= set(p.get("devDependencies", {}))
+        for f in (a / "src").rglob("*.ts*"):
+            deps |= {package_of(m) for m in IMPORT.findall(f.read_text()) if not m.startswith(("@/", "node:"))}
+    deps -= SHIMMED
 
     def version(name):
         if name.startswith("@tailwindcss/"):
             return versions["tailwindcss"]
         if name in versions:
             return versions[name]
-        installed = app / "node_modules" / name / "package.json"
-        return json.loads(installed.read_text())["version"] if installed.exists() else "latest"
+        for a in apps:
+            installed = a / "node_modules" / name / "package.json"
+            if installed.exists():
+                return json.loads(installed.read_text())["version"]
+        return "latest"
 
     pkg["dependencies"] = {n: version(n) for n in sorted(deps)}
-    pkg["devDependencies"] = {n: version(n) for n in sorted(pkg.get("devDependencies", {}))}
+    pkg["devDependencies"] = {n: version(n) for n in sorted(dev)}
     (app / "package.json").write_text(json.dumps(pkg, indent=2) + "\n")
     (app / "pnpm-lock.yaml").unlink(missing_ok=True)
     run(["pnpm", "install"], app)
@@ -229,7 +237,6 @@ def build(style, args, src, pin, examples):
     for path, dest in HELPERS.items():
         shutil.copy(raw(pin, path, src / "refapp-pin" / path), app / dest)
     if args.update_lock:
-        update_lock(app, src, pin)
         return app
     pin_packages(app)
     run(["pnpm", "install", "--frozen-lockfile"], app, env)
@@ -248,7 +255,7 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--styles", default="nova")
     ap.add_argument("--allow-drift", action="store_true", help="build even when a live registry item differs from the pinned source")
-    ap.add_argument("--update-lock", action="store_true", help="install and add only, then write refapp/package.json and refapp/pnpm-lock.yaml from the first style")
+    ap.add_argument("--update-lock", action="store_true", help="install and add only, then write refapp/package.json and refapp/pnpm-lock.yaml for all --styles (use all styles)")
     args = ap.parse_args()
     if not args.src:
         raise SystemExit("set --src or SHADCN_SRC")
@@ -256,10 +263,13 @@ def main():
     pin = next(l.split("\t")[1] for l in (HERE.parent / "gen/pin.tsv").read_text().splitlines() if l.startswith("commit\t"))
     examples = pinned_examples(src, pin)
     pathlib.Path(args.out).mkdir(parents=True, exist_ok=True)
+    apps = []
     for style in args.styles.split(","):
         if style not in STYLES:
             raise SystemExit(f"{style}: not a shadcn style ({', '.join(STYLES)})")
-        build(style, args, src, pin, examples)
+        apps.append(build(style, args, src, pin, examples))
+    if args.update_lock:
+        update_lock(apps, src, pin)
 
 
 if __name__ == "__main__":

@@ -181,6 +181,9 @@ def composed(cls, parts, slot, names=(), parent=None, ancestors=()):
     if slot and "cn-" + slot in cls.split():
         return None
     toks = set(parts.canon(cls.split())) - {t for t in cls.split() if t.startswith("lucide")}
+    if 3 <= len(toks) < 6 and not toks & parts.plain.get(slot, set()):
+        same = [o for o, b in parts.base.items() if o != slot and b == toks]
+        return same[0] if len(same) == 1 else None
     if len(toks) < 6:
         return None
     own = [parts.plain.get(slot, set())] + [t for ctx, child, t in parts.contextual.get(slot, []) if (ctx == parent if child else ctx in ancestors)]
@@ -619,7 +622,8 @@ def page_html(conv, cap, sources=None):
             color = "; color: CanvasText" if cap.get("view") else ""
             body.append(f'<div data-parity-scope style="width: {w}px; {style}{color}">{conv.node(root["tree"])}</div>')
         else:
-            body.append(f'<div data-parity-portal style="{style}; color: CanvasText">{conv.node(root["tree"], portal=True)}</div>')
+            color = "var(--foreground)" if cap.get("ref") else "CanvasText"
+            body.append(f'<div data-parity-portal style="{style}; color: {color}">{conv.node(root["tree"], portal=True)}</div>')
     return ("<!doctype html><html lang=\"en\" data-theme=\"light\"><head><meta charset=\"utf-8\">"
             "<link rel=\"stylesheet\" href=\"/gen.css\"><link rel=\"stylesheet\" href=\"/consumer.css\"><link rel=\"stylesheet\" href=\"/font.css\">"
             "</head><body>" + "".join(body) + "</body></html>")
@@ -1151,7 +1155,7 @@ def measure_view(comp, docs, args, view, prefix, offset, examples, view_style=No
             if not trig:
                 continue
             hovered = trig if how == "hover" else None
-        cap = {"roots": docs.page.evaluate(CAPTURE, "docs"), "active": docs.page.evaluate("() => window.__parity.active()"), "visible": docs.page.evaluate("() => !!document.activeElement?.matches(':focus-visible')"), "hover": hovered, "view": bool(view) and not view.startswith(NOVA_PAGE)}
+        cap = {"roots": docs.page.evaluate(CAPTURE, "docs"), "active": docs.page.evaluate("() => window.__parity.active()"), "visible": docs.page.evaluate("() => !!document.activeElement?.matches(':focus-visible')"), "hover": hovered, "view": bool(view) and not view.startswith(NOVA_PAGE), "ref": bool(docs.ref_style) and bool(view) and view.startswith(NOVA_PAGE) and docs.ref is not None}
         if kind == "open" and not any(r["kind"] == "portal" for r in cap["roots"]) and comp not in ("accordion", "collapsible", "toggle", "toggle-group"):
             continue
         styles = root_styles(cap["roots"], docs.preview_styles, view_style)

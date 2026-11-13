@@ -17,7 +17,9 @@ env:
   PLAYWRIGHT_VERSION: "1.64.1"
   TAILWIND_VERSION: "4.3.3"
   TAILWIND_SHA256: dc61b3ac6b8c9ca874c0cc4c57b2409791a64c5540404ca5f5367360babc313a
-  PARITY_ONLY: ""
+  PARITY_ONLY: "attachment,bubble,collapsible,message-scroller,card,select,resizable,calendar,toggle-group,input-group,button-group,combobox,native-select,code-block,empty,input-otp,table,hover-card,progress,sheet,marker,tabs"
+  PARITY_RUNS: nova
+  PARITY_RAW: "1"
   NO_COLOR: "1"
 
 jobs:
@@ -25,7 +27,11 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'parity-ci')
     runs-on: ubuntu-26.04
     timeout-minutes: 10
+    outputs:
+      runs: ${{ steps.runs.outputs.runs }}
     steps:
+      - id: runs
+        run: echo "runs=$(printf '%s\n' $PARITY_RUNS | jq -Rsc 'split("\n") | map(select(length > 0))')" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -47,7 +53,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        run: [docs, nova, luma, lyra, maia, mira, sera, vega]
+        run: ${{ fromJSON(needs.fetch.outputs.runs) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -99,6 +105,7 @@ jobs:
           set -- --src "$RUNNER_TEMP/shadcn" --out "$out" --ref "$RUNNER_TEMP/ref"
           [ "$RUN" = docs ] || set -- "$@" --page-style "$RUN"
           [ -z "$PARITY_ONLY" ] || set -- "$@" --only "$PARITY_ONLY"
+          [ -z "$PARITY_RAW" ] || set -- "$@" --keep-raw
           start=$(date +%s)
           uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I tools/parity/parity.py "$@"
           echo "parity $RUN: $(( $(date +%s) - start )) s" | tee -a "$GITHUB_STEP_SUMMARY"
@@ -133,5 +140,6 @@ jobs:
             ${{ runner.temp }}/parity/*.md
             ${{ runner.temp }}/parity/*.tsv
             ${{ runner.temp }}/ref/*/manifest.json
+            ${{ env.PARITY_RAW && format('{0}/parity/pages', runner.temp) || '' }}
           if-no-files-found: ignore
           retention-days: 14

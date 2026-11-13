@@ -19,6 +19,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Sidebar: `sidebar-inset` has `min-width: 0`, so a wide table scrolls inside its `table-container` and the page no longer scrolls sideways (#123). shadcn `SidebarInset` has the same gap.
 - Accessibility layer: the text of destructive badges, buttons, alert-dialog actions, and pagination links is the new token `--destructive-text`. The editor schemes (Tokyo Night, Catppuccin, Gruvbox, Nord, Dracula, Rosé Pine, Solarized, One, Kanagawa, Everforest) mix `--destructive` with black (light) or white (dark), so the text has 4.5:1 on its tinted background, also on hover (#129). The design lint finds the token, so `non-token-color` no longer warns on these parts (#127).
 - Design lint `empty-region`: a start-aligned row of three or more columns (a board) is not checked, and a start-aligned item no longer gets the hint "align the row to start" (#131).
+- Catalog: an attribute that the kit JavaScript only reads (`data-sticky-header` of `table-container`, `data-layout` of `page`) is a Write attribute, not State, so agents that follow the skill write it (#128).
 
 ## 0.3.0 - 2026-11-10
 

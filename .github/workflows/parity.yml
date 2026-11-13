@@ -49,12 +49,14 @@ jobs:
           version: "0.13.7"
           python-version: "3.13"
           enable-cache: false
-      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-        with:
-          version: "12.18.0"
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "24"
+      - name: Install pnpm
+        run: |
+          corepack enable pnpm
+          corepack install -g pnpm@12.18.0
+          pnpm --version
       - name: Pinned shadcn sources
         run: go run ./tools/gen fetch -src "$RUNNER_TEMP/shadcn"
       - name: Reference app

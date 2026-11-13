@@ -7470,7 +7470,122 @@ define("table-header", { init: tableRole })
 define("table-body", { init: tableRole })
 define("table-footer", { init: tableRole })
 define("table-row", { init: tableRole })
-define("table-head", { init: tableRole })
+const tableSortHeads = '[data-sort=""], [data-sort="auto"], [data-sort="text"], [data-sort="number"], [data-sort="date"]'
+const tableRowOrder = new WeakMap()
+const tableSortRest = new WeakMap()
+let tableRowCount = 0
+
+define("table-head", {
+  init(el) {
+    tableRole(el)
+    if (!el.matches(tableSortHeads) || !el.closest("thead")) return
+    let button = el.querySelector(':scope > [data-slot="button"]')
+    const made = !button
+    if (made) {
+      button = h("button", { type: "button", "data-slot": "button", "data-variant": "ghost" })
+      button.append(...el.childNodes)
+      el.append(button)
+    }
+    if (!["ascending", "descending"].includes(el.getAttribute("aria-sort"))) el.setAttribute("aria-sort", "none")
+    const rest = button.querySelector(":scope > svg[data-sort-icon]")?.getAttribute("data-lucide")
+    if (rest) tableSortRest.set(el, rest)
+    tableSortIcon(el)
+    return () => {
+      button.querySelector(":scope > [data-sort-icon]")?.remove()
+      if (made) el.replaceChildren(...button.childNodes)
+    }
+  },
+  click(event, el) {
+    const button = el.querySelector(':scope > [data-slot="button"]')
+    if (!el.matches(tableSortHeads) || !button?.contains(event.target) || button.disabled) return
+    const now = el.getAttribute("aria-sort")
+    tableSort(el, now === "ascending" ? "descending" : now === "descending" ? "none" : "ascending")
+  },
+})
+
+function tableSortIcon(head) {
+  const button = head.querySelector(':scope > [data-slot="button"]')
+  if (!button) return
+  const dir = head.getAttribute("aria-sort")
+  const next = icon(dir === "ascending" ? "arrow-up" : dir === "descending" ? "arrow-down" : tableSortRest.get(head) ?? "chevrons-up-down", { "data-sort-icon": "" })
+  const old = button.querySelector(":scope > [data-sort-icon]")
+  old ? old.replaceWith(next) : button.append(next)
+}
+
+export function tableSort(head, dir = "ascending") {
+  const th = typeof head === "string" ? document.getElementById(head) : head
+  if (!th?.matches('[data-slot="table-head"]') || !th.matches(tableSortHeads)) throw new TypeError("clanker-ui tableSort: the first argument must be a table-head with data-sort")
+  if (!["ascending", "descending", "none"].includes(dir)) throw new TypeError(`clanker-ui tableSort: unknown direction "${dir}"`)
+  const table = th.closest('[data-slot="table"]') ?? th.closest("table")
+  for (const other of th.parentElement.querySelectorAll(':scope > [data-slot="table-head"]')) {
+    if (!other.matches(tableSortHeads)) continue
+    other.setAttribute("aria-sort", other === th ? dir : "none")
+    tableSortIcon(other)
+  }
+  if (!table || !emit(table, "table:sort", { column: th.cellIndex, dir }, { cancelable: true })) return
+  const lang = th.closest("[lang]")?.getAttribute("lang") || undefined
+  const type = th.getAttribute("data-sort").replace("auto", "")
+  for (const body of table.tBodies) {
+    const rows = [...body.rows]
+    for (const row of rows) if (!tableRowOrder.has(row)) tableRowOrder.set(row, tableRowCount++)
+    const values = new Map(rows.map(row => {
+      const cell = row.cells[th.cellIndex]
+      const raw = cell ? (cell.getAttribute("data-value") ?? cell.textContent).trim() : ""
+      return [row, /^[-–—]?$/.test(raw) ? null : raw]
+    }))
+    const kind = type || (rows.every(r => values.get(r) === null || !/\p{L}/u.test(values.get(r)) && Number.isFinite(tableNumber(values.get(r), lang))) ? "number" : "text")
+    const key = new Map(rows.map(row => {
+      const v = values.get(row)
+      const k = v === null ? null : kind === "number" ? tableNumber(v, lang) : kind === "date" ? tableDate(v, lang) : v
+      return [row, k === null || Number.isNaN(k) ? null : k]
+    }))
+    let text
+    try {
+      text = new Intl.Collator(lang, { numeric: true, sensitivity: "base" })
+    } catch {
+      text = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" })
+    }
+    const sign = dir === "descending" ? -1 : 1
+    rows.sort((a, b) => {
+      const order = tableRowOrder.get(a) - tableRowOrder.get(b)
+      if (dir === "none") return order
+      const x = key.get(a)
+      const y = key.get(b)
+      if (x === null || y === null) return x === y ? order : x === null ? 1 : -1
+      return sign * (typeof x === "string" ? text.compare(x, y) : x - y) || order
+    })
+    body.append(...rows)
+  }
+}
+
+function tableLocale(lang, make) {
+  try {
+    return make(lang)
+  } catch {
+    return make(undefined)
+  }
+}
+
+function tableNumber(value, lang) {
+  const parts = tableLocale(lang, l => new Intl.NumberFormat(l)).formatToParts(-12345.6)
+  const group = parts.find(p => p.type === "group")?.value ?? ","
+  const decimal = parts.find(p => p.type === "decimal")?.value ?? "."
+  let s = value.replace(/\s/g, "").replaceAll("−", "-")
+  if (group.trim()) s = s.replaceAll(group, "")
+  if (decimal !== ".") s = s.replaceAll(".", "").replaceAll(decimal, ".")
+  const m = s.match(/-?\d+(?:\.\d+)?(?:e-?\d+)?/i)
+  return m ? Number(m[0]) : NaN
+}
+
+function tableDate(value, lang) {
+  if (/^\d{4}-\d{2}-\d{2}/.test(value)) return Date.parse(value)
+  const nums = value.match(/\d+/g)
+  if (!nums || nums.length < 3) return Date.parse(value)
+  const order = tableLocale(lang, l => new Intl.DateTimeFormat(l)).formatToParts(new Date(2001, 10, 22)).map(p => p.type).filter(t => t === "day" || t === "month" || t === "year")
+  const at = Object.fromEntries(order.map((t, i) => [t, Number(nums[i])]))
+  const year = at.year < 100 ? 2000 + at.year : at.year
+  return Date.UTC(year, at.month - 1, at.day, ...nums.slice(3, 6).map(Number))
+}
 define("table-cell", { init: tableRole })
 
 const progressWatch = new MutationObserver(records => {

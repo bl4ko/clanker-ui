@@ -31,9 +31,9 @@ card	card-header	padding-left	2	T22 the custom spacing card gets its class from 
 card	card-header	padding-right	2	T22 the custom spacing card gets its class from an options array
 card	card-title	@w	2	T22 the custom spacing card gets its class from an options array
 card	card-title	width	2	T22 the custom spacing card gets its class from an options array
-card	card[size=default]	@h	4	T22 the custom spacing card gets its class from an options array
+card	card[size=default]	@h	2	T22 the custom spacing card gets its class from an options array
 card	card[size=default]	column-gap	2	T22 the custom spacing card gets its class from an options array
-card	card[size=default]	height	4	T22 the custom spacing card gets its class from an options array
+card	card[size=default]	height	2	T22 the custom spacing card gets its class from an options array
 card	card[size=default]	padding-bottom	2	T22 the custom spacing card gets its class from an options array
 card	card[size=default]	padding-top	2	T22 the custom spacing card gets its class from an options array
 card	card[size=default]	row-gap	2	T22 the custom spacing card gets its class from an options array
@@ -73,7 +73,9 @@ input-otp	field[orientation=vertical]	height	4	C the field description after the
 menubar	menubar[orientation=horizontal]	@w	80	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 menubar	menubar[orientation=horizontal]	width	80	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 message-scroller	button[size=icon-sm]	margin-left	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-content	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 message-scroller	card-content	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-content	height	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 message-scroller	card-content	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 message-scroller	card-description	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 message-scroller	card-description	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
@@ -99,6 +101,10 @@ message-scroller	input-group-addon	@w	2	R7 the example layout widens children by
 message-scroller	input-group-addon	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 message-scroller	input-group-control	@w	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 message-scroller	input-group-control	width	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller	height	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 message-scroller	message-scroller-button[size=icon-sm,variant=secondary]	left	6	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 message-scroller	message-scroller-button[size=icon-sm,variant=secondary]	right	6	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 message-scroller	message-scroller-button[size=icon-sm,variant=secondary]	top	6	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)

@@ -540,31 +540,32 @@ def tab_walk(page, key, start, stop):
 def check_overlay_tab_native(t):
     page = t.page
     t.section("dialog")
+    walk = lambda *a: [s for s in tab_walk(*a) if not (t.engine == "firefox" and s == "frame>body")]
     trigger = page.locator("#dialog-demo [data-dialog-trigger]")
     for kind in ("fieldset", "editable", "editable-link", "shadow", "date", "radio", "positive", "frame"):
         page.evaluate(TAB_LAB, [kind, "page"])
-        native = [tab_walk(page, "Tab", "pre", "post"), tab_walk(page, "Shift+Tab", "post", "pre")]
+        native = [walk(page, "Tab", "pre", "post"), walk(page, "Shift+Tab", "post", "pre")]
         page.evaluate("() => document.getElementById('tab-lab').remove()")
         edges = kind in ("shadow", "date", "radio", "frame")
         fresh = []
         for key, start, stop in (("Tab", "pre", "post"), ("Shift+Tab", "post", "pre")) if edges else ():
             page.evaluate(TAB_LAB, [kind, "page"])
-            fresh.append(tab_walk(page, key, start, stop))
+            fresh.append(walk(page, key, start, stop))
             page.evaluate("() => document.getElementById('tab-lab').remove()")
         trigger.click()
         wait(page, "() => document.querySelector('#dialog-demo dialog').open")
         t.settle()
         page.evaluate(TAB_LAB, [kind, "middle"])
-        trapped = [tab_walk(page, "Tab", "pre", "post"), tab_walk(page, "Shift+Tab", "post", "pre")]
+        trapped = [walk(page, "Tab", "pre", "post"), walk(page, "Shift+Tab", "post", "pre")]
         page.evaluate("() => document.getElementById('tab-lab').remove()")
         assert trapped == native, ("a modal keeps the browser Tab order between its edges", kind, trapped, native)
         if edges:
             first, last = page.evaluate("async () => { const { tabbables } = await import('/clanker-ui.js'); const s = tabbables(document.querySelector('#dialog-demo dialog')); return [s[0], s.at(-1)].map(a => a.id || a.localName) }")
             page.evaluate(TAB_LAB, [kind, "last"])
-            tail = tab_walk(page, "Tab", "pre", first)
+            tail = walk(page, "Tab", "pre", first)
             page.evaluate("() => document.getElementById('tab-lab').remove()")
             page.evaluate(TAB_LAB, [kind, "first"])
-            head = tab_walk(page, "Shift+Tab", "post", last)
+            head = walk(page, "Shift+Tab", "post", last)
             page.evaluate("() => document.getElementById('tab-lab').remove()")
             assert tail == fresh[0][:-1] + [first] and head == fresh[1][:-1] + [last], ("the modal edges keep the browser order and wrap like Base UI focus guards", kind, tail, head, fresh)
         page.keyboard.press("Escape")
@@ -4493,13 +4494,20 @@ def check_toast_detached(t):
     page.locator("[data-slot=toast]").filter(has_text="Detached").wait_for()
     page.evaluate("() => document.querySelectorAll('[data-slot=toast-portal]').forEach(e => e.remove())")
     page.wait_for_timeout(800)
+    probe = page.context.new_page()
+    probe.set_content("<button>native</button>")
+    probe.focus("button")
+    probe.keyboard.press("F6")
+    native = probe.evaluate("() => document.activeElement.localName === 'button'")
+    probe.close()
+    page.bring_to_front()
     start = section.get_by_role("button").first
     start.focus()
     page.evaluate("() => { window.__f6 = null; addEventListener('keydown', e => { if (e.key === 'F6') window.__f6 = e.defaultPrevented }, { once: true }) }")
     page.keyboard.press("F6")
     result = page.evaluate("() => [window.__f6, document.querySelectorAll('[data-slot=toast-portal]').length, window.__toast.getToasts().length]")
     assert result == [False, 0, 0], ("toasts that left the document do not capture F6 or bring back a portal", result)
-    assert start.evaluate("e => e === document.activeElement"), "F6 leaves focus where it was"
+    assert start.evaluate("e => e === document.activeElement") == native, ("F6 moves focus only as the browser does on a page without the kit", native)
     page.evaluate("() => window.__toast.add({ title: 'Again' })")
     page.locator("[data-slot=toast]").filter(has_text="Again").wait_for()
     assert page.locator("[data-slot=toast-portal]").count() == 1

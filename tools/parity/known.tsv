@@ -1,45 +1,22 @@
-attachment	attachment[orientation=horizontal,size=default]	min-width	108	R2 reference
-attachment	attachment[orientation=horizontal,size=sm]	min-width	12	R2 reference
-attachment	attachment[orientation=horizontal,size=xs]	min-width	4	R2 reference
 breadcrumb	svg in breadcrumb-separator	rotate	16	U3 upstream
+bubble	bubble-content	border-bottom-color	12	T7 the bubble variant (*:data-[slot=bubble-content]) beats the example border class by specificity
+bubble	bubble-content	border-left-color	12	T7 the bubble variant (*:data-[slot=bubble-content]) beats the example border class by specificity
+bubble	bubble-content	border-right-color	12	T7 the bubble variant (*:data-[slot=bubble-content]) beats the example border class by specificity
+bubble	bubble-content	border-top-color	12	T7 the bubble variant (*:data-[slot=bubble-content]) beats the example border class by specificity
+bubble	collapsible-trigger	@w	8	T7 the button has-data-[icon] padding beats the example p-0
+bubble	collapsible-trigger	padding-right	8	T7 the button has-data-[icon] padding beats the example p-0
+bubble	collapsible-trigger	width	8	T7 the button has-data-[icon] padding beats the example p-0
 button-group	span in select-item	color	2	T7 tool
 calendar	button in calendar	border-bottom-color	6	T10 tool
 calendar	button in calendar	border-left-color	6	T10 tool
 calendar	button in calendar	border-right-color	6	T10 tool
 calendar	button in calendar	border-top-color	6	T10 tool
 calendar	button in calendar	box-shadow	6	T10 tool
-calendar	card-footer	@h	8	R2 reference
-calendar	card-footer	height	8	R2 reference
-calendar	card[size=sm]	@h	8	R2 reference
-calendar	card[size=sm]	height	8	R2 reference
-calendar	field-group	@h	8	R2 reference
-calendar	field-group	height	8	R2 reference
-calendar	field-label	@h	40	R2 reference
-calendar	field-label	height	40	R2 reference
-calendar	field-label	line-height	40	R2 reference
-calendar	field[orientation=vertical]	@h	40	R2 reference
-calendar	field[orientation=vertical]	height	40	R2 reference
-calendar	select in calendar	@h	44	R2 reference
-calendar	select in calendar	@w	44	R2 reference
-calendar	select in calendar	height	44	R2 reference
-calendar	select in calendar	width	44	R2 reference
-calendar	span in calendar	@h	64	R2 reference
-calendar	span in calendar	@w	64	R2 reference
-calendar	span in calendar	border-bottom-color	16	R2 reference
-calendar	span in calendar	border-bottom-width	32	R2 reference
-calendar	span in calendar	border-left-color	16	R2 reference
-calendar	span in calendar	border-left-width	32	R2 reference
-calendar	span in calendar	border-right-color	16	R2 reference
-calendar	span in calendar	border-right-width	32	R2 reference
-calendar	span in calendar	border-top-color	16	R2 reference
-calendar	span in calendar	border-top-width	32	R2 reference
-calendar	span in calendar	height	64	R2 reference
-calendar	span in calendar	padding-left	32	R2 reference
-calendar	span in calendar	padding-right	32	R2 reference
-calendar	span in calendar	width	64	R2 reference
-code-block	button	line-height	4	R2 reference
-code-block	code-block-content	mask-image	6	U2 upstream
-code-block	code-block[size=default,variant=default]	margin-top	8	R3 reference
+calendar	popover-trigger	@w	8	T7 the button has-data-[icon] padding beats the example px-2.5
+calendar	popover-trigger	padding-left	38	T7 the button has-data-[icon] padding beats the example px-2.5
+calendar	popover-trigger	width	8	T7 the button has-data-[icon] padding beats the example px-2.5
+calendar	svg in popover-trigger	margin-left	8	T7 the button has-data-[icon] padding beats the example px-2.5
+code-block	code-block-content	mask-image	4	U2 upstream
 collapsible	button	background-color	2	T7 tool
 collapsible	button	transition-duration	36	T7 tool
 collapsible	field-label	@w	16	T7 tool
@@ -111,11 +88,50 @@ item	item[size=xs,variant=default]	padding-left	6	T7 tool
 item	item[size=xs,variant=default]	padding-right	6	T7 tool
 item	item[size=xs,variant=default]	padding-top	6	T7 tool
 label	select-trigger[size=default]	background-color	1	P3 positioning
-marker	accordion-trigger[orientation=vertical]	border-bottom-color	2	R2 reference
-marker	accordion-trigger[orientation=vertical]	border-left-color	2	R2 reference
-marker	accordion-trigger[orientation=vertical]	border-right-color	2	R2 reference
-marker	accordion-trigger[orientation=vertical]	border-top-color	2	R2 reference
-message	attachment[orientation=horizontal,size=default]	min-width	8	R2 reference
+message-scroller	button[size=icon-sm]	margin-left	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-content	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-content	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-content	height	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-content	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-description	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-description	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-footer	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-footer	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-header	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-header	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-header	grid-template-columns	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-header	grid-template-rows	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-header	height	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-header	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-title	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-title	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-title	height	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card-title	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card[size=default]	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	card[size=default]	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	form in card-footer	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	form in card-footer	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	input-group	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	input-group	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	input-group-addon	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	input-group-addon	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	input-group-control	@w	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	input-group-control	width	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller	height	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-button[size=icon-sm,variant=secondary]	left	6	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-button[size=icon-sm,variant=secondary]	right	6	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-button[size=icon-sm,variant=secondary]	top	6	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-content	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-content	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-content	height	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-content	width	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-viewport	@h	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-viewport	@w	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-viewport	height	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
+message-scroller	message-scroller-viewport	width	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 pagination	select-trigger[size=default]	background-color	1	P3 positioning
 progress	input in slider-thumb	outline-style	2	T11 tool
 progress	input in slider-thumb	outline-width	2	T11 tool
@@ -125,9 +141,3 @@ select	select-trigger[size=default]	background-color	4	P3 positioning
 sidebar	sidebar-menu-button[size=default]	color	4	T7 tool
 slider	input in slider-thumb	outline-style	2	T11 tool
 slider	input in slider-thumb	outline-width	2	T11 tool
-spinner	field-label	@h	2	R2 reference
-spinner	field-label	height	2	R2 reference
-spinner	field-label	line-height	2	R2 reference
-spinner	field[orientation=vertical]	@h	2	R2 reference
-spinner	field[orientation=vertical]	height	2	R2 reference
-trace	button	line-height	6	R2 reference

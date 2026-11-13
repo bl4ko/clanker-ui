@@ -2,7 +2,7 @@
 
 > clanker-ui is a dependency-free port of shadcn/ui (the base-nova style on Base UI) for plain HTML, CSS, and JavaScript. It has no build step, no npm, no framework, and needs no CDN. You write the shadcn markup with `data-slot` attributes, and the kit adds the behavior. Everything runs under a strict Content Security Policy with Trusted Types.
 
-Version 0.2.1 (the last release; `main` can be newer, see the Unreleased part of `CHANGELOG.md`). Docs: https://bl4ko.github.io/clanker-ui/. Source: https://github.com/bl4ko/clanker-ui. Catalog: https://raw.githubusercontent.com/bl4ko/clanker-ui/main/skills/clanker-ui/references/clanker-ui.json. Agent skill: https://github.com/bl4ko/clanker-ui/tree/main/skills/clanker-ui.
+Version 0.3.0 (the last release; `main` can be newer, see the Unreleased part of `CHANGELOG.md`). Docs: https://bl4ko.github.io/clanker-ui/. Source: https://github.com/bl4ko/clanker-ui. Catalog: https://raw.githubusercontent.com/bl4ko/clanker-ui/main/skills/clanker-ui/references/clanker-ui.json. Agent skill: https://github.com/bl4ko/clanker-ui/tree/main/skills/clanker-ui.
 
 ## Use with AI agents
 
@@ -12,7 +12,7 @@ Add the [agent skill](skills/clanker-ui/SKILL.md) to a project with the [skills 
 pnpm dlx skills add bl4ko/clanker-ui
 ```
 
-- Pin the skill to a release: `pnpm dlx skills add https://github.com/bl4ko/clanker-ui/tree/v0.2.1/skills/clanker-ui`.
+- Pin the skill to a release: `pnpm dlx skills add https://github.com/bl4ko/clanker-ui/tree/v0.3.0/skills/clanker-ui`.
 - Without the CLI: copy `skills/clanker-ui/` from the release zip to `.agents/skills/` (Codex, Cursor, GitHub Copilot, Gemini CLI, Cline, OpenCode), `.claude/skills/` (Claude Code), or `.windsurf/skills/` (Windsurf). It is a portable [Agent Skill](https://agentskills.io) and works without network access.
 - Chat tools without skills: give the agent [`llms.txt`](https://bl4ko.github.io/clanker-ui/llms.txt). [`llms-full.txt`](https://bl4ko.github.io/clanker-ui/llms-full.txt) is the full text in one file.
 - Catalog: [`clanker-ui.json`](skills/clanker-ui/references/clanker-ui.json) lists each component with its group file, parts, attributes and allowed values, state attributes, events, keys, and a minimal example ([schema](skills/clanker-ui/references/clanker-ui.schema.json)). `go run ./tools/gen catalog` makes it; the skill has a Markdown file for each component.
@@ -446,6 +446,7 @@ Only the components below export functions; every name starts with the component
 | `calendarGetValue` | `calendarGetValue(el) → value` | `"2026-10-28"`, an array (`multiple`), `{ from, to }` (`range`), or `null`. |
 | `calendarSetValue` | `calendarSetValue(el, value, { emit = false, month = true }?) → boolean` | `month` shows the month of the first selected date. |
 | `calendarSetMonth` | `calendarSetMonth(el, "2026-10") → boolean` | |
+| `tableSort` | `tableSort(head, dir = "ascending")` | `head` is a `table-head` with `data-sort` (or its id); `dir` is `ascending`, `descending`, or `none`. Same as a click: sets `aria-sort` and the icons, fires `table:sort`, and moves the rows. |
 | `messageScrollerScrollToEnd` | `messageScrollerScrollToEnd(el, { behavior }?) → boolean` | |
 | `messageScrollerScrollToStart` | `messageScrollerScrollToStart(el, { behavior }?) → boolean` | |
 | `messageScrollerScrollToMessage` | `messageScrollerScrollToMessage(el, id, { align, behavior, scrollMargin }?) → boolean` | Waits for the row if the list is still empty. |
@@ -511,6 +512,7 @@ Components dispatch bubbling, composed `CustomEvent`s named `<component>:<action
 | `calendar:change` | `calendar` | `{ value, mode, source }`: `day`, `api`, `reset` |
 | `calendar:navigate` | `calendar` | `{ value: "YYYY-MM" }` |
 | `date-picker:open`, `date-picker:close` | `date-picker` | — |
+| `table:sort` | `table` | `{ column, dir }` (`column` is the cell index of the head; `dir`: `ascending`, `descending`, `none`). Cancelable: `preventDefault()` keeps the rows where they are (sort on the server or in your own paged view); `aria-sort` and the icons still change. |
 | `chart:active` | chart element | `{ index, key, row }`, or `null` when the tooltip closes |
 | `chart:legend` | chart element | `{ key, visible, hidden }` |
 | `chart:view` | chart element | `{ view }`: `chart` or `table` |
@@ -610,7 +612,7 @@ show(content, { trigger, anchor = trigger, side, align, sideOffset = 4, alignOff
 - Utilities: `.sr-only`; `.shimmer` (text shimmer, override `--shimmer-color`, `--shimmer-duration`, `--shimmer-spread`, `--shimmer-angle`); `.scroll-fade` and `.scroll-fade-x` (see below).
 - `.scroll-fade` goes on a vertical scroll container, `.scroll-fade-x` on a horizontal one. A mask fades the edge where more content is: at rest only the end edge fades, in the middle both edges fade, at the end only the start edge fades. Without overflow, nothing fades. `.scroll-fade-x` mirrors in RTL. It uses scroll-driven animations (`animation-timeline: scroll()`); browsers without them (Firefox today) show no fade. Override `--scroll-fade-size` (default `min(12%, 2.5rem)`), one edge with `--scroll-fade-t-size`, `--scroll-fade-b-size`, `--scroll-fade-s-size`, or `--scroll-fade-e-size`, the whole mask with `--scroll-fade-mask` (`none` turns it off), and `--scroll-fade-reveal` (scroll distance until the fade is full, default `6rem`; `ease-in-out`). The class sets `animation`, so put it on an inner scroller, not on an element with its own enter or exit animation. It follows the shadcn `scroll-fade` utility, with one difference: without scroll-driven animations shadcn shows a fixed fade on both edges, the kit shows none (a fixed fade covers content that does not scroll).
 - shadcn tokens: `--background`, `--foreground`, `--card`, `--card-foreground`, `--popover`, `--popover-foreground`, `--primary`, `--primary-foreground`, `--secondary`, `--secondary-foreground`, `--muted`, `--muted-foreground`, `--accent`, `--accent-foreground`, `--destructive`, `--border`, `--input`, `--ring`, `--chart-1`…`--chart-5`, `--sidebar`, `--sidebar-foreground`, `--sidebar-primary`, `--sidebar-primary-foreground`, `--sidebar-accent`, `--sidebar-accent-foreground`, `--sidebar-border`, `--sidebar-ring`, `--radius`.
-- Kit tokens: `--radius-sm`…`--radius-4xl`, `--shadow-2xs`…`--shadow-2xl`, `--ease-in`, `--ease-out`, `--ease-in-out`, `--font-sans`, `--font-mono`, `--spacing`; status tokens `--success-bg`, `--success-border`, `--success-text`, and the same for `info`, `warning`, and `error` (the `success`, `warning`, and `info` variants of `alert` and `badge` use them); status fills `--success-fill`, `--warning-fill`, `--error-fill`, `--info-fill` for marks such as bars, dots, and meters (3:1 or more against the card, the same hue in light and dark), and `--neutral-fill` (gray, 3:1 or more against the card) for "no data" marks; chart tokens `--chart-6`…`--chart-8`, `--chart-other`, `--chart-negative`, `--chart-good`, `--chart-bad`, `--chart-surface`, `--chart-grid`, `--chart-axis`, `--chart-area-opacity`, `--chart-ink-light`, `--chart-ink-dark` (label ink inside a fill, set on `[data-slot="chart"]`).
+- Kit tokens: `--radius-sm`…`--radius-4xl`, `--shadow-2xs`…`--shadow-2xl`, `--ease-in`, `--ease-out`, `--ease-in-out`, `--font-sans`, `--font-mono`, `--spacing`; status tokens `--success-bg`, `--success-border`, `--success-text`, and the same for `info`, `warning`, and `error` (the `success`, `warning`, and `info` variants of `alert` and `badge` use them); status fills `--success-fill`, `--warning-fill`, `--error-fill`, `--info-fill` for marks such as bars, dots, and meters (3:1 or more against the card, the same hue in light and dark), and `--neutral-fill` (gray, 3:1 or more against the card) for "no data" marks; chart tokens `--chart-6`…`--chart-8`, `--chart-other`, `--chart-negative`, `--chart-good`, `--chart-bad`, `--chart-surface`, `--chart-tooltip-border`, `--chart-grid`, `--chart-axis`, `--chart-area-opacity`, `--chart-ink-light`, `--chart-ink-dark` (label ink inside a fill, set on `[data-slot="chart"]`).
 
 ### Accessibility layer
 
@@ -622,7 +624,7 @@ show(content, { trigger, anchor = trigger, side, align, sideOffset = 4, alignOff
 - Focus: every `:focus-visible` element gets `outline: 3px solid var(--focus-ring)`. `--focus-ring` mixes `--ring` with 25 % `--foreground` (at least 3:1 on `--background`; the shadcn ring at 50 % is below 2:1). `aria-invalid="true"` and destructive buttons use `--focus-ring-invalid` (`--destructive`). Composite fields (input group, OTP slot, combobox chips, calendar dropdown, code block, questionnaire choice, slider thumb) draw the outline on the field, not on the inner control. Sidebar items use a 2 px outline of `--sidebar-ring` mixed with 25 % `--sidebar-foreground`; the resizable handle a 1 px outline.
 - Keyboard highlight in item lists (select, combobox, and command items, dropdown, context, and menubar items, menubar triggers, and links in navigation menu content): a 2 px `--focus-ring` outline inside the item (`outline-offset: -2px`), only while `<html>` has `data-keyboard` (the kit sets it during keyboard use). Pointer hover shows only the `--accent` background, like shadcn.
 - Status tokens: borders reach 3:1 on `--background` (in dark also on `--card`) and light text reaches 4.5:1 on its background (success `hsl(140 100% 25%)`, info `hsl(210 92% 43%)`, warning `hsl(31 92% 35%)`, error `hsl(360 100% 43%)`).
-- Destructive buttons and badges (the tinted shadcn `destructive` variant): the text is `--destructive` mixed with 25 % `--foreground`, so it has 4.5:1 on its tinted background, also on hover. The background keeps the shadcn value.
+- Destructive buttons and badges (the tinted shadcn `destructive` variant): the text is the token `--destructive-text`, `--destructive` mixed with 25 % `--foreground`; the editor schemes mix `--destructive` with black (light) or white (dark) instead. It has 4.5:1 on its tinted background on `--background`, `--card`, and `--popover`, also on hover, in every scheme. The background keeps the shadcn value.
 - Native select: 16 px text below 48rem and 14 px from 48rem, like `input` (shadcn `text-base md:text-sm`), so iOS Safari does not zoom the page when the select gets focus. shadcn and the kit without the layer use 14 px at every width.
 - Light `--muted-foreground` is `oklch(0.54 0 0)` (shadcn 0.556), so it has 4.6:1 on `--muted`.
 - `--chart-1`…`--chart-8` is the categorical palette validated with the dataviz `validate_palette.js` in light and dark: all checks pass. In light, slots 3, 4, and 5 are below 3:1 contrast; every chart and sparkline has a tooltip and a table view as relief, and charts with two or more series also have a legend. The kit tokens have the same palette; the layer also gives it to the shadcn base schemes, which set a gray ramp.
@@ -1220,7 +1222,15 @@ The viewport is the real scroll container; the kit makes it focusable, hides the
 
 #### Table
 
-`table-container` > `table` > `table-caption`, `table-header`, `table-body`, `table-footer`, `table-row` (`data-state="selected"`), `table-head`, `table-cell`. Sorting, filtering, selection, column visibility, and paging are app code; the demo builds a data table with `h()`, `aria-sort`, a row actions `dropdown-menu`, a column `dropdown-menu`, and `toast`.
+`table-container` > `table` > `table-caption`, `table-header`, `table-body`, `table-footer`, `table-row` (`data-state="selected"`), `table-head`, `table-cell`. Filtering, selection, column visibility, and paging are app code; the demo builds a data table with `h()`, a row actions `dropdown-menu`, a column `dropdown-menu`, and `toast`.
+
+Sorting (kit extension, opt-in): `data-sort` on a `table-head` in the `table-header`. The kit puts the head content in a ghost `button` (or uses the `button` that is already there), adds the sort icon (`chevrons-up-down`, `arrow-up`, `arrow-down`), and sets `aria-sort="none"`. A click (Enter and Space are the native button keys) goes ascending, descending, and back to the first order; the other sortable heads of the row go back to `none`. Then the kit fires `table:sort` and, unless the listener calls `preventDefault()`, moves the rows of each `tbody`:
+
+- The value of a cell is its `data-value`, else its text. Empty values (no text, `-`, `–`, `—`) go last in both directions.
+- `data-sort="number"` reads numbers in the language of the nearest `lang` (`1.234,56 €` in `sl`, `12.5 %` in `en`); `data-sort="date"` reads ISO dates and the day, month, and year order of that language (`3. 11. 2026`); `data-sort="text"` compares with `Intl.Collator` of that language (č, š, ž in their place), numbers in text by value. An empty `data-sort` (or `auto`) is `number` when every value is a number without letters, else `text`. Other values are left to app code, so an older app sort with its own `data-sort` keys keeps working.
+- The sort is stable, and the third click restores the first order. Rows added later go after the known rows in the first order.
+- `data-align="end"` on the head puts the icon before the label, so the label ends at the cell edge.
+- `data-sort-icon` on an `svg` in an authored head `button` marks the sort icon; its `data-lucide` is the icon of the unsorted state (shadcn uses `arrow-up-down`).
 
 Kit extensions on `table-container`:
 
@@ -1457,12 +1467,13 @@ view.destroy()
 | Pie and donut | `labels: "value" \| "percent" \| "name"`, `labelPosition: "inside"`, `innerRadius`, `center`, `highlight` |
 | Radar | `grid: "polygon" \| "circle" \| "none"`, `fill: false`, `dots`, `max` |
 | Radial | `stacked`, `startAngle`, `endAngle`, `max`, `track`, `grid`, `labels`, `center`, `innerRadius` |
-| `tooltip` | `{ indicator: "line" \| "dot" \| "dashed", hideLabel, hideIndicator }` |
+| `tooltip` | `{ indicator: "line" \| "dot" \| "dashed", hideLabel, hideIndicator, hideEmpty }`. `hideEmpty: true` leaves out the series without a value at the hovered point (like Recharts `filterNull`); `"zero"` also leaves out 0. Default: every series, `–` for no value. |
 | `view`, `animate` | `"chart"` or `"table"`; `animate: false` skips the entrance animation |
 
 - The SVG is `role="application"` with `tabindex="0"`, so screen readers pass the arrow keys to it. Its accessible name is an automatic summary; the marks inside are hidden from assistive technology, and the table view has every value. Pointer: crosshair for line and area, per-mark tooltip otherwise. Keyboard: arrows move between points, Home, End, Escape. A polite live region reads the readout. The legend is a toolbar of toggle buttons with one tab stop. The table button switches to an accessible `<table>`.
 - Colors: `--chart-1`…`--chart-8` is a categorical palette with 8 distinct hues, validated with the dataviz `validate_palette.js` in light and dark. shadcn's own `--chart-1`…`--chart-5` are a gray ramp (the base color), which does not separate series; the kit uses the validated hues by default. The shadcn base schemes of `clanker-ui-themes.css` (`data-scheme="neutral"`, `zinc`, ...) set the exact shadcn gray ramp; the accessibility layer and the editor schemes keep hues. Brand colors: override `--chart-1`… in `app.css` (light and dark), or give a series `color` in `config`.
 - `--chart-surface` is the gap and dot ring color (default `--card`); set it to the background the chart sits on.
+- The tooltip sits next to the pointer. When it is too wide for either side, it goes above the hovered points, or below them when there is more room. `--chart-tooltip-border` is its border color (default `--border` at 50 %, like shadcn); the editor schemes where `--background` equals `--card` set it to the full `--border` in dark mode.
 - A label inside a fill uses `--chart-ink-light` (`#fff`) or `--chart-ink-dark` (`#0b0b0b`), whichever has the higher WCAG contrast against the fill. Override both on `[data-slot="chart"]`.
 - Charts redraw on `theme:change` while they are in the document. A removed chart closes its tooltip, is not tracked, and redraws when it is inserted again. A destroyed chart never redraws.
 - Fixed labels (chart names, legend, table button, table header, summary sentences) come from `strings` (see [Localization](#localization)); `data-string-<key>` on the chart element or an ancestor overrides one chart.
@@ -1631,7 +1642,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 - The frame of the shadcn data table (tasks example and `dashboard-01`): a toolbar, the table in a bordered, rounded `table-container` with a muted header, and the pagination row. Sorting, filtering, and paging are app code.
 - `data-table-toolbar` has two `div` groups: filters at the start (the first grows; a text input in it is 150 to 250 px) and actions at the end. Both wrap. Small buttons in it are 32 px high, as high as the input (shadcn `h-8`). Below 40rem, when the first control of the start group is an `input` or `input-group` (the search), the search takes the whole first row, and the filters and the end group share the next row, with the end group at the end.
 - `data-table-pagination` is a row of `div` groups at the end, 14 px, weight 500. `data-table-selection` is the muted selection text that fills the start.
-- `data-table-text` is the text of a cell: one line, cut with an ellipsis at 32rem (or 60 % of the table width). With an icon first it is an icon and label row (the icon is muted). A sort button: a ghost `button` alone in the `table-head`, with `aria-sort` on the head.
+- `data-table-text` is the text of a cell: one line, cut with an ellipsis at 32rem (or 60 % of the table width). With an icon first it is an icon and label row (the icon is muted). A sort button: `data-sort` on the `table-head` (see [Table](#table)).
 - `data-align="end"` on a `table-head` or `table-cell` aligns numbers to the end with tabular figures; `data-align="center"` centers. A cell with only a `checkbox` is 2rem wide. A cell with an `empty` has no padding: use it with `colspan` for the empty state.
 
 #### Brand
@@ -1692,7 +1703,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 
 ## License
 
-MIT, see [LICENSE](LICENSE). The notices and licenses of the third-party parts are in [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES). Each kit file starts with a one-line license comment that names them; keep it when you copy or minify the file.
+MIT, see [LICENSE](LICENSE). The notices and licenses of the third-party parts are in [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES). Each kit file starts with a one-line license comment that names them; keep it when you copy or minify the file. In a file from a release, that comment names the version: `head -n 1 clanker-ui.css` shows `/*! clanker-ui v<version> | MIT | ...`. A file from the repository has no version.
 
 
 ## Component reference
@@ -1835,22 +1846,24 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 | Part | Write | State |
 | --- | --- | --- |
-| `table-container` |  | `data-fits`, `data-sticky-header` |
+| `table-container` | `data-sticky-header` any | `data-fits` |
 | `table-row` | `data-state` string |  |
 
 Other parts: `table` (root), `table-body`, `table-caption`, `table-cell`, `table-footer`, `table-head`, `table-header`.
 
-Other options named in the docs: `data-label` any; `data-layout` string.
+Other options named in the docs: `data-label` any; `data-layout` string; `data-sort` string; `data-sort-icon` any.
+
+Events: `table:sort` `{ column, dir }`.
 
 ```html
 <div data-slot="table-container">
   <table data-slot="table">
     <caption data-slot="table-caption">A list of your recent invoices.</caption>
     <thead data-slot="table-header">
-      <tr data-slot="table-row"><th data-slot="table-head" scope="col">Invoice</th><th data-slot="table-head" scope="col">Amount</th></tr>
+      <tr data-slot="table-row"><th data-slot="table-head" scope="col">Invoice</th><th data-slot="table-head" scope="col" data-sort="number" data-align="end">Amount</th></tr>
     </thead>
     <tbody data-slot="table-body">
-      <tr data-slot="table-row" data-state="selected"><td data-slot="table-cell">INV001</td><td data-slot="table-cell">$250.00</td></tr>
+      <tr data-slot="table-row" data-state="selected"><td data-slot="table-cell">INV001</td><td data-slot="table-cell" data-align="end">$250.00</td></tr>
     </tbody>
     <tfoot data-slot="table-footer">
       <tr data-slot="table-row"><td data-slot="table-cell">Total</td><td data-slot="table-cell">$250.00</td></tr>
@@ -1945,13 +1958,11 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 | Part | Write | State |
 | --- | --- | --- |
-| `page` (root) | `data-size` `lg`, `md`, `sm` | `data-layout` |
+| `page` (root) | `data-layout` any; `data-size` `lg`, `md`, `sm` |  |
 | `page-aside` | `data-variant` `sticky` |  |
 | `page-header` | `data-size` `lg` |  |
 
 Other parts: `page-actions`, `page-body`, `page-description`, `page-meta`, `page-nav`, `page-title`.
-
-Other options named in the docs: `data-layout` string.
 
 #### Site Header (`site-header`)
 
@@ -1983,7 +1994,7 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 Other parts: `data-table` (root), `data-table-pagination`, `data-table-selection`, `data-table-text`, `data-table-toolbar`.
 
-Other options named in the docs: `data-table-pagination` any; `data-table-selection` any; `data-table-text` any.
+Other options named in the docs: `data-sort` any; `data-table-pagination` any; `data-table-selection` any; `data-table-text` any.
 
 #### Brand (`brand`)
 

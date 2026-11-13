@@ -4,7 +4,7 @@ Group `core`. Needs none. CSS only.
 
 Other parts: `data-table` (root), `data-table-pagination`, `data-table-selection`, `data-table-text`, `data-table-toolbar`.
 
-Other options named in the docs: `data-table-pagination` any; `data-table-selection` any; `data-table-text` any.
+Other options named in the docs: `data-sort` any; `data-table-pagination` any; `data-table-selection` any; `data-table-text` any.
 
 ## Full text
 
@@ -40,5 +40,5 @@ Other options named in the docs: `data-table-pagination` any; `data-table-select
 - The frame of the shadcn data table (tasks example and `dashboard-01`): a toolbar, the table in a bordered, rounded `table-container` with a muted header, and the pagination row. Sorting, filtering, and paging are app code.
 - `data-table-toolbar` has two `div` groups: filters at the start (the first grows; a text input in it is 150 to 250 px) and actions at the end. Both wrap. Small buttons in it are 32 px high, as high as the input (shadcn `h-8`). Below 40rem, when the first control of the start group is an `input` or `input-group` (the search), the search takes the whole first row, and the filters and the end group share the next row, with the end group at the end.
 - `data-table-pagination` is a row of `div` groups at the end, 14 px, weight 500. `data-table-selection` is the muted selection text that fills the start.
-- `data-table-text` is the text of a cell: one line, cut with an ellipsis at 32rem (or 60 % of the table width). With an icon first it is an icon and label row (the icon is muted). A sort button: a ghost `button` alone in the `table-head`, with `aria-sort` on the head.
+- `data-table-text` is the text of a cell: one line, cut with an ellipsis at 32rem (or 60 % of the table width). With an icon first it is an icon and label row (the icon is muted). A sort button: `data-sort` on the `table-head` (see [Table](table.md)).
 - `data-align="end"` on a `table-head` or `table-cell` aligns numbers to the end with tabular figures; `data-align="center"` centers. A cell with only a `checkbox` is 2rem wide. A cell with an `empty` has no padding: use it with `colspan` for the empty state.

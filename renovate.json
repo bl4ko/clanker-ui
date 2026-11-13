@@ -19,6 +19,11 @@
   ],
   "packageRules": [
     {
+      "description": "Versions of the shadcn pin (tools/parity/refapp.py --update-lock)",
+      "matchFileNames": ["tools/parity/refapp/**"],
+      "enabled": false
+    },
+    {
       "groupName": "playwright",
       "matchPackageNames": ["playwright"]
     },

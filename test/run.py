@@ -16,6 +16,7 @@ import tempfile
 import threading
 import time
 import traceback
+import types
 
 from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import TimeoutError as PlaywrightTimeout
@@ -24,6 +25,7 @@ from playwright.sync_api import sync_playwright
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WIDTHS = {1280: 800, 390: 844}
 WEBKIT_REFUSED_STYLE = "console.error: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy."
+WEBKIT_NOT_ISOLATED = "This document is not cross-origin isolated because the Cross-Origin-Embedder-Policy header is missing (it must be 'require-corp'). window.crossOriginIsolated is false and SharedArrayBuffer is unavailable."
 WATCH = """
 const watch = JSON.parse(sessionStorage.getItem("clanker-watch") || '{"violations":[],"selects":0,"errors":[]}')
 const save = () => sessionStorage.setItem("clanker-watch", JSON.stringify(watch))
@@ -275,6 +277,14 @@ def discover(only):
 WEBKIT_NOISE = re.compile(r"(style-src-elem|style-src-attr) blocked inline at (\?|web-inspector://[^ ]*):\d+ .* on <(\w+)>")
 
 
+def console_problem(engine, message):
+    if message.type not in ("error", "warning", "assert"):
+        return None
+    if engine == "webkit" and message.text == WEBKIT_NOT_ISOLATED and not message.location.get("url"):
+        return None
+    return f"console.{message.type}: {message.text}"
+
+
 def drop_webkit_noise(problems, selects):
     out = []
     dropped = 0
@@ -323,7 +333,7 @@ def run_check(browser, args, engine, theme, width, module, name, fn, start):
     page = context.new_page()
     recorder = impact_module().Recorder(context, page, engine, args.base_url) if args.impact else None
     problems = []
-    page.on("console", lambda m: problems.append(f"console.{m.type}: {m.text}") if m.type in ("error", "warning", "assert") else None)
+    page.on("console", lambda m: (p := console_problem(engine, m)) and problems.append(p))
     page.on("pageerror", lambda e: problems.append(f"pageerror: {e}"))
     page.on("requestfailed", lambda r: None if aborted_prefetch(r) else problems.append(f"requestfailed: {r.url} {r.failure}"))
     page.on("response", lambda r: problems.append(f"http {r.status}: {r.url}") if r.status >= 400 else None)
@@ -617,6 +627,10 @@ def self_test():
     case(drop_webkit_noise(kit + [refused] * len(kit), 5) == kit + [refused] * len(kit), "kit violations must stay")
     extra = "style-src-attr blocked inline at ?:0  on <document>"
     case(drop_webkit_noise([extra, extra], 1) == [extra], "document reports are bounded by the selects created by script")
+    msg = lambda type, text, url="": types.SimpleNamespace(type=type, text=text, location={"url": url})
+    case(console_problem("webkit", msg("warning", WEBKIT_NOT_ISOLATED)) is None, "the WebKit navigation warning without a source must be dropped")
+    case(console_problem("webkit", msg("warning", WEBKIT_NOT_ISOLATED, "http://127.0.0.1:8141/clanker-ui.js")) and console_problem("chromium", msg("warning", WEBKIT_NOT_ISOLATED)), "the same warning from a script, or in another engine, stays")
+    case(console_problem("webkit", msg("error", "boom")) == "console.error: boom" and console_problem("webkit", msg("log", "boom")) is None, "console errors stay, logs are not problems")
     req = lambda failure, headers: type("R", (), {"failure": failure, "headers": headers})()
     case(aborted_prefetch(req("NS_BINDING_ABORTED", {"x-moz": "prefetch"})) and aborted_prefetch(req("net::ERR_ABORTED", {"sec-purpose": "prefetch"})), "a link prefetch that the next page load cancels is not a failure")
     case(not aborted_prefetch(req("NS_BINDING_ABORTED", {})) and not aborted_prefetch(req("net::ERR_CONNECTION_RESET", {"sec-purpose": "prefetch"})), "other failed requests stay failures")

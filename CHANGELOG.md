@@ -6,13 +6,43 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ## Unreleased
 
+### Added
+
+- Behavior drift check: `tools/behavior drift` records the live shadcn pages again and lists the behavior changes against the committed references (a difference counts only when two records have it), and the weekly `behavior-drift` workflow opens one issue `behavior drift: <component>` per changed component.
+- Chart: `tooltip: { hideEmpty: true }` leaves out the series without a value at the hovered point, like Recharts `filterNull`; `hideEmpty: "zero"` also leaves out 0. The keyboard readout uses the same rows. Default unchanged (#124).
+- Table: opt-in sortable column heads. `data-sort` (`number`, `date`, `text`, or empty for auto) on a `table-head` makes it a ghost button with the sort icon and `aria-sort`; a click sorts the rows ascending, descending, and back to the first order. Numbers and dates follow the `lang` of the table, text uses `Intl.Collator`, empty values go last, and the sort is stable. `table:sort` (`{ column, dir }`, cancelable for server or paged sorting) and the export `tableSort(head, dir)`. The head button lines up with the cells in any table, and `data-align="end"` puts the icon before the label. The data-table block and the docs data-table example use it instead of their own sort code (#126).
+
+### Changed
+
+- Parity tool: the example pages of every style are measured against a reference app, a real shadcn install of that style (`tools/parity/refapp.py`: shadcn CLI, the pinned registry items and package versions, `tailwind-merge`), not against the live example page with its `@layer base` file order. Equal (part, state, theme) pairs on the example pages: Nova 91.7 to 98.9 %, Luma 92.7 to 99.0 %, Lyra 93.2 to 98.8 %, Maia 92.7 to 99.0 %, Mira 91.1 to 98.8 %, Sera 96.8 to 98.6 %, Vega 92.6 to 98.0 %. The `parity` workflow runs it on a pull request with the label `parity-ci`. New parity issues #143 and #144.
+- Smaller kit CSS with the same computed styles: `dist/clanker-ui.min.css` 634,103 to 599,426 bytes (gzip 58,122 to 55,868, brotli 40,363 to 39,023), `dist/clanker-ui-core.min.css` 90,748 to 87,543 bytes, and the same for the other styles. The generator merges rules with the same selector and `@media` blocks with the same condition and parts where the cascade order permits, and drops `@property` rules that nothing uses. All `--tw-*` definitions and reads stay, so a Tailwind utility on a kit part composes with the kit value as before. `tools/gen/guard` compares every computed style of the old and the new CSS in Chromium, Firefox, and WebKit.
+
+### Fixed
+
+- Navigation menu: in Firefox 159 a menu opened by hover closes again after a press on a link that is dragged out of the menu and released, as on the live shadcn site; the close timer now also starts on `mouseout`, because Firefox 159 sends no `pointerout` after the release (#145).
+- Card grid: `card-grid` has `width: 100%`, so it keeps its columns in a parent that sizes it to its content (a centering flex or grid container). Before, it was one 24 px column with cards, and with covers in Firefox 159; with covers in Chromium and WebKit it was as wide as the content of the covers (2 columns in the Cover section of the demo) and now has as many columns as fit (#146).
+- Chart: the active dots of line, area, and radar charts no longer fade in again on every pointer move; only the first draw animates (#119).
+- Chart: a tooltip that is too wide for either side of the pointer goes above the hovered points (or below them when there is more room), so it no longer covers them (#120).
+- Chart tooltip: the editor schemes where `--background` equals `--card` (Catppuccin, Dracula, Everforest, GitHub, Gruvbox, Kanagawa, Nord, One, Solarized, Tokyo Night) give the tooltip the full `--border` in dark mode, so it has an edge on a card. New token `--chart-tooltip-border` (default: `--border` at 50 %) (#121).
+- Sidebar: in icon mode the hidden `sidebar-group-label` (moved up 32 px, `opacity: 0`) no longer takes the clicks of the last menu button of the group above (`pointer-events: none`) (#125). shadcn has the same gap.
+- Sidebar: `sidebar-inset` has `min-width: 0`, so a wide table scrolls inside its `table-container` and the page no longer scrolls sideways (#123). shadcn `SidebarInset` has the same gap.
+- Accessibility layer: the text of destructive badges, buttons, alert-dialog actions, and pagination links is the new token `--destructive-text`. The editor schemes (Tokyo Night, Catppuccin, Gruvbox, Nord, Dracula, Rosé Pine, Solarized, One, Kanagawa, Everforest) mix `--destructive` with black (light) or white (dark), so the text has 4.5:1 on its tinted background, also on hover (#129). The design lint finds the token, so `non-token-color` no longer warns on these parts (#127).
+- Design lint `empty-region`: a start-aligned row of three or more columns (a board) is not checked, and a start-aligned item no longer gets the hint "align the row to start" (#131).
+- Catalog: an attribute that the kit JavaScript only reads (`data-sticky-header` of `table-container`, `data-layout` of `page`) is a Write attribute, not State, so agents that follow the skill write it (#128).
+
+### Docs
+
+- Recipe "Board (columns of cards)": a Kanban board from `card-grid`, `card`, `item-group`, `badge`, and `empty`, with one line of app CSS. A dedicated board part waits until after 1.0 (#130).
+
+## 0.3.0 - 2026-11-10
+
 ### Breaking
 
 - `calendar` and `date-picker` move from the `chat` group to the `overlays` group, so a form with a date picker needs only `forms` and `overlays`. The one-file set does not change. To upgrade with group files: load `clanker-ui-overlays.min.css` and `.js` (and `forms` for the date picker) instead of `chat` for these components.
 
 ### Added
 
-- Behavior drift check: `tools/behavior drift` records the live shadcn pages again and lists the behavior changes against the committed references (a difference counts only when two records have it), and the weekly `behavior-drift` workflow opens one issue `behavior drift: <component>` per changed component.
+- Each kit and `dist/` file of a release names its version in the first-line license comment: `/*! clanker-ui v0.3.0 | MIT | ...`. `head -n 1 <file>` shows which release a copied file is from. The files in the repository have no version.
 - Parity of the Luma, Lyra, Maia, Mira, Sera, and Vega styles against the live shadcn preview of each style (`tools/parity --page-style`, `known-<style>.tsv`).
 - Calendar: `data-month-format="long"` shows long month names in the month dropdown, like the shadcn `calendar-custom-days` example (#91).
 - Rhea style: `clanker-ui-rhea.css` (and `dist/clanker-ui-rhea.min.css`, `dist/clanker-ui-rhea-<group>.min.css`) is the kit CSS generated from the shadcn `style-rhea.css`. Load it instead of `clanker-ui.css`; markup and JavaScript are the same. Nova stays the default and does not change. The catalog lists the styles in `files.styles`.

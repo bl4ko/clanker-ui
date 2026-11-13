@@ -73,7 +73,7 @@ def main():
     rows, parts_lines = [], []
     tot = dict.fromkeys(("parts", "parts_equal", "pairs", "pairs_equal", "meaningful", "meaningful_equal", "measured", "equal"), 0)
     states = {}
-    failures, sites = bad_causes, set()
+    failures, sites, refs = bad_causes, set(), set()
     other = dict.fromkeys(("parts", "parts_equal", "pairs", "pairs_equal"), 0)
     other_comps, other_lines = [], []
     for f in sorted(out.glob("*.json")):
@@ -102,7 +102,11 @@ def main():
             t[0] += v[0]
             t[1] += v[1]
         site = s.get("site") or {}
-        sites.add(f"{site.get('deployment', '?')} ({site.get('date', '?')[:10]})")
+        if site.get("deployment") or not site.get("ref"):
+            sites.add(f"{site.get('deployment', '?')} ({site.get('date', '?')[:10]})")
+        if site.get("ref"):
+            r = site["ref"]
+            refs.add(f"{r.get('style')} (shadcn {str(r.get('shadcn'))[:7]}, CLI {r.get('cli')}, built {str(r.get('date'))[:10]})")
         st = ", ".join(f"{k} {pct(*v)}" for k, v in s["by_state"].items())
         top = "; ".join(f"{t['part']} {t['state']} {t['prop']}: {short(t['shadcn'])} vs {short(t['ours'])} ({t['count']})" for t in s["top"][: args.top])
         rows.append(f"| {s['component']} | {s['parts_equal']}/{s['parts']} | {s['pairs_equal']}/{s['pairs']} ({pct(s['pairs_equal'], s['pairs'])} %) | {pct(s['meaningful_equal'], s['meaningful'])} % | {st} | {top} |")
@@ -126,7 +130,7 @@ def main():
                     worse.append(f"{part} {prop} {n} pairs (known {allowed})")
             if worse:
                 failures.append(f"{s['component']}: {len(worse)} (part, property) entries differ more than {kp.name} allows: {'; '.join(worse)}")
-    print(f"Live site: {', '.join(sorted(sites)) or '?'}. Style: {args.style}.\n")
+    print(f"Live site: {', '.join(sorted(sites)) or 'none'}. Reference app: {', '.join(sorted(refs)) or 'none'}. Style: {args.style}.\n")
     print(f"Parts with no difference in any state: {tot['parts_equal']}/{tot['parts']} ({pct(tot['parts_equal'], tot['parts'])} %).")
     print(f"(part, state, theme) pairs with no difference: {tot['pairs_equal']}/{tot['pairs']} ({pct(tot['pairs_equal'], tot['pairs'])} %).")
     print(f"Values not at their initial value, equal: {tot['meaningful_equal']}/{tot['meaningful']} ({pct(tot['meaningful_equal'], tot['meaningful'])} %).")

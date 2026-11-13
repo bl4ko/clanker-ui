@@ -14,6 +14,9 @@
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
   }
+  :is([data-scheme~="catppuccin-frappe"], [data-scheme~="catppuccin-macchiato"], [data-scheme~="catppuccin-mocha"], [data-scheme~="dracula"], [data-scheme~="everforest"], [data-scheme~="github"], [data-scheme~="gruvbox"], [data-scheme~="kanagawa-dragon"], [data-scheme~="kanagawa-wave"], [data-scheme~="nord"], [data-scheme~="one"], [data-scheme~="solarized"], [data-scheme~="tokyonight-moon"], [data-scheme~="tokyonight-night"], [data-scheme~="tokyonight-storm"]) {
+    --chart-tooltip-border: light-dark(color-mix(in oklab, var(--border) 50%, transparent), var(--border));
+  }
   [data-scheme~="neutral"] {
     --background: light-dark(oklch(1 0 0), oklch(0.145 0 0));
     --foreground: light-dark(oklch(0.145 0 0), oklch(0.985 0 0));

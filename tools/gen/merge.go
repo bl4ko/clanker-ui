@@ -265,7 +265,7 @@ func (g *gen) rules(p *part, prim map[string]string, drop map[string]bool) []rul
 			for _, x := range merged[other] {
 				if kx, okx := groupKey(x, prim); okx && kx == k {
 					if pos[other][x] > pos[""][c] {
-						later = true
+						later = later || g.props == nil || prim[c] == "font-size" || covers(g.props[x], g.props[c])
 					} else {
 						if beaten[other] == nil {
 							beaten[other] = map[string]bool{}

@@ -11,6 +11,7 @@ document.addEventListener("select:change", event => console.log(event.target, ev
 | Event | Component | Target | `detail` | Notes |
 | --- | --- | --- | --- | --- |
 | `theme:change` | `theme` | `<html>` | `mode`, `resolved`, `scheme` | `{ mode, resolved, scheme }`, after a mode or scheme change |
+| `table:sort` | `table` | `table` | `column`, `dir` | `{ column, dir }` (`column` is the cell index of the head; `dir`: `ascending`, `descending`, `none`). Cancelable: `preventDefault()` keeps the rows where they are (sort on the server or in your own paged view); `aria-sort` and the icons still change. |
 | `input-otp:complete` | `input-otp` | `input-otp` | `value` |  |
 | `form:invalid` | `form` | `form` | `errors` |  |
 | `form:submit` | `form` | `form` | `formData`, `values`, `submitter` | `{ formData, values, submitter }`, cancelable. Default action: the native submit (the page navigates to `action`); call `preventDefault()` to send with `fetch` |

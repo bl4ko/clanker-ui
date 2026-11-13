@@ -208,7 +208,7 @@ def marker_checks():
 def nova_page_checks():
     parts = parity.Parts(PARTS)
     ex = object.__new__(parity.Examples)
-    ex.nova = {"bubble-example": "", "badge-example": "", "example": ""}
+    ex.nova = {"bubble-example": "", "badge-example": "<Example title=\"A\">", "sidebar-example": "<SidebarProvider>", "example": ""}
     rhea = [{"cap": {"styles": ["nova", "rhea"]}}]
     nova = [{"cap": {"styles": ["nova", "nova"]}}]
     conv = parity.Converter(parts, PARTS["components"], "badge", [], False)
@@ -234,6 +234,28 @@ def nova_page_checks():
         check("a part rendered as another component (its root marker) gets that slot", parity.composed("cn-card cn-badge flex", parts, "badge", PARTS["components"]) == "card"),
         check("an element with its own part marker is that part, whatever its example classes look like", parity.composed("flex flex-col gap-2 w-full min-w-0 p-2", wide, "badge", PARTS["components"]) == "card" and parity.composed("cn-badge flex flex-col gap-2 w-full min-w-0 p-2", wide, "badge", PARTS["components"]) is None),
         check("a marker in the part's own definition is no composition", parity.composed("cn-badge cn-card flex", parts, "card", PARTS["components"]) is None),
+    ]
+
+
+def ref_checks():
+    parts = parity.Parts(PARTS)
+    ex = object.__new__(parity.Examples)
+    ex.nova = {"badge-example": "<Example title=\"A\">", "sidebar-example": "<SidebarProvider>"}
+    conv = parity.Converter(parts, PARTS["components"], "badge", [], False)
+    conv.by_slot["badge"] = [frozenset({"inline-flex", "h-5"})]
+    conv.fallback = False
+    toks = ["inline-flex", "h-5", "rounded-4xl", "mt-2"]
+    live = conv.keep(toks, "badge", {"badge"})
+    conv.ref = True
+    ref = conv.keep(toks, "badge", {"badge"})
+    tree = {"i": 1, "t": "div", "a": [["data-slot", "card"]], "c": []}
+    root = {"kind": "portal", "tree": tree, "box": {"w": 10, "h": 10}, "inh": {}}
+    return [
+        check("with --ref an example page loads from the reference app of its style", parity.style_page("badge", "luma", ex, True) == "/preview/base/badge-example?ref=luma"),
+        check("an example page without the Example wrapper is not measured", parity.style_page("sidebar", "luma", ex) is None and parity.style_page("sidebar", "luma", ex, True) is None),
+        check("a small part rendered through another component is that part when its classes are exactly the base of the other part", parity.composed("flex gap-4 rounded-xl", parts, "badge", PARTS["components"]) == "card"),
+        check("on a reference page an example run in the middle of the part classes is a part class", live == ["inline-flex", "h-5"] and ref == []),
+        check("a reference portal inherits the foreground color like the app body, a live portal CanvasText", "color: var(--foreground)" in parity.page_html(conv, {"roots": [root], "ref": True}) and "color: CanvasText" in parity.page_html(conv, {"roots": [root]})),
     ]
 
 
@@ -269,14 +291,14 @@ def report_checks():
             return subprocess.run([sys.executable, "-I", report, str(out), "--strict", "--known", str(known)], capture_output=True, text=True)
 
         repo = subprocess.run([sys.executable, "-I", report, str(out), "--strict"], capture_output=True, text=True)
-        defined, z9, unchecked = strict("R2 reference"), strict("Z9 tool"), strict("to check")
+        defined, z9, unchecked = strict("T7 tool"), strict("Z9 tool"), strict("to check")
         out.joinpath("bubble.json").write_text(json.dumps({"component": "bubble", "parts": 1, "parts_equal": 1, "pairs": 1, "pairs_equal": 1, "meaningful": 1, "meaningful_equal": 1, "measured": 1, "equal": 1, "by_state": {"rest": [1, 1]}, "top": [], "differing_parts": [],
                                                            "styles": {"rhea": {"parts": 1, "parts_equal": 0, "pairs": 1, "pairs_equal": 0, "meaningful": 1, "meaningful_equal": 0, "measured": 1, "equal": 0, "by_state": {"rest": [0, 1]}, "top": [], "differing_parts": [{"part": "bubble", "pairs": 1, "equal": 0, "states": {"rest": 1}, "props": {"color": 1}}]}}}))
         out.joinpath("bubble.rows.json").write_text(json.dumps([{"scenario": "rest", "state": "rest", "theme": "light", "part": "bubble", "id": 1, "prop": "color", "shadcn": "a", "ours": "b", "style": "rhea"}]))
         known.write_text("")
         rhea = subprocess.run([sys.executable, "-I", report, str(out), "--strict", "--style", "rhea", "--known", str(known)], capture_output=True, text=True)
         nova = subprocess.run([sys.executable, "-I", report, str(out), "--strict", "--known", str(known)], capture_output=True, text=True)
-        known.write_text("bubble\tbubble\tcolor\t1\tR2 reference\n")
+        known.write_text("bubble\tbubble\tcolor\t1\tT7 tool\n")
         rhea_known = subprocess.run([sys.executable, "-I", report, str(out), "--strict", "--style", "rhea", "--known", str(known)], capture_output=True, text=True)
     return [
         check("report.py fails on a directory without component results", r.returncode == 1),
@@ -290,7 +312,7 @@ def report_checks():
 
 
 def main():
-    results = tolerance_checks() + converter_checks() + style_checks() + nova_page_checks() + style_page_checks() + marker_checks() + source_checks() + report_checks()
+    results = tolerance_checks() + converter_checks() + style_checks() + nova_page_checks() + ref_checks() + style_page_checks() + marker_checks() + source_checks() + report_checks()
     failed = results.count(False)
     print(f"{len(results) - failed} passed, {failed} failed")
     sys.exit(1 if failed else 0)

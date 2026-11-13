@@ -156,7 +156,15 @@ def check_docs_sidebar_scroll_restore(t):
         t.skip("the docs sidebar shows from 1024 px")
     page = t.page
     content = page.locator("[data-docs-sidebar-content]")
-    stored = content.evaluate("el => { el.scrollTop = 900; return el.scrollTop }")
+    stored = content.evaluate("""async el => {
+      el.scrollTop = 400
+      const step = document.createElement("div")
+      step.style.height = "0.5px"
+      el.firstElementChild.prepend(step)
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+      el.scrollTop = 900
+      return el.scrollTop
+    }""")
     assert stored > 0
     page.wait_for_function("n => JSON.parse(sessionStorage.getItem('docs-sidebar-scroll') || '{}').scrollTop === n", arg=stored)
     href = page.evaluate("""() => {
@@ -178,16 +186,16 @@ def check_docs_sidebar_scroll_restore(t):
     old_frames = [f for f in frames if f[0] != href]
     new_frames = [f for f in frames if f[0] == href]
     assert old_frames and new_frames, frames
-    assert {f[1] for f in frames} == {stored}, frames
+    assert all(abs(f[1] - stored) < 1 for f in frames), (stored, frames)
     assert {f[2] for f in new_frames} == {href}, new_frames
-    assert content.evaluate("el => el.scrollTop") == stored
+    assert abs(content.evaluate("el => el.scrollTop") - stored) < 1
     assert page.locator('[data-docs="sidebar"] [aria-current="page"]').first.get_attribute("href") == href
     t.docs("/docs/components/tooltip")
     assert active_visible(page)
     top = content.evaluate("el => el.scrollTop")
-    assert top != stored
+    assert abs(top - stored) >= 1
     page.reload(wait_until="load")
-    assert content.evaluate("el => el.scrollTop") == top
+    assert abs(content.evaluate("el => el.scrollTop") - top) < 1
 
 
 def check_docs_scroll_fade(t):
@@ -805,15 +813,16 @@ def check_blocks_data_table(t):
     status = page.locator('#tasks tbody tr:not([hidden]) [data-hide-from="sm"] [data-slot="text-stack"] > :last-child').first
     assert status.is_visible() == t.mobile and page.locator('th[data-column="status"]').is_visible() != t.mobile
     if not t.mobile:
-        sort = page.locator('[data-sort="title"]')
+        head = page.locator('#tasks th[data-column="title"]')
+        sort = head.locator(':scope > [data-slot="button"]')
         sort.click()
-        assert page.locator('th:has([data-sort="title"])').get_attribute("aria-sort") == "ascending"
+        assert head.get_attribute("aria-sort") == "ascending"
         titles = rows.evaluate_all("rows => rows.map(r => r.cells[2].querySelector('[title]').title)")
         assert titles == sorted(titles), titles
         sort.click()
         sort.click()
-        assert page.locator('th:has([data-sort="title"])').get_attribute("aria-sort") == "none"
-        assert page.locator('#tasks thead [data-sort] > svg').evaluate_all("icons => icons.map(i => i.dataset.lucide)") == ["chevrons-up-down"] * 3
+        assert head.get_attribute("aria-sort") == "none"
+        assert page.locator('#tasks thead [data-sort] > button > svg').evaluate_all("icons => icons.map(i => i.dataset.lucide)") == ["chevrons-up-down"] * 3
     page.locator('[data-page="next"]').click()
     assert page.locator("#task-page").inner_text() == "Page 2 of 2" and rows.count() == 6
 
@@ -1058,6 +1067,17 @@ def check_kit_card_grid_rows(t):
     assert abs(cards[0]["top"] - cards[1]["top"]) < 1 and cards[2]["top"] > cards[0]["bottom"], cards
     assert abs(cards[0]["height"] - cards[1]["height"]) < 1, ("cards in one row have one height", cards[:2])
     assert abs(feet[0]["bottom"] - feet[1]["bottom"]) < 1 and abs(feet[0]["bottom"] - cards[0]["bottom"]) < 1, ("footers sit at the bottom", feet[:2], cards[:2])
+
+
+def check_kit_card_grid_centered(t):
+    card = lambda i: ["div", {"data-slot": "card", "id": f"fx-fit-cards-{i}"}, ["div", {"data-slot": "card-header"}, ["div", {"data-slot": "card-title"}, "Circe"]]]
+    cover = lambda i: ["div", {"data-slot": "cover", "id": f"fx-fit-covers-{i}"}, ["span", {}, "Sea of Tranquility"]]
+    row = lambda name, make: ["div", {"style": {"display": "flex", "justifyContent": "center", "width": "680px"}}, ["div", {"data-slot": "card-grid", "data-size": "sm", "id": f"fx-fit-{name}"}, make(1), make(2), make(3)]]
+    kit_fixture(t, ["div", {}, row("cards", card), row("covers", cover)])
+    for name in ("cards", "covers"):
+        grid, items = rect(t, f"#fx-fit-{name}"), [rect(t, f"#fx-fit-{name}-{i}") for i in range(1, 4)]
+        assert abs(grid["width"] - 680) < 1, ("a card grid in a centering parent takes the full width", name, grid)
+        assert all(abs(i["top"] - items[0]["top"]) < 1 and abs(i["width"] - 216) < 1 for i in items), ("three columns fit in 680 px", name, items)
 
 
 def check_kit_cover_words(t):

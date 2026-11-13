@@ -101,19 +101,18 @@ def open_live(browser, sc, width, hosts, reduced_motion):
         pass
     page.add_style_tag(content=E.SHADCN_FONT)
     nth = sc.get("preview", 0)
-    ok = page.evaluate(
-        """([sel, n]) => {
+    mark = """([sel, n, scroll]) => {
           const p = document.querySelectorAll(sel)[n]
           if (!p) return false
           p.setAttribute("data-bh-preview", "")
-          p.scrollIntoView({ block: "center" })
+          if (scroll) p.scrollIntoView({ block: "center" })
           return true
-        }""",
-        [root, nth],
-    )
-    if not ok:
+        }"""
+    if not page.evaluate(mark, [root, nth, True]):
         raise E.StepError(f"{root} {nth} not found on {url}")
     page.wait_for_timeout(sc.get("wait", 800))
+    if not page.evaluate(mark, [root, nth, False]):
+        raise E.StepError(f"{root} {nth} not found on {url} after the wait")
     return ctx, page, url, deploy, ("%04d-%02d-%02d" % day if day else None)
 
 

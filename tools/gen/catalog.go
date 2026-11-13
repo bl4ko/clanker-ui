@@ -214,6 +214,8 @@ var (
 	jsMadeSlot  = regexp.MustCompile(`"data-slot": *"([a-z0-9-]+)"|setAttribute\("data-slot", "([a-z0-9-]+)"\)|dataset\.slot = "([a-z0-9-]+)"`)
 	jsEmit      = regexp.MustCompile(`emit\([^,()]*(?:\([^()]*\))?[^,()]*, *"([a-z-]+:[a-z-]+)"|"([a-z-]+:(?:open|close|change))"`)
 	jsSetAttr   = regexp.MustCompile(`(?:setAttribute|toggleAttribute)\("(data-[a-z0-9-]+)"|dataset\.([a-zA-Z]+) *=[^=]`)
+	jsReadAttr  = regexp.MustCompile(`(?:hasAttribute|getAttribute)\("(data-[a-z0-9-]+)"\)`)
+	jsWroteAttr = regexp.MustCompile(`(?:setAttribute|toggleAttribute|removeAttribute)\("(data-[a-z0-9-]+)"|"(data-[a-z0-9-]+)": |dataset\.([a-zA-Z]+) *=[^=]`)
 	keyWord     = regexp.MustCompile(`\b(Keyboard|Keys|Up|Down|Enter|Escape|Esc|Space|Arrow(?:Up|Down|Left|Right)?|arrows?|Home|End|Page ?Up|Page ?Down|Backspace|Delete|F6|Shift\+F10|Ctrl|Cmd|Alt\+[A-Za-z]+|Shift\+[A-Za-z]+|Tab)\b`)
 	slugDrop    = regexp.MustCompile(`[^a-z0-9 _-]`)
 )
@@ -481,6 +483,7 @@ type catalogBuild struct {
 	defined    map[string]bool
 	made       map[string]bool
 	jsSet      map[string]bool
+	jsReadOnly map[string]bool
 	cssSlots   map[string]bool
 	jsEvents   map[string]bool
 	listedPart map[string]bool
@@ -545,7 +548,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	b := &catalogBuild{t: t, data: map[string]*compData{}, global: attrSet{}, markup: map[string]bool{}, defined: map[string]bool{}, made: map[string]bool{}, jsSet: map[string]bool{}, cssSlots: map[string]bool{}, jsEvents: map[string]bool{}, listedPart: map[string]bool{}, named: map[string]bool{}}
+	b := &catalogBuild{t: t, data: map[string]*compData{}, global: attrSet{}, markup: map[string]bool{}, defined: map[string]bool{}, made: map[string]bool{}, jsSet: map[string]bool{}, jsReadOnly: map[string]bool{}, cssSlots: map[string]bool{}, jsEvents: map[string]bool{}, listedPart: map[string]bool{}, named: map[string]bool{}}
 	for _, c := range t.order {
 		b.data[c] = newCompData()
 	}
@@ -562,6 +565,16 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 	b.scanJS(js.String())
 	if err := b.scanCSS(css); err != nil {
 		return nil, nil, err
+	}
+	for _, d := range b.data {
+		for slot, names := range d.state {
+			for name := range names {
+				if b.jsReadOnly[name] {
+					delete(names, name)
+					d.part(slot).mention(name)
+				}
+			}
+		}
 	}
 	for _, s := range sections {
 		b.scanSection(s)
@@ -1006,6 +1019,19 @@ func (b *catalogBuild) scanJS(src string) {
 	}
 	for _, m := range jsEmit.FindAllStringSubmatch(src, -1) {
 		b.jsEvents[m[1]+m[2]] = true
+	}
+	wrote := map[string]bool{}
+	for _, m := range jsWroteAttr.FindAllStringSubmatch(src, -1) {
+		if m[3] != "" {
+			wrote[attrName(m[3])] = true
+		} else {
+			wrote[m[1]+m[2]] = true
+		}
+	}
+	for _, m := range jsReadAttr.FindAllStringSubmatch(src, -1) {
+		if !wrote[m[1]] {
+			b.jsReadOnly[m[1]] = true
+		}
 	}
 }
 

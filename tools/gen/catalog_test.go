@@ -628,3 +628,36 @@ func TestCatalogKitAdds(t *testing.T) {
 		}
 	}
 }
+
+func TestCatalogReadOnlyAttrsAreWrite(t *testing.T) {
+	cat := testCatalog(t)
+	var js strings.Builder
+	for _, f := range []string{"clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-code.js"} {
+		b, err := os.ReadFile(filepath.Join("../..", f))
+		if err != nil {
+			t.Fatal(err)
+		}
+		js.Write(b)
+	}
+	src := js.String()
+	found := false
+	for _, c := range cat.Components {
+		for _, p := range c.Parts {
+			for _, st := range p.State {
+				read := strings.Contains(src, `hasAttribute("`+st+`")`) || strings.Contains(src, `getAttribute("`+st+`")`)
+				wrote := jsWroteAttr.MatchString(src) && slices.ContainsFunc(jsWroteAttr.FindAllStringSubmatch(src, -1), func(m []string) bool {
+					return m[1] == st || m[2] == st || m[3] != "" && attrName(m[3]) == st
+				})
+				if read && !wrote {
+					t.Errorf("%s: part %s lists %s as State, but the kit only reads it", c.Name, p.Slot, st)
+				}
+			}
+			if p.Slot == "table-container" {
+				_, found = p.Attributes["data-sticky-header"]
+			}
+		}
+	}
+	if !found {
+		t.Error("table-container: data-sticky-header is not a Write attribute")
+	}
+}

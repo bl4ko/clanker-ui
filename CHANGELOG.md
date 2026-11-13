@@ -6,6 +6,10 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ## Unreleased
 
+### Added
+
+- Chart: `tooltip: { hideEmpty: true }` leaves out the series without a value at the hovered point, like Recharts `filterNull`; `hideEmpty: "zero"` also leaves out 0. The keyboard readout uses the same rows. Default unchanged (#124).
+
 ### Fixed
 
 - Chart: the active dots of line, area, and radar charts no longer fade in again on every pointer move; only the first draw animates (#119).

@@ -156,6 +156,7 @@ function chartIngest(s, data, options) {
   if (!TYPES.includes(o.type ?? "bar")) throw new TypeError(`clanker-ui chart: unknown type "${o.type}"`)
   if (!CURVES.includes(o.curve ?? "monotone")) throw new TypeError(`clanker-ui chart: unknown curve "${o.curve}"`)
   if (!INDICATORS.includes(o.tooltip?.indicator ?? "line")) throw new TypeError(`clanker-ui chart: unknown tooltip indicator "${o.tooltip.indicator}"`)
+  if (![undefined, false, true, "zero"].includes(o.tooltip?.hideEmpty)) throw new TypeError('clanker-ui chart: tooltip hideEmpty must be true, false, or "zero"')
   if (o.domain != null && !(Array.isArray(o.domain) && o.domain.every(v => v == null || Number.isFinite(v)))) throw new TypeError("clanker-ui chart: domain must be [min, max] with finite numbers or null")
   const cartesian = ["area", "bar", "line"].includes(o.type ?? "bar")
   if (!SCALES.includes(o.scale ?? "category")) throw new TypeError(`clanker-ui chart: unknown scale "${o.scale}"`)
@@ -1542,7 +1543,7 @@ function chartRadar(c) {
       return { x: best[0], y: best[1] }
     },
     tip(a) {
-      return { label: f.xLabel(a.index), key: null, items: keys.map((key, k) => { const e = m.byKey.get(key); const v = vals[k][a.index]; return { key, label: e.label, icon: e.icon, color: e.color, value: v == null ? "–" : f.value(v) } }) }
+      return { label: f.xLabel(a.index), key: null, items: keys.map((key, k) => { const e = m.byKey.get(key); const v = vals[k][a.index]; return { key, label: e.label, icon: e.icon, color: e.color, value: v == null ? "–" : f.value(v), v } }) }
     },
     activate(a) {
       deactivate()
@@ -1807,6 +1808,8 @@ function chartShowTip(s, a, source, point) {
   s.source = source
   g.activate(s.active)
   const data = g.tip(s.active)
+  const hide = s.opts.tooltip?.hideEmpty
+  if (hide) data.items = data.items.filter(it => it.total || !(it.v == null || (hide === "zero" && it.v === 0)))
   chartTipContent(s, data)
   const opening = tip.hidden
   tip.hidden = false

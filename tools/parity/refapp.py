@@ -197,7 +197,7 @@ def write_shell(app, style, names):
     text = css.read_text()
     variants = "".join(f"@custom-variant style-{s} (&:where(.style-{s} *));\n" for s in STYLES)
     if "@custom-variant style-" not in text:
-        text = text.replace("@custom-variant dark", variants + "@custom-variant dark", 1)
+        text = text.replace("@custom-variant dark", '@source "../node_modules/streamdown/dist/*.js";\n' + variants + "@custom-variant dark", 1)
         css.write_text(text)
     vite = app / "vite.config.ts"
     v = vite.read_text()

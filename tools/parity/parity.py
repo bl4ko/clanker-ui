@@ -445,6 +445,7 @@ class Converter:
         self.kept = collections.defaultdict(set)
         self.kept_source = collections.defaultdict(set)
         self.unpinned = collections.defaultdict(set)
+        self.ref = False
 
     def use(self, texts):
         self.by_slot, self.free_sets, self.by_comp = collections.defaultdict(list), [], collections.defaultdict(list)
@@ -477,6 +478,8 @@ class Converter:
         src = self.parts.source_of(owners | ({component_of(slot, self.names)} if slot else set()))
         cands = self.sets_for(slot, orig)
         suffix = example_suffix(toks, cands)
+        if self.ref and suffix and toks[-len(suffix):] != suffix and set(self.parts.canon(suffix)) <= src | self.parts.tokens.get(slot, set()):
+            suffix = []
         own = self.parts.tokens.get(slot, set()) if slot else set()
         if self.fallback:
             keep = [t for t in plain if t not in src and self.parts.logical.get(t, t) not in own]
@@ -611,6 +614,7 @@ def inherited(style):
 
 def page_html(conv, cap, sources=None):
     body = []
+    conv.ref = bool(cap.get("ref"))
     for root in cap["roots"]:
         conv.infer(root["tree"])
     for k, root in enumerate(cap["roots"]):

@@ -17,9 +17,9 @@ env:
   PLAYWRIGHT_VERSION: "1.64.1"
   TAILWIND_VERSION: "4.3.3"
   TAILWIND_SHA256: dc61b3ac6b8c9ca874c0cc4c57b2409791a64c5540404ca5f5367360babc313a
-  PARITY_ONLY: "attachment,bubble,collapsible,message-scroller,card,select,resizable,calendar,toggle-group,input-group,button-group,combobox,native-select,code-block,empty,input-otp,table,hover-card,progress,sheet,marker,tabs"
-  PARITY_RUNS: nova
-  PARITY_RAW: "1"
+  PARITY_ONLY: ""
+  PARITY_RUNS: docs nova luma lyra maia mira sera vega
+  PARITY_RAW: ""
   NO_COLOR: "1"
 
 jobs:

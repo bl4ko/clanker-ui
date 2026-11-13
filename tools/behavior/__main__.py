@@ -354,7 +354,33 @@ def drift_section(c):
     return lines
 
 
+def drift_merge(out, dirs):
+    (out / "components").mkdir(parents=True, exist_ok=True)
+    slices = []
+    for d in map(pathlib.Path, dirs):
+        if not (d / "slices.json").exists():
+            continue
+        slices += json.loads((d / "slices.json").read_text())
+        for f in sorted((d / "components").glob("*.json")):
+            c = json.loads(f.read_text())
+            dst = out / "components" / f.name
+            if dst.exists():
+                old = json.loads(dst.read_text())
+                c["runs"] = {**old["runs"], **c["runs"]}
+                c["deploy"] = c.get("deploy") or old.get("deploy")
+                if old.get("skip") and not c.get("skip"):
+                    c["skip"] = old["skip"]
+            dst.write_text(json.dumps(c, indent=1, ensure_ascii=False) + "\n")
+    if not slices:
+        print(f"no drift results in {', '.join(dirs)}")
+        return 2
+    (out / "slices.json").write_text(json.dumps(slices, indent=1) + "\n")
+    return drift_write(out)
+
+
 def drift(args):
+    if args.merge:
+        return drift_merge(pathlib.Path(args.out), args.merge)
     names = [n for n in args.only.split(",") if n] or E.scenario_names()
     engines = [e for e in args.engines.split(",") if e]
     widths = [int(w) for w in args.widths.split(",") if w]
@@ -595,6 +621,7 @@ def main():
     d.add_argument("--only", default="", help="comma-separated scenario names")
     d.add_argument("--engines", default="chromium,firefox,webkit")
     d.add_argument("--widths", default="1280,390")
+    d.add_argument("--merge", nargs="+", metavar="DIR", help="record nothing: add the results of other drift directories to --out and write the report")
     sub.add_parser("stamp", help="write the live deploy id and the @base-ui/react version into reference files that have none (needs the network)")
     sub.add_parser("status", help="list references to record again: changed scenario, pin, @base-ui/react on shadcn main, or live deploy (needs the network)")
     args = ap.parse_args()

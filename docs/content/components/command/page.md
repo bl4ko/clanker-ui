@@ -104,6 +104,16 @@ The command uses logical properties. Set `dir="rtl"` on `<html>` or on a contain
 | `data-keywords` | Extra search words: `"a, b"` | |
 | `data-disabled` | Boolean | |
 
+### Events
+
+{{catalog "events"}}
+
+| Event | Target | Detail |
+| --- | --- | --- |
+| `command:select` | `command` | `{ value, item }` |
+
+{{/catalog}}
+
 ### Keyboard and Accessibility
 
 - Typing filters, scores, and sorts the items.

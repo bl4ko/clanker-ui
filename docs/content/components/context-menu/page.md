@@ -126,10 +126,16 @@ The context menu has the parts, attributes, and states of the [Dropdown Menu](/d
 
 ### Events
 
+{{catalog "events"}}
+
 | Event | Target | Detail |
 | --- | --- | --- |
+| `context-menu:open` | `context-menu` | `{ trigger }` |
+| `context-menu:close` | `context-menu` | `{ reason }` |
 | `context-menu:select` | `context-menu` | `{ value, item, checked }`, cancelable (keeps the menu open) |
 | `context-menu:change` | `context-menu` | `{ value, checked, item, group }` for checkbox and radio items |
+
+{{/catalog}}
 
 ### Keyboard and Accessibility
 

@@ -134,6 +134,16 @@ The kit fills each slot with the character at its position. The active slot has 
 
 A `role="separator"` element between groups, usually with the `minus` icon.
 
+### Events
+
+{{catalog "events"}}
+
+| Event | Target | Detail |
+| --- | --- | --- |
+| `input-otp:complete` | `input-otp` | `{ value }` |
+
+{{/catalog}}
+
 ### Keyboard and Accessibility
 
 - The input is a normal text input: typing, paste, autofill (`autocomplete="one-time-code"`), and Backspace work as usual.

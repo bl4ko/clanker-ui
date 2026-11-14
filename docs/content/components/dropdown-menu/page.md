@@ -170,10 +170,16 @@ Use `data-checked` on a checkbox item. Use `data-value` on the radio group and o
 
 ### Events
 
+{{catalog "events"}}
+
 | Event | Target | Detail |
 | --- | --- | --- |
+| `dropdown-menu:open` | `dropdown-menu` | `{ trigger }` |
+| `dropdown-menu:close` | `dropdown-menu` | `{ reason }` |
 | `dropdown-menu:select` | `dropdown-menu` | `{ value, item, checked }`, cancelable (keeps the menu open) |
 | `dropdown-menu:change` | `dropdown-menu` | `{ value, checked, item, group }` for checkbox and radio items |
+
+{{/catalog}}
 
 ### Keyboard and Accessibility
 

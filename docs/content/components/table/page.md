@@ -128,3 +128,23 @@ The `table` part is the `<table>` element.
 | Attribute | Values | Default |
 | --- | --- | --- |
 | `data-label` | the column name that a stacked row shows next to the value (kit extension) | |
+
+### Events
+
+{{catalog "events"}}
+
+| Event | Target | Detail |
+| --- | --- | --- |
+| `table:sort` | `table` | `{ column, dir }` (`column` is the cell index of the head; `dir`: `ascending`, `descending`, `none`). Cancelable: `preventDefault()` keeps the rows where they are (sort on the server or in your own paged view); `aria-sort` and the icons still change. |
+
+{{/catalog}}
+
+### JavaScript
+
+{{catalog "exports"}}
+
+Import these functions from `clanker-ui.js`.
+
+- `tableSort(head, dir?)`: `head` is a `table-head` with `data-sort` (or its id); `dir` is `ascending`, `descending`, or `none` (default: the first direction of the head, `data-sort-first`). Same as a click: sets `aria-sort` and the icons, fires `table:sort`, and moves the rows.
+
+{{/catalog}}

@@ -68,6 +68,8 @@ Open the page through a web server, for example `python3 -m http.server -b 127.0
 
 `dist/` has minified copies of the kit and one file for each component group, so an app loads only the groups that it uses. Copy them byte for byte, like the readable files. Use the `.min` files together or the readable files together, never both.
 
+{{catalog "groups"}}
+
 | Group | Components | Needs |
 | --- | --- | --- |
 | `core` | button, separator, direction, theme, input, textarea, label, kbd, card, badge, alert, table, skeleton, spinner, empty, progress, aspect-ratio, page, site-header, section-cards, stat-grid, data-table, brand, text-stack, card-grid, cover, rating |  |
@@ -76,6 +78,8 @@ Open the page through a web server, for example `python3 -m http.server -b 127.0
 | `layout` | avatar, accordion, collapsible, tabs, breadcrumb, pagination, scroll-area, resizable, sidebar, carousel, item | sidebar: `overlays` |
 | `chat` | message, bubble, attachment, message-scroller, trace, marker, questionnaire, code-block |  |
 | `chart` | chart |  |
+
+{{/catalog}}
 
 Add the groups in the "Needs" column for the components you use. An app that uses 3 or more of the 4 component groups (`forms`, `overlays`, `layout`, `chat`) loads the one-file set: `clanker-ui.min.css`, `clanker-ui.min.js`, and `clanker-ui-core.min.js`. Other apps link the group CSS in the order of the table and load one module for each group with behavior; the browser loads the core through the import.
 

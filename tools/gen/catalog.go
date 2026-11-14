@@ -528,10 +528,20 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	readme, err := read("README.md")
+	readmeSrc, err := read("README.md")
 	if err != nil {
 		return nil, nil, err
 	}
+	readmeOut, err := fillRegions("README.md", readmeSrc, func(kind string) (string, error) {
+		if kind != "groups" {
+			return "", fmt.Errorf("unknown region %q", kind)
+		}
+		return t.markdown(), nil
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+	readme := catalogMark.ReplaceAllString(readmeOut, "")
 	css, err := read("clanker-ui.css")
 	if err != nil {
 		return nil, nil, err
@@ -647,7 +657,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 		Exports:     exports,
 	}
 	cat.Files = catFiles{
-		Note:     "Put all files in one directory of the static site. In the repository and in the release zip, the .min files are in dist/; the release also has each file as a separate asset. Use the readable set or the .min files, never both.",
+		Note:     "Put all files in one directory of the static site. In the release zip, the .min files are in dist/; the release also has each file as a separate asset. In a clone of the repository, dist/ and the styles other than Nova exist only after go run ./tools/gen build. Use the readable set or the .min files, never both.",
 		Readable: catFileSet{CSS: []string{"clanker-ui.css"}, JS: []string{"clanker-ui.js"}},
 		Bundle:   catFileSet{CSS: []string{"clanker-ui.min.css"}, JS: []string{"clanker-ui-core.min.js", "clanker-ui.min.js"}},
 		Optional: []catFile{
@@ -727,7 +737,144 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 	}
 	files[catalogIcons] = []byte(icons)
 	files[catalogLLMs] = []byte(llmsFull(cat, sections))
+	files["README.md"] = []byte(readmeOut)
+	if err := docsRegions(root, cat, t, files); err != nil {
+		return nil, nil, err
+	}
 	return files, cat, nil
+}
+
+var (
+	catalogStart = regexp.MustCompile(`^(?:<!-- catalog:([a-z]+) -->|\{\{catalog "([a-z]+)"\}\})$`)
+	catalogEnd   = regexp.MustCompile(`^(?:<!-- /catalog:([a-z]+) -->|\{\{/catalog\}\})$`)
+	catalogMark  = regexp.MustCompile(`(?m)^(?:<!-- /?catalog:[a-z]+ -->|\{\{/?catalog(?: "[a-z]+")?\}\})\n\n?`)
+)
+
+func fillRegions(name, src string, gen func(kind string) (string, error)) (string, error) {
+	lines := strings.SplitAfter(src, "\n")
+	var b strings.Builder
+	for i := 0; i < len(lines); i++ {
+		b.WriteString(lines[i])
+		line := strings.TrimSuffix(lines[i], "\n")
+		m := catalogStart.FindStringSubmatch(line)
+		if m == nil {
+			if catalogEnd.MatchString(line) {
+				return "", fmt.Errorf("%s:%d: region end without a start", name, i+1)
+			}
+			continue
+		}
+		kind := m[1] + m[2]
+		end := "{{/catalog}}"
+		if m[1] != "" {
+			end = "<!-- /catalog:" + kind + " -->"
+		}
+		j := i + 1
+		for j < len(lines) && strings.TrimSuffix(lines[j], "\n") != end {
+			if l := strings.TrimSuffix(lines[j], "\n"); catalogStart.MatchString(l) || catalogEnd.MatchString(l) {
+				return "", fmt.Errorf("%s:%d: region %s is not closed with %s", name, i+1, kind, end)
+			}
+			j++
+		}
+		if j == len(lines) {
+			return "", fmt.Errorf("%s:%d: region %s is not closed with %s", name, i+1, kind, end)
+		}
+		body, err := gen(kind)
+		if err != nil {
+			return "", fmt.Errorf("%s:%d: %w", name, i+1, err)
+		}
+		b.WriteString("\n" + body + "\n" + lines[j])
+		i = j
+	}
+	return b.String(), nil
+}
+
+func docsRegions(root string, cat *catalog, t *groupTable, files map[string][]byte) error {
+	comps := map[string]catComponent{}
+	for _, c := range cat.Components {
+		comps["docs/content"+strings.TrimPrefix(c.Docs, catalogSite+"/docs")+"page.md"] = c
+	}
+	return filepath.WalkDir(filepath.Join(root, "docs", "content"), func(p string, d os.DirEntry, err error) error {
+		if err != nil || d.IsDir() || d.Name() != "page.md" {
+			return err
+		}
+		rel, _ := filepath.Rel(root, p)
+		rel = filepath.ToSlash(rel)
+		src, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		c, isComp := comps[rel]
+		used := map[string]bool{}
+		out, err := fillRegions(rel, string(src), func(kind string) (string, error) {
+			used[kind] = true
+			switch {
+			case kind == "groups":
+				return t.markdown(), nil
+			case kind == "events" && isComp && len(c.Events) > 0:
+				return eventsTable(c), nil
+			case kind == "exports" && isComp && len(c.Exports) > 0:
+				return exportsList(cat, c), nil
+			}
+			return "", fmt.Errorf("the catalog has no %s for this page", kind)
+		})
+		if err != nil {
+			return err
+		}
+		if isComp && len(c.Events) > 0 && !used["events"] {
+			return fmt.Errorf("%s: no {{catalog \"events\"}} region for the events of %s", rel, c.Name)
+		}
+		if isComp && len(c.Exports) > 0 && !used["exports"] {
+			return fmt.Errorf("%s: no {{catalog \"exports\"}} region for the exports of %s", rel, c.Name)
+		}
+		if len(used) > 0 {
+			files[rel] = []byte(out)
+		}
+		return nil
+	})
+}
+
+func eventsTable(c catComponent) string {
+	root := c.Name
+	for _, p := range c.Parts {
+		if p.Root {
+			root = p.Slot
+		}
+	}
+	var b strings.Builder
+	b.WriteString("| Event | Target | Detail |\n| --- | --- | --- |\n")
+	for _, e := range c.Events {
+		target := e.Target
+		if target == "root" {
+			target = root
+		}
+		detail := e.Notes
+		if detail == "" && len(e.Detail) > 0 {
+			detail = "`{ " + strings.Join(e.Detail, ", ") + " }`"
+			if e.Cancelable {
+				detail += ", cancelable"
+			}
+		}
+		fmt.Fprintf(&b, "| `%s` | `%s` | %s |\n", e.Name, target, cell(detail))
+	}
+	return b.String()
+}
+
+func exportsList(cat *catalog, c catComponent) string {
+	module := "clanker-ui.js"
+	var list strings.Builder
+	for _, name := range c.Exports {
+		for _, e := range cat.Exports {
+			if e.Name == name {
+				module = e.Module
+				fmt.Fprintf(&list, "- `%s`", e.Signature)
+				if e.Notes != "" {
+					fmt.Fprintf(&list, ": %s", e.Notes)
+				}
+				list.WriteString("\n")
+			}
+		}
+	}
+	return "Import these functions from `" + module + "`.\n\n" + list.String()
 }
 
 var (

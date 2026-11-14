@@ -443,19 +443,6 @@ func TestDistJSLinks(t *testing.T) {
 	}
 }
 
-func TestDistGroupsTableInDocs(t *testing.T) {
-	table := testTable(t).markdown()
-	for _, f := range []string{"../../README.md", "../../docs/content/index/page.md"} {
-		b, err := os.ReadFile(f)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if !strings.Contains(string(b), table) {
-			t.Errorf("%s has no current groups table; paste the output of go run ./tools/gen dist -table", f)
-		}
-	}
-}
-
 func customProps(t *testing.T, css string) []string {
 	t.Helper()
 	tree, err := parseCSS(css)

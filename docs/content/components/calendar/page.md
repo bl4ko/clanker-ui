@@ -139,18 +139,26 @@ The kit adds these parts. Do not write them: `calendar-months`, `calendar-month`
 
 ### Events
 
+{{catalog "events"}}
+
 | Event | Target | Detail |
 | --- | --- | --- |
 | `calendar:change` | `calendar` | `{ value, mode, source }`: `day`, `api`, `reset` |
 | `calendar:navigate` | `calendar` | `{ value }` |
 
+{{/catalog}}
+
 ### JavaScript
+
+{{catalog "exports"}}
 
 Import these functions from `clanker-ui.js`.
 
 - `calendarGetValue(el) → value`: `"2026-10-28"`, an array (`multiple`), `{ from, to }` (`range`), or `null`.
 - `calendarSetValue(el, value, { emit = false, month = true }?) → boolean`: `month` shows the month of the first selected date.
 - `calendarSetMonth(el, "2026-10") → boolean`
+
+{{/catalog}}
 
 ### Keyboard and Accessibility
 

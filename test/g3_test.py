@@ -1738,6 +1738,58 @@ def check_table_sort(t):
     assert out["error"] is True, out
 
 
+TABLE_SORT_OPTIONS = """async () => {
+  const { h, tableSort } = await import("/clanker-ui.js")
+  const rows = [["Žan", "1,2 mio. €", "1200000", "b"], ["Cene", "12 tis. €", "12000", "a"], ["Ana", "n/a", "", "c"], ["Dora", "850 €", "850", "d"]]
+  const make = toggle => {
+    const table = h("table", { "data-slot": "table", lang: "sl", "data-sort-toggle": toggle ? "" : null },
+      h("thead", { "data-slot": "table-header" }, h("tr", { "data-slot": "table-row" },
+        h("th", { "data-slot": "table-head", "data-sort": "text" }, "Name"),
+        h("th", { "data-slot": "table-head", "data-sort": "number", "data-sort-first": "descending" }, "Amount"),
+        h("th", { "data-slot": "table-head" }, "Id"))),
+      h("tbody", { "data-slot": "table-body" }, rows.map(r => h("tr", { "data-slot": "table-row" },
+        h("td", { "data-slot": "table-cell" }, r[0]), h("td", { "data-slot": "table-cell", "data-value": r[2] }, r[1]), h("td", { "data-slot": "table-cell" }, r[3])))))
+    document.body.append(table)
+    return table
+  }
+  const run = async toggle => {
+    const table = make(toggle)
+    await new Promise(r => requestAnimationFrame(r))
+    const [name, amount] = table.tHead.rows[0].cells
+    const ids = () => [...table.tBodies[0].rows].map(r => r.cells[2].textContent).join("")
+    const step = th => { th.querySelector('[data-slot="button"]').click(); return [ids(), name.getAttribute("aria-sort"), amount.getAttribute("aria-sort")] }
+    const out = [step(amount), step(amount), step(amount), step(name), step(name), step(name)]
+    tableSort(amount)
+    out.push([ids(), amount.getAttribute("aria-sort")])
+    table.remove()
+    return out
+  }
+  return { three: await run(false), two: await run(true) }
+}"""
+
+
+def check_table_sort_options(t):
+    out = t.page.evaluate(TABLE_SORT_OPTIONS)
+    assert out["three"] == [
+        ["badc", "none", "descending"],
+        ["dabc", "none", "ascending"],
+        ["bacd", "none", "none"],
+        ["cadb", "ascending", "none"],
+        ["bdac", "descending", "none"],
+        ["bacd", "none", "none"],
+        ["badc", "descending"],
+    ], ("data-sort-first starts with the larger value; data-value sorts compact numbers; the third click restores the first order", out["three"])
+    assert out["two"] == [
+        ["badc", "none", "descending"],
+        ["dabc", "none", "ascending"],
+        ["badc", "none", "descending"],
+        ["cadb", "ascending", "none"],
+        ["bdac", "descending", "none"],
+        ["cadb", "ascending", "none"],
+        ["badc", "descending"],
+    ], ("data-sort-toggle on the table: two states, the other head starts with its first direction", out["two"])
+
+
 def check_sidebar_rtl(t):
     page = t.page
     t.section("sidebar")

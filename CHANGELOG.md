@@ -4,6 +4,12 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
+## Unreleased
+
+### Added
+
+- Table sort: `data-sort-first="descending"` on a `table-head` starts that column descending (numbers and dates with the largest or newest value); `data-sort-toggle` on the `table` (or a head) gives a two-state cycle without the return to the first order; `tableSort(head)` uses the first direction of the head. The cell `data-value` (already the sort value) is documented for compact numbers and for empty values that show text (#156).
+
 ## 0.4.0 - 2026-11-14
 
 ### Added

@@ -184,7 +184,11 @@ func dropFallbacks(r *cssRule) int {
 			n++
 			continue
 		}
-		n += dropFallbacks(it.rule)
+		d := dropFallbacks(it.rule)
+		n += d
+		if d > 0 && len(it.rule.items) == 0 {
+			continue
+		}
 		if it.rule.prelude != colorMixSupports {
 			out = append(out, it)
 			continue

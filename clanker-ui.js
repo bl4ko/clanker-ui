@@ -7504,9 +7504,16 @@ define("table-head", {
     const button = el.querySelector(':scope > [data-slot="button"]')
     if (!el.matches(tableSortHeads) || !button?.contains(event.target) || button.disabled) return
     const now = el.getAttribute("aria-sort")
-    tableSort(el, now === "ascending" ? "descending" : now === "descending" ? "none" : "ascending")
+    const first = tableSortFirst(el)
+    const other = first === "ascending" ? "descending" : "ascending"
+    const toggle = el.hasAttribute("data-sort-toggle") || !!el.closest('[data-slot="table"]')?.hasAttribute("data-sort-toggle")
+    tableSort(el, now === first ? other : now === other && !toggle ? "none" : first)
   },
 })
+
+function tableSortFirst(head) {
+  return head.getAttribute("data-sort-first") === "descending" ? "descending" : "ascending"
+}
 
 function tableSortIcon(head) {
   const button = head.querySelector(':scope > [data-slot="button"]')
@@ -7517,9 +7524,10 @@ function tableSortIcon(head) {
   old ? old.replaceWith(next) : button.append(next)
 }
 
-export function tableSort(head, dir = "ascending") {
+export function tableSort(head, dir) {
   const th = typeof head === "string" ? document.getElementById(head) : head
   if (!th?.matches('[data-slot="table-head"]') || !th.matches(tableSortHeads)) throw new TypeError("clanker-ui tableSort: the first argument must be a table-head with data-sort")
+  dir ??= tableSortFirst(th)
   if (!["ascending", "descending", "none"].includes(dir)) throw new TypeError(`clanker-ui tableSort: unknown direction "${dir}"`)
   const table = th.closest('[data-slot="table"]') ?? th.closest("table")
   for (const other of th.parentElement.querySelectorAll(':scope > [data-slot="table-head"]')) {

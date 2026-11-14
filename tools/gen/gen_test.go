@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"regexp"
 	"slices"
 	"strings"
 	"testing"
@@ -345,7 +347,7 @@ func TestDropFallbacks(t *testing.T) {
 	if n := dropFallbacks(tree); n != 3 {
 		t.Errorf("dropped %d", n)
 	}
-	want := "@layer properties {\n}\n@layer c {\n  .a {\n    color: red;\n  }\n  .a {\n    background-color: color-mix(in oklab, var(--x) 50%, transparent);\n  }\n  .b {\n    outline-color: color-mix(in oklab, var(--y) 50%, transparent);\n  }\n}\n"
+	want := "@layer c {\n  .a {\n    color: red;\n  }\n  .a {\n    background-color: color-mix(in oklab, var(--x) 50%, transparent);\n  }\n  .b {\n    outline-color: color-mix(in oklab, var(--y) 50%, transparent);\n  }\n}\n"
 	if got := tree.String(); got != want {
 		t.Errorf("got\n%s\nwant\n%s", got, want)
 	}
@@ -540,6 +542,39 @@ func TestNoteAndPartLookups(t *testing.T) {
 	g.addPart(&part{slot: "z", layers: l("flex")})
 	if len(g.parts) != 2 {
 		t.Errorf("a new part list starts a new index: %d parts", len(g.parts))
+	}
+}
+
+func TestProbeClassesKeepsUnknown(t *testing.T) {
+	runs := 0
+	unknown := map[string]bool{"easing-[ease]": true, "xs:w-full": true, "only-b": true}
+	compile := func(css string) (string, string, error) {
+		runs++
+		for _, m := range regexp.MustCompile(`@apply ([^;]+);`).FindAllStringSubmatch(css, -1) {
+			if unknown[m[1]] {
+				return "", "Error: Cannot apply unknown utility class `" + m[1] + "`", errors.New("exit status 1")
+			}
+		}
+		return css, "", nil
+	}
+	a := []string{"flex", "easing-[ease]", "p-2", "xs:w-full"}
+	if _, drop, err := probeClasses("theme 1", a, compile); err != nil || runs != 3 || len(drop) != 2 {
+		t.Errorf("the first style finds each unknown class with one run: %d runs, %v, %v", runs, drop, err)
+	}
+	runs = 0
+	if css, drop, err := probeClasses("theme 1", append(a, "only-b"), compile); err != nil || runs != 2 || len(drop) != 3 || !drop["only-b"] || strings.Contains(css, "easing") {
+		t.Errorf("the next style with the same Tailwind input starts with the known classes and finds its own: %d runs, %v, %v", runs, drop, err)
+	}
+	runs = 0
+	if _, drop, err := probeClasses("theme 1", []string{"flex", "xs:w-full"}, compile); err != nil || runs != 1 || len(drop) != 1 {
+		t.Errorf("a known class that the style does not have is not dropped: %d runs, %v, %v", runs, drop, err)
+	}
+	runs = 0
+	if _, _, err := probeClasses("theme 2", a, compile); err != nil || runs != 3 {
+		t.Errorf("another Tailwind input probes again: %d runs, %v", runs, err)
+	}
+	if _, _, err := probeClasses("theme 3", a, func(string) (string, string, error) { return "", "boom", errors.New("exit status 1") }); err == nil || !strings.Contains(err.Error(), "boom") {
+		t.Errorf("another Tailwind error stops the run: %v", err)
 	}
 }
 

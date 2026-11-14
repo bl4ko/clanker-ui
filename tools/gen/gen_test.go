@@ -514,6 +514,37 @@ func TestRulesOrder(t *testing.T) {
 	}
 }
 
+func TestNoteAndPartLookups(t *testing.T) {
+	g := newGen(nil, nil, nil, nil)
+	g.note("k", "%s", "a")
+	g.note("k", "%s", "b")
+	g.note("k", "%s", "a")
+	g.note("other", "%s", "a")
+	g.notes["k"] = append(g.notes["k"], "direct")
+	g.note("k", "%s", "direct")
+	g.note("k", "%s", "c")
+	if !slices.Equal(g.notes["k"], []string{"a", "b", "direct", "c"}) || !slices.Equal(g.notes["other"], []string{"a"}) {
+		t.Errorf("each note is listed one time, in the order of the first call: %v", g.notes)
+	}
+	l := func(c string) []layer { return []layer{{classes: []string{c}}} }
+	g.addPart(&part{slot: "x", layers: l("flex")})
+	g.addPart(&part{slot: "x", layers: l("flex")})
+	g.addPart(&part{slot: "x", layers: l("grid")})
+	g.addPart(&part{slot: "x", sel: "& > svg", layers: l("flex")})
+	g.addPart(&part{slot: "x", tag: "span", layers: l("flex")})
+	g.parts = append(g.parts, &part{slot: "y", layers: l("flex")})
+	g.addPart(&part{slot: "y", layers: l("flex")})
+	if len(g.parts) != 5 || len(g.free["x"]) != 3 {
+		t.Errorf("an equal part is added one time, also after a direct append: %d parts, %d free", len(g.parts), len(g.free["x"]))
+	}
+	g.parts = []*part{{slot: "z", layers: l("flex")}}
+	g.addPart(&part{slot: "x", layers: l("flex")})
+	g.addPart(&part{slot: "z", layers: l("flex")})
+	if len(g.parts) != 2 {
+		t.Errorf("a new part list starts a new index: %d parts", len(g.parts))
+	}
+}
+
 func TestProbeClassesKeepsUnknown(t *testing.T) {
 	runs := 0
 	unknown := map[string]bool{"easing-[ease]": true, "xs:w-full": true, "only-b": true}

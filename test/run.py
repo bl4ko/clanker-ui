@@ -8,6 +8,7 @@ import contextlib
 import functools
 import importlib.util
 import io
+import json
 import os
 import pathlib
 import re
@@ -732,6 +733,11 @@ def plain(x):
     case(compare(motion(350), allowed=[dict(rule, steps=[2])])[0][2] is None, "compare: an allowed entry for another step does not match")
     case(compare(motion(350), allowed=[dict(rule, platforms=["other"])])[0][2] is None, "compare: an allowed entry for another platform does not match")
     case(compare(motion(350), allowed=[rule], engine="webkit")[0][2] is None, "compare: an allowed entry for another engine does not match")
+    cal = json.loads((ROOT / "test" / "behavior" / "scenarios" / "calendar.json").read_text())["dates"]["clock"]
+    gold = json.loads((ROOT / "test" / "behavior" / "golden" / "calendar.json").read_text())["runs"].values()
+    case(E.clock_day(cal) == (2026, 10, 28) and E.clock_day({"mark": "x", "date": "y"}) is None, "the calendar scenario pins a fixed day, independent of the live build day")
+    case(all(r.get("clock") == cal["day"] and r["dates"]["today"] == cal["day"] for r in gold), "every calendar reference was recorded on the fixed day")
+
     spec = importlib.util.spec_from_file_location("clanker_ci_plan", ROOT / "tools" / "ci" / "plan.py")
     P = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(P)

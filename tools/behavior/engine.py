@@ -39,6 +39,11 @@ WIDTHS = RUNNER.WIDTHS
 TODAY = RUNNER.TODAY
 
 
+def clock_day(clock):
+    day = (clock or {}).get("day")
+    return tuple(int(x) for x in day.split("-")) if day else None
+
+
 def pin_clock(year, month, day):
     return TODAY.replace("new Real(2026, 9, 28, 12)", f"new Real({year}, {month - 1}, {day}, 12)")
 

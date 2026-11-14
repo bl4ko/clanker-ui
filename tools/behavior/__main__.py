@@ -69,7 +69,7 @@ def open_live(browser, sc, width, hosts, reduced_motion):
     ctx = browser.new_context(viewport={"width": width, "height": E.WIDTHS[width]}, color_scheme="light", reduced_motion="reduce" if reduced_motion else "no-preference")
     url = sc.get("url") or f"{E.SITE}/docs/components/base/{sc.get('page', sc['name'])}"
     clock = (sc.get("dates") or {}).get("clock")
-    day = prerendered_day(ctx, url, clock) if clock else None
+    day = E.clock_day(clock) or (prerendered_day(ctx, url, clock) if clock else None)
     if clock and not day:
         raise E.StepError(f"no {clock['mark']} day in the prerendered page")
     ctx.add_init_script(E.pin_clock(*day) if day else E.TODAY)

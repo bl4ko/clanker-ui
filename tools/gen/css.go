@@ -483,9 +483,14 @@ func (g *gen) attrRenderers(attr string) []string {
 
 func postprocess(css string, owners map[string][]string, k kitMap, g *gen) string {
 	css = blockComment.ReplaceAllString(css, "")
+	renderers := map[string][]string{}
 	css = hasAttr.ReplaceAllStringFunc(css, func(m string) string {
 		sub := hasAttr.FindStringSubmatch(m)
-		slots := g.attrRenderers(sub[2])
+		slots, ok := renderers[sub[2]]
+		if !ok {
+			slots = g.attrRenderers(sub[2])
+			renderers[sub[2]] = slots
+		}
 		if len(slots) == 0 {
 			return m
 		}

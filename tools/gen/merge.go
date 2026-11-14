@@ -285,8 +285,8 @@ func (g *gen) rules(p *part, prim map[string]string, drop map[string]bool) []rul
 	whole := func(later, earlier string) bool {
 		return g.props == nil || prim[earlier] == "font-size" || covers(g.props[later], g.props[earlier])
 	}
-	shadowed := func(later, earlier string) bool {
-		return !iconSize.MatchString(earlier) && covers(g.allProps[later], g.allProps[earlier])
+	shadowed := func(cond, later, earlier string) bool {
+		return slices.Index(conds, "") < slices.Index(conds, cond) && !iconSize.MatchString(earlier) && covers(g.allProps[later], g.allProps[earlier])
 	}
 	for _, c := range merged[""] {
 		k, ok := groupKey(c, prim)
@@ -300,7 +300,7 @@ func (g *gen) rules(p *part, prim map[string]string, drop map[string]bool) []rul
 				if kx, okx := groupKey(x, prim); okx && kx == k {
 					switch {
 					case pos[other][x] > pos[""][c] && whole(x, c):
-						later = later || !shadowed(x, c)
+						later = later || !shadowed(other, x, c)
 					case pos[other][x] < pos[""][c] && whole(c, x):
 						if beaten[other] == nil {
 							beaten[other] = map[string]bool{}

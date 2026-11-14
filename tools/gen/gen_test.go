@@ -501,6 +501,12 @@ func TestRulesOrder(t *testing.T) {
 	if len(got) != 2 || !slices.Equal(got[0].classes, []string{"rounded-lg"}) || !slices.Equal(got[1].classes, []string{"rounded-md"}) {
 		t.Errorf("a base class stays in the base rule when the later variant class sets all its properties: %+v", got)
 	}
+	p.layers = []layer{{cond: cond, classes: []string{"flex"}}, {classes: []string{"rounded-lg"}}, {cond: cond, classes: []string{"rounded-md"}}}
+	got = g.rules(p, map[string]string{"flex": "display", "rounded-lg": "border-radius", "rounded-md": "border-radius"}, nil)
+	if len(got) != 3 || got[0].cond != cond || got[2].cond != ":not("+cond+")" || !slices.Equal(got[2].classes, []string{"rounded-lg"}) {
+		t.Errorf("a base rule that comes after the variant rule keeps the exclusion: %+v", got)
+	}
+	p.layers = []layer{{classes: []string{"rounded-lg"}}, {cond: cond, classes: []string{"rounded-md"}}}
 	icon, small := "[&_svg:not([class*='size-'])]:size-4", "[&_svg:not([class*='size-'])]:size-3"
 	g.props = map[string][]string{"text-sm": {"font-size", "line-height"}, "text-[10px]": {"font-size"}, "leading-none": {"line-height"}, "leading-5": {"line-height"}, icon: {"width", "height"}, small: {"width", "height"}}
 	g.allProps = map[string][]string{"text-sm": {"font-size", "line-height"}, "text-[10px]": {"font-size"}, "leading-none": {"--tw-leading", "line-height"}, "leading-5": {"line-height"}, icon: {"width", "height"}, small: {"width", "height"}}

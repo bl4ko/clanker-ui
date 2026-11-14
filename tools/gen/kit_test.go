@@ -133,3 +133,74 @@ func TestIconSizeTailwindOrder(t *testing.T) {
 		t.Error("iconSize matches only the plain icon size utility")
 	}
 }
+
+var subjectSlot = regexp.MustCompile(`\[data-slot="([^"]+)"\][^\s>+~]*$`)
+
+func twWithoutReader(kit, style *cssRule) []string {
+	reads := map[string]bool{}
+	var collect func(r *cssRule)
+	collect = func(r *cssRule) {
+		for _, it := range r.items {
+			if it.rule != nil {
+				collect(it.rule)
+				continue
+			}
+			for _, sel := range splitTop(r.prelude, ',') {
+				if m := subjectSlot.FindStringSubmatch(strings.TrimSpace(sel)); m != nil && strings.TrimSpace(sel) == `[data-slot="`+m[1]+`"]` {
+					for _, v := range twName.FindAllString(it.decl[strings.Index(it.decl, ":")+1:], -1) {
+						reads[m[1]+" "+v] = true
+					}
+				}
+			}
+		}
+	}
+	collect(style)
+	var missing []string
+	var walk func(r *cssRule)
+	walk = func(r *cssRule) {
+		for _, it := range r.items {
+			if it.rule != nil {
+				walk(it.rule)
+				continue
+			}
+			name := declProp(it.decl)
+			if !strings.HasPrefix(name, "--tw-") {
+				continue
+			}
+			for _, sel := range splitTop(r.prelude, ',') {
+				m := subjectSlot.FindStringSubmatch(strings.TrimSpace(sel))
+				if m == nil || !reads[m[1]+" "+name] {
+					missing = append(missing, strings.TrimSpace(sel)+" "+name)
+				}
+			}
+		}
+	}
+	walk(kit)
+	return missing
+}
+
+func TestKitTailwindVariablesHaveReaders(t *testing.T) {
+	parse := func(css string) *cssRule {
+		tree, err := parseCSS(css)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tree
+	}
+	kitCSS := readRepo(t, "tools/gen/kit.css")
+	kit := parse(kitCSS)
+	for _, s := range kitStyles {
+		if missing := twWithoutReader(kit, parse(strings.TrimSuffix(readRepo(t, s.file), kitCSS))); len(missing) > 0 {
+			t.Errorf("%s: kit.css sets a Tailwind variable that the base rule of the part does not read: %v", s.file, missing)
+		}
+	}
+	def := parse(`@layer k { [data-slot="a"] > [data-slot="card"] { --tw-shadow: 0 0 #000; } }`)
+	if got := twWithoutReader(def, parse(`@layer c { [data-slot="card"] { box-shadow: var(--tw-ring-shadow), var(--tw-shadow); } }`)); len(got) != 0 {
+		t.Errorf("a base rule that reads the variable is a reader: %v", got)
+	}
+	for _, style := range []string{`@layer c { [data-slot="card"] { box-shadow: var(--tw-ring-shadow); } }`, `@layer c { [data-slot="card"]:where([data-size="sm"]) { box-shadow: var(--tw-shadow); } }`, `@layer c { [data-slot="item"] { box-shadow: var(--tw-shadow); } }`} {
+		if got := twWithoutReader(def, parse(style)); len(got) != 1 {
+			t.Errorf("no base rule of the part reads the variable in %q: %v", style, got)
+		}
+	}
+}

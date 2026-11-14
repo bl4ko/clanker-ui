@@ -325,20 +325,14 @@ func run(o options) (string, error) {
 		return "", err
 	}
 	classes := g.allClasses()
-	drop := map[string]bool{}
-	var probe string
-	for attempt := 0; ; attempt++ {
-		compiled, stderr, err := compile(o.tailwind, work, in.preamble()+probeCSS(classes, drop))
-		if err == nil {
-			probe = compiled
-			break
-		}
-		m := unknownClass.FindStringSubmatch(stderr)
-		if m == nil || attempt > 100 {
-			return "", fmt.Errorf("tailwindcss: %v\n%s", err, stderr)
-		}
-		drop[m[1]] = true
-		g.note("not a Tailwind utility (dropped)", "%s", m[1])
+	probe, drop, err := probeClasses(in.preamble()+"\x00"+in.animateCSS, classes, func(css string) (string, string, error) {
+		return compile(o.tailwind, work, in.preamble()+css)
+	})
+	if err != nil {
+		return "", err
+	}
+	for _, c := range sortedKeys(drop) {
+		g.note("not a Tailwind utility (dropped)", "%s", c)
 	}
 	g.props = propSets(probe, classes)
 	g.allProps = propSetsOf(probe, classes, true)

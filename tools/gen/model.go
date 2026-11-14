@@ -76,6 +76,9 @@ type gen struct {
 	unsafe    []error
 	where     string
 	renderers map[*function][]*elem
+	noted     map[string]map[string]bool
+	partIndex map[[6]string][]*part
+	indexed   int
 }
 
 var (
@@ -93,7 +96,19 @@ func newGen(sources map[string]*source, styles map[string]string, manual map[str
 
 func (g *gen) note(kind, format string, args ...any) {
 	msg := fmt.Sprintf(format, args...)
-	if !slices.Contains(g.notes[kind], msg) {
+	seen := g.noted[kind]
+	if seen == nil || len(seen) != len(g.notes[kind]) {
+		seen = map[string]bool{}
+		for _, m := range g.notes[kind] {
+			seen[m] = true
+		}
+		if g.noted == nil {
+			g.noted = map[string]map[string]bool{}
+		}
+		g.noted[kind] = seen
+	}
+	if !seen[msg] {
+		seen[msg] = true
 		g.notes[kind] = append(g.notes[kind], msg)
 	}
 }
@@ -720,8 +735,16 @@ func sameLayers(a, b []layer) bool {
 }
 
 func (g *gen) addPart(p *part) {
-	for _, q := range g.parts {
-		if q.slot == p.slot && q.context == p.context && q.suffix == p.suffix && q.sel == p.sel && q.marker == p.marker && q.tag == p.tag && sameLayers(q.layers, p.layers) {
+	key := func(q *part) [6]string { return [6]string{q.slot, q.context, q.suffix, q.sel, q.marker, q.tag} }
+	if g.partIndex == nil || g.indexed > len(g.parts) {
+		g.partIndex, g.indexed = map[[6]string][]*part{}, 0
+	}
+	for ; g.indexed < len(g.parts); g.indexed++ {
+		q := g.parts[g.indexed]
+		g.partIndex[key(q)] = append(g.partIndex[key(q)], q)
+	}
+	for _, q := range g.partIndex[key(p)] {
+		if sameLayers(q.layers, p.layers) {
 			return
 		}
 	}

@@ -38,6 +38,7 @@ jobs:
       - name: Build the generated files
         env:
           NO_COLOR: "1"
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           SHADCN_SRC="$RUNNER_TEMP/shadcn" go run ./tools/gen build
           git diff --exit-code

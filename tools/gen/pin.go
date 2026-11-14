@@ -221,7 +221,12 @@ func curl(url, dest string) error {
 	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 		return err
 	}
-	out, err := exec.Command("curl", "-sSfL", "--proto", "=https", "--proto-redir", "=https", "--max-time", "60", "-o", dest, url).CombinedOutput()
+	cmd := exec.Command("curl", "-sSfL", "--proto", "=https", "--proto-redir", "=https", "--max-time", "60", "-o", dest, url)
+	if token := os.Getenv("GITHUB_TOKEN"); token != "" && strings.HasPrefix(url, "https://api.github.com/") {
+		cmd.Args = append(cmd.Args, "-H", "@-")
+		cmd.Stdin = strings.NewReader("Authorization: Bearer " + token + "\n")
+	}
+	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("%s: %v %s", url, err, out)
 	}

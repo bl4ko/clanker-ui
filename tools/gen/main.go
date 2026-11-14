@@ -131,6 +131,7 @@ func main() {
 				log.Fatal(err)
 			}
 		}
+		os.Unsetenv("GITHUB_TOKEN")
 		os.Args = append([]string{os.Args[0], "-src", src, "-out", kitStyles[0].file}, os.Args[2:]...)
 	}
 	var o options

@@ -75,6 +75,7 @@ jobs:
       - name: Build the generated files
         env:
           NO_COLOR: "1"
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           SHADCN_SRC="$RUNNER_TEMP/shadcn" go run ./tools/gen build
           git ls-files -z -o -i --exclude-standard -- dist 'clanker-ui-*.css' | tar -cf "$RUNNER_TEMP/generated.tar" --null -T -
@@ -106,6 +107,7 @@ jobs:
       - name: Generated files are reproducible and clanker-ui.css is current
         env:
           NO_COLOR: "1"
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           SHADCN_SRC="$RUNNER_TEMP/shadcn" go run ./tools/gen build
           git diff --exit-code

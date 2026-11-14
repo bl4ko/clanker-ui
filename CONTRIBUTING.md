@@ -15,12 +15,13 @@ Before 1.0 the kit takes no new styles and no new components. Pull requests fix 
   uv run --no-project --with playwright playwright install chromium firefox webkit
   ```
 
-- Optional: the Tailwind CSS CLI for the generator and its tests that compile CSS. Without it, these tests skip. Use the exact version of `tailwindVersion` in `tools/gen/main.go`: download `tailwindcss-<os>-<arch>` of that version from the [Tailwind CSS releases](https://github.com/tailwindlabs/tailwindcss/releases), and pass `-tailwind PATH` to the generator or put it on `PATH` as `tailwindcss`. Homebrew gives only the newest version.
+- The Tailwind CSS CLI for the generator. Only the Nova style `clanker-ui.css` is in git: `go run ./tools/gen build` (network) writes the other styles and `dist/`, and the server and `go test` need them. Use the exact version of `tailwindVersion` in `tools/gen/main.go`: download `tailwindcss-<os>-<arch>` of that version from the [Tailwind CSS releases](https://github.com/tailwindlabs/tailwindcss/releases), and pass `-tailwind PATH` to the generator or put it on `PATH` as `tailwindcss`. Homebrew gives only the newest version.
 
 ## Run and test
 
 ```sh
-DIR=. ADDR=127.0.0.1:8110 go run .
+go run ./tools/gen build
+DIR=. ADDR=127.0.0.1:8110 go run ./server
 go vet ./... && go test ./...
 uv run --no-project --with playwright python -I test/run.py --base-url http://127.0.0.1:8110 --only g1 -k select --themes light --jobs 3 --out out/run
 uv run --no-project --with playwright python -I tools/behavior gate --quick --base-url http://127.0.0.1:8110 --out out/gate

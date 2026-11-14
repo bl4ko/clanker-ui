@@ -17,6 +17,8 @@ concurrency:
 env:
   # renovate: datasource=pypi depName=playwright
   PLAYWRIGHT_VERSION: "1.65.0"
+  TAILWIND_VERSION: "4.3.3"
+  TAILWIND_SHA256: dc61b3ac6b8c9ca874c0cc4c57b2409791a64c5540404ca5f5367360babc313a
 
 jobs:
   plan:
@@ -52,12 +54,9 @@ jobs:
           fi
           python3 -I tools/ci/plan.py "$files"
 
-  go:
+  gen:
     runs-on: ubuntu-26.04
-    timeout-minutes: 15
-    env:
-      TAILWIND_VERSION: "4.3.3"
-      TAILWIND_SHA256: dc61b3ac6b8c9ca874c0cc4c57b2409791a64c5540404ca5f5367360babc313a
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -73,6 +72,48 @@ jobs:
           echo "$TAILWIND_SHA256  $bin/tailwindcss" | sha256sum -c -
           chmod +x "$bin/tailwindcss"
           echo "$bin" >> "$GITHUB_PATH"
+      - name: Build the generated files
+        env:
+          NO_COLOR: "1"
+        run: |
+          SHADCN_SRC="$RUNNER_TEMP/shadcn" go run ./tools/gen build
+          git ls-files -z -o -i --exclude-standard -- dist 'clanker-ui-*.css' | tar -cf "$RUNNER_TEMP/generated.tar" --null -T -
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: generated
+          path: ${{ runner.temp }}/generated.tar
+          retention-days: 1
+          if-no-files-found: error
+
+  go:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+      - name: Install Tailwind CLI
+        run: |
+          bin="$RUNNER_TEMP/bin"
+          mkdir -p "$bin"
+          curl -fsSLo "$bin/tailwindcss" "https://github.com/tailwindlabs/tailwindcss/releases/download/v${TAILWIND_VERSION}/tailwindcss-linux-x64"
+          echo "$TAILWIND_SHA256  $bin/tailwindcss" | sha256sum -c -
+          chmod +x "$bin/tailwindcss"
+          echo "$bin" >> "$GITHUB_PATH"
+      - name: Generated files are reproducible and clanker-ui.css is current
+        env:
+          NO_COLOR: "1"
+        run: |
+          SHADCN_SRC="$RUNNER_TEMP/shadcn" go run ./tools/gen build
+          git diff --exit-code
+          sha256sum dist/* clanker-ui*.css > "$RUNNER_TEMP/generated.sha256"
+          git clean -fdXq -- dist 'clanker-ui-*.css'
+          SHADCN_SRC="$RUNNER_TEMP/shadcn" go run ./tools/gen build
+          sha256sum --strict --quiet -c "$RUNNER_TEMP/generated.sha256"
+          [ -z "$(git status --porcelain)" ]
       - run: go vet ./... && go test ./...
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
@@ -84,13 +125,10 @@ jobs:
           uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I tools/parity/selftest.py
           uv run --no-project --with "playwright==$PLAYWRIGHT_VERSION" python -I test/run.py --self-test
           python3 -I tools/ci/plan.py --self-test
-      - name: Generated CSS is current
+      - name: Docs coverage and example classes are current
         env:
           NO_COLOR: "1"
         run: |
-          go run ./tools/gen fetch -src "$RUNNER_TEMP/shadcn"
-          go run ./tools/gen -src "$RUNNER_TEMP/shadcn" -out clanker-ui.css
-          git diff --exit-code clanker-ui*.css dist
           go run ./tools/gen docs-coverage -src "$RUNNER_TEMP/shadcn"
           go run ./tools/gen utilities -src "$RUNNER_TEMP/shadcn" -content 'docs/content/**/examples/*.{html,js}' -out docs/assets/examples.css
           git diff --exit-code docs/assets/examples.css
@@ -111,7 +149,7 @@ jobs:
 
   browser:
     name: ${{ matrix.engine }} ${{ matrix.id }}
-    needs: plan
+    needs: [plan, gen]
     if: needs.plan.outputs.browser == 'true'
     runs-on: ${{ matrix.engine == 'webkit' && 'macos-26' || 'ubuntu-26.04' }}
     timeout-minutes: 40
@@ -132,6 +170,11 @@ jobs:
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: go.mod
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: generated
+          path: ${{ runner.temp }}
+      - run: tar -xf "$RUNNER_TEMP/generated.tar"
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
           version: "0.13.7"
@@ -149,7 +192,7 @@ jobs:
         run: |
           OUT="$RUNNER_TEMP/out"
           mkdir -p "$OUT"
-          go build -o "$RUNNER_TEMP/srv" .
+          go build -o "$RUNNER_TEMP/srv" ./server
           "$RUNNER_TEMP/srv" -addr 127.0.0.1:8110 -dir "$GITHUB_WORKSPACE" ${KIT:+-kit "$KIT"} > "$OUT/srv.log" 2>&1 &
           for _ in $(seq 60); do
             curl -fsS -o /dev/null http://127.0.0.1:8110/healthz && exit 0
@@ -176,7 +219,7 @@ jobs:
           OUT="$RUNNER_TEMP/out"
           ROOT="$RUNNER_TEMP/pages"
           mkdir -p "$OUT" "$ROOT"
-          go run . -export "$ROOT/clanker-ui" -base /clanker-ui -site-url http://127.0.0.1:8120/clanker-ui/
+          go run ./server -export "$ROOT/clanker-ui" -base /clanker-ui -site-url http://127.0.0.1:8120/clanker-ui/
           uv run --no-project python -I -m http.server 8120 --bind 127.0.0.1 --directory "$ROOT" > "$OUT/http.log" 2>&1 &
           for _ in $(seq 60); do
             curl -fsS -o /dev/null http://127.0.0.1:8120/clanker-ui/ && break
@@ -194,7 +237,7 @@ jobs:
   ci-result:
     name: ci-result
     if: always()
-    needs: [plan, go, gitleaks, browser]
+    needs: [plan, gen, go, gitleaks, browser]
     runs-on: ubuntu-26.04
     timeout-minutes: 5
     steps:

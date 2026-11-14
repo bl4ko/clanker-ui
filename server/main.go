@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"compress/gzip"
 	"crypto/sha256"
-	"embed"
 	"encoding/hex"
 	"errors"
 	"flag"
@@ -21,10 +20,11 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	clankerui "github.com/bl4ko/clanker-ui"
 )
 
-//go:embed clanker-ui* demo docs dist skills/clanker-ui
-var embedded embed.FS
+var embedded = clankerui.Files
 
 const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; require-trusted-types-for 'script'"
 

@@ -121,6 +121,18 @@ func main() {
 		}
 		return
 	}
+	if len(os.Args) > 1 && os.Args[1] == "build" {
+		src := os.Getenv("SHADCN_SRC")
+		if src == "" {
+			src = filepath.Join("out", "shadcn")
+		}
+		if entries, _ := os.ReadDir(src); len(entries) == 0 {
+			if err := fetch(src, "tools/gen/pin.tsv", false); err != nil {
+				log.Fatal(err)
+			}
+		}
+		os.Args = append([]string{os.Args[0], "-src", src, "-out", kitStyles[0].file}, os.Args[2:]...)
+	}
 	var o options
 	flag.StringVar(&o.src, "src", os.Getenv("SHADCN_SRC"), "directory with the pinned inputs (go run ./tools/gen fetch -src DIR)")
 	flag.StringVar(&o.pin, "pin", "tools/gen/pin.tsv", "git blob hashes of the pinned inputs")

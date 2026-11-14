@@ -3,7 +3,7 @@ name: clanker-ui
 description: Build web pages with clanker-ui, the shadcn/ui components (Base UI, Nova style) for plain HTML, CSS, and JavaScript. No build step, no npm, no framework; works under a strict Content-Security-Policy with Trusted Types. Use when a project needs shadcn-style UI without React or a bundler, when it has files named clanker-ui*.css or clanker-ui*.js, when plain HTML (not JSX or TSX) uses shadcn data-slot parts, or when the user mentions clanker-ui.
 license: MIT
 metadata:
-  version: "0.3.0"
+  version: "0.4.0"
   repository: https://github.com/bl4ko/clanker-ui
 ---
 
@@ -27,7 +27,7 @@ References in this skill:
 
 ## 1. Get the files
 
-When the kit files came with this skill, use those files and skip the download. Else use one release version for all files: `gh release download v0.3.0 -R bl4ko/clanker-ui -p 'clanker-ui-*.zip' -p SHA256SUMS`, or `curl -fLO https://github.com/bl4ko/clanker-ui/releases/download/v0.3.0/clanker-ui-0.3.0.zip`. The zip has the readable files, `dist/` (the `.min` files), and this skill.
+When the kit files came with this skill, use those files and skip the download. Else use one release version for all files: `gh release download v0.4.0 -R bl4ko/clanker-ui -p 'clanker-ui-*.zip' -p SHA256SUMS`, or `curl -fLO https://github.com/bl4ko/clanker-ui/releases/download/v0.4.0/clanker-ui-0.4.0.zip`. The zip has the readable files, `dist/` (the `.min` files), and this skill.
 
 Copy the files that the page loads (step 2) and the files they import into one directory, for example `static/vendor/clanker-ui/` with `static/` as the web root. Put the `dist/` files in that directory, not in a subdirectory. Do not change the files. Put your styles in `app.css` and your code in a module such as `app.js`.
 

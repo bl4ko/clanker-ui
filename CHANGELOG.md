@@ -4,7 +4,7 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
-## Unreleased
+## 0.4.0 - 2026-11-14
 
 ### Added
 
@@ -17,6 +17,9 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Behavior drift check: the calendar scenario pins a fixed day (`dates.clock.day`, 2026-10-28) in every record and check, so the calendar is compared on each run and no longer goes `stale` on each new shadcn build day. The calendar reference is recorded again on macOS (3 engines, 2 widths, checked twice).
 - Parity tool: the example pages of every style are measured against a reference app, a real shadcn install of that style (`tools/parity/refapp.py`: shadcn CLI, the pinned registry items and package versions, `tailwind-merge`), not against the live example page with its `@layer base` file order. Equal (part, state, theme) pairs on the example pages: Nova 91.7 to 98.9 %, Luma 92.7 to 99.0 %, Lyra 93.2 to 98.8 %, Maia 92.7 to 99.0 %, Mira 91.1 to 98.8 %, Sera 96.8 to 98.6 %, Vega 92.6 to 98.0 %. The `parity` workflow runs it on a pull request with the label `parity-ci`. New parity issues #143 and #144.
 - Smaller kit CSS with the same computed styles: `dist/clanker-ui.min.css` 634,103 to 599,426 bytes (gzip 58,122 to 55,868, brotli 40,363 to 39,023), `dist/clanker-ui-core.min.css` 90,748 to 87,543 bytes, and the same for the other styles. The generator merges rules with the same selector and `@media` blocks with the same condition and parts where the cascade order permits, and drops `@property` rules that nothing uses. All `--tw-*` definitions and reads stay, so a Tailwind utility on a kit part composes with the kit value as before. `tools/gen/guard` compares every computed style of the old and the new CSS in Chromium, Firefox, and WebKit.
+- Tooling: Playwright 1.65.0 (Chromium 158, Firefox 159, WebKit 27.2) in CI and the parity workflow (#147); Node 26 in the parity workflow (#148).
+- Behavior references: the carousel reference is recorded again on Playwright 1.65.0 (#149).
+- Tests: `docs.docs_sidebar_scroll_restore` accepts the whole-pixel scroll restore of Firefox (#122); `g4.trace` waits for the end of the trace icon rotation (#151).
 
 ### Fixed
 
@@ -32,6 +35,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Design lint `empty-region`: a start-aligned row of three or more columns (a board) is not checked, and a start-aligned item no longer gets the hint "align the row to start" (#131).
 - Catalog: an attribute that the kit JavaScript only reads (`data-sticky-header` of `table-container`, `data-layout` of `page`) is a Write attribute, not State, so agents that follow the skill write it (#128).
 - Icon size utilities (`[&_svg:not([class*='size-'])]:size-*`) of different parts are written in the Tailwind order (smaller size first), as in a shadcn install, so a button icon in a Lyra marker is 16 px like the button, not 14 px (#144).
+- Generator: a base class stays when a later variant class does not set all of its properties (a base `size-6` with a later `w-full` lost its height) (#141).
 
 ### Docs
 

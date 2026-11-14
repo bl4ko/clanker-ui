@@ -1,7 +1,7 @@
 {
   "$schema": "./clanker-ui.schema.json",
   "name": "clanker-ui",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "clanker-ui is a dependency-free port of shadcn/ui (the base-nova style on Base UI) for plain HTML, CSS, and JavaScript. It has no build step, no npm, no framework, and needs no CDN. You write the shadcn markup with `data-slot` attributes, and the kit adds the behavior. Everything runs under a strict Content Security Policy with Trusted Types.",
   "license": "MIT",
   "repository": "https://github.com/bl4ko/clanker-ui",

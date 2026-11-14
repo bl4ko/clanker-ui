@@ -341,6 +341,7 @@ func run(o options) (string, error) {
 		g.note("not a Tailwind utility (dropped)", "%s", m[1])
 	}
 	g.props = propSets(probe, classes)
+	g.allProps = propSetsOf(probe, classes, true)
 	in.components = g.emitComponents(kit, primaries(probe, classes), drop)
 	css, stderr, err := compile(o.tailwind, work, in.css())
 	if err != nil {

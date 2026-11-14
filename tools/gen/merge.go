@@ -69,13 +69,17 @@ func primaries(compiled string, classes []string) map[string]string {
 }
 
 func propSets(compiled string, classes []string) map[string][]string {
+	return propSetsOf(compiled, classes, false)
+}
+
+func propSetsOf(compiled string, classes []string, all bool) map[string][]string {
 	out := map[string][]string{}
 	for _, m := range probeRule.FindAllStringSubmatch(compiled, -1) {
 		var props []string
 		for _, decl := range strings.Split(m[2], ";") {
 			prop, val, ok := strings.Cut(strings.TrimSpace(decl), ":")
 			prop = strings.TrimSpace(prop)
-			if !ok || prop == "" || prop == "content" && strings.TrimSpace(val) == "var(--tw-content)" || prop == "--tw-leading" || prop == "--tw-font-weight" || prop == "--tw-tracking" {
+			if !ok || prop == "" || !all && (prop == "content" && strings.TrimSpace(val) == "var(--tw-content)" || prop == "--tw-leading" || prop == "--tw-font-weight" || prop == "--tw-tracking") {
 				continue
 			}
 			props = append(props, prop)
@@ -258,6 +262,9 @@ func (g *gen) rules(p *part, prim map[string]string, drop map[string]bool) []rul
 	whole := func(later, earlier string) bool {
 		return g.props == nil || prim[earlier] == "font-size" || covers(g.props[later], g.props[earlier])
 	}
+	shadowed := func(later, earlier string) bool {
+		return !iconSize.MatchString(earlier) && covers(g.allProps[later], g.allProps[earlier])
+	}
 	for _, c := range merged[""] {
 		k, ok := groupKey(c, prim)
 		var over []string
@@ -270,7 +277,7 @@ func (g *gen) rules(p *part, prim map[string]string, drop map[string]bool) []rul
 				if kx, okx := groupKey(x, prim); okx && kx == k {
 					switch {
 					case pos[other][x] > pos[""][c] && whole(x, c):
-						later = true
+						later = later || !shadowed(x, c)
 					case pos[other][x] < pos[""][c] && whole(c, x):
 						if beaten[other] == nil {
 							beaten[other] = map[string]bool{}

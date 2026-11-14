@@ -493,7 +493,24 @@ func TestRulesOrder(t *testing.T) {
 	if len(got) != 3 || got[1].cond != ":not("+cond+")" || !slices.Equal(got[2].classes, []string{"rounded-md"}) {
 		t.Errorf("a later variant class wins where it applies: %+v", got)
 	}
+	g.props = map[string][]string{"rounded-lg": {"border-radius"}, "rounded-md": {"border-radius"}}
+	g.allProps = g.props
+	got = g.rules(p, prim, nil)
+	if len(got) != 2 || !slices.Equal(got[0].classes, []string{"rounded-lg"}) || !slices.Equal(got[1].classes, []string{"rounded-md"}) {
+		t.Errorf("a base class stays in the base rule when the later variant class sets all its properties: %+v", got)
+	}
+	icon, small := "[&_svg:not([class*='size-'])]:size-4", "[&_svg:not([class*='size-'])]:size-3"
+	g.props = map[string][]string{"text-sm": {"font-size", "line-height"}, "text-[10px]": {"font-size"}, "leading-none": {"line-height"}, "leading-5": {"line-height"}, icon: {"width", "height"}, small: {"width", "height"}}
+	g.allProps = map[string][]string{"text-sm": {"font-size", "line-height"}, "text-[10px]": {"font-size"}, "leading-none": {"--tw-leading", "line-height"}, "leading-5": {"line-height"}, icon: {"width", "height"}, small: {"width", "height"}}
+	for _, pair := range [][2]string{{"text-sm", "text-[10px]"}, {"leading-none", "leading-5"}, {icon, small}} {
+		p.layers = []layer{{classes: []string{pair[0]}}, {cond: cond, classes: []string{pair[1]}}}
+		got = g.rules(p, map[string]string{"text-sm": "font-size", "text-[10px]": "font-size", "leading-none": "line-height", "leading-5": "line-height", icon: "width", small: "width"}, nil)
+		if len(got) != 3 || got[1].cond != ":not("+cond+")" || !slices.Equal(got[1].classes, []string{pair[0]}) {
+			t.Errorf("%s stays out of the variant state of %s (a property stays, or icon size rules are in Tailwind order): %+v", pair[0], pair[1], got)
+		}
+	}
 	g.props = map[string][]string{"size-6": {"width", "height"}, "w-full": {"width"}}
+	g.allProps = nil
 	p.layers = []layer{{classes: []string{"size-6"}}, {cond: cond, classes: []string{"w-full"}}}
 	got = g.rules(p, map[string]string{"size-6": "width", "w-full": "width"}, nil)
 	if len(got) != 2 || !slices.Equal(got[0].classes, []string{"size-6"}) || !slices.Equal(got[1].classes, []string{"w-full", "size-6"}) {

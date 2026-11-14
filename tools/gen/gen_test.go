@@ -347,7 +347,7 @@ func TestDropFallbacks(t *testing.T) {
 	if n := dropFallbacks(tree); n != 3 {
 		t.Errorf("dropped %d", n)
 	}
-	want := "@layer properties {\n}\n@layer c {\n  .a {\n    color: red;\n  }\n  .a {\n    background-color: color-mix(in oklab, var(--x) 50%, transparent);\n  }\n  .b {\n    outline-color: color-mix(in oklab, var(--y) 50%, transparent);\n  }\n}\n"
+	want := "@layer c {\n  .a {\n    color: red;\n  }\n  .a {\n    background-color: color-mix(in oklab, var(--x) 50%, transparent);\n  }\n  .b {\n    outline-color: color-mix(in oklab, var(--y) 50%, transparent);\n  }\n}\n"
 	if got := tree.String(); got != want {
 		t.Errorf("got\n%s\nwant\n%s", got, want)
 	}

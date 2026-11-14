@@ -119,7 +119,7 @@ Behavior:
 | --- | --- |
 | Nightly run, `workflow_dispatch` (release check), or label `full-ci` | All: Chromium, Firefox, and WebKit in light and dark, `--rtl`, `--reduced-motion`, the minified kit, and the exported pages. |
 | Kit, generator, server, `test/run.py`, `ci.yml`, `tools/ci/plan.py`, or any other file | Pull request tier: Chromium and Firefox in light and dark, WebKit light (5 macOS jobs), a minified-kit smoke set, and the exported pages. |
-| Only component files: lines of `clanker-ui.js`, `clanker-ui.css`, or `tools/gen/kit.css` that belong to a component, the other kit files, `docs/content/`, `docs/assets/`, `docs/nav.json`, `docs/templates/`, `demo/` (with `dist/`, test modules, Go test files, and docs) | The pull request tier, only the checks that ran the changed code or showed the changed component in the last measured run (`tools/ci/impact.tsv`), and checks that are not in the file. A kit file change keeps all 5 WebKit jobs (the map has no WebKit measurement). The minified-kit smoke set keeps `foundation` and the selected rest. The exported pages run as two jobs, light and dark. Core JS, tokens, base CSS, utilities, an unmeasured file, and a map that was measured on other tests, demo, or kit files count as "any other file". |
+| Only component files: lines of `clanker-ui.js`, `clanker-ui.css`, or `tools/gen/kit.css` that belong to a component, the other kit files, `docs/content/`, `docs/assets/`, `docs/nav.json`, `docs/templates/`, `demo/` (with test modules, Go test files, and docs) | The pull request tier, only the checks that ran the changed code or showed the changed component in the last measured run (`tools/ci/impact.tsv`), and checks that are not in the file. A kit file change keeps all 5 WebKit jobs (the map has no WebKit measurement). The minified-kit smoke set keeps `foundation` and the selected rest. The exported pages run as two jobs, light and dark. Core JS, tokens, base CSS, utilities, an unmeasured file, and a map that was measured on other tests, demo, or kit files count as "any other file". |
 | Only `test/<module>_test.py`, `test/behavior/`, `test/split/`, `test/spike/`, `test/lint/`, or `skills/clanker-ui/references/design-lint.js` (Go test files and docs can be in the same change) | The pull request tier, only for the changed modules. `test/lint/` and `design-lint.js` run the `lint` and `pages` modules. |
 | Only Markdown, `docs/*.txt`, `skills/`, licenses, issue templates, `release.yml`, `pages.yml`, or `renovate.json` | Only the exported pages in Chromium. |
 | Only Go test files (`*_test.go`) | None. |
@@ -133,6 +133,29 @@ The other styles and `dist/` are not in git. The `go` job builds them from the p
 `tools/ci/impact.py` maps a change to keys. A JS line maps to its top-level statement (split and named as in `tools/gen dist`): a statement with functions needs the checks that ran it; a data statement (`const x = new Map()`) needs the checks that ran the statements that use it. A statement that no check ran falls back to its component. A CSS line maps to the `data-slot` components of its rule (all of them must be shown), a docs file to its page. `tools/ci/impact.tsv` lists, for groups of checks, the keys that they touched: statements that ran (Chromium coverage, load time included), rendered `data-slot` elements (outside `[hidden]`), and the fetched files and pages. `test/run.py --impact` prints these lines; it changes no result. The first line of the file has a hash of `test/`, `demo/`, and the kit files of the measured commit. When the base of a pull request has other files, the plan uses the pull request tier. Refresh the file after a change of these files: run the pull request tier with `--impact`, then `python3 -I tools/ci/impact.py build tools/ci/impact.tsv <measured commit> <log directories>`. To plan a local pull request run, set `EVENT=pull_request` and `PLAN_BASE=<base commit>` and pass the changed files.
 
 `plan.py` splits each engine, theme, and mode into jobs of about equal time. `tools/ci/durations.tsv` gives the seconds of each check from a full run; a check that is not in the file gets the median. The file changes only the split, not the checks that run. `shards()` splits a matrix again into a given number of runner jobs with the same split code; `test/run.py --self-test` checks that `plan.py` finds the same checks as the runner.
+
+### Without GitHub Actions
+
+When Actions is not available (billing lock, outage), run the `go` and `browser` jobs of `ci.yml` by hand in a clean clone of the pull request head. You need Go, `uv`, and the Tailwind CSS CLI of the pinned version in `$TAILWIND` ("Generated CSS").
+
+```sh
+PW=$(sed -nE 's/^ *PLAYWRIGHT_VERSION: "([0-9.]+)"/\1/p' .github/workflows/ci.yml)
+py() { uv run --no-project --python 3.13 --with "playwright==$PW" python -I "$@"; }
+go run ./tools/gen build -tailwind "$TAILWIND" && git diff --exit-code
+go vet ./... && go test ./...
+py tools/parity/selftest.py && py test/run.py --self-test && python3 -I tools/ci/plan.py --self-test
+go run ./tools/gen docs-coverage -src out/shadcn
+go run ./tools/gen utilities -src out/shadcn -content 'docs/content/**/examples/*.{html,js}' -out docs/assets/examples.css -tailwind "$TAILWIND"
+git diff --exit-code
+EVENT=workflow_dispatch GITHUB_OUTPUT=out/plan.txt GITHUB_STEP_SUMMARY=/dev/null python3 -I tools/ci/plan.py
+uv run --no-project --with "playwright==$PW" playwright install chromium
+go build -o out/srv ./server && out/srv -addr 127.0.0.1:8110 -dir . &
+py test/run.py --base-url http://127.0.0.1:8110 --engines chromium --only g1 --themes light --retry --out out/run
+```
+
+- Each entry of `include` on the `matrix=` line of `out/plan.txt` is one browser job (a shard). Run it with `--engines <engine> --only <only> -k <k> --themes <themes>`, add `--rtl` or `--reduced-motion` when `mode` is set, and start the server with `-kit min` when `kit` is `min`. An entry with `pages` also needs the "Check exported pages" step of the `browser` job. `EVENT=workflow_dispatch` gives all jobs; for the pull request tier, set `EVENT=pull_request PLAN_BASE=$(git merge-base origin/main HEAD)` and pass a file with `git diff --name-only --no-renames "$PLAN_BASE" HEAD`.
+- Not covered: `gitleaks` (with Docker, run the `docker run` line of that job), the second build of the `go` job that proves the generated bytes are reproducible, `ci-result`, and the macOS runners of the WebKit jobs (a local WebKit run uses the Playwright WebKit of your host).
+- Stop the server when you are done.
 
 ## Demo and tests
 

@@ -66,6 +66,7 @@ type gen struct {
 	rootSels  map[*function]string
 	shadows   []shadow
 	props     map[string][]string
+	allProps  map[string][]string
 	unmapped  []*part
 	fps       map[string]string
 	ownGroups map[string]bool

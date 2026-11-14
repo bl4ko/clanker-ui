@@ -243,7 +243,7 @@ func buildDist(root string) (*distResult, error) {
 	for _, s := range kitStyles[1:] {
 		css, err := read(s.file)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w (build the generated styles: go run ./tools/gen build)", err)
 		}
 		alt := &distResult{files: res.files, cssBody: map[string]string{}}
 		if err := t.distCSS(alt, css, strings.TrimSuffix(s.file, ".css")); err != nil {

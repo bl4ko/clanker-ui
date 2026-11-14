@@ -124,9 +124,23 @@ func TestTailwindVersionPins(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	m := regexp.MustCompile(`(?m)^\s*TAILWIND_VERSION:\s*"?([^"\s]+)"?\s*$`).FindAllSubmatch(ci, -1)
+	ver := regexp.MustCompile(`(?m)^\s*TAILWIND_VERSION:\s*"?([^"\s]+)"?\s*$`)
+	m := ver.FindAllSubmatch(ci, -1)
 	if len(m) != 1 || string(m[0][1]) != tailwindVersion {
 		t.Errorf("TAILWIND_VERSION in ci.yml must be tailwindVersion %s (change both and the SHA-256): %q", tailwindVersion, m)
+	}
+	sha := regexp.MustCompile(`(?m)^\s*TAILWIND_SHA256:\s*(\S+)\s*$`)
+	want := sha.FindSubmatch(ci)
+	for _, name := range []string{"release.yml", "pages.yml", "parity.yml"} {
+		w, err := os.ReadFile("../../.github/workflows/" + name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		v := ver.FindSubmatch(w)
+		s := sha.FindSubmatch(w)
+		if v == nil || string(v[1]) != tailwindVersion || s == nil || want == nil || string(s[1]) != string(want[1]) {
+			t.Errorf("%s: TAILWIND_VERSION and TAILWIND_SHA256 must be the ones in ci.yml", name)
+		}
 	}
 	notices, err := os.ReadFile("../../THIRD_PARTY_NOTICES")
 	if err != nil {

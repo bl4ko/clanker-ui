@@ -7,6 +7,10 @@ on:
 permissions:
   contents: read
 
+env:
+  TAILWIND_VERSION: "4.3.3"
+  TAILWIND_SHA256: dc61b3ac6b8c9ca874c0cc4c57b2409791a64c5540404ca5f5367360babc313a
+
 concurrency:
   group: release
   cancel-in-progress: false
@@ -37,6 +41,22 @@ jobs:
         with:
           go-version-file: go.mod
           cache: false
+      - name: Install Tailwind CLI
+        run: |
+          bin="$RUNNER_TEMP/bin"
+          mkdir -p "$bin"
+          curl -fsSLo "$bin/tailwindcss" "https://github.com/tailwindlabs/tailwindcss/releases/download/v${TAILWIND_VERSION}/tailwindcss-linux-x64"
+          echo "$TAILWIND_SHA256  $bin/tailwindcss" | sha256sum -c -
+          chmod +x "$bin/tailwindcss"
+          echo "$bin" >> "$GITHUB_PATH"
+      - name: Build the generated files
+        env:
+          NO_COLOR: "1"
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          SHADCN_SRC="$RUNNER_TEMP/shadcn" go run ./tools/gen build
+          git diff --exit-code
+          [ -z "$(git status --porcelain)" ]
       - run: go vet ./... && go test ./...
       - name: Pack
         run: |

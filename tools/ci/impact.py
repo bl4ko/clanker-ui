@@ -10,7 +10,7 @@ from urllib.parse import urlsplit
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 ANCHOR = "scan(document.documentElement)"
 SPLIT = {"clanker-ui.js": "js", "clanker-ui.css": "css", "tools/gen/kit.css": "css"}
-KIT_SOURCES = {*SPLIT, "clanker-ui-chart.js", "clanker-ui-code.js", "clanker-ui-theme.js", "clanker-ui-themes.css", "clanker-ui-a11y.css", "clanker-ui-rhea.css"}
+KIT_SOURCES = {*SPLIT, "clanker-ui-chart.js", "clanker-ui-code.js", "clanker-ui-theme.js", "clanker-ui-themes.css", "clanker-ui-a11y.css"}
 SERVED = [*KIT_SOURCES - set(SPLIT), "demo/demo.css", "demo/demo.js", "demo/assets/*", "docs/assets/*"]
 SITE = ["docs/nav.json", "docs/templates/*"]
 SOURCE = ["test", "demo", *sorted(KIT_SOURCES)]

@@ -558,7 +558,7 @@ func TestCommentRules(t *testing.T) {
 			}
 		}
 	}
-	for _, f := range repoFiles(t, "*.go", "tools/gen/*.go") {
+	for _, f := range repoFiles(t, "*.go", "server/*.go", "tools/gen/*.go") {
 		file, err := parser.ParseFile(token.NewFileSet(), f, nil, parser.ParseComments)
 		if err != nil {
 			t.Fatal(err)

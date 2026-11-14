@@ -5,3 +5,11 @@ __pycache__/
 *.merged
 /out/
 /site/
+/dist/
+/clanker-ui-luma.css
+/clanker-ui-lyra.css
+/clanker-ui-maia.css
+/clanker-ui-mira.css
+/clanker-ui-rhea.css
+/clanker-ui-sera.css
+/clanker-ui-vega.css

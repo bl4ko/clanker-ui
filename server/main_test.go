@@ -13,6 +13,13 @@ import (
 	"testing/fstest"
 )
 
+func TestMain(m *testing.M) {
+	if err := os.Chdir(".."); err != nil {
+		panic(err)
+	}
+	os.Exit(m.Run())
+}
+
 func request(t *testing.T, h http.Handler, method, path string, headers ...string) *httptest.ResponseRecorder {
 	t.Helper()
 	req := httptest.NewRequest(method, path, nil)

@@ -282,7 +282,7 @@ func (d *docsSite) loadPage(fsys fs.FS, name, href string) error {
 	if front["title"] == "" || front["description"] == "" {
 		return fmt.Errorf("%s: front matter needs title and description", name)
 	}
-	d.pages[href] = &docPage{Href: href, Title: front["title"], Description: front["description"], Source: body}
+	d.pages[href] = &docPage{Href: href, Title: front["title"], Description: front["description"], Source: catalogMark.ReplaceAllString(body, "")}
 	return nil
 }
 

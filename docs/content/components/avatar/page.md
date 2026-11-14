@@ -133,3 +133,13 @@ A row of avatars that overlap.
 ### Avatar Group Count
 
 The count at the end of a group, for example `+3` or an icon.
+
+### Events
+
+{{catalog "events"}}
+
+| Event | Target | Detail |
+| --- | --- | --- |
+| `avatar:change` | `avatar` | `{ value }`: `loaded` or `error` |
+
+{{/catalog}}

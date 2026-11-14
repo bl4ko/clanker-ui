@@ -15,6 +15,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 - Table sort: `data-sort-first="descending"` on a `table-head` starts that column descending (numbers and dates with the largest or newest value); `data-sort-toggle` on the `table` (or a head) gives a two-state cycle without the return to the first order; `tableSort(head)` uses the first direction of the head. The cell `data-value` (already the sort value) is documented for compact numbers and for empty values that show text (#156).
 - Docs: `skills/clanker-ui/references/setup.md` "Updates" shows how Renovate finds a new release from the file header and how a job on the pull request replaces the whole file set with the checked release files (#157).
+- Docs: `go run ./tools/gen catalog` writes the group table of the README and the docs home, and the Events and JavaScript sections of the hand-written docs pages, from the catalog; `go test` fails when one is stale or edited by hand (#159). Drift fixed: the open and close events of Dropdown Menu and Context Menu, the events of Avatar, Command, Input OTP, and Table, the `tableSort` export on the Table page, the Command group files (`forms`), and the full detail notes of `accordion:change` and `checkbox:change`. `setup.md` and the catalog file note: in a clone, `dist/` and the styles other than Nova exist only after `go run ./tools/gen build`.
 
 ## 0.4.0 - 2026-11-14
 

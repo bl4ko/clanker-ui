@@ -13,7 +13,7 @@ The command follows the behavior of [`cmdk`](https://github.com/dip/cmdk) by [Di
 
 Load `clanker-ui.css` and `clanker-ui.js`.
 
-With the minified group files, load `clanker-ui-core.min.css`, `clanker-ui-overlays.min.css`, and their `.min.js` files.
+With the minified group files, load `clanker-ui-core.min.css`, `clanker-ui-forms.min.css`, `clanker-ui-overlays.min.css`, and their `.min.js` files.
 
 ## Usage
 
@@ -103,6 +103,16 @@ The command uses logical properties. Set `dir="rtl"` on `<html>` or on a contain
 | `data-value` | The value for filtering and events | The text |
 | `data-keywords` | Extra search words: `"a, b"` | |
 | `data-disabled` | Boolean | |
+
+### Events
+
+{{catalog "events"}}
+
+| Event | Target | Detail |
+| --- | --- | --- |
+| `command:select` | `command` | `{ value, item }` |
+
+{{/catalog}}
 
 ### Keyboard and Accessibility
 

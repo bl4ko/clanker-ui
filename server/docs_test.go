@@ -698,6 +698,9 @@ func TestDocsPagesLinkMarkdownAndLLMs(t *testing.T) {
 		if ref, ok := d.refs[href]; ok && d.pages[href] == nil && md.Body.String() != string(ref) {
 			t.Errorf("%s.md is not the component reference", href)
 		}
+		if strings.Contains(md.Body.String(), "{{catalog ") || strings.Contains(md.Body.String(), "{{/catalog}}") {
+			t.Errorf("%s.md has a catalog region mark", href)
+		}
 	}
 	if rec := request(t, h, http.MethodGet, "/llms.txt"); rec.Code != http.StatusOK || rec.Header().Get("Content-Type") != contentTypes[".txt"] {
 		t.Errorf("/llms.txt: status %d, Content-Type %q", rec.Code, rec.Header().Get("Content-Type"))

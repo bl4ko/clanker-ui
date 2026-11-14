@@ -94,9 +94,13 @@ Like Base UI, a single accordion can close its open item, so all items can be cl
 
 ### Events
 
+{{catalog "events"}}
+
 | Event | Target | Detail |
 | --- | --- | --- |
-| `accordion:change` | `accordion` | `{ value }` |
+| `accordion:change` | `accordion` | `{ value }` (string, or array for `multiple`) |
+
+{{/catalog}}
 
 ### Keyboard and Accessibility
 

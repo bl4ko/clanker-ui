@@ -90,9 +90,13 @@ The kit sets `role`, `aria-checked`, `data-checked` or `data-unchecked`, `data-s
 
 ### Events
 
+{{catalog "events"}}
+
 | Event | Target | Detail |
 | --- | --- | --- |
-| `checkbox:change` | `checkbox` | `{ checked, value }` |
+| `checkbox:change` | `checkbox` | `{ checked, value }` (`value` is `checked`) |
+
+{{/catalog}}
 
 ### Keyboard and Accessibility
 

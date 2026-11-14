@@ -163,6 +163,8 @@ Put overrides in `app.css` after the kit files, without a layer.
 | `clanker-ui-chart.min.js` | The chart module. Imports `./clanker-ui-core.min.js` |
 | `clanker-ui-code.min.js` | The syntax color module. Imports `./clanker-ui-core.min.js` |
 
+<!-- catalog:groups -->
+
 | Group | Components | Needs |
 | --- | --- | --- |
 | `core` | button, separator, direction, theme, input, textarea, label, kbd, card, badge, alert, table, skeleton, spinner, empty, progress, aspect-ratio, page, site-header, section-cards, stat-grid, data-table, brand, text-stack, card-grid, cover, rating |  |
@@ -171,6 +173,8 @@ Put overrides in `app.css` after the kit files, without a layer.
 | `layout` | avatar, accordion, collapsible, tabs, breadcrumb, pagination, scroll-area, resizable, sidebar, carousel, item | sidebar: `overlays` |
 | `chat` | message, bubble, attachment, message-scroller, trace, marker, questionnaire, code-block |  |
 | `chart` | chart |  |
+
+<!-- /catalog:groups -->
 
 1. Make a list of the components that the app uses and find their groups. Add the groups in the "Needs" column: these components put parts of another group in the page. This command lists the groups, with their "Needs", of the `data-slot` parts in the HTML files of the current folder. It reads `clanker-ui.json` (in the zip at `skills/clanker-ui/references/`):
 

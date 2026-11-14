@@ -70,16 +70,7 @@ func distMain(args []string) error {
 	fset := flag.NewFlagSet("dist", flag.ExitOnError)
 	root := fset.String("root", ".", "repository root with the readable kit files")
 	out := fset.String("out", "", "output directory (default: <root>/dist)")
-	table := fset.Bool("table", false, "print the Markdown table of the groups (README and docs) and stop")
 	fset.Parse(args)
-	if *table {
-		t, err := readGroups(filepath.Join(*root, "tools", "gen", "groups.tsv"))
-		if err != nil {
-			return err
-		}
-		fmt.Print(t.markdown())
-		return nil
-	}
 	dir := *out
 	if dir == "" {
 		dir = filepath.Join(*root, "dist")

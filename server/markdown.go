@@ -40,6 +40,7 @@ var (
 	mdSafeURL   = regexp.MustCompile(`^(https?://[^\s"'<>]+|mailto:[^\s"'<>]+|[A-Za-z0-9._~%/#?=&+-]+)$`)
 	mdTags      = regexp.MustCompile(`<[^>]*>`)
 	mdRootLink  = regexp.MustCompile(`\]\((/[^()\s]*)\)`)
+	catalogMark = regexp.MustCompile(`(?m)^\{\{/?catalog(?: "[a-z]+")?\}\}\n\n?`)
 )
 
 func parseTag(line string) (mdTag, bool, error) {

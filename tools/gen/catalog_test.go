@@ -661,3 +661,26 @@ func TestCatalogReadOnlyAttrsAreWrite(t *testing.T) {
 		t.Error("table-container: data-sticky-header is not a Write attribute")
 	}
 }
+
+func TestCatalogRegions(t *testing.T) {
+	testCatalog(t)
+	for name, mark := range map[string]string{"README.md": "<!-- catalog:groups -->", "docs/content/index/page.md": `{{catalog "groups"}}`, "docs/content/components/dropdown-menu/page.md": `{{catalog "events"}}`, "docs/content/components/calendar/page.md": `{{catalog "exports"}}`} {
+		if !strings.Contains(string(catFilesOut[name]), mark+"\n") {
+			t.Errorf("%s has no %s region", name, mark)
+		}
+	}
+	gen := func(kind string) (string, error) { return "| " + kind + " |\n", nil }
+	src := "a\n\n<!-- catalog:groups -->\n\n| hand edit |\n\n<!-- /catalog:groups -->\n\nb\n{{catalog \"events\"}}\n{{/catalog}}\n"
+	out, err := fillRegions("x", src, gen)
+	if want := "a\n\n<!-- catalog:groups -->\n\n| groups |\n\n<!-- /catalog:groups -->\n\nb\n{{catalog \"events\"}}\n\n| events |\n\n{{/catalog}}\n"; err != nil || out != want {
+		t.Errorf("fillRegions:\n%q, %v\nwant\n%q", out, err, want)
+	}
+	if got, want := catalogMark.ReplaceAllString(out, ""), "a\n\n| groups |\n\nb\n| events |\n\n"; got != want {
+		t.Errorf("marks not removed: %q, want %q", got, want)
+	}
+	for _, bad := range []string{"<!-- catalog:groups -->\n", "{{/catalog}}\n", "{{catalog \"events\"}}\n<!-- /catalog:events -->\n", "<!-- catalog:groups -->\n<!-- catalog:groups -->\n<!-- /catalog:groups -->\n"} {
+		if _, err := fillRegions("x", bad, gen); err == nil {
+			t.Errorf("fillRegions(%q) gives no error", bad)
+		}
+	}
+}

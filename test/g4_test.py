@@ -1356,6 +1356,7 @@ def check_trace(t):
     t.settle()
     page.wait_for_function("() => document.querySelector('#trace-version [data-slot=trace-collapsible-content]').getBoundingClientRect().height > 0")
     assert body.is_visible()
+    page.wait_for_function("t => getComputedStyle(t.lastElementChild).rotate === '90deg'", arg=trigger.element_handle(), timeout=2000)
     assert trigger.evaluate("b => getComputedStyle(b.lastElementChild).rotate") == "90deg"
     keyboard_mode(page)
     trigger.focus()

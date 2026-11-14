@@ -13,7 +13,7 @@ The command follows the behavior of [`cmdk`](https://github.com/dip/cmdk) by [Di
 
 Load `clanker-ui.css` and `clanker-ui.js`.
 
-With the minified group files, load `clanker-ui-core.min.css`, `clanker-ui-overlays.min.css`, and their `.min.js` files.
+With the minified group files, load `clanker-ui-core.min.css`, `clanker-ui-forms.min.css`, `clanker-ui-overlays.min.css`, and their `.min.js` files.
 
 ## Usage
 

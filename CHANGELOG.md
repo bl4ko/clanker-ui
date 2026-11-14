@@ -6,6 +6,10 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ## Unreleased
 
+### Changed
+
+- Smaller kit CSS with the same computed styles: `dist/clanker-ui.min.css` 599,808 to 595,411 bytes (gzip 55,981 to 55,591, brotli 39,178 to 38,935), and the same for the other styles. A base rule of a part no longer has a `:not(...)` copy for a variant whose rule sets all the same properties (Nova: 105 to 30 such rules); the variant rule overrides the base rule as before. `tools/gen/guard` compares every computed style of the old and the new CSS in Chromium, Firefox, and WebKit.
+
 ### Added
 
 - Table sort: `data-sort-first="descending"` on a `table-head` starts that column descending (numbers and dates with the largest or newest value); `data-sort-toggle` on the `table` (or a head) gives a two-state cycle without the return to the first order; `tableSort(head)` uses the first direction of the head. The cell `data-value` (already the sort value) is documented for compact numbers and for empty values that show text (#156).

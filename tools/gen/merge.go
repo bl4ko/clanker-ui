@@ -46,6 +46,29 @@ func probeCSS(classes []string, drop map[string]bool) string {
 	return b.String()
 }
 
+var probeUnknown = map[string][]string{}
+
+func probeClasses(key string, classes []string, compile func(css string) (string, string, error)) (string, map[string]bool, error) {
+	drop := map[string]bool{}
+	for _, c := range probeUnknown[key] {
+		if slices.Contains(classes, c) {
+			drop[c] = true
+		}
+	}
+	for attempt := 0; ; attempt++ {
+		compiled, stderr, err := compile(probeCSS(classes, drop))
+		if err == nil {
+			return compiled, drop, nil
+		}
+		m := unknownClass.FindStringSubmatch(stderr)
+		if m == nil || attempt > 100 {
+			return "", nil, fmt.Errorf("tailwindcss: %v\n%s", err, stderr)
+		}
+		drop[m[1]] = true
+		probeUnknown[key] = append(probeUnknown[key], m[1])
+	}
+}
+
 func primaries(compiled string, classes []string) map[string]string {
 	out := map[string]string{}
 	for _, m := range probeRule.FindAllStringSubmatch(compiled, -1) {

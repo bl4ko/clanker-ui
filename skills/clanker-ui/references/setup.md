@@ -5,7 +5,7 @@
 - Single files: each kit file is also a release asset, for example `https://github.com/bl4ko/clanker-ui/releases/download/v<version>/clanker-ui.min.css`.
 - A local checkout of the repository: copy the files from its root and from `dist/`.
 
-Check each downloaded file against `SHA256SUMS` (also a release asset): `grep ' clanker-ui-<version>.zip$' SHA256SUMS | shasum -a 256 -c` (Linux: `sha256sum -c`). Optional: `gh attestation verify <file> -R bl4ko/clanker-ui`.
+Check each downloaded file against `SHA256SUMS` (also a release asset): `grep ' clanker-ui-<version>.zip$' SHA256SUMS | shasum -a 256 -c` (Linux: `sha256sum -c`). A release that `release.yml` built has a build provenance attestation: `gh attestation verify <file> -R bl4ko/clanker-ui`. v0.3.0 was released by hand and has none.
 
 The modules import each other by relative path, so all kit files go in one directory.
 

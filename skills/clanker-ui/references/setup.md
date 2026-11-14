@@ -9,6 +9,27 @@ Check each downloaded file against `SHA256SUMS` (also a release asset): `grep ' 
 
 The modules import each other by relative path, so all kit files go in one directory.
 
+## Updates
+
+The first line of each release file is `/*! clanker-ui v<version> | ...`. An update replaces every kit file of the app with the file of the same name from one new release. A changed header alone is not an update, and a mix of two versions breaks the page ("already defined" or a missing export).
+
+Renovate finds new releases from this header with a regex manager:
+
+```json
+{
+  "customType": "regex",
+  "managerFilePatterns": ["/(^|/)clanker-ui[^/]*\\.(css|js)$/"],
+  "matchStrings": ["^/\\*! clanker-ui v(?<currentValue>\\d+\\.\\d+\\.\\d+\\S*) \\|"],
+  "datasourceTemplate": "github-releases",
+  "depNameTemplate": "bl4ko/clanker-ui",
+  "extractVersionTemplate": "^v(?<version>.+)$"
+}
+```
+
+- `config:recommended` ignores `**/vendor/**`. If the kit is in a `vendor/` directory, set `ignorePaths` without that entry.
+- Renovate changes only the headers. A job on the Renovate pull request must replace the files: download `clanker-ui-<version>.zip` and `SHA256SUMS`, check the checksum, run `gh attestation verify <zip> -R bl4ko/clanker-ui --signer-workflow bl4ko/clanker-ui/.github/workflows/release.yml --source-ref refs/tags/v<version>`, and copy each file of the app from the zip root or `dist/`. Add the files that a copied module imports (`./clanker-ui-core.min.js`). Then commit to the pull request branch.
+- Do not auto-merge a kit update. Run the app UI test and look at the app first. An app rule that auto-merges all minor updates comes after the presets; `automergeType: "pr-comment"` in the kit package rule stops the merge.
+
 ## Groups of existing HTML
 
 This command lists the groups, with their "Needs", of the `data-slot` parts in the HTML files of the current folder (use the path of `clanker-ui.json` in this directory):

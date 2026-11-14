@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"cmp"
 	"fmt"
 	"maps"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 )
 
@@ -137,17 +139,28 @@ func (g *gen) emitComponents(k kitMap, prim map[string]string, drop map[string]b
 	slices.SortStableFunc(ordered, func(x, y *part) int {
 		return rank(x) - rank(y)
 	})
+	var chunks []string
+	var icons []int
 	emit := func(p *part, keep func(string) bool) {
 		sel := k.selector(p)
 		for _, r := range g.rules(p, prim, drop) {
-			var cls []string
+			var cls, sizes []string
 			for _, c := range r.classes {
-				if keep(c) {
+				if !keep(c) {
+					continue
+				}
+				if iconSize.MatchString(c) {
+					sizes = append(sizes, c)
+				} else {
 					cls = append(cls, c)
 				}
 			}
 			if len(cls) > 0 {
-				fmt.Fprintf(&b, "  %s%s {\n    @apply %s;\n  }\n", sel, r.cond, strings.Join(cls, " "))
+				chunks = append(chunks, fmt.Sprintf("  %s%s {\n    @apply %s;\n  }\n", sel, r.cond, strings.Join(cls, " ")))
+			}
+			for _, c := range sizes {
+				icons = append(icons, len(chunks))
+				chunks = append(chunks, fmt.Sprintf("  %s%s {\n    @apply %s;\n  }\n", sel, r.cond, c))
 			}
 		}
 	}
@@ -161,12 +174,32 @@ func (g *gen) emitComponents(k kitMap, prim map[string]string, drop map[string]b
 			}
 		}
 	}
+	sorted := make([]string, len(icons))
+	for i, at := range icons {
+		sorted[i] = chunks[at]
+	}
+	slices.SortStableFunc(sorted, func(x, y string) int { return cmp.Compare(iconSizeOf(x), iconSizeOf(y)) })
+	for i, at := range icons {
+		chunks[at] = sorted[i]
+	}
+	b.WriteString(strings.Join(chunks, ""))
+	chunks = nil
+	icons = nil
 	for _, p := range ordered {
 		if rank(p) != 0 {
 			emit(p, all)
 		}
 	}
+	b.WriteString(strings.Join(chunks, ""))
 	return b.String()
+}
+
+var iconSize = regexp.MustCompile(`^\[&_svg:not\(\[class\*='size-'\](?:,\[data-slot\])?\)\]:size-([0-9.]+)$`)
+
+func iconSizeOf(chunk string) float64 {
+	i := strings.LastIndex(chunk, ":size-")
+	v, _ := strconv.ParseFloat(strings.TrimRight(chunk[i+6:], ";\n }"), 64)
+	return v
 }
 
 func (g *gen) boxlessCSS(k kitMap) string {

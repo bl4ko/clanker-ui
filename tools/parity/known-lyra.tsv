@@ -49,26 +49,6 @@ input-group	svg in dropdown-menu-trigger	fill	2	T27 tailwind-merge removed the c
 input-otp	field-description	margin-top	4	C the field description after the label has margin-top 0 in shadcn (nth-last-2:-mt-1 does not apply there) and -4px in the kit; not explained
 input-otp	field[orientation=vertical]	@h	4	C the field description after the label has margin-top 0 in shadcn (nth-last-2:-mt-1 does not apply there) and -4px in the kit; not explained
 input-otp	field[orientation=vertical]	height	4	C the field description after the label has margin-top 0 in shadcn (nth-last-2:-mt-1 does not apply there) and -4px in the kit; not explained
-marker	button	@w	10	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	button	width	10	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	drawer-trigger	@w	10	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	drawer-trigger	width	10	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	marker-content	@w	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	marker-content	width	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	marker[variant=separator]::after	width	8	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	marker[variant=separator]::before	width	8	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	path in button	@h	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	path in button	@w	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	path in drawer-trigger	@h	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	path in drawer-trigger	@w	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	svg in button	@h	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	svg in button	@w	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	svg in button	height	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	svg in button	width	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	svg in drawer-trigger	@h	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	svg in drawer-trigger	@w	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	svg in drawer-trigger	height	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
-marker	svg in drawer-trigger	width	4	K #144 Lyra: the marker icon size beats the button icon size in the kit, Tailwind order gives the button size
 message-scroller	button[size=icon-sm]	margin-left	8	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 message-scroller	card-content	@h	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)
 message-scroller	card-content	@w	2	R7 the example layout widens children by a class substring test that the installed class attribute passes (w-fit, min-w-0, overflow-hidden)

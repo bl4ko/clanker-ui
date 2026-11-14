@@ -88,7 +88,28 @@ func TestHasVariantLimitedToRenderers(t *testing.T) {
 
 func TestParseStylesSkipsComments(t *testing.T) {
 	got := parseStyles(".style-x {\n  .cn-a {\n    @apply p-2;\n  }\n\n  /* .cn-b {\n    @apply -ml-1;\n  } */\n\n  .cn-a:has(> [data-slot=x]) {\n    @apply flex;\n  }\n}\n")
-	if got["cn-a"] != "[&:has(>_[data-slot=x])]:flex p-2" || got["cn-b"] != "" {
-		t.Errorf("parseStyles = %v, want cn-a with the classes of its compound rule under their condition, and no commented rule", got)
+	if got["cn-a"] != "flex p-2" || got["cn-b"] != "" {
+		t.Errorf("parseStyles = %v, want cn-a with the classes of its compound rule without the condition, like the shadcn style map, and no commented rule", got)
+	}
+}
+
+func TestVegaCardContentFlex(t *testing.T) {
+	b, err := os.ReadFile("../../clanker-ui-vega.css")
+	if err != nil {
+		t.Fatal(err)
+	}
+	css := string(b)
+	i := strings.Index(css, "\n  [data-slot=\"card-content\"] {\n")
+	if i < 0 {
+		t.Fatal("no card-content rule in clanker-ui-vega.css")
+	}
+	rule := css[i : i+strings.Index(css[i:], "}")]
+	for _, d := range []string{"display: flex;", "flex-direction: column;", "gap: calc(var(--spacing) * 3);"} {
+		if !strings.Contains(rule, d) {
+			t.Errorf("Vega card-content lacks %q, as in a shadcn install: %s", d, rule)
+		}
+	}
+	if strings.Contains(css, `[data-slot="card-content"]:has( > [data-slot="questionnaire-choices"])`) {
+		t.Error("Vega card-content keeps the :has() condition that the shadcn style map drops")
 	}
 }

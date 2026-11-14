@@ -13,6 +13,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 ### Added
 
 - Table sort: `data-sort-first="descending"` on a `table-head` starts that column descending (numbers and dates with the largest or newest value); `data-sort-toggle` on the `table` (or a head) gives a two-state cycle without the return to the first order; `tableSort(head)` uses the first direction of the head. The cell `data-value` (already the sort value) is documented for compact numbers and for empty values that show text (#156).
+- Docs: `skills/clanker-ui/references/setup.md` "Updates" shows how Renovate finds a new release from the file header and how a job on the pull request replaces the whole file set with the checked release files (#157).
 
 ## 0.4.0 - 2026-11-14
 

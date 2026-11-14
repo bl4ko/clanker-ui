@@ -496,8 +496,19 @@ func TestRulesOrder(t *testing.T) {
 	g.props = map[string][]string{"size-6": {"width", "height"}, "w-full": {"width"}}
 	p.layers = []layer{{classes: []string{"size-6"}}, {cond: cond, classes: []string{"w-full"}}}
 	got = g.rules(p, map[string]string{"size-6": "width", "w-full": "width"}, nil)
-	if len(got) != 2 || !slices.Equal(got[0].classes, []string{"size-6"}) || !slices.Equal(got[1].classes, []string{"w-full"}) {
+	if len(got) != 2 || !slices.Equal(got[0].classes, []string{"size-6"}) || !slices.Equal(got[1].classes, []string{"w-full", "size-6"}) {
 		t.Errorf("a later variant class that sets fewer properties does not remove the base class: %+v", got)
+	}
+	sizes := map[string]string{"flex": "display", "size-6": "width", "w-full": "width"}
+	p.layers = []layer{{classes: []string{"flex"}}, {cond: cond, classes: []string{"size-6"}}, {classes: []string{"w-full"}}}
+	got = g.rules(p, sizes, nil)
+	if len(got) != 2 || !slices.Equal(got[0].classes, []string{"flex", "w-full"}) || !slices.Equal(got[1].classes, []string{"size-6", "w-full"}) {
+		t.Errorf("a later base class that sets fewer properties does not remove the variant class: %+v", got)
+	}
+	p.layers = []layer{{classes: []string{"flex"}}, {cond: cond, classes: []string{"w-full"}}, {classes: []string{"size-6"}}}
+	got = g.rules(p, sizes, nil)
+	if len(got) != 2 || !slices.Equal(got[0].classes, []string{"flex", "size-6"}) || len(got[1].classes) != 0 {
+		t.Errorf("a later base class that sets all properties of the variant class removes it: %+v", got)
 	}
 }
 

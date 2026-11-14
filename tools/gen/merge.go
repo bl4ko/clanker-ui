@@ -254,6 +254,10 @@ func (g *gen) rules(p *part, prim map[string]string, drop map[string]bool) []rul
 	var base []string
 	moved := map[string][]string{}
 	beaten := map[string]map[string]bool{}
+	again := map[string][]string{}
+	whole := func(later, earlier string) bool {
+		return g.props == nil || prim[earlier] == "font-size" || covers(g.props[later], g.props[earlier])
+	}
 	for _, c := range merged[""] {
 		k, ok := groupKey(c, prim)
 		var over []string
@@ -264,14 +268,18 @@ func (g *gen) rules(p *part, prim map[string]string, drop map[string]bool) []rul
 			later := false
 			for _, x := range merged[other] {
 				if kx, okx := groupKey(x, prim); okx && kx == k {
-					if pos[other][x] > pos[""][c] {
-						later = later || g.props == nil || prim[c] == "font-size" || covers(g.props[x], g.props[c])
-					} else {
+					switch {
+					case pos[other][x] > pos[""][c] && whole(x, c):
+						later = true
+					case pos[other][x] < pos[""][c] && whole(c, x):
 						if beaten[other] == nil {
 							beaten[other] = map[string]bool{}
 						}
 						beaten[other][x] = true
 						g.note("class removed like tailwind-merge", "%s: %s (a later base class wins)", p.slot+other, x)
+					case !slices.Contains(again[other], c):
+						again[other] = append(again[other], c)
+						g.note("base class applied again with a variant class of the same group (Tailwind orders the two)", "%s: %s with %s", p.slot+other, c, x)
 					}
 				}
 			}
@@ -302,7 +310,7 @@ func (g *gen) rules(p *part, prim map[string]string, drop map[string]bool) []rul
 				keep = append(keep, x)
 			}
 		}
-		out = append(out, rule{cond, keep})
+		out = append(out, rule{cond, append(keep, again[cond]...)})
 	}
 	return out
 }

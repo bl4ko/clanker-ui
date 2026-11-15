@@ -6,7 +6,7 @@ Group `layout`. Needs `core`. CSS and JS.
 | --- | --- | --- |
 | `accordion` (root) | `data-type` `multiple`, `single` |  |
 | `accordion-content` |  | `data-closed`, `data-open`, `data-state` |
-| `accordion-item` | `data-disabled` any; `data-state` string; `data-value` string |  |
+| `accordion-item` | `data-disabled` boolean; `data-state` string; `data-value` string |  |
 
 Other parts: `accordion-trigger`.
 

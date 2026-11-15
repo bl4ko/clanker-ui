@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -685,6 +686,44 @@ func TestCatalogRegions(t *testing.T) {
 	}
 }
 
+func TestCatalogValuelessAttrsAreBoolean(t *testing.T) {
+	cat := testCatalog(t)
+	var js strings.Builder
+	for _, f := range []string{"clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-code.js"} {
+		js.WriteString(readFile(t, filepath.Join("../..", f)))
+	}
+	flags := map[string]bool{}
+	for _, m := range jsFlagAttr.FindAllStringSubmatch(js.String(), -1) {
+		flags[m[1]] = true
+	}
+	check := func(where string, attrs catAttrs) {
+		for name, v := range attrs {
+			if flags[name] && v == "any" {
+				t.Errorf("%s: %s is a flag that the kit reads with flag(), but the catalog type is any, not boolean", where, name)
+			}
+		}
+	}
+	got := map[string]any{}
+	for _, c := range cat.Components {
+		check(c.Name+" options", c.Options)
+		check(c.Name+" part attributes", c.PartAttributes)
+		for _, p := range c.Parts {
+			check(p.Slot, p.Attributes)
+			for name, v := range p.Attributes {
+				got[p.Slot+" "+name] = v
+			}
+		}
+		for name, v := range c.Options {
+			got[c.Name+" option "+name] = v
+		}
+	}
+	for key, want := range map[string]any{"dropdown-menu-item data-inset": "boolean", "menubar-label data-inset": "boolean", "dropdown-menu-item data-disabled": "boolean", "table option data-label": "any"} {
+		if fmt.Sprint(got[key]) != fmt.Sprint(want) {
+			t.Errorf("%s: type %v, want %v", key, got[key], want)
+		}
+	}
+}
+
 func TestCatalogAuthoredAttrsAreNotState(t *testing.T) {
 	cat := testCatalog(t)
 	parts := map[string]*catPart{}
@@ -722,7 +761,7 @@ func TestCatalogAuthoredAttrsAreNotState(t *testing.T) {
 		t.Fatal(err)
 	}
 	more, _ := filepath.Glob("examples/*.html")
-	for _, f := range append(files, more...) {
+	for _, f := range append(append(files, more...), "../../demo/index.html") {
 		walkNodes(parseFragment(readFile(t, f)), func(n *htmlNode) {
 			slot, _ := n.attr("data-slot")
 			p := parts[slot]
@@ -765,6 +804,101 @@ func TestCatalogAuthoredAttrsAreNotState(t *testing.T) {
 					fail(f, slot, am[1], "%s: the attribute table lists %s for %s, but the catalog has it as State or not at all")
 				}
 			}
+		}
+	}
+}
+
+var (
+	repoFileURL = regexp.MustCompile("https://(?:cdn\\.jsdelivr\\.net/gh/bl4ko/clanker-ui@|raw\\.githubusercontent\\.com/bl4ko/clanker-ui/)[^/\\s]+/([^\\s`)\"'<>#?]+)")
+	iconCount   = regexp.MustCompile(`(\d+) (?:\[Lucide\]\([^)]*\)|Lucide)(?: [0-9.]+)? icons`)
+)
+
+func TestDocsRepoFileURLs(t *testing.T) {
+	var ignored []string
+	for _, l := range strings.Split(readFile(t, "../../.gitignore"), "\n") {
+		if strings.HasPrefix(l, "/") {
+			ignored = append(ignored, strings.TrimPrefix(l, "/"))
+		}
+	}
+	skip := func(p string) bool {
+		return slices.ContainsFunc(ignored, func(g string) bool {
+			return p == strings.TrimSuffix(g, "/") || strings.HasSuffix(g, "/") && strings.HasPrefix(p, g)
+		})
+	}
+	found := 0
+	err := filepath.WalkDir("../..", func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		rel, _ := filepath.Rel("../..", path)
+		rel = filepath.ToSlash(rel)
+		if d.IsDir() {
+			if rel == ".git" || rel != "." && skip(rel) {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if skip(rel) || !slices.Contains([]string{".md", ".txt", ".json", ".html"}, filepath.Ext(rel)) {
+			return nil
+		}
+		b, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		for _, m := range repoFileURL.FindAllStringSubmatch(string(b), -1) {
+			found++
+			p := strings.TrimRight(m[1], ".,;:")
+			if _, err := os.Stat(filepath.Join("../..", p)); err != nil || skip(p) {
+				t.Errorf("%s: %s is not a file in git at that ref", rel, m[0])
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if found < 3 {
+		t.Fatalf("found %d repository file URLs", found)
+	}
+}
+
+func TestDocsIconCount(t *testing.T) {
+	js := readFile(t, "../../clanker-ui.js")
+	start := strings.Index(js, "const ICONS = {\n")
+	end := strings.Index(js[max(start, 0):], "\n}\n")
+	if start < 0 || end < 0 {
+		t.Fatal("clanker-ui.js: no ICONS table")
+	}
+	want := strconv.Itoa(len(iconEntry.FindAllString(js[start:start+end], -1)))
+	for _, name := range []string{"README.md", "skills/clanker-ui/references/icons.md"} {
+		for _, m := range iconCount.FindAllStringSubmatch(readFile(t, "../../"+name), -1) {
+			if m[1] != want {
+				t.Errorf("%s: %q, but ICONS has %s icons", name, m[0], want)
+			}
+		}
+	}
+}
+
+func TestAgentsCITriggers(t *testing.T) {
+	ci := readFile(t, "../../.github/workflows/ci.yml")
+	start := strings.Index(ci, "\non:\n")
+	if start < 0 {
+		t.Fatal("ci.yml: no on: block")
+	}
+	block := ci[start+5:]
+	block = block[:strings.Index(block, "\n\n")]
+	has := map[string]bool{}
+	for _, m := range regexp.MustCompile(`(?m)^  ([a-z_]+):`).FindAllStringSubmatch(block, -1) {
+		has[m[1]] = true
+	}
+	m := regexp.MustCompile(`(?m)^- CI on (.+?) skips`).FindStringSubmatch(readFile(t, "../../AGENTS.md"))
+	if m == nil {
+		t.Fatal("AGENTS.md: no \"- CI on ... skips\" line")
+	}
+	said := map[string]bool{"pull_request": strings.Contains(m[1], "pull request"), "push": strings.Contains(m[1], "push")}
+	for k, v := range said {
+		if v != has[k] {
+			t.Errorf("AGENTS.md says CI runs on %q, but the ci.yml trigger %s is %v", m[1], k, has[k])
 		}
 	}
 }

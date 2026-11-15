@@ -5,7 +5,7 @@ Group `chat`. Needs `core`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `questionnaire` (root) | `data-default-item` string; `data-shortcuts` `letters`, `numbers` |  |
-| `questionnaire-choice` | `data-default-checked` boolean; `data-value` string | `data-checked`, `data-disabled`, `data-invalid`, `data-state` |
+| `questionnaire-choice` | `data-default-checked` boolean; `data-disabled` boolean; `data-value` string | `data-checked`, `data-invalid`, `data-state` |
 | `questionnaire-next` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 | `questionnaire-previous` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 | `questionnaire-progress` | `data-template` string |  |
@@ -48,4 +48,5 @@ Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clan
 
 One item at a time. The kit builds the native radio or checkbox, the indicator, and the shortcut hint (the input, the choice, and the hint carry `data-type`, `data-shortcut`, `data-checked` or `data-unchecked`; a required single-choice radio is `required` until a text answer is given; the action buttons default to `data-variant` `outline` (previous, skip) or `default` (next, submit) and `data-size="default"`), validates before Next and Submit, and fills the progress text and error message. Keys: letters or numbers pick, Up and Down move, Left and Right change the item, Enter continues, Ctrl or Cmd+Enter continues from anywhere. Skipped items are left out of the form data.
 
+- `data-disabled` on a `questionnaire-choice` disables that choice.
 - A text answer can be `<input data-slot="questionnaire-input">` or `<textarea data-slot="questionnaire-input">` (Enter inserts a newline; Ctrl or Cmd+Enter continues). Text answers use the input and textarea styles. A selected text answer must pass native constraint validation (`type="email"`, `pattern`, `minlength`, ...); the automatic error then shows the browser's `validationMessage`. Text answers stay in the form (no `form=""`); an unselected text answer has no `name`.

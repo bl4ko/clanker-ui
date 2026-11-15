@@ -5,18 +5,18 @@ Group `overlays`. Needs `core`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `context-menu` (root) | `data-modal` `false`, `true` |  |
-| `context-menu-checkbox-item` | `data-checked` boolean; `data-disabled` any; `data-inset` any |  |
+| `context-menu-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean |  |
 | `context-menu-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `context-menu-item` | `data-disabled` any; `data-inset` any; `data-variant` `destructive` |  |
-| `context-menu-label` | `data-inset` any |  |
+| `context-menu-item` | `data-disabled` boolean; `data-inset` boolean; `data-variant` `destructive` |  |
+| `context-menu-label` | `data-inset` boolean |  |
 | `context-menu-radio-group` | `data-value` string |  |
-| `context-menu-radio-item` | `data-checked` boolean; `data-disabled` any; `data-inset` any; `data-value` string |  |
+| `context-menu-radio-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
 | `context-menu-sub-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `context-menu-sub-trigger` | `data-inset` any | `data-open`, `data-state` |
+| `context-menu-sub-trigger` | `data-inset` boolean | `data-open`, `data-state` |
 
 Other parts: `context-menu-group`, `context-menu-separator`, `context-menu-shortcut`, `context-menu-sub`, `context-menu-trigger`.
 
-Other options named in the docs: `data-close-on-click` any; `data-state` string; `data-text-value` any.
+Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` any.
 
 Events: `context-menu:open` `{ trigger }`; `context-menu:close` `{ reason }`; `context-menu:select` `{ value, item, checked }` (cancelable); `context-menu:change` `{ value, checked, item, group }`.
 

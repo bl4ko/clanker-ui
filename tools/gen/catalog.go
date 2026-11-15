@@ -215,6 +215,7 @@ var (
 	jsEmit      = regexp.MustCompile(`emit\([^,()]*(?:\([^()]*\))?[^,()]*, *"([a-z-]+:[a-z-]+)"|"([a-z-]+:(?:open|close|change))"`)
 	jsSetAttr   = regexp.MustCompile(`(?:setAttribute|toggleAttribute)\("(data-[a-z0-9-]+)"|dataset\.([a-zA-Z]+) *=[^=]`)
 	jsReadAttr  = regexp.MustCompile(`(?:hasAttribute|getAttribute)\("(data-[a-z0-9-]+)"\)`)
+	jsFlagAttr  = regexp.MustCompile(`\bflag\([^,()]+, "(data-[a-z0-9-]+)"\)`)
 	jsWroteAttr = regexp.MustCompile(`(?:setAttribute|toggleAttribute|removeAttribute)\("(data-[a-z0-9-]+)"|"(data-[a-z0-9-]+)": |dataset\.([a-zA-Z]+) *=[^=]`)
 	keyWord     = regexp.MustCompile(`\b(Keyboard|Keys|Up|Down|Enter|Escape|Esc|Space|Arrow(?:Up|Down|Left|Right)?|arrows?|Home|End|Page ?Up|Page ?Down|Backspace|Delete|F6|Shift\+F10|Ctrl|Cmd|Alt\+[A-Za-z]+|Shift\+[A-Za-z]+|Tab)\b`)
 	slugDrop    = regexp.MustCompile(`[^a-z0-9 _-]`)
@@ -484,6 +485,9 @@ type catalogBuild struct {
 	made       map[string]bool
 	jsSet      map[string]bool
 	jsReadOnly map[string]bool
+	flags      map[string]bool
+	cssBare    map[string]bool
+	cssValued  map[string]bool
 	cssSlots   map[string]bool
 	jsEvents   map[string]bool
 	listedPart map[string]bool
@@ -558,7 +562,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	b := &catalogBuild{t: t, data: map[string]*compData{}, global: attrSet{}, markup: map[string]bool{}, defined: map[string]bool{}, made: map[string]bool{}, jsSet: map[string]bool{}, jsReadOnly: map[string]bool{}, cssSlots: map[string]bool{}, jsEvents: map[string]bool{}, listedPart: map[string]bool{}, named: map[string]bool{}}
+	b := &catalogBuild{t: t, data: map[string]*compData{}, global: attrSet{}, markup: map[string]bool{}, defined: map[string]bool{}, made: map[string]bool{}, jsSet: map[string]bool{}, jsReadOnly: map[string]bool{}, flags: map[string]bool{}, cssBare: map[string]bool{}, cssValued: map[string]bool{}, cssSlots: map[string]bool{}, jsEvents: map[string]bool{}, listedPart: map[string]bool{}, named: map[string]bool{}}
 	for _, c := range t.order {
 		b.data[c] = newCompData()
 	}
@@ -653,7 +657,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 		BaseUI:      catalogBaseUI,
 		CSP:         csp,
 		CSPMeta:     strings.Replace(csp, "; frame-ancestors 'none'", "", 1),
-		Global:      b.global.json(),
+		Global:      b.boolean(b.global).json(),
 		Exports:     exports,
 	}
 	cat.Files = catFiles{
@@ -1181,7 +1185,21 @@ func (b *catalogBuild) scanJS(src string) {
 			b.jsReadOnly[m[1]] = true
 		}
 	}
+	for _, m := range jsFlagAttr.FindAllStringSubmatch(src, -1) {
+		b.flags[m[1]] = true
+	}
 }
+
+func (b *catalogBuild) boolean(s attrSet) attrSet {
+	for name, a := range s {
+		if len(a.values) == 0 && !a.list && (b.flags[name] || b.cssBare[name] && !b.cssValued[name]) {
+			a.values[""] = true
+		}
+	}
+	return s
+}
+
+var cssAttrRead = regexp.MustCompile(`attr\((data-[a-z0-9-]+)`)
 
 var cssAttrSel = regexp.MustCompile(`\[(data-[a-z0-9-]+)(?:([~|^$*]?=)["']?([^\]"']*)["']?)?\]`)
 
@@ -1189,6 +1207,9 @@ func (b *catalogBuild) scanCSS(src string) error {
 	tree, err := parseCSS(src)
 	if err != nil {
 		return err
+	}
+	for _, m := range cssAttrRead.FindAllStringSubmatch(src, -1) {
+		b.cssValued[m[1]] = true
 	}
 	var walk func(items []cssItem)
 	walk = func(items []cssItem) {
@@ -1205,6 +1226,13 @@ func (b *catalogBuild) scanCSS(src string) error {
 			}
 			for _, sel := range splitTop(p, ',') {
 				b.cssSelector(strings.TrimSpace(sel))
+				for _, m := range cssAttrSel.FindAllStringSubmatch(sel, -1) {
+					if m[2] == "" {
+						b.cssBare[m[1]] = true
+					} else if m[2] != "=" || m[3] != "false" {
+						b.cssValued[m[1]] = true
+					}
+				}
 			}
 			walk(it.rule.items)
 		}
@@ -1727,7 +1755,7 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 		Keyboard:       []string{},
 		KitAdds:        []string{},
 		Parts:          []catPart{},
-		PartAttributes: d.partAttr.idJSON(),
+		PartAttributes: b.boolean(d.partAttr).idJSON(),
 		Docs:           catalogSite + "/docs/components/" + page + "/",
 		DocsMarkdown:   catalogSite + "/" + catalogCompDir + "/" + c + ".md",
 		Readme:         catalogCompDir + "/" + c + ".md",
@@ -1772,7 +1800,7 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 			comp.KitAdds = append(comp.KitAdds, s)
 		}
 		if a := d.parts[s]; a != nil && !p.KitAdds {
-			p.Attributes = a.json()
+			p.Attributes = b.boolean(a).json()
 		}
 		for name := range d.state[s] {
 			if pc := b.t.partComponent(strings.TrimPrefix(name, "data-")); pc != "" && pc != c && b.data[pc].partAttr[name] != nil {
@@ -1804,7 +1832,7 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 			opts[name] = a
 		}
 	}
-	comp.Options = opts.json()
+	comp.Options = b.boolean(opts).json()
 	seen := map[string]bool{}
 	for _, s := range d.sections {
 		for _, line := range b.sectionLines(s) {

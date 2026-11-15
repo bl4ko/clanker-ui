@@ -1863,6 +1863,61 @@ def check_combobox_base_ui(t):
     assert multi.locator("[data-slot=combobox-chip]").count() == 0 and multi.locator("input[aria-hidden=true]").evaluate_all("l => l.map(i => i.value).join()") == ""
 
 
+IME_STATE = """root => {
+  const input = root.querySelector("input[role=combobox]")
+  return { value: input.value, native: root.querySelector("input[aria-hidden=true]").value, open: input.getAttribute("aria-expanded"),
+    visible: [...root.querySelectorAll("[data-slot=combobox-item]:not([hidden])")].map(e => e.textContent),
+    highlighted: root.querySelector("[data-slot=combobox-item][data-highlighted]")?.textContent ?? null }
+}"""
+
+IME_EVENT = """(root, [type, init, keyCode]) => {
+  const input = root.querySelector("input[role=combobox]")
+  const Kind = type.startsWith("composition") ? CompositionEvent : type === "input" ? InputEvent : KeyboardEvent
+  const event = new Kind(type, { bubbles: true, cancelable: type === "keydown", ...init })
+  if (keyCode != null) Object.defineProperty(event, "keyCode", { value: keyCode })
+  if (init.value != null) input.value = init.value
+  input.dispatchEvent(event)
+  return event.defaultPrevented
+}"""
+
+
+def check_combobox_ime(t):
+    page = t.page
+    t.section("combobox")
+    page.evaluate("""async () => {
+  const { h } = await import("/clanker-ui.js")
+  const root = h("div", { "data-slot": "combobox", id: "fx-combo-ime", "data-name": "fx-ime", "data-auto-highlight": "" },
+    h("div", { "data-slot": "input-group" }, h("input", { "data-slot": "input-group-control", id: "fx-combo-ime-input", "aria-label": "IME" })),
+    h("div", { "data-slot": "combobox-content" }, h("div", { "data-slot": "combobox-empty" }, "No items found."),
+      h("div", { "data-slot": "combobox-list" }, ["Next.js", "Remix", "Re 東京"].map(v => h("div", { "data-slot": "combobox-item", "data-value": v }, v)))))
+  document.getElementById("combobox").prepend(root)
+  await new Promise(r => setTimeout(r, 0))
+}""")
+    root = page.locator("#fx-combo-ime")
+    content = root.locator("[data-slot=combobox-content]")
+    state = lambda: root.evaluate(IME_STATE)
+    fire = lambda type, init={}, key_code=None: root.evaluate(IME_EVENT, [type, init, key_code])
+    page.locator("#fx-combo-ime-input").press_sequentially("re")
+    wait_open(page, content)
+    typed = {"value": "re", "native": "", "open": "true", "visible": ["Remix", "Re 東京"], "highlighted": "Remix"}
+    assert state() == typed
+    fire("compositionstart", {"data": ""})
+    fire("input", {"value": "re とう", "isComposing": True, "inputType": "insertCompositionText", "data": "とう"})
+    assert state() == {**typed, "value": "re とう"}, "no filter and no highlight change during IME composition"
+    assert not fire("keydown", {"key": "ArrowDown", "isComposing": True}, 229)
+    assert state() == {**typed, "value": "re とう"}, "ArrowDown during composition moves the IME candidate, not the list highlight"
+    assert not fire("keydown", {"key": "Enter", "isComposing": True}, 229)
+    assert state() == {**typed, "value": "re とう"}, "Enter during composition commits the IME text, it does not choose an item"
+    fire("compositionend", {"value": "re 東京", "data": "東京"})
+    composed = {**typed, "value": "re 東京", "visible": ["Re 東京"], "highlighted": "Re 東京"}
+    assert state() == composed, "compositionend filters once to the final text"
+    assert not fire("keydown", {"key": "Enter"}, 229)
+    assert state() == composed, "the WebKit commit Enter after compositionend (keyCode 229) does not choose an item"
+    page.keyboard.press("Enter")
+    wait_open(page, content, False)
+    assert state()["native"] == "Re 東京"
+
+
 def check_choice_disabled_focus(t):
     page = t.page
     t.section("checkbox")

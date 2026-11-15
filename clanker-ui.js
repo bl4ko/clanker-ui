@@ -3110,6 +3110,13 @@ function comboboxFilter(st, query) {
   if (st.highlighted?.hidden) comboboxHighlight(st, null)
 }
 
+function comboboxTyped(st, root) {
+  comboboxFilter(st, st.input.value)
+  const items = comboboxVisible(st)
+  if (flag(root, "data-auto-highlight")) comboboxHighlight(st, items[0] ?? null)
+  else if (st.highlighted && !items.includes(st.highlighted)) comboboxHighlight(st, null)
+}
+
 function comboboxHighlight(st, item, reveal = true) {
   st.highlighted?.removeAttribute("data-highlighted")
   st.highlighted = item ?? null
@@ -3339,6 +3346,7 @@ define("combobox", {
       }
       return
     }
+    if (event.isComposing || event.keyCode === 229) return
     if (event.key === "ArrowDown") {
       event.preventDefault()
       if (!open) comboboxOpen(st, "selected")
@@ -3383,10 +3391,11 @@ define("combobox", {
     const st = comboboxStates.get(root)
     if (!st || event.target !== st.input) return
     if (!isOpen(st.content)) comboboxOpen(st, null)
-    comboboxFilter(st, st.input.value)
-    const items = comboboxVisible(st)
-    if (flag(root, "data-auto-highlight")) comboboxHighlight(st, items[0] ?? null)
-    else if (st.highlighted && !items.includes(st.highlighted)) comboboxHighlight(st, null)
+    if (!event.isComposing) comboboxTyped(st, root)
+  },
+  compositionend(event, root) {
+    const st = comboboxStates.get(root)
+    if (st && event.target === st.input) comboboxTyped(st, root)
   },
   pointerdown(event, root) {
     const st = comboboxStates.get(root)

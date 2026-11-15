@@ -42,6 +42,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Dialog, Alert Dialog, Sheet, Popover: a touch open focuses the popup itself, not the first field, so the on-screen keyboard does not open, like Base UI (#196).
 - Select, Combobox: the arrow keys (and Home and End in the select) highlight disabled items, which cannot be chosen; typeahead still skips them, like Base UI (#199).
 - Dropdown Menu, Context Menu, Menubar, Select: a touch open locks page scroll only when the popup is at most 20 px narrower than the viewport, like Base UI (#200).
+- Slider: a fractional `min` (`min="0.5" step="1"`) and a small `step` in exponent form (`0.0000001`) now snap to every step; the value keeps the decimals of `step` or `min`, whichever has more, like Base UI (#188).
 
 ## 0.4.0 - 2026-11-14
 

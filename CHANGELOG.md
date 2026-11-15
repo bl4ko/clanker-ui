@@ -36,6 +36,12 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Docs: the CDN example points to `clanker-ui.css` at the tag; `dist/` is not in git since #178, so the old `dist/` URL gave 404. `go test` checks that every jsDelivr and raw GitHub URL in the docs names a file that is in git (#186).
 - Docs: the catalog schema `$id` is the raw URL of `skills/clanker-ui/references/clanker-ui.schema.json` (the old URL gave 404), the README no longer gives a wrong icon count for `iconNames` (244; there are 256), and `AGENTS.md` says that CI runs on pull requests, not on `main` pushes. `go test` checks the icon counts in the docs and the CI triggers of `AGENTS.md` (#203).
 - Catalog: `data-checked` on `switch` and `radio-group-item`, `data-disabled` on `combobox-item` and `questionnaire-choice`, `data-active` on `sidebar-menu-sub-button`, and `data-state="expanded|collapsed"` on `sidebar` are Write attributes, not State. The demo presses a toggle with `aria-pressed="true"` (the kit sets `data-state`). A Write attribute without a value is `boolean` when the kit reads it as a flag or the CSS selects it only without a value (for example menu `data-disabled` and `data-inset`), not `any`. The State test also reads `demo/index.html` (#204).
+- Combobox: Enter with the list open and no highlighted item closes the list and no longer blocks the form submit, like Base UI (#191).
+- Scroll Area: the viewport is a Tab stop only while its content overflows, like Base UI; an author `tabindex` stays (#194).
+- Tabs: the arrow keys, Home, and End focus a disabled tab, which cannot be selected, like Base UI. The kit changes `disabled` on a trigger to `aria-disabled="true"` and `data-disabled` (#195).
+- Dialog, Alert Dialog, Sheet, Popover: a touch open focuses the popup itself, not the first field, so the on-screen keyboard does not open, like Base UI (#196).
+- Select, Combobox: the arrow keys (and Home and End in the select) highlight disabled items, which cannot be chosen; typeahead still skips them, like Base UI (#199).
+- Dropdown Menu, Context Menu, Menubar, Select: a touch open locks page scroll only when the popup is at most 20 px narrower than the viewport, like Base UI (#200).
 
 ## 0.4.0 - 2026-11-14
 

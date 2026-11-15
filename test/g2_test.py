@@ -3786,6 +3786,104 @@ def check_menu_scroll_lock(t):
         assert not page.evaluate(LOCKED), ("the page scroll lock stays after", how)
 
 
+def tap(page, loc):
+    loc.evaluate("e => e.scrollIntoView({ block: 'center' })")
+    b = box(loc)
+    x, y = b["x"] + b["width"] / 2, b["y"] + b["height"] / 2
+    cdp = page.context.new_cdp_session(page)
+    cdp.send("Emulation.setTouchEmulationEnabled", {"enabled": True, "maxTouchPoints": 1})
+    cdp.send("Input.dispatchTouchEvent", {"type": "touchStart", "touchPoints": [{"x": x, "y": y}]})
+    cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []})
+    page.wait_for_timeout(100)
+    cdp.send("Emulation.setTouchEmulationEnabled", {"enabled": False})
+    cdp.detach()
+
+
+def check_popup_touch_scroll_lock(t):
+    if t.engine != "chromium":
+        t.skip("touch input needs the Chromium DevTools protocol")
+    page = t.page
+    t.section("dropdown-menu")
+    trigger = page.locator("#dropdown-menu-demo [data-dropdown-menu-trigger]")
+    content = page.locator("#dropdown-menu-demo > [data-slot=dropdown-menu-content]")
+    opened = "e => e.matches(':popover-open')"
+    closed = "e => !e.matches(':popover-open')"
+    tap(page, trigger)
+    wait(page, opened, content.element_handle())
+    assert not page.evaluate(LOCKED), "a touch open of a narrow menu keeps the page scroll, like Base UI"
+    page.keyboard.press("Escape")
+    wait(page, closed, content.element_handle())
+    trigger.click()
+    wait(page, opened, content.element_handle())
+    assert page.evaluate(LOCKED), "a mouse open still locks the page scroll"
+    page.keyboard.press("Escape")
+    wait(page, closed, content.element_handle())
+    content.evaluate("e => { e.style.minWidth = `${document.documentElement.clientWidth - 10}px` }")
+    tap(page, trigger)
+    wait(page, opened, content.element_handle())
+    assert content.evaluate("e => e.offsetWidth >= document.documentElement.clientWidth - 20")
+    assert page.evaluate(LOCKED), "a touch open of a menu as wide as the viewport locks the page scroll, like Base UI"
+    page.keyboard.press("Escape")
+    wait(page, closed, content.element_handle())
+    content.evaluate("e => { e.style.minWidth = '' }")
+    page.wait_for_timeout(50)
+    assert not page.evaluate(LOCKED)
+    t.section("select")
+    strigger = page.locator("#select-demo [data-slot=select-trigger]")
+    scontent = page.locator("#select-demo [data-slot=select-content]")
+    tap(page, strigger)
+    wait(page, opened, scontent.element_handle())
+    assert not page.evaluate(LOCKED), "a touch open of a narrow select keeps the page scroll, like Base UI"
+    page.keyboard.press("Escape")
+    wait(page, closed, scontent.element_handle())
+    strigger.click()
+    wait(page, opened, scontent.element_handle())
+    assert page.evaluate(LOCKED), "a mouse open of a select still locks the page scroll"
+    page.keyboard.press("Escape")
+    wait(page, closed, scontent.element_handle())
+
+
+def check_popup_touch_focus(t):
+    if t.engine != "chromium":
+        t.skip("touch input needs the Chromium DevTools protocol")
+    page = t.page
+    t.section("dialog")
+    page.evaluate("() => document.getElementById('dialog-name').addEventListener('focus', () => window.__fieldFocus = (window.__fieldFocus ?? 0) + 1)")
+    trigger = page.locator("#dialog-demo [data-dialog-trigger]")
+    dialog_open = "s => document.querySelector('#dialog-demo dialog').dataset.state === s"
+    tap(page, trigger)
+    wait(page, dialog_open, "open")
+    assert active(page, "e => e.matches('#dialog-demo dialog')"), ("a touch open focuses the dialog popup, so no on-screen keyboard opens, like Base UI", active(page, "e => e.id || e.dataset.slot"))
+    assert page.evaluate("window.__fieldFocus ?? 0") == 0, "the text field never gets focus during a touch open"
+    page.keyboard.press("Escape")
+    wait(page, "() => !document.querySelector('#dialog-demo dialog').open")
+    trigger.click()
+    wait(page, dialog_open, "open")
+    assert active(page, "e => e.id") == "dialog-name", "a mouse open focuses the first field"
+    page.keyboard.press("Escape")
+    wait(page, "() => !document.querySelector('#dialog-demo dialog').open")
+    t.section("popover")
+    page.evaluate("""async () => {
+  const { h } = await import("/clanker-ui.js")
+  const root = h("div", { "data-slot": "popover", id: "fx-pop-touch" },
+    h("button", { type: "button", "data-slot": "button", "data-variant": "outline", "data-popover-trigger": "" }, "Dimensions"),
+    h("div", { "data-slot": "popover-content" }, h("input", { "data-slot": "input", id: "fx-pop-touch-input", "aria-label": "Width" })))
+  document.getElementById("popover").prepend(root)
+  await new Promise(r => setTimeout(r, 0))
+}""")
+    ptrigger = page.locator("#fx-pop-touch [data-popover-trigger]")
+    pcontent = page.locator("#fx-pop-touch [data-slot=popover-content]")
+    tap(page, ptrigger)
+    wait(page, "e => e.matches(':popover-open')", pcontent.element_handle())
+    assert active(page, "e => e.dataset.slot") == "popover-content", "a touch open focuses the popover popup, like Base UI"
+    page.keyboard.press("Escape")
+    wait(page, "e => !e.matches(':popover-open')", pcontent.element_handle())
+    ptrigger.click()
+    wait(page, "e => e.matches(':popover-open')", pcontent.element_handle())
+    assert active(page, "e => e.id") == "fx-pop-touch-input", "a mouse open focuses the first field"
+    page.keyboard.press("Escape")
+
+
 def check_tooltip_hover_card_settings(t):
     page = t.page
     page.evaluate("""async () => {

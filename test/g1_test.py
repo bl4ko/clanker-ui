@@ -1999,6 +1999,38 @@ def check_forced_colors(t):
     assert result["checkbox"][0] != result["checkbox"][1], result
     assert result["slider"][0] != result["slider"][1], result
     t.shot("forced-colors", page.locator("#switch"))
+    t.section("radio-group")
+    radio = page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const choice = (value, extra = {}) => h("label", { "data-slot": "questionnaire-choice", "data-value": value, ...extra }, value)
+          const form = h("form", { "data-slot": "questionnaire", id: "fx-forced-q" }, h("fieldset", { "data-slot": "questionnaire-item", name: "fx" }, h("div", { "data-slot": "questionnaire-choices" }, choice("on", { "data-default-checked": "" }), choice("off"))))
+          document.getElementById("radio-group").append(form)
+          await new Promise(r => setTimeout(r, 20))
+          const probe = document.body.appendChild(document.createElement("span"))
+          probe.style.forcedColorAdjust = "none"
+          probe.style.backgroundColor = "Highlight"
+          const highlight = getComputedStyle(probe).backgroundColor
+          probe.remove()
+          const pick = (sel, prop = 'backgroundColor') => { const el = document.querySelector(sel); return el && getComputedStyle(el)[prop] }
+          const q = v => `#fx-forced-q [data-slot=questionnaire-choice][data-value=${v}]`
+          const out = {
+            highlight,
+            on: [pick('#radio-group-comfortable'), pick('#radio-group-comfortable', 'borderTopColor'), pick('#radio-group-comfortable [data-slot=radio-group-indicator] > span')],
+            off: [pick('#radio-group-default'), pick('#radio-group-default', 'borderTopColor'), pick('#radio-group-default [data-slot=radio-group-indicator] > span')],
+            choiceOn: [document.querySelector(q('on')).hasAttribute('data-checked'), pick(q('on') + ' [data-slot=questionnaire-choice-indicator]'), pick(q('on') + ' [data-slot=questionnaire-choice-indicator]', 'borderTopColor'), pick(q('on') + ' [data-slot=questionnaire-choice-indicator-dot]'), pick(q('on') + ' [data-slot=questionnaire-choice-indicator-dot]', 'display')],
+            choiceOff: [document.querySelector(q('off')).hasAttribute('data-checked'), pick(q('off') + ' [data-slot=questionnaire-choice-indicator]', 'borderTopColor'), pick(q('off') + ' [data-slot=questionnaire-choice-indicator-dot]', 'display')],
+          }
+          form.remove()
+          return out
+        }"""
+    )
+    hl = radio["highlight"]
+    assert radio["on"][2] == hl and radio["on"][2] != radio["on"][0] and radio["on"][1] == hl, radio
+    assert radio["off"][2] is None and radio["off"][1] != hl and radio["off"][0] == radio["on"][0], radio
+    assert radio["choiceOn"][0] and radio["choiceOn"][4] == "block", radio
+    assert radio["choiceOn"][3] == hl and radio["choiceOn"][3] != radio["choiceOn"][1] and radio["choiceOn"][2] == hl, radio
+    assert not radio["choiceOff"][0] and radio["choiceOff"][2] == "none" and radio["choiceOff"][1] != hl, radio
 
 
 def check_forced_colors_scheme(t):

@@ -1141,6 +1141,120 @@ def check_forced_colors_item_focus(t):
     assert found == ["dropdown-menu-item", "solid", True], ("a focused menu item keeps the forced-colors outline", found)
 
 
+SYSTEM_COLORS = """() => {
+  const probe = document.body.appendChild(document.createElement("span"))
+  probe.style.forcedColorAdjust = "none"
+  const read = c => { probe.style.backgroundColor = c; return getComputedStyle(probe).backgroundColor }
+  const out = { highlight: read("Highlight"), canvas: read("Canvas"), text: read("CanvasText") }
+  probe.remove()
+  return out
+}"""
+
+
+def forced_colors(t, path):
+    t.docs(path)
+    t.a11y()
+    t.page.emulate_media(forced_colors="active")
+    if not t.page.evaluate("matchMedia('(forced-colors: active)').matches"):
+        t.skip("engine has no forced-colors emulation")
+    return t.page.evaluate(SYSTEM_COLORS)
+
+
+def end_transitions(page):
+    page.evaluate("() => { for (const a of document.getAnimations()) if (a instanceof CSSTransition) a.finish() }")
+
+
+def check_forced_colors_progress_scroll(t):
+    system = forced_colors(t, "/demo?only=progress,scroll-area")
+    page = t.page
+    page.wait_for_function("() => document.querySelector('#progress-demo [data-slot=progress-indicator]') && document.querySelector('#scroll-area-demo [data-slot=scroll-area-thumb]')")
+    end_transitions(page)
+    found = page.evaluate("""() => {
+      const s = sel => getComputedStyle(document.querySelector(sel))
+      return {
+        track: [s('#progress-demo [data-slot=progress-track]').backgroundColor, s('#progress-demo [data-slot=progress-track]').borderTopWidth],
+        indicator: s('#progress-demo [data-slot=progress-indicator]').backgroundColor,
+        thumb: s('#scroll-area-demo [data-slot=scroll-area-thumb]').backgroundColor,
+      }
+    }""")
+    assert found["indicator"] == system["highlight"] and found["track"][0] == system["canvas"] and found["track"][1] == "1px", ("the progress value stays visible in forced colors", found, system)
+    assert found["thumb"] == system["text"] and found["thumb"] != system["canvas"], ("the scroll-area thumb stays visible in forced colors", found, system)
+
+
+def check_forced_colors_selected_states(t):
+    system = forced_colors(t, "/demo?only=theming,toggle,toggle-group,tabs,calendar,page")
+    page = t.page
+    page.wait_for_function("() => document.querySelector('#calendar-range [data-range-middle=true]') && document.querySelector('#calendar-booked [data-selected-single=true]') && document.querySelector('#tabs [data-slot=tabs-trigger][aria-selected=true]')")
+    found = page.evaluate("""async () => {
+      const { h } = await import("/clanker-ui.js")
+      const host = h("div", { id: "fx-forced-states" }, h("button", { type: "button", "data-slot": "chart-table-toggle", "aria-pressed": "true" }, "Table"), h("button", { type: "button", "data-slot": "chart-table-toggle", "aria-pressed": "false" }, "Chart"))
+      document.body.append(host)
+      const items = [...document.querySelectorAll('#toggle-group-demo [data-slot=toggle-group-item]')]
+      if (!items.some(e => e.getAttribute('aria-pressed') === 'true')) items[0].click()
+      await new Promise(r => setTimeout(r, 20))
+      for (const a of document.getAnimations()) if (a instanceof CSSTransition) a.finish()
+      const q = s => document.querySelector(s)
+      const tabs = [...document.querySelectorAll('#tabs [data-slot=tabs-trigger]')]
+      const toggle = q('#toggle [data-slot=toggle][data-state=on]')
+      const pairs = {
+        toggle: [toggle, toggle.previousElementSibling],
+        "toggle-group-item": [items.find(e => e.getAttribute('aria-pressed') === 'true'), items.find(e => e.getAttribute('aria-pressed') !== 'true')],
+        "tabs-trigger": [tabs.find(e => e.getAttribute('aria-selected') === 'true'), tabs.find(e => e.getAttribute('aria-selected') !== 'true')],
+        "calendar-day": [q('#calendar-booked [data-calendar-day-button][data-selected-single=true]'), q('#calendar-booked [data-calendar-day-button]:not([data-selected-single=true]):not(:disabled)')],
+        "calendar-range": [q('#calendar-range [data-calendar-day-button][data-range-start=true]'), q('#calendar-range [data-calendar-day-button]:not([data-range-start=true], [data-range-middle=true], [data-range-end=true]):not(:disabled)')],
+        "theme-switch": [q('[data-slot=theme-switch] > button[aria-pressed=true]'), q('[data-slot=theme-switch] > button[aria-pressed=false]')],
+        "page-nav": [q('[data-slot=page-nav] > [aria-current=page]'), q('[data-slot=page-nav] > [aria-current=page] + *')],
+        "chart-table-toggle": [...host.children],
+      }
+      const out = {}
+      for (const [name, [on, off]] of Object.entries(pairs)) out[name] = on && off ? [getComputedStyle(on).backgroundColor, getComputedStyle(off).backgroundColor] : null
+      const middle = q('#calendar-range [data-calendar-day-button][data-range-middle=true]')
+      out.middle = [getComputedStyle(middle).borderTopColor, getComputedStyle(pairs["calendar-range"][1]).borderTopColor]
+      host.remove()
+      return out
+    }""")
+    hl = system["highlight"]
+    for name, colors in found.items():
+        assert colors and colors[0] == hl and colors[1] != hl, (f"{name}: the pressed, active, or selected state stays visible in forced colors", colors, hl)
+
+
+def check_forced_colors_slider_focus(t):
+    system = forced_colors(t, "/demo?only=slider")
+    page = t.page
+    t.section("slider")
+    thumb = page.locator("#slider-demo [data-slot=slider-thumb]").first
+    thumb.evaluate("e => { e.style.transition = 'none' }")
+    page.keyboard.press("Shift")
+    thumb.locator("input").focus()
+    found = thumb.evaluate("e => [e.querySelector('input').matches(':focus-visible'), getComputedStyle(e).outlineStyle, getComputedStyle(e).outlineColor]")
+    assert found == [True, "solid", system["highlight"]], ("a focused slider thumb has a Highlight ring in forced colors", found, system)
+
+
+def check_destructive_focus_ring_parts(t):
+    t.docs("/demo?only=alert-dialog,pagination")
+    page = t.page
+    t.a11y()
+    page.keyboard.press("Shift")
+    found = page.evaluate("""async () => {
+      const { h } = await import("/clanker-ui.js")
+      const parts = [h("button", { type: "button", "data-slot": "button", "data-variant": "destructive" }, "Delete"), h("button", { type: "button", "data-slot": "alert-dialog-action", "data-variant": "destructive" }, "Delete"), h("button", { type: "button", "data-slot": "alert-dialog-cancel", "data-variant": "destructive" }, "Cancel"), h("a", { href: "#fx", "data-slot": "pagination-link", "data-variant": "destructive" }, "1")]
+      const host = h("div", { id: "fx-destructive-ring" }, ...parts)
+      document.body.append(host)
+      const probe = host.appendChild(document.createElement("span"))
+      probe.style.outlineColor = "var(--focus-ring-invalid)"
+      const out = { invalid: getComputedStyle(probe).outlineColor, parts: {} }
+      for (const el of parts) {
+        el.style.transition = "none"
+        el.focus()
+        out.parts[el.dataset.slot] = [el.matches(":focus-visible"), getComputedStyle(el).outlineColor]
+      }
+      host.remove()
+      return out
+    }""")
+    for slot, (visible, color) in found["parts"].items():
+        assert visible and color == found["invalid"], (f"a focused destructive {slot} uses --focus-ring-invalid", found)
+
+
 def check_core_button_tabindex(t):
     t.docs("/demo?only=accordion,carousel,dialog,sheet")
     page = t.page

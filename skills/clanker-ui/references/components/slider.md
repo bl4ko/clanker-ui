@@ -20,7 +20,7 @@ Group `forms`. Needs `core`. CSS and JS.
 </div>
 ```
 
-- One native range per thumb. The kit builds the Base UI DOM: `role="group"` on the root, a control `div`, `slider-track` with `slider-range`, and one `div` `slider-thumb` (`data-index`) around each range input. The input is visually hidden and keeps focus, form value, and `aria-valuenow`; two thumbs get `aria-valuetext` (`25 start range`, `75 end range`).
+- One native range per thumb. The kit builds the Base UI DOM: `role="group"` on the root, a control `div`, `slider-track` with `slider-range`, and one `div` `slider-thumb` (`data-index`) around each range input. The input is visually hidden and keeps focus, form value, and `aria-valuenow`; two thumbs get `aria-valuetext` (`25 start range`, `1,000 end range`), with the number in the language of the nearest `lang`.
 - Thumbs are inset to the control edges (Base UI `thumbAlignment="edge"`). Every part has `data-orientation`, `data-disabled` (all inputs disabled), and `data-dragging` while a pointer drags. The active thumb gets `z-index`.
 - A press on the control moves the closest thumb (on a tie the last one) and drags it; a dragged thumb pushes the others. Keys: arrows (RTL aware), Shift+arrow and Page Up/Down by `data-large-step` (default 10, in value units), Home, End. Keys stop at the next thumb.
 - Events: native `input` while the value changes, `change` on key press and on pointer release.

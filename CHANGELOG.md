@@ -23,6 +23,12 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Combobox: IME composition no longer chooses, filters, or moves the highlight. Enter and the arrow keys of an IME (`isComposing` or `keyCode` 229) go to the IME, and the list filters once on `compositionend`, like Base UI (#184).
 - Theme Switch, Section Cards: with `data-theme="light"` on a dark system, the pressed theme-switch button and the section cards no longer get their dark styles; the two dark rules of `tools/gen/kit.css` now check the theme on the element itself, and `go test` rejects a bare `:not([data-theme] *)` before a combinator (#185).
 - Accessibility layer: in forced colors, the dot of a checked radio and of a checked questionnaire choice is `Highlight` with a `Highlight` border, so the checked state is visible (#187).
+- Table: auto sort (`data-sort=""` or `auto`) is `number` only when the whole value is one number (spaces, group separators, a currency sign, and `%` allowed); ISO dates and versions sort as text, so `2026-01-02` comes before `2026-02-20` and `1.2.0` before `1.10.2` (#189).
+- Calendar: with a start day other than Monday (`data-week-start="0"`, the shadcn default), week numbers are the react-day-picker en-US weeks (week 1 has January 1), not ISO weeks; a Monday start keeps ISO weeks (#192).
+- Overlays: an Escape that ends an IME composition no longer closes a dialog, popover, or menu. The core Escape handler and the native `<dialog>` `cancel` path also skip `keyCode` 229 and the 5 ms after `compositionend` (Safari fires `compositionend` before the `keydown`), as Base UI (#197).
+- Slider: the `aria-valuetext` of a range slider has the number in the language of the nearest `lang` (`1,000 end range`, `1.000 end range` in `de`), as Base UI (#201).
+- Toast: a closing toast (`data-ending-style`) takes no pointer events, so a click during its exit animation goes to the element below (#206).
+- CI: the exported pages are served with `tools/ci/serve.py` (`Cache-Control: max-age=600`, as GitHub Pages). With `python -m http.server`, WebKit revalidated the fresh files during the run and logged a false "preloaded using link preload but not used" warning for the fonts, which failed `pages.pages_every_page` (#208).
 
 ## 0.4.0 - 2026-11-14
 

@@ -1374,8 +1374,18 @@ document.addEventListener(
   true,
 )
 
+let composing = false
+let composeEnd
+document.addEventListener("compositionstart", () => {
+  clearTimeout(composeEnd)
+  composing = true
+}, true)
+document.addEventListener("compositionend", () => {
+  composeEnd = setTimeout(() => (composing = false), 5)
+}, true)
+
 document.addEventListener("keydown", event => {
-  if (event.defaultPrevented || event.isComposing) return
+  if (event.defaultPrevented || event.isComposing || event.keyCode === 229 || composing) return
   if (event.key === "Escape") {
     const layer = layers.at(-1)
     if (!layer) return
@@ -1475,7 +1485,7 @@ document.addEventListener(
   "cancel",
   event => {
     const el = event.target
-    if (closing.has(el)) return event.preventDefault()
+    if (closing.has(el) || composing) return event.preventDefault()
     const state = opened.get(el)
     if (!state) return
     event.preventDefault()
@@ -2118,6 +2128,14 @@ function sliderPosition(f, size) {
   return `calc(${size / 2}px + ${+f.toFixed(6)} * (100% - ${size}px))`
 }
 
+function sliderNumber(root, value) {
+  try {
+    return new Intl.NumberFormat(root.closest("[lang]")?.getAttribute("lang") || undefined).format(value)
+  } catch {
+    return new Intl.NumberFormat().format(value)
+  }
+}
+
 function sliderRender(root) {
   const st = sliderStates.get(root)
   if (!st || !st.inputs.length) return
@@ -2148,7 +2166,7 @@ function sliderRender(root) {
     s.zIndex = st.active === k ? (dragging || overlap ? "2" : "1") : ""
     const input = inputs[k]
     input.setAttribute("aria-valuenow", input.value)
-    if (inputs.length === 2) input.setAttribute("aria-valuetext", `${input.value} ${k ? "end" : "start"} range`)
+    if (inputs.length === 2) input.setAttribute("aria-valuetext", `${sliderNumber(root, input.valueAsNumber)} ${k ? "end" : "start"} range`)
     else input.removeAttribute("aria-valuetext")
     thumb.toggleAttribute("data-disabled", input.disabled)
   })
@@ -7555,7 +7573,7 @@ export function tableSort(head, dir) {
       const raw = cell ? (cell.getAttribute("data-value") ?? cell.textContent).trim() : ""
       return [row, /^[-–—]?$/.test(raw) ? null : raw]
     }))
-    const kind = type || (rows.every(r => values.get(r) === null || !/\p{L}/u.test(values.get(r)) && Number.isFinite(tableNumber(values.get(r), lang))) ? "number" : "text")
+    const kind = type || (rows.every(r => values.get(r) === null || tableIsNumber(values.get(r), lang)) ? "number" : "text")
     const key = new Map(rows.map(row => {
       const v = values.get(row)
       const k = v === null ? null : kind === "number" ? tableNumber(v, lang) : kind === "date" ? tableDate(v, lang) : v
@@ -7588,10 +7606,19 @@ function tableLocale(lang, make) {
   }
 }
 
-function tableNumber(value, lang) {
+function tableSeparators(lang) {
   const parts = tableLocale(lang, l => new Intl.NumberFormat(l)).formatToParts(-12345.6)
-  const group = parts.find(p => p.type === "group")?.value ?? ","
-  const decimal = parts.find(p => p.type === "decimal")?.value ?? "."
+  return [parts.find(p => p.type === "group")?.value ?? ",", parts.find(p => p.type === "decimal")?.value ?? "."]
+}
+
+function tableIsNumber(value, lang) {
+  const [group, decimal] = tableSeparators(lang).map(c => c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+  const whole = group.trim() ? `\\d{1,3}(?:${group}\\d{3})+|\\d+` : "\\d+"
+  return new RegExp(`^[-−]?(?:${whole})(?:${decimal}\\d+)?$`).test(value.replace(/[\s\p{Sc}%]/gu, ""))
+}
+
+function tableNumber(value, lang) {
+  const [group, decimal] = tableSeparators(lang)
   let s = value.replace(/\s/g, "").replaceAll("−", "-")
   if (group.trim()) s = s.replaceAll(group, "")
   if (decimal !== ".") s = s.replaceAll(".", "").replaceAll(decimal, ".")
@@ -10308,6 +10335,15 @@ function calendarWeekNumber(date) {
   return 1 + Math.round(((thursday - january) / 864e5 - 3 + ((january.getDay() + 6) % 7)) / 7)
 }
 
+function calendarLocalWeek(date, weekStart) {
+  const start = year => {
+    const first = calendarDate(year, 0, 1)
+    return calendarAddDays(first, -((first.getDay() - weekStart + 7) % 7))
+  }
+  const next = start(date.getFullYear() + 1)
+  return 1 + Math.round((date - (date >= next ? next : start(date.getFullYear()))) / 6048e5)
+}
+
 function calendarConfig(el) {
   const get = name => el.getAttribute(name)
   const mode = ["multiple", "range"].includes(get("data-mode")) ? get("data-mode") : "single"
@@ -10644,8 +10680,7 @@ function calendarGrid(s, first, focusIso) {
   const rows = calendarWeeks(s, first).map(week => {
     const cells = week.map(date => calendarDayCell(s, date, first, focusIso))
     if (s.weekNumbers) {
-      const thursday = week.find(date => date.getDay() === 4) ?? week[0]
-      const number = calendarWeekNumber(thursday)
+      const number = s.weekStart === 1 ? calendarWeekNumber(week.find(date => date.getDay() === 4) ?? week[0]) : calendarLocalWeek(week[0], s.weekStart)
       cells.unshift(h("td", { "data-slot": "calendar-week-number", role: "rowheader", scope: "row", "aria-label": stringFor(s.el, "week", { week: number }) }, h("div", null, calendarNumber(s, number).padStart(2, calendarNumber(s, 0)))))
     }
     return h("tr", { "data-slot": "calendar-week" }, cells)

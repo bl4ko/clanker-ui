@@ -23,6 +23,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Combobox: IME composition no longer chooses, filters, or moves the highlight. Enter and the arrow keys of an IME (`isComposing` or `keyCode` 229) go to the IME, and the list filters once on `compositionend`, like Base UI (#184).
 - Theme Switch, Section Cards: with `data-theme="light"` on a dark system, the pressed theme-switch button and the section cards no longer get their dark styles; the two dark rules of `tools/gen/kit.css` now check the theme on the element itself, and `go test` rejects a bare `:not([data-theme] *)` before a combinator (#185).
 - Accessibility layer: in forced colors, the dot of a checked radio and of a checked questionnaire choice is `Highlight` with a `Highlight` border, so the checked state is visible (#187).
+- Slider: a fractional `min` (`min="0.5" step="1"`) and a small `step` in exponent form (`0.0000001`) now snap to every step; the value keeps the decimals of `step` or `min`, whichever has more, like Base UI (#188).
 
 ## 0.4.0 - 2026-11-14
 

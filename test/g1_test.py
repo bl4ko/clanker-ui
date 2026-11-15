@@ -2245,6 +2245,41 @@ def check_slider_programmatic(t):
     assert result == {"value": ["80", True, True], "disabled": [True, True], "after": [False, True]}, ("code changes update the slider", result)
 
 
+def check_slider_snap(t):
+    page = t.page
+    t.section("slider")
+    page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const range = (id, attrs) => h("input", { type: "range", id, "aria-label": id, ...attrs })
+          const half = { min: "0.5", max: "10.5", step: "1" }
+          const box = h("div", { id: "fx-slider-snap" },
+            h("div", { "data-slot": "slider" }, range("fx-snap-half", { ...half, value: "2.5" })),
+            h("div", { "data-slot": "slider" }, range("fx-snap-tiny", { min: "0", max: "0.00001", step: "0.0000001", value: "0" })),
+            h("div", { "data-slot": "slider" }, range("fx-snap-lo", { ...half, value: "2.5" }), range("fx-snap-hi", { ...half, value: "6.5" })))
+          document.getElementById("slider").prepend(box)
+          await new Promise(r => requestAnimationFrame(() => setTimeout(r, 30)))
+        }"""
+    )
+    value = lambda id: page.locator(f"#{id}").evaluate("e => e.valueAsNumber")
+
+    def press(id, *keys):
+        page.locator(f"#{id}").focus()
+        for k in keys:
+            page.keyboard.press(key(t, k))
+        return value(id)
+
+    assert press("fx-snap-half", "ArrowLeft") == 1.5, ("fractional min: ArrowLeft", value("fx-snap-half"))
+    assert press("fx-snap-half", "Home") == 0.5, ("fractional min: Home", value("fx-snap-half"))
+    assert press("fx-snap-half", "End", "ArrowLeft") == 9.5, ("fractional min: End ArrowLeft", value("fx-snap-half"))
+    assert press("fx-snap-tiny", "ArrowRight") == 1e-7, ("exponent step: ArrowRight", value("fx-snap-tiny"))
+    assert press("fx-snap-tiny", "ArrowRight") == 2e-7, ("exponent step: second ArrowRight", value("fx-snap-tiny"))
+    assert press("fx-snap-lo", "ArrowLeft") == 1.5, ("range start: ArrowLeft", value("fx-snap-lo"))
+    assert press("fx-snap-lo", "Home") == 0.5, ("range start: Home", value("fx-snap-lo"))
+    assert press("fx-snap-hi", "End", "ArrowLeft") == 9.5, ("range end: End ArrowLeft", value("fx-snap-hi"))
+    page.evaluate("() => document.getElementById('fx-slider-snap').remove()")
+
+
 def check_form_reset_then_set(t):
     page = t.page
     page.evaluate(FIXTURE)

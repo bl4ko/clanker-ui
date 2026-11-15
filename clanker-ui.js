@@ -2062,11 +2062,18 @@ function sliderBounds(input) {
   return { min, max: max < min ? min : max, step }
 }
 
+function sliderPrecision(n) {
+  if (!n) return 0
+  if (Math.abs(n) >= 1) return String(n).split(".")[1]?.length ?? 0
+  const [mantissa, exponent] = n.toExponential().split("e-")
+  return Math.min(100, (mantissa.split(".")[1]?.length ?? 0) + Number(exponent))
+}
+
 function sliderSnap(input, value) {
   const { min, max, step } = sliderBounds(input)
   let v = value
   if (step > 0) {
-    const decimals = (String(step).split(".")[1] ?? "").length
+    const decimals = Math.max(sliderPrecision(step), sliderPrecision(min))
     v = Number((min + Math.round((value - min) / step) * step).toFixed(decimals))
     if (v > max) v = Number((min + Math.floor((max - min) / step) * step).toFixed(decimals))
   }

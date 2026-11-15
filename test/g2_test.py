@@ -142,6 +142,41 @@ def check_dialog(t):
     t.shot()
 
 
+
+DIALOG_IME = """dialog => {
+  const input = dialog.querySelector("input")
+  const fire = (Kind, type, init = {}, keyCode) => {
+    const event = new Kind(type, { bubbles: true, cancelable: true, ...init })
+    if (keyCode != null) Object.defineProperty(event, "keyCode", { value: keyCode })
+    input.dispatchEvent(event)
+    return event
+  }
+  const out = {}
+  fire(CompositionEvent, "compositionstart")
+  out.composing = fire(KeyboardEvent, "keydown", { key: "Escape", isComposing: true }, 229).defaultPrevented
+  fire(CompositionEvent, "compositionend")
+  out.safari = fire(KeyboardEvent, "keydown", { key: "Escape" }, 229).defaultPrevented
+  out.after = fire(KeyboardEvent, "keydown", { key: "Escape" }, 27).defaultPrevented
+  const cancel = new Event("cancel", { cancelable: true })
+  dialog.dispatchEvent(cancel)
+  out.cancel = cancel.defaultPrevented
+  out.state = [dialog.open, dialog.getAttribute("data-state")]
+  return out
+}"""
+
+
+def check_dialog_ime_escape(t):
+    page = t.page
+    section = t.section("dialog")
+    section.get_by_role("button", name="Open Dialog").click()
+    dialog = page.locator("#dialog-demo dialog")
+    page.wait_for_function("() => document.querySelector('#dialog-demo dialog').open")
+    out = dialog.evaluate(DIALOG_IME)
+    assert out == {"composing": False, "safari": False, "after": False, "cancel": True, "state": [True, "open"]}, ("Escape that ends an IME composition keeps the dialog open, as Base UI 1.6.0 useDismiss", out)
+    page.wait_for_timeout(50)
+    page.keyboard.press("Escape")
+    wait(page, "() => !document.querySelector('#dialog-demo dialog').open")
+
 def check_dialog_body(t):
     page = t.page
     section = t.section("dialog")
@@ -3043,6 +3078,26 @@ def check_toast_timers(t):
     wait(page, "() => !document.querySelector('[data-slot=toast]')", timeout=3000)
 
 
+
+TOAST_ENDING = """async () => {
+  const { toast } = await import("/clanker-ui.js")
+  toast("Saved", { id: "ending", timeout: 0 })
+  await new Promise(r => setTimeout(r, 400))
+  const el = document.querySelector("[data-slot=toast]")
+  const r = el.getBoundingClientRect()
+  const at = () => el.contains(document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2))
+  const before = [at(), getComputedStyle(el).pointerEvents]
+  toast.close("ending")
+  return { before, ending: [el.isConnected, el.hasAttribute("data-ending-style"), getComputedStyle(el).pointerEvents, at()] }
+}"""
+
+
+def check_toast_ending_pointer(t):
+    page = t.page
+    out = page.evaluate(TOAST_ENDING)
+    assert out == {"before": [True, "auto"], "ending": [True, True, "none", False]}, ("a closing toast lets clicks through to the element below", out)
+    wait(page, "() => !document.querySelector('[data-slot=toast]')")
+
 def check_toast_options(t):
     page = t.page
     result = page.evaluate(
@@ -3729,6 +3784,104 @@ def check_menu_scroll_lock(t):
         wait(page, closed, content.element_handle())
         page.wait_for_timeout(50)
         assert not page.evaluate(LOCKED), ("the page scroll lock stays after", how)
+
+
+def tap(page, loc):
+    loc.evaluate("e => e.scrollIntoView({ block: 'center' })")
+    b = box(loc)
+    x, y = b["x"] + b["width"] / 2, b["y"] + b["height"] / 2
+    cdp = page.context.new_cdp_session(page)
+    cdp.send("Emulation.setTouchEmulationEnabled", {"enabled": True, "maxTouchPoints": 1})
+    cdp.send("Input.dispatchTouchEvent", {"type": "touchStart", "touchPoints": [{"x": x, "y": y}]})
+    cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []})
+    page.wait_for_timeout(100)
+    cdp.send("Emulation.setTouchEmulationEnabled", {"enabled": False})
+    cdp.detach()
+
+
+def check_popup_touch_scroll_lock(t):
+    if t.engine != "chromium":
+        t.skip("touch input needs the Chromium DevTools protocol")
+    page = t.page
+    t.section("dropdown-menu")
+    trigger = page.locator("#dropdown-menu-demo [data-dropdown-menu-trigger]")
+    content = page.locator("#dropdown-menu-demo > [data-slot=dropdown-menu-content]")
+    opened = "e => e.matches(':popover-open')"
+    closed = "e => !e.matches(':popover-open')"
+    tap(page, trigger)
+    wait(page, opened, content.element_handle())
+    assert not page.evaluate(LOCKED), "a touch open of a narrow menu keeps the page scroll, like Base UI"
+    page.keyboard.press("Escape")
+    wait(page, closed, content.element_handle())
+    trigger.click()
+    wait(page, opened, content.element_handle())
+    assert page.evaluate(LOCKED), "a mouse open still locks the page scroll"
+    page.keyboard.press("Escape")
+    wait(page, closed, content.element_handle())
+    content.evaluate("e => { e.style.minWidth = `${document.documentElement.clientWidth - 10}px` }")
+    tap(page, trigger)
+    wait(page, opened, content.element_handle())
+    assert content.evaluate("e => e.offsetWidth >= document.documentElement.clientWidth - 20")
+    assert page.evaluate(LOCKED), "a touch open of a menu as wide as the viewport locks the page scroll, like Base UI"
+    page.keyboard.press("Escape")
+    wait(page, closed, content.element_handle())
+    content.evaluate("e => { e.style.minWidth = '' }")
+    page.wait_for_timeout(50)
+    assert not page.evaluate(LOCKED)
+    t.section("select")
+    strigger = page.locator("#select-demo [data-slot=select-trigger]")
+    scontent = page.locator("#select-demo [data-slot=select-content]")
+    tap(page, strigger)
+    wait(page, opened, scontent.element_handle())
+    assert not page.evaluate(LOCKED), "a touch open of a narrow select keeps the page scroll, like Base UI"
+    page.keyboard.press("Escape")
+    wait(page, closed, scontent.element_handle())
+    strigger.click()
+    wait(page, opened, scontent.element_handle())
+    assert page.evaluate(LOCKED), "a mouse open of a select still locks the page scroll"
+    page.keyboard.press("Escape")
+    wait(page, closed, scontent.element_handle())
+
+
+def check_popup_touch_focus(t):
+    if t.engine != "chromium":
+        t.skip("touch input needs the Chromium DevTools protocol")
+    page = t.page
+    t.section("dialog")
+    page.evaluate("() => document.getElementById('dialog-name').addEventListener('focus', () => window.__fieldFocus = (window.__fieldFocus ?? 0) + 1)")
+    trigger = page.locator("#dialog-demo [data-dialog-trigger]")
+    dialog_open = "s => document.querySelector('#dialog-demo dialog').dataset.state === s"
+    tap(page, trigger)
+    wait(page, dialog_open, "open")
+    assert active(page, "e => e.matches('#dialog-demo dialog')"), ("a touch open focuses the dialog popup, so no on-screen keyboard opens, like Base UI", active(page, "e => e.id || e.dataset.slot"))
+    assert page.evaluate("window.__fieldFocus ?? 0") == 0, "the text field never gets focus during a touch open"
+    page.keyboard.press("Escape")
+    wait(page, "() => !document.querySelector('#dialog-demo dialog').open")
+    trigger.click()
+    wait(page, dialog_open, "open")
+    assert active(page, "e => e.id") == "dialog-name", "a mouse open focuses the first field"
+    page.keyboard.press("Escape")
+    wait(page, "() => !document.querySelector('#dialog-demo dialog').open")
+    t.section("popover")
+    page.evaluate("""async () => {
+  const { h } = await import("/clanker-ui.js")
+  const root = h("div", { "data-slot": "popover", id: "fx-pop-touch" },
+    h("button", { type: "button", "data-slot": "button", "data-variant": "outline", "data-popover-trigger": "" }, "Dimensions"),
+    h("div", { "data-slot": "popover-content" }, h("input", { "data-slot": "input", id: "fx-pop-touch-input", "aria-label": "Width" })))
+  document.getElementById("popover").prepend(root)
+  await new Promise(r => setTimeout(r, 0))
+}""")
+    ptrigger = page.locator("#fx-pop-touch [data-popover-trigger]")
+    pcontent = page.locator("#fx-pop-touch [data-slot=popover-content]")
+    tap(page, ptrigger)
+    wait(page, "e => e.matches(':popover-open')", pcontent.element_handle())
+    assert active(page, "e => e.dataset.slot") == "popover-content", "a touch open focuses the popover popup, like Base UI"
+    page.keyboard.press("Escape")
+    wait(page, "e => !e.matches(':popover-open')", pcontent.element_handle())
+    ptrigger.click()
+    wait(page, "e => e.matches(':popover-open')", pcontent.element_handle())
+    assert active(page, "e => e.id") == "fx-pop-touch-input", "a mouse open focuses the first field"
+    page.keyboard.press("Escape")
 
 
 def check_tooltip_hover_card_settings(t):

@@ -779,7 +779,10 @@ export function show(el, options = {}) {
   closing.delete(el)
   const quiet = pointer && o.modal && o.focus === "first" && el instanceof HTMLDialogElement
   if (el instanceof HTMLDialogElement) {
+    const still = o.focus === "content" && !el.open ? [...el.children].filter(child => child instanceof HTMLElement && !child.inert) : []
+    for (const child of still) child.inert = true
     if (!el.open) o.modal ? el.showModal() : el.show()
+    for (const child of still) child.inert = false
     const native = document.activeElement
     if (quiet && native !== el && el.contains(native) && native.matches(":focus-visible") && !native.matches(TEXT_ENTRY)) native.blur()
   } else if (el.hasAttribute("popover")) {
@@ -793,7 +796,7 @@ export function show(el, options = {}) {
   const dismiss = o.onDismiss ?? (reason => hide(el, { restoreFocus: reason !== "outside" }))
   state.cleanup.push(dismissable(el, dismiss, { escape: o.escape, outside: o.outside, focusOutside: o.focusOutside, intentional: o.intentional, ignore: [o.trigger] }))
   if (o.modal) state.cleanup.push(trapFocus(el), lockScroll())
-  else if (o.scrollLock) state.cleanup.push(lockScroll())
+  else if (o.scrollLock && touchLock(el)) state.cleanup.push(lockScroll())
   if (o.hideOthers) state.cleanup.push(hideOthers([el, ...o.hideOthers]))
   if (o.scrollLock || o.hideOthers) {
     const watch = new ResizeObserver(() => opened.get(el) === state && !el.checkVisibility() && hide(el, { restoreFocus: false }))
@@ -1374,8 +1377,18 @@ document.addEventListener(
   true,
 )
 
+let composing = false
+let composeEnd
+document.addEventListener("compositionstart", () => {
+  clearTimeout(composeEnd)
+  composing = true
+}, true)
+document.addEventListener("compositionend", () => {
+  composeEnd = setTimeout(() => (composing = false), 5)
+}, true)
+
 document.addEventListener("keydown", event => {
-  if (event.defaultPrevented || event.isComposing) return
+  if (event.defaultPrevented || event.isComposing || event.keyCode === 229 || composing) return
   if (event.key === "Escape") {
     const layer = layers.at(-1)
     if (!layer) return
@@ -1414,6 +1427,15 @@ document.addEventListener(
 function keyboardModality(on) {
   keyboardMode = on
   if (document.documentElement.hasAttribute("data-keyboard") !== on) document.documentElement.toggleAttribute("data-keyboard", on)
+}
+
+function touchOpen() {
+  return !keyboardMode && pressPointer === "touch"
+}
+
+function touchLock(el) {
+  const width = document.documentElement.clientWidth
+  return !touchOpen() || (width > 0 && el.offsetWidth > 0 && el.offsetWidth >= width - 20)
 }
 
 function pointerMoved(event) {
@@ -1475,7 +1497,7 @@ document.addEventListener(
   "cancel",
   event => {
     const el = event.target
-    if (closing.has(el)) return event.preventDefault()
+    if (closing.has(el) || composing) return event.preventDefault()
     const state = opened.get(el)
     if (!state) return
     event.preventDefault()
@@ -2125,6 +2147,14 @@ function sliderPosition(f, size) {
   return `calc(${size / 2}px + ${+f.toFixed(6)} * (100% - ${size}px))`
 }
 
+function sliderNumber(root, value) {
+  try {
+    return new Intl.NumberFormat(root.closest("[lang]")?.getAttribute("lang") || undefined).format(value)
+  } catch {
+    return new Intl.NumberFormat().format(value)
+  }
+}
+
 function sliderRender(root) {
   const st = sliderStates.get(root)
   if (!st || !st.inputs.length) return
@@ -2155,7 +2185,7 @@ function sliderRender(root) {
     s.zIndex = st.active === k ? (dragging || overlap ? "2" : "1") : ""
     const input = inputs[k]
     input.setAttribute("aria-valuenow", input.value)
-    if (inputs.length === 2) input.setAttribute("aria-valuetext", `${input.value} ${k ? "end" : "start"} range`)
+    if (inputs.length === 2) input.setAttribute("aria-valuetext", `${sliderNumber(root, input.valueAsNumber)} ${k ? "end" : "start"} range`)
     else input.removeAttribute("aria-valuetext")
     thumb.toggleAttribute("data-disabled", input.disabled)
   })
@@ -2703,9 +2733,10 @@ function selectOpen(root, focus = "selected", pointer = false) {
   const quiet = pointer && !(document.activeElement === st.trigger && st.trigger.matches(":focus-visible"))
   const popper = selectPopper(st.content)
   st.content.dataset.alignTrigger = String(!popper)
-  const release = lockScroll()
+  const touch = touchOpen()
+  let release = touch ? null : lockScroll()
   st.lock = release
-  show(st.content, { trigger: st.trigger, anchor: popper ? st.trigger : null, side: st.side, align: st.align, settle: true, focus: null, onDismiss: reason => selectDismiss(root, reason), onClose: release })
+  show(st.content, { trigger: st.trigger, anchor: popper ? st.trigger : null, side: st.side, align: st.align, settle: true, focus: null, onDismiss: reason => selectDismiss(root, reason), onClose: () => release?.() })
   const items = selectEnabled(root)
   const selected = items.find(i => i.getAttribute("aria-selected") === "true")
   const target = focus === "first" ? items[0] : focus === "last" ? items.at(-1) : focus instanceof Element ? focus : (selected ?? items[0])
@@ -2723,6 +2754,7 @@ function selectOpen(root, focus = "selected", pointer = false) {
     st.content.style.height = ""
     selectHeight(st.content, st.content.offsetHeight)
   }
+  if (touch && touchLock(st.content)) release = st.lock = lockScroll()
   if (target) {
     setRoving(items, target)
     target.focus(quiet ? { preventScroll: true, focusVisible: false } : { preventScroll: true })
@@ -2921,14 +2953,14 @@ define("select-content", {
     const root = content.closest('[data-slot="select"]')
     const st = root && selectStates.get(root)
     if (!st) return
-    const items = selectEnabled(root)
+    const items = selectItems(root).filter(item => !item.hidden)
     const active = items.find(i => i === document.activeElement)
     if (event.key === "Tab") {
       selectClose(root, false)
       st.trigger.focus()
       return
     }
-    if (rove(event, items, { loop: false, label: selectLabel, ms: 750 })) {
+    if (rove(event, items, { loop: false, label: selectLabel, ms: 750, skipDisabled: false })) {
       selectReveal(st.viewport, document.activeElement)
       return
     }
@@ -2987,8 +3019,12 @@ function comboboxItems(st) {
   return [...st.list.querySelectorAll('[data-slot="combobox-item"]')]
 }
 
+function comboboxShown(st) {
+  return comboboxItems(st).filter(item => !item.hidden && !item.closest("[hidden]"))
+}
+
 function comboboxVisible(st) {
-  return comboboxItems(st).filter(item => !item.hidden && !item.closest("[hidden]") && !flag(item, "data-disabled"))
+  return comboboxShown(st).filter(item => !flag(item, "data-disabled"))
 }
 
 function comboboxLabel(item) {
@@ -3121,7 +3157,7 @@ function comboboxTyped(st, root) {
   comboboxFilter(st, st.input.value)
   const items = comboboxVisible(st)
   if (flag(root, "data-auto-highlight")) comboboxHighlight(st, items[0] ?? null)
-  else if (st.highlighted && !items.includes(st.highlighted)) comboboxHighlight(st, null)
+  else if (st.highlighted && !comboboxShown(st).includes(st.highlighted)) comboboxHighlight(st, null)
 }
 
 function comboboxHighlight(st, item, reveal = true) {
@@ -3218,7 +3254,7 @@ function comboboxChoose(st, item) {
 }
 
 function comboboxMove(st, delta) {
-  const items = comboboxVisible(st)
+  const items = comboboxShown(st)
   if (!items.length) return
   const i = items.indexOf(st.highlighted)
   comboboxHighlight(st, i < 0 ? (delta > 0 ? items[0] : items.at(-1)) : (items[i + delta] ?? null))
@@ -3367,10 +3403,7 @@ define("combobox", {
       if (open && st.highlighted) {
         event.preventDefault()
         comboboxChoose(st, st.highlighted)
-      } else if (open && !st.popup) {
-        event.preventDefault()
-        comboboxClose(st)
-      }
+      } else if (open && !st.popup) comboboxClose(st)
     } else if (event.key === "Backspace") {
       if (st.multiple && !st.input.value && st.value.length && st.input.selectionStart === 0) {
         event.preventDefault()
@@ -3730,7 +3763,7 @@ function dialogShow(found, trigger = null) {
   if (kind === "drawer") return drawerShow(found, trigger)
   if (kind === "sheet") transition(content, true)
   for (const command of content.querySelectorAll('[data-slot="command"]')) commandReset(command)
-  show(content, { trigger, anchor: null, modal: true, outside: kind !== "alert-dialog", intentional: true, onDismiss: reason => dialogHide(content, reason) })
+  show(content, { trigger, anchor: null, modal: true, outside: kind !== "alert-dialog", intentional: true, focus: touchOpen() ? "content" : "first", onDismiss: reason => dialogHide(content, reason) })
   emit(root, `${kind}:open`, { trigger })
   return true
 }
@@ -4587,6 +4620,7 @@ function popoverShow(found, trigger, anchor) {
     trigger,
     anchor,
     modal,
+    focus: touchOpen() ? "content" : "first",
     focusOutside: !modal,
     intentional: "mouse",
     collisionPadding: 5,
@@ -7361,6 +7395,11 @@ define("tabs", {
     for (const trigger of triggers) {
       trigger.setAttribute("role", "tab")
       trigger.dataset.orientation = orientation
+      if (trigger.disabled) {
+        trigger.disabled = false
+        trigger.setAttribute("aria-disabled", "true")
+        trigger.setAttribute("data-disabled", "")
+      }
       buttonType(trigger)
       ensureId(trigger, "tabs-trigger")
       const panel = panels.find(p => p.dataset.value === tabsValue(trigger)) ?? panels.find(p => p.dataset.value == null)
@@ -7375,7 +7414,7 @@ define("tabs", {
       panel.dataset.orientation = orientation
       if (!panel.hasAttribute("tabindex")) panel.tabIndex = 0
     }
-    const usable = triggers.filter(t => !t.disabled)
+    const usable = triggers.filter(t => !disabled(t))
     const initial = triggers.find(t => root.dataset.value != null && tabsValue(t) === root.dataset.value) ?? triggers.find(t => t.dataset.state === "active" || t.getAttribute("aria-selected") === "true") ?? triggers.find(t => tabsValue(t) === root.dataset.defaultValue) ?? usable[0]
     if (initial) tabsSelect(root, tabsValue(initial))
     tabsWatch.observe(root, { attributes: true, attributeFilter: ["data-value"] })
@@ -7389,7 +7428,7 @@ define("tabs", {
 define("tabs-trigger", {
   click(event, trigger) {
     const root = trigger.closest('[data-slot="tabs"]')
-    if (!root || trigger.disabled || trigger.getAttribute("aria-disabled") === "true") return
+    if (!root || disabled(trigger)) return
     const value = tabsValue(trigger)
     tabsReveal(trigger)
     if (tabsSelect(root, value)) emit(root, "tabs:change", { value })
@@ -7399,11 +7438,11 @@ define("tabs-trigger", {
     if (!root) return
     const { triggers } = tabsParts(root)
     const orientation = root.dataset.orientation === "vertical" ? "vertical" : "horizontal"
-    const next = rove(event, triggers, { orientation, typeahead: false, focus: false })
+    const next = rove(event, triggers, { orientation, typeahead: false, focus: false, skipDisabled: false })
     if (!next) return
     setRoving(triggers, next)
     queueMicrotask(() => next.focus())
-    if (root.dataset.activation !== "automatic") return
+    if (root.dataset.activation !== "automatic" || disabled(next)) return
     const value = tabsValue(next)
     if (tabsSelect(root, value)) emit(root, "tabs:change", { value })
   },
@@ -7562,7 +7601,7 @@ export function tableSort(head, dir) {
       const raw = cell ? (cell.getAttribute("data-value") ?? cell.textContent).trim() : ""
       return [row, /^[-–—]?$/.test(raw) ? null : raw]
     }))
-    const kind = type || (rows.every(r => values.get(r) === null || !/\p{L}/u.test(values.get(r)) && Number.isFinite(tableNumber(values.get(r), lang))) ? "number" : "text")
+    const kind = type || (rows.every(r => values.get(r) === null || tableIsNumber(values.get(r), lang)) ? "number" : "text")
     const key = new Map(rows.map(row => {
       const v = values.get(row)
       const k = v === null ? null : kind === "number" ? tableNumber(v, lang) : kind === "date" ? tableDate(v, lang) : v
@@ -7595,10 +7634,19 @@ function tableLocale(lang, make) {
   }
 }
 
-function tableNumber(value, lang) {
+function tableSeparators(lang) {
   const parts = tableLocale(lang, l => new Intl.NumberFormat(l)).formatToParts(-12345.6)
-  const group = parts.find(p => p.type === "group")?.value ?? ","
-  const decimal = parts.find(p => p.type === "decimal")?.value ?? "."
+  return [parts.find(p => p.type === "group")?.value ?? ",", parts.find(p => p.type === "decimal")?.value ?? "."]
+}
+
+function tableIsNumber(value, lang) {
+  const [group, decimal] = tableSeparators(lang).map(c => c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+  const whole = group.trim() ? `\\d{1,3}(?:${group}\\d{3})+|\\d+` : "\\d+"
+  return new RegExp(`^[-−]?(?:${whole})(?:${decimal}\\d+)?$`).test(value.replace(/[\s\p{Sc}%]/gu, ""))
+}
+
+function tableNumber(value, lang) {
+  const [group, decimal] = tableSeparators(lang)
   let s = value.replace(/\s/g, "").replaceAll("−", "-")
   if (group.trim()) s = s.replaceAll(group, "")
   if (decimal !== ".") s = s.replaceAll(".", "").replaceAll(decimal, ".")
@@ -7771,6 +7819,7 @@ function scrollAreaUpdate(state) {
     thumb.style.setProperty(horizontal ? "width" : "height", `${size}px`)
     thumb.style.transform = horizontal ? `translateX(${rtl ? -offset : offset}px)` : `translateY(${offset}px)`
   }
+  if (state.tab && v.scrollHeight && v.scrollWidth) v.tabIndex = v.clientHeight >= v.scrollHeight && v.clientWidth >= v.scrollWidth ? -1 : 0
   scrollAreaFlags(state)
 }
 
@@ -7778,7 +7827,8 @@ define("scroll-area", {
   init(root) {
     const viewport = root.querySelector(':scope > [data-slot="scroll-area-viewport"]')
     if (!viewport) return
-    if (!viewport.hasAttribute("tabindex")) viewport.tabIndex = 0
+    const tab = !viewport.hasAttribute("tabindex") || scrollAreaStates.get(root)?.tab === true
+    if (tab) viewport.tabIndex = 0
     if (!viewport.hasAttribute("role") && (viewport.hasAttribute("aria-label") || viewport.hasAttribute("aria-labelledby"))) viewport.setAttribute("role", "region")
     if (![...root.querySelectorAll(':scope > [data-slot="scroll-area-scrollbar"]')].some(b => b.dataset.orientation !== "horizontal")) {
       root.append(h("div", { "data-slot": "scroll-area-scrollbar", "data-orientation": "vertical" }))
@@ -7789,7 +7839,7 @@ define("scroll-area", {
       if (!bar.querySelector('[data-slot="scroll-area-thumb"]')) bar.append(h("div", { "data-slot": "scroll-area-thumb" }))
       bar.querySelector('[data-slot="scroll-area-thumb"]').dataset.orientation = bar.dataset.orientation
     }
-    const state = { root, viewport, bars, hover: false, scrolling: { x: false, y: false }, timers: {}, at: { x: viewport.scrollLeft, y: viewport.scrollTop }, dragging: null, frame: 0 }
+    const state = { root, viewport, bars, tab, hover: false, scrolling: { x: false, y: false }, timers: {}, at: { x: viewport.scrollLeft, y: viewport.scrollTop }, dragging: null, frame: 0 }
     scrollAreaStates.set(root, state)
     const update = () => scrollAreaUpdate(state)
     const stop = observeChildren(viewport, update)
@@ -10315,6 +10365,15 @@ function calendarWeekNumber(date) {
   return 1 + Math.round(((thursday - january) / 864e5 - 3 + ((january.getDay() + 6) % 7)) / 7)
 }
 
+function calendarLocalWeek(date, weekStart) {
+  const start = year => {
+    const first = calendarDate(year, 0, 1)
+    return calendarAddDays(first, -((first.getDay() - weekStart + 7) % 7))
+  }
+  const next = start(date.getFullYear() + 1)
+  return 1 + Math.round((date - (date >= next ? next : start(date.getFullYear()))) / 6048e5)
+}
+
 function calendarConfig(el) {
   const get = name => el.getAttribute(name)
   const mode = ["multiple", "range"].includes(get("data-mode")) ? get("data-mode") : "single"
@@ -10651,8 +10710,7 @@ function calendarGrid(s, first, focusIso) {
   const rows = calendarWeeks(s, first).map(week => {
     const cells = week.map(date => calendarDayCell(s, date, first, focusIso))
     if (s.weekNumbers) {
-      const thursday = week.find(date => date.getDay() === 4) ?? week[0]
-      const number = calendarWeekNumber(thursday)
+      const number = s.weekStart === 1 ? calendarWeekNumber(week.find(date => date.getDay() === 4) ?? week[0]) : calendarLocalWeek(week[0], s.weekStart)
       cells.unshift(h("td", { "data-slot": "calendar-week-number", role: "rowheader", scope: "row", "aria-label": stringFor(s.el, "week", { week: number }) }, h("div", null, calendarNumber(s, number).padStart(2, calendarNumber(s, 0)))))
     }
     return h("tr", { "data-slot": "calendar-week" }, cells)

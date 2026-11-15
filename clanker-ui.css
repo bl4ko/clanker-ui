@@ -14744,6 +14744,7 @@
 
 @layer clanker.components {
   :is([data-slot="sonner"], [data-slot="toast-portal"]) { position: absolute; }
+  [data-slot="toast"][data-ending-style] { pointer-events: none; }
   [data-slot="pagination-link"][aria-disabled="true"] { pointer-events: none; opacity: 0.5; }
   [data-slot="theme-switch"] {
     display: inline-flex;

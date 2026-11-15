@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/bl4ko/clanker-ui/main/clanker-ui.schema.json",
+  "$id": "https://raw.githubusercontent.com/bl4ko/clanker-ui/main/skills/clanker-ui/references/clanker-ui.schema.json",
   "title": "clanker-ui catalog",
   "description": "Machine-readable catalog of the clanker-ui components. Made by go run ./tools/gen catalog.",
   "type": "object",

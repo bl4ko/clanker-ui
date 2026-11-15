@@ -5,7 +5,7 @@ Group `core`. Needs none. CSS only.
 | Part | Write | State |
 | --- | --- | --- |
 | `card` (root) | `data-orientation` `horizontal`; `data-size` `sm` |  |
-| `card-action` | `data-wrap` any |  |
+| `card-action` | `data-wrap` boolean |  |
 
 Other parts: `card-content`, `card-description`, `card-footer`, `card-header`, `card-title`.
 

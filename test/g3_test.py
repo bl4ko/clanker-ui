@@ -1357,6 +1357,37 @@ def check_scroll_area_children(t):
     assert result == {"shrank": True, "restored": True, "unobserved": True}, result
 
 
+def check_scroll_area_tab_stop(t):
+    page = t.page
+    t.section("scroll-area")
+    page.evaluate("""async () => {
+  const { h } = await import("/clanker-ui.js")
+  const host = h("div", { id: "fx-sa-host" },
+    h("button", { type: "button", id: "fx-sa-before" }, "Before"),
+    h("div", { "data-slot": "scroll-area", id: "fx-sa", style: { height: "48px", width: "160px" } },
+      h("div", { "data-slot": "scroll-area-viewport", "aria-label": "Notes", id: "fx-sa-viewport" }, h("p", { id: "fx-sa-text" }, "One line"))),
+    h("div", { "data-slot": "scroll-area", style: { height: "48px", width: "160px" } },
+      h("div", { "data-slot": "scroll-area-viewport", "aria-label": "Authored", tabindex: "0", id: "fx-sa-authored" }, "Short")),
+    h("button", { type: "button", id: "fx-sa-after" }, "After"))
+  document.getElementById("scroll-area").prepend(host)
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+}""")
+    viewport = page.locator("#fx-sa-viewport")
+    assert viewport.evaluate("e => e.scrollHeight <= e.clientHeight && e.scrollWidth <= e.clientWidth")
+    g3_keyboard(page)
+    page.locator("#fx-sa-before").focus()
+    page.keyboard.press("Tab")
+    assert page.evaluate("document.activeElement.id") == "fx-sa-authored", "a viewport without overflow is not a Tab stop, as in Base UI"
+    assert viewport.get_attribute("tabindex") == "-1"
+    page.locator("#fx-sa-text").evaluate("e => { for (let i = 0; i < 8; i++) e.append(document.createElement('br'), 'More') }")
+    page.wait_for_function("() => document.getElementById('fx-sa-viewport').tabIndex === 0")
+    page.locator("#fx-sa-before").focus()
+    page.keyboard.press("Tab")
+    assert page.evaluate("document.activeElement.id") == "fx-sa-viewport", "the viewport becomes a Tab stop when its content overflows"
+    page.locator("#fx-sa-text").evaluate("e => e.replaceChildren('One line')")
+    page.wait_for_function("() => document.getElementById('fx-sa-viewport').tabIndex === -1")
+
+
 def check_strings_layout(t):
     page = t.page
     t.section("carousel")
@@ -2020,8 +2051,14 @@ def check_tabs(t):
     icons = page.locator("#tabs-icons")
     it = icons.locator('[data-slot="tabs-trigger"]')
     assert it.nth(2).is_disabled() and round(g3_rect(it.first.locator("svg"))["w"]) == 16
+    assert [it.nth(2).get_attribute(a) for a in ("disabled", "aria-disabled", "data-disabled")] == [None, "true", ""], "a disabled tab stays focusable, as in Base UI"
     it.nth(1).focus()
-    page.keyboard.press("ArrowRight")
+    page.keyboard.press(g3_key(t, "ArrowRight"))
+    assert it.nth(2).evaluate("e => e === document.activeElement") and it.nth(2).get_attribute("aria-selected") == "false", "an arrow key focuses a disabled tab, as in Base UI"
+    page.keyboard.press("Enter")
+    page.keyboard.press("Space")
+    assert it.nth(2).get_attribute("aria-selected") == "false" and it.nth(0).get_attribute("aria-selected") == "true"
+    page.keyboard.press(g3_key(t, "ArrowRight"))
     assert it.nth(0).evaluate("e => e === document.activeElement") and it.nth(1).get_attribute("aria-selected") == "false"
     page.keyboard.press("Enter")
     assert it.nth(0).get_attribute("aria-selected") == "true"

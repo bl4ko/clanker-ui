@@ -1,0 +1,24 @@
+{
+  "page": "tabs",
+  "preview": 3,
+  "parts": {
+    "tablist": {"role": "tablist"},
+    "home": {"role": "tab", "name": "Home"},
+    "disabled": {"role": "tab", "name": "Disabled"}
+  },
+  "anchor": "tablist",
+  "steps": [
+    {"do": "tab_in"},
+    {"do": "press", "key": "ArrowRight", "label": "ArrowRight onto the disabled tab"},
+    {"do": "press", "key": "Enter"},
+    {"do": "press", "key": "Space"},
+    {"do": "press", "key": "ArrowRight"},
+    {"do": "press", "key": "ArrowLeft"},
+    {"do": "press", "key": "Home"},
+    {"do": "press", "key": "End"},
+    {"do": "tab"},
+    {"do": "shift_tab"},
+    {"do": "click", "target": "home"},
+    {"do": "press", "key": "ArrowLeft"}
+  ]
+}

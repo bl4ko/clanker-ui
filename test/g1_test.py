@@ -1189,9 +1189,21 @@ def check_select(t):
     assert focused(page) == "Apple"
     assert droot.get_by_role("option", name="Banana", exact=True).get_attribute("aria-disabled") == "true"
     page.keyboard.press("ArrowDown")
-    assert focused(page) == "Blueberry"
+    assert focused(page) == "Banana", "arrows highlight a disabled item, as in Base UI"
+    assert droot.locator("[data-highlighted]").evaluate_all("l => l.map(e => e.textContent)") == ["Banana"]
+    page.keyboard.press("Enter")
+    page.keyboard.press(" ")
+    assert popover_open(dcontent) and dtrigger.inner_text().strip() == "Select a fruit", "Enter and Space on a disabled item do nothing"
     page.keyboard.press("ArrowDown")
+    assert focused(page) == "Blueberry"
+    page.keyboard.press("End")
     assert focused(page) == "Pineapple"
+    page.keyboard.press("ArrowUp")
+    assert focused(page) == "Grapes"
+    page.keyboard.press("Home")
+    assert focused(page) == "Apple"
+    page.keyboard.press("b")
+    assert focused(page) == "Blueberry", "typeahead skips disabled items, as in Base UI"
     page.keyboard.press("Escape")
     wait_open(page, dcontent, False)
     assert page.locator("#select-disabled [data-slot=select-trigger]").is_disabled()
@@ -1916,6 +1928,68 @@ def check_combobox_ime(t):
     page.keyboard.press("Enter")
     wait_open(page, content, False)
     assert state()["native"] == "Re 東京"
+
+
+def check_combobox_enter_submit(t):
+    page = t.page
+    t.section("combobox")
+    page.evaluate("""async () => {
+  const { h } = await import("/clanker-ui.js")
+  const form = h("form", { id: "fx-combo-form" },
+    h("div", { "data-slot": "combobox", "data-name": "fx-submit" },
+      h("div", { "data-slot": "input-group" }, h("input", { "data-slot": "input-group-control", id: "fx-combo-form-input", "aria-label": "Framework" })),
+      h("div", { "data-slot": "combobox-content" }, h("div", { "data-slot": "combobox-list" }, ["Next.js", "Remix", "Astro"].map(v => h("div", { "data-slot": "combobox-item", "data-value": v }, v))))),
+    h("button", { type: "submit" }, "Save"))
+  form.addEventListener("submit", event => {
+    event.preventDefault()
+    window.__fxSubmits = (window.__fxSubmits ?? 0) + 1
+  })
+  document.getElementById("combobox").prepend(form)
+  await new Promise(r => setTimeout(r, 0))
+}""")
+    content = page.locator("#fx-combo-form [data-slot=combobox-content]")
+    page.locator("#fx-combo-form-input").press_sequentially("Remix")
+    wait_open(page, content)
+    assert page.locator("#fx-combo-form [data-highlighted]").count() == 0
+    page.keyboard.press("Enter")
+    wait_open(page, content, False)
+    assert page.evaluate("window.__fxSubmits ?? 0") == 1, "Enter with no highlighted item closes the list and lets the form submit, like Base UI"
+    page.keyboard.press("ArrowDown")
+    wait_open(page, content)
+    page.keyboard.press("Enter")
+    wait_open(page, content, False)
+    assert page.evaluate("window.__fxSubmits ?? 0") == 1, "Enter on a highlighted item chooses it and does not submit"
+
+
+def check_combobox_disabled_item(t):
+    page = t.page
+    t.section("combobox")
+    page.evaluate("""async () => {
+  const { h } = await import("/clanker-ui.js")
+  const root = h("div", { "data-slot": "combobox", id: "fx-combo-dis", "data-name": "fx-dis" },
+    h("div", { "data-slot": "input-group" }, h("input", { "data-slot": "input-group-control", id: "fx-combo-dis-input", "aria-label": "Framework" })),
+    h("div", { "data-slot": "combobox-content" }, h("div", { "data-slot": "combobox-list" }, ["Next.js", "Nuxt.js", "Remix"].map(v => h("div", { "data-slot": "combobox-item", "data-value": v, "data-disabled": v === "Nuxt.js" ? "" : null }, v)))))
+  document.getElementById("combobox").prepend(root)
+  await new Promise(r => setTimeout(r, 0))
+}""")
+    root = page.locator("#fx-combo-dis")
+    content = root.locator("[data-slot=combobox-content]")
+    highlighted = lambda: root.locator("[data-slot=combobox-item][data-highlighted]").evaluate_all("l => l.map(e => e.textContent)")
+    page.locator("#fx-combo-dis-input").focus()
+    page.keyboard.press("ArrowDown")
+    wait_open(page, content)
+    assert highlighted() == ["Next.js"]
+    page.keyboard.press("ArrowDown")
+    assert highlighted() == ["Nuxt.js"], "arrows highlight a disabled item, as in Base UI"
+    assert page.locator("#fx-combo-dis-input").get_attribute("aria-activedescendant") == root.locator("[data-value='Nuxt.js']").get_attribute("id")
+    page.keyboard.press("Enter")
+    assert popover_open(content) and root.locator("input[aria-hidden=true]").input_value() == "", "Enter on a disabled item does nothing"
+    page.keyboard.press("ArrowDown")
+    assert highlighted() == ["Remix"]
+    page.keyboard.press("ArrowUp")
+    assert highlighted() == ["Nuxt.js"]
+    page.keyboard.press("Escape")
+    wait_open(page, content, False)
 
 
 def check_choice_disabled_focus(t):

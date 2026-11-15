@@ -23,6 +23,12 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Combobox: IME composition no longer chooses, filters, or moves the highlight. Enter and the arrow keys of an IME (`isComposing` or `keyCode` 229) go to the IME, and the list filters once on `compositionend`, like Base UI (#184).
 - Theme Switch, Section Cards: with `data-theme="light"` on a dark system, the pressed theme-switch button and the section cards no longer get their dark styles; the two dark rules of `tools/gen/kit.css` now check the theme on the element itself, and `go test` rejects a bare `:not([data-theme] *)` before a combinator (#185).
 - Accessibility layer: in forced colors, the dot of a checked radio and of a checked questionnaire choice is `Highlight` with a `Highlight` border, so the checked state is visible (#187).
+- Combobox: Enter with the list open and no highlighted item closes the list and no longer blocks the form submit, like Base UI (#191).
+- Scroll Area: the viewport is a Tab stop only while its content overflows, like Base UI; an author `tabindex` stays (#194).
+- Tabs: the arrow keys, Home, and End focus a disabled tab, which cannot be selected, like Base UI. The kit changes `disabled` on a trigger to `aria-disabled="true"` and `data-disabled` (#195).
+- Dialog, Alert Dialog, Sheet, Popover: a touch open focuses the popup itself, not the first field, so the on-screen keyboard does not open, like Base UI (#196).
+- Select, Combobox: the arrow keys (and Home and End in the select) highlight disabled items, which cannot be chosen; typeahead still skips them, like Base UI (#199).
+- Dropdown Menu, Context Menu, Menubar, Select: a touch open locks page scroll only when the popup is at most 20 px narrower than the viewport, like Base UI (#200).
 
 ## 0.4.0 - 2026-11-14
 

@@ -1801,6 +1801,29 @@ def check_calendar_show_week_number(t):
     assert out == {"data-show-week-number": [1, True, 0], "data-week-numbers": [0, False, 0]}, out
 
 
+WEEK_NUMBERS = """async () => {
+  const ui = await import("/clanker-ui.js")
+  const out = {}
+  for (const [name, start, month] of [["sunday", "0", "2027-01"], ["sundayDecember", "0", "2026-12"], ["monday", "1", "2027-01"]]) {
+    const cal = ui.h("div", { "data-slot": "calendar", "data-month": month, "data-week-start": start, "data-show-week-number": "" })
+    document.getElementById("calendar").append(cal)
+    await new Promise(r => setTimeout(r, 20))
+    out[name] = [...cal.querySelectorAll("[data-slot=calendar-week-number]")].map(n => n.textContent.trim())
+    cal.remove()
+  }
+  return out
+}"""
+
+
+def check_calendar_week_number_start(t):
+    t.section("calendar")
+    out = t.page.evaluate(WEEK_NUMBERS)
+    assert out == {
+        "sunday": ["01", "02", "03", "04", "05", "06"],
+        "sundayDecember": ["49", "50", "51", "52", "01"],
+        "monday": ["53", "01", "02", "03", "04"],
+    }, ("Sunday start: week 1 has January 1, as react-day-picker en-US; Monday start: ISO weeks", out)
+
 DEMO_RESET = """async () => {
   const ui = await import("/clanker-ui.js")
   const content = document.getElementById("message-scroller-transcript")

@@ -1944,6 +1944,28 @@ def check_toggle_tab(t):
     assert page.locator("#button button[data-slot=button]").evaluate_all("l => [...new Set(l.map(b => b.getAttribute('tabindex')))]") == ["0"]
 
 
+
+SLIDER_VALUETEXT = """async () => {
+  const { h } = await import("/clanker-ui.js")
+  const out = {}
+  for (const lang of ["en", "de"]) {
+    const root = h("div", { "data-slot": "slider", lang },
+      h("input", { type: "range", min: "0", max: "1000", value: "250", "aria-label": "Minimum" }),
+      h("input", { type: "range", min: "0", max: "1000", value: "1000", "aria-label": "Maximum" }))
+    document.getElementById("slider").prepend(root)
+    await new Promise(r => requestAnimationFrame(() => setTimeout(r, 30)))
+    out[lang] = [...root.querySelectorAll("input")].map(i => i.getAttribute("aria-valuetext"))
+    root.remove()
+  }
+  return out
+}"""
+
+
+def check_slider_range_valuetext(t):
+    t.section("slider")
+    out = t.page.evaluate(SLIDER_VALUETEXT)
+    assert out == {"en": ["250 start range", "1,000 end range"], "de": ["250 start range", "1.000 end range"]}, ("range aria-valuetext formats the number for the nearest lang, as Base UI 1.6.0", out)
+
 def check_slider_pointer_focus(t):
     page = t.page
     t.section("slider")

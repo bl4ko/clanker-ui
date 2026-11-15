@@ -1790,6 +1790,40 @@ def check_table_sort_options(t):
     ], ("data-sort-toggle on the table: two states, the other head starts with its first direction", out["two"])
 
 
+
+TABLE_SORT_AUTO = """async () => {
+  const { h } = await import("/clanker-ui.js")
+  const sort = async (lang, values) => {
+    const table = h("table", { "data-slot": "table", lang },
+      h("thead", { "data-slot": "table-header" }, h("tr", { "data-slot": "table-row" }, h("th", { "data-slot": "table-head", "data-sort": "" }, "Value"))),
+      h("tbody", { "data-slot": "table-body" }, values.map(v => h("tr", { "data-slot": "table-row" }, h("td", { "data-slot": "table-cell" }, v)))))
+    document.body.append(table)
+    await new Promise(r => requestAnimationFrame(r))
+    table.tHead.querySelector("button").click()
+    const out = [...table.tBodies[0].rows].map(r => r.cells[0].textContent)
+    table.remove()
+    return out
+  }
+  return {
+    dates: await sort("en", ["2026-03-14", "2026-01-02", "2026-02-20"]),
+    versions: await sort("en", ["1.10.2", "1.9.0", "1.2.0"]),
+    german: await sort("de", ["1.10.2", "1.9.0", "1.2.0"]),
+    numbers: await sort("en", ["$1,200.50", "12 %", "-3", "250"]),
+    euros: await sort("de", ["1.234,50 €", "99 €", "1.000 €"]),
+  }
+}"""
+
+
+def check_table_sort_auto(t):
+    out = t.page.evaluate(TABLE_SORT_AUTO)
+    assert out == {
+        "dates": ["2026-01-02", "2026-02-20", "2026-03-14"],
+        "versions": ["1.2.0", "1.9.0", "1.10.2"],
+        "german": ["1.2.0", "1.9.0", "1.10.2"],
+        "numbers": ["-3", "12 %", "250", "$1,200.50"],
+        "euros": ["99 €", "1.000 €", "1.234,50 €"],
+    }, ("auto sort is number only when the whole value is a number; ISO dates and versions sort as text", out)
+
 def check_sidebar_rtl(t):
     page = t.page
     t.section("sidebar")

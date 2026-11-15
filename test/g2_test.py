@@ -142,6 +142,41 @@ def check_dialog(t):
     t.shot()
 
 
+
+DIALOG_IME = """dialog => {
+  const input = dialog.querySelector("input")
+  const fire = (Kind, type, init = {}, keyCode) => {
+    const event = new Kind(type, { bubbles: true, cancelable: true, ...init })
+    if (keyCode != null) Object.defineProperty(event, "keyCode", { value: keyCode })
+    input.dispatchEvent(event)
+    return event
+  }
+  const out = {}
+  fire(CompositionEvent, "compositionstart")
+  out.composing = fire(KeyboardEvent, "keydown", { key: "Escape", isComposing: true }, 229).defaultPrevented
+  fire(CompositionEvent, "compositionend")
+  out.safari = fire(KeyboardEvent, "keydown", { key: "Escape" }, 229).defaultPrevented
+  out.after = fire(KeyboardEvent, "keydown", { key: "Escape" }, 27).defaultPrevented
+  const cancel = new Event("cancel", { cancelable: true })
+  dialog.dispatchEvent(cancel)
+  out.cancel = cancel.defaultPrevented
+  out.state = [dialog.open, dialog.getAttribute("data-state")]
+  return out
+}"""
+
+
+def check_dialog_ime_escape(t):
+    page = t.page
+    section = t.section("dialog")
+    section.get_by_role("button", name="Open Dialog").click()
+    dialog = page.locator("#dialog-demo dialog")
+    page.wait_for_function("() => document.querySelector('#dialog-demo dialog').open")
+    out = dialog.evaluate(DIALOG_IME)
+    assert out == {"composing": False, "safari": False, "after": False, "cancel": True, "state": [True, "open"]}, ("Escape that ends an IME composition keeps the dialog open, as Base UI 1.6.0 useDismiss", out)
+    page.wait_for_timeout(50)
+    page.keyboard.press("Escape")
+    wait(page, "() => !document.querySelector('#dialog-demo dialog').open")
+
 def check_dialog_body(t):
     page = t.page
     section = t.section("dialog")
@@ -3042,6 +3077,26 @@ def check_toast_timers(t):
     page.evaluate("() => window.dispatchEvent(new FocusEvent('focus'))")
     wait(page, "() => !document.querySelector('[data-slot=toast]')", timeout=3000)
 
+
+
+TOAST_ENDING = """async () => {
+  const { toast } = await import("/clanker-ui.js")
+  toast("Saved", { id: "ending", timeout: 0 })
+  await new Promise(r => setTimeout(r, 400))
+  const el = document.querySelector("[data-slot=toast]")
+  const r = el.getBoundingClientRect()
+  const at = () => el.contains(document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2))
+  const before = [at(), getComputedStyle(el).pointerEvents]
+  toast.close("ending")
+  return { before, ending: [el.isConnected, el.hasAttribute("data-ending-style"), getComputedStyle(el).pointerEvents, at()] }
+}"""
+
+
+def check_toast_ending_pointer(t):
+    page = t.page
+    out = page.evaluate(TOAST_ENDING)
+    assert out == {"before": [True, "auto"], "ending": [True, True, "none", False]}, ("a closing toast lets clicks through to the element below", out)
+    wait(page, "() => !document.querySelector('[data-slot=toast]')")
 
 def check_toast_options(t):
     page = t.page

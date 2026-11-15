@@ -15,7 +15,7 @@ Before 1.0 the kit takes no new styles and no new components. Pull requests fix 
   uv run --no-project --with playwright playwright install chromium firefox webkit
   ```
 
-- The Tailwind CSS CLI for the generator. Only the Nova style `clanker-ui.css` is in git: `go run ./tools/gen build` (network) writes the other styles and `dist/`, and the server and `go test` need them. Use the exact version of `tailwindVersion` in `tools/gen/main.go`: download `tailwindcss-<os>-<arch>` of that version from the [Tailwind CSS releases](https://github.com/tailwindlabs/tailwindcss/releases), and pass `-tailwind PATH` to the generator or put it on `PATH` as `tailwindcss`. Homebrew gives only the newest version.
+- The Tailwind CSS CLI for the generator. Only the Nova style `kit/clanker-ui.css` is in git: `go run ./tools/gen build` (network) writes the other styles and `kit/dist/`, and the server and `go test` need them. Use the exact version of `tailwindVersion` in `tools/gen/main.go`: download `tailwindcss-<os>-<arch>` of that version from the [Tailwind CSS releases](https://github.com/tailwindlabs/tailwindcss/releases), and pass `-tailwind PATH` to the generator or put it on `PATH` as `tailwindcss`. Homebrew gives only the newest version.
 
 ## Run and test
 
@@ -34,7 +34,7 @@ uv run --no-project --with playwright python -I tools/behavior gate --quick --ba
 
 ## Rules
 
-- Never edit `clanker-ui.css` or `dist/` by hand. The component CSS comes from `tools/gen` and the kit layer `tools/gen/kit.css`. After each change of a kit file, run `go run ./tools/gen dist`; `go test` fails when `dist/` is old.
+- Never edit `kit/clanker-ui.css` or `kit/dist/` by hand. The component CSS comes from `tools/gen` and the kit layer `tools/gen/kit.css`. After each change of a kit file, run `go run ./tools/gen dist`; `go test` fails when `kit/dist/` is old.
 - No comments in code, except the first-line license comment of each kit file.
 - The security rules in [README.md](README.md#security-rules) apply to all kit, demo, and docs code: no `innerHTML`, no `eval`, no inline scripts or styles. `go test` checks them.
 - Each fix has a check that fails when only that fix is removed.

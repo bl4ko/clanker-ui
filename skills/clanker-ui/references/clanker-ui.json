@@ -11,7 +11,7 @@
   "csp": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; require-trusted-types-for 'script'",
   "cspMeta": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'",
   "files": {
-    "note": "Put all files in one directory of the static site. In the release zip, the .min files are in dist/; the release also has each file as a separate asset. In a clone of the repository, dist/ and the styles other than Nova exist only after go run ./tools/gen build. Use the readable set or the .min files, never both.",
+    "note": "Put all files in one directory of the static site. In the release zip, the .min files are in dist/; the release also has each file as a separate asset. In a clone of the repository, the files are in kit/, and kit/dist/ and the styles other than Nova exist only after go run ./tools/gen build. Use the readable set or the .min files, never both.",
     "readable": {
       "css": [
         "clanker-ui.css"

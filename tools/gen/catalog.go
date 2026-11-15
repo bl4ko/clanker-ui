@@ -528,6 +528,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 		bs, err := os.ReadFile(filepath.Join(root, name))
 		return string(bs), err
 	}
+	readKit := func(name string) (string, error) { return read(filepath.Join(kitDir, name)) }
 	t, err := readGroups(filepath.Join(root, "tools", "gen", "groups.tsv"))
 	if err != nil {
 		return nil, nil, err
@@ -546,13 +547,13 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 		return nil, nil, err
 	}
 	readme := catalogMark.ReplaceAllString(readmeOut, "")
-	css, err := read("clanker-ui.css")
+	css, err := readKit("clanker-ui.css")
 	if err != nil {
 		return nil, nil, err
 	}
 	var js strings.Builder
 	for _, f := range []string{"clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-code.js"} {
-		s, err := read(f)
+		s, err := readKit(f)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -661,7 +662,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 		Exports:     exports,
 	}
 	cat.Files = catFiles{
-		Note:     "Put all files in one directory of the static site. In the release zip, the .min files are in dist/; the release also has each file as a separate asset. In a clone of the repository, dist/ and the styles other than Nova exist only after go run ./tools/gen build. Use the readable set or the .min files, never both.",
+		Note:     "Put all files in one directory of the static site. In the release zip, the .min files are in dist/; the release also has each file as a separate asset. In a clone of the repository, the files are in kit/, and kit/dist/ and the styles other than Nova exist only after go run ./tools/gen build. Use the readable set or the .min files, never both.",
 		Readable: catFileSet{CSS: []string{"clanker-ui.css"}, JS: []string{"clanker-ui.js"}},
 		Bundle:   catFileSet{CSS: []string{"clanker-ui.min.css"}, JS: []string{"clanker-ui-core.min.js", "clanker-ui.min.js"}},
 		Optional: []catFile{
@@ -727,7 +728,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 		files[c.Readme] = []byte(componentFile(cat, c, full))
 	}
 	files[catalogEvents] = []byte(eventsMarkdown(cat))
-	kit, err := read("clanker-ui.js")
+	kit, err := readKit("clanker-ui.js")
 	if err != nil {
 		return nil, nil, err
 	}

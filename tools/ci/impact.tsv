@@ -73,13 +73,13 @@ checks	ai.ai_chain_of_thought_replay ai.ai_chat_turn ai.ai_checkpoint_restore ai
 75,78,86-88,96,98,120,129,139,159,164-208,290,431-434,436-437,452-453	c:toggle-group
 1,9-10,76,96-98,104,120-121,126,129,139,159,209-290,335-336,433,435-437,439,452,457	c:tooltip
 0-1,3-4,12,14-20,22-30,32,34,39-47,96,98,129,137,139,159,348-402,433,436-437,448,452	c:trace
-117,119,130-131,136-137,147,151,165,177-178,184-185,190-191,199,202,204-205,236,241-242,296,299-300,323-324,326,332,342,348,351,370,378,381,395,402,409,411,415	f:clanker-ui-a11y.css
-89-90,96,98-99,102,104,117-430,433,435-437,439,447	f:clanker-ui-chart.js
-1,9-10,89-90,96,98-99,102,104,117-430,433,435-437,439	f:clanker-ui-code.js
-99	f:clanker-ui-rhea.css p:/__rhea-only
-0-30,77-430,433,435-442	f:clanker-ui-theme.js
-1,96,98-99,117-430,433,436-437	f:clanker-ui-themes.css
-0-451,453-458	f:clanker-ui.css f:clanker-ui.js j:choice:choiceClick+3 j:choice:choiceSelector j:dialog:dialogTriggerSelector j:part:partDefaults j:toast:toastPortal j:toast:toastPortalSetup
+117,119,130-131,136-137,147,151,165,177-178,184-185,190-191,199,202,204-205,236,241-242,296,299-300,323-324,326,332,342,348,351,370,378,381,395,402,409,411,415	f:kit/clanker-ui-a11y.css
+89-90,96,98-99,102,104,117-430,433,435-437,439,447	f:kit/clanker-ui-chart.js
+1,9-10,89-90,96,98-99,102,104,117-430,433,435-437,439	f:kit/clanker-ui-code.js
+99	f:kit/clanker-ui-rhea.css p:/__rhea-only
+0-30,77-430,433,435-442	f:kit/clanker-ui-theme.js
+1,96,98-99,117-430,433,436-437	f:kit/clanker-ui-themes.css
+0-451,453-458	f:kit/clanker-ui.css f:kit/clanker-ui.js j:choice:choiceClick+3 j:choice:choiceSelector j:dialog:dialogTriggerSelector j:part:partDefaults j:toast:toastPortal j:toast:toastPortalSetup
 437	f:demo/assets/artwork-1.svg f:demo/assets/artwork-2.svg f:demo/assets/artwork-3.svg f:demo/assets/gradient.svg f:docs/content/components/card/examples/card-spacing.js f:docs/content/components/checkbox/examples/checkbox-table.js f:docs/content/components/field/examples/field-slider.js f:docs/content/components/input-group/examples/input-group-button.js f:docs/content/components/input-otp/examples/input-otp-controlled.js f:docs/content/utils/shimmer/examples/shimmer-once.js p:/docs/ai-elements/context p:/docs/blocks p:/docs/blocks/card-grid p:/docs/blocks/data-table p:/docs/blocks/detail p:/docs/blocks/form p:/docs/blocks/login p:/docs/blocks/login-split p:/docs/blocks/overlay-form p:/docs/blocks/settings p:/docs/blocks/states p:/docs/components/alert p:/docs/components/alert-dialog p:/docs/components/aspect-ratio p:/docs/components/attachment p:/docs/components/avatar p:/docs/components/badge p:/docs/components/brand p:/docs/components/breadcrumb p:/docs/components/card p:/docs/components/card-grid p:/docs/components/carousel p:/docs/components/checkbox p:/docs/components/collapsible p:/docs/components/combobox p:/docs/components/command p:/docs/components/context-menu p:/docs/components/cover p:/docs/components/date-picker p:/docs/components/direction p:/docs/components/dropdown-menu p:/docs/components/empty p:/docs/components/field p:/docs/components/hover-card p:/docs/components/input p:/docs/components/input-group p:/docs/components/input-otp p:/docs/components/item p:/docs/components/kbd p:/docs/components/label p:/docs/components/marker p:/docs/components/menubar p:/docs/components/message p:/docs/components/message-scroller p:/docs/components/navigation-menu p:/docs/components/page p:/docs/components/pagination p:/docs/components/popover p:/docs/components/questionnaire p:/docs/components/radio-group p:/docs/components/rating p:/docs/components/resizable p:/docs/components/scroll-area p:/docs/components/section-cards p:/docs/components/select p:/docs/components/separator p:/docs/components/sheet p:/docs/components/site-header p:/docs/components/skeleton p:/docs/components/slider p:/docs/components/sonner p:/docs/components/spinner p:/docs/components/stat-grid p:/docs/components/switch p:/docs/components/table p:/docs/components/text-stack p:/docs/components/textarea p:/docs/components/theme-switch p:/docs/components/toast p:/docs/components/toggle p:/docs/components/toggle-group p:/docs/components/trace p:/docs/dark-mode p:/docs/javascript p:/docs/localization p:/docs/markup p:/docs/rtl p:/docs/security p:/docs/theming p:/docs/utils/scroll-fade p:/docs/utils/shimmer
 90,96,98,129,136,139,159,291-347,433,436-437,452,455-456	f:demo/assets/g3-avatar-1.svg
 96,98,129,139,159,291-347,433,436-437,452,455-456	f:demo/assets/g3-avatar-2.svg f:demo/assets/g3-avatar-3.svg f:demo/assets/g3-avatar-4.svg
@@ -88,18 +88,18 @@ checks	ai.ai_chain_of_thought_replay ai.ai_chat_turn ai.ai_checkpoint_restore ai
 96,98,129,139,159,348-402,433,436-437,448,452	f:demo/assets/g4-desk.svg f:demo/assets/g4-office.svg
 96,98,129,139,159,348-402,433,436-437,448-449,452	f:demo/assets/g4-workspace.svg
 89-90,96,98-99,102,104,117-430,433,435-437,439	f:demo/demo.css f:demo/demo.js
-77-88,111-114,432,437	f:dist/clanker-ui-a11y.min.css f:dist/clanker-ui-theme.min.js f:dist/clanker-ui.min.css
-447,452	f:dist/clanker-ui-chart.min.css f:test/split/chart.html f:test/split/chart.js
-78,86-88,117-163,192,218,303,352,403-430,432,437,447,452	f:dist/clanker-ui-chart.min.js
-448-449,452	f:dist/clanker-ui-chat.min.css f:dist/clanker-ui-chat.min.js
-117-163,192,218,303,352,403-430	f:dist/clanker-ui-code.min.js
-447-459	f:dist/clanker-ui-core.min.css f:test/split/core.html
-77-88,111-114,117-163,192,218,303,352,403-430,432,437,447-459	f:dist/clanker-ui-core.min.js
-449,452-454,458-459	f:dist/clanker-ui-forms.min.css
-449,451-454,458-459	f:dist/clanker-ui-forms.min.js
-449,452,455-456	f:dist/clanker-ui-layout.min.css f:dist/clanker-ui-layout.min.js
-449,452,454,456-459	f:dist/clanker-ui-overlays.min.css f:dist/clanker-ui-overlays.min.js
-77-88,111-114,117-163,192,218,303,352,403-430,432,437	f:dist/clanker-ui.min.js
+77-88,111-114,432,437	f:kit/dist/clanker-ui-a11y.min.css f:kit/dist/clanker-ui-theme.min.js f:kit/dist/clanker-ui.min.css
+447,452	f:kit/dist/clanker-ui-chart.min.css f:test/split/chart.html f:test/split/chart.js
+78,86-88,117-163,192,218,303,352,403-430,432,437,447,452	f:kit/dist/clanker-ui-chart.min.js
+448-449,452	f:kit/dist/clanker-ui-chat.min.css f:kit/dist/clanker-ui-chat.min.js
+117-163,192,218,303,352,403-430	f:kit/dist/clanker-ui-code.min.js
+447-459	f:kit/dist/clanker-ui-core.min.css f:test/split/core.html
+77-88,111-114,117-163,192,218,303,352,403-430,432,437,447-459	f:kit/dist/clanker-ui-core.min.js
+449,452-454,458-459	f:kit/dist/clanker-ui-forms.min.css
+449,451-454,458-459	f:kit/dist/clanker-ui-forms.min.js
+449,452,455-456	f:kit/dist/clanker-ui-layout.min.css f:kit/dist/clanker-ui-layout.min.js
+449,452,454,456-459	f:kit/dist/clanker-ui-overlays.min.css f:kit/dist/clanker-ui-overlays.min.js
+77-88,111-114,117-163,192,218,303,352,403-430,432,437	f:kit/dist/clanker-ui.min.js
 0-30,77-116,329,361,435,437,439-442	f:docs/assets/docs-sidebar.js
 0-30,33-34,40,43,77-116,329,361,435-442	f:docs/assets/docs.css
 0-30,77-116,329,361,435-442	f:docs/assets/docs.js f:docs/assets/examples.css f:docs/assets/fonts.css f:docs/assets/geist-latin.woff2 f:docs/assets/geist-mono-latin.woff2

@@ -185,7 +185,7 @@ func (e *exporter) files() error {
 		if err := e.copy("/"+path.Base(name), path.Base(name)); err != nil {
 			return err
 		}
-		if err := e.copy("/"+path.Base(name), name); err != nil {
+		if err := e.copy("/"+path.Base(name), "dist/"+path.Base(name)); err != nil {
 			return err
 		}
 	}

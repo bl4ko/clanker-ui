@@ -34,6 +34,8 @@ APP_CSS = "[data-slot], [data-slot]::before, [data-slot]::after { letter-spacing
 
 def css_text(root, style, a):
     base = "clanker-ui" + ("" if style == "nova" else "-" + style)
+    if (root / "kit").is_dir():
+        root = root / "kit"
     if a.groups:
         return "\n".join((root / f"dist/{base}-{g}.min.css").read_text() for g in GROUPS)
     return (root / (f"dist/{base}.min.css" if a.min else base + ".css")).read_text()

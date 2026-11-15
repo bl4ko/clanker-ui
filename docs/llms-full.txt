@@ -29,7 +29,7 @@ pnpm dlx skills add bl4ko/clanker-ui
    mkdir site && cp clanker-ui-*/clanker-ui.css clanker-ui-*/clanker-ui.js site/
    ```
 
-   On Linux, use `sha256sum` in place of `shasum -a 256`. Without `gh`, download the kit files one by one: each is a release asset (`https://github.com/bl4ko/clanker-ui/releases/latest/download/clanker-ui.css`). You can also copy the files from this repository.
+   On Linux, use `sha256sum` in place of `shasum -a 256`. Without `gh`, download the kit files one by one: each is a release asset (`https://github.com/bl4ko/clanker-ui/releases/latest/download/clanker-ui.css`). You can also copy the files from `kit/` in this repository.
 
 2. Save this page as `site/index.html`:
 
@@ -127,7 +127,7 @@ A smaller page can load only the component groups that it uses: see [Minified an
    default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; require-trusted-types-for 'script'
    ```
 
-   On a static host that cannot send headers, put the same policy without `frame-ancestors 'none'` in `<meta http-equiv="Content-Security-Policy" content="...">` right after `<meta charset>` and before every `<link>` and `<script>` (browsers ignore `frame-ancestors` in a meta tag). To load the kit from a CDN (for example jsDelivr, `https://cdn.jsdelivr.net/gh/bl4ko/clanker-ui@vX.Y.Z/clanker-ui.css`; a git tag has only the unminified root files and the Nova style, and the minified and group files of `dist/` are release assets only), add the CDN host to `script-src` and `style-src` and use `integrity` hashes; copying the files stays the default.
+   On a static host that cannot send headers, put the same policy without `frame-ancestors 'none'` in `<meta http-equiv="Content-Security-Policy" content="...">` right after `<meta charset>` and before every `<link>` and `<script>` (browsers ignore `frame-ancestors` in a meta tag). To load the kit from a CDN (for example jsDelivr, `https://cdn.jsdelivr.net/gh/bl4ko/clanker-ui@vX.Y.Z/kit/clanker-ui.css`; tags up to v0.4.0 have the files in the root, without `kit/`; a git tag has only the unminified kit files and the Nova style, and the minified and group files of `dist/` are release assets only), add the CDN host to `script-src` and `style-src` and use `integrity` hashes; copying the files stays the default.
 
    Do not use inline `<script>`, inline `<style>`, `style=""`, or `on*=""` attributes. Setting `element.style.x` from JavaScript is allowed. The kit needs no `data:` URLs; `img-src data:` is for app images.
 
@@ -147,7 +147,7 @@ Put overrides in `app.css` after the kit files, without a layer.
 
 ### Minified and group files
 
-`dist/` has minified copies of the kit and one file for each component group, so an app loads only the groups that it uses. `go run ./tools/gen dist` makes them from the readable files, and the generator runs it after it writes `clanker-ui.css`. The readable files stay the source: do not edit `dist/`. Copy `dist/` files byte for byte into the same directory as the other kit files.
+`dist/` has minified copies of the kit and one file for each component group, so an app loads only the groups that it uses. In this repository, `go run ./tools/gen dist` writes them to `kit/dist/` from the readable files in `kit/`, and the generator runs it after it writes `kit/clanker-ui.css`. The readable files stay the source: do not edit `dist/`. Copy `dist/` files byte for byte into the same directory as the other kit files.
 
 | File | Contents |
 | --- | --- |

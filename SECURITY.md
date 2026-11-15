@@ -11,7 +11,7 @@ You get an answer in the advisory. When a fix is ready, it is released and the a
 
 ## Scope
 
-- The kit files (`clanker-ui*.css`, `clanker-ui*.js`, `dist/`): for example a way to run script under the strict CSP with Trusted Types, an HTML injection through kit APIs, or a bypass of the kit security rules.
+- The kit files (`kit/clanker-ui*.css`, `kit/clanker-ui*.js`, `kit/dist/`; the same files in the release): for example a way to run script under the strict CSP with Trusted Types, an HTML injection through kit APIs, or a bypass of the kit security rules.
 - The docs site and the dev server in this repository.
 
 ## Supported versions

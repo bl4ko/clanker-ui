@@ -78,7 +78,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           SHADCN_SRC="$RUNNER_TEMP/shadcn" go run ./tools/gen build
-          git ls-files -z -o -i --exclude-standard -- dist 'clanker-ui-*.css' | tar -cf "$RUNNER_TEMP/generated.tar" --null -T -
+          git ls-files -z -o -i --exclude-standard -- kit | tar -cf "$RUNNER_TEMP/generated.tar" --null -T -
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: generated
@@ -111,8 +111,8 @@ jobs:
         run: |
           SHADCN_SRC="$RUNNER_TEMP/shadcn" go run ./tools/gen build
           git diff --exit-code
-          sha256sum dist/* clanker-ui*.css > "$RUNNER_TEMP/generated.sha256"
-          git clean -fdXq -- dist 'clanker-ui-*.css'
+          sha256sum kit/dist/* kit/clanker-ui*.css > "$RUNNER_TEMP/generated.sha256"
+          git clean -fdXq -- kit
           SHADCN_SRC="$RUNNER_TEMP/shadcn" go run ./tools/gen build
           sha256sum --strict --quiet -c "$RUNNER_TEMP/generated.sha256"
           [ -z "$(git status --porcelain)" ]

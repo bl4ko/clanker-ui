@@ -8,6 +8,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Changed
 
+- Repository: the kit files moved from the root to `kit/` (`kit/clanker-ui.css`, `kit/clanker-ui.js`, ...), and the generated styles and the minified files go to `kit/` and `kit/dist/`. The release zip and the release assets keep the same names and paths, and the server and the docs site serve the files at the same URLs. Links to root files on `main` (raw or jsDelivr) must add `kit/`; tags up to v0.4.0 keep the root paths (#213).
 - Repository: only the Nova style `clanker-ui.css` is in git. CI, `release.yml`, and `pages.yml` build the other styles and `dist/` from the pinned inputs with `go run ./tools/gen build`, and the `go` job checks that two builds give the same bytes. The release files do not change. The docs server moved to `server/` (#158).
 - Smaller kit CSS with the same computed styles: `dist/clanker-ui.min.css` 599,808 to 595,411 bytes (gzip 55,981 to 55,591, brotli 39,178 to 38,935), and the same for the other styles. A base rule of a part no longer has a `:not(...)` copy for a variant whose rule sets all the same properties (Nova: 105 to 30 such rules); the variant rule overrides the base rule as before. `tools/gen/guard` compares every computed style of the old and the new CSS in Chromium, Firefox, and WebKit.
 

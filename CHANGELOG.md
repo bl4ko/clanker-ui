@@ -20,6 +20,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 ### Fixed
 
 - Catalog: attributes that authors write are no longer State or missing: `data-disabled` and `data-inset` on the menu items (also `data-inset` on the label and the sub trigger) of Dropdown Menu, Context Menu, and Menubar, `data-modal` on the menu roots, `data-disabled` on `accordion-item`, `data-start-year` and `data-end-year` on `calendar`, `data-readonly` on `checkbox`, `data-wrap` on `card-action`, `data-columns` on `field-group`, `data-sort` and `data-sort-toggle` on `table-head` and `table`, and the `data-variant` and `data-size` options of the input group button. The generator now reads "`attribute` on `part`" in the README. A test fails when a docs example or a docs attribute table writes an attribute that the catalog lists as State or does not list. The Table docs page now describes sorting (#180).
+- Combobox: IME composition no longer chooses, filters, or moves the highlight. Enter and the arrow keys of an IME (`isComposing` or `keyCode` 229) go to the IME, and the list filters once on `compositionend`, like Base UI (#184).
 
 ## 0.4.0 - 2026-11-14
 

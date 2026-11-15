@@ -5,11 +5,9 @@ Group `core`. Needs none. CSS only.
 | Part | Write | State |
 | --- | --- | --- |
 | `card` (root) | `data-orientation` `horizontal`; `data-size` `sm` |  |
-| `card-action` |  | `data-wrap` |
+| `card-action` | `data-wrap` any |  |
 
 Other parts: `card-content`, `card-description`, `card-footer`, `card-header`, `card-title`.
-
-Other options named in the docs: `data-wrap` any.
 
 ```html
 <div data-slot="card" data-size="sm">

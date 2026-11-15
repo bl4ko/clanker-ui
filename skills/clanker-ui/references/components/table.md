@@ -4,12 +4,14 @@ Group `core`. Needs none. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
+| `table` (root) | `data-sort-toggle` any |  |
 | `table-container` | `data-sticky-header` any | `data-fits` |
+| `table-head` | `data-sort` any; `data-sort-toggle` any |  |
 | `table-row` | `data-state` string |  |
 
-Other parts: `table` (root), `table-body`, `table-caption`, `table-cell`, `table-footer`, `table-head`, `table-header`.
+Other parts: `table-body`, `table-caption`, `table-cell`, `table-footer`, `table-header`.
 
-Other options named in the docs: `data-label` any; `data-layout` string; `data-sort` string; `data-sort-first` string; `data-sort-icon` any; `data-sort-toggle` any.
+Other options named in the docs: `data-label` any; `data-layout` string; `data-sort-first` string; `data-sort-icon` any.
 
 Events: `table:sort` `{ column, dir }`.
 
@@ -40,7 +42,7 @@ Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui-core.min.js`):
 
 `table-container` > `table` > `table-caption`, `table-header`, `table-body`, `table-footer`, `table-row` (`data-state="selected"`), `table-head`, `table-cell`. Filtering, selection, column visibility, and paging are app code; the demo builds a data table with `h()`, a row actions `dropdown-menu`, a column `dropdown-menu`, and `toast`.
 
-Sorting (kit extension, opt-in): `data-sort` on a `table-head` in the `table-header`. The kit puts the head content in a ghost `button` (or uses the `button` that is already there), adds the sort icon (`chevrons-up-down`, `arrow-up`, `arrow-down`), and sets `aria-sort="none"`. A click (Enter and Space are the native button keys) goes ascending, descending, and back to the first order; the other sortable heads of the row go back to `none`. `data-sort-first="descending"` on a head starts that column with the largest value or the newest date (descending, ascending, first order). `data-sort-toggle` on the `table` (or on one head) leaves out the first order: a click on the sorted head changes between its two directions, and a click on another head starts with that head's first direction. Then the kit fires `table:sort` and, unless the listener calls `preventDefault()`, moves the rows of each `tbody`:
+Sorting (kit extension, opt-in): `data-sort` on a `table-head` in the `table-header`. The kit puts the head content in a ghost `button` (or uses the `button` that is already there), adds the sort icon (`chevrons-up-down`, `arrow-up`, `arrow-down`), and sets `aria-sort="none"`. A click (Enter and Space are the native button keys) goes ascending, descending, and back to the first order; the other sortable heads of the row go back to `none`. `data-sort-first="descending"` on a head starts that column with the largest value or the newest date (descending, ascending, first order). `data-sort-toggle` on the `table` or on a `table-head` (that column only) leaves out the first order: a click on the sorted head changes between its two directions, and a click on another head starts with that head's first direction. Then the kit fires `table:sort` and, unless the listener calls `preventDefault()`, moves the rows of each `tbody`:
 
 - The value of a cell is its `data-value`, else its text. Put the plain value in `data-value` when the text is not a plain number or date (compact numbers such as `1,2 mio. €`, a relative date), and `data-value=""` for an empty value that shows text (`n/a`). Empty values (no text, `-`, `–`, `—`) go last in both directions.
 - `data-sort="number"` reads numbers in the language of the nearest `lang` (`1.234,56 €` in `sl`, `12.5 %` in `en`); `data-sort="date"` reads ISO dates and the day, month, and year order of that language (`3. 11. 2026`); `data-sort="text"` compares with `Intl.Collator` of that language (č, š, ž in their place), numbers in text by value. An empty `data-sort` (or `auto`) is `number` when every value is a number without letters, else `text`. Other values are left to app code, so an older app sort with its own `data-sort` keys keeps working.

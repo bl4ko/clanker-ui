@@ -17,6 +17,10 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Docs: `skills/clanker-ui/references/setup.md` "Updates" shows how Renovate finds a new release from the file header and how a job on the pull request replaces the whole file set with the checked release files (#157).
 - Docs: `go run ./tools/gen catalog` writes the group table of the README and the docs home, and the Events and JavaScript sections of the hand-written docs pages, from the catalog; `go test` fails when one is stale or edited by hand (#159). Drift fixed: the open and close events of Dropdown Menu and Context Menu, the events of Avatar, Command, Input OTP, and Table, the `tableSort` export on the Table page, the Command group files (`forms`), and the full detail notes of `accordion:change` and `checkbox:change`. `setup.md` and the catalog file note: in a clone, `dist/` and the styles other than Nova exist only after `go run ./tools/gen build`.
 
+### Fixed
+
+- Catalog: attributes that authors write are no longer State or missing: `data-disabled` and `data-inset` on the menu items (also `data-inset` on the label and the sub trigger) of Dropdown Menu, Context Menu, and Menubar, `data-modal` on the menu roots, `data-disabled` on `accordion-item`, `data-start-year` and `data-end-year` on `calendar`, `data-readonly` on `checkbox`, `data-wrap` on `card-action`, `data-columns` on `field-group`, `data-sort` and `data-sort-toggle` on `table-head` and `table`, and the `data-variant` and `data-size` options of the input group button. The generator now reads "`attribute` on `part`" in the README. A test fails when a docs example or a docs attribute table writes an attribute that the catalog lists as State or does not list. The Table docs page now describes sorting (#180).
+
 ## 0.4.0 - 2026-11-14
 
 ### Added

@@ -4,7 +4,7 @@ Group `core`. Needs none. CSS only.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `page` (root) | `data-layout` any; `data-size` `lg`, `md`, `sm` |  |
+| `page` (root) | `data-layout` string; `data-size` `lg`, `md`, `sm` |  |
 | `page-aside` | `data-variant` `sticky` |  |
 | `page-header` | `data-size` `lg` |  |
 

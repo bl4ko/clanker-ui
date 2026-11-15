@@ -82,6 +82,10 @@ A kit extension for phone tables where every column is needed: `data-layout="sta
 
 {{example "table-stack" height="auto"}}
 
+## Sorting
+
+A kit extension: `data-sort` on a `table-head` in the `table-header` makes the column sortable. The kit puts the head content in a ghost `button` (or uses the `button` that is already there), adds the sort icon, and sets `aria-sort`. A click goes ascending, descending, and back to the first order. Then the kit fires `table:sort` and, unless the listener calls `preventDefault()`, moves the rows of each `tbody`. The value of a cell is its `data-value`, else its text; empty values go last. `tableSort()` sorts from code.
+
 ## Data Table
 
 You can use the table parts to build more complex data tables with sorting, filtering, and pagination. See the [Data Table](/docs/components/data-table) documentation for more information, and the [Data Table block](/docs/blocks/data-table) for a full page.
@@ -113,6 +117,10 @@ Custom properties: `--table-header-top` (the sticky header offset, default `0px`
 
 The `table` part is the `<table>` element.
 
+| Attribute | Values | Default |
+| --- | --- | --- |
+| `data-sort-toggle` | boolean (kit extension): a click on the sorted head changes between its two directions, without the first order | |
+
 ### Table Row
 
 | Attribute | Values | Default |
@@ -122,6 +130,19 @@ The `table` part is the `<table>` element.
 ### Other parts
 
 `table-caption` (`<caption>`, below the table), `table-header` (`<thead>`), `table-body` (`<tbody>`), `table-footer` (`<tfoot>`), `table-head` (`<th>`), and `table-cell` (`<td>`).
+
+### Table Head
+
+A `table-head` in the `table-header`. The sort attributes are kit extensions.
+
+| Attribute | Values | Default |
+| --- | --- | --- |
+| `data-sort` | `""` or `"auto"` (`number` when every value is a number, else `text`), `"number"`, `"date"`, `"text"`; other values are left to app code | |
+| `data-sort-first` | `"ascending" \| "descending"`: the first direction of a click | `"ascending"` |
+| `data-sort-toggle` | boolean: as on the `table`, for this head only | |
+| `data-align` | `"end"`: the sort icon goes before the label | |
+
+`data-sort-icon` on an `svg` in an authored head `button` marks the sort icon; its `data-lucide` is the icon of the unsorted state.
 
 ### Table Cell
 

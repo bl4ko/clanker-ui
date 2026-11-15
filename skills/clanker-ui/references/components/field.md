@@ -5,13 +5,13 @@ Group `forms`. Needs `core`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `field` (root) | `data-disabled` `false`, `true`; `data-invalid` `false`, `true`; `data-orientation` `horizontal`, `responsive`, `vertical` |  |
-| `field-group` |  | `data-columns` |
+| `field-group` | `data-columns` `2`, `3` |  |
 | `field-legend` | `data-variant` `label`, `legend` |  |
 | `field-separator` | `data-content` any |  |
 
 Other parts: `field-content`, `field-description`, `field-error`, `field-label`, `field-label-row`, `field-separator-content`, `field-set`.
 
-Other options named in the docs: `data-columns` `2`, `3`; `data-span` number.
+Other options named in the docs: `data-span` number.
 
 ```html
 <fieldset data-slot="field-set">

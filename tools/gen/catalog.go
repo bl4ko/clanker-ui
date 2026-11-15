@@ -1061,6 +1061,7 @@ func (b *catalogBuild) mirror() {
 		for slot, attrs := range src.parts {
 			to := m[1] + strings.TrimPrefix(slot, m[0])
 			for name, a := range attrs {
+				dst.part(to).mention(name)
 				for v := range a.values {
 					dst.part(to).add(name, v)
 				}
@@ -1341,6 +1342,24 @@ func (b *catalogBuild) scanSection(s mdSection) {
 		}
 	}
 	text := stripFences(s.body)
+	for _, sentence := range sentences(text) {
+		if stateSentence.MatchString(stripCode(sentence)) {
+			continue
+		}
+		for _, m := range attrOnSlot.FindAllStringSubmatch(sentence, -1) {
+			for _, sc := range mdCode.FindAllStringSubmatch(m[2], -1) {
+				c := b.t.component(sc[1])
+				if c == "" || !slices.Contains(s.comps, c) {
+					continue
+				}
+				for _, code := range mdCode.FindAllStringSubmatch(m[1], -1) {
+					if am := attrCode.FindStringSubmatch(code[1]); am != nil && b.global[am[1]] == nil {
+						b.data[c].part(sc[1]).addCode(code[1], am)
+					}
+				}
+			}
+		}
+	}
 	for _, loc := range regexp.MustCompile("`([a-z0-9-]+)` \\(").FindAllStringSubmatchIndex(text, -1) {
 		slot := text[loc[2]:loc[3]]
 		c := b.t.component(slot)
@@ -1458,6 +1477,7 @@ func (b *catalogBuild) sectionLines(s mdSection) []string {
 }
 
 var (
+	attrOnSlot    = regexp.MustCompile("((?:`data-[a-z0-9-]+(?:=\"[^\"`]*\")?`(?:,? and |, ))*`data-[a-z0-9-]+(?:=\"[^\"`]*\")?`) on (?:the |a |an )?((?:`[a-z0-9-]+`(?:,? (?:and|or) (?:on (?:the |a |an )?)?|, ))*`[a-z0-9-]+`)")
 	stateSentence = regexp.MustCompile(`(?i)\bkit (adds|sets|keeps|gives|writes|copies|renders|builds)\b|\b(gets|has|have)\b`)
 	migration     = regexp.MustCompile(`→|^removed:|\bold\b`)
 	kitRenders    = regexp.MustCompile(`(?i)\bkit (renders|adds|builds|creates)\b`)

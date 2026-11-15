@@ -5,7 +5,7 @@ Group `core`. Needs none. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `table` (root) | `data-sort-toggle` any |  |
-| `table-container` | `data-sticky-header` any | `data-fits` |
+| `table-container` | `data-sticky-header` boolean | `data-fits` |
 | `table-head` | `data-sort` any; `data-sort-toggle` any |  |
 | `table-row` | `data-state` string |  |
 

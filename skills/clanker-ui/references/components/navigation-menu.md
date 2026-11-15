@@ -6,7 +6,7 @@ Group `overlays`. Needs `core`. CSS and JS.
 | --- | --- | --- |
 | `navigation-menu-content` |  | `data-activation-direction`, `data-closed`, `data-ending-style`, `data-motion`, `data-open`, `data-starting-style`, `data-state` |
 | `navigation-menu-indicator` |  | `data-state` |
-| `navigation-menu-link` | `data-active` any; `data-close-on-click` any; `data-variant` `trigger` | `data-open`, `data-popup-open`, `data-state` |
+| `navigation-menu-link` | `data-active` boolean; `data-close-on-click` boolean; `data-variant` `trigger` | `data-open`, `data-popup-open`, `data-state` |
 | `navigation-menu-popup` (kit adds) |  | `data-ending-style`, `data-starting-style` |
 | `navigation-menu-positioner` (kit adds) |  | `data-align`, `data-instant`, `data-side` |
 | `navigation-menu-trigger` |  | `data-open`, `data-popup-open`, `data-state` |

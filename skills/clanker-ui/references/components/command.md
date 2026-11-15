@@ -5,7 +5,7 @@ Group `overlays`. Needs `core`, `forms`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `command-group` | `data-heading` any |  |
-| `command-item` | `data-disabled` any; `data-keywords` string; `data-value` any | `data-selected` |
+| `command-item` | `data-disabled` boolean; `data-keywords` string; `data-value` any | `data-selected` |
 
 Other parts: `command` (root), `command-empty`, `command-input`, `command-list`, `command-separator`, `command-shortcut`.
 

@@ -14,7 +14,7 @@ Other parts: `drawer-body`, `drawer-description`, `drawer-footer`, `drawer-heade
 
 Part attributes: `data-drawer-close` boolean; `data-drawer-trigger` boolean.
 
-Other options named in the docs: `data-base-ui-swipe-ignore` any; `data-disable-pointer-dismissal` any; `data-modal` `false`, `true`; `data-snap-point` any; `data-snap-points` string; `data-snap-to-sequential-points` any; `data-swipe-axis` `x`, `y`.
+Other options named in the docs: `data-base-ui-swipe-ignore` any; `data-disable-pointer-dismissal` boolean; `data-modal` `false`, `true`; `data-snap-point` any; `data-snap-points` string; `data-snap-to-sequential-points` boolean; `data-swipe-axis` `x`, `y`.
 
 Events: `drawer:open` `{ trigger }`; `drawer:close` `{ reason }` (cancelable); `drawer:release` `{ delta }`; `drawer:snap-point-change` `{ snapPoint }`.
 

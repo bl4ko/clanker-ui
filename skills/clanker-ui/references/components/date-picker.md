@@ -10,7 +10,7 @@ Other parts: `date-picker-value`.
 
 Part attributes: `data-date-picker-content` boolean; `data-date-picker-input` boolean; `data-date-picker-preset` boolean; `data-date-picker-trigger` boolean.
 
-Other options named in the docs: `data-keep-open` any; `data-lang` string; `data-name` any; `data-value` any.
+Other options named in the docs: `data-keep-open` boolean; `data-lang` string; `data-name` any; `data-value` any.
 
 Events: `date-picker:open`; `date-picker:close`.
 

@@ -651,6 +651,35 @@ def check_theme_no_transitions(t):
     assert page_is_dark(page) == (t.theme == "dark") and page.evaluate("window.__colorRuns") == []
 
 
+THEME_PARTS = """() => {
+  for (const a of document.getAnimations()) if (a instanceof CSSTransition) a.finish()
+  const read = (selector, props) => { const s = getComputedStyle(document.querySelector(selector)); return Object.fromEntries(props.map(p => [p, s.getPropertyValue(p)])) }
+  return {
+    pressed: read("#theming [data-slot='theme-switch'] > button[aria-pressed='true']", ["background-color", "border-color", "color", "box-shadow"]),
+    card: read("#section-cards [data-slot='section-cards'] > [data-slot='card']", ["background-image", "background-color"]),
+  }
+}"""
+
+
+def check_theme_mode_over_system(t):
+    t.docs("/demo")
+    page = t.page
+    switch = t.section("theming").locator("[data-slot='theme-switch']")
+    seen = {}
+    for mode in ["light", "dark"]:
+        switch.get_by_role("button", name=f"{mode.title()} theme").click()
+        assert page.evaluate("document.documentElement.getAttribute('data-theme')") == mode
+        for scheme in ["light", "dark"]:
+            page.emulate_media(color_scheme=scheme)
+            if page.evaluate("matchMedia('(prefers-color-scheme: dark)').matches") != (scheme == "dark"):
+                return
+            seen[mode, scheme] = page.evaluate(THEME_PARTS)
+        assert seen[mode, "light"] == seen[mode, "dark"], f"data-theme={mode} must not follow the system scheme: light OS {seen[mode, 'light']}, dark OS {seen[mode, 'dark']}"
+    assert seen["light", "light"] != seen["dark", "dark"]
+    assert seen["light", "light"]["card"]["background-image"].startswith("linear-gradient") and seen["dark", "dark"]["card"]["background-image"] == "none"
+    page.emulate_media(color_scheme=t.theme)
+
+
 def check_safe_dom(t):
     page = t.page
     proof = t.section("introduction").locator("#h-proof")

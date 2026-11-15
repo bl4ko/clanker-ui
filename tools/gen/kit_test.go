@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -32,6 +33,52 @@ func TestKitCSSAllInLayers(t *testing.T) {
 		}
 		if r := strayRule(tree); r != "" {
 			t.Errorf("%s: %q is outside @layer, @property, and @keyframes", s.file, r)
+		}
+	}
+}
+
+var (
+	themeNotDescendant = regexp.MustCompile(`:not\(\[data-theme="(?:light|dark)"\] \*\)\s+[^\s{},>+~)]`)
+	themeNotBareParent = regexp.MustCompile(`(?:^|[\s,{}(>+~]):not\(\[data-theme="(?:light|dark)"\] \*\)\s*[>+~]`)
+)
+
+func themeNotAncestors(css string) []string {
+	var bad []string
+	for _, re := range []*regexp.Regexp{themeNotDescendant, themeNotBareParent} {
+		for _, m := range re.FindAllStringIndex(css, -1) {
+			start, end := strings.LastIndexByte(css[:m[1]], '\n')+1, strings.IndexByte(css[m[1]:], '\n')
+			if end < 0 {
+				end = len(css) - m[1]
+			}
+			bad = append(bad, strconv.Itoa(1+strings.Count(css[:m[1]], "\n"))+": "+strings.TrimSpace(css[start:m[1]+end]))
+		}
+	}
+	return bad
+}
+
+func TestThemeNotOnElement(t *testing.T) {
+	bad := `  @media (prefers-color-scheme: dark) {
+    :not([data-theme="light"] *) :is([data-slot="theme-switch"] > button) { color: red; }
+    :not([data-theme="dark"] *) > [data-slot="card"] { color: red; }
+  }`
+	good := `  @media (prefers-color-scheme: dark) {
+    :is([data-slot="theme-switch"] > button):not([data-theme="light"] *) { color: red; }
+    [data-slot="bubble"]:not([data-theme="light"] *) > [data-slot="bubble-content"] { color: red; }
+    [data-slot="button"]:not([data-theme="light"] *)[aria-invalid="true"], [data-slot="input"]:not([data-theme="light"] *) { color: red; }
+  }`
+	if got := themeNotAncestors(bad); len(got) != 2 {
+		t.Errorf("the check finds %q in the bad sample, want 2", got)
+	}
+	if got := themeNotAncestors(good); len(got) != 0 {
+		t.Errorf("the check finds %q in the good sample, want none", got)
+	}
+	files := []string{"tools/gen/kit.css", "clanker-ui-a11y.css", "clanker-ui-themes.css"}
+	for _, s := range kitStyles {
+		files = append(files, s.file)
+	}
+	for _, f := range files {
+		for _, b := range themeNotAncestors(readRepo(t, f)) {
+			t.Errorf("%s:%s: a bare :not([data-theme] *) before a combinator matches <html>, so the rule ignores data-theme; put it on the element: X:not([data-theme=\"light\"] *)", f, b)
 		}
 	}
 }

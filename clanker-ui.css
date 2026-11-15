@@ -14776,7 +14776,7 @@
     background-color: color-mix(in oklab, var(--input) 30%, transparent);
   }
   @media (prefers-color-scheme: dark) {
-    :not([data-theme="light"] *) :is([data-slot="theme-switch"] > button[aria-pressed="true"]) {
+    :is([data-slot="theme-switch"] > button[aria-pressed="true"]):not([data-theme="light"] *) {
       border-color: var(--input);
       background-color: color-mix(in oklab, var(--input) 30%, transparent);
     }
@@ -15129,7 +15129,7 @@
   [data-slot="section-cards"] > [data-slot="card"]:has(> [data-slot="card-content"]) { grid-row: span 3; }
   :is([data-theme="dark"] *) :is([data-slot="section-cards"] > [data-slot="card"]) { background-image: none; }
   @media (prefers-color-scheme: dark) {
-    :not([data-theme="light"] *) :is([data-slot="section-cards"] > [data-slot="card"]) { background-image: none; }
+    :is([data-slot="section-cards"] > [data-slot="card"]):not([data-theme="light"] *) { background-image: none; }
   }
   [data-slot="section-cards"] [data-slot="card-title"] {
     min-width: 0;

@@ -11,6 +11,8 @@ Other parts: `input-group` (root), `input-group-control`, `input-group-text`.
 
 Part attributes: `data-input-group-button` boolean.
 
+Other options named in the docs: `data-size` `icon-sm`, `icon-xs`, `sm`, `xs`; `data-variant` any.
+
 ## Full text
 
 ### Input Group
@@ -26,4 +28,4 @@ Part attributes: `data-input-group-button` boolean.
 </div>
 ```
 
-The control can be a `textarea`. A click on an addon (not on a button) focuses the control. `input-group` and `input-group-addon` get `role="group"`; an addon without `data-align` gets `inline-start`. Buttons in an addon are `InputGroupButton`: add `data-input-group-button`; the kit sets `data-variant="ghost"` and `data-size="xs"` when they are missing. Sizes: `xs`, `sm`, `icon-xs`, `icon-sm`. Not built: the `.border-b` and `.border-t` class variants of block addons (Tailwind classes, not attributes).
+The control can be a `textarea`. A click on an addon (not on a button) focuses the control. `input-group` and `input-group-addon` get `role="group"`; an addon without `data-align` gets `inline-start`. Buttons in an addon are `InputGroupButton`: add `data-input-group-button`; the kit sets `data-variant="ghost"` and `data-size="xs"` when they are missing. Button options: `data-variant` (any `button` variant) and `data-size="xs|sm|icon-xs|icon-sm"`. Not built: the `.border-b` and `.border-t` class variants of block addons (Tailwind classes, not attributes).

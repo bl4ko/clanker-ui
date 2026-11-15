@@ -4,7 +4,7 @@ Group `forms`. Needs `core`. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `checkbox` (root) | `data-checked` boolean; `data-indeterminate` boolean; `data-name` string | `data-state` |
+| `checkbox` (root) | `data-checked` boolean; `data-indeterminate` boolean; `data-name` string; `data-readonly` any | `data-state` |
 
 Other parts: `checkbox-group`.
 
@@ -30,5 +30,5 @@ Events: `checkbox:change` `{ checked, value }`.
 - The kit adds a hidden native input right after the button (`aria-hidden`, `tabindex="-1"`) for form submission, reset, and validation. It gets `data-name` (radio: the group `data-name`), `value` (default `on`), `required` (`data-required` on the button or the group), and `disabled`. Focus on the hidden input moves to the button. The input follows the button: a removed button takes it out of the form, a moved button moves it. `form.reset()` restores the initial state, also `data-indeterminate`.
 - Children: `checkbox-indicator` (check icon) and `radio-group-indicator` exist only while checked; `switch-thumb` is always there and has the same state attributes.
 - Initial state: `data-checked` on the button. Change it later the same way: toggle `data-checked` on the button. `disabled`, `aria-invalid`, `data-required`, and `data-readonly` changes are applied at once. The kit moves `disabled` to `aria-disabled`, so enable the control again with `el.disabled = false` or by removing `aria-disabled` (removing the `disabled` attribute has no effect). Read-only controls do not change. A click on a disabled control does not move focus.
-- Checkbox: `data-indeterminate` gives the mixed state; toggle it later the same way. Click, Space, and a `<label for>` or wrapping `<label>` toggle; Enter does nothing.
+- Checkbox: `data-readonly` on the `checkbox` makes it read-only. `data-indeterminate` gives the mixed state; toggle it later the same way. Click, Space, and a `<label for>` or wrapping `<label>` toggle; Enter does nothing.
 - Events: `checkbox:change` and `switch:change` on the button (`{ checked, value }`), `radio-group:change` on the group (`{ value }`), and native `input` and `change` on the hidden input.

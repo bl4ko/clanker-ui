@@ -684,3 +684,87 @@ func TestCatalogRegions(t *testing.T) {
 		}
 	}
 }
+
+func TestCatalogAuthoredAttrsAreNotState(t *testing.T) {
+	cat := testCatalog(t)
+	parts := map[string]*catPart{}
+	byDocs := map[string]catComponent{}
+	partAttrs := catAttrs{}
+	for _, c := range cat.Components {
+		byDocs[c.Docs] = c
+		for k, v := range c.PartAttributes {
+			partAttrs[k] = v
+		}
+		for i := range c.Parts {
+			parts[c.Parts[i].Slot] = &c.Parts[i]
+		}
+	}
+	write := func(c catComponent, p *catPart, name string) bool {
+		if p != nil {
+			if _, ok := p.Attributes[name]; ok {
+				return true
+			}
+		}
+		_, opt := c.Options[name]
+		_, glob := cat.Global[name]
+		_, pa := partAttrs[name]
+		return opt || glob || pa
+	}
+	seen := map[string]bool{}
+	fail := func(src, slot, name, f string) {
+		if !seen[slot+" "+name] {
+			seen[slot+" "+name] = true
+			t.Errorf(f, strings.TrimPrefix(src, "../../"), name, slot)
+		}
+	}
+	files, err := filepath.Glob("../../docs/content/*/*/examples/*.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	more, _ := filepath.Glob("examples/*.html")
+	for _, f := range append(files, more...) {
+		walkNodes(parseFragment(readFile(t, f)), func(n *htmlNode) {
+			slot, _ := n.attr("data-slot")
+			p := parts[slot]
+			if p == nil || p.KitAdds {
+				return
+			}
+			for _, a := range n.attrs {
+				if slices.Contains(p.State, a[0]) {
+					fail(f, slot, a[0], "%s: authors write %s on %s, but the catalog lists it as State")
+				}
+			}
+		})
+	}
+	pages, err := filepath.Glob("../../docs/content/components/*/page.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, f := range pages {
+		c, ok := byDocs[catalogSite+"/docs/components/"+filepath.Base(filepath.Dir(f))+"/"]
+		if !ok {
+			continue
+		}
+		slot, table := c.Name, false
+		for _, line := range strings.Split(readFile(t, f), "\n") {
+			switch {
+			case strings.HasPrefix(line, "### "):
+				slot = strings.ReplaceAll(strings.ToLower(strings.TrimPrefix(line, "### ")), " ", "-")
+			case strings.HasPrefix(line, "| Attribute |"):
+				table = true
+				continue
+			case !strings.HasPrefix(line, "|"):
+				table = false
+			}
+			p := parts[slot]
+			if !table || strings.HasPrefix(line, "| ---") || p != nil && p.KitAdds {
+				continue
+			}
+			for _, m := range mdCode.FindAllStringSubmatch(mdTable("|\n" + line)[0][0], -1) {
+				if am := attrCode.FindStringSubmatch(m[1]); am != nil && (!write(c, p, am[1]) || p != nil && slices.Contains(p.State, am[1])) {
+					fail(f, slot, am[1], "%s: the attribute table lists %s for %s, but the catalog has it as State or not at all")
+				}
+			}
+		}
+	}
+}

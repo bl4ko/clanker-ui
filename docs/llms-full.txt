@@ -705,7 +705,7 @@ App CSS: `.dropzone { cursor: pointer }`, a focus ring with `.dropzone:has(input
 </div>
 ```
 
-The control can be a `textarea`. A click on an addon (not on a button) focuses the control. `input-group` and `input-group-addon` get `role="group"`; an addon without `data-align` gets `inline-start`. Buttons in an addon are `InputGroupButton`: add `data-input-group-button`; the kit sets `data-variant="ghost"` and `data-size="xs"` when they are missing. Sizes: `xs`, `sm`, `icon-xs`, `icon-sm`. Not built: the `.border-b` and `.border-t` class variants of block addons (Tailwind classes, not attributes).
+The control can be a `textarea`. A click on an addon (not on a button) focuses the control. `input-group` and `input-group-addon` get `role="group"`; an addon without `data-align` gets `inline-start`. Buttons in an addon are `InputGroupButton`: add `data-input-group-button`; the kit sets `data-variant="ghost"` and `data-size="xs"` when they are missing. Button options: `data-variant` (any `button` variant) and `data-size="xs|sm|icon-xs|icon-sm"`. Not built: the `.border-b` and `.border-t` class variants of block addons (Tailwind classes, not attributes).
 
 #### Field
 
@@ -749,7 +749,7 @@ Kit extensions: `field-label-row` holds a `field-label` and a link that goes to 
 - The kit adds a hidden native input right after the button (`aria-hidden`, `tabindex="-1"`) for form submission, reset, and validation. It gets `data-name` (radio: the group `data-name`), `value` (default `on`), `required` (`data-required` on the button or the group), and `disabled`. Focus on the hidden input moves to the button. The input follows the button: a removed button takes it out of the form, a moved button moves it. `form.reset()` restores the initial state, also `data-indeterminate`.
 - Children: `checkbox-indicator` (check icon) and `radio-group-indicator` exist only while checked; `switch-thumb` is always there and has the same state attributes.
 - Initial state: `data-checked` on the button. Change it later the same way: toggle `data-checked` on the button. `disabled`, `aria-invalid`, `data-required`, and `data-readonly` changes are applied at once. The kit moves `disabled` to `aria-disabled`, so enable the control again with `el.disabled = false` or by removing `aria-disabled` (removing the `disabled` attribute has no effect). Read-only controls do not change. A click on a disabled control does not move focus.
-- Checkbox: `data-indeterminate` gives the mixed state; toggle it later the same way. Click, Space, and a `<label for>` or wrapping `<label>` toggle; Enter does nothing.
+- Checkbox: `data-readonly` on the `checkbox` makes it read-only. `data-indeterminate` gives the mixed state; toggle it later the same way. Click, Space, and a `<label for>` or wrapping `<label>` toggle; Enter does nothing.
 - Switch: `data-name`, `data-required`, and `data-readonly` on the button. Click, Space, Enter, and a `<label for>` or wrapping `<label>` toggle.
 - Radio group: the group `data-value` selects the initial item; later, toggle `data-checked` on an item (a `data-value` change on the group does nothing). `data-disabled`, `data-readonly`, and `data-required` on the group apply to all items (`data-disabled` only at init). One tab stop (the checked item, else the first enabled one, with `data-composite-item-active`); arrows move and check, wrap, skip disabled items, and follow RTL; Home and End do nothing. Click, Space, and a `<label for>` check an item; Enter does nothing.
 - Events: `checkbox:change` and `switch:change` on the button (`{ checked, value }`), `radio-group:change` on the group (`{ value }`), and native `input` and `change` on the hidden input.
@@ -988,11 +988,11 @@ Many small marks with their own readout (a bar per day in an uptime row): one to
 </div>
 ```
 
-- Same parts with the `context-menu-` and `menubar-` prefixes, plus `-group`, `-radio-group`, and `-label` (`menubar-label` too). Items: `data-disabled`, `data-inset`, `data-variant="destructive"` (other items get `data-variant="default"`), `data-value`, `data-text-value` (typeahead label), `data-close-on-click`. Checkbox and radio items: `data-checked` (or `data-state="checked"`). `data-value` on a radio group selects the item with that value. A later change of `data-value` on the radio group or of `data-checked` on an item, from code, updates the items (no event). Links work as items.
+- Same parts with the `context-menu-` and `menubar-` prefixes, plus `-group`, `-radio-group`, and `-label` (`menubar-label` too). `data-disabled` and `data-inset` on `dropdown-menu-item`, `dropdown-menu-checkbox-item`, and `dropdown-menu-radio-item`; `data-inset` on `dropdown-menu-label` and `dropdown-menu-sub-trigger` too. Items: `data-variant="destructive"` (other items get `data-variant="default"`), `data-value`, `data-text-value` (typeahead label), `data-close-on-click`. Checkbox and radio items: `data-checked` (or `data-state="checked"`). `data-value` on a radio group selects the item with that value. A later change of `data-value` on the radio group or of `data-checked` on an item, from code, updates the items (no event). Links work as items.
 - Base UI DOM and states: a label gets `role="presentation"` and names its group (`aria-labelledby`); a separator gets `data-orientation="horizontal"`; checkbox and radio items get `data-checked` or `data-unchecked` and an indicator as the first child (`dropdown-menu-checkbox-item-indicator`, `dropdown-menu-radio-item-indicator`; a `span` without a slot in context menus and menubars) that holds `<span data-checked aria-hidden="true">` with the `check` icon only while checked. The highlighted item has `data-highlighted`; an open sub menu's trigger has `data-popup-open` and loses `data-highlighted` while focus or the pointer is in the sub menu. The content has `data-open` or `data-closed`, `data-side`, `data-align`, and `data-instant` (`click` when a keyboard key or a right click opened it, `group` when a menubar switched menus, `dismiss` after Escape); the trigger has `data-popup-open` and `data-pressed` while open.
 - `dropdown-menu:change` and `:select` are emitted on the `dropdown-menu` root (also for an item in a sub menu or a radio group) and bubble to `document`; a listener on the radio group gets nothing. `detail.group` is the radio group element (`dropdown-menu-radio-group`, `null` outside a group; it is absent for a checkbox item): read `event.detail.group.id` or `.dataset` to tell two groups apart, and `detail.value` for the new value (the group `data-value` is already set).
 - A plain item closes the menu; checkbox and radio items keep it open (Base UI `closeOnClick`), unless `data-close-on-click` says otherwise.
-- Like Base UI, menus are modal (`data-modal="false"` on the root or `menubar` turns this off): page scroll is locked, and the first press outside only closes the menu (the click does not reach the element below, and focus returns to the trigger). A touch outside closes it when the tap ends, or during a drag of more than 10 px.
+- Like Base UI, menus are modal (`data-modal="false"` on the `dropdown-menu`, `context-menu`, or `menubar` root turns this off): page scroll is locked, and the first press outside only closes the menu (the click does not reach the element below, and focus returns to the trigger). A touch outside closes it when the tap ends, or during a drag of more than 10 px.
 - A mouse press on the trigger opens the menu; release over an item to choose it (press, drag, release). Placement: dropdown bottom, start, 4 px; context menu at the pointer, right, start, `alignOffset` 4; menubar bottom, start, 8 px, `alignOffset` -4; sub menus right, start, `alignOffset` -3 (context menu 4); 5 px from the viewport edge.
 - Keyboard per WAI-ARIA APG with Base UI focus looping: Enter, Space, and ArrowDown open at the first item, ArrowUp at the last; arrows wrap from the last item to the first and back, Home, End, typeahead; arrows also stop on disabled items (highlighted, `aria-disabled`, they do not run), as in Base UI; ArrowRight opens a sub menu, ArrowLeft closes it (mirrored in RTL); Escape closes the innermost menu; Tab closes all. Typeahead continues across a space (`New W` reaches "New Window"); Space activates the item only when no typeahead is in progress.
 - A sub menu opens 100 ms after the pointer rests on its trigger. On the way to the sub menu the pointer may cross other items inside the triangle from the pointer to the sub menu (Base UI safe polygon). The sub menu closes when the pointer leaves the trigger on the side away from the sub menu, leaves the triangle, moves slower than 0.1 px/ms, or stops for 40 ms; then the menu keeps focus with no highlight until the pointer moves again.
@@ -1054,7 +1054,7 @@ toast.dismiss(id); toast.dismiss(); toast.getToasts()
 </div>
 ```
 
-The Base UI DOM: a heading with the trigger button, and a panel with one inner `div` (the padding is on it). `data-type="single|multiple"`, `data-state="open"` on an item that starts open, `hidden="until-found"` on the panel of an item that starts closed (so the page does not move when the module loads), `data-disabled` on an item. Like Base UI, a single accordion can close its open item, so all items can be closed. The kit adds the two chevrons (`accordion-trigger-icon`, down when closed, up when open), ids, `aria-expanded`, `aria-controls`, `role="region"`, `aria-labelledby`, `data-open`, `data-closed`, `data-state`, `data-panel-open` on the trigger, and `data-index`. A closed panel has `hidden="until-found"`, so find in page opens its item (`beforematch`). The panel animates with `--accordion-panel-height` (`auto` after the open animation). Keys: Enter and Space toggle; as in Base UI, the arrow keys do not move focus. Like Base UI, the trigger of a disabled item stays in the Tab order (`aria-disabled="true"`), and Enter, Space, or a click does not open it. Event: `accordion:change` `{ value }`.
+The Base UI DOM: a heading with the trigger button, and a panel with one inner `div` (the padding is on it). `data-type="single|multiple"`, `data-state="open"` on an item that starts open, `hidden="until-found"` on the panel of an item that starts closed (so the page does not move when the module loads), `data-disabled` on an `accordion-item`. Like Base UI, a single accordion can close its open item, so all items can be closed. The kit adds the two chevrons (`accordion-trigger-icon`, down when closed, up when open), ids, `aria-expanded`, `aria-controls`, `role="region"`, `aria-labelledby`, `data-open`, `data-closed`, `data-state`, `data-panel-open` on the trigger, and `data-index`. A closed panel has `hidden="until-found"`, so find in page opens its item (`beforematch`). The panel animates with `--accordion-panel-height` (`auto` after the open animation). Keys: Enter and Space toggle; as in Base UI, the arrow keys do not move focus. Like Base UI, the trigger of a disabled item stays in the Tab order (`aria-disabled="true"`), and Enter, Space, or a click does not open it. Event: `accordion:change` `{ value }`.
 
 A count or status in a trigger: a `badge` after the text (`<button type="button" data-slot="accordion-trigger">Payments<span data-slot="badge" data-variant="warning"><svg data-lucide="triangle-alert"></svg>Degraded</span></button>`) sits at the end, before the chevron, centered on the text.
 
@@ -1224,7 +1224,7 @@ The viewport is the real scroll container; the kit makes it focusable, hides the
 
 `table-container` > `table` > `table-caption`, `table-header`, `table-body`, `table-footer`, `table-row` (`data-state="selected"`), `table-head`, `table-cell`. Filtering, selection, column visibility, and paging are app code; the demo builds a data table with `h()`, a row actions `dropdown-menu`, a column `dropdown-menu`, and `toast`.
 
-Sorting (kit extension, opt-in): `data-sort` on a `table-head` in the `table-header`. The kit puts the head content in a ghost `button` (or uses the `button` that is already there), adds the sort icon (`chevrons-up-down`, `arrow-up`, `arrow-down`), and sets `aria-sort="none"`. A click (Enter and Space are the native button keys) goes ascending, descending, and back to the first order; the other sortable heads of the row go back to `none`. `data-sort-first="descending"` on a head starts that column with the largest value or the newest date (descending, ascending, first order). `data-sort-toggle` on the `table` (or on one head) leaves out the first order: a click on the sorted head changes between its two directions, and a click on another head starts with that head's first direction. Then the kit fires `table:sort` and, unless the listener calls `preventDefault()`, moves the rows of each `tbody`:
+Sorting (kit extension, opt-in): `data-sort` on a `table-head` in the `table-header`. The kit puts the head content in a ghost `button` (or uses the `button` that is already there), adds the sort icon (`chevrons-up-down`, `arrow-up`, `arrow-down`), and sets `aria-sort="none"`. A click (Enter and Space are the native button keys) goes ascending, descending, and back to the first order; the other sortable heads of the row go back to `none`. `data-sort-first="descending"` on a head starts that column with the largest value or the newest date (descending, ascending, first order). `data-sort-toggle` on the `table` or on a `table-head` (that column only) leaves out the first order: a click on the sorted head changes between its two directions, and a click on another head starts with that head's first direction. Then the kit fires `table:sort` and, unless the listener calls `preventDefault()`, moves the rows of each `tbody`:
 
 - The value of a cell is its `data-value`, else its text. Put the plain value in `data-value` when the text is not a plain number or date (compact numbers such as `1,2 mio. €`, a relative date), and `data-value=""` for an empty value that shows text (`n/a`). Empty values (no text, `-`, `–`, `—`) go last in both directions.
 - `data-sort="number"` reads numbers in the language of the nearest `lang` (`1.234,56 €` in `sl`, `12.5 %` in `en`); `data-sort="date"` reads ISO dates and the day, month, and year order of that language (`3. 11. 2026`); `data-sort="text"` compares with `Intl.Collator` of that language (č, š, ž in their place), numbers in text by value. An empty `data-sort` (or `auto`) is `number` when every value is a number without letters, else `text`. Other values are left to app code, so an older app sort with its own `data-sort` keys keeps working.
@@ -1393,7 +1393,7 @@ One item at a time. The kit builds the native radio or checkbox, the indicator, 
 | `data-month`, `data-months` | First month shown (`2026-10`), number of months side by side |
 | `data-min`, `data-max`, `data-disabled-dates`, `data-disabled-weekdays`, `data-disabled` | Limits. Ranges use `a/b`. Weekdays `0` (Sunday) to `6`. A change from code (for example `data-max` set to today when the page loads) renders the grid again. |
 | `data-week-start` | `0`–`6`, default `1` (Monday) |
-| `data-caption-layout` | `label`, `dropdown`, `dropdown-months`, `dropdown-years`; years from `data-start-year` to `data-end-year` (default: 100 years before today to this year, or the years of `data-min` and `data-max`). With a year dropdown, navigation stops at January of the first and December of the last year, as in react-day-picker; for future dates set `data-end-year` or `data-max`. A `data-min` in a later year extends the default end year, and a `data-max` in an earlier year extends the default start year. |
+| `data-caption-layout`, `data-start-year`, `data-end-year` | `label`, `dropdown`, `dropdown-months`, `dropdown-years`; years from `data-start-year` to `data-end-year` (default: 100 years before today to this year, or the years of `data-min` and `data-max`). With a year dropdown, navigation stops at January of the first and December of the last year, as in react-day-picker; for future dates set `data-end-year` or `data-max`. A `data-min` in a later year extends the default end year, and a `data-max` in an earlier year extends the default start year. |
 | `data-month-format` | Month names in the month dropdown: `short` (default, `Dec`) or `long` (`December`, the shadcn `formatMonthDropdown` of `calendar-custom-days`) |
 | `data-button-variant` | Button variant of the previous and next buttons, default `ghost` |
 | `data-outside-days="false"`, `data-show-week-number`, `data-fixed-weeks`, `data-required` | rdp options (`data-show-week-number` is the shadcn `showWeekNumber` prop) |
@@ -1787,11 +1787,9 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 | Part | Write | State |
 | --- | --- | --- |
 | `card` (root) | `data-orientation` `horizontal`; `data-size` `sm` |  |
-| `card-action` |  | `data-wrap` |
+| `card-action` | `data-wrap` any |  |
 
 Other parts: `card-content`, `card-description`, `card-footer`, `card-header`, `card-title`.
-
-Other options named in the docs: `data-wrap` any.
 
 ```html
 <div data-slot="card" data-size="sm">
@@ -1846,12 +1844,14 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 | Part | Write | State |
 | --- | --- | --- |
+| `table` (root) | `data-sort-toggle` any |  |
 | `table-container` | `data-sticky-header` any | `data-fits` |
+| `table-head` | `data-sort` any; `data-sort-toggle` any |  |
 | `table-row` | `data-state` string |  |
 
-Other parts: `table` (root), `table-body`, `table-caption`, `table-cell`, `table-footer`, `table-head`, `table-header`.
+Other parts: `table-body`, `table-caption`, `table-cell`, `table-footer`, `table-header`.
 
-Other options named in the docs: `data-label` any; `data-layout` string; `data-sort` string; `data-sort-first` string; `data-sort-icon` any; `data-sort-toggle` any.
+Other options named in the docs: `data-label` any; `data-layout` string; `data-sort-first` string; `data-sort-icon` any.
 
 Events: `table:sort` `{ column, dir }`.
 
@@ -1958,7 +1958,7 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 | Part | Write | State |
 | --- | --- | --- |
-| `page` (root) | `data-layout` any; `data-size` `lg`, `md`, `sm` |  |
+| `page` (root) | `data-layout` string; `data-size` `lg`, `md`, `sm` |  |
 | `page-aside` | `data-variant` `sticky` |  |
 | `page-header` | `data-size` `lg` |  |
 
@@ -2060,6 +2060,8 @@ Other parts: `input-group` (root), `input-group-control`, `input-group-text`.
 
 Part attributes: `data-input-group-button` boolean.
 
+Other options named in the docs: `data-size` `icon-sm`, `icon-xs`, `sm`, `xs`; `data-variant` any.
+
 #### Input OTP (`input-otp`)
 
 Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/input-otp/.
@@ -2082,13 +2084,13 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | Part | Write | State |
 | --- | --- | --- |
 | `field` (root) | `data-disabled` `false`, `true`; `data-invalid` `false`, `true`; `data-orientation` `horizontal`, `responsive`, `vertical` |  |
-| `field-group` |  | `data-columns` |
+| `field-group` | `data-columns` `2`, `3` |  |
 | `field-legend` | `data-variant` `label`, `legend` |  |
 | `field-separator` | `data-content` any |  |
 
 Other parts: `field-content`, `field-description`, `field-error`, `field-label`, `field-label-row`, `field-separator-content`, `field-set`.
 
-Other options named in the docs: `data-columns` `2`, `3`; `data-span` number.
+Other options named in the docs: `data-span` number.
 
 ```html
 <fieldset data-slot="field-set">
@@ -2151,7 +2153,7 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 | Part | Write | State |
 | --- | --- | --- |
-| `checkbox` (root) | `data-checked` boolean; `data-indeterminate` boolean; `data-name` string | `data-state` |
+| `checkbox` (root) | `data-checked` boolean; `data-indeterminate` boolean; `data-name` string; `data-readonly` any | `data-state` |
 
 Other parts: `checkbox-group`.
 
@@ -2448,22 +2450,23 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 | Part | Write | State |
 | --- | --- | --- |
-| `dropdown-menu-checkbox-item` | `data-checked` boolean | `data-disabled`, `data-inset` |
+| `dropdown-menu` (root) | `data-modal` `false`, `true` |  |
+| `dropdown-menu-checkbox-item` | `data-checked` boolean; `data-disabled` any; `data-inset` any |  |
 | `dropdown-menu-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `dropdown-menu-item` | `data-variant` `destructive` | `data-disabled`, `data-inset` |
-| `dropdown-menu-label` |  | `data-inset` |
+| `dropdown-menu-item` | `data-disabled` any; `data-inset` any; `data-variant` `destructive` |  |
+| `dropdown-menu-label` | `data-inset` any |  |
 | `dropdown-menu-radio-group` | `data-value` string |  |
-| `dropdown-menu-radio-item` | `data-checked` boolean; `data-value` string | `data-disabled`, `data-inset` |
+| `dropdown-menu-radio-item` | `data-checked` boolean; `data-disabled` any; `data-inset` any; `data-value` string |  |
 | `dropdown-menu-sub-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `dropdown-menu-sub-trigger` |  | `data-inset`, `data-open`, `data-popup-open`, `data-state` |
+| `dropdown-menu-sub-trigger` | `data-inset` any | `data-open`, `data-popup-open`, `data-state` |
 
-Other parts: `dropdown-menu` (root), `dropdown-menu-group`, `dropdown-menu-separator`, `dropdown-menu-shortcut`, `dropdown-menu-sub`, `dropdown-menu-trigger`.
+Other parts: `dropdown-menu-group`, `dropdown-menu-separator`, `dropdown-menu-shortcut`, `dropdown-menu-sub`, `dropdown-menu-trigger`.
 
 Kit adds: `dropdown-menu-checkbox-item-indicator`, `dropdown-menu-radio-item-indicator`.
 
 Part attributes: `data-dropdown-menu-trigger` boolean.
 
-Other options named in the docs: `data-close-on-click` any; `data-disabled` any; `data-inset` any; `data-state` string; `data-text-value` any.
+Other options named in the docs: `data-close-on-click` any; `data-state` string; `data-text-value` any.
 
 Events: `dropdown-menu:open` `{ trigger }`; `dropdown-menu:close` `{ reason }`; `dropdown-menu:select` `{ value, item, checked }` (cancelable); `dropdown-menu:change` `{ value, checked, item, group }`.
 
@@ -2473,18 +2476,19 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 | Part | Write | State |
 | --- | --- | --- |
-| `context-menu-checkbox-item` | `data-checked` boolean | `data-disabled`, `data-inset` |
+| `context-menu` (root) | `data-modal` `false`, `true` |  |
+| `context-menu-checkbox-item` | `data-checked` boolean; `data-disabled` any; `data-inset` any |  |
 | `context-menu-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `context-menu-item` | `data-variant` `destructive` | `data-disabled`, `data-inset` |
-| `context-menu-label` |  | `data-inset` |
+| `context-menu-item` | `data-disabled` any; `data-inset` any; `data-variant` `destructive` |  |
+| `context-menu-label` | `data-inset` any |  |
 | `context-menu-radio-group` | `data-value` string |  |
-| `context-menu-radio-item` | `data-checked` boolean; `data-value` string | `data-disabled`, `data-inset` |
+| `context-menu-radio-item` | `data-checked` boolean; `data-disabled` any; `data-inset` any; `data-value` string |  |
 | `context-menu-sub-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `context-menu-sub-trigger` |  | `data-inset`, `data-open`, `data-state` |
+| `context-menu-sub-trigger` | `data-inset` any | `data-open`, `data-state` |
 
-Other parts: `context-menu` (root), `context-menu-group`, `context-menu-separator`, `context-menu-shortcut`, `context-menu-sub`, `context-menu-trigger`.
+Other parts: `context-menu-group`, `context-menu-separator`, `context-menu-shortcut`, `context-menu-sub`, `context-menu-trigger`.
 
-Other options named in the docs: `data-close-on-click` any; `data-disabled` any; `data-inset` any; `data-state` string; `data-text-value` any.
+Other options named in the docs: `data-close-on-click` any; `data-state` string; `data-text-value` any.
 
 Events: `context-menu:open` `{ trigger }`; `context-menu:close` `{ reason }`; `context-menu:select` `{ value, item, checked }` (cancelable); `context-menu:change` `{ value, checked, item, group }`.
 
@@ -2519,18 +2523,19 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 | Part | Write | State |
 | --- | --- | --- |
-| `menubar-checkbox-item` | `data-checked` boolean | `data-disabled`, `data-inset` |
+| `menubar` (root) | `data-modal` `false`, `true` |  |
+| `menubar-checkbox-item` | `data-checked` boolean; `data-disabled` any; `data-inset` any |  |
 | `menubar-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `menubar-item` | `data-variant` `destructive` | `data-disabled`, `data-inset` |
-| `menubar-label` |  | `data-inset` |
+| `menubar-item` | `data-disabled` any; `data-inset` any; `data-variant` `destructive` |  |
+| `menubar-label` | `data-inset` any |  |
 | `menubar-radio-group` | `data-value` string |  |
-| `menubar-radio-item` | `data-checked` boolean; `data-value` string | `data-disabled`, `data-inset` |
+| `menubar-radio-item` | `data-checked` boolean; `data-disabled` any; `data-inset` any; `data-value` string |  |
 | `menubar-sub-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `menubar-sub-trigger` |  | `data-inset`, `data-open`, `data-popup-open`, `data-state` |
+| `menubar-sub-trigger` | `data-inset` any | `data-open`, `data-popup-open`, `data-state` |
 
-Other parts: `menubar` (root), `menubar-group`, `menubar-menu`, `menubar-separator`, `menubar-shortcut`, `menubar-sub`, `menubar-trigger`.
+Other parts: `menubar-group`, `menubar-menu`, `menubar-separator`, `menubar-shortcut`, `menubar-sub`, `menubar-trigger`.
 
-Other options named in the docs: `data-close-on-click` any; `data-disabled` any; `data-inset` any; `data-modal` `false`, `true`; `data-state` string; `data-text-value` any.
+Other options named in the docs: `data-close-on-click` any; `data-state` string; `data-text-value` any.
 
 Events: `menubar:open` `{ trigger }`; `menubar:close` `{ reason }`; `menubar:select` `{ value, item, checked }` (cancelable); `menubar:change` `{ value, checked, item, group }`.
 
@@ -2677,7 +2682,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 | Part | Write | State |
 | --- | --- | --- |
-| `calendar` (root) | `data-button-variant` any; `data-caption-layout` any; `data-disabled` any; `data-disabled-dates` any; `data-disabled-weekdays` any; `data-fixed-weeks` any; `data-label-next` any; `data-label-previous` any; `data-lang` any; `data-max` any; `data-min` any; `data-mode` `multiple`, `range`, `single`; `data-month` any; `data-month-format` any; `data-months` any; `data-name` string; `data-outside-days` `false`, `true`; `data-required` any; `data-show-week-number` any; `data-today` any; `data-value` string; `data-week-start` any |  |
+| `calendar` (root) | `data-button-variant` any; `data-caption-layout` any; `data-disabled` any; `data-disabled-dates` any; `data-disabled-weekdays` any; `data-end-year` any; `data-fixed-weeks` any; `data-label-next` any; `data-label-previous` any; `data-lang` any; `data-max` any; `data-min` any; `data-mode` `multiple`, `range`, `single`; `data-month` any; `data-month-format` any; `data-months` any; `data-name` string; `data-outside-days` `false`, `true`; `data-required` any; `data-show-week-number` any; `data-start-year` any; `data-today` any; `data-value` string; `data-week-start` any |  |
 | `calendar-day` (kit adds) |  | `data-disabled`, `data-hidden`, `data-outside`, `data-range-end`, `data-range-middle`, `data-range-start`, `data-selected`, `data-today` |
 
 Kit adds: `calendar-button-next`, `calendar-button-previous`, `calendar-caption-label`, `calendar-dropdown`, `calendar-dropdown-root`, `calendar-dropdowns`, `calendar-month`, `calendar-month-caption`, `calendar-month-grid`, `calendar-months`, `calendar-nav`, `calendar-week`, `calendar-week-number`, `calendar-week-number-header`, `calendar-weekday`, `calendar-weekdays`, `calendar-weeks`.
@@ -2728,7 +2733,7 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 | --- | --- | --- |
 | `accordion` (root) | `data-type` `multiple`, `single` |  |
 | `accordion-content` |  | `data-closed`, `data-open`, `data-state` |
-| `accordion-item` | `data-state` string; `data-value` string |  |
+| `accordion-item` | `data-disabled` any; `data-state` string; `data-value` string |  |
 
 Other parts: `accordion-trigger`.
 

@@ -4,12 +4,12 @@ Group `layout`. Needs `core`, `overlays`. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `sidebar` (root) | `data-collapsible` `icon`, `none`, `offcanvas`; `data-side` `bottom`, `left`, `right`, `top`; `data-variant` `floating`, `inset`, `sidebar` | `data-ending-style`, `data-mobile`, `data-starting-style`, `data-state` |
+| `sidebar` (root) | `data-collapsible` `icon`, `none`, `offcanvas`; `data-side` `bottom`, `left`, `right`, `top`; `data-state` `collapsed`, `expanded`; `data-variant` `floating`, `inset`, `sidebar` | `data-ending-style`, `data-mobile`, `data-starting-style` |
 | `sidebar-container` | `data-side` `left`, `right` |  |
-| `sidebar-menu-action` | `data-show-on-hover` any |  |
+| `sidebar-menu-action` | `data-show-on-hover` boolean |  |
 | `sidebar-menu-button` | `data-active` `false`, `true`; `data-size` `default`, `lg`, `sm`; `data-tooltip` string; `data-variant` `default`, `outline` | `data-state` |
-| `sidebar-menu-skeleton` | `data-show-icon` any |  |
-| `sidebar-menu-sub-button` | `data-size` `md`, `sm` | `data-active`, `data-state` |
+| `sidebar-menu-skeleton` | `data-show-icon` boolean |  |
+| `sidebar-menu-sub-button` | `data-active` boolean; `data-size` `md`, `sm` | `data-state` |
 | `sidebar-separator` | `data-orientation` `horizontal`, `vertical` |  |
 
 Other parts: `sidebar-content`, `sidebar-footer`, `sidebar-gap`, `sidebar-group`, `sidebar-group-action`, `sidebar-group-content`, `sidebar-group-label`, `sidebar-header`, `sidebar-inner`, `sidebar-input`, `sidebar-inset`, `sidebar-menu`, `sidebar-menu-badge`, `sidebar-menu-item`, `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-rail`, `sidebar-trigger`, `sidebar-wrapper`.
@@ -49,7 +49,8 @@ Events: `sidebar:open` `{ mobile }`; `sidebar:close` `{ mobile }`.
 </div>
 ```
 
-- Parts: `sidebar-group-action`, `sidebar-group-content`, `sidebar-menu-button` (`data-variant="outline"`, `data-size="sm|lg"`, `data-active`), `sidebar-menu-action` (`data-show-on-hover`), `sidebar-menu-skeleton` (`data-show-icon`), `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-menu-sub-button`, `sidebar-input`, `sidebar-separator`.
+- Parts: `sidebar-group-action`, `sidebar-group-content`, `sidebar-menu-button` (`data-variant="outline"`, `data-size="sm|lg"`, `data-active`), `sidebar-menu-action` (`data-show-on-hover`), `sidebar-menu-skeleton` (`data-show-icon`), `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-menu-sub-button` (`data-active`), `sidebar-input`, `sidebar-separator`.
+- `data-state="expanded|collapsed"` on the `sidebar` is the first state (default `expanded`); a state in `localStorage` wins.
 - A trigger controls the sidebar in its wrapper, or the one named by `aria-controls`. Ctrl/⌘+B toggles the sidebar of the focused wrapper, else the first one. The state is stored in `localStorage["sidebar_state:<wrapper id>"]`.
 - In icon mode, collapsed menu buttons with `data-tooltip` show a `tooltip-content`. Below 768 px the sidebar is a modal sheet (`data-mobile="open"`). When Escape, a trigger, or Ctrl/⌘+B closes the sheet, focus goes back to the element that had focus when it opened (the trigger, when the trigger opened it). An outside click closes it and does not move focus back.
 - `data-side="left|right"` is inline start and inline end (see [Direction](direction.md)). The kit copies it to `sidebar-container`, like shadcn, and sets `--sidebar-width: 16rem` and `--sidebar-width-icon: 3rem` on the wrapper.

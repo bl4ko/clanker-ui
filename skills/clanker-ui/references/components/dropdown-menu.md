@@ -5,14 +5,14 @@ Group `overlays`. Needs `core`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `dropdown-menu` (root) | `data-modal` `false`, `true` |  |
-| `dropdown-menu-checkbox-item` | `data-checked` boolean; `data-disabled` any; `data-inset` any |  |
+| `dropdown-menu-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean |  |
 | `dropdown-menu-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `dropdown-menu-item` | `data-disabled` any; `data-inset` any; `data-variant` `destructive` |  |
-| `dropdown-menu-label` | `data-inset` any |  |
+| `dropdown-menu-item` | `data-disabled` boolean; `data-inset` boolean; `data-variant` `destructive` |  |
+| `dropdown-menu-label` | `data-inset` boolean |  |
 | `dropdown-menu-radio-group` | `data-value` string |  |
-| `dropdown-menu-radio-item` | `data-checked` boolean; `data-disabled` any; `data-inset` any; `data-value` string |  |
+| `dropdown-menu-radio-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
 | `dropdown-menu-sub-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `dropdown-menu-sub-trigger` | `data-inset` any | `data-open`, `data-popup-open`, `data-state` |
+| `dropdown-menu-sub-trigger` | `data-inset` boolean | `data-open`, `data-popup-open`, `data-state` |
 
 Other parts: `dropdown-menu-group`, `dropdown-menu-separator`, `dropdown-menu-shortcut`, `dropdown-menu-sub`, `dropdown-menu-trigger`.
 
@@ -20,7 +20,7 @@ Kit adds: `dropdown-menu-checkbox-item-indicator`, `dropdown-menu-radio-item-ind
 
 Part attributes: `data-dropdown-menu-trigger` boolean.
 
-Other options named in the docs: `data-close-on-click` any; `data-state` string; `data-text-value` any.
+Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` any.
 
 Events: `dropdown-menu:open` `{ trigger }`; `dropdown-menu:close` `{ reason }`; `dropdown-menu:select` `{ value, item, checked }` (cancelable); `dropdown-menu:change` `{ value, checked, item, group }`.
 

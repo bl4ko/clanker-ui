@@ -5,18 +5,18 @@ Group `overlays`. Needs `core`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `menubar` (root) | `data-modal` `false`, `true` |  |
-| `menubar-checkbox-item` | `data-checked` boolean; `data-disabled` any; `data-inset` any |  |
+| `menubar-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean |  |
 | `menubar-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `menubar-item` | `data-disabled` any; `data-inset` any; `data-variant` `destructive` |  |
-| `menubar-label` | `data-inset` any |  |
+| `menubar-item` | `data-disabled` boolean; `data-inset` boolean; `data-variant` `destructive` |  |
+| `menubar-label` | `data-inset` boolean |  |
 | `menubar-radio-group` | `data-value` string |  |
-| `menubar-radio-item` | `data-checked` boolean; `data-disabled` any; `data-inset` any; `data-value` string |  |
+| `menubar-radio-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
 | `menubar-sub-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
-| `menubar-sub-trigger` | `data-inset` any | `data-open`, `data-popup-open`, `data-state` |
+| `menubar-sub-trigger` | `data-inset` boolean | `data-open`, `data-popup-open`, `data-state` |
 
 Other parts: `menubar-group`, `menubar-menu`, `menubar-separator`, `menubar-shortcut`, `menubar-sub`, `menubar-trigger`.
 
-Other options named in the docs: `data-close-on-click` any; `data-state` string; `data-text-value` any.
+Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` any.
 
 Events: `menubar:open` `{ trigger }`; `menubar:close` `{ reason }`; `menubar:select` `{ value, item, checked }` (cancelable); `menubar:change` `{ value, checked, item, group }`.
 

@@ -32,6 +32,8 @@ var cspMeta = strings.Replace(csp, " frame-ancestors 'none';", "", 1)
 
 var cspView = strings.Replace(csp, "frame-ancestors 'none'", "frame-ancestors 'self'", 1)
 
+const kitDir = "kit"
+
 var kitStyleNames = []string{"rhea", "luma", "lyra", "maia", "mira", "sera", "vega"}
 
 var kitFiles = withStyles(map[string]bool{"clanker-ui.css": true, "clanker-ui-a11y.css": true, "clanker-ui.js": true, "clanker-ui-chart.js": true, "clanker-ui-code.js": true, "clanker-ui-theme.js": true, "clanker-ui-themes.css": true}, func(string) bool { return true })
@@ -99,7 +101,7 @@ func newKitSite(dir, kit string) *site {
 }
 
 func distFiles(fsys fs.FS) []string {
-	names, _ := fs.Glob(fsys, "dist/clanker-ui*.min.*")
+	names, _ := fs.Glob(fsys, kitDir+"/dist/clanker-ui*.min.*")
 	var out []string
 	for _, name := range names {
 		if distFile.MatchString(path.Base(name)) {
@@ -111,9 +113,16 @@ func distFiles(fsys fs.FS) []string {
 
 type minFS struct{ fs.FS }
 
+func minTarget(name string) (string, bool) {
+	base, inKit := strings.CutPrefix(name, kitDir+"/")
+	t, ok := minKit[base]
+	return kitDir + "/" + t, inKit && ok
+}
+
 func (m minFS) shim(name string) ([]byte, bool) {
-	targets, ok := minShims[name]
-	if !ok {
+	base, inKit := strings.CutPrefix(name, kitDir+"/")
+	targets, ok := minShims[base]
+	if !inKit || !ok {
 		return nil, false
 	}
 	src, _ := fs.ReadFile(m.FS, name)
@@ -126,7 +135,7 @@ func (m minFS) shim(name string) ([]byte, bool) {
 }
 
 func (m minFS) Open(name string) (fs.File, error) {
-	if t, ok := minKit[name]; ok {
+	if t, ok := minTarget(name); ok {
 		return m.FS.Open(t)
 	}
 	if b, ok := m.shim(name); ok {
@@ -136,7 +145,7 @@ func (m minFS) Open(name string) (fs.File, error) {
 }
 
 func (m minFS) ReadFile(name string) ([]byte, error) {
-	if t, ok := minKit[name]; ok {
+	if t, ok := minTarget(name); ok {
 		return fs.ReadFile(m.FS, t)
 	}
 	if b, ok := m.shim(name); ok {
@@ -192,7 +201,7 @@ func sourceSignature(fsys fs.FS) (string, error) {
 	}
 	names := []string{"demo/index.html", "demo/demo.css", "demo/demo.js", exportExtras["clanker-ui.json"]}
 	for name := range kitFiles {
-		names = append(names, name)
+		names = append(names, kitDir+"/"+name)
 	}
 	names = append(names, distFiles(fsys)...)
 	slices.Sort(names)
@@ -223,7 +232,7 @@ func sourceSignature(fsys fs.FS) (string, error) {
 func main() {
 	addr := flag.String("addr", env("ADDR", ":8080"), "listen address")
 	dir := flag.String("dir", os.Getenv("DIR"), "serve the kit, demo, and docs from this directory instead of the embedded copy")
-	kit := flag.String("kit", os.Getenv("KIT"), `"min": answer the readable kit file names with the dist/ minified files (test the minified kit)`)
+	kit := flag.String("kit", os.Getenv("KIT"), `"min": answer the readable kit file names with the kit/dist/ minified files (test the minified kit)`)
 	export := flag.String("export", "", "write the docs site as static files to this new directory")
 	base := flag.String("base", "", `URL path of the exported site, for example /clanker-ui or /`)
 	siteURL := flag.String("site-url", "", "full URL of the exported site, for sitemap.xml and the .md files")
@@ -246,7 +255,7 @@ func main() {
 	}
 	s := newKitSite(*dir, *kit)
 	if *kit == "min" && len(distFiles(s.fsys)) == 0 {
-		log.Fatal("-kit min needs the dist/ files: go run ./tools/gen dist")
+		log.Fatal("-kit min needs the kit/dist/ files: go run ./tools/gen dist")
 	}
 	if _, err := s.site(); err != nil {
 		log.Fatal(err)
@@ -347,12 +356,16 @@ func demoOnly(body []byte, only []string) ([]byte, bool) {
 
 func (s *site) serve(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimPrefix(r.URL.Path, "/")
-	if kitFiles[name] || demoAsset.MatchString(name) || (s.live && devFile.MatchString(name)) {
+	if kitFiles[name] {
+		s.file(w, r, kitDir+"/"+name)
+		return
+	}
+	if demoAsset.MatchString(name) || (s.live && devFile.MatchString(name)) {
 		s.file(w, r, name)
 		return
 	}
 	if distFile.MatchString(name) {
-		s.file(w, r, "dist/"+name)
+		s.file(w, r, kitDir+"/dist/"+name)
 		return
 	}
 	if skillFile.MatchString(name) {

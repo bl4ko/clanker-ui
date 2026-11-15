@@ -2,5 +2,5 @@ package clankerui
 
 import "embed"
 
-//go:embed clanker-ui* demo docs dist skills/clanker-ui
+//go:embed kit demo docs skills/clanker-ui
 var Files embed.FS

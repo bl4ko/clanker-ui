@@ -9,8 +9,8 @@ from urllib.parse import urlsplit
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 ANCHOR = "scan(document.documentElement)"
-SPLIT = {"clanker-ui.js": "js", "clanker-ui.css": "css", "tools/gen/kit.css": "css"}
-KIT_SOURCES = {*SPLIT, "clanker-ui-chart.js", "clanker-ui-code.js", "clanker-ui-theme.js", "clanker-ui-themes.css", "clanker-ui-a11y.css"}
+SPLIT = {"kit/clanker-ui.js": "js", "kit/clanker-ui.css": "css", "tools/gen/kit.css": "css"}
+KIT_SOURCES = {*SPLIT, "kit/clanker-ui-chart.js", "kit/clanker-ui-code.js", "kit/clanker-ui-theme.js", "kit/clanker-ui-themes.css", "kit/clanker-ui-a11y.css"}
 SERVED = [*KIT_SOURCES - set(SPLIT), "demo/demo.css", "demo/demo.js", "demo/assets/*", "docs/assets/*"]
 SITE = ["docs/nav.json", "docs/templates/*"]
 SOURCE = ["test", "demo", *sorted(KIT_SOURCES)]
@@ -376,7 +376,7 @@ def url_keys(path, document, root=ROOT):
     if m := re.fullmatch(r"blocks/([a-z0-9-]+)\.js", p):
         return {"p:/blocks/" + m[1]}
     base = p.rsplit("/", 1)[-1]
-    for cand in ([] if p.startswith("assets/") else [p]) + ["dist/" + base, "docs/assets/" + base, "demo/" + base, base]:
+    for cand in ([] if p.startswith("assets/") else [p]) + ["kit/dist/" + base, "docs/assets/" + base, "demo/" + base, "kit/" + base]:
         if base and (pathlib.Path(root) / cand).is_file():
             return {"f:" + cand}
     hits = sorted(pathlib.Path(root).glob("docs/content/**/examples/" + base)) if base else []
@@ -412,7 +412,7 @@ class Recorder:
     def __init__(self, context, page, engine, base_url, root=ROOT):
         if root not in self.shared:
             g = groups(root)
-            src = (pathlib.Path(root) / "clanker-ui.js").read_text()
+            src = (pathlib.Path(root) / "kit/clanker-ui.js").read_text()
             units = [0]
             for ch in src:
                 units.append(units[-1] + (2 if ord(ch) > 0xFFFF else 1))

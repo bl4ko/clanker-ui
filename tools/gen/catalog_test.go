@@ -78,7 +78,7 @@ func TestCatalogComponents(t *testing.T) {
 	if !slices.Equal(names, g.order) {
 		t.Errorf("catalog components %v, want groups.tsv order %v", names, g.order)
 	}
-	js := readFile(t, "../../clanker-ui.js") + readFile(t, "../../clanker-ui-chart.js") + readFile(t, "../../clanker-ui-code.js")
+	js := readFile(t, "../../kit/clanker-ui.js") + readFile(t, "../../kit/clanker-ui-chart.js") + readFile(t, "../../kit/clanker-ui-code.js")
 	var events []string
 	for _, c := range cat.Components {
 		for _, e := range c.Events {
@@ -490,7 +490,7 @@ func TestLLMsTxt(t *testing.T) {
 
 func TestCatalogExports(t *testing.T) {
 	cat := testCatalog(t)
-	src := map[string]string{"clanker-ui.js": readFile(t, "../../clanker-ui.js"), "clanker-ui-chart.js": readFile(t, "../../clanker-ui-chart.js"), "clanker-ui-code.js": readFile(t, "../../clanker-ui-code.js")}
+	src := map[string]string{"clanker-ui.js": readFile(t, "../../kit/clanker-ui.js"), "clanker-ui-chart.js": readFile(t, "../../kit/clanker-ui-chart.js"), "clanker-ui-code.js": readFile(t, "../../kit/clanker-ui-code.js")}
 	declared := regexp.MustCompile(`(?m)^export\s+(?:async\s+)?(?:function\s*\*?\s*|const\s+|let\s+|class\s+)([A-Za-z_$][\w$]*)`)
 	public := map[string]map[string]bool{}
 	for f, s := range src {
@@ -518,7 +518,7 @@ func TestCatalogExports(t *testing.T) {
 }
 
 func kitKeyboardComponents(t *testing.T, g *groupTable) map[string]bool {
-	js := readFile(t, "../../clanker-ui.js")
+	js := readFile(t, "../../kit/clanker-ui.js")
 	lines := strings.Split(js, "\n")
 	arrays := map[string][]string{}
 	for _, m := range regexp.MustCompile(`(?m)^const (\w+) = \[([^\]]*)\]`).FindAllStringSubmatch(js, -1) {
@@ -634,7 +634,7 @@ func TestCatalogReadOnlyAttrsAreWrite(t *testing.T) {
 	cat := testCatalog(t)
 	var js strings.Builder
 	for _, f := range []string{"clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-code.js"} {
-		b, err := os.ReadFile(filepath.Join("../..", f))
+		b, err := os.ReadFile(filepath.Join("../..", kitDir, f))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -690,7 +690,7 @@ func TestCatalogValuelessAttrsAreBoolean(t *testing.T) {
 	cat := testCatalog(t)
 	var js strings.Builder
 	for _, f := range []string{"clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-code.js"} {
-		js.WriteString(readFile(t, filepath.Join("../..", f)))
+		js.WriteString(readFile(t, filepath.Join("../..", kitDir, f)))
 	}
 	flags := map[string]bool{}
 	for _, m := range jsFlagAttr.FindAllStringSubmatch(js.String(), -1) {
@@ -863,7 +863,7 @@ func TestDocsRepoFileURLs(t *testing.T) {
 }
 
 func TestDocsIconCount(t *testing.T) {
-	js := readFile(t, "../../clanker-ui.js")
+	js := readFile(t, "../../kit/clanker-ui.js")
 	start := strings.Index(js, "const ICONS = {\n")
 	end := strings.Index(js[max(start, 0):], "\n}\n")
 	if start < 0 || end < 0 {

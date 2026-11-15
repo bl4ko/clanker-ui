@@ -66,19 +66,16 @@ func TestServesEmbeddedFiles(t *testing.T) {
 		t.Fatal(err)
 	}
 	var disk []string
-	for _, root := range []string{".", "demo", "dist", "docs", "skills/clanker-ui"} {
+	for _, root := range []string{"kit", "demo", "docs", "skills/clanker-ui"} {
 		err := filepath.WalkDir(root, func(name string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
 			base := filepath.Base(name)
 			if d.IsDir() {
-				if root == "." && name != "." {
-					return filepath.SkipDir
-				}
 				return nil
 			}
-			if strings.HasPrefix(base, ".") || strings.HasPrefix(base, "_") || root == "." && !strings.HasPrefix(base, "clanker-ui") {
+			if strings.HasPrefix(base, ".") || strings.HasPrefix(base, "_") {
 				return nil
 			}
 			disk = append(disk, filepath.ToSlash(name))
@@ -93,7 +90,7 @@ func TestServesEmbeddedFiles(t *testing.T) {
 	if !slices.Equal(names, disk) {
 		t.Errorf("embedded files %v, want the kit, demo, docs, and skill files %v", names, disk)
 	}
-	for _, want := range []string{"clanker-ui.css", "clanker-ui-a11y.css", "clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-code.js", "clanker-ui-theme.js", "clanker-ui-themes.css", "demo/index.html", "demo/demo.css", "demo/demo.js", "docs/nav.json", "docs/assets/docs.css", "docs/assets/docs.js", "docs/assets/docs-sidebar.js"} {
+	for _, want := range []string{"kit/clanker-ui.css", "kit/clanker-ui-a11y.css", "kit/clanker-ui.js", "kit/clanker-ui-chart.js", "kit/clanker-ui-code.js", "kit/clanker-ui-theme.js", "kit/clanker-ui-themes.css", "demo/index.html", "demo/demo.css", "demo/demo.js", "docs/nav.json", "docs/assets/docs.css", "docs/assets/docs.js", "docs/assets/docs-sidebar.js"} {
 		if !slices.Contains(names, want) {
 			t.Errorf("%s is not embedded", want)
 		}
@@ -106,7 +103,7 @@ func TestServesEmbeddedFiles(t *testing.T) {
 		if name == "demo/index.html" {
 			path = "/demo"
 		}
-		if strings.HasPrefix(name, "dist/") {
+		if strings.HasPrefix(name, "kit/") {
 			path = "/" + filepath.Base(name)
 		}
 		rec := request(t, h, http.MethodGet, path)
@@ -138,11 +135,11 @@ func TestServesEmbeddedFiles(t *testing.T) {
 }
 
 func TestThemeBootFile(t *testing.T) {
-	boot, err := os.ReadFile("clanker-ui-theme.js")
+	boot, err := os.ReadFile("kit/clanker-ui-theme.js")
 	if err != nil {
 		t.Fatal(err)
 	}
-	module, err := os.ReadFile("clanker-ui.js")
+	module, err := os.ReadFile("kit/clanker-ui.js")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -178,11 +175,11 @@ func TestThemeBootFile(t *testing.T) {
 }
 
 func TestSchemeLists(t *testing.T) {
-	module, err := os.ReadFile("clanker-ui.js")
+	module, err := os.ReadFile("kit/clanker-ui.js")
 	if err != nil {
 		t.Fatal(err)
 	}
-	css, err := os.ReadFile("clanker-ui-themes.css")
+	css, err := os.ReadFile("kit/clanker-ui-themes.css")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -335,7 +332,7 @@ func writeFiles(t *testing.T, files map[string]string) string {
 }
 
 func TestDistFilesServedFlat(t *testing.T) {
-	dir := writeFiles(t, map[string]string{"dist/clanker-ui-core.min.js": "export const a=1\n", "dist/clanker-ui-forms.min.css": "a{b:c}\n", "dist/notes.txt": "x"})
+	dir := writeFiles(t, map[string]string{"kit/dist/clanker-ui-core.min.js": "export const a=1\n", "kit/dist/clanker-ui-forms.min.css": "a{b:c}\n", "kit/dist/notes.txt": "x"})
 	h := newSite(dir).routes()
 	for path, body := range map[string]string{"/clanker-ui-core.min.js": "export const a=1\n", "/clanker-ui-forms.min.css": "a{b:c}\n"} {
 		rec := request(t, h, http.MethodGet, path)
@@ -344,7 +341,7 @@ func TestDistFilesServedFlat(t *testing.T) {
 		}
 		checkSecurityHeaders(t, rec, path)
 	}
-	for _, path := range []string{"/dist/clanker-ui-core.min.js", "/notes.txt", "/dist/notes.txt", "/clanker-ui-layout.min.js", "/clanker-ui-core.min.js.map"} {
+	for _, path := range []string{"/dist/clanker-ui-core.min.js", "/kit/dist/clanker-ui-core.min.js", "/kit/clanker-ui.css", "/notes.txt", "/dist/notes.txt", "/clanker-ui-layout.min.js", "/clanker-ui-core.min.js.map"} {
 		if rec := request(t, h, http.MethodGet, path); rec.Code == http.StatusOK {
 			t.Errorf("%s served with 200", path)
 		}
@@ -354,20 +351,20 @@ func TestDistFilesServedFlat(t *testing.T) {
 func TestKitMinServesMinifiedFiles(t *testing.T) {
 	files := map[string]string{}
 	for name := range kitFiles {
-		b, err := os.ReadFile(name)
+		b, err := os.ReadFile("kit/" + name)
 		if err != nil {
 			t.Fatal(err)
 		}
-		files[name] = string(b)
+		files["kit/"+name] = string(b)
 	}
-	files["dist/clanker-ui.min.css"] = "min-css\n"
-	files["dist/clanker-ui-themes.min.css"] = "min-themes\n"
-	files["dist/clanker-ui-a11y.min.css"] = "min-a11y\n"
-	files["dist/clanker-ui-theme.min.js"] = "min-theme\n"
-	files["dist/clanker-ui-core.min.js"] = "export const h=1\n"
-	license, _, _ := strings.Cut(files["clanker-ui.js"], "\n")
-	chartLicense, _, _ := strings.Cut(files["clanker-ui-chart.js"], "\n")
-	codeLicense, _, _ := strings.Cut(files["clanker-ui-code.js"], "\n")
+	files["kit/dist/clanker-ui.min.css"] = "min-css\n"
+	files["kit/dist/clanker-ui-themes.min.css"] = "min-themes\n"
+	files["kit/dist/clanker-ui-a11y.min.css"] = "min-a11y\n"
+	files["kit/dist/clanker-ui-theme.min.js"] = "min-theme\n"
+	files["kit/dist/clanker-ui-core.min.js"] = "export const h=1\n"
+	license, _, _ := strings.Cut(files["kit/clanker-ui.js"], "\n")
+	chartLicense, _, _ := strings.Cut(files["kit/clanker-ui-chart.js"], "\n")
+	codeLicense, _, _ := strings.Cut(files["kit/clanker-ui-code.js"], "\n")
 	want := map[string]string{
 		"/clanker-ui.css":         "min-css\n",
 		"/clanker-ui-themes.css":  "min-themes\n",
@@ -379,7 +376,7 @@ func TestKitMinServesMinifiedFiles(t *testing.T) {
 		"/clanker-ui-core.min.js": "export const h=1\n",
 	}
 	for _, s := range kitStyleNames {
-		files["dist/clanker-ui-"+s+".min.css"] = "min-" + s + "\n"
+		files["kit/dist/clanker-ui-"+s+".min.css"] = "min-" + s + "\n"
 		want["/clanker-ui-"+s+".css"] = "min-" + s + "\n"
 	}
 	dir := writeFiles(t, files)
@@ -390,7 +387,7 @@ func TestKitMinServesMinifiedFiles(t *testing.T) {
 			t.Errorf("KIT=min %s: status %d, body %q", path, rec.Code, trunc(rec.Body.String(), 120))
 		}
 	}
-	if rec := request(t, newSite(dir).routes(), http.MethodGet, "/clanker-ui.css"); rec.Body.String() != files["clanker-ui.css"] {
+	if rec := request(t, newSite(dir).routes(), http.MethodGet, "/clanker-ui.css"); rec.Body.String() != files["kit/clanker-ui.css"] {
 		t.Error("without KIT=min the readable clanker-ui.css must be served")
 	}
 	m := docsFS(t, nil)
@@ -401,7 +398,7 @@ func TestKitMinServesMinifiedFiles(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if string(d.assets["clanker-ui-core.min.js"]) != files["dist/clanker-ui-core.min.js"] || !strings.Contains(string(d.assets["clanker-ui.js"]), "export * from") {
+	if string(d.assets["clanker-ui-core.min.js"]) != files["kit/dist/clanker-ui-core.min.js"] || !strings.Contains(string(d.assets["clanker-ui.js"]), "export * from") {
 		t.Error("KIT=min docs assets must hold the dist files and the clanker-ui.js shim")
 	}
 }

@@ -186,7 +186,7 @@ func TestDocsRoutesAndHeaders(t *testing.T) {
 	if rec.Code != http.StatusOK || rec.Header().Get("Cache-Control") != "public, max-age=31536000, immutable" || rec.Header().Get("Content-Type") != contentTypes[".js"] {
 		t.Errorf("%s: status %d, Cache-Control %q, Content-Type %q", asset, rec.Code, rec.Header().Get("Cache-Control"), rec.Header().Get("Content-Type"))
 	}
-	body, _ := os.ReadFile("clanker-ui.js")
+	body, _ := os.ReadFile("kit/clanker-ui.js")
 	if rec.Body.String() != string(body) {
 		t.Error("hashed kit asset differs from clanker-ui.js")
 	}
@@ -250,11 +250,11 @@ func docsFS(t *testing.T, extra map[string]string) fstest.MapFS {
 		}
 	}
 	for name := range kitFiles {
-		b, err := os.ReadFile(name)
+		b, err := os.ReadFile(kitDir + "/" + name)
 		if err != nil {
 			t.Fatal(err)
 		}
-		m[name] = &fstest.MapFile{Data: b}
+		m[kitDir+"/"+name] = &fstest.MapFile{Data: b}
 	}
 	for name, body := range extra {
 		if body == "" {
@@ -843,7 +843,7 @@ func TestExampleClassesHaveRules(t *testing.T) {
 			t.Errorf("docs.css has no rule for the preview height %s", h)
 		}
 	}
-	css := readText(t, "docs/assets/examples.css") + readText(t, "clanker-ui.css")
+	css := readText(t, "docs/assets/examples.css") + readText(t, "kit/clanker-ui.css")
 	esc := regexp.MustCompile(`[^A-Za-z0-9_-]`)
 	class := regexp.MustCompile(`\sclass="([^"]*)"`)
 	files, _ := filepath.Glob("docs/content/*/*/examples/*.html")

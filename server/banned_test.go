@@ -23,7 +23,7 @@ func htmlScanFiles(t *testing.T) []string {
 }
 
 func cssScanFiles(t *testing.T) []string {
-	return slices.Concat(repoFiles(t, "clanker-ui*.css", "dist/clanker-ui*.css", "demo/*.css", "test/spike/*.css", "tools/gen/*.css", "test/behavior/fixtures/*.css", "test/lint/*.css"), walkFiles(t, "docs", ".css"))
+	return slices.Concat(repoFiles(t, "kit/clanker-ui*.css", "kit/dist/clanker-ui*.css", "demo/*.css", "test/spike/*.css", "tools/gen/*.css", "test/behavior/fixtures/*.css", "test/lint/*.css"), walkFiles(t, "docs", ".css"))
 }
 
 func plainCommentFiles(t *testing.T) []string {
@@ -38,7 +38,7 @@ func TestScannedFiles(t *testing.T) {
 	} {
 		want := map[string][]string{
 			"html security": {"test/spike/index.html"},
-			"remote css":    {"test/spike/page.css", "clanker-ui.css"},
+			"remote css":    {"test/spike/page.css", "kit/clanker-ui.css"},
 			"no comments":   {"test/spike/page.css", "tools/parity/parity.py", "tools/parity/parity.js", "skills/clanker-ui/references/design-lint.js"},
 		}[name]
 		for _, f := range want {
@@ -58,7 +58,7 @@ var fileLicenseLines = map[string]string{
 
 func kitLicense(name string) string {
 	base := filepath.Base(name)
-	dist := strings.HasPrefix(filepath.ToSlash(name), "dist/")
+	dist := strings.HasPrefix(filepath.ToSlash(name), "kit/dist/")
 	if dist {
 		base = strings.Replace(base, ".min.", ".", 1)
 	}
@@ -77,15 +77,15 @@ func kitLicense(name string) string {
 
 func TestKitLicense(t *testing.T) {
 	for name, want := range map[string]string{
-		"clanker-ui.css":                 generatedLicenseLine,
-		"clanker-ui.js":                  fileLicenseLines["clanker-ui.js"],
-		"dist/clanker-ui.min.css":        generatedLicenseLine,
-		"dist/clanker-ui-forms.min.css":  generatedLicenseLine,
-		"dist/clanker-ui-themes.min.css": fileLicenseLines["clanker-ui-themes.css"],
-		"dist/clanker-ui-a11y.min.css":   licenseLine,
-		"dist/clanker-ui-core.min.js":    fileLicenseLines["clanker-ui.js"],
-		"dist/clanker-ui-chart.min.js":   licenseLine,
-		"dist/clanker-ui-code.min.js":    fileLicenseLines["clanker-ui-code.js"],
+		"kit/clanker-ui.css":                 generatedLicenseLine,
+		"kit/clanker-ui.js":                  fileLicenseLines["clanker-ui.js"],
+		"kit/dist/clanker-ui.min.css":        generatedLicenseLine,
+		"kit/dist/clanker-ui-forms.min.css":  generatedLicenseLine,
+		"kit/dist/clanker-ui-themes.min.css": fileLicenseLines["clanker-ui-themes.css"],
+		"kit/dist/clanker-ui-a11y.min.css":   licenseLine,
+		"kit/dist/clanker-ui-core.min.js":    fileLicenseLines["clanker-ui.js"],
+		"kit/dist/clanker-ui-chart.min.js":   licenseLine,
+		"kit/dist/clanker-ui-code.min.js":    fileLicenseLines["clanker-ui-code.js"],
 	} {
 		if got := kitLicense(name); got != want {
 			t.Errorf("%s: license %q, want %q", name, got, want)
@@ -205,7 +205,7 @@ func timerTakesFunction(src, arg string) bool {
 }
 
 func TestNoBannedAPIs(t *testing.T) {
-	files := slices.Concat(repoFiles(t, "clanker-ui*.js", "dist/clanker-ui*.js", "demo/*.js", "test/behavior/fixtures/*.js", "test/split/*.js", "skills/clanker-ui/references/*.js"), walkFiles(t, "docs", ".js"))
+	files := slices.Concat(repoFiles(t, "kit/clanker-ui*.js", "kit/dist/clanker-ui*.js", "demo/*.js", "test/behavior/fixtures/*.js", "test/split/*.js", "skills/clanker-ui/references/*.js"), walkFiles(t, "docs", ".js"))
 	if !slices.Contains(files, filepath.Join("docs", "assets", "docs.js")) || !slices.Contains(files, filepath.Join("test", "behavior", "fixtures", "toast.js")) {
 		t.Fatal("docs JavaScript is not scanned")
 	}
@@ -530,7 +530,7 @@ func TestNoRemoteOrLegacyCSS(t *testing.T) {
 }
 
 func TestCommentRules(t *testing.T) {
-	kit := repoFiles(t, "clanker-ui*.css", "clanker-ui*.js", "dist/clanker-ui*.css", "dist/clanker-ui*.js")
+	kit := repoFiles(t, "kit/clanker-ui*.css", "kit/clanker-ui*.js", "kit/dist/clanker-ui*.css", "kit/dist/clanker-ui*.js")
 	for _, f := range kit {
 		src := readText(t, f)
 		first, rest, _ := strings.Cut(src, "\n")

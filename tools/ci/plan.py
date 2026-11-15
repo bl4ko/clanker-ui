@@ -351,7 +351,7 @@ def self_test():
     check("macOS jobs on a pull request <= 5", sum(j["engine"] == "webkit" for j in PR) <= 5)
     check("unique job ids", len({(j["engine"], j["id"]) for j in PR + FULL + PAGES}) == len(PR + FULL + PAGES))
     check("README change is docs", classify(["README.md", "docs/content/index/page.md", "skills/clanker-ui/SKILL.md"])[:2] == ("docs", set()))
-    check("kit change is full", classify(["README.md", "clanker-ui.js"])[0] == "full")
+    check("kit change is full", classify(["README.md", "kit/clanker-ui.js"])[0] == "full")
     check("ci.yml change is full", classify([".github/workflows/ci.yml"])[0] == "full")
     check("run.py change is full", classify(["test/run.py"])[0] == "full")
     check("plan change is full", classify(["tools/ci/plan.py"])[0] == "full")
@@ -366,13 +366,13 @@ def self_test():
     check("design lint change runs lint and pages", classify(["skills/clanker-ui/references/design-lint.js", "test/lint/bad.html"])[:2] == ("tests", {"lint", "pages"}))
     check("label runs all", plan("pull_request", True, ["README.md"])[1] == PR + FULL)
     check("schedule and dispatch run all", all(plan(e, False, [])[1] == PR + FULL for e in ("schedule", "workflow_dispatch")))
-    js, css = (ROOT / "clanker-ui.js").read_text(), (ROOT / "clanker-ui.css").read_text()
+    js, css = (ROOT / "kit/clanker-ui.js").read_text(), (ROOT / "kit/clanker-ui.css").read_text()
     page = (ROOT / "docs/content/components/button/page.md").read_text()
     edits = {
-        "carousel": ("clanker-ui.js", js.replace("function carouselChange(inst) {\n", "function carouselChange(inst) {\n  inst.x = 1\n", 1)),
-        "core": ("clanker-ui.js", js.replace("\nconst SVG_NS", "\nconst coreX = 1\nconst SVG_NS", 1)),
-        "token": ("clanker-ui.css", css.replace("    --radius: .625rem;\n", "    --radius: .5rem;\n", 1)),
-        "button": ("clanker-ui.css", css.replace('  [data-slot="button"] {\n', '  [data-slot="button"] {\n    color: red;\n', 1)),
+        "carousel": ("kit/clanker-ui.js", js.replace("function carouselChange(inst) {\n", "function carouselChange(inst) {\n  inst.x = 1\n", 1)),
+        "core": ("kit/clanker-ui.js", js.replace("\nconst SVG_NS", "\nconst coreX = 1\nconst SVG_NS", 1)),
+        "token": ("kit/clanker-ui.css", css.replace("    --radius: .625rem;\n", "    --radius: .5rem;\n", 1)),
+        "button": ("kit/clanker-ui.css", css.replace('  [data-slot="button"] {\n', '  [data-slot="button"] {\n    color: red;\n', 1)),
         "page": ("docs/content/components/button/page.md", page + "\nMore text.\n"),
         "title": ("docs/content/components/button/page.md", page.replace("title: Button", "title: Buttons", 1)),
     }
@@ -395,7 +395,7 @@ def self_test():
     check("min-smoke keeps foundation and only the selected rest", {k[3] for k in got if k[2] == "min"} == {n for n in smoke if n.startswith("foundation.") or n in sel} and set(v for k, v in got.items() if k[2] == "min") == {1})
     check("carousel change needs fewer jobs", len(jobs) < len(PR))
     narrow = {**impact, "g3.carousel_motion": impact["g3.carousel_motion"] | {"j:carousel:carouselChange"}}
-    check("measured JS statement selects only the checks that ran it", {k[3] for k in coverage(plan("pull_request", False, ["clanker-ui.js"], reader("carousel"), narrow)[1]) if k[2] != "min" and k[0] != "webkit"} == {"g3.carousel_motion", "g1.select"})
+    check("measured JS statement selects only the checks that ran it", {k[3] for k in coverage(plan("pull_request", False, ["kit/clanker-ui.js"], reader("carousel"), narrow)[1]) if k[2] != "min" and k[0] != "webkit"} == {"g3.carousel_motion", "g1.select"})
     check("core JS change is full", run(["core"]) == ("full", PR))
     check("token CSS change is full", run(["token"]) == ("full", PR))
     tier, jobs = run(["button"])
@@ -403,13 +403,13 @@ def self_test():
     tier, jobs = run(["page"])
     check("docs page change runs docs and pages checks", tier == "impact" and {k[3].split(".")[0] for k in coverage(jobs) if k[2] != "min"} >= {"docs", "pages"} and any(j.get("pages") for j in jobs))
     check("front matter change counts for all docs pages", classify(["docs/content/components/button/page.md"], reader("title"))[2] == [frozenset({"site:docs"})])
-    check("generated file change is full", all(run(n, f)[0] == "full" for n, f in (([], ["dist/clanker-ui.min.js"]), ([], ["clanker-ui-luma.css"]), (["carousel"], ["clanker-ui.js", "dist/clanker-ui.min.js"]))))
-    check("plan, impact map, or harness change with a kit change is full", all(run(["carousel"], ["clanker-ui.js", f])[0] == "full" for f in ("tools/ci/plan.py", "tools/ci/impact.py", "tools/ci/impact.tsv", "test/run.py")))
-    check("unmeasured component is full", plan("pull_request", False, ["clanker-ui.js"], reader("carousel"), {n: frozenset({"c:button"}) for n in names})[0] == "full")
-    check("label still runs all with a kit change", plan("pull_request", True, ["clanker-ui.js"], reader("carousel"), impact)[1] == PR + FULL)
+    check("generated file change is full", all(run(n, f)[0] == "full" for n, f in (([], ["kit/dist/clanker-ui.min.js"]), ([], ["kit/clanker-ui-luma.css"]), (["carousel"], ["kit/clanker-ui.js", "kit/dist/clanker-ui.min.js"]))))
+    check("plan, impact map, or harness change with a kit change is full", all(run(["carousel"], ["kit/clanker-ui.js", f])[0] == "full" for f in ("tools/ci/plan.py", "tools/ci/impact.py", "tools/ci/impact.tsv", "test/run.py")))
+    check("unmeasured component is full", plan("pull_request", False, ["kit/clanker-ui.js"], reader("carousel"), {n: frozenset({"c:button"}) for n in names})[0] == "full")
+    check("label still runs all with a kit change", plan("pull_request", True, ["kit/clanker-ui.js"], reader("carousel"), impact)[1] == PR + FULL)
     check("kit change keeps the WebKit pull request jobs", [j for j in run(["carousel"])[1] if j["engine"] == "webkit"] == [j for j in PR if j["engine"] == "webkit"])
     check("docs page change reduces WebKit", sum(j["engine"] == "webkit" for j in run(["page"])[1]) < sum(j["engine"] == "webkit" for j in PR))
-    check("stale impact map is full", plan("pull_request", False, ["clanker-ui.js"], reader("carousel"), {}) == ("full", PR))
+    check("stale impact map is full", plan("pull_request", False, ["kit/clanker-ui.js"], reader("carousel"), {}) == ("full", PR))
     head = IMPACT.source_hash(ROOT, "HEAD")
     check("impact map records the source tree", re.fullmatch(r"[0-9a-f]{16}", head) is not None and IMPACT.source_hash(ROOT, "no-such-rev") == "")
     linux = [j for j in PR + FULL if j["engine"] != "webkit"]

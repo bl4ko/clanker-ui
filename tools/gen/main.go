@@ -34,6 +34,8 @@ var sourceFixes = []struct {
 	{regexp.MustCompile(`:not\(\[class\*='size-'\]\)`), ":not([class*='size-'],[data-slot])", "class adapted to the kit markup", "kit markup has no size classes; an icon with a data-slot gets its size from its own part"},
 }
 
+const kitDir = "kit"
+
 type kitStyle struct{ name, file, radius string }
 
 var kitStyles = []kitStyle{
@@ -132,7 +134,7 @@ func main() {
 			}
 		}
 		os.Unsetenv("GITHUB_TOKEN")
-		os.Args = append([]string{os.Args[0], "-src", src, "-out", kitStyles[0].file}, os.Args[2:]...)
+		os.Args = append([]string{os.Args[0], "-src", src, "-out", filepath.Join(kitDir, kitStyles[0].file)}, os.Args[2:]...)
 	}
 	var o options
 	flag.StringVar(&o.src, "src", os.Getenv("SHADCN_SRC"), "directory with the pinned inputs (go run ./tools/gen fetch -src DIR)")
@@ -146,7 +148,7 @@ func main() {
 	flag.StringVar(&o.groups, "groups", "tools/gen/groups.tsv", "ported components; the default component list (other pinned components get a note)")
 	flag.StringVar(&o.parts, "parts", "", "also write the parts as JSON to this file (for tools/parity)")
 	flag.BoolVar(&o.physical, "physical", false, "keep physical classes (ml-, right-) instead of the shadcn rtl mapping")
-	flag.StringVar(&o.style, "style", kitStyles[0].name, "shadcn style (apps/v4/registry/styles/style-<name>.css); with -out clanker-ui.css and no -style, every style in kitStyles is written next to it")
+	flag.StringVar(&o.style, "style", kitStyles[0].name, "shadcn style (apps/v4/registry/styles/style-<name>.css); with -out kit/clanker-ui.css and no -style, every style in kitStyles is written next to it")
 	flag.Parse()
 	set := map[string]bool{}
 	flag.Visit(func(f *flag.Flag) { set[f.Name] = true })
@@ -174,7 +176,7 @@ func main() {
 		}
 		fmt.Println(summary)
 	}
-	if _, err := writeDist(filepath.Dir(o.out), filepath.Join(filepath.Dir(o.out), "dist")); err != nil {
+	if _, err := writeDist(filepath.Dir(filepath.Dir(o.out)), filepath.Join(filepath.Dir(o.out), "dist")); err != nil {
 		log.Fatalf("dist: %v", err)
 	}
 }

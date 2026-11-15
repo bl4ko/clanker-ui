@@ -15,7 +15,7 @@ The markup mirrors the DOM that shadcn/ui renders. If you know the shadcn JSX, y
 
 ## Files
 
-Get the files from a [release](https://github.com/bl4ko/clanker-ui/releases) (zip and `SHA256SUMS`) or from the [repository](https://github.com/bl4ko/clanker-ui). A project needs `clanker-ui.css` and `clanker-ui.js`. The other files are optional:
+Get the files from a [release](https://github.com/bl4ko/clanker-ui/releases) (zip and `SHA256SUMS`) or from `kit/` in the [repository](https://github.com/bl4ko/clanker-ui/tree/main/kit). A project needs `clanker-ui.css` and `clanker-ui.js`. The other files are optional:
 
 | File | Contents |
 | --- | --- |

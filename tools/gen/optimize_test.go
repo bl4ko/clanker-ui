@@ -105,7 +105,7 @@ func TestOptimizeCommitted(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, s := range kitStyles {
-		b, err := os.ReadFile(filepath.Join("../..", s.file))
+		b, err := os.ReadFile(filepath.Join("../..", kitDir, s.file))
 		if err != nil {
 			t.Fatal(err)
 		}

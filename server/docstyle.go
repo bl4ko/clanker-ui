@@ -201,7 +201,7 @@ func (d *docsSite) loadStyles(fsys fs.FS) error {
 		if i == 0 || !schemeName.MatchString(s.Name) {
 			continue
 		}
-		src, err := fs.ReadFile(fsys, s.CSS)
+		src, err := fs.ReadFile(fsys, kitDir+"/"+s.CSS)
 		if err != nil {
 			return err
 		}

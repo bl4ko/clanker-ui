@@ -68,12 +68,12 @@ type distResult struct {
 
 func distMain(args []string) error {
 	fset := flag.NewFlagSet("dist", flag.ExitOnError)
-	root := fset.String("root", ".", "repository root with the readable kit files")
-	out := fset.String("out", "", "output directory (default: <root>/dist)")
+	root := fset.String("root", ".", "repository root")
+	out := fset.String("out", "", "output directory (default: <root>/kit/dist)")
 	fset.Parse(args)
 	dir := *out
 	if dir == "" {
-		dir = filepath.Join(*root, "dist")
+		dir = filepath.Join(*root, kitDir, "dist")
 	}
 	names, err := writeDist(*root, dir)
 	if err != nil {
@@ -220,7 +220,7 @@ func buildDist(root string) (*distResult, error) {
 		return nil, err
 	}
 	read := func(name string) (string, error) {
-		b, err := os.ReadFile(filepath.Join(root, name))
+		b, err := os.ReadFile(filepath.Join(root, kitDir, name))
 		return string(b), err
 	}
 	res := &distResult{files: map[string][]byte{}, imports: map[string][]string{}, cssBody: map[string]string{}}

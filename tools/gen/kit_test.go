@@ -19,15 +19,15 @@ func readRepo(t *testing.T, name string) string {
 
 func TestKitCSSEndsWithKit(t *testing.T) {
 	for _, s := range kitStyles {
-		if !strings.HasSuffix(readRepo(t, s.file), "\n"+readRepo(t, "tools/gen/kit.css")) {
-			t.Errorf("%s does not end with tools/gen/kit.css; do not edit it, run go run ./tools/gen -src \"$SHADCN_SRC\" -out clanker-ui.css", s.file)
+		if !strings.HasSuffix(readRepo(t, kitDir+"/"+s.file), "\n"+readRepo(t, "tools/gen/kit.css")) {
+			t.Errorf("%s does not end with tools/gen/kit.css; do not edit it, run go run ./tools/gen -src \"$SHADCN_SRC\" -out kit/clanker-ui.css", s.file)
 		}
 	}
 }
 
 func TestKitCSSAllInLayers(t *testing.T) {
 	for _, s := range kitStyles {
-		tree, err := parseCSS(readRepo(t, s.file))
+		tree, err := parseCSS(readRepo(t, kitDir+"/"+s.file))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -72,9 +72,9 @@ func TestThemeNotOnElement(t *testing.T) {
 	if got := themeNotAncestors(good); len(got) != 0 {
 		t.Errorf("the check finds %q in the good sample, want none", got)
 	}
-	files := []string{"tools/gen/kit.css", "clanker-ui-a11y.css", "clanker-ui-themes.css"}
+	files := []string{"tools/gen/kit.css", "kit/clanker-ui-a11y.css", "kit/clanker-ui-themes.css"}
 	for _, s := range kitStyles {
-		files = append(files, s.file)
+		files = append(files, kitDir+"/"+s.file)
 	}
 	for _, f := range files {
 		for _, b := range themeNotAncestors(readRepo(t, f)) {
@@ -84,13 +84,13 @@ func TestThemeNotOnElement(t *testing.T) {
 }
 
 func TestKitStyles(t *testing.T) {
-	nova, rhea := readRepo(t, "clanker-ui.css"), readRepo(t, "clanker-ui-rhea.css")
+	nova, rhea := readRepo(t, "kit/clanker-ui.css"), readRepo(t, "kit/clanker-ui-rhea.css")
 	if kitStyles[0].name != "nova" || kitStyles[0].file != "clanker-ui.css" {
 		t.Errorf("the default style is %v, want nova in clanker-ui.css", kitStyles[0])
 	}
 	seen := map[string]string{}
 	for _, s := range kitStyles {
-		css := readRepo(t, s.file)
+		css := readRepo(t, kitDir+"/"+s.file)
 		if other, ok := seen[css]; ok || !strings.Contains(css, `[data-slot="code-block"]`) {
 			t.Errorf("%s must be its own style with the same parts (same bytes as %q)", s.file, other)
 		}
@@ -125,7 +125,7 @@ func TestLayerStray(t *testing.T) {
 
 func TestHasVariantLimitedToRenderers(t *testing.T) {
 	for _, s := range kitStyles {
-		css := readRepo(t, s.file)
+		css := readRepo(t, kitDir+"/"+s.file)
 		for _, raw := range []string{`:has([data-variant=`, `:has( > [data-variant=`, `:has([data-size=`, `:has( > [data-size=`} {
 			if strings.Contains(css, raw) {
 				t.Errorf("%s has %q: kit buttons set data-variant and data-size, shadcn buttons do not; limit it to the parts that render the attribute", s.file, raw)
@@ -142,7 +142,7 @@ func TestParseStylesSkipsComments(t *testing.T) {
 }
 
 func TestVegaCardContentFlex(t *testing.T) {
-	b, err := os.ReadFile("../../clanker-ui-vega.css")
+	b, err := os.ReadFile("../../kit/clanker-ui-vega.css")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -163,7 +163,7 @@ func TestVegaCardContentFlex(t *testing.T) {
 }
 
 func TestIconSizeTailwindOrder(t *testing.T) {
-	b, err := os.ReadFile("../../clanker-ui-lyra.css")
+	b, err := os.ReadFile("../../kit/clanker-ui-lyra.css")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -237,7 +237,7 @@ func TestKitTailwindVariablesHaveReaders(t *testing.T) {
 	kitCSS := readRepo(t, "tools/gen/kit.css")
 	kit := parse(kitCSS)
 	for _, s := range kitStyles {
-		if missing := twWithoutReader(kit, parse(strings.TrimSuffix(readRepo(t, s.file), kitCSS))); len(missing) > 0 {
+		if missing := twWithoutReader(kit, parse(strings.TrimSuffix(readRepo(t, kitDir+"/"+s.file), kitCSS))); len(missing) > 0 {
 			t.Errorf("%s: kit.css sets a Tailwind variable that the base rule of the part does not read: %v", s.file, missing)
 		}
 	}

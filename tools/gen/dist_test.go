@@ -48,9 +48,9 @@ func TestDistFresh(t *testing.T) {
 	if !maps.EqualFunc(res.files, again.files, bytes.Equal) {
 		t.Fatal("two dist runs give different bytes")
 	}
-	committed, _ := filepath.Glob("../../dist/clanker-ui*.min.*")
+	committed, _ := filepath.Glob("../../kit/dist/clanker-ui*.min.*")
 	if len(committed) == 0 {
-		t.Fatal("dist/ has no generated files; run go run ./tools/gen dist")
+		t.Fatal("kit/dist/ has no generated files; run go run ./tools/gen dist")
 	}
 	for _, f := range committed {
 		if _, ok := res.files[filepath.Base(f)]; !ok {
@@ -58,9 +58,9 @@ func TestDistFresh(t *testing.T) {
 		}
 	}
 	for name, want := range res.files {
-		got, err := os.ReadFile(filepath.Join("../../dist", name))
+		got, err := os.ReadFile(filepath.Join("../../kit/dist", name))
 		if err != nil || !bytes.Equal(got, want) {
-			t.Errorf("dist/%s is old; run go run ./tools/gen dist", name)
+			t.Errorf("kit/dist/%s is old; run go run ./tools/gen dist", name)
 		}
 	}
 }
@@ -80,22 +80,22 @@ func TestDistFiles(t *testing.T) {
 		t.Fatalf("dist files\n got %v\nwant %v", got, want)
 	}
 	for name, b := range res.files {
-		src := "../../clanker-ui.js"
+		src := "../../kit/clanker-ui.js"
 		switch {
 		case name == "clanker-ui-chart.min.js" || name == "clanker-ui-code.min.js":
-			src = "../../" + strings.Replace(name, ".min.", ".", 1)
+			src = "../../kit/" + strings.Replace(name, ".min.", ".", 1)
 		case name == "clanker-ui-theme.min.js":
-			src = "../../clanker-ui-theme.js"
+			src = "../../kit/clanker-ui-theme.js"
 		case name == "clanker-ui-themes.min.css":
-			src = "../../clanker-ui-themes.css"
+			src = "../../kit/clanker-ui-themes.css"
 		case name == "clanker-ui-a11y.min.css":
-			src = "../../clanker-ui-a11y.css"
+			src = "../../kit/clanker-ui-a11y.css"
 		case strings.HasSuffix(name, ".css"):
-			src = "../../clanker-ui.css"
+			src = "../../kit/clanker-ui.css"
 		}
 		for _, st := range kitStyles[1:] {
 			if base := strings.TrimSuffix(st.file, ".css"); name == base+".min.css" || strings.HasPrefix(name, base+"-") {
-				src = "../../" + st.file
+				src = "../../kit/" + st.file
 			}
 		}
 		orig, err := os.ReadFile(src)
@@ -138,7 +138,7 @@ func TestDistCSSPartition(t *testing.T) {
 	if strip(res.files[distCSS]) != joined.String() {
 		t.Error("the CSS group files in group order are not equal to clanker-ui.min.css")
 	}
-	src, err := os.ReadFile("../../clanker-ui.css")
+	src, err := os.ReadFile("../../kit/clanker-ui.css")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -403,7 +403,7 @@ func TestDistJSLinks(t *testing.T) {
 		}
 	}
 	var public []string
-	for _, f := range []string{"../../clanker-ui.js", "../../clanker-ui-chart.js", "../../clanker-ui-code.js"} {
+	for _, f := range []string{"../../kit/clanker-ui.js", "../../kit/clanker-ui-chart.js", "../../kit/clanker-ui-code.js"} {
 		b, err := os.ReadFile(f)
 		if err != nil {
 			t.Fatal(err)
@@ -470,7 +470,7 @@ func customProps(t *testing.T, css string) []string {
 func TestDistKeepsCustomPropertyText(t *testing.T) {
 	res := testDist(t)
 	for src, dst := range map[string]string{"clanker-ui.css": distCSS, "clanker-ui-themes.css": "clanker-ui-themes.min.css", "clanker-ui-a11y.css": "clanker-ui-a11y.min.css"} {
-		b, err := os.ReadFile("../../" + src)
+		b, err := os.ReadFile("../../kit/" + src)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -492,14 +492,14 @@ var docImport = regexp.MustCompile(`import\s*\{([^}]*)\}\s*from\s*"([^"]+)"`)
 func TestDocsImportNames(t *testing.T) {
 	exports := map[string][]string{}
 	for _, f := range []string{"clanker-ui.js", "clanker-ui-chart.js", "clanker-ui-code.js"} {
-		exports[f] = esbuildBundle(t, "../..", f)
+		exports[f] = esbuildBundle(t, "../../kit", f)
 	}
-	mins, err := filepath.Glob("../../dist/*.min.js")
+	mins, err := filepath.Glob("../../kit/dist/*.min.js")
 	if err != nil {
 		t.Fatal(err)
 	}
 	for _, f := range mins {
-		exports[filepath.Base(f)] = esbuildBundle(t, "../../dist", filepath.Base(f))
+		exports[filepath.Base(f)] = esbuildBundle(t, "../../kit/dist", filepath.Base(f))
 	}
 	docs := []string{"../../README.md", "../../skills/clanker-ui/SKILL.md"}
 	refs, _ := filepath.Glob("../../skills/clanker-ui/references/*.md")

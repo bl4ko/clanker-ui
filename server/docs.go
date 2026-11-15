@@ -146,7 +146,7 @@ func loadDocsAt(fsys fs.FS, urls siteURLs) (*docsSite, error) {
 		return nil, fmt.Errorf("docs/nav.json: %w", err)
 	}
 	for name := range kitFiles {
-		if d.assets[name], err = fs.ReadFile(fsys, name); err != nil {
+		if d.assets[name], err = fs.ReadFile(fsys, kitDir+"/"+name); err != nil {
 			return nil, err
 		}
 	}

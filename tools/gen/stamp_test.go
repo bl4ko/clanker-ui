@@ -13,7 +13,7 @@ func TestStampReleaseFiles(t *testing.T) {
 		t.Fatal(err)
 	}
 	var kit []string
-	for _, pat := range []string{"../../clanker-ui*.css", "../../clanker-ui*.js", "../../dist/*"} {
+	for _, pat := range []string{"../../kit/clanker-ui*.css", "../../kit/clanker-ui*.js", "../../kit/dist/*"} {
 		m, err := filepath.Glob(pat)
 		if err != nil || len(m) == 0 {
 			t.Fatalf("%s: %v", pat, err)

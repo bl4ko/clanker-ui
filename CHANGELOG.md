@@ -4,6 +4,16 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
+## Unreleased
+
+### Breaking
+
+- Repository: the Go package `github.com/bl4ko/clanker-ui` (`clankerui.Files`) is removed, and a built or `go install`ed docs server no longer runs on its own: it needs a checkout of the repository and `-dir` (or a start from the repository root). The kit files and the release do not change (#218).
+
+### Changed
+
+- Repository: the root `embed.go` is gone, so the root has no Go code. The docs server reads the kit, demo, docs, and skill files from disk: `-dir` (or `DIR`) defaults to `.`, so run it from the repository root. It stops at start with a clear error when a needed file is missing (`go run ./tools/gen build`). The exported docs site does not change (#218).
+
 ## 0.4.1 - 2026-11-16
 
 ### Changed

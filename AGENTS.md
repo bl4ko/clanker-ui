@@ -24,14 +24,14 @@ clanker-ui is a dependency-free port of shadcn/ui (Base UI base, Nova style) to 
 | `test/` | Browser tests (`test/run.py`, Playwright) and behavior scenarios |
 | `docs/`, `demo/` | Docs site content and templates, demo page |
 | `skills/clanker-ui/` | Portable Agent Skill for users of the kit |
-| `server/` | Docs and demo server (Go standard library only); `pages.go` builds the docs pages that have no `page.md`. `embed.go` in the root embeds `kit/` (with `kit/dist/`), `demo/`, `docs/`, and the skill for it. The server answers the kit and `kit/dist/` files at their file name (`/clanker-ui.css`, `/clanker-ui.min.css`). |
+| `server/` | Docs and demo server (Go standard library only); `pages.go` builds the docs pages that have no `page.md`. It reads `kit/` (with `kit/dist/`), `demo/`, `docs/`, and the skill from disk (`-dir`, default `.`). The server answers the kit and `kit/dist/` files at their file name (`/clanker-ui.css`, `/clanker-ui.min.css`). |
 
 ## Commands
 
 ```sh
 go run ./tools/gen build
 go vet ./... && go test ./...
-DIR=. ADDR=127.0.0.1:8110 go run ./server
+ADDR=127.0.0.1:8110 go run ./server
 go run ./tools/gen dist
 go run ./tools/gen catalog
 go run ./tools/gen catalog -check
@@ -39,7 +39,7 @@ uv run --no-project --with playwright python -I test/run.py --base-url http://12
 uv run --no-project --with playwright python -I tools/behavior gate --quick --base-url http://127.0.0.1:8110 --out out/gate
 ```
 
-- `DIR=.` serves the working tree, so a change shows without a rebuild; without it the server uses the files embedded at build time. `out/` is ignored by git.
+- The server reads the files from disk (`-dir` or `DIR`, default `.`: run it from the repository root), so a change shows without a restart. It stops at start when a needed file is missing (`go run ./tools/gen build`). `out/` is ignored by git.
 - `test/run.py` flags: `--engines chromium,firefox,webkit`, `--themes light,dark`, `--widths 1280,390`, `--only <test file prefixes>`, `-k <regex>`, `--rtl`, `--reduced-motion`, `--jobs 3` (engines in parallel), `--retry`, `--exitfirst`, `--list`, `--shots` (screenshots of passes too; a failure always saves one). A check fails on any console error or warning.
 - Python tools run with `uv` only. Never use `pip`. JavaScript tools, if a task needs one, use `pnpm` only. The kit itself has no package manager.
 - Install Playwright browsers once: `uv run --no-project --with playwright playwright install chromium firefox webkit`.

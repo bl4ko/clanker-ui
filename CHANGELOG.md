@@ -4,13 +4,17 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
-## Unreleased
+## 0.4.1 - 2026-11-16
 
 ### Changed
 
 - Repository: the kit files moved from the root to `kit/` (`kit/clanker-ui.css`, `kit/clanker-ui.js`, ...), and the generated styles and the minified files go to `kit/` and `kit/dist/`. The release zip and the release assets keep the same names and paths, and the server and the docs site serve the files at the same URLs. Links to root files on `main` (raw or jsDelivr) must add `kit/`; tags up to v0.4.0 keep the root paths (#213).
 - Repository: only the Nova style `clanker-ui.css` is in git. CI, `release.yml`, and `pages.yml` build the other styles and `dist/` from the pinned inputs with `go run ./tools/gen build`, and the `go` job checks that two builds give the same bytes. The release files do not change. The docs server moved to `server/` (#158).
-- Smaller kit CSS with the same computed styles: `dist/clanker-ui.min.css` 599,808 to 595,411 bytes (gzip 55,981 to 55,591, brotli 39,178 to 38,935), and the same for the other styles. A base rule of a part no longer has a `:not(...)` copy for a variant whose rule sets all the same properties (Nova: 105 to 30 such rules); the variant rule overrides the base rule as before. `tools/gen/guard` compares every computed style of the old and the new CSS in Chromium, Firefox, and WebKit.
+- Smaller kit CSS with the same computed styles: `dist/clanker-ui.min.css` 599,808 to 595,411 bytes (gzip 55,981 to 55,591, brotli 39,178 to 38,935), and the same for the other styles. A base rule of a part no longer has a `:not(...)` copy for a variant whose rule sets all the same properties (Nova: 105 to 30 such rules); the variant rule overrides the base rule as before. `tools/gen/guard` compares every computed style of the old and the new CSS in Chromium, Firefox, and WebKit (#176).
+- Generator: faster runs with the same output. A Tailwind class that the probe refused is not probed again for a style with the same Tailwind input (#174), and the notes, parts, and attribute renderers use lookups (#175).
+- Tooling: Playwright 1.65.1 (#182) and uv 0.13.8 (#210) in CI.
+- Tests: each `--tw-*` variable that `tools/gen/kit.css` sets has a reader in the base rule of its part in every style (#172).
+- Docs: `DEVELOPMENT.md` "Without GitHub Actions" runs the `go` and `browser` jobs of `ci.yml` by hand, and `tools/ci/plan.py` no longer has rules for the generated files that are not in git (#181).
 
 ### Added
 
@@ -44,6 +48,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Select, Combobox: the arrow keys (and Home and End in the select) highlight disabled items, which cannot be chosen; typeahead still skips them, like Base UI (#199).
 - Dropdown Menu, Context Menu, Menubar, Select: a touch open locks page scroll only when the popup is at most 20 px narrower than the viewport, like Base UI (#200).
 - Slider: a fractional `min` (`min="0.5" step="1"`) and a small `step` in exponent form (`0.0000001`) now snap to every step; the value keeps the decimals of `step` or `min`, whichever has more, like Base UI (#188).
+- Generator: a variant class stays when a later base class does not set all of its properties (a variant `size-6` before a base `w-full` lost its height in the variant state); #141 fixed only the other order (#171).
+- Style files: no empty `@layer properties {}` block after the layer order statement (#173).
 
 ## 0.4.0 - 2026-11-14
 

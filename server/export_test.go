@@ -255,7 +255,7 @@ func TestExportOptions(t *testing.T) {
 }
 
 func TestServerPagesHaveCSPMeta(t *testing.T) {
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	for _, p := range []string{"/", "/docs", "/docs/components/button", "/docs/components/accordion", "/docs/nope"} {
 		rec := request(t, h, "GET", p)
 		m := cspMetaTag.FindStringSubmatch(rec.Body.String())

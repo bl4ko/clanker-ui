@@ -53,19 +53,29 @@ func TestCSPMatchesDesign(t *testing.T) {
 	}
 }
 
-func TestServesEmbeddedFiles(t *testing.T) {
-	h := newSite("").routes()
-	var names []string
-	err := fs.WalkDir(embedded, ".", func(name string, d fs.DirEntry, err error) error {
-		if err == nil && !d.IsDir() && !strings.HasPrefix(filepath.Base(name), ".") {
-			names = append(names, name)
-		}
-		return err
-	})
+func staticSite(t *testing.T) *site {
+	t.Helper()
+	fsys := os.DirFS(".")
+	d, err := loadDocs(fsys)
 	if err != nil {
 		t.Fatal(err)
 	}
-	var disk []string
+	return &site{fsys: fsys, docs: d}
+}
+
+func TestCheckDir(t *testing.T) {
+	if err := checkDir(os.DirFS("."), "."); err != nil {
+		t.Fatal(err)
+	}
+	err := checkDir(os.DirFS("server"), "server")
+	if err == nil || !strings.Contains(err.Error(), `-dir "server"`) || !strings.Contains(err.Error(), "go run ./tools/gen build") {
+		t.Fatalf("checkDir(server) = %v", err)
+	}
+}
+
+func TestServesFiles(t *testing.T) {
+	h := staticSite(t).routes()
+	var names []string
 	for _, root := range []string{"kit", "demo", "docs", "skills/clanker-ui"} {
 		err := filepath.WalkDir(root, func(name string, d fs.DirEntry, err error) error {
 			if err != nil {
@@ -78,21 +88,16 @@ func TestServesEmbeddedFiles(t *testing.T) {
 			if strings.HasPrefix(base, ".") || strings.HasPrefix(base, "_") {
 				return nil
 			}
-			disk = append(disk, filepath.ToSlash(name))
+			names = append(names, filepath.ToSlash(name))
 			return nil
 		})
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
-	slices.Sort(names)
-	slices.Sort(disk)
-	if !slices.Equal(names, disk) {
-		t.Errorf("embedded files %v, want the kit, demo, docs, and skill files %v", names, disk)
-	}
 	for _, want := range []string{"kit/clanker-ui.css", "kit/clanker-ui-a11y.css", "kit/clanker-ui.js", "kit/clanker-ui-chart.js", "kit/clanker-ui-code.js", "kit/clanker-ui-theme.js", "kit/clanker-ui-themes.css", "demo/index.html", "demo/demo.css", "demo/demo.js", "docs/nav.json", "docs/assets/docs.css", "docs/assets/docs.js", "docs/assets/docs-sidebar.js"} {
 		if !slices.Contains(names, want) {
-			t.Errorf("%s is not embedded", want)
+			t.Errorf("%s is missing", want)
 		}
 	}
 	for _, name := range names {
@@ -120,7 +125,7 @@ func TestServesEmbeddedFiles(t *testing.T) {
 			t.Fatal(err)
 		}
 		if rec.Body.String() != string(body) {
-			t.Errorf("%s: embedded body differs from %s", path, name)
+			t.Errorf("%s: body differs from %s", path, name)
 		}
 		if rec.Header().Get("ETag") == "" || rec.Header().Get("Cache-Control") != "no-cache" {
 			t.Errorf("%s: missing ETag or Cache-Control", path)
@@ -219,7 +224,7 @@ func TestSchemeLists(t *testing.T) {
 }
 
 func TestETagRevalidation(t *testing.T) {
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	first := request(t, h, http.MethodGet, "/clanker-ui.js")
 	again := request(t, h, http.MethodGet, "/clanker-ui.js", "If-None-Match", first.Header().Get("ETag"))
 	if again.Code != http.StatusNotModified {
@@ -228,7 +233,7 @@ func TestETagRevalidation(t *testing.T) {
 }
 
 func TestHealthz(t *testing.T) {
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	rec := request(t, h, http.MethodGet, "/healthz")
 	if rec.Code != http.StatusNoContent || rec.Body.Len() != 0 {
 		t.Fatalf("healthz: status %d body %q", rec.Code, rec.Body.String())
@@ -240,8 +245,7 @@ func TestHealthz(t *testing.T) {
 }
 
 func TestRejectsOtherPathsAndMethods(t *testing.T) {
-	for _, dir := range []string{"", "."} {
-		h := newSite(dir).routes()
+	for dir, h := range map[string]http.Handler{"static": staticSite(t).routes(), ".": newSite(".").routes()} {
 		for _, path := range []string{"/main.go", "/go.mod", "/.git/config", "/wip/g1.js", "/test/run.py", "/demo/index.html", "/demo/../main.go", "/demo/assets/../../main.go", "/demo/x/y.js", "/clanker-ui.css.map", "/LICENSE", "/index.html", "/docs/nav.json", "/assets/x/main.go", "/assets/x/../main.go", "/view/../main.go"} {
 			rec := request(t, h, http.MethodGet, path)
 			if rec.Code == http.StatusOK {
@@ -272,8 +276,8 @@ func TestSpikeFilesOnlyInDirMode(t *testing.T) {
 			t.Errorf("dir mode: %s status %d", path, rec.Code)
 		}
 		checkSecurityHeaders(t, rec, path)
-		if rec := request(t, newSite("").routes(), http.MethodGet, path); rec.Code == http.StatusOK {
-			t.Errorf("embedded mode: %s served with 200", path)
+		if rec := request(t, staticSite(t).routes(), http.MethodGet, path); rec.Code == http.StatusOK {
+			t.Errorf("static mode: %s served with 200", path)
 		}
 	}
 	for _, path := range []string{"/test/run.py", "/test/spike/../run.py", "/tools/gen/main.go", "/tools/gen/kit.css"} {
@@ -290,8 +294,8 @@ func TestSplitFixturesOnlyInDirMode(t *testing.T) {
 			t.Errorf("dir mode: %s status %d", path, rec.Code)
 		}
 		checkSecurityHeaders(t, rec, path)
-		if rec := request(t, newSite("").routes(), http.MethodGet, path); rec.Code == http.StatusOK {
-			t.Errorf("embedded mode: %s served with 200", path)
+		if rec := request(t, staticSite(t).routes(), http.MethodGet, path); rec.Code == http.StatusOK {
+			t.Errorf("static mode: %s served with 200", path)
 		}
 	}
 	if rec := request(t, newSite(".").routes(), http.MethodGet, "/test/split_test.py"); rec.Code == http.StatusOK {
@@ -306,8 +310,8 @@ func TestBehaviorFixturesOnlyInDirMode(t *testing.T) {
 			t.Errorf("dir mode: %s status %d", path, rec.Code)
 		}
 		checkSecurityHeaders(t, rec, path)
-		if rec := request(t, newSite("").routes(), http.MethodGet, path); rec.Code == http.StatusOK {
-			t.Errorf("embedded mode: %s served with 200", path)
+		if rec := request(t, staticSite(t).routes(), http.MethodGet, path); rec.Code == http.StatusOK {
+			t.Errorf("static mode: %s served with 200", path)
 		}
 	}
 	for _, path := range []string{"/test/behavior/scenarios/tooltip.json", "/test/behavior/golden/tooltip.json", "/tools/behavior/engine.py", "/test/behavior/fixtures/../scenarios/tooltip.json", "/test/behavior_test.py"} {
@@ -442,7 +446,7 @@ func TestDemoOnly(t *testing.T) {
 		t.Fatal(err)
 	}
 	html := string(page)
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	if got, want := len(demoBlock.FindAllString(html, -1)), strings.Count(html, "\n      <section ")+strings.Count(html, `data-demo="category"`); got != want {
 		t.Fatalf("the filter finds %d sections and categories, want %d", got, want)
 	}

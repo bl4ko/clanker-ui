@@ -50,17 +50,14 @@ func navHrefs(t *testing.T) []string {
 	return slices.Compact(out)
 }
 
-func TestDocsLoadInBothModes(t *testing.T) {
-	if s := newSite(""); s.docsErr != nil {
-		t.Fatalf("embedded docs: %v", s.docsErr)
-	}
+func TestDocsLoadFromDisk(t *testing.T) {
 	if _, err := newSite(".").site(); err != nil {
 		t.Fatalf("docs from disk: %v", err)
 	}
 }
 
 func TestEveryNavLinkResolves(t *testing.T) {
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	hrefs := navHrefs(t)
 	if len(hrefs) < 80 {
 		t.Fatalf("nav has %d links", len(hrefs))
@@ -123,7 +120,7 @@ var (
 )
 
 func TestRenderedPages(t *testing.T) {
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	d := docsOf(t)
 	paths := []string{"/", "/view/button-demo", "/docs/components/accordion"}
 	for _, href := range sortedKeys(d.pages) {
@@ -179,7 +176,7 @@ func TestRenderedPages(t *testing.T) {
 }
 
 func TestDocsRoutesAndHeaders(t *testing.T) {
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	d := docsOf(t)
 	asset := "/assets/" + d.hash + "/clanker-ui.js"
 	rec := request(t, h, http.MethodGet, asset)
@@ -216,7 +213,7 @@ func TestDocsRoutesAndHeaders(t *testing.T) {
 }
 
 func TestViewCSPDiffersOnlyInFrameAncestors(t *testing.T) {
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	view := request(t, h, http.MethodGet, "/view/button-demo").Header().Get("Content-Security-Policy")
 	docs := request(t, h, http.MethodGet, "/docs/components/button").Header().Get("Content-Security-Policy")
 	if docs != csp {
@@ -478,8 +475,7 @@ func gunzip(t *testing.T, body []byte) string {
 }
 
 func TestGzip(t *testing.T) {
-	for _, dir := range []string{"", "."} {
-		h := newSite(dir).routes()
+	for dir, h := range map[string]http.Handler{"static": staticSite(t).routes(), ".": newSite(".").routes()} {
 		d := docsOf(t)
 		for _, path := range []string{"/docs/components/button", "/docs/components/button.md", "/", "/demo", "/clanker-ui.css", "/assets/" + d.hash + "/clanker-ui.js"} {
 			plain := request(t, h, http.MethodGet, path)
@@ -547,7 +543,7 @@ func TestDocsNits(t *testing.T) {
 	if _, err := loadDocs(docsFS(t, map[string]string{"docs/nav.json": nav})); err == nil {
 		t.Error("nav.json accepted a protocol-relative href")
 	}
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	if rec := request(t, h, http.MethodGet, "/docs/components/?q=1"); rec.Code != http.StatusMovedPermanently || rec.Header().Get("Location") != "/docs/components?q=1" {
 		t.Errorf("trailing slash redirect: status %d, Location %q", rec.Code, rec.Header().Get("Location"))
 	}
@@ -632,7 +628,7 @@ func readmeAnchors(t *testing.T) map[string]bool {
 func TestEveryDocsPageIsReal(t *testing.T) {
 	d := docsOf(t)
 	anchors := readmeAnchors(t)
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	generated := 0
 	for _, href := range sortedKeys(d.titles) {
 		if !strings.HasPrefix(href, "/docs") || docRedirects[href] != "" {
@@ -679,7 +675,7 @@ var discoveryLink = regexp.MustCompile(`<link rel="(alternate" type="text/markdo
 
 func TestDocsPagesLinkMarkdownAndLLMs(t *testing.T) {
 	d := docsOf(t)
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	for _, href := range sortedKeys(d.titles) {
 		if !strings.HasPrefix(href, "/docs") || docRedirects[href] != "" {
 			continue
@@ -715,7 +711,7 @@ func TestDocsPagesLinkMarkdownAndLLMs(t *testing.T) {
 }
 
 func TestDocsFontsSelfHosted(t *testing.T) {
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	d := docsOf(t)
 	page := request(t, h, http.MethodGet, "/docs/components/button").Body.String()
 	css, _ := os.ReadFile("docs/assets/fonts.css")

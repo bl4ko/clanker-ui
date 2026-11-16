@@ -60,7 +60,7 @@ func TestDocsPageStyles(t *testing.T) {
 			t.Errorf("style %s: kit file %v, KIT=min file %q, docs style %d bytes", s.Name, kitFiles[s.CSS], minKit[s.CSS], len(d.assets["style-"+s.Name+".css"]))
 		}
 	}
-	h := newSite("").routes()
+	h := staticSite(t).routes()
 	shadcn := map[string]string{"components/attachment": "blue", "components/bubble": "blue", "components/code-block": "", "components/drawer": "", "components/marker": "blue", "components/message": "blue", "components/message-scroller": "blue", "components/trace": "", "ai-elements/chat": "blue"}
 	for _, name := range []string{"chain-of-thought", "checkpoint", "confirmation", "context", "file-tree", "inline-citation", "message", "model-selector", "plan", "prompt-input", "queue", "reasoning", "sources", "stack-trace", "subagent", "suggestion", "task", "terminal", "test-results", "tool"} {
 		shadcn["ai-elements/"+name] = ""

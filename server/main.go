@@ -20,11 +20,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-
-	clankerui "github.com/bl4ko/clanker-ui"
 )
-
-var embedded = clankerui.Files
 
 const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; require-trusted-types-for 'script'"
 
@@ -76,7 +72,6 @@ type site struct {
 	fsys    fs.FS
 	live    bool
 	docs    *docsSite
-	docsErr error
 	mu      sync.Mutex
 	liveSig string
 }
@@ -86,18 +81,32 @@ func newSite(dir string) *site {
 }
 
 func newKitSite(dir, kit string) *site {
-	var fsys fs.FS = embedded
-	if dir != "" {
-		fsys = os.DirFS(dir)
-	}
+	var fsys fs.FS = os.DirFS(dir)
 	if kit == "min" {
 		fsys = minFS{fsys}
 	}
-	s := &site{fsys: fsys, live: dir != ""}
-	if !s.live {
-		s.docs, s.docsErr = loadDocs(s.fsys)
+	return &site{fsys: fsys, live: true}
+}
+
+func checkDir(fsys fs.FS, dir string) error {
+	names := []string{"demo/index.html", "docs/nav.json"}
+	for name := range kitFiles {
+		names = append(names, kitDir+"/"+name)
 	}
-	return s
+	slices.Sort(names)
+	var missing []string
+	for _, name := range names {
+		if _, err := fs.Stat(fsys, name); err != nil {
+			missing = append(missing, name)
+		}
+	}
+	if len(distFiles(fsys)) == 0 {
+		missing = append(missing, kitDir+"/dist/")
+	}
+	if len(missing) == 0 {
+		return nil
+	}
+	return fmt.Errorf("-dir %q has no %s (%d files missing): run from the repository root or set -dir (DIR) to it, and run go run ./tools/gen build", dir, missing[0], len(missing))
 }
 
 func distFiles(fsys fs.FS) []string {
@@ -175,7 +184,7 @@ func (s *site) read(name string) ([]byte, error) {
 
 func (s *site) site() (*docsSite, error) {
 	if !s.live {
-		return s.docs, s.docsErr
+		return s.docs, nil
 	}
 	sig, err := sourceSignature(s.fsys)
 	if err != nil {
@@ -231,21 +240,20 @@ func sourceSignature(fsys fs.FS) (string, error) {
 
 func main() {
 	addr := flag.String("addr", env("ADDR", ":8080"), "listen address")
-	dir := flag.String("dir", os.Getenv("DIR"), "serve the kit, demo, and docs from this directory instead of the embedded copy")
+	dir := flag.String("dir", env("DIR", "."), "repository root with the kit, demo, and docs files")
 	kit := flag.String("kit", os.Getenv("KIT"), `"min": answer the readable kit file names with the kit/dist/ minified files (test the minified kit)`)
 	export := flag.String("export", "", "write the docs site as static files to this new directory")
 	base := flag.String("base", "", `URL path of the exported site, for example /clanker-ui or /`)
 	siteURL := flag.String("site-url", "", "full URL of the exported site, for sitemap.xml and the .md files")
 	flag.Parse()
+	if err := checkDir(os.DirFS(*dir), *dir); err != nil {
+		log.Fatal(err)
+	}
 	if *export != "" {
 		if *kit != "" {
 			log.Fatal("-export writes the readable kit; remove -kit")
 		}
-		src := *dir
-		if src == "" {
-			src = "."
-		}
-		if err := exportSite(os.DirFS(src), *export, *base, *siteURL); err != nil {
+		if err := exportSite(os.DirFS(*dir), *export, *base, *siteURL); err != nil {
 			log.Fatal(err)
 		}
 		return
@@ -254,9 +262,6 @@ func main() {
 		log.Fatalf("-kit must be empty or min, not %q", *kit)
 	}
 	s := newKitSite(*dir, *kit)
-	if *kit == "min" && len(distFiles(s.fsys)) == 0 {
-		log.Fatal("-kit min needs the kit/dist/ files: go run ./tools/gen dist")
-	}
 	if _, err := s.site(); err != nil {
 		log.Fatal(err)
 	}
@@ -268,11 +273,7 @@ func main() {
 		WriteTimeout:      30 * time.Second,
 		IdleTimeout:       60 * time.Second,
 	}
-	source := "embedded files"
-	if *dir != "" {
-		source = *dir
-	}
-	log.Printf("clanker-ui listening on %s, serving %s", *addr, source)
+	log.Printf("clanker-ui listening on %s, serving %s", *addr, *dir)
 	log.Fatal(server.ListenAndServe())
 }
 

@@ -71,6 +71,9 @@ func TestCheckDir(t *testing.T) {
 	if err == nil || !strings.Contains(err.Error(), `-dir "server"`) || !strings.Contains(err.Error(), "go run ./tools/gen build") {
 		t.Fatalf("checkDir(server) = %v", err)
 	}
+	if err := checkDir(os.DirFS("."), ""); err == nil || !strings.Contains(err.Error(), "-dir is empty") {
+		t.Fatalf("checkDir(empty) = %v", err)
+	}
 }
 
 func TestServesFiles(t *testing.T) {

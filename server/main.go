@@ -89,6 +89,9 @@ func newKitSite(dir, kit string) *site {
 }
 
 func checkDir(fsys fs.FS, dir string) error {
+	if dir == "" {
+		return errors.New("-dir is empty: set it to the repository root, or leave it out to use the current directory")
+	}
 	names := []string{"demo/index.html", "docs/nav.json"}
 	for name := range kitFiles {
 		names = append(names, kitDir+"/"+name)
@@ -106,7 +109,11 @@ func checkDir(fsys fs.FS, dir string) error {
 	if len(missing) == 0 {
 		return nil
 	}
-	return fmt.Errorf("-dir %q has no %s (%d files missing): run from the repository root or set -dir (DIR) to it, and run go run ./tools/gen build", dir, missing[0], len(missing))
+	more := ""
+	if len(missing) > 1 {
+		more = fmt.Sprintf(" (and %d more)", len(missing)-1)
+	}
+	return fmt.Errorf("-dir %q has no %s%s: run from the repository root or set -dir (DIR) to it, and run go run ./tools/gen build", dir, missing[0], more)
 }
 
 func distFiles(fsys fs.FS) []string {
@@ -246,20 +253,20 @@ func main() {
 	base := flag.String("base", "", `URL path of the exported site, for example /clanker-ui or /`)
 	siteURL := flag.String("site-url", "", "full URL of the exported site, for sitemap.xml and the .md files")
 	flag.Parse()
+	if *export != "" && *kit != "" {
+		log.Fatal("-export writes the readable kit; remove -kit")
+	}
+	if *kit != "" && *kit != "min" {
+		log.Fatalf("-kit must be empty or min, not %q", *kit)
+	}
 	if err := checkDir(os.DirFS(*dir), *dir); err != nil {
 		log.Fatal(err)
 	}
 	if *export != "" {
-		if *kit != "" {
-			log.Fatal("-export writes the readable kit; remove -kit")
-		}
 		if err := exportSite(os.DirFS(*dir), *export, *base, *siteURL); err != nil {
 			log.Fatal(err)
 		}
 		return
-	}
-	if *kit != "" && *kit != "min" {
-		log.Fatalf("-kit must be empty or min, not %q", *kit)
 	}
 	s := newKitSite(*dir, *kit)
 	if _, err := s.site(); err != nil {

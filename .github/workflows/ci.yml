@@ -16,7 +16,7 @@ concurrency:
 
 env:
   # renovate: datasource=pypi depName=playwright
-  PLAYWRIGHT_VERSION: "1.65.1"
+  PLAYWRIGHT_VERSION: "1.65.2"
   TAILWIND_VERSION: "4.3.3"
   TAILWIND_SHA256: dc61b3ac6b8c9ca874c0cc4c57b2409791a64c5540404ca5f5367360babc313a
 

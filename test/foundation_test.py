@@ -213,6 +213,7 @@ SCHEME_GATES = [
     ["muted-foreground", "muted-foreground", ["background", "muted", "card", "popover"], 4.5],
     ["primary-foreground", "primary-foreground", ["primary"], 4.5],
     ["destructive text", "destructive", ["background", "card", "popover"], 4.5],
+    ["link text", "link-text, var(--primary)", ["background", "card", "popover"], 4.5],
     ["input", "input-edge", ["background", "card", "popover", "sidebar"], 3],
     ["focus-ring", "focus-ring", ["background", "card", "popover"], 3],
     *[["status text", f"{k}-text", [f"{k}-bg"], 4.5] for k in ["success", "info", "warning", "error"]],
@@ -448,6 +449,39 @@ def check_scheme_destructive_text(t):
     result = page.evaluate(DESTRUCTIVE_TINT)
     assert result["failures"] == [], (f"{len(result['failures'])} destructive text failures, worst {result['worst']}:1", result["failures"][:20])
     assert result["untokened"] == [], ("destructive text is --destructive-text", result["untokened"][:10])
+
+
+def check_link_text(t):
+    if t.mobile:
+        t.skip("colors do not depend on the viewport width")
+    t.a11y()
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const root = document.documentElement
+          const saved = ["data-scheme", "data-theme"].map(n => [n, root.getAttribute(n)])
+          const host = h("div", {},
+            h("div", { "data-typography": "" }, h("p", {}, h("a", { href: "#" }, "Read more"))),
+            ...["button", "alert-dialog-action", "pagination-link", "badge"].map(slot => h(slot === "badge" ? "span" : "button", { "data-slot": slot, "data-variant": "link" }, "Link")),
+            h("span", { id: "link-token" }))
+          document.body.prepend(host)
+          root.setAttribute("data-theme-switching", "")
+          const token = host.querySelector("#link-token")
+          token.style.color = "var(--link-text)"
+          const out = []
+          for (const [scheme, mode] of [["neutral blue", "dark"], ["neutral lime", "light"], ["everforest", "light"]]) {
+            root.setAttribute("data-scheme", scheme)
+            root.setAttribute("data-theme", mode)
+            const want = getComputedStyle(token).color
+            for (const el of [host.querySelector("a"), ...host.querySelectorAll('[data-variant="link"]')]) out.push([scheme, mode, el.dataset.slot ?? "a", getComputedStyle(el).color === want && want !== getComputedStyle(host).color])
+          }
+          host.remove()
+          for (const [n, v] of saved) v === null ? root.removeAttribute(n) : root.setAttribute(n, v)
+          root.removeAttribute("data-theme-switching")
+          return out.filter(r => !r[3])
+        }"""
+    )
+    assert result == [], ("link text uses --link-text", result)
 
 
 def check_scheme_persist(t):

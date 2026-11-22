@@ -76,6 +76,9 @@
   @media (width < 48rem) {
     [data-slot="native-select"] { font-size: var(--text-base); line-height: var(--text-base--line-height); }
   }
+  :is([data-slot="dialog-content"]:has(> [data-slot="dialog-close"]) [data-slot="dialog-title"], [data-slot="sheet-content"]:has(> [data-slot="sheet-close"]) [data-slot="sheet-title"]) {
+    padding-inline-end: calc(var(--spacing) * 10);
+  }
   :is([data-slot="button"], [data-slot="badge"], [data-slot="alert-dialog-action"], [data-slot="alert-dialog-cancel"], [data-slot="pagination-link"]):where([data-variant="destructive"]) {
     color: var(--destructive-text);
   }

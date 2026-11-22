@@ -871,16 +871,23 @@ function chartCartesian(c) {
   const catText = m.time ? [] : m.rows.map((_, i) => f.xTick(i))
   const catW = horizontal && categoryAxis ? Math.min(W * 0.4, catText.reduce((a, t) => Math.max(a, chartWidth(t, font.tick)), 0)) : 0
   const labelText = []
+  let upW = 0
+  let downW = 0
   if (labels) {
     for (let i = 0; i < n; i++) {
-      if (stack) {
-        let total = 0
-        for (const row of vals) total += row[i] ?? 0
-        labelText.push([f.value(total)])
-      } else labelText.push(vals.map(row => (row[i] == null ? "" : f.value(row[i]))))
+      const list = stack ? [vals.reduce((a, row) => a + (row[i] ?? 0), 0)] : vals.map(row => row[i])
+      labelText.push(
+        list.map(v => {
+          if (v == null) return ""
+          const t = f.value(v)
+          if (v < 0) downW = Math.max(downW, chartWidth(t, font.label))
+          else upW = Math.max(upW, chartWidth(t, font.label))
+          return t
+        }),
+      )
     }
   }
-  const labelW = labels ? labelText.flat().reduce((a, t) => Math.max(a, chartWidth(t, font.label)), 0) : 0
+  const labelW = Math.max(upW, downW)
   const pad = spark ? 6 : 0
   let top = spark ? pad : 8
   let right = spark ? pad : 12
@@ -897,6 +904,20 @@ function chartCartesian(c) {
     if (labels && !bar) right = Math.max(right, labelW / 2 + 4)
   }
   if (reversed) [left, right] = [right, left]
+  const group = stack ? 1 : Math.max(1, keys.length)
+  const thickOf = b => Math.max(1, Math.min(o.barSize ?? BAR_MAX, (b * 0.8 - (group - 1) * GAP) / group))
+  const slotOf = b => (group > 1 ? thickOf(b) + GAP * 4 : b)
+  let turn = false
+  let below = 0
+  if (bar && labels && !horizontal) {
+    const slot = slotOf(Math.max(1, W - left - right) / Math.max(1, n))
+    turn = slot >= 12 && labelW > slot - 2
+    if (turn) {
+      top = Math.max(top, upW + 12)
+      below = downW && downW + 6
+      bottom += below
+    }
+  }
   const pl = left
   const pt = top
   const pw = Math.max(1, W - left - right)
@@ -958,7 +979,7 @@ function chartCartesian(c) {
       const step = Math.max(1, Math.ceil(need / spacing))
       for (let i = 0; i < n; i += step) {
         const w = widths[i]
-        out.push(svg("text", { x: chartRound(Math.min(Math.max(pos(i), w / 2), W - w / 2)), y: chartRound(pt + ph + 20), "text-anchor": "middle" }, catText[i]))
+        out.push(svg("text", { x: chartRound(Math.min(Math.max(pos(i), w / 2), W - w / 2)), y: chartRound(pt + ph + below + 20), "text-anchor": "middle" }, catText[i]))
       }
     }
     nodes.push(svg("g", { "data-part": "axis", "data-axis": "category" }, out))
@@ -969,8 +990,7 @@ function chartCartesian(c) {
   const cursor = svg("rect", { "data-part": "cursor", x: 0, y: 0, width: 0, height: 0 })
   const crosshair = svg("line", { "data-part": "crosshair", x1: 0, x2: 0, y1: pt, y2: pt + ph })
   const active = svg("g", { "data-part": "active" })
-  const group = stack ? 1 : Math.max(1, keys.length)
-  const thick = Math.max(1, Math.min(o.barSize ?? BAR_MAX, (band * 0.8 - (group - 1) * GAP) / group))
+  const thick = thickOf(band)
   const gw = group * thick + (group - 1) * GAP
   if (bar) {
     nodes.push(cursor)
@@ -1048,9 +1068,11 @@ function chartCartesian(c) {
               else if (w + 12 <= mark.w) out.push(svg("text", { x: chartRound(mark.x + mark.w - 6), y, dy: "0.35em", "text-anchor": "end", "data-part": "label", "data-ink": c.ink(entity(keys[k]).color) }, text))
             } else if (mark.x - 6 - w >= 0) out.push(svg("text", { x: chartRound(mark.x - 6), y, dy: "0.35em", "text-anchor": "end", "data-part": "label" }, text))
           } else {
-            if (w > (group > 1 ? thick + GAP * 4 : band) - 2) continue
             const x = chartRound(mark.x + mark.w / 2)
-            out.push(svg("text", { x, y: chartRound(neg ? mark.y + mark.h + 16 : mark.y - 6), "text-anchor": "middle", "data-part": "label" }, text))
+            if (turn) {
+              const y = chartRound(neg ? mark.y + mark.h + 6 : mark.y - 6)
+              out.push(svg("text", { x, y, dy: "0.35em", "text-anchor": neg ? "end" : "start", transform: `rotate(-90 ${x} ${y})`, "data-part": "label" }, text))
+            } else if (w <= slotOf(band) - 2) out.push(svg("text", { x, y: chartRound(neg ? mark.y + mark.h + 16 : mark.y - 6), "text-anchor": "middle", "data-part": "label" }, text))
           }
         }
       }

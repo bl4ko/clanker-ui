@@ -470,7 +470,8 @@ def check_breadcrumb_site_header(t):
           const r = e => e.getBoundingClientRect()
           const natural = [more, menu].map(item => Math.round(r(item).width))
           host.style.width = "300px"
-          const out = [more, menu].map((item, i) => [Math.round(r(item).width) === natural[i], r(item).right <= r(item.nextElementSibling).left + 0.5])
+          const rtl = getComputedStyle(header).direction === "rtl"
+          const out = [more, menu].map((item, i) => [Math.round(r(item).width) === natural[i], rtl ? r(item).left >= r(item.nextElementSibling).right - 0.5 : r(item).right <= r(item.nextElementSibling).left + 0.5])
           host.remove()
           return out
         }"""
@@ -2277,7 +2278,7 @@ def check_tabs_scroll_fade(t):
           const edges = () => ["--scroll-fade-s", "--scroll-fade-e"].map(name => { probe.style.width = getComputedStyle(list).getPropertyValue(name) || "0px"; return Math.round(probe.getBoundingClientRect().width) })
           await frame()
           const start = edges()
-          list.scrollLeft = list.scrollWidth
+          list.scrollLeft = getComputedStyle(list).direction === "rtl" ? -list.scrollWidth : list.scrollWidth
           await frame()
           const end = edges()
           const out = { timeline: CSS.supports("animation-timeline: scroll()"), overflow: getComputedStyle(list).overflowX, scrolls: list.scrollWidth > list.clientWidth, start, end }

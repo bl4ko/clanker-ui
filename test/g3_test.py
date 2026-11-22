@@ -2185,6 +2185,33 @@ def check_tabs_overflow(t):
     t.shot("tabs-overflow", host)
 
 
+def check_tabs_scroll_fade(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const names = ["Overview", "Analytics", "Reports", "Notifications", "Settings", "Billing", "Members"]
+          const list = h("div", { "data-slot": "tabs-list", class: "scroll-fade-x" }, names.map(n => h("button", { "data-slot": "tabs-trigger", "data-value": n }, n)))
+          const host = h("div", { style: { width: "300px" } }, h("div", { "data-slot": "tabs", "data-default-value": "Overview" }, list))
+          const probe = h("div")
+          document.body.prepend(host, probe)
+          const frame = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+          const edges = () => ["--scroll-fade-s", "--scroll-fade-e"].map(name => { probe.style.width = getComputedStyle(list).getPropertyValue(name) || "0px"; return Math.round(probe.getBoundingClientRect().width) })
+          await frame()
+          const start = edges()
+          list.scrollLeft = list.scrollWidth
+          await frame()
+          const end = edges()
+          const out = { timeline: CSS.supports("animation-timeline: scroll()"), overflow: getComputedStyle(list).overflowX, scrolls: list.scrollWidth > list.clientWidth, start, end }
+          host.remove(); probe.remove()
+          return out
+        }"""
+    )
+    assert result["overflow"] == "auto" and result["scrolls"], result
+    if result["timeline"]:
+        assert result["start"][0] == 0 and result["start"][1] > 0, result
+        assert result["end"][0] > 0 and result["end"][1] == 0, result
+
+
 G3_TABS_SELECTED = """async () => {
   const { h } = await import("/clanker-ui.js")
   const names = ["Overview", "Analytics", "Reports", "Notifications", "Settings", "Billing", "Members"]

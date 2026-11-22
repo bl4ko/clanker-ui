@@ -11,6 +11,7 @@ const TYPES = ["area", "bar", "line", "pie", "donut", "radar", "radial"]
 const CURVES = ["monotone", "linear", "step"]
 const INDICATORS = ["line", "dot", "dashed"]
 const SCALES = ["category", "time"]
+const SHAPES = ["circle", "square", "diamond"]
 const DAY = 864e5
 const TIME_STEPS = [["minute", 1, 6e4], ["minute", 5, 3e5], ["minute", 15, 9e5], ["minute", 30, 18e5], ["hour", 1, 36e5], ["hour", 3, 108e5], ["hour", 6, 216e5], ["hour", 12, 432e5], ["day", 1, DAY], ["day", 2, 2 * DAY], ["week", 1, 7 * DAY], ["month", 1, 30 * DAY], ["month", 3, 91 * DAY], ["month", 6, 182 * DAY], ...[1, 2, 5, 10, 20, 50, 100].map(n => ["year", n, n * 365 * DAY])]
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/
@@ -159,6 +160,7 @@ function chartIngest(s, data, options) {
   if (![undefined, false, true, "zero"].includes(o.tooltip?.hideEmpty)) throw new TypeError('clanker-ui chart: tooltip hideEmpty must be true, false, or "zero"')
   if (o.domain != null && !(Array.isArray(o.domain) && o.domain.every(v => v == null || Number.isFinite(v)))) throw new TypeError("clanker-ui chart: domain must be [min, max] with finite numbers or null")
   const cartesian = ["area", "bar", "line"].includes(o.type ?? "bar")
+  if (o.shapes != null && (typeof o.shapes !== "object" || Object.values(o.shapes).some(v => !SHAPES.includes(v)))) throw new TypeError(`clanker-ui chart: shapes must map keys to ${SHAPES.join(", ")}`)
   if (!SCALES.includes(o.scale ?? "category")) throw new TypeError(`clanker-ui chart: unknown scale "${o.scale}"`)
   if (o.scale === "time" && o.type !== "line" && o.type !== "area") throw new TypeError('clanker-ui chart: scale "time" needs type "line" or "area"')
   if (o.references != null) {
@@ -1100,14 +1102,15 @@ function chartCartesian(c) {
       const g = svg("g", { "data-part": "series", "data-key": key, style: { "--c": e.color } })
       const dots = o.dots && !spark
       const last = spark ? pts[k].findLast(Boolean) : null
+      const shape = chartShape(o, key)
       for (const seg of chartSegments(joined(key) ? pts[k].filter(Boolean) : pts[k])) {
         const el = svg("path", { d: chartCurve(seg, curve), "data-part": "line", pathLength: "1" })
         if (spark) el.setAttribute("data-muted", "")
         g.append(el)
-        if (seg.length === 1 && !dots && seg[0] !== last) g.append(svg("circle", { cx: chartRound(seg[0].x), cy: chartRound(seg[0].y), r: 4, "data-part": "dot", "data-muted": spark }))
+        if (seg.length === 1 && !dots && seg[0] !== last) g.append(chartDot(seg[0], 4, shape, { "data-muted": spark }))
       }
-      if (dots) for (const p of pts[k]) if (p) g.append(svg("circle", { cx: chartRound(p.x), cy: chartRound(p.y), r: 4, "data-part": "dot" }))
-      if (last) g.append(svg("circle", { cx: chartRound(last.x), cy: chartRound(last.y), r: 4, "data-part": "dot", "data-accent": "" }))
+      if (dots) for (const p of pts[k]) if (p) g.append(chartDot(p, 4, shape))
+      if (last) g.append(chartDot(last, 4, shape, { "data-accent": "" }))
       marksGroup.append(g)
     })
     nodes.push(marksGroup)
@@ -1236,11 +1239,29 @@ function chartCartesian(c) {
       crosshair.setAttribute("data-active", "")
       keys.forEach((key, k) => {
         const p = pts[k][a.index]
-        if (p) active.append(svg("circle", { cx: chartRound(p.x), cy: chartRound(p.y), r: 5, "data-part": "dot", "data-active": "", style: { "--c": entity(key).color } }))
+        if (p) active.append(chartDot(p, 5, chartShape(o, key), { "data-active": "", style: { "--c": entity(key).color } }))
       })
     },
     deactivate,
   }
+}
+
+function chartShape(o, key) {
+  return o.shapes && Object.hasOwn(o.shapes, key) ? o.shapes[key] : "circle"
+}
+
+function chartDot(p, r, shape, attrs) {
+  const x = chartRound(p.x)
+  const y = chartRound(p.y)
+  if (shape === "square") {
+    const a = chartRound(r * 0.9)
+    return svg("rect", { x: chartRound(x - a), y: chartRound(y - a), width: 2 * a, height: 2 * a, "data-part": "dot", "data-shape": shape, ...attrs })
+  }
+  if (shape === "diamond") {
+    const a = chartRound(r * 1.25)
+    return svg("path", { d: `M${x},${chartRound(y - a)}L${chartRound(x + a)},${y}L${x},${chartRound(y + a)}L${chartRound(x - a)},${y}Z`, "data-part": "dot", "data-shape": shape, ...attrs })
+  }
+  return svg("circle", { cx: x, cy: y, r, "data-part": "dot", ...attrs })
 }
 
 function chartReferences(c, nodes, p) {
@@ -1902,9 +1923,10 @@ function chartLegend(s, m) {
     legend.replaceChildren()
     return
   }
-  const shape = m.type === "line" ? "line" : "rect"
+  const marked = m.type === "line" || m.type === "area"
   const items = keys.map(key => {
     const e = m.byKey.get(key)
+    const shape = marked && s.opts.shapes && Object.hasOwn(s.opts.shapes, key) ? s.opts.shapes[key] : m.type === "line" ? "line" : "rect"
     return h(
       "button",
       { type: "button", "data-slot": "chart-legend-item", "data-key": key, "aria-pressed": String(!s.hidden.has(key)), onclick: () => chartToggle(s, key) },

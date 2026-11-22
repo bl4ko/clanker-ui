@@ -59,6 +59,7 @@ view.destroy()
 | `horizontal`, `labels`, `diverging`, `highlight`, `barSize` | Bar options |
 | `curve`, `dots`, `gradient`, `zero`, `domain` | `monotone` (default), `linear`, `step`; dots; gradient fill; `zero: false`; fixed `[min, max]` (finite numbers or `null`; else a `TypeError`) |
 | `references` | Bar, line, and area: a list of `{ value, label, tone, position }` (a dashed line) or `{ from, to, label, tone, position }` (a band with dashed edges). See [Reference lines and time axis](chart.md). |
+| `shapes` | Line and area: `{ key: "circle" \| "square" \| "diamond" }`. The dots and the hover dot of that series and its legend key take the shape, so series do not differ by color alone. Another value throws a `TypeError`. |
 | `scale`, `connectNulls` | `scale: "time"` (line and area) puts each row at its date. `connectNulls`: `true` or a list of keys; the line goes across missing values. |
 | `grid`, `valueAxis`, `categoryAxis`, `legend`, `table` | `false` hides each part |
 | Pie and donut | `labels: "value" \| "percent" \| "name"`, `labelPosition: "inside"`, `innerRadius`, `center`, `highlight` |

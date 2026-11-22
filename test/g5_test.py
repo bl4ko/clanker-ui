@@ -1048,6 +1048,37 @@ def check_chart_marks(t):
     assert result["empty"] == "Pie chart. All series are hidden.", f"pie with every slice hidden: {result}"
 
 
+def check_chart_shapes(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const rows = [{ m: "a", x: 3, y: 2, z: 1 }, { m: "b", x: 4, y: 3, z: 2 }]
+          const out = {}
+          for (const type of ["line", "area"]) {
+            const c = make(rows, { type, x: "m", dots: true, shapes: { y: "square", z: "diamond" } })
+            c.svg.focus()
+            const dots = sel => [...c.svg.querySelectorAll(sel)].map(d => [d.tagName, d.dataset.shape ?? null, Math.round(d.getBBox().width)])
+            out[type] = {
+              dots: ["x", "y", "z"].map(k => dots(`[data-key="${k}"] [data-part="dot"]`)),
+              active: dots('[data-part="active"] [data-part="dot"]'),
+              legend: [...c.box.querySelectorAll('[data-slot="chart-legend-indicator"]')].map(i => [i.dataset.shape, getComputedStyle(i).borderRadius]),
+            }
+            c.box.remove()
+          }
+          const attempt = o => { const b = document.createElement("div"); document.body.append(b); try { chart(b, rows, { x: "m", type: "line", ...o }); return "ok" } catch (e) { return e.name } finally { b.remove() } }
+          out.errors = [attempt({ shapes: { x: "star" } }), attempt({ shapes: "square" }), attempt({ shapes: { x: "square" } })]
+          return out
+        }"""
+    )
+    for kind in ("line", "area"):
+        r = result[kind]
+        assert r["dots"] == [[["circle", None, 8]] * 2, [["rect", "square", 7]] * 2, [["path", "diamond", 10]] * 2], (kind, r["dots"])
+        assert [(d[0], d[1]) for d in r["active"]] == [("circle", None), ("rect", "square"), ("path", "diamond")], (kind, r["active"])
+    assert [s for s, _ in result["line"]["legend"]] == ["line", "square", "diamond"], result["line"]
+    assert [s for s, _ in result["area"]["legend"]] == ["rect", "square", "diamond"] and result["area"]["legend"][1][1] == "0px", result["area"]
+    assert result["errors"] == ["TypeError", "TypeError", "ok"], result["errors"]
+
 def check_chart_lifecycle(t):
     page = t.page
     t.a11y()

@@ -15080,6 +15080,10 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  [data-slot="site-header"] [data-slot="breadcrumb"] { min-width: 0; }
+  [data-slot="site-header"] [data-slot="breadcrumb-list"] { flex-wrap: nowrap; }
+  [data-slot="site-header"] [data-slot="breadcrumb-item"] { min-width: 0; }
+  [data-slot="site-header"] :is([data-slot="breadcrumb-link"], [data-slot="breadcrumb-page"]) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   [data-slot="site-header-nav"] {
     display: flex;
     align-items: center;

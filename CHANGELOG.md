@@ -4,7 +4,7 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
-## Unreleased
+## 0.5.0 - 2026-11-22
 
 ### Breaking
 
@@ -15,6 +15,9 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Repository: the root `embed.go` is gone, so the root has no Go code. The docs server reads the kit, demo, docs, and skill files from disk: `-dir` (or `DIR`) defaults to `.`, so run it from the repository root. It stops at start with a clear error when a needed file is missing (`go run ./tools/gen build`). The exported docs site does not change (#218).
 - Section Cards: each card is a subgrid row again (the card is no longer a size container, which turned the subgrid off), so the headers and footers of one row line up. The 30 px value now follows the grid width and column count, so it switches at a 250 px card in every style (#241, #237).
 - Table: a `data-sticky-header` table after a `site-header` sticks below the header (`--header-height`) instead of at the top. Not in a dialog or a `scroll-area-viewport`; set `--table-header-top: 0px` on a table in its own scroll pane (#248, #246).
+- Chart: `dots` accepts only `true`, `false`, or `"last"`, and `dashed` only `true` or an array of keys; another value throws a `TypeError` (before, `dots: 1` drew every dot) (#257).
+- Section Cards: the 30 px value follows the grid columns, so a card that an app spans over several columns keeps the value of one column.
+- Tooling: Playwright 1.65.2 (#220), uv 0.13.9 (#223), and `actions/setup-go` 7.1.0 (#222) in CI; the secret scan runs the hardened gitleaks 8.30.1 (#221).
 - Chart: bar `labels` that do not fit their bar turn -90° instead of being left out; they are left out only in a slot under 16 px or when they would need more than half the plot height (#238, #233).
 
 ### Added

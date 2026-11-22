@@ -15824,6 +15824,9 @@
     border-radius: 1px;
   }
   [data-slot="chart-legend-indicator"][data-dashed] { border-style: dashed; background-color: transparent; }
+  [data-slot="chart-legend-indicator"][data-shape="circle"] { border-radius: 50%; }
+  [data-slot="chart-legend-indicator"][data-shape="square"] { border-radius: 0; }
+  [data-slot="chart-legend-indicator"][data-shape="diamond"] { border-radius: 0; transform: rotate(45deg) scale(0.85); }
   [data-slot="chart-legend-item"][aria-pressed="false"] [data-slot="chart-legend-indicator"] { background-color: transparent; }
   [data-slot="chart-legend-item"][aria-pressed="false"] [data-slot="chart-legend-indicator"][data-shape="line"] { border-style: dotted; }
   [data-slot="chart-table-toggle"] {

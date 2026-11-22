@@ -859,6 +859,7 @@ def check_chart_tick_end(t):
     for kind, labels in result.items():
         assert labels[-1] == "Nov 10" and len(labels) < 10, (kind, labels)
 
+
 def check_chart_rtl(t):
     page = t.page
     result = page.evaluate(
@@ -1155,6 +1156,38 @@ def check_chart_dashed(t):
         assert len(plan) == 1 and len(actual) == 1 and not plan[0][1] and not actual[0][1], ("one plain dot per series", kind, r)
         assert abs(plan[0][0] - r["ends"][0][0]) < 1 and abs(actual[0][0] - r["ends"][1][0]) < 1, ("the dot sits on the last point", kind, r)
     assert result["line"]["legend"] == ["dashed", "solid"], result["line"]
+
+
+def check_chart_shapes(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const rows = [{ m: "a", x: 3, y: 2, z: 1 }, { m: "b", x: 4, y: 3, z: 2 }]
+          const out = {}
+          for (const type of ["line", "area"]) {
+            const c = make(rows, { type, x: "m", dots: true, shapes: { y: "square", z: "diamond" } })
+            c.svg.focus()
+            const dots = sel => [...c.svg.querySelectorAll(sel)].map(d => [d.tagName, d.dataset.shape ?? null, Math.round(d.getBBox().width)])
+            out[type] = {
+              dots: ["x", "y", "z"].map(k => dots(`[data-key="${k}"] [data-part="dot"]`)),
+              active: dots('[data-part="active"] [data-part="dot"]'),
+              legend: [...c.box.querySelectorAll('[data-slot="chart-legend-indicator"]')].map(i => [i.dataset.shape, getComputedStyle(i).borderRadius]),
+            }
+            c.box.remove()
+          }
+          const attempt = o => { const b = document.createElement("div"); document.body.append(b); try { chart(b, rows, { x: "m", type: "line", ...o }); return "ok" } catch (e) { return e.name } finally { b.remove() } }
+          out.errors = [attempt({ shapes: { x: "star" } }), attempt({ shapes: "square" }), attempt({ shapes: { x: "square" } })]
+          return out
+        }"""
+    )
+    for kind in ("line", "area"):
+        r = result[kind]
+        assert r["dots"] == [[["circle", None, 8]] * 2, [["rect", "square", 7]] * 2, [["path", "diamond", 10]] * 2], (kind, r["dots"])
+        assert [(d[0], d[1]) for d in r["active"]] == [("circle", None), ("rect", "square"), ("path", "diamond")], (kind, r["active"])
+    assert [s for s, _ in result["line"]["legend"]] == ["line", "square", "diamond"], result["line"]
+    assert [s for s, _ in result["area"]["legend"]] == ["rect", "square", "diamond"] and result["area"]["legend"][1][1] == "0px", result["area"]
+    assert result["errors"] == ["TypeError", "TypeError", "ok"], result["errors"]
 
 
 def check_chart_lifecycle(t):
@@ -1482,6 +1515,7 @@ def check_chart_references_x(t):
     assert abs(tx - want) <= 2, ("the line sits at its date; a date past the data draws nothing", time)
     assert "Launch at Oct 1, 2026." in time["summary"], time["summary"]
     assert result["errors"] == ["TypeError", "TypeError", "TypeError", "ok", "ok"], result["errors"]
+
 
 def check_chart_time_axis(t):
     page = t.page

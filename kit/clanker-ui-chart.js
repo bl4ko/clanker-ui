@@ -165,7 +165,7 @@ function chartIngest(s, data, options) {
     if (!Array.isArray(o.references)) throw new TypeError("clanker-ui chart: references must be an array")
     if (o.references.length && !cartesian) throw new TypeError("clanker-ui chart: references need type bar, line, or area")
     for (const r of o.references) {
-      if (!r || typeof r !== "object" || !(Number.isFinite(r.value) || (Number.isFinite(r.from) && Number.isFinite(r.to)))) throw new TypeError("clanker-ui chart: a reference needs a finite value, or a finite from and to")
+      if (!r || typeof r !== "object" || !(r.x !== undefined ? typeof r.x === "string" || Number.isFinite(r.x) || (r.x instanceof Date && !Number.isNaN(r.x.getTime())) : Number.isFinite(r.value) || (Number.isFinite(r.from) && Number.isFinite(r.to)))) throw new TypeError("clanker-ui chart: a reference needs a finite value, a finite from and to, or an x (a category or a date)")
       if (r.position != null && r.position !== "start" && r.position !== "end") throw new TypeError(`clanker-ui chart: unknown reference position "${r.position}"`)
       if (r.tone != null) chartColorValue(r.tone)
     }
@@ -373,7 +373,13 @@ function chartModel(s) {
       const p = clock.parts(t)
       return !p.h && !p.mi && !p.s && !p.ms
     }),
-    references: (o.references ?? []).map(r => ({ ...r, band: !Number.isFinite(r.value), label: r.label == null ? "" : String(r.label), color: r.tone == null ? null : chartColorValue(r.tone) })),
+    references: (o.references ?? []).map(r => {
+      const across = r.x !== undefined
+      const t = across && time ? chartDate(r.x, clock)?.getTime() : null
+      if (t === undefined) throw new TypeError('clanker-ui chart: a reference x on scale "time" needs an ISO date or a Date')
+      const index = across && !time ? rows.findIndex((row, i) => (r.x instanceof Date ? chartDate(row?.[x], clock)?.getTime() === r.x.getTime() : chartCategory(row, x, i) === String(r.x))) : -1
+      return { ...r, across, t, index, band: !across && !Number.isFinite(r.value), label: r.label == null ? "" : String(r.label), color: r.tone == null ? null : chartColorValue(r.tone) }
+    }),
     sparkline: !!o.sparkline,
     expand: o.stack === "expand" && (type === "area" || type === "bar"),
   }
@@ -528,15 +534,15 @@ function chartFormats(s, m) {
     const key = chartCategory(m.rows[i], m.x, i)
     return m.byKey.get(key)?.label ?? chartLabel(m.config, key, key)
   }
-  const date = (i, options) => chartDateFormat(locale, { ...zone, ...options }).format(chartDate(raw(i), m.clock))
+  const date = (v, options) => chartDateFormat(locale, { ...zone, ...options }).format(chartDate(v, m.clock))
   const pick = (f, fallback) => (f && typeof f === "object" ? f : fallback)
   const xTick = i => {
     if (typeof o.xFormat === "function") return String(o.xFormat(raw(i), i))
-    return m.isDate ? date(i, pick(o.xFormat, { month: "short", day: "numeric" })) : name(i)
+    return m.isDate ? date(raw(i), pick(o.xFormat, { month: "short", day: "numeric" })) : name(i)
   }
-  const xLabel = i => {
-    if (typeof o.labelFormat === "function") return String(o.labelFormat(raw(i), i))
-    return m.isDate ? date(i, pick(o.labelFormat, m.dateOnly ? { month: "short", day: "numeric", year: "numeric" } : { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })) : name(i)
+  const xLabel = (i, v = raw(i)) => {
+    if (typeof o.labelFormat === "function") return String(o.labelFormat(v, i))
+    return m.isDate ? date(v, pick(o.labelFormat, m.dateOnly ? { month: "short", day: "numeric", year: "numeric" } : { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })) : name(i)
   }
   const timeTick = (t, unit) => {
     const d = new Date(t)
@@ -554,7 +560,8 @@ function chartFormats(s, m) {
             : { month: "short", day: "numeric" }
     return chartDateFormat(locale, { ...zone, ...options }).format(d)
   }
-  return { locale, value, percent, tick, xTick, xLabel, timeTick }
+  const xAt = r => (r.index >= 0 ? xLabel(r.index) : r.t != null ? xLabel(-1, r.x) : String(r.x))
+  return { locale, value, percent, tick, xTick, xLabel, xAt, timeTick }
 }
 
 function chartWidth(text, font) {
@@ -836,6 +843,7 @@ function chartCartesian(c) {
     hi = 1
   }
   for (const r of m.references) {
+    if (r.across) continue
     for (const v of r.band ? [r.from, r.to] : [r.value]) {
       lo = Math.min(lo, v)
       hi = Math.max(hi, v)
@@ -930,7 +938,7 @@ function chartCartesian(c) {
     const p = Math.round(v2p(0)) + 0.5
     nodes.push(horizontal ? svg("line", { "data-part": "baseline", x1: p, x2: p, y1: pt, y2: pt + ph }) : svg("line", { "data-part": "baseline", x1: pl, x2: pl + pw, y1: p, y2: p }))
   }
-  const refs = m.references.length ? chartReferences(c, nodes, { pl, pt, pw, ph, v2p, lo: scale.lo, hi: scale.hi, horizontal, labels: !spark }) : null
+  const refs = m.references.length ? chartReferences(c, nodes, { pl, pt, pw, ph, v2p, lo: scale.lo, hi: scale.hi, horizontal, labels: !spark, at: r => (m.time ? (r.t >= t0 && r.t <= t1 ? tpos(r.t) : null) : r.index >= 0 ? pos(r.index) : null) }) : null
   if (valueAxis) {
     nodes.push(
       svg(
@@ -1250,29 +1258,38 @@ function chartReferences(c, nodes, p) {
   const lines = svg("g", { "data-part": "references" })
   const labels = svg("g", { "data-part": "reference-labels" })
   const used = []
-  const crisp = v => Math.round(v2p(v)) + 0.5
+  const crisp = q => Math.round(q) + 0.5
   const fits = b => b.x0 >= pl - 0.5 && b.x1 <= pl + pw + 0.5 && b.y0 >= pt - 0.5 && b.y1 <= pt + ph + 0.5 && !used.some(u => b.x0 < u.x1 && b.x1 > u.x0 && b.y0 < u.y1 && b.y1 > u.y0)
   for (const r of m.references) {
-    const a = r.band ? Math.max(p.lo, Math.min(r.from, r.to)) : r.value
-    const b = r.band ? Math.min(p.hi, Math.max(r.from, r.to)) : r.value
-    if (a > p.hi || b < p.lo || a > b) continue
     const style = { "--r": r.color }
-    const edges = r.band ? [r.from, r.to].filter(v => v >= p.lo && v <= p.hi) : [r.value]
-    if (r.band) {
-      const [u, v] = [v2p(a), v2p(b)].sort((x, y) => x - y)
-      bands.append(horizontal ? svg("rect", { x: chartRound(u), y: pt, width: chartRound(v - u), height: ph, "data-part": "reference-band", style }) : svg("rect", { x: pl, y: chartRound(u), width: pw, height: chartRound(v - u), "data-part": "reference-band", style }))
+    let vertical = horizontal
+    let edges
+    let lo
+    let hi
+    if (r.across) {
+      const q = p.at(r)
+      if (q == null) continue
+      vertical = !horizontal
+      edges = [q]
+      lo = hi = q
+    } else {
+      const a = r.band ? Math.max(p.lo, Math.min(r.from, r.to)) : r.value
+      const b = r.band ? Math.min(p.hi, Math.max(r.from, r.to)) : r.value
+      if (a > p.hi || b < p.lo || a > b) continue
+      edges = (r.band ? [r.from, r.to].filter(v => v >= p.lo && v <= p.hi) : [r.value]).map(v2p)
+      lo = Math.min(v2p(a), v2p(b))
+      hi = Math.max(v2p(a), v2p(b))
+      if (r.band) bands.append(vertical ? svg("rect", { x: chartRound(lo), y: pt, width: chartRound(hi - lo), height: ph, "data-part": "reference-band", style }) : svg("rect", { x: pl, y: chartRound(lo), width: pw, height: chartRound(hi - lo), "data-part": "reference-band", style }))
     }
-    for (const v of edges) {
-      const q = crisp(v)
-      lines.append(horizontal ? svg("line", { x1: q, x2: q, y1: pt, y2: pt + ph, "data-part": "reference-line", style }) : svg("line", { x1: pl, x2: pl + pw, y1: q, y2: q, "data-part": "reference-line", style }))
+    for (const e of edges) {
+      const q = crisp(e)
+      lines.append(vertical ? svg("line", { x1: q, x2: q, y1: pt, y2: pt + ph, "data-part": "reference-line", style }) : svg("line", { x1: pl, x2: pl + pw, y1: q, y2: q, "data-part": "reference-line", style }))
     }
     if (!p.labels || !r.label) continue
     const text = chartFit(r.label, Math.max(8, pw - 8), font.tick)
     const w = chartWidth(text, font.tick)
-    const lo = Math.min(v2p(a), v2p(b))
-    const hi = Math.max(v2p(a), v2p(b))
     const cands = []
-    if (horizontal) {
+    if (vertical) {
       const ys = r.position === "start" ? [pt + ph - 4, pt + 15] : [pt + 15, pt + ph - 4]
       for (const y of ys) {
         if (r.band && hi - lo >= w + 8) cands.push([lo + 4, y, "start"])
@@ -1740,6 +1757,7 @@ function chartSummary(c) {
 
 function chartReferenceText(s, f, r) {
   const label = r.label || stringFor(s.root, "reference")
+  if (r.across) return stringFor(s.root, "referenceAt", { label, value: f.xAt(r) })
   return r.band ? stringFor(s.root, "referenceBand", { label, from: f.value(Math.min(r.from, r.to)), to: f.value(Math.max(r.from, r.to)) }) : stringFor(s.root, "referenceAt", { label, value: f.value(r.value) })
 }
 
@@ -1961,7 +1979,7 @@ function chartTable(s, m) {
         { "data-part": "references" },
         h("caption", { class: "sr-only" }, stringFor(s.root, "references")),
         h("thead", null, h("tr", null, h("th", { scope: "col" }, stringFor(s.root, "reference")), h("th", { scope: "col" }, stringFor(s.root, "value")))),
-        h("tbody", null, m.references.map(r => h("tr", null, h("th", { scope: "row" }, r.label || stringFor(s.root, "reference")), h("td", null, r.band ? `${f.value(Math.min(r.from, r.to))}–${f.value(Math.max(r.from, r.to))}` : f.value(r.value))))),
+        h("tbody", null, m.references.map(r => h("tr", null, h("th", { scope: "row" }, r.label || stringFor(s.root, "reference")), h("td", null, r.across ? f.xAt(r) : r.band ? `${f.value(Math.min(r.from, r.to))}–${f.value(Math.max(r.from, r.to))}` : f.value(r.value))))),
       )
     : null
   s.els.table.replaceChildren(table, ...(refs ? [refs] : []))

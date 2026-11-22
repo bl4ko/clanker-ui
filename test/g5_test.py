@@ -1093,6 +1093,42 @@ def check_chart_marks(t):
     assert result["empty"] == "Pie chart. All series are hidden.", f"pie with every slice hidden: {result}"
 
 
+def check_chart_bar_labels(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const read = (rows, width) => {
+            const c = make(rows, { type: "bar", x: "d", labels: true, height: 240 }, width)
+            const svg = c.svg.getBoundingClientRect()
+            const rect = e => e.getBoundingClientRect()
+            const labels = [...c.svg.querySelectorAll('text[data-part="label"]')]
+            const bars = [...c.svg.querySelectorAll('[data-part="bar"]')].map(rect)
+            const axis = ticks(c.svg, "category").map(rect)
+            const hit = (a, b) => a.left < b.right - 0.5 && a.right > b.left + 0.5 && a.top < b.bottom - 0.5 && a.bottom > b.top + 0.5
+            const out = {
+              count: labels.length,
+              bars: bars.length,
+              turned: labels.filter(l => l.hasAttribute("transform")).length,
+              inside: labels.every(l => { const r = rect(l); return r.top >= svg.top - 0.5 && r.bottom <= svg.bottom + 0.5 && r.left >= svg.left - 0.5 && r.right <= svg.right + 0.5 }),
+              clear: labels.every(l => !bars.some(b => hit(rect(l), b)) && !axis.some(a => hit(rect(l), a))),
+              apart: labels.every((l, i) => labels.every((m, j) => i <= j || !hit(rect(l), rect(m)))),
+            }
+            c.box.remove()
+            return out
+          }
+          const days = Array.from({ length: 14 }, (_, i) => ({ d: `Nov ${i + 1}`, v: 1000 + i * 137 }))
+          const signs = Array.from({ length: 10 }, (_, i) => ({ d: `M${i + 1}`, v: (i % 2 ? -1 : 1) * (12000 + i * 3137) }))
+          return { narrow: read(days, 390), wide: read(days, 1000), signs: read(signs, 390) }
+        }"""
+    )
+    narrow, wide, signs = result["narrow"], result["wide"], result["signs"]
+    assert narrow["count"] == narrow["bars"] == 14 and narrow["turned"] == 14, ("labels that do not fit turn instead of vanishing", narrow)
+    assert wide["count"] == 14 and wide["turned"] == 0, ("labels that fit stay level", wide)
+    assert signs["count"] == 10 and signs["turned"] == 10, signs
+    for r in (narrow, wide, signs):
+        assert r["inside"] and r["clear"] and r["apart"], ("labels stay in the chart, off the bars and the axis, and apart", r)
+
 def check_chart_lifecycle(t):
     page = t.page
     t.a11y()

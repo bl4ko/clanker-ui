@@ -1483,6 +1483,7 @@ view.destroy()
 - When the category labels do not fit, the axis labels every n-th category counted back from the last one, so the last category always has a label (like the Recharts default `interval="preserveEnd"`).
 - `--chart-surface` is the gap and dot ring color (default `--card`); set it to the background the chart sits on.
 - The tooltip sits next to the pointer. When it is too wide for either side, it goes above the hovered points, or below them when there is more room. `--chart-tooltip-border` is its border color (default `--border` at 50 %, like shadcn); the editor schemes where `--background` equals `--card` set it to the full `--border` in dark mode.
+- Bar `labels` sit above each bar, below a negative one. When a label is wider than its bar slot, all labels of the chart turn -90° and read from the bar end, and the plot makes room for the longest one. In a slot narrower than 12 px, labels that do not fit are left out; the table view has every value.
 - A label inside a fill uses `--chart-ink-light` (`#fff`) or `--chart-ink-dark` (`#0b0b0b`), whichever has the higher WCAG contrast against the fill. Override both on `[data-slot="chart"]`.
 - Charts redraw on `theme:change` while they are in the document. A removed chart closes its tooltip, is not tracked, and redraws when it is inserted again. A destroyed chart never redraws.
 - Fixed labels (chart names, legend, table button, table header, summary sentences) come from `strings` (see [Localization](#localization)); `data-string-<key>` on the chart element or an ancestor overrides one chart.

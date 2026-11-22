@@ -841,6 +841,24 @@ def check_chart_scale(t):
     assert result == [True, True], f"200,000 rows: {result}"
 
 
+def check_chart_tick_end(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const days = Array.from({ length: 10 }, (_, i) => ({ d: `2026-11-${String(i + 1).padStart(2, "0")}`, v: i + 1 }))
+          const read = o => {
+            const c = make(days, { x: "d", ...o }, 390)
+            const out = ticks(c.svg, "category").map(e => e.textContent)
+            c.box.remove()
+            return out
+          }
+          return { line: read({ type: "line" }), bar: read({ type: "bar" }), horizontal: read({ type: "bar", horizontal: true, height: 120 }) }
+        }"""
+    )
+    for kind, labels in result.items():
+        assert labels[-1] == "Nov 10" and len(labels) < 10, (kind, labels)
+
 def check_chart_rtl(t):
     page = t.page
     result = page.evaluate(

@@ -950,13 +950,13 @@ function chartCartesian(c) {
       for (const tk of chartTimeAxis(c, t0, t1, tpos, clen)) out.push(svg("text", { x: chartRound(tk.x), y: chartRound(pt + ph + 20), "text-anchor": "middle" }, tk.text))
     } else if (horizontal) {
       const step = Math.max(1, Math.ceil(16 / band))
-      for (let i = 0; i < n; i += step) out.push(svg("text", { x: chartRound(pl - 8), y: chartRound(pos(i)), dy: "0.35em", "text-anchor": "end" }, chartFit(catText[i], catW, font.tick)))
+      for (let i = (n - 1) % step; i < n; i += step) out.push(svg("text", { x: chartRound(pl - 8), y: chartRound(pos(i)), dy: "0.35em", "text-anchor": "end" }, chartFit(catText[i], catW, font.tick)))
     } else {
       const widths = catText.map(t => chartWidth(t, font.tick))
       const need = widths.reduce((a, w) => Math.max(a, w), 0) + (m.isDate ? 24 : 10)
       const spacing = bar ? band : n > 1 ? clen / (n - 1) : clen
       const step = Math.max(1, Math.ceil(need / spacing))
-      for (let i = 0; i < n; i += step) {
+      for (let i = (n - 1) % step; i < n; i += step) {
         const w = widths[i]
         out.push(svg("text", { x: chartRound(Math.min(Math.max(pos(i), w / 2), W - w / 2)), y: chartRound(pt + ph + 20), "text-anchor": "middle" }, catText[i]))
       }

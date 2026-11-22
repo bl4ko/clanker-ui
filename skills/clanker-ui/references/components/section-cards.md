@@ -4,6 +4,8 @@ Group `core`. Needs none. CSS only.
 
 Other parts: `section-cards` (root).
 
+Other options named in the docs: `data-min-columns` `2`.
+
 ## Full text
 
 ### Section Cards
@@ -24,7 +26,7 @@ Other parts: `section-cards` (root).
 </div>
 ```
 
-- The KPI cards of shadcn `dashboard-01`. Columns follow the width of the grid itself: 1, then 2 from 34rem, then 4 from 61rem; exactly 3 cards go to 3 columns from 44rem. Use 2, 3, 4, or 8 cards.
+- The KPI cards of shadcn `dashboard-01`. Columns follow the width of the grid itself: 1, then 2 from 34rem, then 4 from 61rem; exactly 3 cards go to 3 columns from 44rem. Use 2, 3, 4, or 8 cards. Kit extension: `data-min-columns="2"` keeps 2 columns below 34rem too (a 2 x 2 grid on a phone); with an odd number of cards, the last one takes the full row there.
 - Each card is a subgrid row of the grid, so the headers and the footers of one row line up when a label wraps. A card with a `card-content` takes three rows.
 - `card-title` is the value: 24 px (30 px when the card is at least 250 px wide), weight 600, tabular numbers. With a description first and a `badge` in `card-action`, the value takes the full width of the row under them, so a number does not break next to the badge. It wraps at spaces, and only a value wider than the card breaks inside. The footer holds a medium trend line with an icon and a `card-description`.
 - `statTile()` elements can be the children too.

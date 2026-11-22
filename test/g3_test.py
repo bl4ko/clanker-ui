@@ -433,6 +433,52 @@ def check_breadcrumb(t):
     assert slash.inner_text() == "/" and slash.locator("svg").count() == 0
 
 
+def check_breadcrumb_site_header(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const item = (slot, text) => h("li", { "data-slot": "breadcrumb-item" }, slot === "page" ? h("span", { "data-slot": "breadcrumb-page", "aria-current": "page" }, text) : h("a", { "data-slot": "breadcrumb-link", href: "#" }, text))
+          const sep = () => h("li", { "data-slot": "breadcrumb-separator", role: "presentation", "aria-hidden": "true" }, "/")
+          const header = h("header", { "data-slot": "site-header" },
+            h("nav", { "data-slot": "breadcrumb", "aria-label": "breadcrumb" }, h("ol", { "data-slot": "breadcrumb-list" }, item("link", "Projects and workspaces"), sep(), item("link", "A rather long folder name"), sep(), item("page", "A very long current page title that does not fit"))),
+            h("div", { "data-slot": "site-header-actions" }, h("button", { type: "button", "data-slot": "button", "data-size": "sm" }, "Share")))
+          const host = h("div", {}, header)
+          host.style.width = "360px"
+          document.body.prepend(host)
+          const r = e => e.getBoundingClientRect()
+          const list = header.querySelector('[data-slot="breadcrumb-list"]'), page = header.querySelector('[data-slot="breadcrumb-page"]'), share = header.querySelector("button")
+          const out = { header: Math.round(r(header).height), list: Math.round(r(list).height), overflow: header.scrollWidth - header.clientWidth, shareInside: r(share).right <= r(header).right + 0.5, cut: page.scrollWidth > page.clientWidth, ellipsis: getComputedStyle(page).textOverflow }
+          host.remove()
+          return out
+        }"""
+    )
+    assert result["header"] == 48 and result["list"] <= 24, ("a breadcrumb in a site-header stays on one line", result)
+    assert result["overflow"] == 0 and result["shareInside"], ("the breadcrumb does not push the header wider", result)
+    assert result["cut"] and result["ellipsis"] == "ellipsis", result
+    kept = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const sep = () => h("li", { "data-slot": "breadcrumb-separator", role: "presentation", "aria-hidden": "true" }, "/")
+          const link = text => h("li", { "data-slot": "breadcrumb-item" }, h("a", { "data-slot": "breadcrumb-link", href: "#" }, text))
+          const more = h("li", { "data-slot": "breadcrumb-item" }, h("span", { "data-slot": "breadcrumb-ellipsis" }))
+          const menu = h("li", { "data-slot": "breadcrumb-item" }, h("div", { "data-slot": "dropdown-menu" }, h("button", { type: "button", "data-dropdown-menu-trigger": "" }, "Components"), h("div", { "data-slot": "dropdown-menu-content" }, h("div", { "data-slot": "dropdown-menu-item" }, "Docs"))))
+          const header = h("header", { "data-slot": "site-header" }, h("nav", { "data-slot": "breadcrumb", "aria-label": "breadcrumb" }, h("ol", { "data-slot": "breadcrumb-list" },
+            link("Projects and workspaces"), sep(), more, sep(), menu, sep(), link("A rather long folder name"), sep(), h("li", { "data-slot": "breadcrumb-item" }, h("span", { "data-slot": "breadcrumb-page", "aria-current": "page" }, "A very long current page title")))))
+          const host = h("div", {}, header)
+          host.style.width = "2000px"
+          document.body.prepend(host)
+          const r = e => e.getBoundingClientRect()
+          const natural = [more, menu].map(item => Math.round(r(item).width))
+          host.style.width = "300px"
+          const rtl = getComputedStyle(header).direction === "rtl"
+          const out = [more, menu].map((item, i) => [Math.round(r(item).width) === natural[i], rtl ? r(item).left >= r(item.nextElementSibling).right - 0.5 : r(item).right <= r(item.nextElementSibling).left + 0.5])
+          host.remove()
+          return out
+        }"""
+    )
+    assert kept == [[True, True], [True, True]], ("an ellipsis or a dropdown trigger item keeps its size and does not run under the next separator", kept)
+
+
 def check_card(t):
     page = t.page
     section = t.section("card")
@@ -1945,6 +1991,40 @@ def g3_table_rows(page):
     return page.evaluate("() => [...document.querySelectorAll('#table-data tbody tr')].map(r => [...r.cells].slice(1).map(c => c.textContent))")
 
 
+def check_table_sticky_site_header(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const table = () => h("div", { "data-slot": "table-container", "data-sticky-header": "" },
+            h("table", { "data-slot": "table" }, h("thead", { "data-slot": "table-header" }, h("tr", { "data-slot": "table-row" }, h("th", { "data-slot": "table-head" }, "Name"))),
+              h("tbody", { "data-slot": "table-body" }, Array.from({ length: 80 }, (_, i) => h("tr", { "data-slot": "table-row" }, h("td", { "data-slot": "table-cell" }, "Row " + i))))))
+          const out = []
+          for (const size of [null, "lg"]) {
+            const host = h("div", {}, h("header", { "data-slot": "site-header", "data-size": size }, "Title"), h("main", {}, h("div", { style: { height: "200px" } }), table()))
+            document.body.prepend(host)
+            const c = host.querySelector('[data-slot="table-container"]')
+            for (let i = 0; i < 50 && !c.hasAttribute("data-fits"); i++) await new Promise(r => requestAnimationFrame(r))
+            scrollTo(0, host.getBoundingClientRect().top + scrollY + 1200)
+            await new Promise(r => requestAnimationFrame(r))
+            out.push([size, c.hasAttribute("data-fits"), Math.round(host.querySelector('[data-slot="site-header"]').getBoundingClientRect().bottom), Math.round(host.querySelector("thead").getBoundingClientRect().top)])
+            host.remove()
+          }
+          scrollTo(0, 0)
+          const pane = h("div", { "data-slot": "scroll-area-viewport", style: { height: "300px", overflow: "auto" } }, table())
+          const host = h("div", {}, h("header", { "data-slot": "site-header" }, "Title"), h("div", { "data-slot": "scroll-area" }, pane))
+          document.body.prepend(host)
+          const c = pane.querySelector('[data-slot="table-container"]')
+          for (let i = 0; i < 50 && !c.hasAttribute("data-fits"); i++) await new Promise(r => requestAnimationFrame(r))
+          pane.scrollTop = 1200
+          await new Promise(r => requestAnimationFrame(r))
+          out.push(["pane", c.hasAttribute("data-fits"), Math.round(pane.querySelector("thead").getBoundingClientRect().top - pane.getBoundingClientRect().top)])
+          host.remove()
+          return out
+        }"""
+    )
+    assert result == [[None, True, 48, 48], ["lg", True, 56, 56], ["pane", True, 0]], ("the sticky table header stops below the site-header, and at the top of its own scroll pane", result)
+
+
 def check_table(t):
     page = t.page
     section = t.section("table")
@@ -2183,6 +2263,33 @@ def check_tabs_overflow(t):
     assert clicked.evaluate(reach) >= 2
     assert g3_style(page.locator("#tabs-vertical [data-slot=tabs-list]"), "overflow-x") == "visible"
     t.shot("tabs-overflow", host)
+
+
+def check_tabs_scroll_fade(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const names = ["Overview", "Analytics", "Reports", "Notifications", "Settings", "Billing", "Members"]
+          const list = h("div", { "data-slot": "tabs-list", class: "scroll-fade-x" }, names.map(n => h("button", { "data-slot": "tabs-trigger", "data-value": n }, n)))
+          const host = h("div", { style: { width: "300px" } }, h("div", { "data-slot": "tabs", "data-default-value": "Overview" }, list))
+          const probe = h("div")
+          document.body.prepend(host, probe)
+          const frame = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+          const edges = () => ["--scroll-fade-s", "--scroll-fade-e"].map(name => { probe.style.width = getComputedStyle(list).getPropertyValue(name) || "0px"; return Math.round(probe.getBoundingClientRect().width) })
+          await frame()
+          const start = edges()
+          list.scrollLeft = getComputedStyle(list).direction === "rtl" ? -list.scrollWidth : list.scrollWidth
+          await frame()
+          const end = edges()
+          const out = { timeline: CSS.supports("animation-timeline: scroll()"), overflow: getComputedStyle(list).overflowX, scrolls: list.scrollWidth > list.clientWidth, start, end }
+          host.remove(); probe.remove()
+          return out
+        }"""
+    )
+    assert result["overflow"] == "auto" and result["scrolls"], result
+    if result["timeline"]:
+        assert result["start"][0] == 0 and result["start"][1] > 0, result
+        assert result["end"][0] > 0 and result["end"][1] == 0, result
 
 
 G3_TABS_SELECTED = """async () => {

@@ -213,6 +213,7 @@ SCHEME_GATES = [
     ["muted-foreground", "muted-foreground", ["background", "muted", "card", "popover"], 4.5],
     ["primary-foreground", "primary-foreground", ["primary"], 4.5],
     ["destructive text", "destructive", ["background", "card", "popover"], 4.5],
+    ["link text", "link-text, var(--primary)", ["background", "card", "popover"], 4.5],
     ["input", "input-edge", ["background", "card", "popover", "sidebar"], 3],
     ["focus-ring", "focus-ring", ["background", "card", "popover"], 3],
     *[["status text", f"{k}-text", [f"{k}-bg"], 4.5] for k in ["success", "info", "warning", "error"]],
@@ -448,6 +449,47 @@ def check_scheme_destructive_text(t):
     result = page.evaluate(DESTRUCTIVE_TINT)
     assert result["failures"] == [], (f"{len(result['failures'])} destructive text failures, worst {result['worst']}:1", result["failures"][:20])
     assert result["untokened"] == [], ("destructive text is --destructive-text", result["untokened"][:10])
+
+
+def check_link_text(t):
+    if t.mobile:
+        t.skip("colors do not depend on the viewport width")
+    t.a11y()
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const root = document.documentElement
+          const saved = ["data-scheme", "data-theme"].map(n => [n, root.getAttribute(n)])
+          const host = h("div", {},
+            h("div", { "data-typography": "" }, h("p", {}, h("a", { href: "#" }, "Read more"))),
+            ...["button", "alert-dialog-action", "pagination-link", "badge"].map(slot => h(slot === "badge" ? "span" : "button", { "data-slot": slot, "data-variant": "link" }, "Link")),
+            h("span", { id: "link-token" }))
+          document.body.prepend(host)
+          root.setAttribute("data-theme-switching", "")
+          const token = host.querySelector("#link-token")
+          token.style.color = "var(--link-text)"
+          const out = []
+          for (const [scheme, mode] of [["neutral blue", "dark"], ["neutral lime", "light"], ["everforest", "light"]]) {
+            root.setAttribute("data-scheme", scheme)
+            root.setAttribute("data-theme", mode)
+            const want = getComputedStyle(token).color
+            for (const el of [host.querySelector("a"), ...host.querySelectorAll('[data-variant="link"]')]) out.push([scheme, mode, el.dataset.slot ?? "a", getComputedStyle(el).color === want && want !== getComputedStyle(host).color])
+          }
+          const sheet = new CSSStyleSheet()
+          sheet.replaceSync("@layer clanker.components { .link-probe { color: rgb(1, 2, 3) } }")
+          document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
+          const probe = h("button", { "data-slot": "button", "data-variant": "link", class: "link-probe" }, "Link")
+          host.append(probe)
+          const low = getComputedStyle(probe).color === "rgb(1, 2, 3)"
+          document.adoptedStyleSheets = document.adoptedStyleSheets.filter(x => x !== sheet)
+          host.remove()
+          for (const [n, v] of saved) v === null ? root.removeAttribute(n) : root.setAttribute(n, v)
+          root.removeAttribute("data-theme-switching")
+          return { bad: out.filter(r => !r[3]), low }
+        }"""
+    )
+    assert result["bad"] == [], ("link text uses --link-text", result["bad"])
+    assert result["low"], "the link variant rule keeps the low specificity of the layer, so one class in the components layer recolors it"
 
 
 def check_scheme_persist(t):
@@ -1923,6 +1965,24 @@ def check_item_media_cover(t):
         assert not text, (size, variant, "cover text is hidden at media size")
 
 
+def check_brand_mark_image(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const src = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1"/>')
+          const mark = attrs => h("a", { "data-slot": "brand", href: "#" }, h("img", { "data-slot": "brand-mark", src, alt: "", ...attrs }), "Acme")
+          const host = h("div", {}, mark({}), mark({ "data-size": "sm" }), h("div", { "data-slot": "sidebar" }, mark({})), h("a", { "data-slot": "brand", href: "#" }, h("span", { "data-slot": "brand-mark" }, "A")))
+          document.body.prepend(host)
+          const out = [...host.querySelectorAll('[data-slot="brand-mark"]')].map(m => { const s = getComputedStyle(m); return [m.localName, s.backgroundColor, s.objectFit, Math.round(m.getBoundingClientRect().width)] })
+          host.remove()
+          return out
+        }"""
+    )
+    clear = "rgba(0, 0, 0, 0)"
+    assert result[:3] == [["img", clear, "contain", 32], ["img", clear, "contain", 24], ["img", clear, "contain", 32]], result
+    assert result[3][1] != clear, ("a span mark keeps the primary square", result[3])
+
+
 def check_section_cards_value_wrap(t):
     result = t.page.evaluate(
         """async () => {
@@ -1956,3 +2016,104 @@ def check_section_cards_value_wrap(t):
     for width, value, lines, hit, top in result:
         assert lines == 1 and not hit, (width, value, lines, hit)
         assert top == 24, (width, value, top, "the value stays in the second row under the description")
+
+
+def check_section_cards_subgrid(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const card = (label, note) => h("div", { "data-slot": "card" },
+            h("div", { "data-slot": "card-header" }, h("div", { "data-slot": "card-description" }, label), h("div", { "data-slot": "card-title" }, "1,234")),
+            h("div", { "data-slot": "card-footer" }, h("div", { "data-slot": "card-description" }, note)))
+          const out = []
+          for (const width of [249, 250, 600]) {
+            const grid = h("div", { "data-slot": "section-cards" },
+              card("Revenue", "Short"), card("Revenue", "A longer note that wraps to more lines in a narrow card"),
+              card("A longer label that wraps to more lines in a narrow card", "Short"), card("Revenue", "Short"))
+            const host = h("div", { style: { width: width + "px" } }, grid)
+            document.body.prepend(host)
+            await new Promise(r => requestAnimationFrame(r))
+            out.push([width, [...grid.children].map(c => [
+              Math.round(c.getBoundingClientRect().width),
+              Math.round(c.querySelector('[data-slot="card-header"]').getBoundingClientRect().height),
+              Math.round(c.querySelector('[data-slot="card-footer"]').getBoundingClientRect().top - c.getBoundingClientRect().top),
+              parseFloat(getComputedStyle(c.querySelector('[data-slot="card-title"]')).fontSize)])])
+            host.remove()
+          }
+          return out
+        }"""
+    )
+    for width, cards in result:
+        assert all(size == (30 if w >= 250 else 24) for w, _, _, size in cards), (width, cards)
+        if width == 600:
+            assert cards[0][1:3] == cards[1][1:3] and cards[2][1:3] == cards[3][1:3], (width, cards, "headers and footers line up in each row")
+
+
+def check_section_cards_columns(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const card = value => h("div", { "data-slot": "card" },
+            h("div", { "data-slot": "card-header" }, h("div", { "data-slot": "card-description" }, "Revenue"), h("div", { "data-slot": "card-title" }, value)),
+            h("div", { "data-slot": "card-footer" }, h("div", { "data-slot": "card-description" }, "Last 6 months")))
+          const out = {}
+          for (const [width, columns, values] of [[358, null], [358, "2"], [1000, "2"], [358, "2", ["1", "2", "3"]]]) {
+            const grid = h("div", { "data-slot": "section-cards", ...(columns ? { "data-min-columns": columns } : {}) }, (values ?? ["$1,250.00", "1,234", "45,678", "4.5%"]).map(card))
+            const host = h("div", { style: { width: width + "px" } }, grid)
+            document.body.prepend(host)
+            await new Promise(r => requestAnimationFrame(r))
+            const cards = [...grid.children].map(c => c.getBoundingClientRect())
+            const titles = [...grid.querySelectorAll('[data-slot="card-title"]')].map(e => e.scrollWidth <= e.clientWidth)
+            out[`${width}-${columns}${values ? "-odd" : ""}`] = { columns: new Set(cards.map(r => Math.round(r.left))).size, width: Math.round(cards[0].width), last: Math.round(cards.at(-1).width), fit: titles.every(Boolean) }
+            host.remove()
+          }
+          return out
+        }"""
+    )
+    assert result["358-null"]["columns"] == 1, result
+    assert result["358-2"] == {"columns": 2, "width": 171, "last": 171, "fit": True}, result
+    assert result["358-2-odd"]["width"] == 171 and result["358-2-odd"]["last"] == 358, ("with an odd count the last card takes the full row", result)
+    assert result["1000-2"]["columns"] == 4, result
+
+
+def check_section_cards_title_size(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const link = [...document.querySelectorAll("link[rel=stylesheet]")].find(l => l.getAttribute("href").endsWith("clanker-ui.css"))
+          const href = link.getAttribute("href")
+          const card = () => h("div", { "data-slot": "card" },
+            h("div", { "data-slot": "card-header" }, h("div", { "data-slot": "card-description" }, "Revenue"), h("div", { "data-slot": "card-title" }, "1,234")),
+            h("div", { "data-slot": "card-footer" }, h("div", { "data-slot": "card-description" }, "Last 6 months")))
+          const bad = []
+          let checked = 0
+          for (const style of ["", "-sera", "-vega"]) {
+            if (style) {
+              const loaded = new Promise(r => link.addEventListener("load", r, { once: true }))
+              link.setAttribute("href", href.replace("clanker-ui.css", `clanker-ui${style}.css`))
+              await loaded
+            }
+            for (const width of [249, 250, 515, 516, 781, 782, 1047, 1048, 1200]) {
+              for (const [count, min] of [[4, false], [3, false], [3, true]]) {
+                const grid = h("div", { "data-slot": "section-cards", ...(min ? { "data-min-columns": "2" } : {}) }, Array.from({ length: count }, card))
+                const host = h("div", { style: { width: width + "px" } }, grid)
+                document.body.prepend(host)
+                for (const c of grid.children) {
+                  const w = c.getBoundingClientRect().width
+                  const size = parseFloat(getComputedStyle(c.querySelector('[data-slot="card-title"]')).fontSize)
+                  checked++
+                  if (size !== (w >= 249.9 ? 30 : 24)) bad.push([style || "nova", width, count, min, Math.round(w * 10) / 10, size])
+                }
+                host.remove()
+              }
+            }
+          }
+          if (link.getAttribute("href") !== href) {
+            const loaded = new Promise(r => link.addEventListener("load", r, { once: true }))
+            link.setAttribute("href", href)
+            await loaded
+          }
+          return { bad, checked }
+        }"""
+    )
+    assert result["checked"] > 200 and result["bad"] == [], ("the value is 30 px exactly when the card is at least 250 px wide, in every style", result["bad"][:10])

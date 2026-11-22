@@ -841,6 +841,25 @@ def check_chart_scale(t):
     assert result == [True, True], f"200,000 rows: {result}"
 
 
+def check_chart_tick_end(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const days = Array.from({ length: 10 }, (_, i) => ({ d: `2026-11-${String(i + 1).padStart(2, "0")}`, v: i + 1 }))
+          const read = o => {
+            const c = make(days, { x: "d", ...o }, 390)
+            const out = ticks(c.svg, "category").map(e => e.textContent)
+            c.box.remove()
+            return out
+          }
+          return { line: read({ type: "line" }), bar: read({ type: "bar" }), horizontal: read({ type: "bar", horizontal: true, height: 120 }) }
+        }"""
+    )
+    for kind, labels in result.items():
+        assert labels[-1] == "Nov 10" and len(labels) < 10, (kind, labels)
+
+
 def check_chart_rtl(t):
     page = t.page
     result = page.evaluate(
@@ -972,6 +991,35 @@ def check_chart_locale(t):
     assert result == {"chart": "1,234", "stat": "12.3K"}, f"invalid <html lang>: {result}"
 
 
+def check_chart_tick_format(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const read = (rows, o) => {
+            const c = make(rows, { type: "bar", x: "m", ...o })
+            const out = ticks(c.svg, "value").map(e => e.textContent)
+            c.box.remove()
+            return out
+          }
+          const small = [{ m: "a", v: 1.25 }, { m: "b", v: 0.5 }]
+          const big = [{ m: "a", v: 2500 }, { m: "b", v: 500 }]
+          return {
+            digits: read(small, { format: { maximumFractionDigits: 1 }, tickFormat: { maximumFractionDigits: 2 } }),
+            merged: read(small, { format: { style: "currency", currency: "EUR" }, tickFormat: { minimumFractionDigits: 0 } }),
+            compact: read(big, { tickFormat: { style: "percent" } }),
+            standard: read(big, { tickFormat: { notation: "standard" } }),
+            whole: read(big, { tickFormat: { maximumFractionDigits: 0 } }),
+          }
+        }"""
+    )
+    assert result["digits"] == ["0", "0.25", "0.5", "0.75", "1", "1.25"], result
+    assert result["merged"][-1] == "€1.25" and result["merged"][0] == "€0", result
+    assert result["compact"][-1] == "250K%", result
+    assert result["standard"][-1] == "2,500", result
+    assert result["whole"][-1].endswith("K") and not any("." in v for v in result["whole"]), ("the tickFormat digits stay on compact ticks", result["whole"])
+
+
 def check_chart_colors(t):
     result = t.page.evaluate(
         """async () => {
@@ -1046,6 +1094,113 @@ def check_chart_marks(t):
     assert result["gap"] == [["4", 8]], f"isolated point between gaps: {result}"
     assert result["spark"] == [True], f"one-point sparkline: {result}"
     assert result["empty"] == "Pie chart. All series are hidden.", f"pie with every slice hidden: {result}"
+
+
+def check_chart_bar_labels(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const read = (rows, width, height = 240) => {
+            const c = make(rows, { type: "bar", x: "d", labels: true, height }, width)
+            const svg = c.svg.getBoundingClientRect()
+            const rect = e => e.getBoundingClientRect()
+            const labels = [...c.svg.querySelectorAll('text[data-part="label"]')]
+            const bars = [...c.svg.querySelectorAll('[data-part="bar"]')].map(rect)
+            const axis = ticks(c.svg, "category").map(rect)
+            const hit = (a, b) => a.left < b.right - 0.5 && a.right > b.left + 0.5 && a.top < b.bottom - 0.5 && a.bottom > b.top + 0.5
+            const out = {
+              count: labels.length,
+              bars: bars.length,
+              turned: labels.filter(l => l.hasAttribute("transform")).length,
+              inside: labels.every(l => { const r = rect(l); return r.top >= svg.top - 0.5 && r.bottom <= svg.bottom + 0.5 && r.left >= svg.left - 0.5 && r.right <= svg.right + 0.5 }),
+              clear: labels.every(l => !bars.some(b => hit(rect(l), b)) && !axis.some(a => hit(rect(l), a))),
+              apart: labels.every((l, i) => labels.every((m, j) => i <= j || !hit(rect(l), rect(m)))),
+            }
+            c.box.remove()
+            return out
+          }
+          const days = Array.from({ length: 14 }, (_, i) => ({ d: `Nov ${i + 1}`, v: 1000 + i * 137 }))
+          const signs = Array.from({ length: 10 }, (_, i) => ({ d: `M${i + 1}`, v: (i % 2 ? -1 : 1) * (12000 + i * 3137) }))
+          const huge = days.map(r => ({ ...r, v: r.v * 1234567 }))
+          const crowd = Array.from({ length: 24 }, (_, i) => ({ d: `D${i + 1}`, v: 1000 + i * 137 }))
+          return { narrow: read(days, 390), wide: read(days, 1000), signs: read(signs, 390), short: read(huge, 390, 160), crowd: read(crowd, 390) }
+        }"""
+    )
+    narrow, wide, signs, short, crowd = result["narrow"], result["wide"], result["signs"], result["short"], result["crowd"]
+    assert narrow["count"] == narrow["bars"] == 14 and narrow["turned"] == 14, ("labels that do not fit turn instead of vanishing", narrow)
+    assert wide["count"] == 14 and wide["turned"] == 0, ("labels that fit stay level", wide)
+    assert signs["count"] == 10 and signs["turned"] == 10, signs
+    assert short["turned"] == 0 and short["count"] < short["bars"], ("turned labels that need more than half the plot height are left out", short)
+    assert crowd["turned"] == 0, ("bars thinner than 16 px do not turn their labels", crowd)
+    for r in (narrow, wide, signs, short, crowd):
+        assert r["inside"] and r["clear"] and r["apart"], ("labels stay in the chart, off the bars and the axis, and apart", r)
+
+
+def check_chart_dashed(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const rows = [{ m: "a", plan: 3, actual: 2 }, { m: "b", plan: 4, actual: 3 }, { m: "c", plan: 5, actual: null }]
+          const out = {}
+          for (const type of ["line", "area"]) {
+            const c = make(rows, { type, x: "m", dashed: ["plan"], dots: "last" })
+            const dash = k => getComputedStyle(c.svg.querySelector(`[data-key="${k}"] [data-part="line"]`)).strokeDasharray
+            const legend = k => getComputedStyle(c.box.querySelector(`[data-slot="chart-legend-item"][data-key="${k}"] [data-slot="chart-legend-indicator"]`)).borderTopStyle
+            const dots = k => [...c.svg.querySelectorAll(`[data-key="${k}"] [data-part="dot"]`)].map(d => [+d.getAttribute("cx"), d.hasAttribute("data-accent")])
+            const ends = k => [...c.svg.querySelectorAll(`[data-key="${k}"] [data-part="line"]`)].map(l => +l.getAttribute("d").split(/[MCL]/).at(-1).split(",").at(-2))
+            out[type] = { plan: dash("plan"), actual: dash("actual"), legend: [legend("plan"), legend("actual")], dots: [dots("plan"), dots("actual")], ends: [ends("plan"), ends("actual")] }
+            c.box.remove()
+          }
+          const radar = make(rows, { type: "radar", x: "m", dots: "last" })
+          const radarDots = radar.svg.querySelectorAll('[data-part="dot"]').length
+          radar.box.remove()
+          const attempt = o => { const b = document.createElement("div"); document.body.append(b); try { chart(b, rows, { x: "m", type: "line", ...o }); return "ok" } catch (e) { return e.name } finally { b.remove() } }
+          return { kinds: out, radarDots, errors: [attempt({ dots: "all" }), attempt({ dots: 1 }), attempt({ dashed: "plan" }), attempt({ dashed: [1] }), attempt({ dashed: true, dots: false })] }
+        }"""
+    )
+    assert result["radarDots"] == 0, ("dots: \"last\" draws no radar dots", result["radarDots"])
+    assert result["errors"] == ["TypeError", "TypeError", "TypeError", "TypeError", "ok"], result["errors"]
+    result = result["kinds"]
+    for kind, r in result.items():
+        assert r["plan"] not in ("none", "", "1px") and r["actual"] == "none", (kind, r)
+        plan, actual = r["dots"]
+        assert len(plan) == 1 and len(actual) == 1 and not plan[0][1] and not actual[0][1], ("one plain dot per series", kind, r)
+        assert abs(plan[0][0] - r["ends"][0][0]) < 1 and abs(actual[0][0] - r["ends"][1][0]) < 1, ("the dot sits on the last point", kind, r)
+    assert result["line"]["legend"] == ["dashed", "solid"], result["line"]
+
+
+def check_chart_shapes(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const rows = [{ m: "a", x: 3, y: 2, z: 1 }, { m: "b", x: 4, y: 3, z: 2 }]
+          const out = {}
+          for (const type of ["line", "area"]) {
+            const c = make(rows, { type, x: "m", dots: true, shapes: { y: "square", z: "diamond" } })
+            c.svg.focus()
+            const dots = sel => [...c.svg.querySelectorAll(sel)].map(d => [d.tagName, d.dataset.shape ?? null, Math.round(d.getBBox().width)])
+            out[type] = {
+              dots: ["x", "y", "z"].map(k => dots(`[data-key="${k}"] [data-part="dot"]`)),
+              active: dots('[data-part="active"] [data-part="dot"]'),
+              legend: [...c.box.querySelectorAll('[data-slot="chart-legend-indicator"]')].map(i => [i.dataset.shape, getComputedStyle(i).borderRadius]),
+            }
+            c.box.remove()
+          }
+          const attempt = o => { const b = document.createElement("div"); document.body.append(b); try { chart(b, rows, { x: "m", type: "line", ...o }); return "ok" } catch (e) { return e.name } finally { b.remove() } }
+          out.errors = [attempt({ shapes: { x: "star" } }), attempt({ shapes: "square" }), attempt({ shapes: ["square"] }), attempt({ shapes: { x: "square" } })]
+          return out
+        }"""
+    )
+    for kind in ("line", "area"):
+        r = result[kind]
+        assert r["dots"] == [[["circle", None, 8]] * 2, [["rect", "square", 7]] * 2, [["path", "diamond", 10]] * 2], (kind, r["dots"])
+        assert [(d[0], d[1]) for d in r["active"]] == [("circle", None), ("rect", "square"), ("path", "diamond")], (kind, r["active"])
+    assert [s for s, _ in result["line"]["legend"]] == ["line", "square", "diamond"], result["line"]
+    assert [s for s, _ in result["area"]["legend"]] == ["rect", "square", "diamond"] and result["area"]["legend"][1][1] == "0px", result["area"]
+    assert result["errors"] == ["TypeError", "TypeError", "TypeError", "ok"], result["errors"]
 
 
 def check_chart_lifecycle(t):
@@ -1309,6 +1464,75 @@ def check_chart_references(t):
     assert result["fixed"] == ["10", 0], ("a fixed domain hides a reference outside it", result["fixed"])
     assert result["horizontal"][0] == result["horizontal"][1] and result["horizontal"][2], ("a vertical reference line in a horizontal bar chart", result["horizontal"])
     assert result["errors"] == ["TypeError"] * 6 + ["ok"], result["errors"]
+
+
+def check_chart_references_x(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const out = {}
+          const line = (svg) => [...svg.querySelectorAll('[data-part="reference-line"]')].map(l => ["x1", "x2", "y1", "y2"].map(a => +l.getAttribute(a)))
+          const years = Array.from({ length: 15 }, (_, i) => ({ year: String(i + 1), cash: -5000 + i * 620 }))
+          let c = make(years, { type: "line", x: "year", references: [{ x: 9, label: "Payback" }, { x: "99", label: "Gone" }] })
+          const plot = plotOf(c.svg)
+          const tick = ticks(c.svg, "category").find(e => e.textContent === "9")
+          const label = c.svg.querySelector('[data-part="reference-label"]')
+          out.line = {
+            lines: line(c.svg),
+            tick: tick && +tick.getAttribute("x"),
+            plot: [plot.y0 + 0.5, plot.y1 - 0.5],
+            label: label && [label.textContent, inside(boxOf(label), plot)],
+            values: ticks(c.svg, "value").map(e => e.textContent),
+            summary: c.svg.getAttribute("aria-label"),
+            table: [...c.box.querySelectorAll('[data-slot="chart-table"] table[data-part="references"] tr')].map(r => [...r.children].map(e => e.textContent)),
+          }
+          c.box.remove()
+          c = make(years, { type: "line", x: "year" })
+          out.line.plain = ticks(c.svg, "value").map(e => e.textContent)
+          c.box.remove()
+          const months = Array.from({ length: 6 }, (_, i) => ({ m: `M${i + 1}`, v: 100 + i * 20 }))
+          c = make(months, { type: "bar", x: "m", references: [{ x: "M3" }] })
+          const bar = c.svg.querySelectorAll('[data-part="bar"]')[2].getBBox()
+          out.bar = [line(c.svg), bar.x + bar.width / 2]
+          c.box.remove()
+          c = make(months, { type: "bar", x: "m", horizontal: true, references: [{ x: "M2" }] })
+          const row = c.svg.querySelectorAll('[data-part="bar"]')[1].getBBox()
+          out.horizontal = [line(c.svg), row.y + row.height / 2]
+          c.box.remove()
+          const days = [{ d: "2026-09-01", v: 3 }, { d: "2026-09-21", v: 5 }, { d: "2026-11-10", v: 4 }]
+          c = make(days, { type: "area", x: "d", scale: "time", references: [{ x: "2026-10-01", label: "Launch" }, { x: new Date(2027, 0, 1) }] })
+          out.time = { lines: line(c.svg), plot: [plotOf(c.svg).x0, plotOf(c.svg).x1], summary: c.svg.getAttribute("aria-label") }
+          c.box.remove()
+          const attempt = o => { const b = document.createElement("div"); document.body.append(b); try { chart(b, days, { x: "d", type: "line", ...o }); return "ok" } catch (e) { return e.name } finally { b.remove() } }
+          const calls = []
+          c = make(days, { type: "area", x: "d", scale: "time", labelFormat: (v, i) => { calls.push(i); return "Day " + i }, references: [{ x: "2026-10-01", label: "Launch" }] })
+          out.labelFormat = { calls: calls.filter(i => !(i >= 0)).length, summary: c.svg.getAttribute("aria-label") }
+          c.box.remove()
+          out.errors = [attempt({ references: [{ x: {} }] }), attempt({ references: [{ x: NaN }] }), attempt({ scale: "time", references: [{ x: "soon" }] }), attempt({ references: [{ x: "soon" }] }), attempt({ references: [{ x: new Date(2026, 8, 1) }] })]
+          return out
+        }"""
+    )
+    line = result["line"]
+    assert len(line["lines"]) == 1, ("an x that matches no category draws nothing", line)
+    x1, x2, y1, y2 = line["lines"][0]
+    assert x1 == x2 and abs(x1 - line["tick"]) <= 1 and abs(y1 - line["plot"][0]) <= 1 and abs(y2 - line["plot"][1]) <= 1, ("a vertical line at the category, across the plot", line)
+    assert line["label"] == ["Payback", True], line
+    assert line["values"] == line["plain"], ("an x reference does not grow the value axis", line)
+    assert line["summary"].endswith("Payback at 9. Gone at 99."), line["summary"]
+    assert line["table"] == [["Reference", "Value"], ["Payback", "9"], ["Gone", "99"]], line["table"]
+    (bx1, bx2, _, _), = result["bar"][0]
+    assert bx1 == bx2 and abs(bx1 - result["bar"][1]) <= 1, ("the line sits at the band center", result["bar"])
+    (_, _, hy1, hy2), = result["horizontal"][0]
+    assert hy1 == hy2 and abs(hy1 - result["horizontal"][1]) <= 1, ("a horizontal line in a horizontal bar chart", result["horizontal"])
+    time = result["time"]
+    (tx, _, _, _), = time["lines"]
+    p0, p1 = time["plot"]
+    want = p1 - (p1 - p0) * 30 / 70 if t.rtl else p0 + (p1 - p0) * 30 / 70
+    assert abs(tx - want) <= 2, ("the line sits at its date; a date past the data draws nothing", time)
+    assert "Launch at Oct 1, 2026." in time["summary"], time["summary"]
+    assert result["labelFormat"]["calls"] == 0 and "Launch at Oct 1, 2026." in result["labelFormat"]["summary"], ("labelFormat gets only row indexes; a time reference uses the date format", result["labelFormat"])
+    assert result["errors"] == ["TypeError", "TypeError", "TypeError", "ok", "ok"], result["errors"]
 
 
 def check_chart_time_axis(t):

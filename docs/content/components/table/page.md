@@ -70,7 +70,7 @@ A table showing actions for each row using a [Dropdown Menu](/docs/components/dr
 
 ## Sticky Header
 
-A kit extension: `data-sticky-header` on `table-container` keeps the header row in view while the page scrolls past the table. The kit measures the table: when it fits its box, the box (and a `card` around it) clips with `overflow: clip` instead of scrolling, so the header sticks to the page, not to the box. A wider table keeps its sideways scroll and a normal header. The header gets the page or the card background. Below a sticky site header, set `--table-header-top` on the container to its height (`--table-header-top: var(--header-height, 3rem)`).
+A kit extension: `data-sticky-header` on `table-container` keeps the header row in view while the page scrolls past the table. The kit measures the table: when it fits its box, the box (and a `card` around it) clips with `overflow: clip` instead of scrolling, so the header sticks to the page, not to the box. A wider table keeps its sideways scroll and a normal header. The header gets the page or the card background. After a `site-header` (in a later sibling of it, not in a dialog or a `scroll-area-viewport`), the header row sticks below it: the default offset is `--header-height` (3rem, or the height of a large site-header). Set `--table-header-top` on the container for any other offset, and `--table-header-top: 0px` for a table in its own scroll pane (a `main` with `overflow: auto`).
 
 The header sticks to the nearest scroll container. In an app that is the page; in this preview it is a 16rem box.
 
@@ -111,7 +111,7 @@ The `table-container` part is a `div` around the table. It scrolls the table hor
 | --- | --- |
 | `data-fits` | Set by the kit with `data-sticky-header`: the table fits its box, so the header sticks. |
 
-Custom properties: `--table-header-top` (the sticky header offset, default `0px`) and `--table-label-width` (the label column of stacked rows, default `7rem`).
+Custom properties: `--table-header-top` (the sticky header offset, default `0px`, or the `site-header` height after one) and `--table-label-width` (the label column of stacked rows, default `7rem`).
 
 ### Table
 

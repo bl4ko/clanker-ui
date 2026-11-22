@@ -683,7 +683,9 @@ export function trapFocus(container) {
 export function saveFocus(trigger) {
   if (trigger?.isConnected && document.activeElement !== trigger) trigger.focus({ preventScroll: true, focusVisible: focusKeyboard })
   const el = trigger?.isConnected && trigger.disabled ? trigger : document.activeElement
+  const [popup, owner] = [...opened].findLast(([p, state]) => state.restore && p.contains(el)) ?? []
   const restore = visible => {
+    if (owner && !opened.has(popup) && (closing.has(popup) || !el.checkVisibility())) return owner.restore(visible)
     if (!el || el === document.body || !el.isConnected || typeof el.focus !== "function") return
     visible ??= focusKeyboard
     if (document.activeElement === el) {

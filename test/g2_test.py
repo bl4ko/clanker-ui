@@ -2967,11 +2967,14 @@ def check_menu_item_opens_dialog(t):
     page = t.page
     page.evaluate(
         """async () => {
-          const { h } = await import("/clanker-ui.js")
+          const { h, dialogOpen } = await import("/clanker-ui.js")
+          const code = h("div", { "data-slot": "dropdown-menu-item", id: "md-code" }, "Rename")
+          code.addEventListener("click", () => dialogOpen("md-dialog"))
           const menu = h("div", { "data-slot": "dropdown-menu" },
             h("button", { type: "button", "data-dropdown-menu-trigger": "", id: "md-trigger" }, "Actions"),
             h("div", { "data-slot": "dropdown-menu-content" },
               h("div", { "data-slot": "dropdown-menu-item", "data-dialog-trigger": "md-dialog", id: "md-item" }, "Delete"),
+              code,
               ["New Tab", "New Window"].map(v => h("div", { "data-slot": "dropdown-menu-item" }, v))))
           const dialog = h("div", { "data-slot": "dialog", id: "md-dialog" },
             h("dialog", { "data-slot": "dialog-content" }, h("h2", { "data-slot": "dialog-title" }, "Confirm"), h("button", { type: "button", "data-dialog-close": "" }, "Cancel")))
@@ -2982,27 +2985,50 @@ def check_menu_item_opens_dialog(t):
     )
     trigger = page.locator("#md-trigger")
     content = page.locator("#md-dialog dialog")
-    for how in ("keyboard", "mouse"):
+    for how, item in (("keyboard", "md-item"), ("mouse", "md-item"), ("keyboard", "md-code"), ("mouse", "md-code")):
         if how == "keyboard":
             trigger.focus()
             page.keyboard.press("Enter")
             wait(page, "() => document.activeElement.id === 'md-item'")
+            if item == "md-code":
+                page.keyboard.press("ArrowDown")
             page.keyboard.press("Enter")
         else:
             trigger.click()
-            page.locator("#md-item").click()
+            page.locator(f"#{item}").click()
         wait(page, "() => document.querySelector('#md-dialog dialog').open")
         page.keyboard.press("Escape")
         wait(page, "() => !document.querySelector('#md-dialog dialog').open")
-        assert page.evaluate("document.activeElement.id") == "md-trigger", (how, page.evaluate("document.activeElement.tagName"))
+        assert page.evaluate("document.activeElement.id") == "md-trigger", (how, item, page.evaluate("document.activeElement.tagName"))
     assert content.get_attribute("data-state") == "closed"
     trigger.focus()
     page.keyboard.press("ArrowDown")
     wait(page, "() => document.activeElement.id === 'md-item'")
     page.keyboard.type("new w", delay=40)
     assert active(page) == "New Window"
-    assert page.evaluate("window.__mdSelect ?? []") == ["Delete", "Delete"]
+    assert page.evaluate("window.__mdSelect ?? []") == ["Delete", "Delete", "Rename", "Rename"]
     page.keyboard.press("Escape")
+    moved = page.evaluate(
+        """async () => {
+          const { h, show, hide, saveFocus } = await import("/clanker-ui.js")
+          const opener = h("button", { type: "button", id: "sf-opener" }, "Open")
+          const item = h("button", { type: "button" }, "Item")
+          const pop = h("div", { hidden: "" }, item)
+          document.body.append(opener, pop)
+          opener.focus()
+          show(pop, { trigger: opener })
+          item.focus()
+          const back = saveFocus()
+          item.hidden = true
+          back(false)
+          const id = document.activeElement.id
+          hide(pop, { restoreFocus: false })
+          opener.remove()
+          pop.remove()
+          return id
+        }"""
+    )
+    assert moved != "sf-opener", "a hidden element in a popup that is still open does not send focus to the popup trigger"
 
 
 def check_toast_in_modal(t):
@@ -4692,6 +4718,45 @@ G2_OVERLAY_FORMS = """async () => {
   document.body.append(dialog, sheet, alert)
   await new Promise(r => setTimeout(r, 30))
 }"""
+
+
+def check_overlay_title_close(t):
+    t.a11y()
+    page = t.page
+    title = " ".join(["Edit"] * 40)
+    page.evaluate(
+        """async title => {
+          const { h } = await import("/clanker-ui.js")
+          for (const kind of ["dialog", "sheet"]) {
+            document.body.append(h("div", { "data-slot": kind, id: `fx-title-${kind}` },
+              h("button", { type: "button", "data-slot": "button", [`data-${kind}-trigger`]: "" }, "Open"),
+              h("dialog", { "data-slot": `${kind}-content` }, h("div", { "data-slot": `${kind}-header` }, h("h2", { "data-slot": `${kind}-title` }, title), h("p", { "data-slot": `${kind}-description` }, "Details.")))))
+          }
+          await new Promise(r => setTimeout(r, 0))
+        }""",
+        title,
+    )
+    for kind in ("dialog", "sheet"):
+        page.evaluate("async id => { const { dialogOpen } = await import('/clanker-ui.js'); dialogOpen(id) }", f"fx-title-{kind}")
+        wait(page, f"() => document.querySelector('#fx-title-{kind} dialog').open")
+        t.settle()
+        hit = page.evaluate(
+            """kind => {
+              const c = document.querySelector(`#fx-title-${kind} dialog`), x = c.querySelector(`:scope > [data-slot=${kind}-close]`).getBoundingClientRect()
+              const t = c.querySelector(`[data-slot=${kind}-title]`), r = t.getBoundingClientRect()
+              const range = document.createRange()
+              range.selectNodeContents(t)
+              const lines = [...range.getClientRects()].filter(l => l.left < x.right && l.right > x.left && l.top < x.bottom && l.bottom > x.top).length
+              const pad = parseFloat(getComputedStyle(t).paddingInlineEnd)
+              const under = getComputedStyle(t).direction === "rtl" ? r.left + pad < x.right : r.right - pad > x.left
+              return lines + (r.top < x.bottom && under ? 1 : 0)
+            }""",
+            kind,
+        )
+        assert hit == 0, (kind, "no title line runs under the close button", hit)
+        page.keyboard.press("Escape")
+        wait(page, f"() => !document.querySelector('#fx-title-{kind} dialog').open")
+    page.evaluate("() => ['fx-title-dialog', 'fx-title-sheet'].forEach(id => document.getElementById(id).remove())")
 
 
 def check_overlay_form_layout(t):

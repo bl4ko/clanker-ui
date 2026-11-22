@@ -233,7 +233,7 @@ var catalogSameAs = map[string]string{"sonner": "toast"}
 
 var catalogDocsPage = map[string]string{"theme": "theme-switch"}
 
-var catalogOptionAttrs = []string{"data-variant", "data-size", "data-orientation", "data-side", "data-align", "data-spacing"}
+var catalogOptionAttrs = []string{"data-variant", "data-size", "data-orientation", "data-side", "data-align", "data-spacing", "data-min-columns"}
 
 var catalogGeneric = map[string]bool{
 	"id": true, "class": true, "role": true, "type": true, "for": true, "href": true, "src": true, "alt": true, "title": true,

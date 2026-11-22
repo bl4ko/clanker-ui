@@ -11,6 +11,7 @@ const TYPES = ["area", "bar", "line", "pie", "donut", "radar", "radial"]
 const CURVES = ["monotone", "linear", "step"]
 const INDICATORS = ["line", "dot", "dashed"]
 const SCALES = ["category", "time"]
+const SHAPES = ["circle", "square", "diamond"]
 const DAY = 864e5
 const TIME_STEPS = [["minute", 1, 6e4], ["minute", 5, 3e5], ["minute", 15, 9e5], ["minute", 30, 18e5], ["hour", 1, 36e5], ["hour", 3, 108e5], ["hour", 6, 216e5], ["hour", 12, 432e5], ["day", 1, DAY], ["day", 2, 2 * DAY], ["week", 1, 7 * DAY], ["month", 1, 30 * DAY], ["month", 3, 91 * DAY], ["month", 6, 182 * DAY], ...[1, 2, 5, 10, 20, 50, 100].map(n => ["year", n, n * 365 * DAY])]
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/
@@ -159,13 +160,16 @@ function chartIngest(s, data, options) {
   if (![undefined, false, true, "zero"].includes(o.tooltip?.hideEmpty)) throw new TypeError('clanker-ui chart: tooltip hideEmpty must be true, false, or "zero"')
   if (o.domain != null && !(Array.isArray(o.domain) && o.domain.every(v => v == null || Number.isFinite(v)))) throw new TypeError("clanker-ui chart: domain must be [min, max] with finite numbers or null")
   const cartesian = ["area", "bar", "line"].includes(o.type ?? "bar")
+  if (![undefined, null, false, true, "last"].includes(o.dots)) throw new TypeError('clanker-ui chart: dots must be true, false, or "last"')
+  if (o.dashed != null && typeof o.dashed !== "boolean" && !(Array.isArray(o.dashed) && o.dashed.every(k => typeof k === "string"))) throw new TypeError("clanker-ui chart: dashed must be true or a list of keys")
+  if (o.shapes != null && (typeof o.shapes !== "object" || Array.isArray(o.shapes) || Object.values(o.shapes).some(v => !SHAPES.includes(v)))) throw new TypeError(`clanker-ui chart: shapes must map keys to ${SHAPES.join(", ")}`)
   if (!SCALES.includes(o.scale ?? "category")) throw new TypeError(`clanker-ui chart: unknown scale "${o.scale}"`)
   if (o.scale === "time" && o.type !== "line" && o.type !== "area") throw new TypeError('clanker-ui chart: scale "time" needs type "line" or "area"')
   if (o.references != null) {
     if (!Array.isArray(o.references)) throw new TypeError("clanker-ui chart: references must be an array")
     if (o.references.length && !cartesian) throw new TypeError("clanker-ui chart: references need type bar, line, or area")
     for (const r of o.references) {
-      if (!r || typeof r !== "object" || !(Number.isFinite(r.value) || (Number.isFinite(r.from) && Number.isFinite(r.to)))) throw new TypeError("clanker-ui chart: a reference needs a finite value, or a finite from and to")
+      if (!r || typeof r !== "object" || !(r.x !== undefined ? typeof r.x === "string" || Number.isFinite(r.x) || (r.x instanceof Date && !Number.isNaN(r.x.getTime())) : Number.isFinite(r.value) || (Number.isFinite(r.from) && Number.isFinite(r.to)))) throw new TypeError("clanker-ui chart: a reference needs a finite value, a finite from and to, or an x (a category or a date)")
       if (r.position != null && r.position !== "start" && r.position !== "end") throw new TypeError(`clanker-ui chart: unknown reference position "${r.position}"`)
       if (r.tone != null) chartColorValue(r.tone)
     }
@@ -373,7 +377,13 @@ function chartModel(s) {
       const p = clock.parts(t)
       return !p.h && !p.mi && !p.s && !p.ms
     }),
-    references: (o.references ?? []).map(r => ({ ...r, band: !Number.isFinite(r.value), label: r.label == null ? "" : String(r.label), color: r.tone == null ? null : chartColorValue(r.tone) })),
+    references: (o.references ?? []).map(r => {
+      const across = r.x !== undefined
+      const t = across && time ? chartDate(r.x, clock)?.getTime() : null
+      if (t === undefined) throw new TypeError('clanker-ui chart: a reference x on scale "time" needs an ISO date or a Date')
+      const index = across && !time ? rows.findIndex((row, i) => (r.x instanceof Date ? chartDate(row?.[x], clock)?.getTime() === r.x.getTime() : chartCategory(row, x, i) === String(r.x))) : -1
+      return { ...r, across, t, index, band: !across && !Number.isFinite(r.value), label: r.label == null ? "" : String(r.label), color: r.tone == null ? null : chartColorValue(r.tone) }
+    }),
     sparkline: !!o.sparkline,
     expand: o.stack === "expand" && (type === "area" || type === "bar"),
   }
@@ -515,28 +525,30 @@ function chartFormats(s, m) {
   const locale = chartLocale(o)
   const zone = o.timeZone == null ? {} : { timeZone: o.timeZone }
   const base = o.format && typeof o.format === "object" ? o.format : {}
-  const compact = chartCompact(base)
+  const own = o.tickFormat && typeof o.tickFormat === "object" ? o.tickFormat : null
+  const ticks = own ? chartDigits(base, own) : base
+  const compact = own && Object.hasOwn(own, "notation") ? ticks : chartDigits(chartCompact(ticks), own && Object.fromEntries(Object.entries(own).filter(([k]) => k.endsWith("Digits"))))
   const value = typeof o.format === "function" ? v => String(o.format(v)) : v => chartNumber(locale, base).format(v)
   const percent = v => chartNumber(locale, { style: "percent", maximumFractionDigits: 1 }).format(v)
   const tick = (v, max) => {
     if (typeof o.tickFormat === "function") return String(o.tickFormat(v))
     if (m.expand) return chartNumber(locale, { style: "percent", maximumFractionDigits: 0 }).format(v)
-    return chartNumber(locale, max >= 1000 ? compact : base).format(v)
+    return chartNumber(locale, max >= 1000 ? compact : ticks).format(v)
   }
   const raw = i => (m.x == null ? i + 1 : m.rows[i]?.[m.x])
   const name = i => {
     const key = chartCategory(m.rows[i], m.x, i)
     return m.byKey.get(key)?.label ?? chartLabel(m.config, key, key)
   }
-  const date = (i, options) => chartDateFormat(locale, { ...zone, ...options }).format(chartDate(raw(i), m.clock))
+  const date = (v, options) => chartDateFormat(locale, { ...zone, ...options }).format(chartDate(v, m.clock))
   const pick = (f, fallback) => (f && typeof f === "object" ? f : fallback)
   const xTick = i => {
     if (typeof o.xFormat === "function") return String(o.xFormat(raw(i), i))
-    return m.isDate ? date(i, pick(o.xFormat, { month: "short", day: "numeric" })) : name(i)
+    return m.isDate ? date(raw(i), pick(o.xFormat, { month: "short", day: "numeric" })) : name(i)
   }
-  const xLabel = i => {
-    if (typeof o.labelFormat === "function") return String(o.labelFormat(raw(i), i))
-    return m.isDate ? date(i, pick(o.labelFormat, m.dateOnly ? { month: "short", day: "numeric", year: "numeric" } : { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })) : name(i)
+  const xLabel = (i, v = raw(i)) => {
+    if (typeof o.labelFormat === "function" && i >= 0) return String(o.labelFormat(v, i))
+    return m.isDate ? date(v, pick(o.labelFormat, m.dateOnly ? { month: "short", day: "numeric", year: "numeric" } : { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })) : name(i)
   }
   const timeTick = (t, unit) => {
     const d = new Date(t)
@@ -554,7 +566,8 @@ function chartFormats(s, m) {
             : { month: "short", day: "numeric" }
     return chartDateFormat(locale, { ...zone, ...options }).format(d)
   }
-  return { locale, value, percent, tick, xTick, xLabel, timeTick }
+  const xAt = r => (r.index >= 0 ? xLabel(r.index) : r.t != null ? xLabel(-1, r.x) : String(r.x))
+  return { locale, value, percent, tick, xTick, xLabel, xAt, timeTick }
 }
 
 function chartWidth(text, font) {
@@ -795,7 +808,7 @@ function chartCartesian(c) {
   const reversed = c.rtl && !horizontal && !spark
   const stack = m.type === "line" ? false : m.expand ? "expand" : !!o.stack
   const curve = o.curve ?? "monotone"
-  const joined = k => o.connectNulls === true || (Array.isArray(o.connectNulls) && o.connectNulls.includes(k))
+  const joined = k => chartPicked(o.connectNulls, k)
   const n = m.rows.length
   const entity = k => m.byKey.get(k)
   const vals = keys.map(k => m.rows.map(r => chartNum(r?.[k])))
@@ -836,6 +849,7 @@ function chartCartesian(c) {
     hi = 1
   }
   for (const r of m.references) {
+    if (r.across) continue
     for (const v of r.band ? [r.from, r.to] : [r.value]) {
       lo = Math.min(lo, v)
       hi = Math.max(hi, v)
@@ -871,16 +885,23 @@ function chartCartesian(c) {
   const catText = m.time ? [] : m.rows.map((_, i) => f.xTick(i))
   const catW = horizontal && categoryAxis ? Math.min(W * 0.4, catText.reduce((a, t) => Math.max(a, chartWidth(t, font.tick)), 0)) : 0
   const labelText = []
+  let upW = 0
+  let downW = 0
   if (labels) {
     for (let i = 0; i < n; i++) {
-      if (stack) {
-        let total = 0
-        for (const row of vals) total += row[i] ?? 0
-        labelText.push([f.value(total)])
-      } else labelText.push(vals.map(row => (row[i] == null ? "" : f.value(row[i]))))
+      const list = stack ? [vals.reduce((a, row) => a + (row[i] ?? 0), 0)] : vals.map(row => row[i])
+      labelText.push(
+        list.map(v => {
+          if (v == null) return ""
+          const t = f.value(v)
+          if (v < 0) downW = Math.max(downW, chartWidth(t, font.label))
+          else upW = Math.max(upW, chartWidth(t, font.label))
+          return t
+        }),
+      )
     }
   }
-  const labelW = labels ? labelText.flat().reduce((a, t) => Math.max(a, chartWidth(t, font.label)), 0) : 0
+  const labelW = Math.max(upW, downW)
   const pad = spark ? 6 : 0
   let top = spark ? pad : 8
   let right = spark ? pad : 12
@@ -897,6 +918,20 @@ function chartCartesian(c) {
     if (labels && !bar) right = Math.max(right, labelW / 2 + 4)
   }
   if (reversed) [left, right] = [right, left]
+  const group = stack ? 1 : Math.max(1, keys.length)
+  const thickOf = b => Math.max(1, Math.min(o.barSize ?? BAR_MAX, (b * 0.8 - (group - 1) * GAP) / group))
+  const slotOf = b => (group > 1 ? thickOf(b) + GAP * 4 : b)
+  let turn = false
+  let below = 0
+  if (bar && labels && !horizontal) {
+    const slot = slotOf(Math.max(1, W - left - right) / Math.max(1, n))
+    turn = slot >= 16 && labelW > slot - 2 && Math.max(0, upW + 12 - top) + (downW && downW + 6) <= H / 2
+    if (turn) {
+      top = Math.max(top, upW + 12)
+      below = downW && downW + 6
+      bottom += below
+    }
+  }
   const pl = left
   const pt = top
   const pw = Math.max(1, W - left - right)
@@ -930,7 +965,7 @@ function chartCartesian(c) {
     const p = Math.round(v2p(0)) + 0.5
     nodes.push(horizontal ? svg("line", { "data-part": "baseline", x1: p, x2: p, y1: pt, y2: pt + ph }) : svg("line", { "data-part": "baseline", x1: pl, x2: pl + pw, y1: p, y2: p }))
   }
-  const refs = m.references.length ? chartReferences(c, nodes, { pl, pt, pw, ph, v2p, lo: scale.lo, hi: scale.hi, horizontal, labels: !spark }) : null
+  const refs = m.references.length ? chartReferences(c, nodes, { pl, pt, pw, ph, v2p, lo: scale.lo, hi: scale.hi, horizontal, labels: !spark, at: r => (m.time ? (r.t >= t0 && r.t <= t1 ? tpos(r.t) : null) : r.index >= 0 ? pos(r.index) : null) }) : null
   if (valueAxis) {
     nodes.push(
       svg(
@@ -950,15 +985,15 @@ function chartCartesian(c) {
       for (const tk of chartTimeAxis(c, t0, t1, tpos, clen)) out.push(svg("text", { x: chartRound(tk.x), y: chartRound(pt + ph + 20), "text-anchor": "middle" }, tk.text))
     } else if (horizontal) {
       const step = Math.max(1, Math.ceil(16 / band))
-      for (let i = 0; i < n; i += step) out.push(svg("text", { x: chartRound(pl - 8), y: chartRound(pos(i)), dy: "0.35em", "text-anchor": "end" }, chartFit(catText[i], catW, font.tick)))
+      for (let i = (n - 1) % step; i < n; i += step) out.push(svg("text", { x: chartRound(pl - 8), y: chartRound(pos(i)), dy: "0.35em", "text-anchor": "end" }, chartFit(catText[i], catW, font.tick)))
     } else {
       const widths = catText.map(t => chartWidth(t, font.tick))
       const need = widths.reduce((a, w) => Math.max(a, w), 0) + (m.isDate ? 24 : 10)
       const spacing = bar ? band : n > 1 ? clen / (n - 1) : clen
       const step = Math.max(1, Math.ceil(need / spacing))
-      for (let i = 0; i < n; i += step) {
+      for (let i = (n - 1) % step; i < n; i += step) {
         const w = widths[i]
-        out.push(svg("text", { x: chartRound(Math.min(Math.max(pos(i), w / 2), W - w / 2)), y: chartRound(pt + ph + 20), "text-anchor": "middle" }, catText[i]))
+        out.push(svg("text", { x: chartRound(Math.min(Math.max(pos(i), w / 2), W - w / 2)), y: chartRound(pt + ph + below + 20), "text-anchor": "middle" }, catText[i]))
       }
     }
     nodes.push(svg("g", { "data-part": "axis", "data-axis": "category" }, out))
@@ -969,8 +1004,7 @@ function chartCartesian(c) {
   const cursor = svg("rect", { "data-part": "cursor", x: 0, y: 0, width: 0, height: 0 })
   const crosshair = svg("line", { "data-part": "crosshair", x1: 0, x2: 0, y1: pt, y2: pt + ph })
   const active = svg("g", { "data-part": "active" })
-  const group = stack ? 1 : Math.max(1, keys.length)
-  const thick = Math.max(1, Math.min(o.barSize ?? BAR_MAX, (band * 0.8 - (group - 1) * GAP) / group))
+  const thick = thickOf(band)
   const gw = group * thick + (group - 1) * GAP
   if (bar) {
     nodes.push(cursor)
@@ -1048,9 +1082,11 @@ function chartCartesian(c) {
               else if (w + 12 <= mark.w) out.push(svg("text", { x: chartRound(mark.x + mark.w - 6), y, dy: "0.35em", "text-anchor": "end", "data-part": "label", "data-ink": c.ink(entity(keys[k]).color) }, text))
             } else if (mark.x - 6 - w >= 0) out.push(svg("text", { x: chartRound(mark.x - 6), y, dy: "0.35em", "text-anchor": "end", "data-part": "label" }, text))
           } else {
-            if (w > (group > 1 ? thick + GAP * 4 : band) - 2) continue
             const x = chartRound(mark.x + mark.w / 2)
-            out.push(svg("text", { x, y: chartRound(neg ? mark.y + mark.h + 16 : mark.y - 6), "text-anchor": "middle", "data-part": "label" }, text))
+            if (turn) {
+              const y = chartRound(neg ? mark.y + mark.h + 6 : mark.y - 6)
+              out.push(svg("text", { x, y, dy: "0.35em", "text-anchor": neg ? "end" : "start", transform: `rotate(-90 ${x} ${y})`, "data-part": "label" }, text))
+            } else if (w <= slotOf(band) - 2) out.push(svg("text", { x, y: chartRound(neg ? mark.y + mark.h + 16 : mark.y - 6), "text-anchor": "middle", "data-part": "label" }, text))
           }
         }
       }
@@ -1098,16 +1134,18 @@ function chartCartesian(c) {
     keys.forEach((key, k) => {
       const e = entity(key)
       const g = svg("g", { "data-part": "series", "data-key": key, style: { "--c": e.color } })
-      const dots = o.dots && !spark
-      const last = spark ? pts[k].findLast(Boolean) : null
+      const dots = !!o.dots && o.dots !== "last" && !spark
+      const last = spark || o.dots === "last" ? pts[k].findLast(Boolean) : null
+      const dashed = chartPicked(o.dashed, key)
+      const shape = chartShape(o, key)
       for (const seg of chartSegments(joined(key) ? pts[k].filter(Boolean) : pts[k])) {
-        const el = svg("path", { d: chartCurve(seg, curve), "data-part": "line", pathLength: "1" })
+        const el = svg("path", { d: chartCurve(seg, curve), "data-part": "line", pathLength: dashed ? null : "1", "data-dashed": dashed })
         if (spark) el.setAttribute("data-muted", "")
         g.append(el)
-        if (seg.length === 1 && !dots && seg[0] !== last) g.append(svg("circle", { cx: chartRound(seg[0].x), cy: chartRound(seg[0].y), r: 4, "data-part": "dot", "data-muted": spark }))
+        if (seg.length === 1 && !dots && seg[0] !== last) g.append(chartDot(seg[0], 4, shape, { "data-muted": spark }))
       }
-      if (dots) for (const p of pts[k]) if (p) g.append(svg("circle", { cx: chartRound(p.x), cy: chartRound(p.y), r: 4, "data-part": "dot" }))
-      if (last) g.append(svg("circle", { cx: chartRound(last.x), cy: chartRound(last.y), r: 4, "data-part": "dot", "data-accent": "" }))
+      if (dots) for (const p of pts[k]) if (p) g.append(chartDot(p, 4, shape))
+      if (last) g.append(chartDot(last, 4, shape, { "data-accent": spark }))
       marksGroup.append(g)
     })
     nodes.push(marksGroup)
@@ -1236,11 +1274,33 @@ function chartCartesian(c) {
       crosshair.setAttribute("data-active", "")
       keys.forEach((key, k) => {
         const p = pts[k][a.index]
-        if (p) active.append(svg("circle", { cx: chartRound(p.x), cy: chartRound(p.y), r: 5, "data-part": "dot", "data-active": "", style: { "--c": entity(key).color } }))
+        if (p) active.append(chartDot(p, 5, chartShape(o, key), { "data-active": "", style: { "--c": entity(key).color } }))
       })
     },
     deactivate,
   }
+}
+
+function chartPicked(option, key) {
+  return option === true || (Array.isArray(option) && option.includes(key))
+}
+
+function chartShape(o, key) {
+  return o.shapes && Object.hasOwn(o.shapes, key) ? o.shapes[key] : "circle"
+}
+
+function chartDot(p, r, shape, attrs) {
+  const x = chartRound(p.x)
+  const y = chartRound(p.y)
+  if (shape === "square") {
+    const a = chartRound(r * 0.9)
+    return svg("rect", { x: chartRound(x - a), y: chartRound(y - a), width: 2 * a, height: 2 * a, "data-part": "dot", "data-shape": shape, ...attrs })
+  }
+  if (shape === "diamond") {
+    const a = chartRound(r * 1.25)
+    return svg("path", { d: `M${x},${chartRound(y - a)}L${chartRound(x + a)},${y}L${x},${chartRound(y + a)}L${chartRound(x - a)},${y}Z`, "data-part": "dot", "data-shape": shape, ...attrs })
+  }
+  return svg("circle", { cx: x, cy: y, r, "data-part": "dot", ...attrs })
 }
 
 function chartReferences(c, nodes, p) {
@@ -1250,29 +1310,38 @@ function chartReferences(c, nodes, p) {
   const lines = svg("g", { "data-part": "references" })
   const labels = svg("g", { "data-part": "reference-labels" })
   const used = []
-  const crisp = v => Math.round(v2p(v)) + 0.5
+  const crisp = q => Math.round(q) + 0.5
   const fits = b => b.x0 >= pl - 0.5 && b.x1 <= pl + pw + 0.5 && b.y0 >= pt - 0.5 && b.y1 <= pt + ph + 0.5 && !used.some(u => b.x0 < u.x1 && b.x1 > u.x0 && b.y0 < u.y1 && b.y1 > u.y0)
   for (const r of m.references) {
-    const a = r.band ? Math.max(p.lo, Math.min(r.from, r.to)) : r.value
-    const b = r.band ? Math.min(p.hi, Math.max(r.from, r.to)) : r.value
-    if (a > p.hi || b < p.lo || a > b) continue
     const style = { "--r": r.color }
-    const edges = r.band ? [r.from, r.to].filter(v => v >= p.lo && v <= p.hi) : [r.value]
-    if (r.band) {
-      const [u, v] = [v2p(a), v2p(b)].sort((x, y) => x - y)
-      bands.append(horizontal ? svg("rect", { x: chartRound(u), y: pt, width: chartRound(v - u), height: ph, "data-part": "reference-band", style }) : svg("rect", { x: pl, y: chartRound(u), width: pw, height: chartRound(v - u), "data-part": "reference-band", style }))
+    let vertical = horizontal
+    let edges
+    let lo
+    let hi
+    if (r.across) {
+      const q = p.at(r)
+      if (q == null) continue
+      vertical = !horizontal
+      edges = [q]
+      lo = hi = q
+    } else {
+      const a = r.band ? Math.max(p.lo, Math.min(r.from, r.to)) : r.value
+      const b = r.band ? Math.min(p.hi, Math.max(r.from, r.to)) : r.value
+      if (a > p.hi || b < p.lo || a > b) continue
+      edges = (r.band ? [r.from, r.to].filter(v => v >= p.lo && v <= p.hi) : [r.value]).map(v2p)
+      lo = Math.min(v2p(a), v2p(b))
+      hi = Math.max(v2p(a), v2p(b))
+      if (r.band) bands.append(vertical ? svg("rect", { x: chartRound(lo), y: pt, width: chartRound(hi - lo), height: ph, "data-part": "reference-band", style }) : svg("rect", { x: pl, y: chartRound(lo), width: pw, height: chartRound(hi - lo), "data-part": "reference-band", style }))
     }
-    for (const v of edges) {
-      const q = crisp(v)
-      lines.append(horizontal ? svg("line", { x1: q, x2: q, y1: pt, y2: pt + ph, "data-part": "reference-line", style }) : svg("line", { x1: pl, x2: pl + pw, y1: q, y2: q, "data-part": "reference-line", style }))
+    for (const e of edges) {
+      const q = crisp(e)
+      lines.append(vertical ? svg("line", { x1: q, x2: q, y1: pt, y2: pt + ph, "data-part": "reference-line", style }) : svg("line", { x1: pl, x2: pl + pw, y1: q, y2: q, "data-part": "reference-line", style }))
     }
     if (!p.labels || !r.label) continue
     const text = chartFit(r.label, Math.max(8, pw - 8), font.tick)
     const w = chartWidth(text, font.tick)
-    const lo = Math.min(v2p(a), v2p(b))
-    const hi = Math.max(v2p(a), v2p(b))
     const cands = []
-    if (horizontal) {
+    if (vertical) {
       const ys = r.position === "start" ? [pt + ph - 4, pt + 15] : [pt + 15, pt + ph - 4]
       for (const y of ys) {
         if (r.band && hi - lo >= w + 8) cands.push([lo + 4, y, "start"])
@@ -1505,7 +1574,7 @@ function chartRadar(c) {
     const e = m.byKey.get(key)
     const g = svg("g", { "data-part": "series", "data-key": key, style: { "--c": e.color } })
     if (n) g.append(svg("path", { d: `M${pts[k].map(p => p.map(chartRound).join(",")).join("L")}Z`, "data-part": "shape", "data-fill": o.fill === false ? "none" : null }))
-    if (o.dots) for (const p of pts[k]) g.append(svg("circle", { cx: chartRound(p[0]), cy: chartRound(p[1]), r: 4, "data-part": "dot" }))
+    if (o.dots === true) for (const p of pts[k]) g.append(svg("circle", { cx: chartRound(p[0]), cy: chartRound(p[1]), r: 4, "data-part": "dot" }))
     marksGroup.append(g)
   })
   nodes.push(marksGroup)
@@ -1740,6 +1809,7 @@ function chartSummary(c) {
 
 function chartReferenceText(s, f, r) {
   const label = r.label || stringFor(s.root, "reference")
+  if (r.across) return stringFor(s.root, "referenceAt", { label, value: f.xAt(r) })
   return r.band ? stringFor(s.root, "referenceBand", { label, from: f.value(Math.min(r.from, r.to)), to: f.value(Math.max(r.from, r.to)) }) : stringFor(s.root, "referenceAt", { label, value: f.value(r.value) })
 }
 
@@ -1902,13 +1972,14 @@ function chartLegend(s, m) {
     legend.replaceChildren()
     return
   }
-  const shape = m.type === "line" ? "line" : "rect"
+  const marked = m.type === "line" || m.type === "area"
   const items = keys.map(key => {
     const e = m.byKey.get(key)
+    const shape = marked && s.opts.shapes && Object.hasOwn(s.opts.shapes, key) ? s.opts.shapes[key] : m.type === "line" ? "line" : "rect"
     return h(
       "button",
       { type: "button", "data-slot": "chart-legend-item", "data-key": key, "aria-pressed": String(!s.hidden.has(key)), onclick: () => chartToggle(s, key) },
-      h("span", { "data-slot": "chart-legend-indicator", "data-shape": shape, style: { "--c": e.color } }),
+      h("span", { "data-slot": "chart-legend-indicator", "data-shape": shape, "data-dashed": shape === "line" && chartPicked(s.opts.dashed, key), style: { "--c": e.color } }),
       e.icon ? chartIconNode(e.icon) : null,
       h("span", { "data-slot": "chart-legend-label" }, e.label),
     )
@@ -1961,7 +2032,7 @@ function chartTable(s, m) {
         { "data-part": "references" },
         h("caption", { class: "sr-only" }, stringFor(s.root, "references")),
         h("thead", null, h("tr", null, h("th", { scope: "col" }, stringFor(s.root, "reference")), h("th", { scope: "col" }, stringFor(s.root, "value")))),
-        h("tbody", null, m.references.map(r => h("tr", null, h("th", { scope: "row" }, r.label || stringFor(s.root, "reference")), h("td", null, r.band ? `${f.value(Math.min(r.from, r.to))}–${f.value(Math.max(r.from, r.to))}` : f.value(r.value))))),
+        h("tbody", null, m.references.map(r => h("tr", null, h("th", { scope: "row" }, r.label || stringFor(s.root, "reference")), h("td", null, r.across ? f.xAt(r) : r.band ? `${f.value(Math.min(r.from, r.to))}–${f.value(Math.max(r.from, r.to))}` : f.value(r.value))))),
       )
     : null
   s.els.table.replaceChildren(table, ...(refs ? [refs] : []))

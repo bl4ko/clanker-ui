@@ -1392,6 +1392,69 @@ def check_chart_references(t):
     assert result["errors"] == ["TypeError"] * 6 + ["ok"], result["errors"]
 
 
+def check_chart_references_x(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const out = {}
+          const line = (svg) => [...svg.querySelectorAll('[data-part="reference-line"]')].map(l => ["x1", "x2", "y1", "y2"].map(a => +l.getAttribute(a)))
+          const years = Array.from({ length: 15 }, (_, i) => ({ year: String(i + 1), cash: -5000 + i * 620 }))
+          let c = make(years, { type: "line", x: "year", references: [{ x: 9, label: "Payback" }, { x: "99", label: "Gone" }] })
+          const plot = plotOf(c.svg)
+          const tick = ticks(c.svg, "category").find(e => e.textContent === "9")
+          const label = c.svg.querySelector('[data-part="reference-label"]')
+          out.line = {
+            lines: line(c.svg),
+            tick: tick && +tick.getAttribute("x"),
+            plot: [plot.y0 + 0.5, plot.y1 - 0.5],
+            label: label && [label.textContent, inside(boxOf(label), plot)],
+            values: ticks(c.svg, "value").map(e => e.textContent),
+            summary: c.svg.getAttribute("aria-label"),
+            table: [...c.box.querySelectorAll('[data-slot="chart-table"] table[data-part="references"] tr')].map(r => [...r.children].map(e => e.textContent)),
+          }
+          c.box.remove()
+          c = make(years, { type: "line", x: "year" })
+          out.line.plain = ticks(c.svg, "value").map(e => e.textContent)
+          c.box.remove()
+          const months = Array.from({ length: 6 }, (_, i) => ({ m: `M${i + 1}`, v: 100 + i * 20 }))
+          c = make(months, { type: "bar", x: "m", references: [{ x: "M3" }] })
+          const bar = c.svg.querySelectorAll('[data-part="bar"]')[2].getBBox()
+          out.bar = [line(c.svg), bar.x + bar.width / 2]
+          c.box.remove()
+          c = make(months, { type: "bar", x: "m", horizontal: true, references: [{ x: "M2" }] })
+          const row = c.svg.querySelectorAll('[data-part="bar"]')[1].getBBox()
+          out.horizontal = [line(c.svg), row.y + row.height / 2]
+          c.box.remove()
+          const days = [{ d: "2026-09-01", v: 3 }, { d: "2026-09-21", v: 5 }, { d: "2026-11-10", v: 4 }]
+          c = make(days, { type: "area", x: "d", scale: "time", references: [{ x: "2026-10-01", label: "Launch" }, { x: new Date(2027, 0, 1) }] })
+          out.time = { lines: line(c.svg), plot: [plotOf(c.svg).x0, plotOf(c.svg).x1], summary: c.svg.getAttribute("aria-label") }
+          c.box.remove()
+          const attempt = o => { const b = document.createElement("div"); document.body.append(b); try { chart(b, days, { x: "d", type: "line", ...o }); return "ok" } catch (e) { return e.name } finally { b.remove() } }
+          out.errors = [attempt({ references: [{ x: {} }] }), attempt({ references: [{ x: NaN }] }), attempt({ scale: "time", references: [{ x: "soon" }] }), attempt({ references: [{ x: "soon" }] }), attempt({ references: [{ x: new Date(2026, 8, 1) }] })]
+          return out
+        }"""
+    )
+    line = result["line"]
+    assert len(line["lines"]) == 1, ("an x that matches no category draws nothing", line)
+    x1, x2, y1, y2 = line["lines"][0]
+    assert x1 == x2 and abs(x1 - line["tick"]) <= 1 and abs(y1 - line["plot"][0]) <= 1 and abs(y2 - line["plot"][1]) <= 1, ("a vertical line at the category, across the plot", line)
+    assert line["label"] == ["Payback", True], line
+    assert line["values"] == line["plain"], ("an x reference does not grow the value axis", line)
+    assert line["summary"].endswith("Payback at 9. Gone at 99."), line["summary"]
+    assert line["table"] == [["Reference", "Value"], ["Payback", "9"], ["Gone", "99"]], line["table"]
+    (bx1, bx2, _, _), = result["bar"][0]
+    assert bx1 == bx2 and abs(bx1 - result["bar"][1]) <= 1, ("the line sits at the band center", result["bar"])
+    (_, _, hy1, hy2), = result["horizontal"][0]
+    assert hy1 == hy2 and abs(hy1 - result["horizontal"][1]) <= 1, ("a horizontal line in a horizontal bar chart", result["horizontal"])
+    time = result["time"]
+    (tx, _, _, _), = time["lines"]
+    p0, p1 = time["plot"]
+    want = p1 - (p1 - p0) * 30 / 70 if t.rtl else p0 + (p1 - p0) * 30 / 70
+    assert abs(tx - want) <= 2, ("the line sits at its date; a date past the data draws nothing", time)
+    assert "Launch at Oct 1, 2026." in time["summary"], time["summary"]
+    assert result["errors"] == ["TypeError", "TypeError", "TypeError", "ok", "ok"], result["errors"]
+
 def check_chart_time_axis(t):
     page = t.page
     result = page.evaluate(

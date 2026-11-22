@@ -2008,3 +2008,34 @@ def check_section_cards_value_wrap(t):
     for width, value, lines, hit, top in result:
         assert lines == 1 and not hit, (width, value, lines, hit)
         assert top == 24, (width, value, top, "the value stays in the second row under the description")
+
+
+def check_section_cards_subgrid(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const card = (label, note) => h("div", { "data-slot": "card" },
+            h("div", { "data-slot": "card-header" }, h("div", { "data-slot": "card-description" }, label), h("div", { "data-slot": "card-title" }, "1,234")),
+            h("div", { "data-slot": "card-footer" }, h("div", { "data-slot": "card-description" }, note)))
+          const out = []
+          for (const width of [249, 250, 600]) {
+            const grid = h("div", { "data-slot": "section-cards" },
+              card("Revenue", "Short"), card("Revenue", "A longer note that wraps to more lines in a narrow card"),
+              card("A longer label that wraps to more lines in a narrow card", "Short"), card("Revenue", "Short"))
+            const host = h("div", { style: { width: width + "px" } }, grid)
+            document.body.prepend(host)
+            await new Promise(r => requestAnimationFrame(r))
+            out.push([width, [...grid.children].map(c => [
+              Math.round(c.getBoundingClientRect().width),
+              Math.round(c.querySelector('[data-slot="card-header"]').getBoundingClientRect().height),
+              Math.round(c.querySelector('[data-slot="card-footer"]').getBoundingClientRect().top - c.getBoundingClientRect().top),
+              parseFloat(getComputedStyle(c.querySelector('[data-slot="card-title"]')).fontSize)])])
+            host.remove()
+          }
+          return out
+        }"""
+    )
+    for width, cards in result:
+        assert all(size == (30 if w >= 250 else 24) for w, _, _, size in cards), (width, cards)
+        if width == 600:
+            assert cards[0][1:3] == cards[1][1:3] and cards[2][1:3] == cards[3][1:3], (width, cards, "headers and footers line up in each row")

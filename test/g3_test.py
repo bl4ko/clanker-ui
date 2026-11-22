@@ -1969,6 +1969,31 @@ def g3_table_rows(page):
     return page.evaluate("() => [...document.querySelectorAll('#table-data tbody tr')].map(r => [...r.cells].slice(1).map(c => c.textContent))")
 
 
+def check_table_sticky_site_header(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const table = () => h("div", { "data-slot": "table-container", "data-sticky-header": "" },
+            h("table", { "data-slot": "table" }, h("thead", { "data-slot": "table-header" }, h("tr", { "data-slot": "table-row" }, h("th", { "data-slot": "table-head" }, "Name"))),
+              h("tbody", { "data-slot": "table-body" }, Array.from({ length: 80 }, (_, i) => h("tr", { "data-slot": "table-row" }, h("td", { "data-slot": "table-cell" }, "Row " + i))))))
+          const out = []
+          for (const size of [null, "lg"]) {
+            const host = h("div", {}, h("header", { "data-slot": "site-header", "data-size": size }, "Title"), h("main", {}, h("div", { style: { height: "200px" } }), table()))
+            document.body.prepend(host)
+            const c = host.querySelector('[data-slot="table-container"]')
+            for (let i = 0; i < 50 && !c.hasAttribute("data-fits"); i++) await new Promise(r => requestAnimationFrame(r))
+            scrollTo(0, host.getBoundingClientRect().top + scrollY + 1200)
+            await new Promise(r => requestAnimationFrame(r))
+            out.push([size, c.hasAttribute("data-fits"), Math.round(host.querySelector('[data-slot="site-header"]').getBoundingClientRect().bottom), Math.round(host.querySelector("thead").getBoundingClientRect().top)])
+            host.remove()
+          }
+          scrollTo(0, 0)
+          return out
+        }"""
+    )
+    assert result == [[None, True, 48, 48], ["lg", True, 56, 56]], ("the sticky table header stops below the site-header", result)
+
+
 def check_table(t):
     page = t.page
     section = t.section("table")

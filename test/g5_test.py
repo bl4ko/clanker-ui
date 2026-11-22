@@ -1129,6 +1129,34 @@ def check_chart_bar_labels(t):
     for r in (narrow, wide, signs):
         assert r["inside"] and r["clear"] and r["apart"], ("labels stay in the chart, off the bars and the axis, and apart", r)
 
+
+def check_chart_dashed(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const rows = [{ m: "a", plan: 3, actual: 2 }, { m: "b", plan: 4, actual: 3 }, { m: "c", plan: 5, actual: null }]
+          const out = {}
+          for (const type of ["line", "area"]) {
+            const c = make(rows, { type, x: "m", dashed: ["plan"], dots: "last" })
+            const dash = k => getComputedStyle(c.svg.querySelector(`[data-key="${k}"] [data-part="line"]`)).strokeDasharray
+            const legend = k => getComputedStyle(c.box.querySelector(`[data-slot="chart-legend-item"][data-key="${k}"] [data-slot="chart-legend-indicator"]`)).borderTopStyle
+            const dots = k => [...c.svg.querySelectorAll(`[data-key="${k}"] [data-part="dot"]`)].map(d => [+d.getAttribute("cx"), d.hasAttribute("data-accent")])
+            const ends = k => [...c.svg.querySelectorAll(`[data-key="${k}"] [data-part="line"]`)].map(l => +l.getAttribute("d").split(/[MCL]/).at(-1).split(",").at(-2))
+            out[type] = { plan: dash("plan"), actual: dash("actual"), legend: [legend("plan"), legend("actual")], dots: [dots("plan"), dots("actual")], ends: [ends("plan"), ends("actual")] }
+            c.box.remove()
+          }
+          return out
+        }"""
+    )
+    for kind, r in result.items():
+        assert r["plan"] not in ("none", "", "1px") and r["actual"] == "none", (kind, r)
+        plan, actual = r["dots"]
+        assert len(plan) == 1 and len(actual) == 1 and not plan[0][1] and not actual[0][1], ("one plain dot per series", kind, r)
+        assert abs(plan[0][0] - r["ends"][0][0]) < 1 and abs(actual[0][0] - r["ends"][1][0]) < 1, ("the dot sits on the last point", kind, r)
+    assert result["line"]["legend"] == ["dashed", "solid"], result["line"]
+
+
 def check_chart_lifecycle(t):
     page = t.page
     t.a11y()

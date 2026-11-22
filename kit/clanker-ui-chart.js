@@ -804,7 +804,7 @@ function chartCartesian(c) {
   const reversed = c.rtl && !horizontal && !spark
   const stack = m.type === "line" ? false : m.expand ? "expand" : !!o.stack
   const curve = o.curve ?? "monotone"
-  const joined = k => o.connectNulls === true || (Array.isArray(o.connectNulls) && o.connectNulls.includes(k))
+  const joined = k => chartPicked(o.connectNulls, k)
   const n = m.rows.length
   const entity = k => m.byKey.get(k)
   const vals = keys.map(k => m.rows.map(r => chartNum(r?.[k])))
@@ -1130,16 +1130,17 @@ function chartCartesian(c) {
     keys.forEach((key, k) => {
       const e = entity(key)
       const g = svg("g", { "data-part": "series", "data-key": key, style: { "--c": e.color } })
-      const dots = o.dots && !spark
-      const last = spark ? pts[k].findLast(Boolean) : null
+      const dots = !!o.dots && o.dots !== "last" && !spark
+      const last = spark || o.dots === "last" ? pts[k].findLast(Boolean) : null
+      const dashed = chartPicked(o.dashed, key)
       for (const seg of chartSegments(joined(key) ? pts[k].filter(Boolean) : pts[k])) {
-        const el = svg("path", { d: chartCurve(seg, curve), "data-part": "line", pathLength: "1" })
+        const el = svg("path", { d: chartCurve(seg, curve), "data-part": "line", pathLength: dashed ? null : "1", "data-dashed": dashed })
         if (spark) el.setAttribute("data-muted", "")
         g.append(el)
         if (seg.length === 1 && !dots && seg[0] !== last) g.append(svg("circle", { cx: chartRound(seg[0].x), cy: chartRound(seg[0].y), r: 4, "data-part": "dot", "data-muted": spark }))
       }
       if (dots) for (const p of pts[k]) if (p) g.append(svg("circle", { cx: chartRound(p.x), cy: chartRound(p.y), r: 4, "data-part": "dot" }))
-      if (last) g.append(svg("circle", { cx: chartRound(last.x), cy: chartRound(last.y), r: 4, "data-part": "dot", "data-accent": "" }))
+      if (last) g.append(svg("circle", { cx: chartRound(last.x), cy: chartRound(last.y), r: 4, "data-part": "dot", "data-accent": spark }))
       marksGroup.append(g)
     })
     nodes.push(marksGroup)
@@ -1273,6 +1274,10 @@ function chartCartesian(c) {
     },
     deactivate,
   }
+}
+
+function chartPicked(option, key) {
+  return option === true || (Array.isArray(option) && option.includes(key))
 }
 
 function chartReferences(c, nodes, p) {
@@ -1950,7 +1955,7 @@ function chartLegend(s, m) {
     return h(
       "button",
       { type: "button", "data-slot": "chart-legend-item", "data-key": key, "aria-pressed": String(!s.hidden.has(key)), onclick: () => chartToggle(s, key) },
-      h("span", { "data-slot": "chart-legend-indicator", "data-shape": shape, style: { "--c": e.color } }),
+      h("span", { "data-slot": "chart-legend-indicator", "data-shape": shape, "data-dashed": shape === "line" && chartPicked(s.opts.dashed, key), style: { "--c": e.color } }),
       e.icon ? chartIconNode(e.icon) : null,
       h("span", { "data-slot": "chart-legend-label" }, e.label),
     )

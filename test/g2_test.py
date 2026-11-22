@@ -2967,11 +2967,14 @@ def check_menu_item_opens_dialog(t):
     page = t.page
     page.evaluate(
         """async () => {
-          const { h } = await import("/clanker-ui.js")
+          const { h, dialogOpen } = await import("/clanker-ui.js")
+          const code = h("div", { "data-slot": "dropdown-menu-item", id: "md-code" }, "Rename")
+          code.addEventListener("click", () => dialogOpen("md-dialog"))
           const menu = h("div", { "data-slot": "dropdown-menu" },
             h("button", { type: "button", "data-dropdown-menu-trigger": "", id: "md-trigger" }, "Actions"),
             h("div", { "data-slot": "dropdown-menu-content" },
               h("div", { "data-slot": "dropdown-menu-item", "data-dialog-trigger": "md-dialog", id: "md-item" }, "Delete"),
+              code,
               ["New Tab", "New Window"].map(v => h("div", { "data-slot": "dropdown-menu-item" }, v))))
           const dialog = h("div", { "data-slot": "dialog", id: "md-dialog" },
             h("dialog", { "data-slot": "dialog-content" }, h("h2", { "data-slot": "dialog-title" }, "Confirm"), h("button", { type: "button", "data-dialog-close": "" }, "Cancel")))
@@ -2982,26 +2985,28 @@ def check_menu_item_opens_dialog(t):
     )
     trigger = page.locator("#md-trigger")
     content = page.locator("#md-dialog dialog")
-    for how in ("keyboard", "mouse"):
+    for how, item in (("keyboard", "md-item"), ("mouse", "md-item"), ("keyboard", "md-code"), ("mouse", "md-code")):
         if how == "keyboard":
             trigger.focus()
             page.keyboard.press("Enter")
             wait(page, "() => document.activeElement.id === 'md-item'")
+            if item == "md-code":
+                page.keyboard.press("ArrowDown")
             page.keyboard.press("Enter")
         else:
             trigger.click()
-            page.locator("#md-item").click()
+            page.locator(f"#{item}").click()
         wait(page, "() => document.querySelector('#md-dialog dialog').open")
         page.keyboard.press("Escape")
         wait(page, "() => !document.querySelector('#md-dialog dialog').open")
-        assert page.evaluate("document.activeElement.id") == "md-trigger", (how, page.evaluate("document.activeElement.tagName"))
+        assert page.evaluate("document.activeElement.id") == "md-trigger", (how, item, page.evaluate("document.activeElement.tagName"))
     assert content.get_attribute("data-state") == "closed"
     trigger.focus()
     page.keyboard.press("ArrowDown")
     wait(page, "() => document.activeElement.id === 'md-item'")
     page.keyboard.type("new w", delay=40)
     assert active(page) == "New Window"
-    assert page.evaluate("window.__mdSelect ?? []") == ["Delete", "Delete"]
+    assert page.evaluate("window.__mdSelect ?? []") == ["Delete", "Delete", "Rename", "Rename"]
     page.keyboard.press("Escape")
 
 

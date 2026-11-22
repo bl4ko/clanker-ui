@@ -1956,3 +1956,29 @@ def check_section_cards_value_wrap(t):
     for width, value, lines, hit, top in result:
         assert lines == 1 and not hit, (width, value, lines, hit)
         assert top == 24, (width, value, top, "the value stays in the second row under the description")
+
+
+def check_section_cards_columns(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const card = value => h("div", { "data-slot": "card" },
+            h("div", { "data-slot": "card-header" }, h("div", { "data-slot": "card-description" }, "Revenue"), h("div", { "data-slot": "card-title" }, value)),
+            h("div", { "data-slot": "card-footer" }, h("div", { "data-slot": "card-description" }, "Last 6 months")))
+          const out = {}
+          for (const [width, columns] of [[358, null], [358, "2"], [1000, "2"]]) {
+            const grid = h("div", { "data-slot": "section-cards", ...(columns ? { "data-columns": columns } : {}) }, ["$1,250.00", "1,234", "45,678", "4.5%"].map(card))
+            const host = h("div", { style: { width: width + "px" } }, grid)
+            document.body.prepend(host)
+            await new Promise(r => requestAnimationFrame(r))
+            const cards = [...grid.children].map(c => c.getBoundingClientRect())
+            const titles = [...grid.querySelectorAll('[data-slot="card-title"]')].map(e => e.scrollWidth <= e.clientWidth)
+            out[`${width}-${columns}`] = { columns: new Set(cards.map(r => Math.round(r.left))).size, width: Math.round(cards[0].width), fit: titles.every(Boolean) }
+            host.remove()
+          }
+          return out
+        }"""
+    )
+    assert result["358-null"]["columns"] == 1, result
+    assert result["358-2"] == {"columns": 2, "width": 171, "fit": True}, result
+    assert result["1000-2"]["columns"] == 4, result

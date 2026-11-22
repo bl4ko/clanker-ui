@@ -3008,6 +3008,27 @@ def check_menu_item_opens_dialog(t):
     assert active(page) == "New Window"
     assert page.evaluate("window.__mdSelect ?? []") == ["Delete", "Delete", "Rename", "Rename"]
     page.keyboard.press("Escape")
+    moved = page.evaluate(
+        """async () => {
+          const { h, show, hide, saveFocus } = await import("/clanker-ui.js")
+          const opener = h("button", { type: "button", id: "sf-opener" }, "Open")
+          const item = h("button", { type: "button" }, "Item")
+          const pop = h("div", { hidden: "" }, item)
+          document.body.append(opener, pop)
+          opener.focus()
+          show(pop, { trigger: opener })
+          item.focus()
+          const back = saveFocus()
+          item.hidden = true
+          back(false)
+          const id = document.activeElement.id
+          hide(pop, { restoreFocus: false })
+          opener.remove()
+          pop.remove()
+          return id
+        }"""
+    )
+    assert moved != "sf-opener", "a hidden element in a popup that is still open does not send focus to the popup trigger"
 
 
 def check_toast_in_modal(t):

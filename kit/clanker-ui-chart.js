@@ -160,7 +160,9 @@ function chartIngest(s, data, options) {
   if (![undefined, false, true, "zero"].includes(o.tooltip?.hideEmpty)) throw new TypeError('clanker-ui chart: tooltip hideEmpty must be true, false, or "zero"')
   if (o.domain != null && !(Array.isArray(o.domain) && o.domain.every(v => v == null || Number.isFinite(v)))) throw new TypeError("clanker-ui chart: domain must be [min, max] with finite numbers or null")
   const cartesian = ["area", "bar", "line"].includes(o.type ?? "bar")
-  if (o.shapes != null && (typeof o.shapes !== "object" || Object.values(o.shapes).some(v => !SHAPES.includes(v)))) throw new TypeError(`clanker-ui chart: shapes must map keys to ${SHAPES.join(", ")}`)
+  if (![undefined, null, false, true, "last"].includes(o.dots)) throw new TypeError('clanker-ui chart: dots must be true, false, or "last"')
+  if (o.dashed != null && typeof o.dashed !== "boolean" && !(Array.isArray(o.dashed) && o.dashed.every(k => typeof k === "string"))) throw new TypeError("clanker-ui chart: dashed must be true or a list of keys")
+  if (o.shapes != null && (typeof o.shapes !== "object" || Array.isArray(o.shapes) || Object.values(o.shapes).some(v => !SHAPES.includes(v)))) throw new TypeError(`clanker-ui chart: shapes must map keys to ${SHAPES.join(", ")}`)
   if (!SCALES.includes(o.scale ?? "category")) throw new TypeError(`clanker-ui chart: unknown scale "${o.scale}"`)
   if (o.scale === "time" && o.type !== "line" && o.type !== "area") throw new TypeError('clanker-ui chart: scale "time" needs type "line" or "area"')
   if (o.references != null) {
@@ -525,7 +527,7 @@ function chartFormats(s, m) {
   const base = o.format && typeof o.format === "object" ? o.format : {}
   const own = o.tickFormat && typeof o.tickFormat === "object" ? o.tickFormat : null
   const ticks = own ? chartDigits(base, own) : base
-  const compact = own && Object.hasOwn(own, "notation") ? ticks : chartCompact(ticks)
+  const compact = own && Object.hasOwn(own, "notation") ? ticks : chartDigits(chartCompact(ticks), own && Object.fromEntries(Object.entries(own).filter(([k]) => k.endsWith("Digits"))))
   const value = typeof o.format === "function" ? v => String(o.format(v)) : v => chartNumber(locale, base).format(v)
   const percent = v => chartNumber(locale, { style: "percent", maximumFractionDigits: 1 }).format(v)
   const tick = (v, max) => {
@@ -545,7 +547,7 @@ function chartFormats(s, m) {
     return m.isDate ? date(raw(i), pick(o.xFormat, { month: "short", day: "numeric" })) : name(i)
   }
   const xLabel = (i, v = raw(i)) => {
-    if (typeof o.labelFormat === "function") return String(o.labelFormat(v, i))
+    if (typeof o.labelFormat === "function" && i >= 0) return String(o.labelFormat(v, i))
     return m.isDate ? date(v, pick(o.labelFormat, m.dateOnly ? { month: "short", day: "numeric", year: "numeric" } : { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })) : name(i)
   }
   const timeTick = (t, unit) => {
@@ -923,7 +925,7 @@ function chartCartesian(c) {
   let below = 0
   if (bar && labels && !horizontal) {
     const slot = slotOf(Math.max(1, W - left - right) / Math.max(1, n))
-    turn = slot >= 12 && labelW > slot - 2
+    turn = slot >= 16 && labelW > slot - 2 && Math.max(0, upW + 12 - top) + (downW && downW + 6) <= H / 2
     if (turn) {
       top = Math.max(top, upW + 12)
       below = downW && downW + 6
@@ -1572,7 +1574,7 @@ function chartRadar(c) {
     const e = m.byKey.get(key)
     const g = svg("g", { "data-part": "series", "data-key": key, style: { "--c": e.color } })
     if (n) g.append(svg("path", { d: `M${pts[k].map(p => p.map(chartRound).join(",")).join("L")}Z`, "data-part": "shape", "data-fill": o.fill === false ? "none" : null }))
-    if (o.dots) for (const p of pts[k]) g.append(svg("circle", { cx: chartRound(p[0]), cy: chartRound(p[1]), r: 4, "data-part": "dot" }))
+    if (o.dots === true) for (const p of pts[k]) g.append(svg("circle", { cx: chartRound(p[0]), cy: chartRound(p[1]), r: 4, "data-part": "dot" }))
     marksGroup.append(g)
   })
   nodes.push(marksGroup)

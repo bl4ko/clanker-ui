@@ -1009,6 +1009,7 @@ def check_chart_tick_format(t):
             merged: read(small, { format: { style: "currency", currency: "EUR" }, tickFormat: { minimumFractionDigits: 0 } }),
             compact: read(big, { tickFormat: { style: "percent" } }),
             standard: read(big, { tickFormat: { notation: "standard" } }),
+            whole: read(big, { tickFormat: { maximumFractionDigits: 0 } }),
           }
         }"""
     )
@@ -1016,6 +1017,7 @@ def check_chart_tick_format(t):
     assert result["merged"][-1] == "€1.25" and result["merged"][0] == "€0", result
     assert result["compact"][-1] == "250K%", result
     assert result["standard"][-1] == "2,500", result
+    assert result["whole"][-1].endswith("K") and not any("." in v for v in result["whole"]), ("the tickFormat digits stay on compact ticks", result["whole"])
 
 
 def check_chart_colors(t):
@@ -1099,8 +1101,8 @@ def check_chart_bar_labels(t):
         "async () => {"
         + MAKE
         + """
-          const read = (rows, width) => {
-            const c = make(rows, { type: "bar", x: "d", labels: true, height: 240 }, width)
+          const read = (rows, width, height = 240) => {
+            const c = make(rows, { type: "bar", x: "d", labels: true, height }, width)
             const svg = c.svg.getBoundingClientRect()
             const rect = e => e.getBoundingClientRect()
             const labels = [...c.svg.querySelectorAll('text[data-part="label"]')]
@@ -1120,14 +1122,18 @@ def check_chart_bar_labels(t):
           }
           const days = Array.from({ length: 14 }, (_, i) => ({ d: `Nov ${i + 1}`, v: 1000 + i * 137 }))
           const signs = Array.from({ length: 10 }, (_, i) => ({ d: `M${i + 1}`, v: (i % 2 ? -1 : 1) * (12000 + i * 3137) }))
-          return { narrow: read(days, 390), wide: read(days, 1000), signs: read(signs, 390) }
+          const huge = days.map(r => ({ ...r, v: r.v * 1234567 }))
+          const crowd = Array.from({ length: 24 }, (_, i) => ({ d: `D${i + 1}`, v: 1000 + i * 137 }))
+          return { narrow: read(days, 390), wide: read(days, 1000), signs: read(signs, 390), short: read(huge, 390, 160), crowd: read(crowd, 390) }
         }"""
     )
-    narrow, wide, signs = result["narrow"], result["wide"], result["signs"]
+    narrow, wide, signs, short, crowd = result["narrow"], result["wide"], result["signs"], result["short"], result["crowd"]
     assert narrow["count"] == narrow["bars"] == 14 and narrow["turned"] == 14, ("labels that do not fit turn instead of vanishing", narrow)
     assert wide["count"] == 14 and wide["turned"] == 0, ("labels that fit stay level", wide)
     assert signs["count"] == 10 and signs["turned"] == 10, signs
-    for r in (narrow, wide, signs):
+    assert short["turned"] == 0 and short["count"] < short["bars"], ("turned labels that need more than half the plot height are left out", short)
+    assert crowd["turned"] == 0, ("bars thinner than 16 px do not turn their labels", crowd)
+    for r in (narrow, wide, signs, short, crowd):
         assert r["inside"] and r["clear"] and r["apart"], ("labels stay in the chart, off the bars and the axis, and apart", r)
 
 
@@ -1147,9 +1153,16 @@ def check_chart_dashed(t):
             out[type] = { plan: dash("plan"), actual: dash("actual"), legend: [legend("plan"), legend("actual")], dots: [dots("plan"), dots("actual")], ends: [ends("plan"), ends("actual")] }
             c.box.remove()
           }
-          return out
+          const radar = make(rows, { type: "radar", x: "m", dots: "last" })
+          const radarDots = radar.svg.querySelectorAll('[data-part="dot"]').length
+          radar.box.remove()
+          const attempt = o => { const b = document.createElement("div"); document.body.append(b); try { chart(b, rows, { x: "m", type: "line", ...o }); return "ok" } catch (e) { return e.name } finally { b.remove() } }
+          return { kinds: out, radarDots, errors: [attempt({ dots: "all" }), attempt({ dots: 1 }), attempt({ dashed: "plan" }), attempt({ dashed: [1] }), attempt({ dashed: true, dots: false })] }
         }"""
     )
+    assert result["radarDots"] == 0, ("dots: \"last\" draws no radar dots", result["radarDots"])
+    assert result["errors"] == ["TypeError", "TypeError", "TypeError", "TypeError", "ok"], result["errors"]
+    result = result["kinds"]
     for kind, r in result.items():
         assert r["plan"] not in ("none", "", "1px") and r["actual"] == "none", (kind, r)
         plan, actual = r["dots"]
@@ -1177,7 +1190,7 @@ def check_chart_shapes(t):
             c.box.remove()
           }
           const attempt = o => { const b = document.createElement("div"); document.body.append(b); try { chart(b, rows, { x: "m", type: "line", ...o }); return "ok" } catch (e) { return e.name } finally { b.remove() } }
-          out.errors = [attempt({ shapes: { x: "star" } }), attempt({ shapes: "square" }), attempt({ shapes: { x: "square" } })]
+          out.errors = [attempt({ shapes: { x: "star" } }), attempt({ shapes: "square" }), attempt({ shapes: ["square"] }), attempt({ shapes: { x: "square" } })]
           return out
         }"""
     )
@@ -1187,7 +1200,7 @@ def check_chart_shapes(t):
         assert [(d[0], d[1]) for d in r["active"]] == [("circle", None), ("rect", "square"), ("path", "diamond")], (kind, r["active"])
     assert [s for s, _ in result["line"]["legend"]] == ["line", "square", "diamond"], result["line"]
     assert [s for s, _ in result["area"]["legend"]] == ["rect", "square", "diamond"] and result["area"]["legend"][1][1] == "0px", result["area"]
-    assert result["errors"] == ["TypeError", "TypeError", "ok"], result["errors"]
+    assert result["errors"] == ["TypeError", "TypeError", "TypeError", "ok"], result["errors"]
 
 
 def check_chart_lifecycle(t):
@@ -1492,6 +1505,10 @@ def check_chart_references_x(t):
           out.time = { lines: line(c.svg), plot: [plotOf(c.svg).x0, plotOf(c.svg).x1], summary: c.svg.getAttribute("aria-label") }
           c.box.remove()
           const attempt = o => { const b = document.createElement("div"); document.body.append(b); try { chart(b, days, { x: "d", type: "line", ...o }); return "ok" } catch (e) { return e.name } finally { b.remove() } }
+          const calls = []
+          c = make(days, { type: "area", x: "d", scale: "time", labelFormat: (v, i) => { calls.push(i); return "Day " + i }, references: [{ x: "2026-10-01", label: "Launch" }] })
+          out.labelFormat = { calls: calls.filter(i => !(i >= 0)).length, summary: c.svg.getAttribute("aria-label") }
+          c.box.remove()
           out.errors = [attempt({ references: [{ x: {} }] }), attempt({ references: [{ x: NaN }] }), attempt({ scale: "time", references: [{ x: "soon" }] }), attempt({ references: [{ x: "soon" }] }), attempt({ references: [{ x: new Date(2026, 8, 1) }] })]
           return out
         }"""
@@ -1514,6 +1531,7 @@ def check_chart_references_x(t):
     want = p1 - (p1 - p0) * 30 / 70 if t.rtl else p0 + (p1 - p0) * 30 / 70
     assert abs(tx - want) <= 2, ("the line sits at its date; a date past the data draws nothing", time)
     assert "Launch at Oct 1, 2026." in time["summary"], time["summary"]
+    assert result["labelFormat"]["calls"] == 0 and "Launch at Oct 1, 2026." in result["labelFormat"]["summary"], ("labelFormat gets only row indexes; a time reference uses the date format", result["labelFormat"])
     assert result["errors"] == ["TypeError", "TypeError", "TypeError", "ok", "ok"], result["errors"]
 
 

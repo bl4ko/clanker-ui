@@ -2468,18 +2468,19 @@ def check_field_separator_surface(t):
         """async () => {
           const { h } = await import("/clanker-ui.js")
           const sep = () => h("div", { "data-slot": "field-separator" }, h("span", { "data-slot": "field-separator-content" }, "Or"))
-          const host = h("div", {}, sep(), h("div", { "data-slot": "card" }, h("div", { "data-slot": "card-content" }, sep())), h("div", { "data-slot": "popover-content" }, sep()))
+          const host = h("div", {}, sep(), h("div", { "data-slot": "card" }, h("div", { "data-slot": "card-content" }, sep())), h("div", { "data-slot": "popover-content" }, sep()),
+            h("div", { "data-slot": "card" }, h("div", { "data-slot": "popover-content" }, sep())), h("div", { "data-slot": "dialog-content" }, h("div", { "data-slot": "card" }, sep())))
           host.style.setProperty("--background", "rgb(1, 2, 3)")
           host.style.setProperty("--card", "rgb(4, 5, 6)")
           host.style.setProperty("--popover", "rgb(7, 8, 9)")
           document.body.prepend(host)
           const bg = [...host.querySelectorAll('[data-slot="field-separator-content"]')].map(e => getComputedStyle(e).backgroundColor)
           host.remove()
-          return [bg, ["rgb(1, 2, 3)", "rgb(4, 5, 6)", "rgb(7, 8, 9)"]]
+          return [bg, ["rgb(1, 2, 3)", "rgb(4, 5, 6)", "rgb(7, 8, 9)", "rgb(7, 8, 9)", "rgb(4, 5, 6)"]]
         }"""
     )
     got, want = result
-    assert got == want, ("field-separator-content takes the page, card, and popover surface", got, want)
+    assert got == want, ("field-separator-content takes the surface it sits on: page, card, popover, a popover in a card, a card in a dialog", got, want)
 
 
 def check_field_separator_line(t):

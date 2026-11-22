@@ -82,7 +82,10 @@
   :is([data-slot="button"], [data-slot="badge"], [data-slot="alert-dialog-action"], [data-slot="alert-dialog-cancel"], [data-slot="pagination-link"]):where([data-variant="destructive"]) {
     color: var(--destructive-text);
   }
-  :is([data-slot][data-variant="link"], [data-typography=""] a:not([data-slot]), :is([data-slot="field-description"], [data-slot="item-description"], [data-slot="empty-description"]) > a:hover) {
+  [data-slot]:where([data-variant="link"]) {
+    color: var(--link-text, var(--primary));
+  }
+  :is([data-typography=""] a:not([data-slot]), :is([data-slot="field-description"], [data-slot="item-description"], [data-slot="empty-description"]) > a:hover) {
     color: var(--link-text, var(--primary));
   }
   :is([data-slot="checkbox"], [data-slot="radio-group-item"], [data-slot="questionnaire-choice-indicator"]):where(:not(:checked, :indeterminate, [data-checked]:not([data-checked="false"]), [data-indeterminate]:not([data-indeterminate="false"]), [data-state="checked"], [data-state="indeterminate"], [aria-checked="true"], [aria-checked="mixed"], [data-slot="questionnaire-choice"][data-state="checked"] *)) {

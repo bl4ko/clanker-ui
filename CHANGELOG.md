@@ -13,6 +13,24 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 ### Changed
 
 - Repository: the root `embed.go` is gone, so the root has no Go code. The docs server reads the kit, demo, docs, and skill files from disk: `-dir` (or `DIR`) defaults to `.`, so run it from the repository root. It stops at start with a clear error when a needed file is missing (`go run ./tools/gen build`). The exported docs site does not change (#218).
+- Section Cards: each card is a subgrid row again (the card is no longer a size container, which turned the subgrid off), so the headers and footers of one row line up. The 30 px value now follows the grid width and column count, so it switches at a 250 px card in every style (#241, #237).
+- Table: a `data-sticky-header` table after a `site-header` sticks below the header (`--header-height`) instead of at the top. Not in a dialog or a `scroll-area-viewport`; set `--table-header-top: 0px` on a table in its own scroll pane (#248, #246).
+- Chart: bar `labels` that do not fit their bar turn -90° instead of being left out; they are left out only in a slot under 16 px or when they would need more than half the plot height (#238, #233).
+
+### Added
+
+- Chart: `references` with `x` draw a line at a category or a date (#243, #224); `dashed` series and `dots: "last"` (#249, #245); `shapes` gives the dots and the legend key of a line or area series a square or diamond (#252, #250).
+- Section Cards: `data-min-columns="2"` keeps 2 columns on a phone; with an odd number of cards, the last one takes the full row (#244, #229).
+
+### Fixed
+
+- Chart: a `tickFormat` object merges over `format` for value ticks, and its digit options also apply to compact ticks (#226, #225); the category axis always labels the last category when it thins the labels (#232, #227).
+- Brand: an `img` brand mark has no primary square behind it (#236, #234).
+- Field: `field-separator-content` takes the surface it sits on: `--card` in a card, `--popover` in a dialog, sheet, drawer, or popover (#239, #235).
+- Site Header: a long breadcrumb stays on one line and cuts its links with an ellipsis; ellipsis and dropdown items keep their size (#242, #240).
+- Accessibility layer: link text uses `--link-text` with 4.5:1 in every scheme and accent (#254, #253); dialog and sheet titles keep clear of the close button (#256, #255).
+- Tabs: the docs name `scroll-fade-x` as the scroll hint of a long tab list (#247, #230).
+- Dialog: closing a dialog that a menu item opened returns focus to the menu trigger when the item is hidden (#251, #228).
 
 ## 0.4.1 - 2026-11-16
 

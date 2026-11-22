@@ -475,13 +475,21 @@ def check_link_text(t):
             const want = getComputedStyle(token).color
             for (const el of [host.querySelector("a"), ...host.querySelectorAll('[data-variant="link"]')]) out.push([scheme, mode, el.dataset.slot ?? "a", getComputedStyle(el).color === want && want !== getComputedStyle(host).color])
           }
+          const sheet = new CSSStyleSheet()
+          sheet.replaceSync("@layer clanker.components { .link-probe { color: rgb(1, 2, 3) } }")
+          document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
+          const probe = h("button", { "data-slot": "button", "data-variant": "link", class: "link-probe" }, "Link")
+          host.append(probe)
+          const low = getComputedStyle(probe).color === "rgb(1, 2, 3)"
+          document.adoptedStyleSheets = document.adoptedStyleSheets.filter(x => x !== sheet)
           host.remove()
           for (const [n, v] of saved) v === null ? root.removeAttribute(n) : root.setAttribute(n, v)
           root.removeAttribute("data-theme-switching")
-          return out.filter(r => !r[3])
+          return { bad: out.filter(r => !r[3]), low }
         }"""
     )
-    assert result == [], ("link text uses --link-text", result)
+    assert result["bad"] == [], ("link text uses --link-text", result["bad"])
+    assert result["low"], "the link variant rule keeps the low specificity of the layer, so one class in the components layer recolors it"
 
 
 def check_scheme_persist(t):
@@ -2049,19 +2057,63 @@ def check_section_cards_columns(t):
             h("div", { "data-slot": "card-header" }, h("div", { "data-slot": "card-description" }, "Revenue"), h("div", { "data-slot": "card-title" }, value)),
             h("div", { "data-slot": "card-footer" }, h("div", { "data-slot": "card-description" }, "Last 6 months")))
           const out = {}
-          for (const [width, columns] of [[358, null], [358, "2"], [1000, "2"]]) {
-            const grid = h("div", { "data-slot": "section-cards", ...(columns ? { "data-columns": columns } : {}) }, ["$1,250.00", "1,234", "45,678", "4.5%"].map(card))
+          for (const [width, columns, values] of [[358, null], [358, "2"], [1000, "2"], [358, "2", ["1", "2", "3"]]]) {
+            const grid = h("div", { "data-slot": "section-cards", ...(columns ? { "data-min-columns": columns } : {}) }, (values ?? ["$1,250.00", "1,234", "45,678", "4.5%"]).map(card))
             const host = h("div", { style: { width: width + "px" } }, grid)
             document.body.prepend(host)
             await new Promise(r => requestAnimationFrame(r))
             const cards = [...grid.children].map(c => c.getBoundingClientRect())
             const titles = [...grid.querySelectorAll('[data-slot="card-title"]')].map(e => e.scrollWidth <= e.clientWidth)
-            out[`${width}-${columns}`] = { columns: new Set(cards.map(r => Math.round(r.left))).size, width: Math.round(cards[0].width), fit: titles.every(Boolean) }
+            out[`${width}-${columns}${values ? "-odd" : ""}`] = { columns: new Set(cards.map(r => Math.round(r.left))).size, width: Math.round(cards[0].width), last: Math.round(cards.at(-1).width), fit: titles.every(Boolean) }
             host.remove()
           }
           return out
         }"""
     )
     assert result["358-null"]["columns"] == 1, result
-    assert result["358-2"] == {"columns": 2, "width": 171, "fit": True}, result
+    assert result["358-2"] == {"columns": 2, "width": 171, "last": 171, "fit": True}, result
+    assert result["358-2-odd"]["width"] == 171 and result["358-2-odd"]["last"] == 358, ("with an odd count the last card takes the full row", result)
     assert result["1000-2"]["columns"] == 4, result
+
+
+def check_section_cards_title_size(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const link = [...document.querySelectorAll("link[rel=stylesheet]")].find(l => l.getAttribute("href").endsWith("clanker-ui.css"))
+          const href = link.getAttribute("href")
+          const card = () => h("div", { "data-slot": "card" },
+            h("div", { "data-slot": "card-header" }, h("div", { "data-slot": "card-description" }, "Revenue"), h("div", { "data-slot": "card-title" }, "1,234")),
+            h("div", { "data-slot": "card-footer" }, h("div", { "data-slot": "card-description" }, "Last 6 months")))
+          const bad = []
+          let checked = 0
+          for (const style of ["", "-sera", "-vega"]) {
+            if (style) {
+              const loaded = new Promise(r => link.addEventListener("load", r, { once: true }))
+              link.setAttribute("href", href.replace("clanker-ui.css", `clanker-ui${style}.css`))
+              await loaded
+            }
+            for (const width of [249, 250, 515, 516, 781, 782, 1047, 1048, 1200]) {
+              for (const [count, min] of [[4, false], [3, false], [3, true]]) {
+                const grid = h("div", { "data-slot": "section-cards", ...(min ? { "data-min-columns": "2" } : {}) }, Array.from({ length: count }, card))
+                const host = h("div", { style: { width: width + "px" } }, grid)
+                document.body.prepend(host)
+                for (const c of grid.children) {
+                  const w = c.getBoundingClientRect().width
+                  const size = parseFloat(getComputedStyle(c.querySelector('[data-slot="card-title"]')).fontSize)
+                  checked++
+                  if (size !== (w >= 249.9 ? 30 : 24)) bad.push([style || "nova", width, count, min, Math.round(w * 10) / 10, size])
+                }
+                host.remove()
+              }
+            }
+          }
+          if (link.getAttribute("href") !== href) {
+            const loaded = new Promise(r => link.addEventListener("load", r, { once: true }))
+            link.setAttribute("href", href)
+            await loaded
+          }
+          return { bad, checked }
+        }"""
+    )
+    assert result["checked"] > 200 and result["bad"] == [], ("the value is 30 px exactly when the card is at least 250 px wide, in every style", result["bad"][:10])

@@ -455,6 +455,27 @@ def check_breadcrumb_site_header(t):
     assert result["header"] == 48 and result["list"] <= 24, ("a breadcrumb in a site-header stays on one line", result)
     assert result["overflow"] == 0 and result["shareInside"], ("the breadcrumb does not push the header wider", result)
     assert result["cut"] and result["ellipsis"] == "ellipsis", result
+    kept = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const sep = () => h("li", { "data-slot": "breadcrumb-separator", role: "presentation", "aria-hidden": "true" }, "/")
+          const link = text => h("li", { "data-slot": "breadcrumb-item" }, h("a", { "data-slot": "breadcrumb-link", href: "#" }, text))
+          const more = h("li", { "data-slot": "breadcrumb-item" }, h("span", { "data-slot": "breadcrumb-ellipsis" }))
+          const menu = h("li", { "data-slot": "breadcrumb-item" }, h("div", { "data-slot": "dropdown-menu" }, h("button", { type: "button", "data-dropdown-menu-trigger": "" }, "Components"), h("div", { "data-slot": "dropdown-menu-content" }, h("div", { "data-slot": "dropdown-menu-item" }, "Docs"))))
+          const header = h("header", { "data-slot": "site-header" }, h("nav", { "data-slot": "breadcrumb", "aria-label": "breadcrumb" }, h("ol", { "data-slot": "breadcrumb-list" },
+            link("Projects and workspaces"), sep(), more, sep(), menu, sep(), link("A rather long folder name"), sep(), h("li", { "data-slot": "breadcrumb-item" }, h("span", { "data-slot": "breadcrumb-page", "aria-current": "page" }, "A very long current page title")))))
+          const host = h("div", {}, header)
+          host.style.width = "2000px"
+          document.body.prepend(host)
+          const r = e => e.getBoundingClientRect()
+          const natural = [more, menu].map(item => Math.round(r(item).width))
+          host.style.width = "300px"
+          const out = [more, menu].map((item, i) => [Math.round(r(item).width) === natural[i], r(item).right <= r(item.nextElementSibling).left + 0.5])
+          host.remove()
+          return out
+        }"""
+    )
+    assert kept == [[True, True], [True, True]], ("an ellipsis or a dropdown trigger item keeps its size and does not run under the next separator", kept)
 
 
 def check_card(t):
@@ -1988,10 +2009,19 @@ def check_table_sticky_site_header(t):
             host.remove()
           }
           scrollTo(0, 0)
+          const pane = h("div", { "data-slot": "scroll-area-viewport", style: { height: "300px", overflow: "auto" } }, table())
+          const host = h("div", {}, h("header", { "data-slot": "site-header" }, "Title"), h("div", { "data-slot": "scroll-area" }, pane))
+          document.body.prepend(host)
+          const c = pane.querySelector('[data-slot="table-container"]')
+          for (let i = 0; i < 50 && !c.hasAttribute("data-fits"); i++) await new Promise(r => requestAnimationFrame(r))
+          pane.scrollTop = 1200
+          await new Promise(r => requestAnimationFrame(r))
+          out.push(["pane", c.hasAttribute("data-fits"), Math.round(pane.querySelector("thead").getBoundingClientRect().top - pane.getBoundingClientRect().top)])
+          host.remove()
           return out
         }"""
     )
-    assert result == [[None, True, 48, 48], ["lg", True, 56, 56]], ("the sticky table header stops below the site-header", result)
+    assert result == [[None, True, 48, 48], ["lg", True, 56, 56], ["pane", True, 0]], ("the sticky table header stops below the site-header, and at the top of its own scroll pane", result)
 
 
 def check_table(t):

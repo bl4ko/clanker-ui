@@ -1459,7 +1459,7 @@ view.destroy()
 | `type` | `bar` (default), `area`, `line`, `pie`, `donut`, `radar`, `radial` |
 | `x`, `y` | Category key (default: the first non-numeric column). `y`: one key or a list. |
 | `label`, `summary` | Name for the `aria-label`, table caption, and table region. `summary` replaces the automatic `aria-label`. |
-| `format`, `tickFormat`, `xFormat`, `labelFormat`, `locale`, `timeZone` | `Intl` options or a function. Axis ticks are compact from 1,000. `locale` sets the language of numbers and dates (`"de-DE"`); it defaults to `<html lang>` when it is a valid language tag, else to the browser language. `timeZone` (an IANA name such as `"UTC"` or `"Europe/Ljubljana"`) places the time axis ticks and shows every date and time in that zone; the default is the browser time zone. An unknown zone throws a `RangeError`. |
+| `format`, `tickFormat`, `xFormat`, `labelFormat`, `locale`, `timeZone` | `Intl` options or a function. Value axis ticks use `format` with a `tickFormat` object merged over it, compact from 1,000 unless `tickFormat` sets `notation`. `locale` sets the language of numbers and dates (`"de-DE"`); it defaults to `<html lang>` when it is a valid language tag, else to the browser language. `timeZone` (an IANA name such as `"UTC"` or `"Europe/Ljubljana"`) places the time axis ticks and shows every date and time in that zone; the default is the browser time zone. An unknown zone throws a `RangeError`. |
 | `stack` | `true` or `"expand"` for `bar` and `area` |
 | `horizontal`, `labels`, `diverging`, `highlight`, `barSize` | Bar options |
 | `curve`, `dots`, `gradient`, `zero`, `domain` | `monotone` (default), `linear`, `step`; dots; gradient fill; `zero: false`; fixed `[min, max]` (finite numbers or `null`; else a `TypeError`) |

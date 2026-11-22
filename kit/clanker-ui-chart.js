@@ -515,13 +515,15 @@ function chartFormats(s, m) {
   const locale = chartLocale(o)
   const zone = o.timeZone == null ? {} : { timeZone: o.timeZone }
   const base = o.format && typeof o.format === "object" ? o.format : {}
-  const compact = chartCompact(base)
+  const own = o.tickFormat && typeof o.tickFormat === "object" ? o.tickFormat : null
+  const ticks = own ? chartDigits(base, own) : base
+  const compact = own && Object.hasOwn(own, "notation") ? ticks : chartCompact(ticks)
   const value = typeof o.format === "function" ? v => String(o.format(v)) : v => chartNumber(locale, base).format(v)
   const percent = v => chartNumber(locale, { style: "percent", maximumFractionDigits: 1 }).format(v)
   const tick = (v, max) => {
     if (typeof o.tickFormat === "function") return String(o.tickFormat(v))
     if (m.expand) return chartNumber(locale, { style: "percent", maximumFractionDigits: 0 }).format(v)
-    return chartNumber(locale, max >= 1000 ? compact : base).format(v)
+    return chartNumber(locale, max >= 1000 ? compact : ticks).format(v)
   }
   const raw = i => (m.x == null ? i + 1 : m.rows[i]?.[m.x])
   const name = i => {

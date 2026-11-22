@@ -15699,6 +15699,8 @@
     stroke-dasharray: 1;
     animation: clanker-chart-draw 700ms var(--ease-out) backwards;
   }
+  [data-slot="chart-svg"] [data-part="line"][data-dashed] { stroke-dasharray: 5 5; }
+  [data-slot="chart-svg"][data-animate] [data-part="line"][data-dashed] { animation-name: clanker-chart-fade; }
   [data-slot="chart-svg"][data-animate] :is([data-part="area"], [data-part="shape"], [data-part="slice"], [data-part="arc"], [data-part="dot"], [data-part="labels"], [data-part="center"], [data-part="references"], [data-part="reference-labels"]):not([data-part="active"] > *) {
     animation: clanker-chart-fade 500ms var(--ease-out) backwards;
   }
@@ -15821,6 +15823,7 @@
     border-width: 1px 0;
     border-radius: 1px;
   }
+  [data-slot="chart-legend-indicator"][data-dashed] { border-style: dashed; background-color: transparent; }
   [data-slot="chart-legend-item"][aria-pressed="false"] [data-slot="chart-legend-indicator"] { background-color: transparent; }
   [data-slot="chart-legend-item"][aria-pressed="false"] [data-slot="chart-legend-indicator"][data-shape="line"] { border-style: dotted; }
   [data-slot="chart-table-toggle"] {

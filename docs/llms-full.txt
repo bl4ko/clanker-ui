@@ -1470,9 +1470,10 @@ view.destroy()
 | `format`, `tickFormat`, `xFormat`, `labelFormat`, `locale`, `timeZone` | `Intl` options or a function. Value axis ticks use `format` with a `tickFormat` object merged over it, compact from 1,000 unless `tickFormat` sets `notation`. `locale` sets the language of numbers and dates (`"de-DE"`); it defaults to `<html lang>` when it is a valid language tag, else to the browser language. `timeZone` (an IANA name such as `"UTC"` or `"Europe/Ljubljana"`) places the time axis ticks and shows every date and time in that zone; the default is the browser time zone. An unknown zone throws a `RangeError`. |
 | `stack` | `true` or `"expand"` for `bar` and `area` |
 | `horizontal`, `labels`, `diverging`, `highlight`, `barSize` | Bar options |
-| `curve`, `dots`, `gradient`, `zero`, `domain` | `monotone` (default), `linear`, `step`; dots; gradient fill; `zero: false`; fixed `[min, max]` (finite numbers or `null`; else a `TypeError`) |
+| `curve`, `dots`, `gradient`, `zero`, `domain` | `monotone` (default), `linear`, `step`; dots (`true`, or `"last"` for the last point of each series); gradient fill; `zero: false`; fixed `[min, max]` (finite numbers or `null`; else a `TypeError`) |
 | `references` | Bar, line, and area: a list of `{ value, label, tone, position }` (a dashed line), `{ from, to, label, tone, position }` (a band with dashed edges), or `{ x, label, tone, position }` (a dashed line at a category or date). See [Reference lines and time axis](#reference-lines-and-time-axis). |
-| `scale`, `connectNulls` | `scale: "time"` (line and area) puts each row at its date. `connectNulls`: `true` or a list of keys; the line goes across missing values. |
+| `shapes` | Line and area: `{ key: "circle" \| "square" \| "diamond" }`. The dots and the hover dot of that series and its legend key take the shape, so series do not differ by color alone. Another value throws a `TypeError`. |
+| `scale`, `connectNulls`, `dashed` | `scale: "time"` (line and area) puts each row at its date. `connectNulls`: `true` or a list of keys; the line goes across missing values. `dashed`: `true` or a list of keys; those lines (line and area) are dashed, and so is their legend key in a line chart. |
 | `grid`, `valueAxis`, `categoryAxis`, `legend`, `table` | `false` hides each part |
 | Pie and donut | `labels: "value" \| "percent" \| "name"`, `labelPosition: "inside"`, `innerRadius`, `center`, `highlight` |
 | Radar | `grid: "polygon" \| "circle" \| "none"`, `fill: false`, `dots`, `max` |
@@ -3023,7 +3024,7 @@ Group `chart`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | Part | Write | State |
 | --- | --- | --- |
 | `chart` (root) |  | `data-sparkline` |
-| `chart-legend-indicator` (kit adds) |  | `data-shape` |
+| `chart-legend-indicator` (kit adds) |  | `data-dashed`, `data-shape` |
 | `chart-stat-delta` (kit adds) |  | `data-direction`, `data-tone` |
 | `chart-tooltip-item` (kit adds) |  | `data-total` |
 

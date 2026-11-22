@@ -4694,6 +4694,45 @@ G2_OVERLAY_FORMS = """async () => {
 }"""
 
 
+def check_overlay_title_close(t):
+    t.a11y()
+    page = t.page
+    title = " ".join(["Edit"] * 40)
+    page.evaluate(
+        """async title => {
+          const { h } = await import("/clanker-ui.js")
+          for (const kind of ["dialog", "sheet"]) {
+            document.body.append(h("div", { "data-slot": kind, id: `fx-title-${kind}` },
+              h("button", { type: "button", "data-slot": "button", [`data-${kind}-trigger`]: "" }, "Open"),
+              h("dialog", { "data-slot": `${kind}-content` }, h("div", { "data-slot": `${kind}-header` }, h("h2", { "data-slot": `${kind}-title` }, title), h("p", { "data-slot": `${kind}-description` }, "Details.")))))
+          }
+          await new Promise(r => setTimeout(r, 0))
+        }""",
+        title,
+    )
+    for kind in ("dialog", "sheet"):
+        page.evaluate("async id => { const { dialogOpen } = await import('/clanker-ui.js'); dialogOpen(id) }", f"fx-title-{kind}")
+        wait(page, f"() => document.querySelector('#fx-title-{kind} dialog').open")
+        t.settle()
+        hit = page.evaluate(
+            """kind => {
+              const c = document.querySelector(`#fx-title-${kind} dialog`), x = c.querySelector(`:scope > [data-slot=${kind}-close]`).getBoundingClientRect()
+              const t = c.querySelector(`[data-slot=${kind}-title]`), r = t.getBoundingClientRect()
+              const range = document.createRange()
+              range.selectNodeContents(t)
+              const lines = [...range.getClientRects()].filter(l => l.left < x.right && l.right > x.left && l.top < x.bottom && l.bottom > x.top).length
+              const pad = parseFloat(getComputedStyle(t).paddingInlineEnd)
+              const under = getComputedStyle(t).direction === "rtl" ? r.left + pad < x.right : r.right - pad > x.left
+              return lines + (r.top < x.bottom && under ? 1 : 0)
+            }""",
+            kind,
+        )
+        assert hit == 0, (kind, "no title line runs under the close button", hit)
+        page.keyboard.press("Escape")
+        wait(page, f"() => !document.querySelector('#fx-title-{kind} dialog').open")
+    page.evaluate("() => ['fx-title-dialog', 'fx-title-sheet'].forEach(id => document.getElementById(id).remove())")
+
+
 def check_overlay_form_layout(t):
     page = t.page
     page.evaluate(G2_OVERLAY_FORMS)

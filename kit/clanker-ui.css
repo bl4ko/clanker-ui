@@ -15119,7 +15119,6 @@
   }
   [data-slot="section-cards"] > :only-child { grid-column: span 12; }
   [data-slot="section-cards"] > [data-slot="card"] {
-    container: card / inline-size;
     display: grid;
     grid-row: span 2;
     grid-template-rows: subgrid;
@@ -15140,7 +15139,7 @@
     font-variant-numeric: tabular-nums;
     overflow-wrap: anywhere;
   }
-  @container card (width >= 250px) {
+  @container card-header (width >= 218px) {
     [data-slot="section-cards"] [data-slot="card-title"] { font-size: 1.875rem; line-height: 2.25rem; }
   }
   [data-slot="section-cards"] [data-slot="card-header"]:has(> [data-slot="card-action"] > [data-slot="badge"]:only-child) > [data-slot="card-description"]:first-child + [data-slot="card-title"] { grid-row: 2; grid-column: 1 / -1; }

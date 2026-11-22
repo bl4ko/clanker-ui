@@ -972,6 +972,33 @@ def check_chart_locale(t):
     assert result == {"chart": "1,234", "stat": "12.3K"}, f"invalid <html lang>: {result}"
 
 
+def check_chart_tick_format(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const read = (rows, o) => {
+            const c = make(rows, { type: "bar", x: "m", ...o })
+            const out = ticks(c.svg, "value").map(e => e.textContent)
+            c.box.remove()
+            return out
+          }
+          const small = [{ m: "a", v: 1.25 }, { m: "b", v: 0.5 }]
+          const big = [{ m: "a", v: 2500 }, { m: "b", v: 500 }]
+          return {
+            digits: read(small, { format: { maximumFractionDigits: 1 }, tickFormat: { maximumFractionDigits: 2 } }),
+            merged: read(small, { format: { style: "currency", currency: "EUR" }, tickFormat: { minimumFractionDigits: 0 } }),
+            compact: read(big, { tickFormat: { style: "percent" } }),
+            standard: read(big, { tickFormat: { notation: "standard" } }),
+          }
+        }"""
+    )
+    assert result["digits"] == ["0", "0.25", "0.5", "0.75", "1", "1.25"], result
+    assert result["merged"][-1] == "€1.25" and result["merged"][0] == "€0", result
+    assert result["compact"][-1] == "250K%", result
+    assert result["standard"][-1] == "2,500", result
+
+
 def check_chart_colors(t):
     result = t.page.evaluate(
         """async () => {

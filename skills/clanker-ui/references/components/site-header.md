@@ -23,6 +23,6 @@ Other parts: `site-header-actions`, `site-header-nav`, `site-header-title`.
 </header>
 ```
 
-- The top bar of a page, as in shadcn `dashboard-01`: `--header-height` high (default 3rem), a bottom border, sticky at the top, 1rem gutters (1.5rem from 64rem). A `sidebar-trigger` first and a vertical `separator` get the shadcn spacing. `site-header-title` is 16 px, weight 500, on one line. `site-header-actions` goes to the end.
+- The top bar of a page, as in shadcn `dashboard-01`: `--header-height` high (default 3rem), a bottom border, sticky at the top, 1rem gutters (1.5rem from 64rem). A `sidebar-trigger` first and a vertical `separator` get the shadcn spacing. `site-header-title` is 16 px, weight 500, on one line. A `breadcrumb` in it stays on one line and cuts its links and page with an ellipsis. `site-header-actions` goes to the end.
 - Without a sidebar it is the app header: a `brand` link, then `site-header-nav` with links (muted, `aria-current="page"` in the foreground), then `site-header-actions`. `data-size="lg"` makes the bar 3.5rem high.
 - A `breadcrumb` can stand in place of the title.

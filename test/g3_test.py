@@ -433,6 +433,30 @@ def check_breadcrumb(t):
     assert slash.inner_text() == "/" and slash.locator("svg").count() == 0
 
 
+def check_breadcrumb_site_header(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const item = (slot, text) => h("li", { "data-slot": "breadcrumb-item" }, slot === "page" ? h("span", { "data-slot": "breadcrumb-page", "aria-current": "page" }, text) : h("a", { "data-slot": "breadcrumb-link", href: "#" }, text))
+          const sep = () => h("li", { "data-slot": "breadcrumb-separator", role: "presentation", "aria-hidden": "true" }, "/")
+          const header = h("header", { "data-slot": "site-header" },
+            h("nav", { "data-slot": "breadcrumb", "aria-label": "breadcrumb" }, h("ol", { "data-slot": "breadcrumb-list" }, item("link", "Projects and workspaces"), sep(), item("link", "A rather long folder name"), sep(), item("page", "A very long current page title that does not fit"))),
+            h("div", { "data-slot": "site-header-actions" }, h("button", { type: "button", "data-slot": "button", "data-size": "sm" }, "Share")))
+          const host = h("div", {}, header)
+          host.style.width = "360px"
+          document.body.prepend(host)
+          const r = e => e.getBoundingClientRect()
+          const list = header.querySelector('[data-slot="breadcrumb-list"]'), page = header.querySelector('[data-slot="breadcrumb-page"]'), share = header.querySelector("button")
+          const out = { header: Math.round(r(header).height), list: Math.round(r(list).height), overflow: header.scrollWidth - header.clientWidth, shareInside: r(share).right <= r(header).right + 0.5, cut: page.scrollWidth > page.clientWidth, ellipsis: getComputedStyle(page).textOverflow }
+          host.remove()
+          return out
+        }"""
+    )
+    assert result["header"] == 48 and result["list"] <= 24, ("a breadcrumb in a site-header stays on one line", result)
+    assert result["overflow"] == 0 and result["shareInside"], ("the breadcrumb does not push the header wider", result)
+    assert result["cut"] and result["ellipsis"] == "ellipsis", result
+
+
 def check_card(t):
     page = t.page
     section = t.section("card")

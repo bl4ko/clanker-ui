@@ -15113,6 +15113,7 @@
     gap: calc(var(--spacing) * 4);
   }
   [data-slot="section-cards"] > * { grid-column: span 12; }
+  [data-slot="section-cards"][data-columns="2"] > * { grid-column: span 6; }
   @container section-cards (width >= 34rem) {
     [data-slot="section-cards"] > * { grid-column: span 6; }
   }

@@ -960,6 +960,7 @@
   [data-slot="brand-mark"][data-size="sm"] { width: calc(var(--spacing) * 6); height: calc(var(--spacing) * 6); border-radius: var(--radius-md); }
   [data-slot="brand-mark"] > svg { width: 1rem; height: 1rem; }
   [data-slot="sidebar"] [data-slot="brand-mark"] { background-color: var(--sidebar-primary); color: var(--sidebar-primary-foreground); }
+  img[data-slot="brand-mark"], [data-slot="sidebar"] img[data-slot="brand-mark"] { background-color: transparent; object-fit: contain; }
   [data-slot="sidebar-menu-button"] > [data-slot="brand-mark"] > svg { width: 1rem; height: 1rem; }
   [data-slot="text-stack"] {
     display: grid;

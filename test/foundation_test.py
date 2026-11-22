@@ -1923,6 +1923,24 @@ def check_item_media_cover(t):
         assert not text, (size, variant, "cover text is hidden at media size")
 
 
+def check_brand_mark_image(t):
+    result = t.page.evaluate(
+        """async () => {
+          const { h } = await import("/clanker-ui.js")
+          const src = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1"/>')
+          const mark = attrs => h("a", { "data-slot": "brand", href: "#" }, h("img", { "data-slot": "brand-mark", src, alt: "", ...attrs }), "Acme")
+          const host = h("div", {}, mark({}), mark({ "data-size": "sm" }), h("div", { "data-slot": "sidebar" }, mark({})), h("a", { "data-slot": "brand", href: "#" }, h("span", { "data-slot": "brand-mark" }, "A")))
+          document.body.prepend(host)
+          const out = [...host.querySelectorAll('[data-slot="brand-mark"]')].map(m => { const s = getComputedStyle(m); return [m.localName, s.backgroundColor, s.objectFit, Math.round(m.getBoundingClientRect().width)] })
+          host.remove()
+          return out
+        }"""
+    )
+    clear = "rgba(0, 0, 0, 0)"
+    assert result[:3] == [["img", clear, "contain", 32], ["img", clear, "contain", 24], ["img", clear, "contain", 32]], result
+    assert result[3][1] != clear, ("a span mark keeps the primary square", result[3])
+
+
 def check_section_cards_value_wrap(t):
     result = t.page.evaluate(
         """async () => {

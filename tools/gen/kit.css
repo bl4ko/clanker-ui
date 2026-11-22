@@ -854,6 +854,8 @@
   }
   [data-slot="table-container"][data-sticky-header][data-fits], [data-slot="card"]:has([data-slot="table-container"][data-sticky-header][data-fits]) { overflow: clip; }
   [data-slot="table-container"][data-sticky-header][data-fits] > [data-slot="table"] > [data-slot="table-header"] { position: sticky; top: var(--table-header-top, 0px); z-index: 1; }
+  :is([data-slot="site-header"] ~ * [data-slot="table-container"], [data-slot="site-header"] ~ [data-slot="table-container"])[data-sticky-header][data-fits]:not(dialog *) > [data-slot="table"] > [data-slot="table-header"] { top: var(--table-header-top, var(--header-height, 3rem)); }
+  :is([data-slot="site-header"][data-size="lg"] ~ * [data-slot="table-container"], [data-slot="site-header"][data-size="lg"] ~ [data-slot="table-container"])[data-sticky-header][data-fits]:not(dialog *) > [data-slot="table"] > [data-slot="table-header"] { top: var(--table-header-top, var(--header-height, 3.5rem)); }
   :where([data-slot="table-container"][data-sticky-header][data-fits] > [data-slot="table"] > [data-slot="table-header"]) { background-color: var(--background); }
   :where([data-slot="card"] [data-slot="table-container"][data-sticky-header][data-fits] > [data-slot="table"] > [data-slot="table-header"]) { background-color: var(--card); }
   @media (width < 40rem) {

@@ -781,6 +781,8 @@ LAYOUT_SHIFT = """() => new Promise(done => {
 
 
 def check_docs_no_layout_shift(t):
+    if t.rtl:
+        t.skip("--rtl sets dir after the first paint")
     page = t.page
     if t.engine == "chromium":
         page.context.new_cdp_session(page).send("Emulation.setCPUThrottlingRate", {"rate": 4})

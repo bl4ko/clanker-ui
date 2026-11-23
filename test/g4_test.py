@@ -151,8 +151,8 @@ def check_attachment(t):
     assert outline[0] == "none", outline
     assert ring_width(page, section.locator("#attachment-trigger [data-slot=attachment]")) == [1]
     t.a11y()
-    outline = preview.evaluate("e => [getComputedStyle(e).outlineStyle, getComputedStyle(e).outlineWidth]")
-    assert outline == ["solid", "3px"], outline
+    outline = [preview.evaluate("e => getComputedStyle(e).outlineStyle"), section.locator("#attachment-trigger [data-slot=attachment]").evaluate("e => [getComputedStyle(e).outlineStyle, getComputedStyle(e).outlineWidth]")]
+    assert outline == ["none", ["solid", "3px"]], outline
     t.shot("attachment-states", section.locator("#attachment-states"))
 
 
@@ -1741,6 +1741,15 @@ def check_attachment_a11y(t):
     group.focus()
     ring = group.evaluate("e => { const s = getComputedStyle(e); return [e.matches(':focus-visible'), s.outlineStyle, s.outlineWidth, s.maskImage, s.webkitMaskImage] }")
     assert ring[:3] == [True, "solid", "3px"] and "gradient" not in (ring[3] or "") + (ring[4] or ""), f"the scroll fade mask hides the focus ring of the group: {ring}"
+    trigger = section.locator("#attachment-images [data-slot=attachment-trigger]").first
+    trigger.focus()
+    ring = trigger.evaluate("""e => {
+      const a = e.closest('[data-slot=attachment]'), g = a.closest('[data-slot=attachment-group]')
+      const s = getComputedStyle(a), r = a.getBoundingClientRect(), c = g.getBoundingClientRect()
+      const out = Math.max(0, parseFloat(s.outlineWidth) + parseFloat(s.outlineOffset))
+      return [e.matches(':focus-visible'), getComputedStyle(e).outlineStyle, s.outlineStyle, s.outlineWidth, r.left - out >= c.left - 0.5 && r.right + out <= c.right + 0.5]
+    }""")
+    assert ring == [True, "none", "solid", "3px", True], f"the attachment, not its trigger, shows the ring, inside the scrolling group: {ring}"
 
 
 def scroll_fade(t, section_id, sel, scroll):

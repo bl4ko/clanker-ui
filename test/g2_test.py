@@ -4193,6 +4193,60 @@ def check_dropdown_menu_pointer_leave_ring(t):
     page.keyboard.press("Escape")
 
 
+def check_select_pointer_leave_ring(t):
+    page = t.page
+    t.a11y()
+    t.section("select")
+    content = page.locator("#select-demo > [data-slot=select-content]")
+    page.locator("#select-demo-trigger").click()
+    wait(page, "e => e.matches(':popover-open')", content.element_handle())
+    t.settle()
+    item = box(content.locator("[data-slot=select-item]", has_text="Banana"))
+    label = box(content.locator("[data-slot=select-label]"))
+    page.mouse.move(item["x"] + 10, item["y"] + item["height"] / 2, steps=4)
+    assert active(page) == "Banana"
+    page.mouse.move(label["x"] + 10, label["y"] + label["height"] / 2, steps=4)
+    wait(page, "e => document.activeElement === e", content.element_handle())
+    assert content.evaluate("e => getComputedStyle(e).outlineStyle") == "none", "no focus ring on the list when the pointer leaves an item"
+    page.keyboard.press("Escape")
+
+
+def check_overlay_container_ring(t):
+    page = t.page
+    t.a11y()
+    t.section("popover")
+    trigger = page.locator("#popover-demo [data-popover-trigger]")
+    content = page.locator("#popover-demo [data-slot=popover-content]")
+    ring = lambda: content.evaluate("e => { const s = getComputedStyle(e); return [document.activeElement === e, s.outlineStyle, s.outlineWidth, s.outlineOffset] }")
+    trigger.focus()
+    page.keyboard.press("Enter")
+    wait(page, "e => document.activeElement === e", content.element_handle())
+    t.settle()
+    assert ring() == [True, "solid", "3px", "-3px"], ("a keyboard user sees an inset ring on a popup without focusable children", ring())
+    tb = box(trigger)
+    page.mouse.move(tb["x"] + 4, tb["y"] - 20, steps=4)
+    wait(page, "() => !document.documentElement.hasAttribute('data-keyboard')")
+    assert ring() == [True, "none", "3px", "-3px"], ("no ring on a focused popup in pointer use", ring())
+    page.keyboard.press("Escape")
+
+
+def check_toast_f6_ring(t):
+    page = t.page
+    t.a11y()
+    section = t.section("toast")
+    section.locator("[data-demo-toast=add-default]").click()
+    toast = page.locator("[data-slot=toast]").first
+    toast.wait_for()
+    section.locator("[data-demo-toast=add-default]").focus()
+    page.keyboard.press("F6")
+    viewport = page.locator("[data-slot=toast-viewport]")
+    wait(page, "e => document.activeElement === e", viewport.element_handle())
+    outline = lambda loc: loc.evaluate("e => { const s = getComputedStyle(e); return [s.outlineStyle, s.outlineWidth] }")
+    assert outline(viewport) == ["none", "3px"], ("no outline on the empty toast viewport", outline(viewport))
+    assert outline(toast) == ["solid", "3px"], ("F6 rings the toasts", outline(toast))
+    page.keyboard.press("Escape")
+
+
 def check_forced_colors_focus(t):
     page = t.page
     t.a11y()

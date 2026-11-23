@@ -229,6 +229,30 @@ func dropFallbacks(r *cssRule) int {
 	return n
 }
 
+func markEdgeSides(r *cssRule) int {
+	n := 0
+	for _, it := range r.items {
+		if it.rule == nil {
+			continue
+		}
+		n += markEdgeSides(it.rule)
+		clear, side := false, false
+		for _, d := range it.rule.items {
+			switch d.decl {
+			case "border-color: #0000":
+				clear = true
+			case "border-bottom-color: var(--input)":
+				side = clear
+			}
+		}
+		if side {
+			it.rule.items = append(it.rule.items, cssItem{decl: "--input-edge-sides: #0000"})
+			n++
+		}
+	}
+	return n
+}
+
 var (
 	selectorClass = regexp.MustCompile(`\.(-?[A-Za-z_][\w-]*(?:\\.[\w-]*)*)`)
 	bracketed     = regexp.MustCompile(`\[[^\]]*\]|"[^"]*"`)

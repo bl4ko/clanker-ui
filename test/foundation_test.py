@@ -1748,6 +1748,22 @@ def check_input_contrast(t):
     t.section("input")
 
 
+def check_sera_input_edge(t):
+    t.docs("/demo?only=input,input-group,select,native-select")
+    page = t.page
+    page.evaluate("""() => new Promise(r => {
+      const link = [...document.querySelectorAll("link[rel=stylesheet]")].find(l => l.getAttribute("href").endsWith("clanker-ui.css"))
+      link.addEventListener("load", r, { once: true })
+      link.setAttribute("href", link.getAttribute("href").replace("clanker-ui.css", "clanker-ui-sera.css"))
+    })""")
+    t.a11y()
+    t.settle()
+    edge = resolved(page, "border-bottom-color", "var(--input-edge)")
+    sides = page.evaluate("""sels => sels.map(s => { const c = getComputedStyle(document.querySelector(s)); return [s, c.borderTopColor, c.borderInlineStartColor, c.borderBottomColor] })""", ["#input [data-slot=input]", "#input-group [data-slot=input-group]", "#select [data-slot=select-trigger]", "#native-select [data-slot=native-select]"])
+    bad = [s for s in sides if s[1:] != ["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, 0)", edge]]
+    assert not bad, ("Sera controls keep their underline only, in --input-edge", edge, bad)
+
+
 UPSTREAM_INPUT = "var(--input)"
 DECORATIVE = """([parts, upstream]) => parts.map(([sel, prop, expr]) => {
   const e = document.querySelector(sel)

@@ -381,6 +381,9 @@ func run(o options) (string, error) {
 	if err := g.optimize(tree, kitCSS, table); err != nil {
 		return "", err
 	}
+	if n := markEdgeSides(tree); n > 0 {
+		g.note("underline control: --input-edge-sides keeps its other sides clear under clanker-ui-a11y.css", "%d rules", n)
+	}
 	css = license + "\n" + layerOrder + tree.String()
 	if kitCSS != "" {
 		fmt.Fprintf(os.Stderr, "kit CSS appended: %s (%d bytes)\n", o.kit, len(kitCSS))

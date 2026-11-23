@@ -1587,6 +1587,10 @@ def check_layout_focus_rings(t):
         back = page.locator(surface).first.evaluate("e => { for (let n = e; n; n = n.parentElement) { const c = getComputedStyle(n).backgroundColor; if (c !== 'rgba(0, 0, 0, 0)') return c } return getComputedStyle(document.body).backgroundColor }")
         ratio = page.evaluate(G3_CONTRAST, [ring[2], back])
         assert ratio >= 3, f"{focus} focus ring has {ratio:.2f}:1 on {back}"
+    handle = page.locator("#resizable [data-slot=resizable-handle]").first
+    handle.focus()
+    handle = handle.evaluate("e => { const s = getComputedStyle(e); return [s.backgroundColor === s.outlineColor, parseFloat(s.outlineWidth) + parseFloat(s.outlineOffset)] }")
+    assert handle == [True, 1], f"the focused handle is one bar in the ring color, so the panel group clips no open ring ends: {handle}"
 
 
 def check_sidebar_sheet_mouse_focus(t):

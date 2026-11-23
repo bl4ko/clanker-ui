@@ -1114,10 +1114,7 @@ body[data-docs="body"] {
 [data-docs="code"] [data-slot="collapsible-content"] { animation: none; }
 
 [data-docs="code-teaser"] { position: relative; }
-[data-docs="code-teaser"] pre {
-  min-height: calc(3lh + 1.75rem + 6px);
-  overflow: hidden;
-}
+[data-docs="code-teaser"] pre { min-height: calc(3lh + 1.75rem + 6px); }
 
 [data-docs="component-preview"] [data-docs="code"] :is([data-docs="code-teaser"] pre, [data-slot="code-block-content"]) { padding-inline: 0; }
 [data-docs="component-preview"] [data-docs="code"] pre code { counter-reset: line; }

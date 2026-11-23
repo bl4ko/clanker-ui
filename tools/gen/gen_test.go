@@ -353,6 +353,20 @@ func TestDropFallbacks(t *testing.T) {
 	}
 }
 
+func TestMarkEdgeSides(t *testing.T) {
+	tree, err := parseCSS("@layer c {\n  .u { border-color: #0000; border-bottom-color: var(--input); }\n  .b { border-color: var(--input); }\n  .f { border-color: #0000; }\n}\n")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if n := markEdgeSides(tree); n != 1 {
+		t.Errorf("marked %d", n)
+	}
+	want := "@layer c {\n  .u {\n    border-color: #0000;\n    border-bottom-color: var(--input);\n    --input-edge-sides: #0000;\n  }\n  .b {\n    border-color: var(--input);\n  }\n  .f {\n    border-color: #0000;\n  }\n}\n"
+	if got := tree.String(); got != want {
+		t.Errorf("got\n%s\nwant\n%s", got, want)
+	}
+}
+
 func TestParseMap(t *testing.T) {
 	m, fps, err := parseMap("a/B/svg\t& > svg\n\nc/D\t[data-slot=\"c\"] > div\ne/F/div#2\t-\t0a1b2c3d\n")
 	if err != nil || m["a/B/svg"] != "& > svg" || m["c/D"] != `[data-slot="c"] > div` || fps["e/F/div#2"] != "0a1b2c3d" {

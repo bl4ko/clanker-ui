@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"io"
 	"io/fs"
@@ -339,7 +340,7 @@ func TestMarkdownRenderer(t *testing.T) {
 		{"- one\n- two `x`", "<ul>\n<li>one</li>\n<li>two <code>x</code></li>\n</ul>\n"},
 		{"1. one\n\n   ```sh\n   go test\n   ```\n2. two", "<ol>\n<li><p>one</p>\n<pre data-lang=\"sh\" title=\"\">go test</pre>\n</li>\n<li><p>two</p>\n</li>\n</ol>\n"},
 		{"- a\n  - b", "<ul>\n<li>a<ul>\n<li>b</li>\n</ul>\n</li>\n</ul>\n"},
-		{"| A | B |\n| --- | --- |\n| `x \\| y` | 2 |", "<div data-docs=\"table\" class=\"scroll-fade-x\"><table>\n<thead><tr><th>A</th><th>B</th></tr></thead>\n<tbody>\n<tr><td><code>x | y</code></td><td>2</td></tr>\n</tbody>\n</table></div>\n"},
+		{"| A | B |\n| --- | --- |\n| `x \\| y` | 2 |", "<div data-docs=\"table\" class=\"scroll-fade-x\"><table>\n<thead><tr><th>A</th><th>B</th></tr></thead>\n<tbody>\n<tr><td><code>x |<wbr> y</code></td><td>2</td></tr>\n</tbody>\n</table></div>\n"},
 		{"```css title=\"app.css\"\na { }\n```", "<pre data-lang=\"css\" title=\"app.css\">a { }</pre>\n"},
 		{"> quote", "<blockquote>\n<p>quote</p>\n</blockquote>\n"},
 		{"{{example \"button-demo\" align=\"start\"}}", "<x-example>button-demo</x-example>\n"},
@@ -852,5 +853,83 @@ func TestExampleClassesHaveRules(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+func TestChartExamplesShowTheirScript(t *testing.T) {
+	md, ok := docsOf(t).markdownFor("/docs/components/chart")
+	if !ok {
+		t.Fatal("no chart page")
+	}
+	_, rest, _ := strings.Cut(string(md), `<div id="chart-bar-negative">`)
+	_, js, _ := strings.Cut(rest, "```js\n")
+	js, _, _ = strings.Cut(js, "```")
+	for _, want := range []string{`import { chart } from "./clanker-ui-chart.js"`, "const chartMonthOptions = {", "chart(\n  document.getElementById(\"chart-bar-negative\"),", "visitors: -207"} {
+		if !strings.Contains(js, want) {
+			t.Errorf("chart-bar-negative script lacks %q:\n%s", want, js)
+		}
+	}
+	if strings.Contains(js, "chartMount") || strings.Contains(js, "chartViews") || strings.Contains(js, "../") {
+		t.Errorf("chart script keeps demo plumbing:\n%s", js)
+	}
+}
+
+func TestDocsContentFacts(t *testing.T) {
+	readFile := func(t *testing.T, name string) string {
+		raw, err := os.ReadFile(name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return string(raw)
+	}
+	if got := htmlInline("Set <code>dir=\"rtl\"</code> on <code>&lt;html&gt;</code> or on any container"); got != "Set `dir=\"rtl\"` on `<html>` or on any container" {
+		t.Errorf("htmlInline: %q", got)
+	}
+	h := staticSite(t).routes()
+	get := func(path string) string {
+		rec := request(t, h, http.MethodGet, path)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("%s: status %d", path, rec.Code)
+		}
+		return rec.Body.String()
+	}
+	if rtl := get("/docs/rtl"); !strings.Contains(rtl, `<meta name="description" content="Set dir=&#34;rtl&#34; on &lt;html&gt; or`) {
+		t.Error("/docs/rtl: description lost <html>")
+	}
+	theming := get("/docs/theming")
+	if i, j := strings.Index(theming, "/clanker-ui-themes.css"), strings.Index(theming, "/clanker-ui-a11y.css"); i < 0 || j < i {
+		t.Error("/docs/theming: clanker-ui-a11y.css does not load after clanker-ui-themes.css")
+	}
+	if !strings.Contains(get("/docs/components/card"), `data-example="card-horizontal"`) {
+		t.Error("/docs/components/card: Horizontal has no example")
+	}
+	blocks := get("/docs/blocks.md")
+	var nav navConfig
+	if err := json.Unmarshal([]byte(readFile(t, "docs/nav.json")), &nav); err != nil {
+		t.Fatal(err)
+	}
+	mobile := map[string]bool{}
+	for _, item := range nav.MobileSections {
+		mobile[item.Href] = true
+	}
+	for _, item := range nav.Sections {
+		if !mobile[item.Href] && item.Href != "/docs/typography" {
+			t.Errorf("mobileSections lacks %s (shadcn shows every section but Typeset on phones)", item.Href)
+		}
+	}
+	for _, g := range nav.Groups {
+		for _, item := range g.Items {
+			if strings.HasPrefix(item.Href, "/docs/blocks/") && !strings.Contains(blocks, "]("+item.Href+")") {
+				t.Errorf("/docs/blocks: index table lacks %s", item.Href)
+			}
+		}
+	}
+	sheet := readFile(t, "docs/content/ai-elements/tool/examples/tool-sheet.html")
+	code := sheet[strings.Index(sheet, `<code data-slot="code-block-code">`):strings.Index(sheet, "</code>")]
+	if want := fmt.Sprintf(`<p data-slot="sheet-description">%d lines</p>`, strings.Count(code, "\n")+1); !strings.Contains(sheet, want) {
+		t.Errorf("tool-sheet: description is not %q", want)
+	}
+	if !strings.Contains(get("/docs/rtl"), `data-string-next-slide="الشريحة التالية"`) {
+		t.Error("/docs/rtl: the Arabic carousel has English slide labels")
 	}
 }

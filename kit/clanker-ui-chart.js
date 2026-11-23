@@ -926,11 +926,9 @@ function chartCartesian(c) {
   if (bar && labels && !horizontal) {
     const slot = slotOf(Math.max(1, W - left - right) / Math.max(1, n))
     turn = slot >= 16 && labelW > slot - 2 && Math.max(0, upW + 12 - top) + (downW && downW + 6) <= H / 2
-    if (turn) {
-      top = Math.max(top, upW + 12)
-      below = downW && downW + 6
-      bottom += below
-    }
+    if (turn) top = Math.max(top, upW + 12)
+    below = downW && (turn ? downW + 6 : 16)
+    bottom += below
   }
   const pl = left
   const pt = top
@@ -982,7 +980,7 @@ function chartCartesian(c) {
   if (categoryAxis && n) {
     const out = []
     if (m.time) {
-      for (const tk of chartTimeAxis(c, t0, t1, tpos, clen)) out.push(svg("text", { x: chartRound(tk.x), y: chartRound(pt + ph + 20), "text-anchor": "middle" }, tk.text))
+      for (const tk of chartTimeAxis(c, t0, t1, tpos, clen)) out.push(svg("text", { x: chartRound(tk.x), y: chartRound(pt + ph + below + 20), "text-anchor": "middle" }, tk.text))
     } else if (horizontal) {
       const step = Math.max(1, Math.ceil(16 / band))
       for (let i = (n - 1) % step; i < n; i += step) out.push(svg("text", { x: chartRound(pl - 8), y: chartRound(pos(i)), dy: "0.35em", "text-anchor": "end" }, chartFit(catText[i], catW, font.tick)))
@@ -1152,6 +1150,20 @@ function chartCartesian(c) {
     if (labels) {
       const out = []
       const used = []
+      const crosses = (x0, x1, y0, y1) =>
+        pts.some(list => {
+          const ps = list.filter(Boolean)
+          for (let j = 1; j < ps.length; j++) {
+            const [a, b] = [ps[j - 1], ps[j]]
+            const lo = Math.max(x0, Math.min(a.x, b.x))
+            const hi = Math.min(x1, Math.max(a.x, b.x))
+            if (lo > hi) continue
+            const ya = a.y + ((b.y - a.y) * (lo - a.x)) / (b.x - a.x || 1)
+            const yb = a.y + ((b.y - a.y) * (hi - a.x)) / (b.x - a.x || 1)
+            if (Math.max(ya, yb) > y0 && Math.min(ya, yb) < y1) return true
+          }
+          return false
+        })
       keys.forEach((_, k) => {
         const i = pts[k].findLastIndex(Boolean)
         if (i < 0 || vals[k][i] == null) return
@@ -1159,8 +1171,8 @@ function chartCartesian(c) {
         const text = f.value(vals[k][i])
         const w = chartWidth(text, font.label)
         const x = Math.min(Math.max(p.x, w / 2), W - w / 2)
-        const y = p.y - 10
-        if (used.some(u => Math.abs(u.y - y) < 14 && Math.abs(u.x - x) < (u.w + w) / 2 + 4)) return
+        const y = [p.y - 10, p.y + 20].find((y, j) => (!j || y + 4 <= pt + ph) && !crosses(x - w / 2, x + w / 2, y - 13, y + 5) && !used.some(u => Math.abs(u.y - y) < 14 && Math.abs(u.x - x) < (u.w + w) / 2 + 4))
+        if (y == null) return
         used.push({ x, y, w })
         out.push(svg("text", { x: chartRound(x), y: chartRound(y), "text-anchor": "middle", "data-part": "label" }, text))
       })

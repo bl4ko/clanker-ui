@@ -191,10 +191,10 @@ function paint(code) {
   const rows = [...code.querySelectorAll(':scope > [data-slot="code-block-line"]')]
   const targets = rows.length ? rows.map(row => row.querySelector(':scope > [data-slot="code-block-line-content"]') ?? row) : [code]
   if (targets.some(el => el.firstElementChild)) return
-  const result = lines(rows.length ? targets.map(el => el.textContent === "\n" ? "" : el.textContent).join("\n") : code.textContent, language)
+  const result = lines(rows.length ? targets.map(el => el.textContent === "\n" ? "" : el.textContent).join("\n") : code.textContent.replace(/\n$/, ""), language)
   if (!result) return
   if (rows.length) targets.forEach((el, i) => result[i]?.length && el.replaceChildren(...result[i]))
-  else code.replaceChildren(...result.flatMap((line, i) => i ? ["\n", ...line] : line))
+  else code.replaceChildren(...result.map(line => h("span", { "data-slot": "code-block-line", "data-variant": "default" }, h("span", { "data-slot": "code-block-line-content" }, line.length ? line : "\n"))))
 }
 
 define("code-block-code", { init: paint })

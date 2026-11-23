@@ -319,6 +319,20 @@ def check_docs_search(t):
         page.keyboard.press("Escape")
 
 
+def check_docs_search_focus_ring(t):
+    if t.width < 768:
+        t.skip("the search button shows from 768 px")
+    page = t.page
+    for _ in range(30):
+        page.keyboard.press("Tab")
+        if page.evaluate("""() => document.activeElement?.dataset.docs === "search-trigger" """):
+            break
+    else:
+        raise AssertionError("Tab does not reach the search button")
+    ring = page.evaluate("""() => getComputedStyle(document.activeElement).boxShadow""")
+    assert "3px" in ring, ring
+
+
 def check_docs_copy_page(t):
     if t.width < 640:
         t.skip("Copy Page shows from 640 px")
@@ -344,6 +358,7 @@ def check_docs_copy_page(t):
     assert item.get_attribute("href") == "/docs/components/button.md"
     assert item.get_attribute("target") == "_blank"
     assert item.inner_text().strip() == "View as Markdown"
+    assert item.evaluate("el => el.getClientRects().length === 1 && el.getBoundingClientRect().height <= 32"), "View as Markdown wraps"
     t.shot("copy-page-menu", page)
     page.keyboard.press("Escape")
 
@@ -445,6 +460,9 @@ def check_docs_view_code(t):
     frame = page.locator('[data-example="button-demo"]')
     teaser = frame.locator('[data-docs="code-teaser"] [data-line]')
     assert teaser.count() == 3
+    frame.locator('[data-docs="preview"] [data-slot="button"]').last.focus()
+    page.keyboard.press("Tab")
+    assert page.evaluate("() => document.activeElement?.textContent.trim()") == "View Code"
     content = frame.locator('[data-slot="collapsible-content"]')
     assert not content.is_visible()
     frame.get_by_role("button", name="View Code").click()
@@ -465,6 +483,30 @@ def check_docs_view_code(t):
         source = page.request.get(t.base_url + "/docs/components/button.md").text().split("```html\n", 1)[1].split("\n```", 1)[0]
         assert page.evaluate("() => navigator.clipboard.readText()") == source
     t.shot("view-code", frame)
+
+
+def check_docs_tables(t):
+    page = t.page
+    probe = """() => [...document.querySelectorAll('[data-docs="table"]')].map(wrap => ({
+      height: wrap.querySelector("table").getBoundingClientRect().height,
+      overflow: wrap.scrollWidth - wrap.clientWidth,
+      wrappedHeads: [...wrap.querySelectorAll("th")].filter(th => { const r = document.createRange(); r.selectNodeContents(th); return new Set([...r.getClientRects()].map(x => Math.round(x.top))).size > 1 }).map(th => th.textContent),
+      brokenNames: [...wrap.querySelectorAll("td:first-child code")].filter(c => !c.textContent.includes("|") && c.getClientRects().length > 1).map(c => c.textContent),
+    }))"""
+    for table in page.evaluate(probe):
+        assert table["brokenNames"] == [] and table["wrappedHeads"] == [], table
+    t.docs("/docs/markup")
+    markup = page.evaluate(probe)[0]
+    if t.width >= 1280:
+        assert markup["overflow"] <= 0 and markup["height"] < 2000, markup
+    t.docs("/docs/theming")
+    assert max(table["height"] for table in page.evaluate(probe)) < 10000
+
+
+def check_docs_usage_code_width(t):
+    page = t.page
+    widths = page.evaluate("""() => [document.querySelector('[data-docs="component-preview"]'), ...document.querySelectorAll('[data-docs="content"] > [data-docs="code-block"]')].map(el => el.getBoundingClientRect()).map(r => [r.left, r.width])""")
+    assert len(widths) > 1 and all(abs(w[0] - widths[0][0]) <= 0.5 and abs(w[1] - widths[0][1]) <= 0.5 for w in widths[1:]), widths
 
 
 def check_docs_pages(t):
@@ -489,6 +531,8 @@ def check_docs_pages(t):
     assert page.locator('link[rel="describedby"]').get_attribute("href") == "/llms.txt"
     t.docs("/docs/installation")
     assert page.locator('[data-docs="content"] h2', has_text="Override the kit").count() == 1
+    li_code = page.evaluate("""() => [...document.querySelectorAll('[data-docs="content"] li [data-slot="code-block-code"]')].map(c => { const s = getComputedStyle(c); return [s.backgroundColor, s.paddingTop, s.fontSize === getComputedStyle(c.parentElement).fontSize] })""")
+    assert li_code and all(x == ["rgba(0, 0, 0, 0)", "0px", True] for x in li_code), li_code
     t.docs("/docs/components/native-select")
     assert page.locator('[data-docs="copy-page-button"]').count() == 1
     assert page.locator('[data-docs="preview"] select[data-slot="native-select"]').count() == 5
@@ -729,6 +773,29 @@ def check_docs_component_demos(t):
     page.wait_for_function("""() => document.querySelectorAll('#icon-grid svg').length > 100""")
 
 
+LAYOUT_SHIFT = """() => new Promise(done => {
+  if (!PerformanceObserver.supportedEntryTypes.includes("layout-shift")) return done(null)
+  new PerformanceObserver((list, observer) => { observer.disconnect(); done(list.getEntries().filter(e => !e.hadRecentInput).reduce((a, e) => a + e.value, 0)) }).observe({ type: "layout-shift", buffered: true })
+  setTimeout(() => done(0), 500)
+})"""
+
+
+def check_docs_no_layout_shift(t):
+    page = t.page
+    if t.engine == "chromium":
+        page.context.new_cdp_session(page).send("Emulation.setCPUThrottlingRate", {"rate": 4})
+    shifts = {}
+    for path, ready in (("/docs/components/chart", "#chart-interactive svg"), ("/docs/components/icons", "#icon-grid svg")):
+        t.docs(path)
+        page.locator(ready).first.wait_for()
+        page.wait_for_timeout(100)
+        shifts[path] = page.evaluate(LAYOUT_SHIFT)
+    assert all(v is None or v < 0.01 for v in shifts.values()), ("the layout, the chart hero, and the icon grid keep their space while the page loads", shifts)
+    t.docs("/docs/components/chart")
+    ring = page.locator("#chart-interactive-card").evaluate("el => getComputedStyle(el).boxShadow")
+    assert ring != "none", ("the chart hero card keeps the card ring", ring)
+
+
 BLOCKS = ["dashboard", "data-table", "settings", "form", "detail", "login", "login-split", "card-grid", "overlay-form", "states"]
 
 BLOCK_LAYOUT = """() => {
@@ -825,6 +892,13 @@ def check_blocks_data_table(t):
         assert page.locator('#tasks thead [data-sort] > button > svg').evaluate_all("icons => icons.map(i => i.dataset.lucide)") == ["chevrons-up-down"] * 3
     page.locator('[data-page="next"]').click()
     assert page.locator("#task-page").inner_text() == "Page 2 of 2" and rows.count() == 6
+    if not t.mobile:
+        fit = {}
+        for width in (700, 926, 1024):
+            page.set_viewport_size({"width": width, "height": 900})
+            fit[width] = page.locator('#tasks [data-slot="table-container"]').evaluate("el => [el.scrollWidth - el.clientWidth, (getComputedStyle(el).maskImage || getComputedStyle(el).webkitMaskImage).includes('gradient')]")
+        assert fit[926][0] <= 0 and fit[1024][0] <= 0, ("the task table fits the desktop preview and lg widths", fit)
+        assert fit[700][0] > 0 and fit[700][1], ("a table that scrolls shows the scroll hint", fit)
 
 
 def check_blocks_login_validation(t):
@@ -1046,6 +1120,29 @@ KIT_FIXTURE = """(tree) => {
 RECT = "el => { const r = el.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, left: r.left, right: r.right, width: r.width, height: r.height } }"
 
 
+def check_docs_item_xs_in_dropdown(t):
+    t.docs("/docs/components/item")
+    frame = t.page.locator('[data-example="item-dropdown"]')
+    frame.scroll_into_view_if_needed()
+    frame.locator("[data-dropdown-menu-trigger]").click()
+    content = frame.locator("[data-slot=dropdown-menu-content]")
+    t.page.wait_for_function("e => e.matches(':popover-open')", arg=content.element_handle())
+    t.settle()
+    rows = content.locator("[data-slot=item]").evaluate_all("els => els.map(e => [getComputedStyle(e).padding, Math.round(e.getBoundingClientRect().height)])")
+    assert len(rows) == 3 and all(p == "0px" and h < 40 for p, h in rows), ("the in-menu reset beats the author p-2", rows)
+
+
+def check_docs_popover_root_radius(t):
+    t.docs("/docs/components/input-group")
+    frame = t.page.locator('[data-example="input-group-button"]')
+    frame.scroll_into_view_if_needed()
+    frame.locator("[data-popover-trigger]").first.click()
+    content = frame.locator("[data-slot=popover-content]").first
+    t.page.wait_for_function("e => e.matches(':popover-open')", arg=content.element_handle())
+    r = content.evaluate("e => [getComputedStyle(e).getPropertyValue('--radius'), getComputedStyle(document.body).getPropertyValue('--radius'), parseFloat(getComputedStyle(e).borderTopLeftRadius), getComputedStyle(e.closest('[data-slot=input-group]')).getPropertyValue('--radius')]")
+    assert r[3] == "9999px" and r[0] == r[1] and r[2] < 30, ("a popup takes --radius from the page, not from its ancestors", r)
+
+
 def kit_fixture(t, tree):
     t.docs("/blocks/states")
     t.page.evaluate(KIT_FIXTURE, tree)
@@ -1091,6 +1188,19 @@ def check_kit_cover_words(t):
     assert "Sea" not in split and "of" not in split, ("a word that fits never breaks", split)
     for sel in ("#fx-cover-title", "#fx-cover-long"):
         assert t.page.locator(sel).evaluate("s => s.scrollWidth <= s.clientWidth + 1"), sel
+
+
+def check_kit_card_cover_first(t):
+    card = lambda i, orientation: ["div", {"data-slot": "card", "data-size": "sm", "data-orientation": orientation, "id": f"fx-cc-{i}", "style": {"width": "240px"}},
+        ["div", {"data-slot": "cover", "id": f"fx-cc-{i}-cover"}],
+        ["div", {"data-slot": "card-header"}, ["div", {"data-slot": "card-title"}, "Circe"]]]
+    kit_fixture(t, ["div", {}, card(1, None), card(2, "horizontal")])
+    c, v = rect(t, "#fx-cc-1"), rect(t, "#fx-cc-1-cover")
+    radius = t.page.evaluate("""() => [document.querySelector('#fx-cc-1'), document.querySelector('#fx-cc-1-cover')].map(e => [getComputedStyle(e).borderTopLeftRadius, getComputedStyle(e).borderBottomRightRadius])""")
+    assert abs(v["top"] - c["top"]) < 1 and abs(v["left"] - c["left"]) < 1 and abs(v["right"] - c["right"]) < 1, ("a first cover fills the top of the card", c, v)
+    assert radius[1] == [radius[0][0], "0px"], ("only the top corners of the cover are round", radius)
+    c, v = rect(t, "#fx-cc-2"), rect(t, "#fx-cc-2-cover")
+    assert v["top"] - c["top"] > 8, ("a horizontal card keeps its padding", c, v)
 
 
 def check_kit_item_actions_phone(t):
@@ -1287,3 +1397,48 @@ def check_kit_table_stack(t):
     }""")
     assert added == ["row", "cell"], ("rows added later get their roles", added)
     t.shot("stack", ex)
+
+
+def check_docs_context_menu_labels(t):
+    t.docs("/docs/components/context-menu")
+    m = t.page.evaluate("""() => {
+      const fine = matchMedia("(pointer: fine)").matches
+      return [...document.querySelectorAll('[data-docs="preview"] [data-slot="context-menu-trigger"]')].map(el => ({
+        example: el.closest("[data-example]").dataset.example,
+        w: Math.round(el.getBoundingClientRect().width),
+        shown: [...el.querySelectorAll("span")].filter(s => s.getClientRects().length).map(s => s.className.includes(fine ? "pointer-fine" : "pointer-coarse")),
+      }))
+    }""")
+    assert len(m) == 14 and all(x["shown"] == [True] for x in m), ("each trigger shows its pointer label", m)
+    rtl = next(x for x in m if x["example"] == "context-menu-rtl")
+    assert rtl["w"] == m[0]["w"], ("the RTL trigger is as wide as the demo trigger", rtl, m[0])
+
+
+def check_docs_date_picker_week_start(t):
+    t.docs("/docs/components/date-picker")
+    days = t.page.evaluate("""() => [...document.querySelectorAll('[data-docs="preview"] [data-slot="calendar"]')].map(c => new Date(c.querySelector("td[data-day]").dataset.day + "T12:00").getDay())""")
+    assert len(days) == 8 and set(days) == {0}, ("the date-picker calendars start on Sunday, as in shadcn", days)
+
+
+def check_docs_example_markup(t):
+    page = t.page
+    t.docs("/docs/components/select")
+    assert abs(rect(t, "#select-timezone")["width"] - 256) < 1, "the timezone trigger is w-full max-w-64"
+    t.docs("/docs/components/table")
+    shadow = page.locator('[data-example="table-sticky-header"] [data-slot="card"]').evaluate("c => getComputedStyle(c).boxShadow")
+    assert "inset" in shadow, ("the card ring stays inside the scroll box", shadow)
+    t.docs("/docs/components/radio-group")
+    group, preview = rect(t, "#radio-group-demo"), rect(t, '[data-example="demo-radio-group-0"] [data-docs="preview"]')
+    assert group["width"] < 200 and abs(group["left"] + group["width"] / 2 - preview["left"] - preview["width"] / 2) < 2, ("the radio group is w-fit", group, preview)
+    t.docs("/docs/components/slider")
+    widths = [round(rect(t, s)["width"]) for s in ("#slider-temperature", "#slider-disabled", "#slider-rtl")]
+    assert len(set(widths)) == 1, ("the sliders line up", widths)
+    t.docs("/docs/rtl")
+    inset = page.evaluate("""() => { const card = document.querySelector('#direction-carousel [data-slot="carousel-item"] > [data-slot="card"]'); return card.getBoundingClientRect().top - card.parentElement.getBoundingClientRect().top }""")
+    assert abs(inset - 4) < 0.5, ("the carousel cards keep room for their ring", inset)
+    if t.mobile:
+        t.docs("/docs/components/drawer")
+        page.locator("#drawer-responsive").click()
+        page.locator("#drawer-responsive-drawer [data-slot=drawer-footer] [data-slot=button]").first.wait_for(state="visible")
+        gap = page.evaluate("""() => { const d = document.querySelector('#drawer-responsive-drawer'); return d.querySelector('[data-slot=drawer-footer] [data-slot=button]').getBoundingClientRect().top - d.querySelector('[data-slot=drawer-description]').getBoundingClientRect().bottom }""")
+        assert gap >= 15, ("the drawer button has room below the description", gap)

@@ -49,15 +49,17 @@ function idle() {
 
 async function answer(item, content, approved, id) {
   next.hidden = true
+  const trace = toolLine(approved ? "Running" : "Denied", approved)
+  trace.tabIndex = -1
+  item.replaceWith(trace)
+  trace.focus()
   if (approved) {
-    const trace = toolLine("Running", true)
-    item.replaceWith(trace)
     await wait(50)
     if (id !== run) return
-    trace.replaceWith(toolLine("Ran", false))
+    trace.querySelector('[data-slot="trace-line"]').removeAttribute("data-status")
+    trace.querySelector('[data-slot="trace-title"]').textContent = `Ran ${COMMAND}`
     await reply(content, "Removed the dist folder.", id)
   } else {
-    item.replaceWith(toolLine("Denied", false))
     await reply(content, "Okay, I left the dist folder in place.", id)
   }
 }

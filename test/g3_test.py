@@ -1587,6 +1587,10 @@ def check_layout_focus_rings(t):
         back = page.locator(surface).first.evaluate("e => { for (let n = e; n; n = n.parentElement) { const c = getComputedStyle(n).backgroundColor; if (c !== 'rgba(0, 0, 0, 0)') return c } return getComputedStyle(document.body).backgroundColor }")
         ratio = page.evaluate(G3_CONTRAST, [ring[2], back])
         assert ratio >= 3, f"{focus} focus ring has {ratio:.2f}:1 on {back}"
+    handle = page.locator("#resizable [data-slot=resizable-handle]").first
+    handle.focus()
+    handle = handle.evaluate("e => { const s = getComputedStyle(e); return [s.backgroundColor === s.outlineColor, parseFloat(s.outlineWidth) + parseFloat(s.outlineOffset)] }")
+    assert handle == [True, 1], f"the focused handle is one bar in the ring color, so the panel group clips no open ring ends: {handle}"
 
 
 def check_sidebar_sheet_mouse_focus(t):
@@ -1600,6 +1604,29 @@ def check_sidebar_sheet_mouse_focus(t):
     page.keyboard.press("Escape")
     page.wait_for_function("() => !document.querySelector('#sidebar-main [data-slot=sidebar]').hasAttribute('data-mobile')")
     assert page.evaluate("document.activeElement.id") == "sidebar-main-trigger"
+
+
+def check_sidebar_sheet_icon_collapsed(t):
+    if not t.mobile:
+        t.skip("the sheet is below 768 px")
+    page = t.page
+    page.evaluate("localStorage.setItem('sidebar_state:sidebar-main', 'false')")
+    page.reload(wait_until="load")
+    t.section("sidebar")
+    sidebar = page.locator("#sidebar-main > [data-slot=sidebar]")
+    assert sidebar.get_attribute("data-state") == "collapsed" and sidebar.get_attribute("data-collapsible") == "icon"
+    page.locator("#sidebar-main-trigger").click()
+    page.wait_for_function("() => document.querySelector('#sidebar-main [data-slot=sidebar]').dataset.mobile === 'open'")
+    t.settle(3000)
+    out = page.evaluate("""() => {
+      const main = document.getElementById('sidebar-main')
+      const button = main.querySelector('[data-slot=sidebar-menu-button][data-tooltip=Home]')
+      return { button: Math.round(button.getBoundingClientRect().width), label: Math.round(button.querySelector('span').getBoundingClientRect().width), group: getComputedStyle(main.querySelector('[data-slot=sidebar-group-label]')).opacity, sub: main.querySelector('[data-slot=sidebar-menu-sub]') && getComputedStyle(main.querySelector('[data-slot=sidebar-menu-sub]')).display }
+    }""")
+    assert out["button"] > 200 and out["label"] > 0 and out["group"] == "1" and out["sub"] != "none", ("the mobile sheet shows the full sidebar also when the desktop sidebar is collapsed to icons", out)
+    page.keyboard.press("Escape")
+    page.wait_for_function("() => !document.querySelector('#sidebar-main [data-slot=sidebar]').hasAttribute('data-mobile')")
+    assert sidebar.get_attribute("data-state") == "collapsed" and sidebar.get_attribute("data-collapsible") == "icon"
 
 
 def check_sidebar(t):

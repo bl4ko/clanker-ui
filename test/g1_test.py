@@ -785,6 +785,13 @@ def check_input_otp(t):
     assert near(line.bounding_box()["width"], 1) and near(line.bounding_box()["height"], 16)
     assert style(line, "animation-name") == ("none" if t.reduced_motion else "caret-blink")
     assert inp.evaluate("i => [getComputedStyle(i).position, getComputedStyle(i).color, i.dataset.inputOtp]") == ["absolute", "rgba(0, 0, 0, 0)", "true"]
+    selection = """i => {
+      const found = []
+      const walk = rules => { for (const r of rules) { if (r.selectorText?.endsWith("::selection") && i.matches(r.selectorText.slice(0, -11))) found.push([r.style.backgroundColor, r.style.color]); else if (r.cssRules) walk(r.cssRules) } }
+      for (const sheet of document.styleSheets) walk(sheet.cssRules)
+      return found
+    }"""
+    assert ["transparent", "transparent"] in inp.evaluate(selection), "the input-otp library hides the selection of the input over the slots"
     page.keyboard.type("123")
     page.wait_for_function("r => r.querySelectorAll('[data-slot=input-otp-slot]')[3].dataset.active === 'true'", arg=root.element_handle())
     assert [s[0] for s in otp_state(root)] == ["1", "2", "3", "", "", ""]
@@ -1818,6 +1825,29 @@ def check_select_open_state(t):
     wait_open(page, content, False)
 
 
+def check_select_tab_popper(t):
+    page = t.page
+    t.section("select")
+    page.evaluate(SELECT_FIXTURE)
+    page.evaluate("""() => {
+      document.querySelector("#fx-select [data-slot=select-content]").dataset.alignTrigger = "false"
+      const after = document.createElement("input")
+      after.id = "fx-after"
+      after.ariaLabel = "After"
+      document.getElementById("fx-select").after(after)
+    }""")
+    trigger = page.locator("#fx-select-trigger")
+    content = page.locator("#fx-select [data-slot=select-content]")
+    for key, target in (("Tab", "fx-after"), ("Shift+Tab", "fx-select-trigger"), ("Tab", "fx-after")):
+        trigger.click()
+        wait_open(page, content)
+        assert content.get_attribute("data-align-trigger") == "false"
+        page.keyboard.press(key)
+        assert page.evaluate("document.activeElement.id") == target, key
+        wait_open(page, content, False)
+        assert page.evaluate("document.activeElement.id") == target, key
+
+
 COMBO_FIXTURE = """async () => {
   const { h } = await import("/clanker-ui.js")
   const root = h("div", { "data-slot": "combobox", id: "fx-combo", "data-name": "fx" },
@@ -2069,6 +2099,26 @@ def check_native_select_phone_text(t):
     t.a11y()
     want = ["16px", "24px"] if t.width < 768 else ["14px", "20px"]
     assert t.page.evaluate(read) == want, (t.page.evaluate(read), want)
+
+
+OUTLINE = "e => { const s = getComputedStyle(e); return [s.outlineStyle, s.outlineWidth] }"
+
+
+def check_a11y_ring_target(t):
+    page = t.page
+    t.a11y()
+    targets = [
+        ("command", "#command-demo [data-slot=command-input]", "#command-demo [data-slot=input-group]"),
+        ("field", "#field-kubernetes", "label[for=field-kubernetes]"),
+        ("checkbox", "#checkbox-card", "label[data-slot=field-label]:has(#checkbox-card)"),
+        ("switch", "#switch-card", "label[for=switch-card]"),
+    ]
+    for section, focus, ring in targets:
+        t.section(section)
+        control = page.locator(focus)
+        kfocus(page, control)
+        assert control.evaluate("e => e.matches(':focus-visible')"), focus
+        assert [control.evaluate(OUTLINE), page.locator(ring).evaluate(OUTLINE)] == [["none", "3px"], ["solid", "3px"]], (focus, "the ring is on the part that shadcn highlights", control.evaluate(OUTLINE), page.locator(ring).evaluate(OUTLINE))
 
 
 def check_forced_colors(t):

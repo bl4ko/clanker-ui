@@ -151,8 +151,8 @@ def check_attachment(t):
     assert outline[0] == "none", outline
     assert ring_width(page, section.locator("#attachment-trigger [data-slot=attachment]")) == [1]
     t.a11y()
-    outline = preview.evaluate("e => [getComputedStyle(e).outlineStyle, getComputedStyle(e).outlineWidth]")
-    assert outline == ["solid", "3px"], outline
+    outline = [preview.evaluate("e => getComputedStyle(e).outlineStyle"), section.locator("#attachment-trigger [data-slot=attachment]").evaluate("e => [getComputedStyle(e).outlineStyle, getComputedStyle(e).outlineWidth]")]
+    assert outline == ["none", ["solid", "3px"]], outline
     t.shot("attachment-states", section.locator("#attachment-states"))
 
 
@@ -694,6 +694,10 @@ def check_code_block(t):
     toggle.click()
     assert toggle.get_attribute("aria-expanded") == "true" and more.get_attribute("data-collapsed") is None
     assert more.bounding_box()["height"] > collapsed
+    assert more.evaluate("e => [getComputedStyle(e).maxHeight, e.scrollHeight - e.clientHeight]") == ["none", 0]
+    section.locator("#code-block-more-scroll-toggle").click()
+    scroll = section.locator("#code-block-more-scroll-content").evaluate("e => [e.getBoundingClientRect().height, e.scrollHeight > e.clientHeight]")
+    assert scroll == [384, True], scroll
     destructive = section.locator("#code-block-small [data-variant=destructive]")
     assert destructive.evaluate("e => getComputedStyle(e).color") == resolve(page, "var(--destructive)")
     t.shot("code-block-lines", section.locator("#code-block-lines"))
@@ -1702,6 +1706,52 @@ def check_trace_shimmer_fallback(t):
     assert fill[0] == fill[1] and fill[0] != "rgba(0, 0, 0, 0)", fill
 
 
+ON_SURFACE = """([sel, prop]) => [...document.querySelectorAll(sel)].filter(e => e.checkVisibility()).map(e => {
+  const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true })
+  const paint = colors => { ctx.clearRect(0, 0, 1, 1); for (const c of colors) { ctx.fillStyle = c; ctx.fillRect(0, 0, 1, 1) } return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3) }
+  const lum = c => { const [r, g, b] = c.map(v => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }); return 0.2126 * r + 0.7152 * g + 0.0722 * b }
+  const layers = ["#fff"]
+  for (let n = e; n; n = n.parentElement) layers.splice(1, 0, getComputedStyle(n).backgroundColor)
+  const a = lum(paint([...layers, getComputedStyle(e)[prop]])), b = lum(paint(layers))
+  return +((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2)
+})"""
+
+
+def check_trace_description_contrast(t):
+    page = t.page
+    t.section("trace")
+    t.a11y()
+    ratios = page.evaluate(ON_SURFACE, ["#trace [data-slot=trace-description]", "color"])
+    assert ratios and min(ratios) >= 4.5, f"trace-description text needs 4.5:1 with clanker-ui-a11y.css: {ratios}"
+
+
+def check_attachment_a11y(t):
+    page = t.page
+    section = t.section("attachment")
+    t.a11y()
+    action = section.locator("#attachment-images [data-attachment-remove]").first
+    chip = lambda: action.evaluate("e => getComputedStyle(e).backgroundColor")
+    assert chip() == resolve(page, "var(--background)"), "the remove button over an image needs an opaque chip"
+    assert page.evaluate(ON_SURFACE, ["#attachment-images [data-attachment-remove]", "color"])[0] >= 3
+    if not t.mobile:
+        action.hover()
+        page.wait_for_function("([e, c]) => getComputedStyle(e).backgroundColor === c", arg=[action.element_handle(), resolve(page, "var(--muted)")], timeout=2000)
+    group = section.locator("#attachment-group [data-slot=attachment-group]")
+    keyboard_mode(page)
+    group.focus()
+    ring = group.evaluate("e => { const s = getComputedStyle(e); return [e.matches(':focus-visible'), s.outlineStyle, s.outlineWidth, s.maskImage, s.webkitMaskImage] }")
+    assert ring[:3] == [True, "solid", "3px"] and "gradient" not in (ring[3] or "") + (ring[4] or ""), f"the scroll fade mask hides the focus ring of the group: {ring}"
+    trigger = section.locator("#attachment-images [data-slot=attachment-trigger]").first
+    trigger.focus()
+    ring = trigger.evaluate("""e => {
+      const a = e.closest('[data-slot=attachment]'), g = a.closest('[data-slot=attachment-group]')
+      const s = getComputedStyle(a), r = a.getBoundingClientRect(), c = g.getBoundingClientRect()
+      const out = Math.max(0, parseFloat(s.outlineWidth) + parseFloat(s.outlineOffset))
+      return [e.matches(':focus-visible'), getComputedStyle(e).outlineStyle, s.outlineStyle, s.outlineWidth, r.left - out >= c.left - 0.5 && r.right + out <= c.right + 0.5]
+    }""")
+    assert ring == [True, "none", "solid", "3px", True], f"the attachment, not its trigger, shows the ring, inside the scrolling group: {ring}"
+
+
 def scroll_fade(t, section_id, sel, scroll):
     page = t.page
     t.section(section_id)
@@ -2166,6 +2216,8 @@ def check_code_block_demo(t):
     assert ansi.locator("[data-token]").evaluate_all("s => s.map(x => [x.textContent, x.dataset.token])")[:3] == [["✓", "inserted"], ["✓", "inserted"], ["✗", "keyword"]]
     plain = section.locator("#code-block-languages [data-language=text]")
     assert plain.locator("[data-token]").count() == 0
+    rows = section.locator("#code-block-highlighting [data-slot=code-block-code]").evaluate("c => { const r = c.querySelectorAll(':scope > [data-slot=code-block-line]'); return [r.length, Math.round(c.getBoundingClientRect().height / r[0].getBoundingClientRect().height)] }")
+    assert rows == [6, 6], rows
     t.shot("code-block-demo", block)
 
 

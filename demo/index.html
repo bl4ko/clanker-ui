@@ -3871,7 +3871,7 @@
               <li data-slot="pagination-item"><a data-slot="pagination-link" data-pagination-next data-size="default" href="#direction" aria-label="الصفحة التالية"><span>التالي</span><svg data-lucide="chevron-right" data-icon="inline-end"></svg></a></li>
             </ul>
           </nav>
-          <div id="direction-carousel" data-slot="carousel" aria-label="شرائح">
+          <div id="direction-carousel" data-slot="carousel" aria-label="شرائح" data-string-carousel="عرض شرائح" data-string-slide="شريحة" data-string-slide-of="{index} من {count}" data-string-previous-slide="الشريحة السابقة" data-string-next-slide="الشريحة التالية">
             <div data-slot="carousel-content">
               <div>
                 <div data-slot="carousel-item"><div data-slot="card"><div data-slot="card-content">١</div></div></div>
@@ -5026,12 +5026,14 @@ done  - Compiled successfully in 41.2s
           </div>
         </div>
         <h4 data-demo="subtitle">Height and show more</h4>
+        <p data-demo="caption">Show more removes the cap. With a long file, raise the cap instead and let the content scroll.</p>
         <div data-demo="preview full">
-          <div id="code-block-more" data-slot="code-block">
-            <div data-slot="code-block-header">
-              <div data-slot="code-block-title">package.json</div>
-            </div>
-            <pre id="code-block-more-content" data-slot="code-block-content" data-numbered="true" data-collapsed><code data-slot="code-block-code">{
+          <div data-demo="stack">
+            <div id="code-block-more" data-slot="code-block">
+              <div data-slot="code-block-header">
+                <div data-slot="code-block-title">package.json</div>
+              </div>
+              <pre id="code-block-more-content" data-slot="code-block-content" data-numbered="true" data-collapsed><code data-slot="code-block-code">{
   "name": "web",
   "private": true,
   "packageManager": "pnpm@10.18.0",
@@ -5054,8 +5056,40 @@ done  - Compiled successfully in 41.2s
   }
 }
 </code></pre>
-            <div data-slot="code-block-footer">
-              <button type="button" data-slot="button" data-variant="ghost" data-size="xs" id="code-block-more-toggle" aria-expanded="false" aria-controls="code-block-more-content">Show more<svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
+              <div data-slot="code-block-footer">
+                <button type="button" data-slot="button" data-variant="ghost" data-size="xs" id="code-block-more-toggle" aria-expanded="false" aria-controls="code-block-more-content">Show more<svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
+              </div>
+            </div>
+            <div id="code-block-more-scroll" data-slot="code-block">
+              <div data-slot="code-block-header">
+                <div data-slot="code-block-title">package.json</div>
+              </div>
+              <pre id="code-block-more-scroll-content" data-slot="code-block-content" data-numbered="true" data-collapsed><code data-slot="code-block-code">{
+  "name": "web",
+  "private": true,
+  "packageManager": "pnpm@10.18.0",
+  "scripts": {
+    "dev": "next dev --turbo",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "next": "16.1.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "eslint": "9.38.0",
+    "typescript": "5.9.3",
+    "vitest": "4.0.4"
+  }
+}
+</code></pre>
+              <div data-slot="code-block-footer">
+                <button type="button" data-slot="button" data-variant="ghost" data-size="xs" id="code-block-more-scroll-toggle" aria-expanded="false" aria-controls="code-block-more-scroll-content">Show more<svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
+              </div>
             </div>
           </div>
         </div>
@@ -5140,7 +5174,7 @@ done  - Compiled successfully in 41.2s
           <div id="date-picker-demo" data-slot="date-picker" data-placeholder="Pick a date">
             <button type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><span data-slot="date-picker-value">Pick a date</span><svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
             <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose date">
-              <div data-slot="calendar"></div>
+              <div data-slot="calendar" data-week-start="0"></div>
             </div>
           </div>
         </div>
@@ -5149,7 +5183,7 @@ done  - Compiled successfully in 41.2s
           <div id="date-picker-range" data-slot="date-picker">
             <button type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><svg data-lucide="calendar" data-icon="inline-start"></svg><span data-slot="date-picker-value">Pick a date</span></button>
             <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose dates">
-              <div data-slot="calendar" data-mode="range" data-months="2" data-value="2026-01-20/2026-02-09"></div>
+              <div data-slot="calendar" data-week-start="0" data-mode="range" data-months="2" data-value="2026-01-20/2026-02-09"></div>
             </div>
           </div>
         </div>
@@ -5160,7 +5194,7 @@ done  - Compiled successfully in 41.2s
             <div id="date-picker-birth" data-slot="date-picker" data-placeholder="Select date" data-format="numeric">
               <button id="date-picker-birth-trigger" type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><span data-slot="date-picker-value">Select date</span><svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
               <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose date of birth">
-                <div data-slot="calendar" data-caption-layout="dropdown" data-month="2000-01" data-max="2026-10-28" data-start-year="1926"></div>
+                <div data-slot="calendar" data-week-start="0" data-caption-layout="dropdown" data-month="2000-01" data-max="2026-10-28" data-start-year="1926"></div>
               </div>
             </div>
           </div>
@@ -5177,7 +5211,7 @@ done  - Compiled successfully in 41.2s
                 </div>
               </div>
               <div data-slot="popover-content" data-date-picker-content data-align="end" data-align-offset="-8" data-side-offset="10" aria-label="Choose subscription date">
-                <div data-slot="calendar" data-value="2025-06-01"></div>
+                <div data-slot="calendar" data-week-start="0" data-value="2025-06-01"></div>
               </div>
             </div>
           </div>
@@ -5190,7 +5224,7 @@ done  - Compiled successfully in 41.2s
               <div data-slot="date-picker" data-placeholder="Select date" data-format="medium">
                 <button id="date-picker-time-trigger" type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><span data-slot="date-picker-value">Select date</span><svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
                 <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose date">
-                  <div data-slot="calendar" data-caption-layout="dropdown"></div>
+                  <div data-slot="calendar" data-week-start="0" data-caption-layout="dropdown"></div>
                 </div>
               </div>
             </div>
@@ -5216,7 +5250,7 @@ done  - Compiled successfully in 41.2s
                   </select>
                   <svg data-lucide="chevron-down" data-slot="native-select-icon"></svg>
                 </div>
-                <div id="date-picker-presets-calendar" data-slot="calendar"></div>
+                <div id="date-picker-presets-calendar" data-slot="calendar" data-week-start="0"></div>
               </div>
             </div>
           </div>
@@ -5236,7 +5270,7 @@ done  - Compiled successfully in 41.2s
                   <div id="date-picker-form-picker" data-slot="date-picker" data-placeholder="Pick a date">
                     <button id="date-picker-form-trigger" type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><svg data-lucide="calendar" data-icon="inline-start"></svg><span data-slot="date-picker-value">Pick a date</span></button>
                     <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose publish date">
-                      <div data-slot="calendar" data-name="due" data-month="2026-11"></div>
+                      <div data-slot="calendar" data-week-start="0" data-name="due" data-month="2026-11"></div>
                     </div>
                   </div>
                 </div>
@@ -5255,7 +5289,7 @@ done  - Compiled successfully in 41.2s
             <div data-slot="date-picker" data-placeholder="اختر تاريخًا">
               <button type="button" data-slot="button" data-variant="outline" data-date-picker-trigger><span data-slot="date-picker-value">اختر تاريخًا</span><svg data-lucide="chevron-down" data-icon="inline-end"></svg></button>
               <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="اختر تاريخًا">
-                <div data-slot="calendar"></div>
+                <div data-slot="calendar" data-week-start="0"></div>
               </div>
             </div>
           </div>

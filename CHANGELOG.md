@@ -4,6 +4,39 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
+## 0.5.1 - 2026-11-23
+
+### Fixed
+
+- Chart: a level label under a negative bar keeps clear of the category axis (the plot keeps room below it, as above a positive label), and a line end label that would cross a line goes below its point, or is left out when that crosses a line too (#268).
+- Code Block: highlighted text without `code-block-line` rows becomes one row per line; before, each token was its own grid row (#259).
+- Cover: as the first child of a card (not a horizontal one), the cover fills the top of the card like a shadcn card image: no top padding, and only its top corners are round (#284).
+- Input OTP: the text selection of the input over the slots is transparent, like the `input-otp` library, so Tab focus no longer draws a selection bar over the slots (#264).
+- Item: an `xs` item in a dropdown menu has no padding also when the item has its own padding utility, as in shadcn (#262).
+- Popups: `data-align="start"` and `"end"` follow the page direction, not a `dir` on an ancestor, as in Base UI (a portaled positioner), so a scoped RTL menu with `data-align="end"` lines up with the trigger's right edge (#265).
+- Popups: a popup or dialog takes `--radius` from the page (`--radius-lg`, set at `:root` or a `data-scheme` scope), not from its ancestors, so a popover from a pill input group is no longer a pill (#263).
+- Select: Tab with the list open moves focus to the next control after the trigger also in popper mode (before, it landed on `<body>`), and Shift+Tab moves focus to the trigger, as in Base UI (#260).
+- Sidebar: the mobile sheet shows the full sidebar with labels also when the desktop sidebar is collapsed to icons, as in shadcn; the desktop and icon-mode rules no longer match while `data-mobile` is set (#261).
+- Accessibility layer: `trace-description` uses the full `--muted-foreground` (shadcn has 70 % of it), so the text has 4.5:1 or more: 5.0:1 in light (2.7:1 before) and 7.7:1 in dark (4.2:1 before) (#267).
+- Accessibility layer: a ghost `attachment-action` over an image has a `--background` chip, so the remove icon has 19.8:1 in light and 19.0:1 in dark (1.2:1 on the dark demo image before); a focused `attachment-group` turns off its scroll fade, so its focus outline shows on all four sides (4.5:1 light, 6.4:1 dark; the mask hid it before) (#266).
+- Accessibility layer: no focus ring on a dropdown, context, or menubar menu when the pointer leaves an item (#287).
+- Accessibility layer: no focus ring on the select list when the pointer leaves an item (#288).
+- Accessibility layer: a popover, dialog, alert dialog, sheet, drawer, or select list that takes focus itself (nothing inside can) shows its ring only in keyboard use, and inside its edge, so a sheet or drawer at the window edge keeps all four sides; pointer use (before, WebKit also on a click) shows none, like shadcn (#289).
+- Accessibility layer: F6 rings the toasts instead of drawing a 6 px bar on the empty toast viewport (#290).
+- Accessibility layer: a command input rings its input group, not the bare input (#291).
+- Accessibility layer: a choice card rings the card, not its checkbox, radio, or switch, as shadcn highlights it (#292).
+- Accessibility layer: an attachment with a trigger rings the attachment inside its edge, so a scrolling attachment group no longer clips it; the trigger has no ring (#293).
+- Accessibility layer: the focused resizable handle is a 3 px bar in the ring color, so the panel group no longer clips open ring ends (#294).
+- Accessibility layer: Sera underline controls keep their clear top and side borders; only the underline takes `--input-edge` (before, the layer drew a box). The generator marks such controls with `--input-edge-sides` (#295).
+- Blocks: the Data Table block fits its table at the desktop preview width and from 1024 px (the Task column shows from `xl`); at the tablet widths where it still scrolls, the table container has the `scroll-fade-x` hint (#270).
+- Catalog: a component in a shared README section gets only its own markup lines and notes in `references/components/<name>.md` and on its docs page: Kbd no longer shows the input lines and the dropzone code, and Empty, Separator, and Skeleton no longer get the Aspect Ratio note (#282).
+- Docs: the code-block "Show more" example expands to the full height, and a second example keeps a 24rem cap and scrolls, as shadcn's "Max Height" (#275); a code block in a list item no longer gets the inline code style (#276).
+- Docs: each example on the Chart and Stat Tile pages shows its script, the `chart()` calls with their data and options, next to the HTML (#281).
+- Docs: the chart hero and the icon grid keep their space before the script runs, and the article keeps the space of the On This Page column while a long page loads, so the Chart and Icons pages do not shift. The chart hero card keeps its card ring (#286).
+- Docs: the context-menu triggers show their label again, and the RTL trigger has its full width; the docs utilities sit in the utilities layer, so the example variants win (#272). The date-picker calendars start on Sunday, as in shadcn (#271). After Approve or Deny, focus moves to the new tool status, and after Restore to Continue (#283). Example fixes for Select, Table, Radio Group, Slider, Carousel, Drawer, and Stack Trace; the frames list of Stack Trace takes keyboard focus (#284).
+- Docs: the header search button shows its focus ring (#277); the code teaser under a preview is no longer a Tab stop (#278); table headers and attribute names stay on one line, and a table scrolls sideways on a phone instead of squeezing every column (#279); the theming page loads `clanker-ui-a11y.css` with the color schemes, so scheme text reaches 4.5:1 (#280); Usage code blocks are as wide as the preview, and the Copy Page menu fits "View as Markdown" on one line (#285).
+- Docs: the RTL page description keeps `<html>`, the tool sheet says 9 lines, the blocks index lists every block, the phone Sections menu has AI Elements, the card Horizontal section has an example, the checkbox Table text matches the demo, and the Arabic carousel has Arabic slide labels (#282).
+
 ## 0.5.0 - 2026-11-22
 
 ### Breaking

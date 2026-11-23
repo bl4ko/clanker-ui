@@ -37,7 +37,7 @@ function stackTrace({ error, links, frames }) {
       h("div", { "data-slot": "trace" },
         links.map(link => h("a", { href: link.href }, line("file-code", link.title))),
         collapsible({}, line("layers", `${frames.length} framework frames`),
-          h("ol", { class: "flex flex-col gap-1 overflow-x-auto rounded-md bg-muted p-3 font-mono text-xs" },
+          h("ol", { class: "flex flex-col gap-1 overflow-x-auto rounded-md bg-muted p-3 font-mono text-xs", tabindex: "0" },
             frames.map(frame => h("li", { class: "whitespace-nowrap" }, frame)))))))
 }
 

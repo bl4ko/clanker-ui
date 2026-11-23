@@ -102,7 +102,7 @@ var docSections = map[string][]string{
 	"/docs/rtl":                     {"direction"},
 }
 
-var docStyles = map[string][]string{"themes": {"clanker-ui-themes.css"}}
+var docStyles = map[string][]string{"themes": {"clanker-ui-themes.css", "clanker-ui-a11y.css"}}
 
 func (d *docsSite) loadCatalog(fsys fs.FS) error {
 	raw, err := fs.ReadFile(fsys, exportExtras["clanker-ui.json"])
@@ -198,9 +198,7 @@ func htmlText(s string) string {
 
 func htmlInline(s string) string {
 	s = strings.ReplaceAll(s, `</kbd><kbd data-slot="kbd">`, "+")
-	s = inlineCode.ReplaceAllStringFunc(s, func(m string) string {
-		return "`" + html.UnescapeString(inlineCode.FindStringSubmatch(m)[1]) + "`"
-	})
+	s = inlineCode.ReplaceAllString(s, "`$1`")
 	return strings.Join(strings.Fields(htmlText(s)), " ")
 }
 

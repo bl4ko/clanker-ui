@@ -61,7 +61,7 @@ Use multiple fields to create a checkbox list.
 
 ## Table
 
-Use `data-indeterminate` on a select-all checkbox when only some rows are selected.
+A select-all checkbox in the header checks or clears every row, and the demo marks a checked row with `data-state="selected"`. As in shadcn, the select-all box is checked only when every row is; add `data-indeterminate` to it when only some rows are.
 
 {{example "checkbox-table"}}
 

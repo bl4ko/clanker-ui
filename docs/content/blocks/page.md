@@ -13,6 +13,9 @@ Blocks are the shadcn blocks and examples as plain HTML. Each one is a whole pag
 | [Form](/docs/blocks/form) | A page that creates or edits one record. |
 | [Detail](/docs/blocks/detail) | A page that shows one record and its activity. |
 | [Login](/docs/blocks/login) | Sign in. |
+| [Login Split](/docs/blocks/login-split) | Sign in, with a brand panel next to the form. |
+| [Card Grid](/docs/blocks/card-grid) | A library of records as cards: search, filter tabs, sort, and the no-results state. |
+| [Overlay Form](/docs/blocks/overlay-form) | A record page that edits in a dialog or a sheet. |
 | [States](/docs/blocks/states) | Empty, loading, and error states. |
 
 ## Rules

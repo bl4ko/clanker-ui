@@ -45,6 +45,7 @@ type catalogComponent struct {
 		Root       bool           `json:"root"`
 		Attributes map[string]any `json:"attributes"`
 		State      []string       `json:"state"`
+		StateVals  map[string]any `json:"stateValues"`
 	} `json:"parts"`
 	PartAttributes map[string]any `json:"partAttributes"`
 	Options        map[string]any `json:"options"`
@@ -836,7 +837,11 @@ func (d *docsSite) apiReference(w *pageWriter, c *catalogComponent) {
 			rows = append(rows, fmt.Sprintf("| `%s` | %s | %s |", k, cellText(attrValues(p.Attributes[k])), by))
 		}
 		for _, k := range p.State {
-			rows = append(rows, fmt.Sprintf("| `%s` | | The kit |", k))
+			vals := ""
+			if v, ok := p.StateVals[k]; ok {
+				vals = cellText(attrValues(v))
+			}
+			rows = append(rows, fmt.Sprintf("| `%s` | %s | The kit |", k, vals))
 		}
 		w.line("| Attribute | Values | Set by |\n| --- | --- | --- |\n%s", strings.Join(rows, "\n"))
 	}

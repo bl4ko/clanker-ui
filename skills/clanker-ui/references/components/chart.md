@@ -4,10 +4,10 @@ Group `chart`. Needs `core`. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `chart` (root) |  | `data-sparkline` |
-| `chart-legend-indicator` (kit adds) |  | `data-dashed`, `data-shape` |
-| `chart-stat-delta` (kit adds) |  | `data-direction`, `data-tone` |
-| `chart-tooltip-item` (kit adds) |  | `data-total` |
+| `chart` (root) |  | `data-sparkline` boolean |
+| `chart-legend-indicator` (kit adds) |  | `data-dashed` boolean; `data-shape` `circle`, `diamond`, `line`, `rect`, `square` |
+| `chart-stat-delta` (kit adds) |  | `data-direction` `down`, `flat`, `up`; `data-tone` `bad`, `good`, `neutral` |
+| `chart-tooltip-item` (kit adds) |  | `data-total` boolean |
 
 Other parts: `chart-stat`.
 
@@ -77,7 +77,7 @@ view.destroy()
 - A label inside a fill uses `--chart-ink-light` (`#fff`) or `--chart-ink-dark` (`#0b0b0b`), whichever has the higher WCAG contrast against the fill. Override both on `[data-slot="chart"]`.
 - Charts redraw on `theme:change` while they are in the document. A removed chart closes its tooltip, is not tracked, and redraws when it is inserted again. A destroyed chart never redraws.
 - Fixed labels (chart names, legend, table button, table header, summary sentences) come from `strings` (see [Localization](https://github.com/bl4ko/clanker-ui#localization)); `data-string-<key>` on the chart element or an ancestor overrides one chart.
-- Parts: `chart-plot`, `chart-svg`, `chart-tooltip` (`-label`, `-items`, `-item`, `-indicator`, `-name`, `-value`), `chart-legend`, `chart-legend-item`, `chart-table`, `chart-table-toggle`, `chart-footer`, `chart-live`. SVG marks use `data-part`.
+- Parts: `chart-plot`, `chart-svg`, `chart-tooltip` (`-label`, `-items`, `-item`, `-indicator`, `-name`, `-value`), `chart-legend`, `chart-legend-item`, `chart-table`, `chart-table-toggle`, `chart-footer`, `chart-live`. SVG marks use `data-part`. The kit sets `data-sparkline` on `chart` (a sparkline), `data-shape="rect|line|circle|square|diamond"` and `data-dashed` on `chart-legend-indicator`, and `data-total` on `chart-tooltip-item` (the total row of a stacked chart).
 
 #### Reference lines and time axis
 
@@ -108,7 +108,7 @@ statTile(el, { label: "Total revenue", value: 1250, format: { style: "currency",
 sparkline(el, [980, 1020, 1284], { area: true, label: "Requests per minute" })
 ```
 
-- `statTile` renders `data-slot="chart-stat"` (`role="group"`) with `chart-stat-label`, `chart-stat-value`, `chart-stat-delta` (`data-direction`, `data-tone`, icon, signed percent, `chart-stat-period`), and an optional `chart-stat-trend` sparkline.
+- `statTile` renders `data-slot="chart-stat"` (`role="group"`) with `chart-stat-label`, `chart-stat-value`, `chart-stat-delta` (`data-direction="up|down|flat"`, `data-tone="good|bad|neutral"`, icon, signed percent, `chart-stat-period`), and an optional `chart-stat-trend` sparkline.
 - The tile draws its own card (border, radius, background, shadow, 24 px padding): call it on a plain `<div>` in a grid of tiles. Inside a `card` (any depth) it drops that frame, so a tile in a card has one border.
 - Value: from 10,000 the value is compact (`notation: "compact"`, at most 1 decimal: `€30.5K`). Pass `format: { style: "currency", currency: "EUR", notation: "standard" }` for the full amount, or a function. `deltaFormat` defaults to `{ style: "percent", maximumFractionDigits: 1, signDisplay: "exceptZero" }`; your options are merged over it, and a `minimumFractionDigits` above the default maximum raises the maximum (`{ minimumFractionDigits: 2 }` gives `+12.50%`). `goodWhen: "down"` when a fall is good. Options: `label`, `value`, `format`, `delta`, `deltaFormat`, `period`, `goodWhen`, `trend`, `trendOptions`, `icon`, `description`, `locale`. `locale` sets the number locale (default as for charts). A failed `update()` throws and keeps the last good options; a `statTile()` call that throws leaves the element as it was.
 - `sparkline` is a line (or `area: true`) without axes or legend, in `--chart-other` with the latest point in the accent. It keeps the tooltip, the keyboard readout, and the table view: a toggle next to the line shows a transposed table (one row per series, one column per point). Pass `table: false` only when the same values are visible next to it.

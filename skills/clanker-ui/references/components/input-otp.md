@@ -5,7 +5,7 @@ Group `forms`. Needs `core`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `input-otp` (root) | `data-pattern` `alphanumeric`, `chars`, `digits` |  |
-| `input-otp-slot` |  | `data-active` |
+| `input-otp-slot` |  | `data-active` `false`, `true` |
 
 Other parts: `input-otp-group`, `input-otp-separator`.
 
@@ -25,4 +25,4 @@ Events: `input-otp:complete` `{ value }`.
 </div>
 ```
 
-One real input lies over the slots (autofill, form value, `required`, `minlength` stay native). The active empty slot shows `input-otp-caret` with an inner `div` (the blinking line). The kit gives the input the inline styles of the `input-otp` library (transparent text over the slots, `data-input-otp`) and the root `--root-height`; the kit CSS makes its text selection transparent, like the library stylesheet. `aria-invalid="true"` on the input also marks every slot, as shadcn sets it on the slots. The pattern filters typed and pasted characters. Arrows move between slots; in RTL the slots run right to left and the kit moves the caret with the visual arrow (ArrowRight goes to the previous slot) in every engine.
+One real input lies over the slots (autofill, form value, `required`, `minlength` stay native). Each `input-otp-slot` has `data-active="true|false"` (`true` at the caret or in the selection). The active empty slot shows `input-otp-caret` with an inner `div` (the blinking line). The kit gives the input the inline styles of the `input-otp` library (transparent text over the slots, `data-input-otp`) and the root `--root-height`; the kit CSS makes its text selection transparent, like the library stylesheet. `aria-invalid="true"` on the input also marks every slot, as shadcn sets it on the slots. The pattern filters typed and pasted characters. Arrows move between slots; in RTL the slots run right to left and the kit moves the caret with the visual arrow (ArrowRight goes to the previous slot) in every engine.

@@ -5,7 +5,7 @@ Group `forms`. Needs `core`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `toggle-group` (root) | `data-disabled` boolean; `data-name` string; `data-orientation` `horizontal`, `vertical`; `data-size` `sm`; `data-spacing` `0`, `1`, `2`, `3`, `4`, `6`, `8`; `data-type` `multiple`, `single`; `data-value` string; `data-variant` `outline` |  |
-| `toggle-group-item` | `data-size` `default`, `lg`, `sm`; `data-spacing` `0`; `data-value` string; `data-variant` `default`, `outline` | `data-state` |
+| `toggle-group-item` | `data-size` `default`, `lg`, `sm`; `data-spacing` `0`; `data-value` string; `data-variant` `default`, `outline` | `data-state` `off`, `on` |
 
 Events: `toggle-group:change` `{ value }`.
 
@@ -19,6 +19,8 @@ Events: `toggle-group:change` `{ value }`.
   <button type="button" data-slot="toggle-group-item" data-value="bold" aria-label="Bold"><svg data-lucide="bold"></svg></button>
 </div>
 ```
+
+A `toggle` gets `tabindex="0"` like the Base UI toggle. The kit keeps `data-state="on|off"` on `toggle` and `toggle-group-item` in sync with `aria-pressed`.
 
 Toggle group: one tab stop, arrows (RTL aware), Home, End. A group is not labelable, so `<label for>` does not name it: give the `field-label` an `id` and the group `aria-labelledby` with it. Single items use `role="radio"` and `aria-checked`, multiple items `aria-pressed`. A pressed single item can be unpressed, as in shadcn.
 

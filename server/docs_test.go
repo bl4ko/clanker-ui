@@ -672,6 +672,54 @@ func TestEveryDocsPageIsReal(t *testing.T) {
 	}
 }
 
+var apiRow = regexp.MustCompile("^\\| `([^`]+)` \\| (.*?) \\| (?:You|The kit) \\|$")
+
+func TestGeneratedAPIValues(t *testing.T) {
+	d := docsOf(t)
+	rows := 0
+	for _, href := range sortedKeys(d.components) {
+		c, p := d.components[href], d.pages[href]
+		if p == nil || p.Section == "" {
+			continue
+		}
+		var known []map[string]bool
+		for _, part := range c.Parts {
+			if len(part.Attributes) == 0 && len(part.State) == 0 {
+				continue
+			}
+			k := map[string]bool{}
+			for name := range part.Attributes {
+				k[name] = true
+			}
+			for name := range part.StateVals {
+				k[name] = true
+			}
+			known = append(known, k)
+		}
+		table := -1
+		for _, line := range strings.Split(p.Source, "\n") {
+			if strings.HasPrefix(line, "| Attribute | Values | Set by |") {
+				table++
+				continue
+			}
+			m := apiRow.FindStringSubmatch(line)
+			if m == nil || table < 0 || table >= len(known) {
+				continue
+			}
+			rows++
+			if strings.TrimSpace(m[2]) == "" && known[table][m[1]] {
+				t.Errorf("%s: API Reference table %d: %s has known values, but the Values cell is empty", href, table+1, m[1])
+			}
+		}
+		if table+1 != len(known) {
+			t.Errorf("%s: %d API Reference part tables, want %d", href, table+1, len(known))
+		}
+	}
+	if rows < 200 {
+		t.Errorf("%d API Reference rows, want at least 200", rows)
+	}
+}
+
 var discoveryLink = regexp.MustCompile(`<link rel="(alternate" type="text/markdown|describedby)" href="([^"]+)">`)
 
 func TestDocsPagesLinkMarkdownAndLLMs(t *testing.T) {

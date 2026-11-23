@@ -5,7 +5,7 @@ Group `chat`. Needs `core`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `trace-collapsible` | `data-default-open` boolean |  |
-| `trace-collapsible-content` |  | `data-ending-style`, `data-starting-style` |
+| `trace-collapsible-content` |  | `data-ending-style` boolean; `data-starting-style` boolean |
 | `trace-line` | `data-status` `error`, `pending`, `running` |  |
 
 Other parts: `trace` (root), `trace-collapsible-trigger`, `trace-description`, `trace-icon`, `trace-title`.

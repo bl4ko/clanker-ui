@@ -115,23 +115,29 @@
     outline-offset: 0;
   }
   :is([aria-invalid="true"], :is([data-slot="button"], [data-slot="alert-dialog-action"], [data-slot="alert-dialog-cancel"], [data-slot="pagination-link"])[data-variant="destructive"]):focus-visible { outline-color: var(--focus-ring-invalid); }
-  :is([data-slot="input-group"]:has([data-slot="input-group-control"]:focus-visible), [data-slot="input-otp-slot"][data-active="true"], [data-slot="combobox-chips"]:focus-within, [data-slot="calendar-dropdown-root"]:has(:focus-visible), [data-slot="code-block"]:has(> [data-slot="code-block-content"]:focus-visible), [data-slot="questionnaire-choice"]:has(> input:focus-visible), [data-slot="slider-thumb"]:has(> input:focus-visible)) {
+  :is([data-slot="input-group"]:has(:is([data-slot="input-group-control"], [data-slot="command-input"]):focus-visible), [data-slot="field-label"]:where(label):has(> [data-slot="field"]):has(:focus-visible), [data-slot="input-otp-slot"][data-active="true"], [data-slot="combobox-chips"]:focus-within, [data-slot="calendar-dropdown-root"]:has(:focus-visible), [data-slot="code-block"]:has(> [data-slot="code-block-content"]:focus-visible), [data-slot="questionnaire-choice"]:has(> input:focus-visible), [data-slot="slider-thumb"]:has(> input:focus-visible)) {
     outline: 3px solid var(--focus-ring);
     outline-offset: 0;
   }
   :is([data-slot="input-group"]:has([data-slot][aria-invalid="true"]), [data-slot="input-otp-slot"][aria-invalid="true"], [data-slot="input-otp"]:has(> input[aria-invalid="true"]) [data-slot="input-otp-slot"], [data-slot="combobox-chips"]:has([aria-invalid="true"])):is(:focus-within, [data-active="true"]) {
     outline-color: var(--focus-ring-invalid);
   }
-  :is([data-slot="input-group-control"], [data-slot="combobox-chip-input"], [data-slot="input-otp"] > input, [data-slot="code-block-content"], [data-slot="calendar-dropdown"], [data-slot="questionnaire-choice"] > input, [data-slot="slider-thumb"] > input):focus-visible {
+  :is([data-slot="input-group-control"], [data-slot="command-input"], [data-slot="attachment-trigger"], [data-slot="combobox-chip-input"], [data-slot="input-otp"] > input, [data-slot="code-block-content"], [data-slot="calendar-dropdown"], [data-slot="questionnaire-choice"] > input, [data-slot="slider-thumb"] > input):focus-visible {
     outline: none;
   }
   :is([data-slot="sidebar-group-label"], [data-slot="sidebar-group-action"], [data-slot="sidebar-menu-button"], [data-slot="sidebar-menu-action"], [data-slot="sidebar-menu-sub-button"]):focus-visible {
     outline: 2px solid color-mix(in oklab, var(--sidebar-ring), var(--sidebar-foreground) 25%);
     outline-offset: 0;
   }
+  [data-slot="field-label"]:where(label):has(> [data-slot="field"]) :is([data-slot="checkbox"], [data-slot="radio-group-item"], [data-slot="switch"]):focus-visible { outline: none; }
+  [data-slot="attachment"]:has(> [data-slot="attachment-trigger"]:focus-visible) {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: -3px;
+  }
   [data-slot="resizable-handle"]:focus-visible {
     outline: 1px solid var(--focus-ring);
-    outline-offset: 1px;
+    outline-offset: 0;
+    background-color: var(--focus-ring);
   }
   [data-slot="chart-svg"]:focus-visible { outline-offset: 2px; }
   [data-slot="message-scroller-viewport"]:focus-visible { outline-offset: -3px; }

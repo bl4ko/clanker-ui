@@ -2101,6 +2101,26 @@ def check_native_select_phone_text(t):
     assert t.page.evaluate(read) == want, (t.page.evaluate(read), want)
 
 
+OUTLINE = "e => { const s = getComputedStyle(e); return [s.outlineStyle, s.outlineWidth] }"
+
+
+def check_a11y_ring_target(t):
+    page = t.page
+    t.a11y()
+    targets = [
+        ("command", "#command-demo [data-slot=command-input]", "#command-demo [data-slot=input-group]"),
+        ("field", "#field-kubernetes", "label[for=field-kubernetes]"),
+        ("checkbox", "#checkbox-card", "label[data-slot=field-label]:has(#checkbox-card)"),
+        ("switch", "#switch-card", "label[for=switch-card]"),
+    ]
+    for section, focus, ring in targets:
+        t.section(section)
+        control = page.locator(focus)
+        kfocus(page, control)
+        assert control.evaluate("e => e.matches(':focus-visible')"), focus
+        assert [control.evaluate(OUTLINE), page.locator(ring).evaluate(OUTLINE)] == [["none", "3px"], ["solid", "3px"]], (focus, "the ring is on the part that shadcn highlights", control.evaluate(OUTLINE), page.locator(ring).evaluate(OUTLINE))
+
+
 def check_forced_colors(t):
     page = t.page
     page.emulate_media(forced_colors="active")

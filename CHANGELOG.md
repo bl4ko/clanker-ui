@@ -23,6 +23,10 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Accessibility layer: no focus ring on the select list when the pointer leaves an item (#288).
 - Accessibility layer: a popover, dialog, alert dialog, sheet, drawer, or select list that takes focus itself (nothing inside can) shows its ring only in keyboard use, and inside its edge, so a sheet or drawer at the window edge keeps all four sides; pointer use (before, WebKit also on a click) shows none, like shadcn (#289).
 - Accessibility layer: F6 rings the toasts instead of drawing a 6 px bar on the empty toast viewport (#290).
+- Accessibility layer: a command input rings its input group, not the bare input (#291).
+- Accessibility layer: a choice card rings the card, not its checkbox, radio, or switch, as shadcn highlights it (#292).
+- Accessibility layer: an attachment with a trigger rings the attachment inside its edge, so a scrolling attachment group no longer clips it; the trigger has no ring (#293).
+- Accessibility layer: the focused resizable handle is a 3 px bar in the ring color, so the panel group no longer clips open ring ends (#294).
 - Blocks: the Data Table block fits its table at the desktop preview width and from 1024 px (the Task column shows from `xl`); at the tablet widths where it still scrolls, the table container has the `scroll-fade-x` hint (#270).
 - Catalog: a component in a shared README section gets only its own markup lines and notes in `references/components/<name>.md` and on its docs page: Kbd no longer shows the input lines and the dropzone code, and Empty, Separator, and Skeleton no longer get the Aspect Ratio note (#282).
 - Docs: the code-block "Show more" example expands to the full height, and a second example keeps a 24rem cap and scrolls, as shadcn's "Max Height" (#275); a code block in a list item no longer gets the inline code style (#276).

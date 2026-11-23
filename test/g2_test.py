@@ -4816,6 +4816,29 @@ G2_MENU_CODE = """async () => {
 }"""
 
 
+def check_dropdown_menu_scoped_rtl_align(t):
+    page = t.page
+    section = t.section("dropdown-menu")
+    page.evaluate("""async () => {
+      const { h } = await import("/clanker-ui.js")
+      const root = h("div", { "data-slot": "dropdown-menu", id: "fx-rtl-menu" },
+        h("button", { type: "button", "data-slot": "button", "data-variant": "outline", "data-dropdown-menu-trigger": "" }, "Menu"),
+        h("div", { "data-slot": "dropdown-menu-content", "data-align": "end" }, ["One", "Two"].map(v => h("div", { "data-slot": "dropdown-menu-item" }, v))))
+      const wrap = h("div", { dir: document.documentElement.dir === "rtl" ? "ltr" : "rtl", style: { display: "flex", justifyContent: "center" } }, root)
+      document.getElementById("dropdown-menu").prepend(wrap)
+      await new Promise(r => setTimeout(r, 0))
+    }""")
+    trigger = section.locator("#fx-rtl-menu [data-dropdown-menu-trigger]")
+    content = section.locator("#fx-rtl-menu [data-slot=dropdown-menu-content]")
+    trigger.click()
+    page.wait_for_function("() => document.querySelector('#fx-rtl-menu [data-slot=dropdown-menu-content]').matches(':popover-open')")
+    t.settle()
+    tb, cb = inline(t, box(trigger)), inline(t, box(content))
+    assert cb["width"] > tb["width"] + 20, (tb, cb)
+    assert abs(cb["x"] + cb["width"] - tb["x"] - tb["width"]) <= 1, ("align end follows the page direction, not the scoped dir", tb, cb)
+    page.keyboard.press("Escape")
+
+
 def check_dropdown_menu_code_values(t):
     r = t.page.evaluate(G2_MENU_CODE)
     assert r["init"] == [["a", "false", False], ["b", "true", True], ["c", "false", False], ["false", "unchecked"]], r

@@ -9,6 +9,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 ### Fixed
 
 - Select: Tab with the list open moves focus to the next control after the trigger also in popper mode (before, it landed on `<body>`), and Shift+Tab moves focus to the trigger, as in Base UI (#260).
+- Popups: `data-align="start"` and `"end"` follow the page direction, not a `dir` on an ancestor, as in Base UI (a portaled positioner), so a scoped RTL menu with `data-align="end"` lines up with the trigger's right edge (#265).
 
 ## 0.5.0 - 2026-11-22
 

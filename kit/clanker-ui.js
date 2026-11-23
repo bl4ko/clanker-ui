@@ -1040,7 +1040,7 @@ function place(f, anchor, o, sized = true) {
   const h = f.offsetHeight
   const pad = o.collisionPadding
   const off = o.sideOffset
-  const rtl = getComputedStyle(anchor instanceof Element ? anchor : f).direction === "rtl"
+  const rtl = getComputedStyle(document.body).direction === "rtl"
   const space = { top: r.top, bottom: vh - r.bottom, left: r.left, right: vw - r.right }
   const opposite = { top: "bottom", bottom: "top", left: "right", right: "left" }
   let side = o.side

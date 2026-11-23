@@ -4,7 +4,7 @@ Group `overlays`. Needs `core`. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `popover-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
+| `popover-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
 | `popover-trigger` | `data-popover-trigger` any |  |
 
 Other parts: `popover` (root), `popover-description`, `popover-header`, `popover-title`.
@@ -34,7 +34,7 @@ Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clan
 
 ### Popover
 
-`popover` > `popover-trigger` (or `data-popover-trigger`), optional `popover-anchor`, `popover-content` with `popover-header`, `popover-title`, `popover-description`. Non-modal: focus moves into the content (after a touch open to the content itself, like Base UI, so no on-screen keyboard opens); Escape, outside click, and focus leaving close it. As in Base UI, a mouse press outside closes it on the click (a held press, a right or middle click, or a press that ends in the popup keep it open); a touch outside closes it at the end of the tap. `data-modal` on the root traps focus and locks scroll. Default placement: bottom, center, 4 px; the trigger has `data-pressed` while it is open.
+`popover` > `popover-trigger` (or `data-popover-trigger`), optional `popover-anchor`, `popover-content` with `popover-header`, `popover-title`, `popover-description`. Non-modal: focus moves into the content (after a touch open to the content itself, like Base UI, so no on-screen keyboard opens); Escape, outside click, and focus leaving close it. As in Base UI, a mouse press outside closes it on the click (a held press, a right or middle click, or a press that ends in the popup keep it open); a touch outside closes it at the end of the tap. `data-modal` on the root traps focus and locks scroll. Default placement: bottom, center, 4 px; the trigger has `data-pressed` while it is open. The content has `data-state="open|closed"` and `data-open` or `data-closed`.
 
 Custom floating content (also linked from Tooltip), for example one readout for many small hover targets (a bar per day in an uptime row, where one tooltip per bar is too heavy): use the core `position()` with your own `popover="manual"` element. It places the element next to an anchor element or a virtual anchor (`{ getBoundingClientRect() }`), flips at the viewport edge, follows scroll and resize, and returns `stop()`. It sets `data-side`, `data-align`, and the `--anchor-*`, `--available-*`, and `--transform-origin` variables, as for kit popups ([Popups](https://github.com/bl4ko/clanker-ui#popups)). Dismissal and focus stay app code; for an interactive popup use `popover`.
 

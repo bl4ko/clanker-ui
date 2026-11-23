@@ -4,7 +4,7 @@ Group `overlays`. Needs `core`. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `hover-card-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
+| `hover-card-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
 
 Other parts: `hover-card` (root).
 
@@ -25,4 +25,4 @@ Events: `hover-card:open`; `hover-card:close`.
 
 ### Tooltip and Hover Card
 
-`hover-card` > trigger + `hover-card-content`. `data-delay` (600) and `data-close-delay` (300) on the trigger or the root (`data-open-delay` also works), the Base UI defaults; shadcn examples set `data-delay="10" data-close-delay="100"`. Placement: bottom, center, 4 px, `alignOffset` 4. Opens on hover and keyboard focus, never on touch. It closes at once when focus leaves the trigger and the card (Base UI); the close delay is for the pointer. A card that focus opened stays open when the pointer leaves the card or a press in it moves focus away, as in Base UI; it closes when the pointer leaves the trigger.
+`hover-card` > trigger + `hover-card-content`. `data-delay` (600) and `data-close-delay` (300) on the trigger or the root (`data-open-delay` also works), the Base UI defaults; shadcn examples set `data-delay="10" data-close-delay="100"`. Placement: bottom, center, 4 px, `alignOffset` 4. Opens on hover and keyboard focus, never on touch. The content has `data-state="open|closed"` and `data-open` or `data-closed`. It closes at once when focus leaves the trigger and the card (Base UI); the close delay is for the pointer. A card that focus opened stays open when the pointer leaves the card or a press in it moves focus away, as in Base UI; it closes when the pointer leaves the trigger.

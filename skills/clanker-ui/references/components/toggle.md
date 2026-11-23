@@ -4,7 +4,7 @@ Group `forms`. Needs `core`. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `toggle` (root) | `data-size` `default`, `lg`, `sm`; `data-variant` `default`, `outline` | `data-state` |
+| `toggle` (root) | `data-size` `default`, `lg`, `sm`; `data-variant` `default`, `outline` | `data-state` `off`, `on` |
 
 Other options named in the docs: `data-name` any.
 
@@ -21,7 +21,7 @@ Events: `toggle:change` `{ pressed, value }`.
 </div>
 ```
 
-A `toggle` gets `tabindex="0"` like the Base UI toggle.
+A `toggle` gets `tabindex="0"` like the Base UI toggle. The kit keeps `data-state="on|off"` on `toggle` and `toggle-group-item` in sync with `aria-pressed`.
 
 - `data-required`: the last pressed item cannot be unpressed (a view switch, a filter, or a rating that always has one value), and in a form the group needs a value: without one, a `data-slot="form"` shows the `field-error` (`data-error-value-missing` on the group) and focuses the first item.
 - `data-name` submits the value: a visually hidden input after the group (single), or one hidden input per value (multiple). `form.reset()` restores the authored value.

@@ -113,7 +113,8 @@
         "root": { "type": "boolean" },
         "js": { "type": "boolean", "description": "The kit has behavior for this slot." },
         "attributes": { "$ref": "#/$defs/attributes", "description": "Attributes that you write." },
-        "state": { "type": "array", "items": { "type": "string" }, "description": "Attributes that the kit sets. Style on them; do not write them." }
+        "state": { "type": "array", "items": { "type": "string" }, "description": "Attributes that the kit sets. Style on them; do not write them." },
+        "stateValues": { "$ref": "#/$defs/attributes", "description": "Values of the state attributes, from the README. A state attribute without an entry has no documented values." }
       }
     },
     "event": {

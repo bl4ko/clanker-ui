@@ -4,6 +4,12 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
+## Unreleased
+
+### Changed
+
+- Catalog: each part has `stateValues` next to `state`, the values of the attributes the kit sets (from the README, same format as `attributes`); `state` stays a list of names. The State column of `references/components/<name>.md` and the Values column of the API tables on the generated docs pages show them (before, about 140 State rows had no values). The README states the values that were missing (popup `data-state="open|closed"`, `data-open`, and `data-closed`; checkbox, switch, radio, and toggle `data-state`; calendar day, command item, chart, navigation menu, scroll area, and other state attributes) (#281).
+
 ## 0.5.1 - 2026-11-23
 
 ### Fixed

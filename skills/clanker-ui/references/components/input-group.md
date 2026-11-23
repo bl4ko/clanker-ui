@@ -5,7 +5,7 @@ Group `forms`. Needs `core`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `input-group-addon` | `data-align` `block-end`, `block-start`, `inline-end`, `inline-start` |  |
-| `input-group-button` |  | `data-pressed` |
+| `input-group-button` |  | `data-pressed` boolean |
 
 Other parts: `input-group` (root), `input-group-control`, `input-group-text`.
 
@@ -28,4 +28,4 @@ Other options named in the docs: `data-size` `icon-sm`, `icon-xs`, `sm`, `xs`; `
 </div>
 ```
 
-The control can be a `textarea`. A click on an addon (not on a button) focuses the control. `input-group` and `input-group-addon` get `role="group"`; an addon without `data-align` gets `inline-start`. Buttons in an addon are `InputGroupButton`: add `data-input-group-button`; the kit sets `data-variant="ghost"` and `data-size="xs"` when they are missing. Button options: `data-variant` (any `button` variant) and `data-size="xs|sm|icon-xs|icon-sm"`. Not built: the `.border-b` and `.border-t` class variants of block addons (Tailwind classes, not attributes).
+The control can be a `textarea`. A click on an addon (not on a button) focuses the control. `input-group` and `input-group-addon` get `role="group"`; an addon without `data-align` gets `inline-start`. Buttons in an addon are `InputGroupButton`: add `data-input-group-button`; the kit sets `data-variant="ghost"` and `data-size="xs"` when they are missing. Button options: `data-variant` (any `button` variant) and `data-size="xs|sm|icon-xs|icon-sm"`. A button in an addon that opens a popover or menu has `data-pressed` while it is open. Not built: the `.border-b` and `.border-t` class variants of block addons (Tailwind classes, not attributes).

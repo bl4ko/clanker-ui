@@ -4,7 +4,7 @@ Group `layout`. Needs `core`. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `scroll-area-scrollbar` | `data-orientation` `horizontal`, `vertical` | `data-overflow` |
+| `scroll-area-scrollbar` | `data-orientation` `horizontal`, `vertical` | `data-overflow` `false`, `true` |
 
 Other parts: `scroll-area` (root), `scroll-area-viewport`.
 
@@ -21,4 +21,4 @@ Kit adds: `scroll-area-thumb`.
 </div>
 ```
 
-The viewport is the real scroll container; the kit makes it a Tab stop (`tabindex="0"`) only while its content overflows, like Base UI (no author `tabindex`; else `-1`), hides the native scrollbars, and adds a vertical scrollbar with a draggable thumb. Like Base UI, a scrollbar shows while its content overflows and is hidden without overflow; it has `data-orientation` (also on the thumb), `data-hovering` while the pointer is over the scroll area, and `data-scrolling` while its own axis scrolls or its thumb is dragged. A click on the track centers the thumb at the pointer with the Base UI formula (it subtracts the scrollbar padding); a press on the scrollbar does not keep focus in the viewport.
+The viewport is the real scroll container; the kit makes it a Tab stop (`tabindex="0"`) only while its content overflows, like Base UI (no author `tabindex`; else `-1`), hides the native scrollbars, and adds a vertical scrollbar with a draggable thumb. Like Base UI, a scrollbar shows while its content overflows and is hidden without overflow; it has `data-orientation` (also on the thumb), `data-overflow="true|false"`, `data-hovering` while the pointer is over the scroll area, and `data-scrolling` while its own axis scrolls or its thumb is dragged. A click on the track centers the thumb at the pointer with the Base UI formula (it subtracts the scrollbar padding); a press on the scrollbar does not keep focus in the viewport.

@@ -825,6 +825,13 @@ def check_blocks_data_table(t):
         assert page.locator('#tasks thead [data-sort] > button > svg').evaluate_all("icons => icons.map(i => i.dataset.lucide)") == ["chevrons-up-down"] * 3
     page.locator('[data-page="next"]').click()
     assert page.locator("#task-page").inner_text() == "Page 2 of 2" and rows.count() == 6
+    if not t.mobile:
+        fit = {}
+        for width in (700, 926, 1024):
+            page.set_viewport_size({"width": width, "height": 900})
+            fit[width] = page.locator('#tasks [data-slot="table-container"]').evaluate("el => [el.scrollWidth - el.clientWidth, (getComputedStyle(el).maskImage || getComputedStyle(el).webkitMaskImage).includes('gradient')]")
+        assert fit[926][0] <= 0 and fit[1024][0] <= 0, ("the task table fits the desktop preview and lg widths", fit)
+        assert fit[700][0] > 0 and fit[700][1], ("a table that scrolls shows the scroll hint", fit)
 
 
 def check_blocks_login_validation(t):

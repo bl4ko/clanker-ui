@@ -111,12 +111,12 @@
           <button type="button" data-slot="button" data-size="sm"><svg data-lucide="plus"></svg>Add task</button>
         </div>
       </div>
-      <div data-slot="table-container">
+      <div data-slot="table-container" class="scroll-fade-x">
         <table data-slot="table">
           <thead data-slot="table-header">
             <tr data-slot="table-row">
               <th data-slot="table-head" scope="col"><button type="button" data-slot="checkbox" aria-label="Select all"></button></th>
-              <th data-slot="table-head" scope="col" data-column="task" data-show-from="md">Task</th>
+              <th data-slot="table-head" scope="col" data-column="task" data-show-from="xl">Task</th>
                 <th data-slot="table-head" scope="col" data-column="title" data-sort>Title</th>
                 <th data-slot="table-head" scope="col" data-column="status" data-show-from="sm" data-sort>Status</th>
                 <th data-slot="table-head" scope="col" data-column="priority" data-show-from="lg" data-sort>Priority</th>
@@ -126,7 +126,7 @@
           <tbody data-slot="table-body">
               <tr data-slot="table-row" data-status="in progress" data-priority="medium">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-8782"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-8782</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-8782</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="You can&#39;t compress the program without quantifying the open-source SSD pixel!" data-show-from="sm">You can&#39;t compress the program without quantifying the open-source SSD pixel!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="You can&#39;t compress the program without quantifying the open-source SSD pixel!">You can&#39;t compress the program without quantifying the open-source SSD pixel!</span><span>In progress · Medium priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="timer"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
@@ -145,7 +145,7 @@
               </tr>
               <tr data-slot="table-row" data-status="backlog" data-priority="medium">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-7878"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-7878</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-7878</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="Try to calculate the EXE feed, maybe it will index the multi-byte pixel!" data-show-from="sm">Try to calculate the EXE feed, maybe it will index the multi-byte pixel!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="Try to calculate the EXE feed, maybe it will index the multi-byte pixel!">Try to calculate the EXE feed, maybe it will index the multi-byte pixel!</span><span>Backlog · Medium priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-question-mark"></svg>Backlog</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
@@ -164,7 +164,7 @@
               </tr>
               <tr data-slot="table-row" data-status="todo" data-priority="high">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-7839"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-7839</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-7839</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Bug</span> <span data-slot="data-table-text" title="We need to bypass the neural TCP card!" data-show-from="sm">We need to bypass the neural TCP card!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="We need to bypass the neural TCP card!">We need to bypass the neural TCP card!</span><span>Todo · High priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle"></svg>Todo</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-up"></svg>High</span></td>
@@ -183,7 +183,7 @@
               </tr>
               <tr data-slot="table-row" data-status="backlog" data-priority="medium">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-5562"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-5562</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-5562</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Feature</span> <span data-slot="data-table-text" title="The SAS interface is down, bypass the open-source pixel so we can back up the PNG bandwidth!" data-show-from="sm">The SAS interface is down, bypass the open-source pixel so we can back up the PNG bandwidth!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="The SAS interface is down, bypass the open-source pixel so we can back up the PNG bandwidth!">The SAS interface is down, bypass the open-source pixel so we can back up the PNG bandwidth!</span><span>Backlog · Medium priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-question-mark"></svg>Backlog</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
@@ -202,7 +202,7 @@
               </tr>
               <tr data-slot="table-row" data-status="canceled" data-priority="medium">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-8686"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-8686</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-8686</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Feature</span> <span data-slot="data-table-text" title="I&#39;ll parse the wireless SSL protocol, that should driver the API panel!" data-show-from="sm">I&#39;ll parse the wireless SSL protocol, that should driver the API panel!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="I&#39;ll parse the wireless SSL protocol, that should driver the API panel!">I&#39;ll parse the wireless SSL protocol, that should driver the API panel!</span><span>Canceled · Medium priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-x"></svg>Canceled</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
@@ -221,7 +221,7 @@
               </tr>
               <tr data-slot="table-row" data-status="done" data-priority="high">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-1280"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-1280</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-1280</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Bug</span> <span data-slot="data-table-text" title="Use the digital TLS panel, then you can transmit the haptic system!" data-show-from="sm">Use the digital TLS panel, then you can transmit the haptic system!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="Use the digital TLS panel, then you can transmit the haptic system!">Use the digital TLS panel, then you can transmit the haptic system!</span><span>Done · High priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-check"></svg>Done</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-up"></svg>High</span></td>
@@ -240,7 +240,7 @@
               </tr>
               <tr data-slot="table-row" data-status="done" data-priority="high">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-7262"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-7262</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-7262</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Feature</span> <span data-slot="data-table-text" title="The UTF8 application is down, parse the neural bandwidth so we can back up the PNG firewall!" data-show-from="sm">The UTF8 application is down, parse the neural bandwidth so we can back up the PNG firewall!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="The UTF8 application is down, parse the neural bandwidth so we can back up the PNG firewall!">The UTF8 application is down, parse the neural bandwidth so we can back up the PNG firewall!</span><span>Done · High priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-check"></svg>Done</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-up"></svg>High</span></td>
@@ -259,7 +259,7 @@
               </tr>
               <tr data-slot="table-row" data-status="in progress" data-priority="medium">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-1138"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-1138</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-1138</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Feature</span> <span data-slot="data-table-text" title="Generating the driver won&#39;t do anything, we need to quantify the 1080p SMTP bandwidth!" data-show-from="sm">Generating the driver won&#39;t do anything, we need to quantify the 1080p SMTP bandwidth!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="Generating the driver won&#39;t do anything, we need to quantify the 1080p SMTP bandwidth!">Generating the driver won&#39;t do anything, we need to quantify the 1080p SMTP bandwidth!</span><span>In progress · Medium priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="timer"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
@@ -278,7 +278,7 @@
               </tr>
               <tr data-slot="table-row" data-status="todo" data-priority="low">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-7184"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-7184</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-7184</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Feature</span> <span data-slot="data-table-text" title="We need to program the back-end THX pixel!" data-show-from="sm">We need to program the back-end THX pixel!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="We need to program the back-end THX pixel!">We need to program the back-end THX pixel!</span><span>Todo · Low priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle"></svg>Todo</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-down"></svg>Low</span></td>
@@ -297,7 +297,7 @@
               </tr>
               <tr data-slot="table-row" data-status="in progress" data-priority="high">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-5160"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-5160</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-5160</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="Calculating the bus won&#39;t do anything, we need to navigate the back-end JSON protocol!" data-show-from="sm">Calculating the bus won&#39;t do anything, we need to navigate the back-end JSON protocol!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="Calculating the bus won&#39;t do anything, we need to navigate the back-end JSON protocol!">Calculating the bus won&#39;t do anything, we need to navigate the back-end JSON protocol!</span><span>In progress · High priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="timer"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-up"></svg>High</span></td>
@@ -316,7 +316,7 @@
               </tr>
               <tr data-slot="table-row" data-status="done" data-priority="medium">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-5618"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-5618</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-5618</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="Generating the driver won&#39;t do anything, we need to index the online SSL application!" data-show-from="sm">Generating the driver won&#39;t do anything, we need to index the online SSL application!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="Generating the driver won&#39;t do anything, we need to index the online SSL application!">Generating the driver won&#39;t do anything, we need to index the online SSL application!</span><span>Done · Medium priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-check"></svg>Done</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
@@ -335,7 +335,7 @@
               </tr>
               <tr data-slot="table-row" data-status="backlog" data-priority="medium">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-6699"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-6699</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-6699</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="I&#39;ll transmit the wireless JBOD capacitor, that should hard drive the SSD feed!" data-show-from="sm">I&#39;ll transmit the wireless JBOD capacitor, that should hard drive the SSD feed!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="I&#39;ll transmit the wireless JBOD capacitor, that should hard drive the SSD feed!">I&#39;ll transmit the wireless JBOD capacitor, that should hard drive the SSD feed!</span><span>Backlog · Medium priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-question-mark"></svg>Backlog</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
@@ -354,7 +354,7 @@
               </tr>
               <tr data-slot="table-row" data-status="backlog" data-priority="medium">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-2858"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-2858</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-2858</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Bug</span> <span data-slot="data-table-text" title="We need to override the online UDP bus!" data-show-from="sm">We need to override the online UDP bus!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="We need to override the online UDP bus!">We need to override the online UDP bus!</span><span>Backlog · Medium priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-question-mark"></svg>Backlog</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-right"></svg>Medium</span></td>
@@ -373,7 +373,7 @@
               </tr>
               <tr data-slot="table-row" data-status="done" data-priority="high">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-9864"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-9864</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-9864</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Bug</span> <span data-slot="data-table-text" title="I&#39;ll reboot the 1080p FTP panel, that should matrix the HEX hard drive!" data-show-from="sm">I&#39;ll reboot the 1080p FTP panel, that should matrix the HEX hard drive!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="I&#39;ll reboot the 1080p FTP panel, that should matrix the HEX hard drive!">I&#39;ll reboot the 1080p FTP panel, that should matrix the HEX hard drive!</span><span>Done · High priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="circle-check"></svg>Done</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-up"></svg>High</span></td>
@@ -392,7 +392,7 @@
               </tr>
               <tr data-slot="table-row" data-status="in progress" data-priority="low">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-8404"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-8404</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-8404</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Bug</span> <span data-slot="data-table-text" title="We need to generate the virtual HEX alarm!" data-show-from="sm">We need to generate the virtual HEX alarm!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="We need to generate the virtual HEX alarm!">We need to generate the virtual HEX alarm!</span><span>In progress · Low priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="timer"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-down"></svg>Low</span></td>
@@ -411,7 +411,7 @@
               </tr>
               <tr data-slot="table-row" data-status="in progress" data-priority="low">
                 <td data-slot="table-cell"><button type="button" data-slot="checkbox" aria-label="Select TASK-5365"></button></td>
-                <td data-slot="table-cell" data-column="task" data-show-from="md">TASK-5365</td>
+                <td data-slot="table-cell" data-column="task" data-show-from="xl">TASK-5365</td>
                 <td data-slot="table-cell" data-column="title"><span data-slot="badge" data-variant="outline" data-show-from="sm">Documentation</span> <span data-slot="data-table-text" title="Backing up the pixel won&#39;t do anything, we need to transmit the primary IB array!" data-show-from="sm">Backing up the pixel won&#39;t do anything, we need to transmit the primary IB array!</span><span data-slot="data-table-text" data-hide-from="sm"><span data-slot="text-stack"><span title="Backing up the pixel won&#39;t do anything, we need to transmit the primary IB array!">Backing up the pixel won&#39;t do anything, we need to transmit the primary IB array!</span><span>In progress · Low priority</span></span></span></td>
                 <td data-slot="table-cell" data-column="status" data-show-from="sm"><span data-slot="data-table-text"><svg data-lucide="timer"></svg>In progress</span></td>
                 <td data-slot="table-cell" data-column="priority" data-show-from="lg"><span data-slot="data-table-text"><svg data-lucide="arrow-down"></svg>Low</span></td>

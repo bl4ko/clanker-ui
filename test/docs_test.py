@@ -731,6 +731,27 @@ def check_docs_component_demos(t):
     page.wait_for_function("""() => document.querySelectorAll('#icon-grid svg').length > 100""")
 
 
+LAYOUT_SHIFT = """() => new Promise(done => {
+  if (!PerformanceObserver.supportedEntryTypes.includes("layout-shift")) return done(null)
+  new PerformanceObserver((list, observer) => { observer.disconnect(); done(list.getEntries().filter(e => !e.hadRecentInput).reduce((a, e) => a + e.value, 0)) }).observe({ type: "layout-shift", buffered: true })
+  setTimeout(() => done(0), 500)
+})"""
+
+
+def check_docs_no_layout_shift(t):
+    page = t.page
+    shifts = {}
+    for path, ready in (("/docs/components/chart", "#chart-interactive svg"), ("/docs/components/icons", "#icon-grid svg")):
+        t.docs(path)
+        page.locator(ready).first.wait_for()
+        page.wait_for_timeout(100)
+        shifts[path] = page.evaluate(LAYOUT_SHIFT)
+    assert all(v is None or v < 0.01 for v in shifts.values()), ("the chart hero and the icon grid keep their space before the script runs", shifts)
+    t.docs("/docs/components/chart")
+    ring = page.locator("#chart-interactive-card").evaluate("el => getComputedStyle(el).boxShadow")
+    assert ring != "none", ("the chart hero card keeps the card ring", ring)
+
+
 BLOCKS = ["dashboard", "data-table", "settings", "form", "detail", "login", "login-split", "card-grid", "overlay-form", "states"]
 
 BLOCK_LAYOUT = """() => {
@@ -827,6 +848,13 @@ def check_blocks_data_table(t):
         assert page.locator('#tasks thead [data-sort] > button > svg').evaluate_all("icons => icons.map(i => i.dataset.lucide)") == ["chevrons-up-down"] * 3
     page.locator('[data-page="next"]').click()
     assert page.locator("#task-page").inner_text() == "Page 2 of 2" and rows.count() == 6
+    if not t.mobile:
+        fit = {}
+        for width in (700, 926, 1024):
+            page.set_viewport_size({"width": width, "height": 900})
+            fit[width] = page.locator('#tasks [data-slot="table-container"]').evaluate("el => [el.scrollWidth - el.clientWidth, (getComputedStyle(el).maskImage || getComputedStyle(el).webkitMaskImage).includes('gradient')]")
+        assert fit[926][0] <= 0 and fit[1024][0] <= 0, ("the task table fits the desktop preview and lg widths", fit)
+        assert fit[700][0] > 0 and fit[700][1], ("a table that scrolls shows the scroll hint", fit)
 
 
 def check_blocks_login_validation(t):

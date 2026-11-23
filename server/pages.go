@@ -379,6 +379,11 @@ func (d *docsSite) generatePages(fsys fs.FS) error {
 		return err
 	}
 	d.demo = parseDemo(demo)
+	demoJS, err := fs.ReadFile(fsys, "demo/demo.js")
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
+		return err
+	}
+	d.demoJS = string(demoJS)
 	readmeSrc, err := fs.ReadFile(fsys, exportExtras["llms-full.txt"])
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return err
@@ -507,7 +512,13 @@ func (w *pageWriter) example(sec *demoSection, html []string) {
 			preview = append(preview, w.d.demoHTML(h, w.href))
 			code = append(code, w.d.demoHTML(demoCode(h), w.href))
 		}
-		w.d.examples[name] = &example{Name: name, HTML: dedent(strings.Join(preview, "\n")), Code: strings.Join(code, "\n\n"), Demo: true}
+		ex := &example{Name: name, HTML: dedent(strings.Join(preview, "\n")), Code: strings.Join(code, "\n\n"), Demo: true}
+		var ids []string
+		for _, m := range idAttrs.FindAllStringSubmatch(ex.HTML, -1) {
+			ids = append(ids, m[1])
+		}
+		ex.Script = demoScript(w.d.demoJS, ids)
+		w.d.examples[name] = ex
 	}
 	for _, m := range idAttrs.FindAllStringSubmatch(w.d.examples[name].HTML, -1) {
 		w.page.reserved = append(w.page.reserved, m[1])
@@ -545,6 +556,89 @@ func (w *pageWriter) items(sec *demoSection, items []demoItem, code bool) {
 }
 
 var idAttrs = regexp.MustCompile(`\sid="([^"]+)"`)
+
+var (
+	demoMount  = regexp.MustCompile(`chartMount\((\s*)"([^"]+)"`)
+	demoName   = regexp.MustCompile(`^(?:const|let|function)\s+([\w$]+)`)
+	demoWord   = regexp.MustCompile(`[\w$]+`)
+	demoImport = regexp.MustCompile(`^import (?:\* as ([\w$]+)|\{([^}]*)\}) from "\.\./([^"]+)"`)
+)
+
+func demoScript(src string, ids []string) string {
+	var stmts []string
+	for _, line := range strings.Split(src, "\n") {
+		if len(stmts) == 0 || line != "" && !strings.ContainsAny(line[:1], " \t)]}") {
+			stmts = append(stmts, line)
+		} else {
+			stmts[len(stmts)-1] += "\n" + line
+		}
+	}
+	names := map[string]int{}
+	var targets []int
+	for i, s := range stmts {
+		for _, m := range demoMount.FindAllStringSubmatch(s, -1) {
+			if slices.Contains(ids, m[2]) {
+				targets = append(targets, i)
+			}
+		}
+		stmts[i] = demoMount.ReplaceAllString(strings.TrimRight(s, "\n"), `chart(${1}document.getElementById("${2}")`)
+		if m := demoName.FindStringSubmatch(s); m != nil {
+			names[m[1]] = i
+		}
+	}
+	keep := map[int]bool{}
+	var visit func(int)
+	visit = func(i int) {
+		if keep[i] {
+			return
+		}
+		keep[i] = true
+		for _, w := range demoWord.FindAllString(stmts[i], -1) {
+			if j, ok := names[w]; ok {
+				visit(j)
+			}
+		}
+	}
+	for _, i := range targets {
+		visit(i)
+	}
+	if len(keep) == 0 {
+		return ""
+	}
+	var body []string
+	used := map[string]bool{}
+	for i, s := range stmts {
+		if keep[i] {
+			body = append(body, s)
+			for _, w := range demoWord.FindAllString(s, -1) {
+				used[w] = true
+			}
+		}
+	}
+	var head []string
+	for _, s := range stmts {
+		m := demoImport.FindStringSubmatch(s)
+		switch {
+		case m == nil:
+		case m[1] != "":
+			if used[m[1]] {
+				head = append(head, fmt.Sprintf(`import * as %s from "./%s"`, m[1], m[3]))
+			}
+		default:
+			var keepNames []string
+			for _, spec := range strings.Split(m[2], ",") {
+				f := strings.Fields(spec)
+				if len(f) > 0 && used[f[len(f)-1]] {
+					keepNames = append(keepNames, strings.Join(f, " "))
+				}
+			}
+			if len(keepNames) > 0 {
+				head = append(head, fmt.Sprintf(`import { %s } from "./%s"`, strings.Join(keepNames, ", "), m[3]))
+			}
+		}
+	}
+	return strings.Join(head, "\n") + "\n\n" + strings.Join(body, "\n")
+}
 
 func (d *docsSite) generatePage(href string, readme readmeDoc, stops map[string]bool) *docPage {
 	c := d.components[href]

@@ -854,3 +854,21 @@ func TestExampleClassesHaveRules(t *testing.T) {
 		}
 	}
 }
+
+func TestChartExamplesShowTheirScript(t *testing.T) {
+	md, ok := docsOf(t).markdownFor("/docs/components/chart")
+	if !ok {
+		t.Fatal("no chart page")
+	}
+	_, rest, _ := strings.Cut(string(md), `<div id="chart-bar-negative">`)
+	_, js, _ := strings.Cut(rest, "```js\n")
+	js, _, _ = strings.Cut(js, "```")
+	for _, want := range []string{`import { chart } from "./clanker-ui-chart.js"`, "const chartMonthOptions = {", "chart(\n  document.getElementById(\"chart-bar-negative\"),", "visitors: -207"} {
+		if !strings.Contains(js, want) {
+			t.Errorf("chart-bar-negative script lacks %q:\n%s", want, js)
+		}
+	}
+	if strings.Contains(js, "chartMount") || strings.Contains(js, "chartViews") || strings.Contains(js, "../") {
+		t.Errorf("chart script keeps demo plumbing:\n%s", js)
+	}
+}

@@ -4175,6 +4175,24 @@ def check_keyboard_modality_keys(t):
     wait(page, "e => !e.matches(':popover-open')", menu.element_handle())
 
 
+def check_dropdown_menu_pointer_leave_ring(t):
+    page = t.page
+    t.a11y()
+    t.section("dropdown-menu")
+    menu = page.locator("#dropdown-menu-demo > [data-slot=dropdown-menu-content]")
+    page.locator("#dropdown-menu-demo").get_by_role("button", name="Open").click()
+    wait(page, "e => e.matches(':popover-open')", menu.element_handle())
+    t.settle()
+    item = box(menu.get_by_role("menuitem", name="Billing"))
+    label = box(menu.locator("[data-slot=dropdown-menu-label]").first)
+    page.mouse.move(item["x"] + 10, item["y"] + item["height"] / 2, steps=4)
+    assert active(page) == "Billing⌘B"
+    page.mouse.move(label["x"] + 10, label["y"] + label["height"] / 2, steps=4)
+    wait(page, "e => document.activeElement === e", menu.element_handle())
+    assert menu.evaluate("e => getComputedStyle(e).outlineStyle") == "none", "no focus ring on the menu when the pointer leaves an item"
+    page.keyboard.press("Escape")
+
+
 def check_forced_colors_focus(t):
     page = t.page
     t.a11y()

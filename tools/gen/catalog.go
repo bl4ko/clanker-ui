@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	catalogVersion = "0.5.1"
+	catalogVersion = "0.5.2"
 	catalogBaseUI  = "1.6.0"
 	catalogSite    = "https://bl4ko.github.io/clanker-ui"
 	catalogRepo    = "https://github.com/bl4ko/clanker-ui"
@@ -103,6 +103,8 @@ type catPart struct {
 	JS         bool     `json:"js,omitempty"`
 	Attributes catAttrs `json:"attributes,omitempty"`
 	State      []string `json:"state,omitempty"`
+	StateVals  catAttrs `json:"stateValues,omitempty"`
+	css        map[string][]string
 }
 
 type catEvent struct {
@@ -459,14 +461,16 @@ func allNumbers(vals []string) bool {
 type compData struct {
 	sections []mdSection
 	parts    map[string]attrSet
-	state    map[string]map[string]bool
+	state    map[string]attrSet
+	stateDoc map[string]attrSet
+	vals     attrSet
 	partAttr attrSet
 	options  attrSet
 	fence    string
 }
 
 func newCompData() *compData {
-	return &compData{parts: map[string]attrSet{}, state: map[string]map[string]bool{}, partAttr: attrSet{}, options: attrSet{}}
+	return &compData{parts: map[string]attrSet{}, state: map[string]attrSet{}, stateDoc: map[string]attrSet{}, vals: attrSet{}, partAttr: attrSet{}, options: attrSet{}}
 }
 
 func (d *compData) part(slot string) attrSet {
@@ -1080,6 +1084,9 @@ func (b *catalogBuild) mirror() {
 				dst.options[name] = a
 			}
 		}
+		for slot, attrs := range src.stateDoc {
+			dst.stateDoc[m[1]+strings.TrimPrefix(slot, m[0])] = attrs
+		}
 	}
 }
 
@@ -1295,9 +1302,16 @@ func (b *catalogBuild) cssSelector(sel string) {
 				continue
 			}
 			if d.state[slot] == nil {
-				d.state[slot] = map[string]bool{}
+				d.state[slot] = attrSet{}
 			}
-			d.state[slot][name] = true
+			switch m[2] {
+			case "":
+				d.state[slot].add(name, "")
+			case "=":
+				d.state[slot].add(name, m[3])
+			default:
+				d.state[slot].mention(name)
+			}
 		}
 	}
 }
@@ -1372,9 +1386,7 @@ func (b *catalogBuild) scanSection(s mdSection) {
 	}
 	text := stripFences(s.body)
 	for _, sentence := range sentences(text) {
-		if stateSentence.MatchString(stripCode(sentence)) {
-			continue
-		}
+		state := stateSentence.MatchString(stripCode(sentence))
 		for _, m := range attrOnSlot.FindAllStringSubmatch(sentence, -1) {
 			for _, sc := range mdCode.FindAllStringSubmatch(m[2], -1) {
 				c := b.t.component(sc[1])
@@ -1382,7 +1394,16 @@ func (b *catalogBuild) scanSection(s mdSection) {
 					continue
 				}
 				for _, code := range mdCode.FindAllStringSubmatch(m[1], -1) {
-					if am := attrCode.FindStringSubmatch(code[1]); am != nil && b.global[am[1]] == nil {
+					am := attrCode.FindStringSubmatch(code[1])
+					switch {
+					case am == nil:
+					case state:
+						d := b.data[c]
+						if d.stateDoc[sc[1]] == nil {
+							d.stateDoc[sc[1]] = attrSet{}
+						}
+						d.stateDoc[sc[1]].addCode(code[1], am)
+					case b.global[am[1]] == nil:
 						b.data[c].part(sc[1]).addCode(code[1], am)
 					}
 				}
@@ -1551,6 +1572,9 @@ func (b *catalogBuild) scanProse(s mdSection) {
 				if am == nil || old[m[1]] {
 					continue
 				}
+				for _, c := range comps {
+					b.data[c].vals.addCode(m[1], am)
+				}
 				name := am[1]
 				if b.global[name] != nil || catalogKitGlobal[name] || name == "data-slot" || strings.HasPrefix(name, "data-string-") {
 					continue
@@ -1594,11 +1618,57 @@ func (b *catalogBuild) isState(d *compData, name string) bool {
 		return true
 	}
 	for _, st := range d.state {
-		if st[name] {
+		if st[name] != nil {
 			return true
 		}
 	}
 	return false
+}
+
+func (b *catalogBuild) stateValues(d *compData, slot string, names []string) (catAttrs, map[string][]string) {
+	if len(names) == 0 {
+		return nil, nil
+	}
+	out, css := catAttrs{}, map[string][]string{}
+	for _, name := range names {
+		var styled []string
+		if a := d.state[slot][name]; a != nil {
+			styled = sortedKeys(a.values)
+			css[name] = styled
+		}
+		bare := !slices.ContainsFunc(styled, func(v string) bool { return v != "" && v != "true" && v != "false" })
+		var a *attrInfo
+		switch doc, kit, all := d.stateDoc[slot][name], d.parts[slot][name], d.vals[name]; {
+		case doc != nil:
+			a = doc
+		case kit != nil && len(kit.values) > 0:
+			a = kit
+		case all != nil && len(all.values) > 0 && !slices.ContainsFunc(styled, func(v string) bool { return v != "" && !all.values[v] }):
+			a = all
+		case all != nil && bare:
+			a = &attrInfo{}
+		default:
+			continue
+		}
+		out[name] = stateJSON(a)
+	}
+	if len(out) == 0 {
+		out = nil
+	}
+	return out, css
+}
+
+func stateJSON(a *attrInfo) any {
+	vals := sortedKeys(a.values)
+	switch {
+	case len(vals) == 0 || len(vals) == 1 && vals[0] == "":
+		return "boolean"
+	case !a.list && allNumbers(vals):
+		return "number"
+	case !a.list && len(vals) == 1 && !boolWords(vals):
+		return "string"
+	}
+	return vals
 }
 
 func fenceExample(src, comp string, t *groupTable) string {
@@ -1823,6 +1893,7 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 			}
 		}
 		sort.Strings(p.State)
+		p.StateVals, p.css = b.stateValues(d, s, p.State)
 		comp.Parts = append(comp.Parts, p)
 		if p.JS || p.KitAdds {
 			comp.JS = true
@@ -1937,11 +2008,16 @@ func attrsText(a catAttrs) string {
 	return strings.Join(out, "; ")
 }
 
-func codeList(s []string) string {
-	if len(s) == 0 {
-		return ""
+func stateText(p catPart) string {
+	var out []string
+	for _, k := range p.State {
+		if v, ok := p.StateVals[k]; ok {
+			out = append(out, "`"+k+"` "+attrText(v))
+		} else {
+			out = append(out, "`"+k+"`")
+		}
 	}
-	return "`" + strings.Join(s, "`, `") + "`"
+	return strings.Join(out, "; ")
 }
 
 func cell(s string) string {
@@ -2020,7 +2096,7 @@ func componentMarkdown(b *strings.Builder, cat *catalog, c catComponent, heading
 			if p.KitAdds {
 				name += " (kit adds)"
 			}
-			rows = append(rows, fmt.Sprintf("| %s | %s | %s |\n", name, cell(attrsText(p.Attributes)), codeList(p.State)))
+			rows = append(rows, fmt.Sprintf("| %s | %s | %s |\n", name, cell(attrsText(p.Attributes)), cell(stateText(p))))
 		case p.KitAdds:
 			kit = append(kit, name)
 		default:

@@ -5,9 +5,9 @@ Group `forms`. Needs `core`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `select` (root) | `data-name` string; `data-value` string |  |
-| `select-content` | `data-align-trigger` `false`, `true`; `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed`, `data-open`, `data-state` |
+| `select-content` | `data-align-trigger` `false`, `true`; `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
 | `select-item` | `data-disabled` boolean; `data-label` string; `data-value` string |  |
-| `select-trigger` | `data-size` `default`, `sm` | `data-placeholder` |
+| `select-trigger` | `data-size` `default`, `sm` | `data-placeholder` boolean |
 
 Other parts: `select-group`, `select-label`, `select-separator`, `select-value`.
 
@@ -33,7 +33,7 @@ Events: `select:open`; `select:close`; `select:change` `{ value }`.
 </div>
 ```
 
-- The first content of `select-value` is the placeholder (`data-placeholder` on the trigger and the value while no item is selected). The trigger shows a copy of the selected item, or `data-label`. The kit adds the chevron, scroll buttons, `select-viewport`, `select-item-text`, ARIA, and a visually hidden proxy input that submits `data-name`. Only the selected item has `data-selected` and a `select-item-indicator`; with no value, an item with `data-value=""` is the selected one, like the Base UI `null` item. The focused item has `data-highlighted`. While open, the trigger has `data-pressed` and `data-popup-side`. The trigger has `tabindex="0"` like Base UI, so Tab reaches it also in Safari.
+- The first content of `select-value` is the placeholder (`data-placeholder` on the trigger and the value while no item is selected). The trigger shows a copy of the selected item, or `data-label`. The kit adds the chevron, scroll buttons, `select-viewport`, `select-item-text`, ARIA, and a visually hidden proxy input that submits `data-name`. Only the selected item has `data-selected` and a `select-item-indicator`; with no value, an item with `data-value=""` is the selected one, like the Base UI `null` item. The focused item has `data-highlighted`. While open, the trigger has `data-pressed` and `data-popup-side`. The content has `data-state="open|closed"` and `data-open` or `data-closed`. The trigger has `tabindex="0"` like Base UI, so Tab reaches it also in Safari.
 - `data-required` makes the proxy `required`. In a `data-slot="form"` the kit shows the error. In other forms native validation reports the proxy (the browser shows its message just below the trigger) and the kit moves focus from the proxy to the trigger.
 - Removing and inserting a select again keeps one proxy input, the authored placeholder, and the authored initial value (form reset goes back to it).
 - `data-value` is the value: a later change selects that item without a `change` event, and items that arrive later (after a `fetch`) select the authored value. While no item matches, the trigger shows the placeholder and the proxy is empty.

@@ -929,3 +929,65 @@ func TestCatalogSharedSectionText(t *testing.T) {
 		t.Error("aspect-ratio: full text lacks its bullet")
 	}
 }
+
+var stateNotSetByKit = map[string]bool{
+	"tooltip-content data-state=delayed-open": true,
+	"navigation-menu-content data-motion":     true,
+	"navigation-menu-link data-state":         true,
+	"tabs-trigger data-active":                true,
+	"sidebar-menu-button data-state":          true,
+	"sidebar-menu-sub-button data-state":      true,
+	"questionnaire-choice data-state":         true,
+}
+
+func TestCatalogStateValues(t *testing.T) {
+	cat := testCatalog(t)
+	filled := 0
+	for _, c := range cat.Components {
+		for _, p := range c.Parts {
+			for _, name := range p.State {
+				key := p.Slot + " " + name
+				v, ok := p.StateVals[name]
+				switch {
+				case stateNotSetByKit[key] && ok:
+					t.Errorf("%s: the README states values %v; remove it from stateNotSetByKit", key, v)
+				case stateNotSetByKit[key]:
+					continue
+				case !ok:
+					t.Errorf("%s: the README states no values for this State attribute (see kit/clanker-ui.js)", key)
+					continue
+				}
+				filled++
+				vals, list := v.([]string)
+				for _, cv := range p.css[name] {
+					switch {
+					case cv == "" || v == "boolean" && (cv == "true" || cv == "false"):
+					case stateNotSetByKit[key+"="+cv]:
+						if slices.Contains(vals, cv) {
+							t.Errorf("%s=%s: the README states it; remove it from stateNotSetByKit", key, cv)
+						}
+					case !list || !slices.Contains(vals, cv):
+						t.Errorf("%s: the CSS styles %q, but the README values are %v", key, cv, v)
+					}
+				}
+			}
+		}
+	}
+	if filled < 130 {
+		t.Errorf("%d State attributes have values, want at least 130", filled)
+	}
+	want := map[string]string{"drawer-popup data-swipe-axis": "[x y]", "dialog-content data-state": "[closed open]", "toast data-expanded": "boolean", "checkbox data-state": "[checked indeterminate unchecked]"}
+	for _, c := range cat.Components {
+		for _, p := range c.Parts {
+			for name, v := range p.StateVals {
+				if w, ok := want[p.Slot+" "+name]; ok && fmt.Sprint(v) != w {
+					t.Errorf("%s %s: values %v, want %s", p.Slot, name, v, w)
+				}
+				delete(want, p.Slot+" "+name)
+			}
+		}
+	}
+	for key := range want {
+		t.Errorf("%s: no state values", key)
+	}
+}

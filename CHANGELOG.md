@@ -11,6 +11,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Input OTP: the text selection of the input over the slots is transparent, like the `input-otp` library, so Tab focus no longer draws a selection bar over the slots (#264).
 - Accessibility layer: `trace-description` uses the full `--muted-foreground` (shadcn has 70 % of it), so the text has 4.5:1 or more: 5.0:1 in light (2.7:1 before) and 7.7:1 in dark (4.2:1 before) (#267).
 - Accessibility layer: a ghost `attachment-action` over an image has a `--background` chip, so the remove icon has 19.8:1 in light and 19.0:1 in dark (1.2:1 on the dark demo image before); a focused `attachment-group` turns off its scroll fade, so its focus outline shows on all four sides (4.5:1 light, 6.4:1 dark; the mask hid it before) (#266).
+- Sidebar: the mobile sheet shows the full sidebar with labels also when the desktop sidebar is collapsed to icons, as in shadcn; the desktop and icon-mode rules no longer match while `data-mobile` is set (#261).
 
 ## 0.5.0 - 2026-11-22
 

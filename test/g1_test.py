@@ -1825,6 +1825,29 @@ def check_select_open_state(t):
     wait_open(page, content, False)
 
 
+def check_select_tab_popper(t):
+    page = t.page
+    t.section("select")
+    page.evaluate(SELECT_FIXTURE)
+    page.evaluate("""() => {
+      document.querySelector("#fx-select [data-slot=select-content]").dataset.alignTrigger = "false"
+      const after = document.createElement("input")
+      after.id = "fx-after"
+      after.ariaLabel = "After"
+      document.getElementById("fx-select").after(after)
+    }""")
+    trigger = page.locator("#fx-select-trigger")
+    content = page.locator("#fx-select [data-slot=select-content]")
+    for key, target in (("Tab", "fx-after"), ("Shift+Tab", "fx-select-trigger"), ("Tab", "fx-after")):
+        trigger.click()
+        wait_open(page, content)
+        assert content.get_attribute("data-align-trigger") == "false"
+        page.keyboard.press(key)
+        assert page.evaluate("document.activeElement.id") == target, key
+        wait_open(page, content, False)
+        assert page.evaluate("document.activeElement.id") == target, key
+
+
 COMBO_FIXTURE = """async () => {
   const { h } = await import("/clanker-ui.js")
   const root = h("div", { "data-slot": "combobox", id: "fx-combo", "data-name": "fx" },

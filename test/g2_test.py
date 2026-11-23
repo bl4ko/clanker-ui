@@ -4175,6 +4175,24 @@ def check_keyboard_modality_keys(t):
     wait(page, "e => !e.matches(':popover-open')", menu.element_handle())
 
 
+def check_dropdown_menu_pointer_leave_ring(t):
+    page = t.page
+    t.a11y()
+    t.section("dropdown-menu")
+    menu = page.locator("#dropdown-menu-demo > [data-slot=dropdown-menu-content]")
+    page.locator("#dropdown-menu-demo").get_by_role("button", name="Open").click()
+    wait(page, "e => e.matches(':popover-open')", menu.element_handle())
+    t.settle()
+    item = box(menu.get_by_role("menuitem", name="Billing"))
+    label = box(menu.locator("[data-slot=dropdown-menu-label]").first)
+    page.mouse.move(item["x"] + 10, item["y"] + item["height"] / 2, steps=4)
+    assert active(page) == "Billing⌘B"
+    page.mouse.move(label["x"] + 10, label["y"] + label["height"] / 2, steps=4)
+    wait(page, "e => document.activeElement === e", menu.element_handle())
+    assert menu.evaluate("e => getComputedStyle(e).outlineStyle") == "none", "no focus ring on the menu when the pointer leaves an item"
+    page.keyboard.press("Escape")
+
+
 def check_forced_colors_focus(t):
     page = t.page
     t.a11y()
@@ -4814,6 +4832,29 @@ G2_MENU_CODE = """async () => {
   menu.remove()
   return { init, byValue, byItem, cleared, log }
 }"""
+
+
+def check_dropdown_menu_scoped_rtl_align(t):
+    page = t.page
+    section = t.section("dropdown-menu")
+    page.evaluate("""async () => {
+      const { h } = await import("/clanker-ui.js")
+      const root = h("div", { "data-slot": "dropdown-menu", id: "fx-rtl-menu" },
+        h("button", { type: "button", "data-slot": "button", "data-variant": "outline", "data-dropdown-menu-trigger": "" }, "Menu"),
+        h("div", { "data-slot": "dropdown-menu-content", "data-align": "end" }, ["One", "Two"].map(v => h("div", { "data-slot": "dropdown-menu-item" }, v))))
+      const wrap = h("div", { dir: document.documentElement.dir === "rtl" ? "ltr" : "rtl", style: { display: "flex", justifyContent: "center" } }, root)
+      document.getElementById("dropdown-menu").prepend(wrap)
+      await new Promise(r => setTimeout(r, 0))
+    }""")
+    trigger = section.locator("#fx-rtl-menu [data-dropdown-menu-trigger]")
+    content = section.locator("#fx-rtl-menu [data-slot=dropdown-menu-content]")
+    trigger.click()
+    page.wait_for_function("() => document.querySelector('#fx-rtl-menu [data-slot=dropdown-menu-content]').matches(':popover-open')")
+    t.settle()
+    tb, cb = inline(t, box(trigger)), inline(t, box(content))
+    assert cb["width"] > tb["width"] + 20, (tb, cb)
+    assert abs(cb["x"] + cb["width"] - tb["x"] - tb["width"]) <= 1, ("align end follows the page direction, not the scoped dir", tb, cb)
+    page.keyboard.press("Escape")
 
 
 def check_dropdown_menu_code_values(t):

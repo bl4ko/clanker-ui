@@ -131,6 +131,8 @@
     -moz-osx-font-smoothing: grayscale;
   }
   dialog { color: inherit; }
+  :is([data-slot="popover-content"], [data-slot="hover-card-content"], [data-slot="tooltip-content"], [data-slot="dropdown-menu-content"], [data-slot="dropdown-menu-sub-content"], [data-slot="context-menu-content"], [data-slot="context-menu-sub-content"], [data-slot="menubar-content"], [data-slot="menubar-sub-content"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"], [data-slot="drawer-content"]) { --radius: var(--radius-lg); }
+  :is([data-slot="select-content"], [data-slot="combobox-content"]) { --radius: var(--radius-lg); }
   [popover] {
     inset: auto;
     margin: 0;
@@ -1513,6 +1515,7 @@
   @media (width >= 48rem) { [data-hide-from="md"] { display: none; } }
   @media (width >= 64rem) { [data-hide-from="lg"] { display: none; } }
   @media (width >= 80rem) { [data-hide-from="xl"] { display: none; } }
+  [data-slot="dropdown-menu-content"] [data-slot="item"][data-size="xs"] { padding: 0; }
   :root[data-theme-switching], :root[data-theme-switching] *, :root[data-theme-switching] ::before, :root[data-theme-switching] ::after { transition: none !important; }
   @media (prefers-color-scheme: dark) {
     :root[data-system-theme="light"], :root[data-system-theme="light"] *, :root[data-system-theme="light"] ::before, :root[data-system-theme="light"] ::after { transition: none !important; }

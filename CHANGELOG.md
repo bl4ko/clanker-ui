@@ -23,6 +23,11 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Docs: the header search button shows its focus ring (#277); the code teaser under a preview is no longer a Tab stop (#278); table headers and attribute names stay on one line, and a table scrolls sideways on a phone instead of squeezing every column (#279); the theming page loads `clanker-ui-a11y.css` with the color schemes, so scheme text reaches 4.5:1 (#280); Usage code blocks are as wide as the preview, and the Copy Page menu fits "View as Markdown" on one line (#285).
 - Docs: the RTL page description keeps `<html>`, the tool sheet says 9 lines, the blocks index lists every block, the phone Sections menu has AI Elements, the card Horizontal section has an example, the checkbox Table text matches the demo, and the Arabic carousel has Arabic slide labels (#282).
 - Catalog: a component in a shared README section gets only its own markup lines and notes in `references/components/<name>.md` and on its docs page: Kbd no longer shows the input lines and the dropzone code, and Empty, Separator, and Skeleton no longer get the Aspect Ratio note (#282).
+- Select: Tab with the list open moves focus to the next control after the trigger also in popper mode (before, it landed on `<body>`), and Shift+Tab moves focus to the trigger, as in Base UI (#260).
+- Popups: `data-align="start"` and `"end"` follow the page direction, not a `dir` on an ancestor, as in Base UI (a portaled positioner), so a scoped RTL menu with `data-align="end"` lines up with the trigger's right edge (#265).
+- Accessibility layer: no focus ring on a dropdown, context, or menubar menu when the pointer leaves an item (#287).
+- Popups: a popup or dialog takes `--radius` from the page (`--radius-lg`, set at `:root` or a `data-scheme` scope), not from its ancestors, so a popover from a pill input group is no longer a pill (#263).
+- Item: an `xs` item in a dropdown menu has no padding also when the item has its own padding utility, as in shadcn (#262).
 
 ## 0.5.0 - 2026-11-22
 

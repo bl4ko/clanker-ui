@@ -4,7 +4,7 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
-## Unreleased
+## 0.5.1 - 2026-11-23
 
 ### Fixed
 

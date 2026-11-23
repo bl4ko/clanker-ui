@@ -1124,10 +1124,13 @@ def check_chart_bar_labels(t):
           const signs = Array.from({ length: 10 }, (_, i) => ({ d: `M${i + 1}`, v: (i % 2 ? -1 : 1) * (12000 + i * 3137) }))
           const huge = days.map(r => ({ ...r, v: r.v * 1234567 }))
           const crowd = Array.from({ length: 24 }, (_, i) => ({ d: `D${i + 1}`, v: 1000 + i * 137 }))
-          return { narrow: read(days, 390), wide: read(days, 1000), signs: read(signs, 390), short: read(huge, 390, 160), crowd: read(crowd, 390) }
+          const neg = [186, 205, -207, 173, -209, 214].map((v, i) => ({ d: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"][i], v }))
+          return { narrow: read(days, 390), wide: read(days, 1000), signs: read(signs, 390), short: read(huge, 390, 160), crowd: read(crowd, 390), neg: read(neg, 390, 200), negWide: read(neg, 1000, 200) }
         }"""
     )
     narrow, wide, signs, short, crowd = result["narrow"], result["wide"], result["signs"], result["short"], result["crowd"]
+    for r in (result["neg"], result["negWide"]):
+        assert r["count"] == 6 and r["turned"] == 0 and r["clear"], ("level labels below negative bars keep clear of the category axis", r)
     assert narrow["count"] == narrow["bars"] == 14 and narrow["turned"] == 14, ("labels that do not fit turn instead of vanishing", narrow)
     assert wide["count"] == 14 and wide["turned"] == 0, ("labels that fit stay level", wide)
     assert signs["count"] == 10 and signs["turned"] == 10, signs
@@ -1135,6 +1138,36 @@ def check_chart_bar_labels(t):
     assert crowd["turned"] == 0, ("bars thinner than 16 px do not turn their labels", crowd)
     for r in (narrow, wide, signs, short, crowd):
         assert r["inside"] and r["clear"] and r["apart"], ("labels stay in the chart, off the bars and the axis, and apart", r)
+
+
+def check_chart_line_labels(t):
+    result = t.page.evaluate(
+        "async () => {"
+        + MAKE
+        + """
+          const rows = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((d, i) => ({ d, a: [186, 305, 237, 73, 209, 214][i], b: [80, 200, 120, 190, 130, 140][i] }))
+          const read = width => {
+            const c = make(rows, { type: "line", x: "d", dots: true, labels: true, height: 200 }, width)
+            const labels = [...c.svg.querySelectorAll('text[data-part="label"]')]
+            const hits = []
+            for (const line of c.svg.querySelectorAll('[data-part="line"]')) {
+              const len = line.getTotalLength()
+              for (let d = 0; d <= len; d += 1) {
+                const p = line.getPointAtLength(d)
+                for (const l of labels) {
+                  const b = l.getBBox()
+                  if (p.x > b.x + 0.5 && p.x < b.x + b.width - 0.5 && p.y > b.y - 1 && p.y < b.y + b.height + 1) hits.push([l.textContent, Math.round(p.x), Math.round(p.y)])
+                }
+              }
+            }
+            c.box.remove()
+            return { texts: labels.map(l => l.textContent).sort(), hits: hits.slice(0, 3) }
+          }
+          return { narrow: read(390), wide: read(1000) }
+        }"""
+    )
+    for r in result.values():
+        assert r["texts"] == ["140", "214"] and not r["hits"], ("line end labels show and keep off the lines", r)
 
 
 def check_chart_dashed(t):

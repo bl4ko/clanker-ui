@@ -4,6 +4,12 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
+## Unreleased
+
+### Fixed
+
+- Chart: a level label under a negative bar keeps clear of the category axis (the plot keeps room below it, as above a positive label), and a line end label that would cross a line goes below its point, or is left out when that crosses a line too (#268).
+
 ## 0.5.0 - 2026-11-22
 
 ### Breaking

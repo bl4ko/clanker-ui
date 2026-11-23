@@ -694,6 +694,10 @@ def check_code_block(t):
     toggle.click()
     assert toggle.get_attribute("aria-expanded") == "true" and more.get_attribute("data-collapsed") is None
     assert more.bounding_box()["height"] > collapsed
+    assert more.evaluate("e => [getComputedStyle(e).maxHeight, e.scrollHeight - e.clientHeight]") == ["none", 0]
+    section.locator("#code-block-more-scroll-toggle").click()
+    scroll = section.locator("#code-block-more-scroll-content").evaluate("e => [e.getBoundingClientRect().height, e.scrollHeight > e.clientHeight]")
+    assert scroll == [384, True], scroll
     destructive = section.locator("#code-block-small [data-variant=destructive]")
     assert destructive.evaluate("e => getComputedStyle(e).color") == resolve(page, "var(--destructive)")
     t.shot("code-block-lines", section.locator("#code-block-lines"))

@@ -9,6 +9,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 ### Fixed
 
 - Code Block: highlighted text without `code-block-line` rows becomes one row per line; before, each token was its own grid row (#259).
+- Docs: the code-block "Show more" example expands to the full height, and a second example keeps a 24rem cap and scrolls, as shadcn's "Max Height" (#275); a code block in a list item no longer gets the inline code style (#276).
 
 ## 0.5.0 - 2026-11-22
 

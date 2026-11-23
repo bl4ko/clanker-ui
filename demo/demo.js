@@ -493,9 +493,9 @@ if (codeBlockAnsi) {
   codeBlockAnsi.replaceChildren(...codeBlockHighlight(output, "ansi").map(line => ui.h("span", { "data-slot": "code-block-line", "data-variant": "default" }, ui.h("span", { "data-slot": "code-block-line-content" }, line.length ? line : "\n"))))
 }
 
-document.getElementById("code-block-more-toggle")?.addEventListener("click", event => {
+for (const id of ["code-block-more-toggle", "code-block-more-scroll-toggle"]) document.getElementById(id)?.addEventListener("click", event => {
   const toggle = event.currentTarget
-  const content = document.getElementById("code-block-more-content")
+  const content = document.getElementById(toggle.getAttribute("aria-controls"))
   const open = !content.toggleAttribute("data-collapsed")
   toggle.setAttribute("aria-expanded", String(open))
   toggle.replaceChildren(open ? "Show less" : "Show more", ui.icon("chevron-down", { "data-icon": "inline-end" }))

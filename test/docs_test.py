@@ -1046,6 +1046,29 @@ KIT_FIXTURE = """(tree) => {
 RECT = "el => { const r = el.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, left: r.left, right: r.right, width: r.width, height: r.height } }"
 
 
+def check_docs_item_xs_in_dropdown(t):
+    t.docs("/docs/components/item")
+    frame = t.page.locator('[data-example="item-dropdown"]')
+    frame.scroll_into_view_if_needed()
+    frame.locator("[data-dropdown-menu-trigger]").click()
+    content = frame.locator("[data-slot=dropdown-menu-content]")
+    t.page.wait_for_function("e => e.matches(':popover-open')", arg=content.element_handle())
+    t.settle()
+    rows = content.locator("[data-slot=item]").evaluate_all("els => els.map(e => [getComputedStyle(e).padding, Math.round(e.getBoundingClientRect().height)])")
+    assert len(rows) == 3 and all(p == "0px" and h < 40 for p, h in rows), ("the in-menu reset beats the author p-2", rows)
+
+
+def check_docs_popover_root_radius(t):
+    t.docs("/docs/components/input-group")
+    frame = t.page.locator('[data-example="input-group-button"]')
+    frame.scroll_into_view_if_needed()
+    frame.locator("[data-popover-trigger]").first.click()
+    content = frame.locator("[data-slot=popover-content]").first
+    t.page.wait_for_function("e => e.matches(':popover-open')", arg=content.element_handle())
+    r = content.evaluate("e => [getComputedStyle(e).getPropertyValue('--radius'), getComputedStyle(document.body).getPropertyValue('--radius'), parseFloat(getComputedStyle(e).borderTopLeftRadius), getComputedStyle(e.closest('[data-slot=input-group]')).getPropertyValue('--radius')]")
+    assert r[3] == "9999px" and r[0] == r[1] and r[2] < 30, ("a popup takes --radius from the page, not from its ancestors", r)
+
+
 def kit_fixture(t, tree):
     t.docs("/blocks/states")
     t.page.evaluate(KIT_FIXTURE, tree)

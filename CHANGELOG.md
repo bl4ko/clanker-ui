@@ -11,6 +11,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Select: Tab with the list open moves focus to the next control after the trigger also in popper mode (before, it landed on `<body>`), and Shift+Tab moves focus to the trigger, as in Base UI (#260).
 - Popups: `data-align="start"` and `"end"` follow the page direction, not a `dir` on an ancestor, as in Base UI (a portaled positioner), so a scoped RTL menu with `data-align="end"` lines up with the trigger's right edge (#265).
 - Accessibility layer: no focus ring on a dropdown, context, or menubar menu when the pointer leaves an item (#287).
+- Popups: a popup or dialog takes `--radius` from the page (`--radius-lg`, set at `:root` or a `data-scheme` scope), not from its ancestors, so a popover from a pill input group is no longer a pill (#263).
+- Item: an `xs` item in a dropdown menu has no padding also when the item has its own padding utility, as in shadcn (#262).
 
 ## 0.5.0 - 2026-11-22
 

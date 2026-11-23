@@ -489,6 +489,8 @@ def check_docs_pages(t):
     assert page.locator('link[rel="describedby"]').get_attribute("href") == "/llms.txt"
     t.docs("/docs/installation")
     assert page.locator('[data-docs="content"] h2', has_text="Override the kit").count() == 1
+    li_code = page.evaluate("""() => [...document.querySelectorAll('[data-docs="content"] li [data-slot="code-block-code"]')].map(c => { const s = getComputedStyle(c); return [s.backgroundColor, s.paddingTop, s.fontSize === getComputedStyle(c.parentElement).fontSize] })""")
+    assert li_code and all(x == ["rgba(0, 0, 0, 0)", "0px", True] for x in li_code), li_code
     t.docs("/docs/components/native-select")
     assert page.locator('[data-docs="copy-page-button"]').count() == 1
     assert page.locator('[data-docs="preview"] select[data-slot="native-select"]').count() == 5

@@ -16,6 +16,10 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Docs: the chart hero and the icon grid keep their space before the script runs, so the Chart and Icons pages do not shift, and the chart hero card keeps its card ring (#286).
 - Cover: as the first child of a card (not a horizontal one), the cover fills the top of the card like a shadcn card image: no top padding, and only its top corners are round (#284).
 - Docs: the context-menu triggers show their label again, and the RTL trigger has its full width; the docs utilities sit in the utilities layer, so the example variants win (#272). The date-picker calendars start on Sunday, as in shadcn (#271). After Approve or Deny, focus moves to the new tool status, and after Restore to Continue (#283). Example fixes for Select, Table, Radio Group, Slider, Carousel, Drawer, and Stack Trace; the frames list of Stack Trace takes keyboard focus (#284).
+- Input OTP: the text selection of the input over the slots is transparent, like the `input-otp` library, so Tab focus no longer draws a selection bar over the slots (#264).
+- Accessibility layer: `trace-description` uses the full `--muted-foreground` (shadcn has 70 % of it), so the text has 4.5:1 or more: 5.0:1 in light (2.7:1 before) and 7.7:1 in dark (4.2:1 before) (#267).
+- Accessibility layer: a ghost `attachment-action` over an image has a `--background` chip, so the remove icon has 19.8:1 in light and 19.0:1 in dark (1.2:1 on the dark demo image before); a focused `attachment-group` turns off its scroll fade, so its focus outline shows on all four sides (4.5:1 light, 6.4:1 dark; the mask hid it before) (#266).
+- Sidebar: the mobile sheet shows the full sidebar with labels also when the desktop sidebar is collapsed to icons, as in shadcn; the desktop and icon-mode rules no longer match while `data-mobile` is set (#261).
 
 ## 0.5.0 - 2026-11-22
 

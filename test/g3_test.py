@@ -1602,6 +1602,29 @@ def check_sidebar_sheet_mouse_focus(t):
     assert page.evaluate("document.activeElement.id") == "sidebar-main-trigger"
 
 
+def check_sidebar_sheet_icon_collapsed(t):
+    if not t.mobile:
+        t.skip("the sheet is below 768 px")
+    page = t.page
+    page.evaluate("localStorage.setItem('sidebar_state:sidebar-main', 'false')")
+    page.reload(wait_until="load")
+    t.section("sidebar")
+    sidebar = page.locator("#sidebar-main > [data-slot=sidebar]")
+    assert sidebar.get_attribute("data-state") == "collapsed" and sidebar.get_attribute("data-collapsible") == "icon"
+    page.locator("#sidebar-main-trigger").click()
+    page.wait_for_function("() => document.querySelector('#sidebar-main [data-slot=sidebar]').dataset.mobile === 'open'")
+    t.settle(3000)
+    out = page.evaluate("""() => {
+      const main = document.getElementById('sidebar-main')
+      const button = main.querySelector('[data-slot=sidebar-menu-button][data-tooltip=Home]')
+      return { button: Math.round(button.getBoundingClientRect().width), label: Math.round(button.querySelector('span').getBoundingClientRect().width), group: getComputedStyle(main.querySelector('[data-slot=sidebar-group-label]')).opacity, sub: main.querySelector('[data-slot=sidebar-menu-sub]') && getComputedStyle(main.querySelector('[data-slot=sidebar-menu-sub]')).display }
+    }""")
+    assert out["button"] > 200 and out["label"] > 0 and out["group"] == "1" and out["sub"] != "none", ("the mobile sheet shows the full sidebar also when the desktop sidebar is collapsed to icons", out)
+    page.keyboard.press("Escape")
+    page.wait_for_function("() => !document.querySelector('#sidebar-main [data-slot=sidebar]').hasAttribute('data-mobile')")
+    assert sidebar.get_attribute("data-state") == "collapsed" and sidebar.get_attribute("data-collapsible") == "icon"
+
+
 def check_sidebar(t):
     page = t.page
     section = t.section("sidebar")

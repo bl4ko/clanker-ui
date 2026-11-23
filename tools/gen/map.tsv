@@ -95,7 +95,7 @@ select/SelectTrigger/SelectPrimitive.Icon	[data-slot="select-icon"]
 sheet/SheetContent/SheetPrimitive.Close	:where([data-slot="sheet-content"]) > [data-slot="sheet-close"]
 sidebar/Sidebar	[data-slot="sidebar"]:not([data-state], [data-mobile])
 sidebar/Sidebar/div#1	:where([data-slot="sidebar"][data-mobile]) > div:not([data-slot])	9d2022f6
-sidebar/Sidebar/div#2	[data-slot="sidebar"][data-state]	64fa0e16
+sidebar/Sidebar/div#2	[data-slot="sidebar"][data-state]:not([data-mobile])	64fa0e16
 sidebar/Sidebar/SheetContent	[data-slot="sidebar"][data-mobile]
 sidebar/Sidebar/SheetHeader	:where([data-slot="sidebar"][data-mobile]) [data-slot="sheet-header"]
 sidebar/SidebarTrigger/IconPlaceholder	& > svg

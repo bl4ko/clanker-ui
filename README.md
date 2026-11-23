@@ -1708,7 +1708,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 </div>
 ```
 
-- Placeholder art made from tokens, for a record without an image: a 2 / 3 box (`data-ratio="square"` 1 / 1, `video` 16 / 9) with the kit radius and a tint of `--chart-N` (`data-tone="1"` to `"5"`, default 1) on the card. An `svg` child fills the box behind the text in the tone color (draw with `currentColor`). The first text child is the title (16 px, weight 600), the others are 12 px; text wraps and is never cut. In a card that shows the title in its `card-header`, the cover is art only: no text on the art. A word breaks only when it alone is wider than the cover (with a hyphen where the browser knows the page language).
+- Placeholder art made from tokens, for a record without an image: a 2 / 3 box (`data-ratio="square"` 1 / 1, `video` 16 / 9) with the kit radius and a tint of `--chart-N` (`data-tone="1"` to `"5"`, default 1) on the card. An `svg` child fills the box behind the text in the tone color (draw with `currentColor`). The first text child is the title (16 px, weight 600), the others are 12 px; text wraps and is never cut. In a card that shows the title in its `card-header`, the cover is art only: no text on the art. As the first child of a `card` (not a horizontal one), the cover fills the top of the card like a shadcn card image: the card has no top padding, and only the top corners are round. A word breaks only when it alone is wider than the cover (with a hyphen where the browser knows the page language).
 
 
 #### Rating

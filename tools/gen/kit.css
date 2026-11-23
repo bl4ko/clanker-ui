@@ -690,6 +690,8 @@
   [data-slot="cover"][data-tone="3"] { --tone: var(--chart-3); }
   [data-slot="cover"][data-tone="4"] { --tone: var(--chart-4); }
   [data-slot="cover"][data-tone="5"] { --tone: var(--chart-5); }
+  [data-slot="card"]:not([data-orientation="horizontal"]):has(> [data-slot="cover"]:first-child) { padding-top: 0; }
+  [data-slot="card"]:not([data-orientation="horizontal"]) > [data-slot="cover"]:first-child { border-start-start-radius: inherit; border-start-end-radius: inherit; border-end-start-radius: 0; border-end-end-radius: 0; }
   [data-slot="cover"] > svg { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--tone); pointer-events: none; }
   [data-slot="cover"] > :not(svg) { position: relative; min-width: 0; overflow-wrap: break-word; hyphens: auto; font-size: var(--text-xs); line-height: var(--text-xs--line-height); }
   [data-slot="cover"] > :nth-child(1 of :not(svg)) { font-size: var(--text-base); line-height: 1.25; font-weight: 600; text-wrap: balance; }

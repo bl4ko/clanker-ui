@@ -1123,6 +1123,19 @@ def check_kit_cover_words(t):
         assert t.page.locator(sel).evaluate("s => s.scrollWidth <= s.clientWidth + 1"), sel
 
 
+def check_kit_card_cover_first(t):
+    card = lambda i, orientation: ["div", {"data-slot": "card", "data-size": "sm", "data-orientation": orientation, "id": f"fx-cc-{i}", "style": {"width": "240px"}},
+        ["div", {"data-slot": "cover", "id": f"fx-cc-{i}-cover"}],
+        ["div", {"data-slot": "card-header"}, ["div", {"data-slot": "card-title"}, "Circe"]]]
+    kit_fixture(t, ["div", {}, card(1, None), card(2, "horizontal")])
+    c, v = rect(t, "#fx-cc-1"), rect(t, "#fx-cc-1-cover")
+    radius = t.page.evaluate("""() => [document.querySelector('#fx-cc-1'), document.querySelector('#fx-cc-1-cover')].map(e => [getComputedStyle(e).borderTopLeftRadius, getComputedStyle(e).borderBottomRightRadius])""")
+    assert abs(v["top"] - c["top"]) < 1 and abs(v["left"] - c["left"]) < 1 and abs(v["right"] - c["right"]) < 1, ("a first cover fills the top of the card", c, v)
+    assert radius[1] == [radius[0][0], "0px"], ("only the top corners of the cover are round", radius)
+    c, v = rect(t, "#fx-cc-2"), rect(t, "#fx-cc-2-cover")
+    assert v["top"] - c["top"] > 8, ("a horizontal card keeps its padding", c, v)
+
+
 def check_kit_item_actions_phone(t):
     item = lambda i, action: ["div", {"data-slot": "item", "data-variant": "outline", "role": "listitem"},
         ["div", {"data-slot": "item-media", "data-variant": "icon"}, ["svg", {"data-lucide": "server"}]],
@@ -1317,3 +1330,48 @@ def check_kit_table_stack(t):
     }""")
     assert added == ["row", "cell"], ("rows added later get their roles", added)
     t.shot("stack", ex)
+
+
+def check_docs_context_menu_labels(t):
+    t.docs("/docs/components/context-menu")
+    m = t.page.evaluate("""() => {
+      const fine = matchMedia("(pointer: fine)").matches
+      return [...document.querySelectorAll('[data-docs="preview"] [data-slot="context-menu-trigger"]')].map(el => ({
+        example: el.closest("[data-example]").dataset.example,
+        w: Math.round(el.getBoundingClientRect().width),
+        shown: [...el.querySelectorAll("span")].filter(s => s.getClientRects().length).map(s => s.className.includes(fine ? "pointer-fine" : "pointer-coarse")),
+      }))
+    }""")
+    assert len(m) == 14 and all(x["shown"] == [True] for x in m), ("each trigger shows its pointer label", m)
+    rtl = next(x for x in m if x["example"] == "context-menu-rtl")
+    assert rtl["w"] == m[0]["w"], ("the RTL trigger is as wide as the demo trigger", rtl, m[0])
+
+
+def check_docs_date_picker_week_start(t):
+    t.docs("/docs/components/date-picker")
+    days = t.page.evaluate("""() => [...document.querySelectorAll('[data-docs="preview"] [data-slot="calendar"]')].map(c => new Date(c.querySelector("td[data-day]").dataset.day + "T12:00").getDay())""")
+    assert len(days) == 8 and set(days) == {0}, ("the date-picker calendars start on Sunday, as in shadcn", days)
+
+
+def check_docs_example_markup(t):
+    page = t.page
+    t.docs("/docs/components/select")
+    assert abs(rect(t, "#select-timezone")["width"] - 256) < 1, "the timezone trigger is w-full max-w-64"
+    t.docs("/docs/components/table")
+    shadow = page.locator('[data-example="table-sticky-header"] [data-slot="card"]').evaluate("c => getComputedStyle(c).boxShadow")
+    assert "inset" in shadow, ("the card ring stays inside the scroll box", shadow)
+    t.docs("/docs/components/radio-group")
+    group, preview = rect(t, "#radio-group-demo"), rect(t, '[data-example="demo-radio-group-0"] [data-docs="preview"]')
+    assert group["width"] < 200 and abs(group["left"] + group["width"] / 2 - preview["left"] - preview["width"] / 2) < 2, ("the radio group is w-fit", group, preview)
+    t.docs("/docs/components/slider")
+    widths = [round(rect(t, s)["width"]) for s in ("#slider-temperature", "#slider-disabled", "#slider-rtl")]
+    assert len(set(widths)) == 1, ("the sliders line up", widths)
+    t.docs("/docs/rtl")
+    inset = page.evaluate("""() => { const card = document.querySelector('#direction-carousel [data-slot="carousel-item"] > [data-slot="card"]'); return card.getBoundingClientRect().top - card.parentElement.getBoundingClientRect().top }""")
+    assert abs(inset - 4) < 0.5, ("the carousel cards keep room for their ring", inset)
+    if t.mobile:
+        t.docs("/docs/components/drawer")
+        page.locator("#drawer-responsive").click()
+        page.locator("#drawer-responsive-drawer [data-slot=drawer-footer] [data-slot=button]").first.wait_for(state="visible")
+        gap = page.evaluate("""() => { const d = document.querySelector('#drawer-responsive-drawer'); return d.querySelector('[data-slot=drawer-footer] [data-slot=button]').getBoundingClientRect().top - d.querySelector('[data-slot=drawer-description]').getBoundingClientRect().bottom }""")
+        assert gap >= 15, ("the drawer button has room below the description", gap)

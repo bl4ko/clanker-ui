@@ -14,6 +14,8 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Blocks: the Data Table block fits its table at the desktop preview width and from 1024 px (the Task column shows from `xl`); at the tablet widths where it still scrolls, the table container has the `scroll-fade-x` hint (#270).
 - Docs: each example on the Chart and Stat Tile pages shows its script, the `chart()` calls with their data and options, next to the HTML (#281).
 - Docs: the chart hero and the icon grid keep their space before the script runs, so the Chart and Icons pages do not shift, and the chart hero card keeps its card ring (#286).
+- Cover: as the first child of a card (not a horizontal one), the cover fills the top of the card like a shadcn card image: no top padding, and only its top corners are round (#284).
+- Docs: the context-menu triggers show their label again, and the RTL trigger has its full width; the docs utilities sit in the utilities layer, so the example variants win (#272). The date-picker calendars start on Sunday, as in shadcn (#271). After Approve or Deny, focus moves to the new tool status, and after Restore to Continue (#283). Example fixes for Select, Table, Radio Group, Slider, Carousel, Drawer, and Stack Trace; the frames list of Stack Trace takes keyboard focus (#284).
 
 ## 0.5.0 - 2026-11-22
 

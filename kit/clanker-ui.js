@@ -2735,6 +2735,7 @@ function selectOpen(root, focus = "selected", pointer = false) {
   const quiet = pointer && !(document.activeElement === st.trigger && st.trigger.matches(":focus-visible"))
   const popper = selectPopper(st.content)
   st.content.dataset.alignTrigger = String(!popper)
+  st.content.inert = false
   const touch = touchOpen()
   let release = touch ? null : lockScroll()
   st.lock = release
@@ -2958,8 +2959,10 @@ define("select-content", {
     const items = selectItems(root).filter(item => !item.hidden)
     const active = items.find(i => i === document.activeElement)
     if (event.key === "Tab") {
+      if (event.shiftKey) event.preventDefault()
       selectClose(root, false)
       st.trigger.focus()
+      content.inert = true
       return
     }
     if (rove(event, items, { loop: false, label: selectLabel, ms: 750, skipDisabled: false })) {

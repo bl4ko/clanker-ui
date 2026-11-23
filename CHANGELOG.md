@@ -4,6 +4,12 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
+## Unreleased
+
+### Fixed
+
+- Select: Tab with the list open moves focus to the next control after the trigger also in popper mode (before, it landed on `<body>`), and Shift+Tab moves focus to the trigger, as in Base UI (#260).
+
 ## 0.5.0 - 2026-11-22
 
 ### Breaking

@@ -4,6 +4,12 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
+## Unreleased
+
+### Fixed
+
+- Print: a printed page keeps its fills and theme (`print-color-adjust: exact`), hides the sidebar, toasts, and open popups, makes the site header, page aside, and sticky table header static, lets a wide table wrap and show in full instead of clipping in its scroll container, drops the scroll-fade masks, and avoids page breaks inside table rows and charts (#231).
+
 ## 0.5.1 - 2026-11-23
 
 ### Fixed

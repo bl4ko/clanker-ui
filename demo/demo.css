@@ -836,9 +836,9 @@ code:not([data-slot]) { font-size: 0.875em; }
 #code-block [data-demo~="stack"] { gap: 1rem; }
 #code-block #code-block-header { max-width: 32rem; }
 #code-block :is(#code-block-highlighting, #code-block-languages, #code-block-ansi) { max-width: 28rem; }
-#code-block #code-block-more [data-slot="code-block-content"][data-collapsed] { max-height: 12rem; }
-#code-block #code-block-more [data-slot="code-block-content"]:not([data-collapsed]) { max-height: 24rem; }
-#code-block #code-block-more-toggle[aria-expanded="true"] svg { rotate: 180deg; }
+#code-block :is(#code-block-more, #code-block-more-scroll) [data-slot="code-block-content"][data-collapsed] { max-height: 12rem; }
+#code-block #code-block-more-scroll [data-slot="code-block-content"]:not([data-collapsed]) { max-height: 24rem; }
+#code-block :is(#code-block-more-toggle, #code-block-more-scroll-toggle)[aria-expanded="true"] svg { rotate: 180deg; }
 
 #date-picker :is(#date-picker-demo, #date-picker-rtl) [data-date-picker-trigger] { width: 212px; justify-content: space-between; }
 #date-picker #date-picker-birth-field { width: 12rem; }

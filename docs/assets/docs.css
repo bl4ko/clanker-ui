@@ -838,7 +838,7 @@ body[data-docs="body"] {
   [data-docs="content"] :is(p, li, td, th, blockquote) a:not([data-slot], [data-docs="preview"] *):hover { text-decoration-color: currentColor; }
 }
 
-[data-docs="content"] :is(p, li, td, th, h2, h3, h4, blockquote) code:not([data-docs="preview"] *) {
+[data-docs="content"] :is(p, li, td, th, h2, h3, h4, blockquote) code:not([data-docs="preview"] *, pre *) {
   padding: 0.125em 0.3em;
   border-radius: min(calc(var(--radius) * 0.6), 0.35em);
   background-color: var(--muted);

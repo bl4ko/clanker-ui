@@ -319,6 +319,20 @@ def check_docs_search(t):
         page.keyboard.press("Escape")
 
 
+def check_docs_search_focus_ring(t):
+    if t.width < 768:
+        t.skip("the search button shows from 768 px")
+    page = t.page
+    for _ in range(30):
+        page.keyboard.press("Tab")
+        if page.evaluate("""() => document.activeElement?.dataset.docs === "search-trigger" """):
+            break
+    else:
+        raise AssertionError("Tab does not reach the search button")
+    ring = page.evaluate("""() => getComputedStyle(document.activeElement).boxShadow""")
+    assert "3px" in ring, ring
+
+
 def check_docs_copy_page(t):
     if t.width < 640:
         t.skip("Copy Page shows from 640 px")
@@ -344,6 +358,7 @@ def check_docs_copy_page(t):
     assert item.get_attribute("href") == "/docs/components/button.md"
     assert item.get_attribute("target") == "_blank"
     assert item.inner_text().strip() == "View as Markdown"
+    assert item.evaluate("el => el.getClientRects().length === 1 && el.getBoundingClientRect().height <= 32"), "View as Markdown wraps"
     t.shot("copy-page-menu", page)
     page.keyboard.press("Escape")
 
@@ -445,6 +460,9 @@ def check_docs_view_code(t):
     frame = page.locator('[data-example="button-demo"]')
     teaser = frame.locator('[data-docs="code-teaser"] [data-line]')
     assert teaser.count() == 3
+    frame.locator('[data-docs="preview"] [data-slot="button"]').last.focus()
+    page.keyboard.press("Tab")
+    assert page.evaluate("() => document.activeElement?.textContent.trim()") == "View Code"
     content = frame.locator('[data-slot="collapsible-content"]')
     assert not content.is_visible()
     frame.get_by_role("button", name="View Code").click()
@@ -465,6 +483,30 @@ def check_docs_view_code(t):
         source = page.request.get(t.base_url + "/docs/components/button.md").text().split("```html\n", 1)[1].split("\n```", 1)[0]
         assert page.evaluate("() => navigator.clipboard.readText()") == source
     t.shot("view-code", frame)
+
+
+def check_docs_tables(t):
+    page = t.page
+    probe = """() => [...document.querySelectorAll('[data-docs="table"]')].map(wrap => ({
+      height: wrap.querySelector("table").getBoundingClientRect().height,
+      overflow: wrap.scrollWidth - wrap.clientWidth,
+      wrappedHeads: [...wrap.querySelectorAll("th")].filter(th => { const r = document.createRange(); r.selectNodeContents(th); return new Set([...r.getClientRects()].map(x => Math.round(x.top))).size > 1 }).map(th => th.textContent),
+      brokenNames: [...wrap.querySelectorAll("td:first-child code")].filter(c => !c.textContent.includes("|") && c.getClientRects().length > 1).map(c => c.textContent),
+    }))"""
+    for table in page.evaluate(probe):
+        assert table["brokenNames"] == [] and table["wrappedHeads"] == [], table
+    t.docs("/docs/markup")
+    markup = page.evaluate(probe)[0]
+    if t.width >= 1280:
+        assert markup["overflow"] <= 0 and markup["height"] < 2000, markup
+    t.docs("/docs/theming")
+    assert max(table["height"] for table in page.evaluate(probe)) < 10000
+
+
+def check_docs_usage_code_width(t):
+    page = t.page
+    widths = page.evaluate("""() => [document.querySelector('[data-docs="component-preview"]'), ...document.querySelectorAll('[data-docs="content"] > [data-docs="code-block"]')].map(el => el.getBoundingClientRect()).map(r => [r.left, r.width])""")
+    assert len(widths) > 1 and all(abs(w[0] - widths[0][0]) <= 0.5 and abs(w[1] - widths[0][1]) <= 0.5 for w in widths[1:]), widths
 
 
 def check_docs_pages(t):

@@ -69,6 +69,8 @@ Add an image before the card header to create a card with an image.
 
 A kit extension: `data-orientation="horizontal"` puts a first-child [Cover](/docs/components/cover) (6rem, 8rem from 48rem) at the start and the other parts in a `div` column next to it, with a wrapping `card-footer`. Use it for a hero or feature card.
 
+{{example "card-horizontal" height="auto"}}
+
 ## Action group
 
 A `card-action` with two or more children (a badge and a button) lays them out in a row with an 8 px gap, aligned to the end, and wraps them when they do not fit. One child keeps the shadcn placement. shadcn has only the placement, and React code adds `className="flex gap-2"` for more children.

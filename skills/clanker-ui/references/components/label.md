@@ -9,15 +9,23 @@ Other parts: `label` (root).
 ### Input, Textarea, Label, Kbd
 
 ```html
-<input data-slot="input" type="email" placeholder="Email">
-<textarea data-slot="textarea"></textarea>
 <label data-slot="label" for="email">Email</label>
-<kbd data-slot="kbd-group"><kbd data-slot="kbd">Ctrl</kbd><kbd data-slot="kbd">K</kbd></kbd>
 ```
 
-`aria-invalid="true"` shows the error border. A label after a `:disabled` control is dimmed. A `kbd` inside `tooltip-content` uses the inverted tooltip colors. CSS only.
+`aria-invalid="true"` shows the error border. A label after a `:disabled` control is dimmed. CSS only.
 
 File upload: `<input data-slot="input" type="file" accept="image/*,application/pdf" name="receipt">` is the shadcn file input (the button is plain `text-sm` text with no border). shadcn has no dropzone component. A dropzone is a `<label>` with the outline `empty` style around a visually hidden file input, and a few lines of app code for drag and drop; show the chosen file with an `attachment` (it works outside a chat). A `label` holds only phrasing content, so the `empty` parts are `span`s:
+
+```html
+<label data-slot="empty" data-variant="outline" class="dropzone">
+  <input type="file" name="receipt" accept="image/*,application/pdf" class="sr-only">
+  <span data-slot="empty-header">
+    <span data-slot="empty-icon" data-variant="icon"><svg data-lucide="cloud-upload"></svg></span>
+    <span data-slot="empty-title">Upload a receipt</span>
+    <span data-slot="empty-description">Drop a file here, or click to choose one. PNG, JPG, or PDF.</span>
+  </span>
+</label>
+```
 
 ```js
 const zone = document.querySelector(".dropzone")

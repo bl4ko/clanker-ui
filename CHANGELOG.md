@@ -20,6 +20,9 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Accessibility layer: `trace-description` uses the full `--muted-foreground` (shadcn has 70 % of it), so the text has 4.5:1 or more: 5.0:1 in light (2.7:1 before) and 7.7:1 in dark (4.2:1 before) (#267).
 - Accessibility layer: a ghost `attachment-action` over an image has a `--background` chip, so the remove icon has 19.8:1 in light and 19.0:1 in dark (1.2:1 on the dark demo image before); a focused `attachment-group` turns off its scroll fade, so its focus outline shows on all four sides (4.5:1 light, 6.4:1 dark; the mask hid it before) (#266).
 - Sidebar: the mobile sheet shows the full sidebar with labels also when the desktop sidebar is collapsed to icons, as in shadcn; the desktop and icon-mode rules no longer match while `data-mobile` is set (#261).
+- Docs: the header search button shows its focus ring (#277); the code teaser under a preview is no longer a Tab stop (#278); table headers and attribute names stay on one line, and a table scrolls sideways on a phone instead of squeezing every column (#279); the theming page loads `clanker-ui-a11y.css` with the color schemes, so scheme text reaches 4.5:1 (#280); Usage code blocks are as wide as the preview, and the Copy Page menu fits "View as Markdown" on one line (#285).
+- Docs: the RTL page description keeps `<html>`, the tool sheet says 9 lines, the blocks index lists every block, the phone Sections menu has AI Elements, the card Horizontal section has an example, the checkbox Table text matches the demo, and the Arabic carousel has Arabic slide labels (#282).
+- Catalog: a component in a shared README section gets only its own markup lines and notes in `references/components/<name>.md` and on its docs page: Kbd no longer shows the input lines and the dropzone code, and Empty, Separator, and Skeleton no longer get the Aspect Ratio note (#282).
 
 ## 0.5.0 - 2026-11-22
 

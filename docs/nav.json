@@ -16,6 +16,7 @@
   "mobileSections": [
     {"title": "Introduction", "href": "/docs"},
     {"title": "Components", "href": "/docs/components"},
+    {"title": "AI Elements", "href": "/docs/ai-elements"},
     {"title": "Installation", "href": "/docs/installation"},
     {"title": "Theming", "href": "/docs/theming"},
     {"title": "RTL", "href": "/docs/rtl"}

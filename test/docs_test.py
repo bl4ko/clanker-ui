@@ -1287,3 +1287,18 @@ def check_kit_table_stack(t):
     }""")
     assert added == ["row", "cell"], ("rows added later get their roles", added)
     t.shot("stack", ex)
+
+
+def check_docs_context_menu_labels(t):
+    t.docs("/docs/components/context-menu")
+    m = t.page.evaluate("""() => {
+      const fine = matchMedia("(pointer: fine)").matches
+      return [...document.querySelectorAll('[data-docs="preview"] [data-slot="context-menu-trigger"]')].map(el => ({
+        example: el.closest("[data-example]").dataset.example,
+        w: Math.round(el.getBoundingClientRect().width),
+        shown: [...el.querySelectorAll("span")].filter(s => s.getClientRects().length).map(s => s.className.includes(fine ? "pointer-fine" : "pointer-coarse")),
+      }))
+    }""")
+    assert len(m) == 14 and all(x["shown"] == [True] for x in m), ("each trigger shows its pointer label", m)
+    rtl = next(x for x in m if x["example"] == "context-menu-rtl")
+    assert rtl["w"] == m[0]["w"], ("the RTL trigger is as wide as the demo trigger", rtl, m[0])

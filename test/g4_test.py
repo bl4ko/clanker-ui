@@ -2166,6 +2166,8 @@ def check_code_block_demo(t):
     assert ansi.locator("[data-token]").evaluate_all("s => s.map(x => [x.textContent, x.dataset.token])")[:3] == [["✓", "inserted"], ["✓", "inserted"], ["✗", "keyword"]]
     plain = section.locator("#code-block-languages [data-language=text]")
     assert plain.locator("[data-token]").count() == 0
+    rows = section.locator("#code-block-highlighting [data-slot=code-block-code]").evaluate("c => { const r = c.querySelectorAll(':scope > [data-slot=code-block-line]'); return [r.length, Math.round(c.getBoundingClientRect().height / r[0].getBoundingClientRect().height)] }")
+    assert rows == [6, 6], rows
     t.shot("code-block-demo", block)
 
 

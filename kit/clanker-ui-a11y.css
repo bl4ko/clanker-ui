@@ -73,6 +73,7 @@
     border-color: var(--input-edge);
   }
   [data-slot="button"][data-variant="outline"][data-date-picker-trigger] { border-color: var(--input-edge); }
+  [data-slot="trace-description"] { color: var(--muted-foreground); }
   @media (width < 48rem) {
     [data-slot="native-select"] { font-size: var(--text-base); line-height: var(--text-base--line-height); }
   }

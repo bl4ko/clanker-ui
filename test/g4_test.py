@@ -1702,6 +1702,25 @@ def check_trace_shimmer_fallback(t):
     assert fill[0] == fill[1] and fill[0] != "rgba(0, 0, 0, 0)", fill
 
 
+ON_SURFACE = """([sel, prop]) => [...document.querySelectorAll(sel)].filter(e => e.checkVisibility()).map(e => {
+  const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true })
+  const paint = colors => { ctx.clearRect(0, 0, 1, 1); for (const c of colors) { ctx.fillStyle = c; ctx.fillRect(0, 0, 1, 1) } return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3) }
+  const lum = c => { const [r, g, b] = c.map(v => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }); return 0.2126 * r + 0.7152 * g + 0.0722 * b }
+  const layers = ["#fff"]
+  for (let n = e.parentElement; n; n = n.parentElement) layers.splice(1, 0, getComputedStyle(n).backgroundColor)
+  const a = lum(paint([...layers, getComputedStyle(e)[prop]])), b = lum(paint(layers))
+  return +((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2)
+})"""
+
+
+def check_trace_description_contrast(t):
+    page = t.page
+    t.section("trace")
+    t.a11y()
+    ratios = page.evaluate(ON_SURFACE, ["#trace [data-slot=trace-description]", "color"])
+    assert ratios and min(ratios) >= 4.5, f"trace-description text needs 4.5:1 with clanker-ui-a11y.css: {ratios}"
+
+
 def scroll_fade(t, section_id, sel, scroll):
     page = t.page
     t.section(section_id)

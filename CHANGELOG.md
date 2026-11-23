@@ -9,6 +9,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 ### Fixed
 
 - Input OTP: the text selection of the input over the slots is transparent, like the `input-otp` library, so Tab focus no longer draws a selection bar over the slots (#264).
+- Accessibility layer: `trace-description` uses the full `--muted-foreground` (shadcn has 70 % of it), so the text has 4.5:1 or more: 5.0:1 in light (2.7:1 before) and 7.7:1 in dark (4.2:1 before) (#267).
 
 ## 0.5.0 - 2026-11-22
 

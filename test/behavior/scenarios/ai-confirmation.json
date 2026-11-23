@@ -6,6 +6,9 @@
     "reset": {"role": "button", "name": "Reset", "optional": true}
   },
   "anchor": "next",
+  "allowed": [
+    {"key": "ai-confirmation.approve-focus", "steps": [3, 4], "match": "^focus \\| outside the component \\| generic \\[trace\\] \\|", "reason": "the kit keeps its better focus: Approve moves focus to the tool status line (#283); the live site drops it to the body"}
+  ],
   "positions": [],
   "steps": [
     {"do": "click", "target": "next"},

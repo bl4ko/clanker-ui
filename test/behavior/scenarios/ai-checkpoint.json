@@ -5,6 +5,11 @@
     "continue": {"role": "button", "name": "Continue", "optional": true}
   },
   "anchor": "restore",
+  "allowed": [
+    {"key": "ai-checkpoint.restore-focus", "steps": [2], "match": "^focus \\| outside the component \\| button \"Continue\" \\[button\\] in continue \\|", "reason": "the kit keeps its better focus: Restore moves focus to Continue (#283); the live site drops it to the body"},
+    {"key": "ai-checkpoint.restore-focus-tab", "steps": [3], "match": "^focus \\| button \"Continue\" \\[button\\] in continue \\| outside the component \\|", "reason": "follows from step 2: focus is already on Continue, so Tab leaves the component"},
+    {"key": "ai-checkpoint.restore-focus-enter", "steps": [4, 5], "match": "^ARIA tree \\(root\\) \\| 9 nodes \\| 5 nodes \\| ours only: button \"Continue\"; shadcn only: button \"Restore to Button renamed\"", "reason": "follows from step 2: Enter after Tab does not press Continue; ai_test checks that Continue has focus and continues"}
+  ],
   "positions": [],
   "steps": [
     {"do": "tab_in"},

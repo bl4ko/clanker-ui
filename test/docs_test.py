@@ -1093,6 +1093,19 @@ def check_kit_cover_words(t):
         assert t.page.locator(sel).evaluate("s => s.scrollWidth <= s.clientWidth + 1"), sel
 
 
+def check_kit_card_cover_first(t):
+    card = lambda i, orientation: ["div", {"data-slot": "card", "data-size": "sm", "data-orientation": orientation, "id": f"fx-cc-{i}", "style": {"width": "240px"}},
+        ["div", {"data-slot": "cover", "id": f"fx-cc-{i}-cover"}],
+        ["div", {"data-slot": "card-header"}, ["div", {"data-slot": "card-title"}, "Circe"]]]
+    kit_fixture(t, ["div", {}, card(1, None), card(2, "horizontal")])
+    c, v = rect(t, "#fx-cc-1"), rect(t, "#fx-cc-1-cover")
+    radius = t.page.evaluate("""() => [document.querySelector('#fx-cc-1'), document.querySelector('#fx-cc-1-cover')].map(e => [getComputedStyle(e).borderTopLeftRadius, getComputedStyle(e).borderBottomRightRadius])""")
+    assert abs(v["top"] - c["top"]) < 1 and abs(v["left"] - c["left"]) < 1 and abs(v["right"] - c["right"]) < 1, ("a first cover fills the top of the card", c, v)
+    assert radius[1] == [radius[0][0], "0px"], ("only the top corners of the cover are round", radius)
+    c, v = rect(t, "#fx-cc-2"), rect(t, "#fx-cc-2-cover")
+    assert v["top"] - c["top"] > 8, ("a horizontal card keeps its padding", c, v)
+
+
 def check_kit_item_actions_phone(t):
     item = lambda i, action: ["div", {"data-slot": "item", "data-variant": "outline", "role": "listitem"},
         ["div", {"data-slot": "item-media", "data-variant": "icon"}, ["svg", {"data-lucide": "server"}]],

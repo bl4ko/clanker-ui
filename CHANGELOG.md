@@ -4,6 +4,12 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
+## Unreleased
+
+### Fixed
+
+- Cover: as the first child of a card (not a horizontal one), the cover fills the top of the card like a shadcn card image: no top padding, and only its top corners are round (#284).
+
 ## 0.5.0 - 2026-11-22
 
 ### Breaking

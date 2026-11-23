@@ -12,6 +12,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 ### Changed
 
 - Catalog: each part has `stateValues` next to `state`, the values of the attributes the kit sets (from the README, same format as `attributes`); `state` stays a list of names. The State column of `references/components/<name>.md` and the Values column of the API tables on the generated docs pages show them (before, about 140 State rows had no values). The README states the values that were missing (popup `data-state="open|closed"`, `data-open`, and `data-closed`; checkbox, switch, radio, and toggle `data-state`; calendar day, command item, chart, navigation menu, scroll area, and other state attributes) (#281).
+- Blocks: the Dashboard and Detail tables fit their container from 640 to 1440 px. Their columns showed at viewport breakpoints without the 16rem sidebar and the 20rem side column, so they were up to 242 px too wide; the secondary columns now show from `lg` and `xl`, and the table containers have the `scroll-fade-x` hint (#297).
 
 ## 0.5.1 - 2026-11-23
 

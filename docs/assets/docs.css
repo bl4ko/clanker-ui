@@ -233,7 +233,6 @@ body[data-docs="body"] {
   border-radius: var(--radius-lg);
   background-color: light-dark(var(--muted), var(--card));
   color: var(--foreground);
-  box-shadow: none;
   transition-property: color, background-color;
 }
 
@@ -1112,7 +1111,10 @@ body[data-docs="body"] {
 [data-docs="code"] [data-slot="collapsible-content"] { animation: none; }
 
 [data-docs="code-teaser"] { position: relative; }
-[data-docs="code-teaser"] pre { min-height: calc(3lh + 1.75rem + 6px); }
+[data-docs="code-teaser"] pre {
+  min-height: calc(3lh + 1.75rem + 6px);
+  overflow: hidden;
+}
 
 [data-docs="component-preview"] [data-docs="code"] :is([data-docs="code-teaser"] pre, [data-slot="code-block-content"]) { padding-inline: 0; }
 [data-docs="component-preview"] [data-docs="code"] pre code { counter-reset: line; }

@@ -319,6 +319,20 @@ def check_docs_search(t):
         page.keyboard.press("Escape")
 
 
+def check_docs_search_focus_ring(t):
+    if t.width < 768:
+        t.skip("the search button shows from 768 px")
+    page = t.page
+    for _ in range(30):
+        page.keyboard.press("Tab")
+        if page.evaluate("""() => document.activeElement?.dataset.docs === "search-trigger" """):
+            break
+    else:
+        raise AssertionError("Tab does not reach the search button")
+    ring = page.evaluate("""() => getComputedStyle(document.activeElement).boxShadow""")
+    assert "3px" in ring, ring
+
+
 def check_docs_copy_page(t):
     if t.width < 640:
         t.skip("Copy Page shows from 640 px")
@@ -445,6 +459,9 @@ def check_docs_view_code(t):
     frame = page.locator('[data-example="button-demo"]')
     teaser = frame.locator('[data-docs="code-teaser"] [data-line]')
     assert teaser.count() == 3
+    frame.locator('[data-docs="preview"] [data-slot="button"]').last.focus()
+    page.keyboard.press("Tab")
+    assert page.evaluate("() => document.activeElement?.textContent.trim()") == "View Code"
     content = frame.locator('[data-slot="collapsible-content"]')
     assert not content.is_visible()
     frame.get_by_role("button", name="View Code").click()

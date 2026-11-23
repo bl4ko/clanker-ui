@@ -4,6 +4,12 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
+## Unreleased
+
+### Fixed
+
+- Input OTP: the text selection of the input over the slots is transparent, like the `input-otp` library, so Tab focus no longer draws a selection bar over the slots (#264).
+
 ## 0.5.0 - 2026-11-22
 
 ### Breaking

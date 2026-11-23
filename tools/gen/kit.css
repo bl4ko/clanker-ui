@@ -1499,6 +1499,7 @@
   [data-slot="code-block-code"] [data-token~="inserted"] { color: var(--code-inserted); }
   [data-slot="code-block-code"] [data-token~="deleted"] { color: var(--code-deleted); }
   [data-slot="code-block-code"] [data-token~="bold"] { font-weight: 600; }
+  :where([data-slot="input-otp"]) [data-input-otp]::selection { background: transparent; color: transparent; }
 }
 
 @layer clanker.utilities {

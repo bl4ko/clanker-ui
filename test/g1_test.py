@@ -785,6 +785,13 @@ def check_input_otp(t):
     assert near(line.bounding_box()["width"], 1) and near(line.bounding_box()["height"], 16)
     assert style(line, "animation-name") == ("none" if t.reduced_motion else "caret-blink")
     assert inp.evaluate("i => [getComputedStyle(i).position, getComputedStyle(i).color, i.dataset.inputOtp]") == ["absolute", "rgba(0, 0, 0, 0)", "true"]
+    selection = """i => {
+      const found = []
+      const walk = rules => { for (const r of rules) { if (r.selectorText?.endsWith("::selection") && i.matches(r.selectorText.slice(0, -11))) found.push([r.style.backgroundColor, r.style.color]); else if (r.cssRules) walk(r.cssRules) } }
+      for (const sheet of document.styleSheets) walk(sheet.cssRules)
+      return found
+    }"""
+    assert ["transparent", "transparent"] in inp.evaluate(selection), "the input-otp library hides the selection of the input over the slots"
     page.keyboard.type("123")
     page.wait_for_function("r => r.querySelectorAll('[data-slot=input-otp-slot]')[3].dataset.active === 'true'", arg=root.element_handle())
     assert [s[0] for s in otp_state(root)] == ["1", "2", "3", "", "", ""]

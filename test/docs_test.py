@@ -1302,3 +1302,9 @@ def check_docs_context_menu_labels(t):
     assert len(m) == 14 and all(x["shown"] == [True] for x in m), ("each trigger shows its pointer label", m)
     rtl = next(x for x in m if x["example"] == "context-menu-rtl")
     assert rtl["w"] == m[0]["w"], ("the RTL trigger is as wide as the demo trigger", rtl, m[0])
+
+
+def check_docs_date_picker_week_start(t):
+    t.docs("/docs/components/date-picker")
+    days = t.page.evaluate("""() => [...document.querySelectorAll('[data-docs="preview"] [data-slot="calendar"]')].map(c => new Date(c.querySelector("td[data-day]").dataset.day + "T12:00").getDay())""")
+    assert len(days) == 8 and set(days) == {0}, ("the date-picker calendars start on Sunday, as in shadcn", days)

@@ -340,6 +340,8 @@ def check_ai_stack_trace_replay(t):
     frames.locator('[data-slot="trace-collapsible-trigger"]').click()
     t.settle()
     assert frames.get_attribute("data-state") == "open" and frames.locator("li").count() == 4
+    page.keyboard.press("Tab")
+    assert page.evaluate("() => document.activeElement.localName") == "ol", "the frames scroller takes keyboard focus"
     assert page.locator("#stack-trace-demo p:not(.font-mono)").inner_text().startswith("The migrations ran, but the seed failed in seedUsers.")
 
 
@@ -356,6 +358,8 @@ def check_ai_stack_trace_frames(t):
     t.settle()
     assert frames.get_attribute("data-state") == "open"
     assert frames.locator("li").first.inner_text() == "at renderWithHooks (node_modules/react-dom/cjs/react-dom.development.js:14985:18)"
+    page.keyboard.press("Tab")
+    assert page.evaluate("() => document.activeElement.localName") == "ol", "the frames scroller takes keyboard focus"
 
 
 def check_ai_test_results_replay(t):

@@ -1312,6 +1312,10 @@
     --radius: 9999rem;
   }
 
+  .ring-inset {
+    --tw-ring-inset: inset;
+  }
+
   .running {
     animation-play-state: running;
   }

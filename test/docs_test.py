@@ -1321,3 +1321,27 @@ def check_docs_date_picker_week_start(t):
     t.docs("/docs/components/date-picker")
     days = t.page.evaluate("""() => [...document.querySelectorAll('[data-docs="preview"] [data-slot="calendar"]')].map(c => new Date(c.querySelector("td[data-day]").dataset.day + "T12:00").getDay())""")
     assert len(days) == 8 and set(days) == {0}, ("the date-picker calendars start on Sunday, as in shadcn", days)
+
+
+def check_docs_example_markup(t):
+    page = t.page
+    t.docs("/docs/components/select")
+    assert abs(rect(t, "#select-timezone")["width"] - 256) < 1, "the timezone trigger is w-full max-w-64"
+    t.docs("/docs/components/table")
+    shadow = page.locator('[data-example="table-sticky-header"] [data-slot="card"]').evaluate("c => getComputedStyle(c).boxShadow")
+    assert "inset" in shadow, ("the card ring stays inside the scroll box", shadow)
+    t.docs("/docs/components/radio-group")
+    group, preview = rect(t, "#radio-group-demo"), rect(t, '[data-example="demo-radio-group-0"] [data-docs="preview"]')
+    assert group["width"] < 200 and abs(group["left"] + group["width"] / 2 - preview["left"] - preview["width"] / 2) < 2, ("the radio group is w-fit", group, preview)
+    t.docs("/docs/components/slider")
+    widths = [round(rect(t, s)["width"]) for s in ("#slider-temperature", "#slider-disabled", "#slider-rtl")]
+    assert len(set(widths)) == 1, ("the sliders line up", widths)
+    t.docs("/docs/rtl")
+    inset = page.evaluate("""() => { const card = document.querySelector('#direction-carousel [data-slot="carousel-item"] > [data-slot="card"]'); return card.getBoundingClientRect().top - card.parentElement.getBoundingClientRect().top }""")
+    assert abs(inset - 4) < 0.5, ("the carousel cards keep room for their ring", inset)
+    if t.mobile:
+        t.docs("/docs/components/drawer")
+        page.locator("#drawer-responsive").click()
+        page.locator("#drawer-responsive-drawer [data-slot=drawer-footer] [data-slot=button]").first.wait_for(state="visible")
+        gap = page.evaluate("""() => { const d = document.querySelector('#drawer-responsive-drawer'); return d.querySelector('[data-slot=drawer-footer] [data-slot=button]').getBoundingClientRect().top - d.querySelector('[data-slot=drawer-description]').getBoundingClientRect().bottom }""")
+        assert gap >= 15, ("the drawer button has room below the description", gap)

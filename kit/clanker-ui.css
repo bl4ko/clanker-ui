@@ -16078,6 +16078,17 @@
       animation-range: revert-layer;
     }
   }
+  @media print {
+    :root { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    [popover] { display: none; }
+    [data-slot="sidebar"] { display: none; }
+    :is([data-slot="site-header"], [data-slot="page-aside"], [data-slot="table-header"]) { position: static; }
+    [data-slot="table-container"] { overflow: visible; }
+    :is([data-slot="table-head"], [data-slot="table-cell"]) { white-space: normal; }
+    .scroll-fade, .scroll-fade-x, .scroll-fade-x:dir(rtl) { -webkit-mask-image: none; mask-image: none; }
+    [data-slot="table-row"] { break-inside: avoid; }
+    [data-slot="chart"] { break-inside: avoid; }
+  }
 }
 
 @property --scroll-fade-t { syntax: "<length-percentage>"; inherits: false; initial-value: 0px; }

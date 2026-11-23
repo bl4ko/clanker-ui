@@ -1840,6 +1840,53 @@ def check_reduced_motion(t):
     assert not [n for n in result["names"] if n not in shadcn and not n.startswith("clanker-")], f"kit keyframes without the clanker- prefix: {result['names']}"
 
 
+PRINT_PROBE = """async () => {
+  const { h } = await import("/clanker-ui.js")
+  const cells = slot => Array.from({ length: 4 }, (_, i) => h(slot === "table-head" ? "th" : "td", { "data-slot": slot }, `Column ${i} with a long label`))
+  const table = h("div", { "data-slot": "table-container", style: { width: "400px" } },
+    h("table", { "data-slot": "table" },
+      h("thead", { "data-slot": "table-header" }, h("tr", { "data-slot": "table-row" }, ...cells("table-head"))),
+      h("tbody", { "data-slot": "table-body" }, h("tr", { "data-slot": "table-row" }, ...cells("table-cell")))))
+  const sidebar = h("div", { "data-slot": "sidebar" })
+  const header = h("header", { "data-slot": "site-header" }, "Header")
+  const pop = h("div", { "data-slot": "popover-content", popover: "manual" }, "Popup")
+  const fade = h("div", { class: "scroll-fade-x" }, "Fade")
+  const box = h("div", {}, sidebar, header, table, fade, pop)
+  document.body.append(box)
+  pop.showPopover()
+  const css = e => getComputedStyle(e)
+  const root = css(document.documentElement)
+  const out = {
+    overflow: table.scrollWidth - table.clientWidth,
+    overflowX: css(table).overflowX,
+    sidebar: css(sidebar).display,
+    header: css(header).position,
+    tableHeader: css(table.querySelector("thead")).position,
+    popup: pop.getClientRects().length,
+    mask: css(fade).maskImage || css(fade).webkitMaskImage,
+    adjust: root.printColorAdjust || root.webkitPrintColorAdjust,
+    row: css(table.querySelector("tbody tr")).breakInside,
+  }
+  box.remove()
+  return out
+}"""
+
+
+def check_print(t):
+    page = t.page
+    screen = page.evaluate(PRINT_PROBE)
+    assert screen["overflow"] > 1 and screen["header"] == "sticky" and screen["popup"] == 1 and screen["mask"] != "none", ("print rules must not change the screen", screen)
+    page.emulate_media(media="print")
+    result = page.evaluate(PRINT_PROBE)
+    assert result["overflow"] <= 1 and result["overflowX"] == "visible", ("a wide table must not clip in print", result)
+    assert result["sidebar"] == "none", ("the fixed sidebar must not print on every page", result)
+    assert result["header"] == "static" and result["tableHeader"] == "static", ("sticky parts must not cover content in print", result)
+    assert result["popup"] == 0, ("open popups and toasts must not print", result)
+    assert result["mask"] == "none", ("scroll fades must not mask printed content", result)
+    assert result["adjust"] == "exact", ("fills and the dark theme must print as on screen", result)
+    assert result["row"] == "avoid", result
+
+
 def check_safari_fallbacks(t):
     page = t.page
     css = page.request.get(t.base_url + "/clanker-ui.css").text()

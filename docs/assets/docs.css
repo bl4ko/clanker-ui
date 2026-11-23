@@ -623,6 +623,7 @@ body[data-docs="body"] {
 [data-docs="copy-page"]:has([data-docs="copy-page-menu"]:focus-visible) [data-docs="copy-page-divider"] { opacity: 0; }
 
 [data-docs="copy-page-content"][data-slot="dropdown-menu-content"] {
+  width: auto;
   border-radius: var(--radius-lg);
   box-shadow: none;
 }
@@ -945,7 +946,6 @@ body[data-docs="body"] {
 
 [data-docs="code-block"][data-slot="code-block"] {
   margin-top: 1.5rem;
-  margin-inline: -0.25rem;
   width: auto;
   border: 0;
   border-radius: var(--radius-2xl);

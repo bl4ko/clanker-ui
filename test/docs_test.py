@@ -358,6 +358,7 @@ def check_docs_copy_page(t):
     assert item.get_attribute("href") == "/docs/components/button.md"
     assert item.get_attribute("target") == "_blank"
     assert item.inner_text().strip() == "View as Markdown"
+    assert item.evaluate("el => el.getClientRects().length === 1 && el.getBoundingClientRect().height <= 32"), "View as Markdown wraps"
     t.shot("copy-page-menu", page)
     page.keyboard.press("Escape")
 
@@ -500,6 +501,12 @@ def check_docs_tables(t):
         assert markup["overflow"] <= 0 and markup["height"] < 2000, markup
     t.docs("/docs/theming")
     assert max(table["height"] for table in page.evaluate(probe)) < 10000
+
+
+def check_docs_usage_code_width(t):
+    page = t.page
+    widths = page.evaluate("""() => [document.querySelector('[data-docs="component-preview"]'), ...document.querySelectorAll('[data-docs="content"] > [data-docs="code-block"]')].map(el => el.getBoundingClientRect()).map(r => [r.left, r.width])""")
+    assert len(widths) > 1 and all(abs(w[0] - widths[0][0]) <= 0.5 and abs(w[1] - widths[0][1]) <= 0.5 for w in widths[1:]), widths
 
 
 def check_docs_pages(t):

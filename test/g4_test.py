@@ -1707,7 +1707,7 @@ ON_SURFACE = """([sel, prop]) => [...document.querySelectorAll(sel)].filter(e =>
   const paint = colors => { ctx.clearRect(0, 0, 1, 1); for (const c of colors) { ctx.fillStyle = c; ctx.fillRect(0, 0, 1, 1) } return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3) }
   const lum = c => { const [r, g, b] = c.map(v => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }); return 0.2126 * r + 0.7152 * g + 0.0722 * b }
   const layers = ["#fff"]
-  for (let n = e.parentElement; n; n = n.parentElement) layers.splice(1, 0, getComputedStyle(n).backgroundColor)
+  for (let n = e; n; n = n.parentElement) layers.splice(1, 0, getComputedStyle(n).backgroundColor)
   const a = lum(paint([...layers, getComputedStyle(e)[prop]])), b = lum(paint(layers))
   return +((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2)
 })"""
@@ -1719,6 +1719,24 @@ def check_trace_description_contrast(t):
     t.a11y()
     ratios = page.evaluate(ON_SURFACE, ["#trace [data-slot=trace-description]", "color"])
     assert ratios and min(ratios) >= 4.5, f"trace-description text needs 4.5:1 with clanker-ui-a11y.css: {ratios}"
+
+
+def check_attachment_a11y(t):
+    page = t.page
+    section = t.section("attachment")
+    t.a11y()
+    action = section.locator("#attachment-images [data-attachment-remove]").first
+    chip = lambda: action.evaluate("e => getComputedStyle(e).backgroundColor")
+    assert chip() == resolve(page, "var(--background)"), "the remove button over an image needs an opaque chip"
+    assert page.evaluate(ON_SURFACE, ["#attachment-images [data-attachment-remove]", "color"])[0] >= 3
+    if not t.mobile:
+        action.hover()
+        page.wait_for_function("([e, c]) => getComputedStyle(e).backgroundColor === c", arg=[action.element_handle(), resolve(page, "var(--muted)")], timeout=2000)
+    group = section.locator("#attachment-group [data-slot=attachment-group]")
+    keyboard_mode(page)
+    group.focus()
+    ring = group.evaluate("e => { const s = getComputedStyle(e); return [e.matches(':focus-visible'), s.outlineStyle, s.outlineWidth, s.maskImage, s.webkitMaskImage] }")
+    assert ring[:3] == [True, "solid", "3px"] and "gradient" not in (ring[3] or "") + (ring[4] or ""), f"the scroll fade mask hides the focus ring of the group: {ring}"
 
 
 def scroll_fade(t, section_id, sel, scroll):

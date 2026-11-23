@@ -519,6 +519,10 @@ body[data-docs="body"] {
 
 @media (width >= 80rem) {
   [data-docs="docs"] { width: 100%; }
+  [data-docs="docs"]:not([data-wide]) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
+  }
 }
 
 [data-docs="column"] {

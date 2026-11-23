@@ -782,13 +782,15 @@ LAYOUT_SHIFT = """() => new Promise(done => {
 
 def check_docs_no_layout_shift(t):
     page = t.page
+    if t.engine == "chromium":
+        page.context.new_cdp_session(page).send("Emulation.setCPUThrottlingRate", {"rate": 4})
     shifts = {}
     for path, ready in (("/docs/components/chart", "#chart-interactive svg"), ("/docs/components/icons", "#icon-grid svg")):
         t.docs(path)
         page.locator(ready).first.wait_for()
         page.wait_for_timeout(100)
         shifts[path] = page.evaluate(LAYOUT_SHIFT)
-    assert all(v is None or v < 0.01 for v in shifts.values()), ("the chart hero and the icon grid keep their space before the script runs", shifts)
+    assert all(v is None or v < 0.01 for v in shifts.values()), ("the layout, the chart hero, and the icon grid keep their space while the page loads", shifts)
     t.docs("/docs/components/chart")
     ring = page.locator("#chart-interactive-card").evaluate("el => getComputedStyle(el).boxShadow")
     assert ring != "none", ("the chart hero card keeps the card ring", ring)

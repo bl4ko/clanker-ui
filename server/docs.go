@@ -54,11 +54,12 @@ type navConfig struct {
 }
 
 type example struct {
-	Name string
-	HTML string
-	Code string
-	JS   string
-	Demo bool
+	Name   string
+	HTML   string
+	Code   string
+	JS     string
+	Script string
+	Demo   bool
 }
 
 type docPage struct {
@@ -92,6 +93,7 @@ type docsSite struct {
 	catalog      catalogData
 	components   map[string]*catalogComponent
 	demo         map[string]*demoSection
+	demoJS       string
 	anchors      map[string]string
 	sectionPage  map[string]string
 	blocks       map[string]*block
@@ -472,11 +474,18 @@ func exampleView(ex *example, attrs map[string]string) exampleData {
 	if ex.Demo && v.Height == "" {
 		v.Height = "demo"
 	}
-	if ex.JS != "" {
+	if js := ex.script(); js != "" {
 		v.Code.Title = ex.Name + ".html"
-		v.Script = &codeView{Lang: "js", Title: ex.Name + ".js", Lines: highlightHTML("js", ex.JS)}
+		v.Script = &codeView{Lang: "js", Title: ex.Name + ".js", Lines: highlightHTML("js", js)}
 	}
 	return v
+}
+
+func (ex *example) script() string {
+	if ex.JS != "" {
+		return ex.JS
+	}
+	return ex.Script
 }
 
 func (ex *example) source() string {
@@ -543,8 +552,8 @@ func (d *docsSite) markdown(p *docPage) string {
 		}
 		ex := d.examples[tag.Arg]
 		out := "```html\n" + ex.source() + "\n```"
-		if ex.JS != "" {
-			out += "\n\n```js\n" + ex.JS + "\n```"
+		if js := ex.script(); js != "" {
+			out += "\n\n```js\n" + js + "\n```"
 		}
 		return out
 	}))

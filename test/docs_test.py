@@ -484,6 +484,24 @@ def check_docs_view_code(t):
     t.shot("view-code", frame)
 
 
+def check_docs_tables(t):
+    page = t.page
+    probe = """() => [...document.querySelectorAll('[data-docs="table"]')].map(wrap => ({
+      height: wrap.querySelector("table").getBoundingClientRect().height,
+      overflow: wrap.scrollWidth - wrap.clientWidth,
+      wrappedHeads: [...wrap.querySelectorAll("th")].filter(th => { const r = document.createRange(); r.selectNodeContents(th); return new Set([...r.getClientRects()].map(x => Math.round(x.top))).size > 1 }).map(th => th.textContent),
+      brokenNames: [...wrap.querySelectorAll("td:first-child code")].filter(c => !c.textContent.includes("|") && c.getClientRects().length > 1).map(c => c.textContent),
+    }))"""
+    for table in page.evaluate(probe):
+        assert table["brokenNames"] == [] and table["wrappedHeads"] == [], table
+    t.docs("/docs/markup")
+    markup = page.evaluate(probe)[0]
+    if t.width >= 1280:
+        assert markup["overflow"] <= 0 and markup["height"] < 2000, markup
+    t.docs("/docs/theming")
+    assert max(table["height"] for table in page.evaluate(probe)) < 10000
+
+
 def check_docs_pages(t):
     page = t.page
     t.docs("/")

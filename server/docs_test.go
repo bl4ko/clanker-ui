@@ -339,7 +339,7 @@ func TestMarkdownRenderer(t *testing.T) {
 		{"- one\n- two `x`", "<ul>\n<li>one</li>\n<li>two <code>x</code></li>\n</ul>\n"},
 		{"1. one\n\n   ```sh\n   go test\n   ```\n2. two", "<ol>\n<li><p>one</p>\n<pre data-lang=\"sh\" title=\"\">go test</pre>\n</li>\n<li><p>two</p>\n</li>\n</ol>\n"},
 		{"- a\n  - b", "<ul>\n<li>a<ul>\n<li>b</li>\n</ul>\n</li>\n</ul>\n"},
-		{"| A | B |\n| --- | --- |\n| `x \\| y` | 2 |", "<div data-docs=\"table\" class=\"scroll-fade-x\"><table>\n<thead><tr><th>A</th><th>B</th></tr></thead>\n<tbody>\n<tr><td><code>x | y</code></td><td>2</td></tr>\n</tbody>\n</table></div>\n"},
+		{"| A | B |\n| --- | --- |\n| `x \\| y` | 2 |", "<div data-docs=\"table\" class=\"scroll-fade-x\"><table>\n<thead><tr><th>A</th><th>B</th></tr></thead>\n<tbody>\n<tr><td><code>x |<wbr> y</code></td><td>2</td></tr>\n</tbody>\n</table></div>\n"},
 		{"```css title=\"app.css\"\na { }\n```", "<pre data-lang=\"css\" title=\"app.css\">a { }</pre>\n"},
 		{"> quote", "<blockquote>\n<p>quote</p>\n</blockquote>\n"},
 		{"{{example \"button-demo\" align=\"start\"}}", "<x-example>button-demo</x-example>\n"},

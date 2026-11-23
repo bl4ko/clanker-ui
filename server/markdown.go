@@ -473,7 +473,7 @@ func (r *mdRenderer) inline(s string) string {
 			if len(code) > 2 && code[0] == ' ' && code[len(code)-1] == ' ' {
 				code = code[1 : len(code)-1]
 			}
-			b.WriteString("<code>" + html.EscapeString(code) + "</code>")
+			b.WriteString("<code>" + strings.ReplaceAll(html.EscapeString(code), "|", "|<wbr>") + "</code>")
 			i = end + n
 		case c == '[':
 			text, url, next, ok := linkAt(s, i)

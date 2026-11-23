@@ -27,6 +27,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Accessibility layer: a choice card rings the card, not its checkbox, radio, or switch, as shadcn highlights it (#292).
 - Accessibility layer: an attachment with a trigger rings the attachment inside its edge, so a scrolling attachment group no longer clips it; the trigger has no ring (#293).
 - Accessibility layer: the focused resizable handle is a 3 px bar in the ring color, so the panel group no longer clips open ring ends (#294).
+- Accessibility layer: Sera underline controls keep their clear top and side borders; only the underline takes `--input-edge` (before, the layer drew a box). The generator marks such controls with `--input-edge-sides` (#295).
 - Blocks: the Data Table block fits its table at the desktop preview width and from 1024 px (the Task column shows from `xl`); at the tablet widths where it still scrolls, the table container has the `scroll-fade-x` hint (#270).
 - Catalog: a component in a shared README section gets only its own markup lines and notes in `references/components/<name>.md` and on its docs page: Kbd no longer shows the input lines and the dropzone code, and Empty, Separator, and Skeleton no longer get the Aspect Ratio note (#282).
 - Docs: the code-block "Show more" example expands to the full height, and a second example keeps a 24rem cap and scrolls, as shadcn's "Max Height" (#275); a code block in a list item no longer gets the inline code style (#276).

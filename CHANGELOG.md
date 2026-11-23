@@ -4,6 +4,12 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
+## Unreleased
+
+### Fixed
+
+- Blocks: the Dashboard and Detail tables fit their container from 640 to 1440 px. Their columns showed at viewport breakpoints without the 16rem sidebar and the 20rem side column, so they were up to 242 px too wide; the secondary columns now show from `lg` and `xl`, and the table containers have the `scroll-fade-x` hint (#297).
+
 ## 0.5.1 - 2026-11-23
 
 ### Fixed

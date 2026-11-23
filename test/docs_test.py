@@ -903,6 +903,21 @@ def check_blocks_data_table(t):
         assert fit[700][0] > 0 and fit[700][1], ("a table that scrolls shows the scroll hint", fit)
 
 
+def check_blocks_tables_fit(t):
+    page = t.page
+    if t.mobile:
+        return
+    widths = sorted({*range(640, 1441, 50), 768, 926, 1024, 1280})
+    for name in BLOCKS:
+        t.docs("/blocks/" + name)
+        for width in widths:
+            page.set_viewport_size({"width": width, "height": 900})
+            tables = page.evaluate("""() => [...document.querySelectorAll('[data-slot="table-container"]')].filter(el => el.getClientRects().length).map(el => { const s = getComputedStyle(el); return [el.scrollWidth - el.clientWidth, (s.maskImage || s.webkitMaskImage).includes("gradient")] })""")
+            for over, hint in tables:
+                assert hint or (over <= 0 and name not in ("dashboard", "detail")), ("a table that can scroll shows the scroll hint", name, width, over)
+                assert over <= 0 or name == "data-table", ("the columns of a sidebar block follow its content width, not the viewport", name, width, over)
+
+
 def check_blocks_login_validation(t):
     page = t.page
     t.docs("/blocks/login")

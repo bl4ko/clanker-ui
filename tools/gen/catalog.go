@@ -1466,7 +1466,11 @@ func (b *catalogBuild) mentioned(s mdSection, line string) []string {
 		if strings.HasSuffix(m[1], "-") {
 			return nil
 		}
-		if c := b.t.component(m[1]); slices.Contains(s.comps, c) {
+		name := m[1]
+		if sm := mdSlot.FindStringSubmatch(name); sm != nil {
+			name = sm[1]
+		}
+		if c := b.t.component(name); slices.Contains(s.comps, c) {
 			found[c] = true
 		}
 	}
@@ -2083,7 +2087,10 @@ func componentMarkdown(b *strings.Builder, cat *catalog, c catComponent, heading
 	}
 }
 
-var mdLocalLink = regexp.MustCompile(`\]\(#([^)\s]+)\)`)
+var (
+	mdLocalLink = regexp.MustCompile(`\]\(#([^)\s]+)\)`)
+	mdSlot      = regexp.MustCompile(`data-slot="([a-z0-9-]+)"`)
+)
 
 func (b *catalogBuild) componentText(s mdSection, c string) string {
 	var blocks []string
@@ -2099,20 +2106,52 @@ func (b *catalogBuild) componentText(s mdSection, c string) string {
 		}
 	}
 	var out strings.Builder
+	prose, intro := true, false
 	for _, blk := range blocks {
 		first, _, _ := strings.Cut(blk, "\n")
 		switch {
 		case strings.HasPrefix(first, "```html"):
-			if len(s.comps) > 1 && !strings.Contains(blk, `data-slot="`+c) {
+			if len(s.comps) > 1 && !(prose && intro) && !strings.Contains(blk, `data-slot="`+c) {
 				continue
 			}
+			if len(s.comps) > 1 && !intro {
+				blk = ownLines(blk, c)
+			}
 		case strings.HasPrefix(first, "```"):
-		case strings.HasPrefix(first, "- Changed with the move to Base UI"), !slices.Contains(b.lineComps(s, first), c):
-			continue
+			if !prose {
+				continue
+			}
+		default:
+			prose = !strings.HasPrefix(first, "- Changed with the move to Base UI") && slices.Contains(b.lineComps(s, first), c)
+			intro = strings.HasSuffix(strings.TrimSpace(blk), ":")
+			if !prose {
+				continue
+			}
 		}
 		out.WriteString(blk)
 	}
 	return out.String()
+}
+
+func ownLines(blk, c string) string {
+	head, body, _ := strings.Cut(blk, "\n")
+	body, tail, ok := strings.Cut(body, "```")
+	if !ok {
+		return blk
+	}
+	var own []string
+	for _, line := range strings.SplitAfter(body, "\n") {
+		if line == "" {
+			continue
+		}
+		if !strings.HasPrefix(line, "<") || mdSlot.FindString(line) == "" {
+			return blk
+		}
+		if strings.Contains(line, `data-slot="`+c) {
+			own = append(own, line)
+		}
+	}
+	return head + "\n" + strings.Join(own, "") + "```" + tail
 }
 
 func (b *catalogBuild) fullText(c string, sections []mdSection) string {

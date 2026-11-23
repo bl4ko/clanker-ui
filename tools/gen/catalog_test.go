@@ -902,3 +902,30 @@ func TestAgentsCITriggers(t *testing.T) {
 		}
 	}
 }
+
+func TestCatalogSharedSectionText(t *testing.T) {
+	testCatalog(t)
+	full := func(name string) string {
+		_, text, _ := strings.Cut(string(catFilesOut["skills/clanker-ui/references/components/"+name+".md"]), "\n## Full text\n\n")
+		return text
+	}
+	for _, c := range []string{"kbd", "textarea"} {
+		if strings.Contains(full(c), "dropzone") {
+			t.Errorf("%s: full text has the dropzone code of input", c)
+		}
+	}
+	if kbd := full("kbd"); strings.Contains(kbd, `data-slot="input"`) || strings.Contains(kbd, "aria-invalid") {
+		t.Errorf("kbd: full text has the input lines:\n%s", kbd)
+	}
+	if !strings.Contains(full("input"), `<label data-slot="empty" data-variant="outline" class="dropzone">`) {
+		t.Error("input: full text lacks the dropzone markup")
+	}
+	for _, c := range []string{"empty", "separator", "skeleton"} {
+		if strings.Contains(full(c), `data-slot="aspect-ratio"`) {
+			t.Errorf("%s: full text has the aspect-ratio bullet", c)
+		}
+	}
+	if !strings.Contains(full("aspect-ratio"), `data-slot="aspect-ratio"`) {
+		t.Error("aspect-ratio: full text lacks its bullet")
+	}
+}

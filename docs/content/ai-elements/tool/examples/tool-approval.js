@@ -24,10 +24,13 @@ function line(title, status) {
 async function answer(content, item, approved) {
   button.hidden = true
   const result = line(approved ? `Running ${command}` : `Denied ${command}`, approved ? "running" : null)
+  result.tabIndex = -1
   item.replaceWith(result)
+  result.focus()
   if (approved) {
     await wait(100)
-    result.replaceWith(line(`Ran ${command}`, null))
+    result.querySelector('[data-slot="trace-line"]').removeAttribute("data-status")
+    result.querySelector('[data-slot="trace-title"]').textContent = `Ran ${command}`
   }
   await wait(600)
   const text = new Text("")

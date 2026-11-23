@@ -173,6 +173,7 @@ def check_ai_tool_approval(t):
         item.get_by_role("button", name="Approve" if approve else "Deny").click()
         assert item.count() == 0
         wait_js(page, f"""() => document.querySelectorAll('#tool-approval [data-slot="message"]:not([data-align="end"]) [data-slot="message-content"] > [data-slot="trace"]')[1]?.textContent.trim() === {line!r}""")
+        assert page.evaluate("() => document.activeElement.matches('#tool-approval [data-slot=trace]') && document.activeElement.textContent.trim()") == line, "focus moves to the tool status"
         wait_js(page, """() => !document.getElementById('tool-approval-send').hidden""")
         assert page.locator('#tool-approval [data-slot="message-content"] > p').inner_text() == reply
         send.click()
@@ -543,6 +544,7 @@ def check_ai_confirmation_approve(t):
     root.locator("[data-slot=item] button", has_text="Approve").click()
     assert root.locator("[data-slot=item]").count() == 0
     wait_text(page, "#confirmation-demo [data-slot=trace-title]", "Ran rm -rf dist")
+    assert page.evaluate("() => document.activeElement.matches('#confirmation-demo [data-slot=trace]') && document.activeElement.textContent.trim()") == "Ran rm -rf dist", "focus moves to the tool status"
     wait_text(page, "#confirmation-demo p", "Removed the dist folder.")
     line = root.locator("[data-slot=trace-line]", has_text="Ran rm -rf dist")
     assert line.get_attribute("data-status") is None
@@ -558,6 +560,7 @@ def check_ai_confirmation_deny(t):
     assert root.locator("[data-slot=item]").count() == 0
     line = root.locator("[data-slot=trace-line]", has_text="Denied rm -rf dist")
     assert line.count() == 1 and line.get_attribute("data-status") is None
+    assert page.evaluate("() => document.activeElement.matches('#confirmation-demo [data-slot=trace]') && document.activeElement.textContent.trim()") == "Denied rm -rf dist", "focus moves to the tool status"
     wait_text(page, "#confirmation-demo p", "Okay, I left the dist folder in place.")
     next_button.wait_for(state="visible")
 
@@ -572,6 +575,7 @@ def check_ai_checkpoint_restore(t):
     assert root.locator("[data-slot=message]").count() == 2
     assert page.locator("#checkpoint-demo-restore").count() == 0
     assert next_button.is_visible()
+    assert page.evaluate("() => document.activeElement.id") == "checkpoint-demo-continue"
     next_button.click()
     assert next_button.is_hidden()
     wait_text(page, "#checkpoint-demo p", "Updated the Button page to say Action.")

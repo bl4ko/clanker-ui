@@ -9,6 +9,7 @@ restore.addEventListener("click", () => {
   while (marker.nextElementSibling !== next) marker.nextElementSibling.remove()
   restore.remove()
   next.hidden = false
+  next.focus()
 })
 
 next.addEventListener("click", async () => {

@@ -729,6 +729,27 @@ def check_docs_component_demos(t):
     page.wait_for_function("""() => document.querySelectorAll('#icon-grid svg').length > 100""")
 
 
+LAYOUT_SHIFT = """() => new Promise(done => {
+  if (!PerformanceObserver.supportedEntryTypes.includes("layout-shift")) return done(null)
+  new PerformanceObserver((list, observer) => { observer.disconnect(); done(list.getEntries().filter(e => !e.hadRecentInput).reduce((a, e) => a + e.value, 0)) }).observe({ type: "layout-shift", buffered: true })
+  setTimeout(() => done(0), 500)
+})"""
+
+
+def check_docs_no_layout_shift(t):
+    page = t.page
+    shifts = {}
+    for path, ready in (("/docs/components/chart", "#chart-interactive svg"), ("/docs/components/icons", "#icon-grid svg")):
+        t.docs(path)
+        page.locator(ready).first.wait_for()
+        page.wait_for_timeout(100)
+        shifts[path] = page.evaluate(LAYOUT_SHIFT)
+    assert all(v is None or v < 0.01 for v in shifts.values()), ("the chart hero and the icon grid keep their space before the script runs", shifts)
+    t.docs("/docs/components/chart")
+    ring = page.locator("#chart-interactive-card").evaluate("el => getComputedStyle(el).boxShadow")
+    assert ring != "none", ("the chart hero card keeps the card ring", ring)
+
+
 BLOCKS = ["dashboard", "data-table", "settings", "form", "detail", "login", "login-split", "card-grid", "overlay-form", "states"]
 
 BLOCK_LAYOUT = """() => {

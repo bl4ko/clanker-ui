@@ -11,6 +11,7 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Chart: a level label under a negative bar keeps clear of the category axis (the plot keeps room below it, as above a positive label), and a line end label that would cross a line goes below its point, or is left out when that crosses a line too (#268).
 - Blocks: the Data Table block fits its table at the desktop preview width and from 1024 px (the Task column shows from `xl`); at the tablet widths where it still scrolls, the table container has the `scroll-fade-x` hint (#270).
 - Docs: each example on the Chart and Stat Tile pages shows its script, the `chart()` calls with their data and options, next to the HTML (#281).
+- Docs: the chart hero and the icon grid keep their space before the script runs, so the Chart and Icons pages do not shift, and the chart hero card keeps its card ring (#286).
 
 ## 0.5.0 - 2026-11-22
 

@@ -1,7 +1,8 @@
 (() => {
   const RULES = ["unknown-slot", "part-outside-root", "unknown-attr", "bad-value", "kit-added", "missing-group", "unknown-class"]
   const KIT_JS = /\/(clanker-ui(?:-[a-z]+)?)(\.min)?\.js(?:[?#]|$)/
-  const TAILWIND = /^[a-z-]+:|\[|^-?(?:[mp][xytblrse]?|w|h|min-w|min-h|max-w|max-h|size|gap|gap-x|gap-y|space-x|space-y|text|bg|border|rounded|shadow|font|leading|tracking|grid-cols|col-span|row-span|items|justify|z|top|bottom|left|right|inset|opacity|ring|overflow|translate|rotate|scale|duration|basis|line-clamp|aspect)-|^(?:flex|grid|hidden|block|inline-flex|inline-block|truncate|absolute|relative|fixed|sticky|uppercase|italic|underline)$/
+  const TW_VALUE = "(?:\\d+(?:\\.\\d+)?(?:/\\d+)?|px|full|auto|screen|fit|min|max|none|\\d?xs|sm|md|lg|\\d?xl|base|center|start|end|between|around|evenly|stretch|baseline|white|black|transparent|[a-z]+-\\d{2,3})"
+  const TAILWIND = new RegExp(`^[a-z-]+:|\\[|^-?(?:[mp][xytblrse]?|w|h|min-w|min-h|max-w|max-h|size|gap|gap-x|gap-y|space-x|space-y|text|bg|border|rounded|shadow|font|leading|tracking|grid-cols|col-span|row-span|items|justify|z|top|bottom|left|right|inset|opacity|ring|overflow|translate|rotate|scale|duration|basis|line-clamp|aspect)-${TW_VALUE}$|^(?:flex|grid|hidden|block|inline-flex|inline-block|truncate|absolute|relative|fixed|sticky|uppercase|italic|underline|rounded|shadow|border)$`)
   const LATE = "markup-lint.js ran after the page was parsed, so it has no copy of the authored HTML: load it with add_init_script (Playwright) or as a classic <script src> in <head> before the kit module, not as a module or with defer"
   const SHARED = new Set(T.shared)
   const SIBLING = {}
@@ -144,7 +145,7 @@
         report("kit-added", "error", el, `the kit adds ${slot}; remove it from the markup`)
         continue
       }
-      if (part.i && !inRoot(el, part.c, root)) report("part-outside-root", "error", el, `${slot} is outside a ${part.c} root; put it inside data-slot="${part.c}" or link it with the id of the root`)
+      if (part.i && root.contains(el) && !inRoot(el, part.c, root)) report("part-outside-root", "error", el, `${slot} is outside a ${part.c} root; put it inside data-slot="${part.c}" or link it with the id of the root`)
       const owners = options(el)
       for (const { name, value } of el.attributes) {
         if (!name.startsWith("data-") || name === "data-slot" || name === "data-lint-ignore" || name.startsWith("data-string-")) continue

@@ -43,9 +43,12 @@ MUTATIONS = {
         (('class="row"', 'class="row md:flex"'), [("error", CLASSES)]),
         (('class="row"', 'class="row fancy"'), [("warn", CLASSES)]),
         (('class="row"', 'class="row autosave fullscreen-toggle step-2"'), [("warn", CLASSES)] * 3),
+        (('class="row"', 'class="row top-bar text-block items-list left-panel"'), [("warn", CLASSES)] * 4),
+        (('class="row"', 'class="row text-red-500 items-center p-1/2 text-2xl"'), [("error", CLASSES)] * 4),
     ],
 }
 IGNORED = [
+    ('<main>', '<main>\n    <template><div data-slot="select-item" data-value="x">X</div><dialog data-slot="dialog-content"></dialog></template>'),
     ('<main>', '<main>\n    <template><button type="button" data-slot="button" data-dialog-trigger="later"></button><div data-slot="dialog" id="later"></div></template>'),
     ('class="row"', 'class="row mt-4" data-lint-ignore="unknown-class"'),
     ('<div data-slot="card-title">', '<div data-slot="card-title" data-lint-ignore data-variant="outline">'),

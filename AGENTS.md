@@ -63,6 +63,30 @@ uv run --no-project --with playwright python -I tools/behavior gate --quick --ba
 - Everything works under the strict CSP with `require-trusted-types-for 'script'` (README "Use in a project").
 - Match the style of the code around a change. Public API changes need a README update (exports, events, attributes).
 
+## Browser support (Baseline)
+
+- Baseline Widely available: use freely in kit code.
+- Baseline Newly available: new uses only behind `@supports` or a feature check, with a small dependency-free fallback that keeps the component working. Features the kit already relies on stay without a check (`popover`, `@property`).
+- Limited availability: never. Candidates and their triggers are in [ROADMAP.md](ROADMAP.md).
+- Generated shadcn CSS keeps its features when the component still works without them (`scroll-fade` has no fade in Firefox).
+
+## Use the platform
+
+Adapted from [GoogleChrome/modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance) (Apache-2.0), limited to what fits the strict CSP and shadcn parity. Kit behavior wins where the two differ.
+
+| Do | Don't |
+| --- | --- |
+| `<dialog>` with `showModal()` | `role="dialog"` or `aria-modal` on a `<dialog>` |
+| `popover` for menus, tooltips, and toasts (top layer) | `z-index` stacks or moving popups to `<body>` |
+| `<button>`, `<a href>`, `<label for>`, `<fieldset>` with `<legend>` | `div` with `role="button"` and a click listener |
+| Constraint validation (`required`, `pattern`, `setCustomValidity`) | Hand-written checks for what the browser validates |
+| `inert` on content behind a modal | `aria-hidden` on focusable content |
+| `Intl.DateTimeFormat`, `Intl.NumberFormat`, `Intl.Collator` | Date or number libraries |
+| `h()`, `textContent`, `replaceChildren` | HTML strings or a sanitizer; Trusted Types blocks them |
+| Logical properties (`margin-inline-start`, `inset-inline-end`) | `left` and `right` that break `dir="rtl"` |
+| `prefers-reduced-motion`, `color-scheme` | Motion or colors that ignore the user setting |
+| Same-origin files only | CDNs, polyfills, inline `<script>`, `<style>`, or `style=""` |
+
 ## Parity rule
 
 - The reference is shadcn at the commit in `tools/gen/main.go` (`shadcnSHA`) and Base UI 1.6.0. The docs previews come from the live site `https://ui.shadcn.com/docs/components/base/<name>` (a `base-rhea` docs preview is the Rhea reference: `report.py --style rhea`). The example pages `<name>-example` of every style come from the reference app, a real shadcn install of that style made by `tools/parity/refapp.py` (shadcn CLI, the pinned registry items and package versions): `parity.py --page-style <style> --ref <dir>`, `report.py --style <style>` (Nova: `--known tools/parity/known-nova.tsv`). The `parity` workflow runs all of them on a pull request with the label `parity-ci`.

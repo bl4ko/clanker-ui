@@ -4,6 +4,14 @@ All notable changes of each release. Versions follow [Semantic Versioning](https
 
 When you upgrade, replace all kit files with the files of one release. Do not mix files of two versions.
 
+## Unreleased
+
+### Added
+
+- Skill: hard rules (no utility classes, no kit-added parts or state attributes, boolean values, `preventDefault()` in `form:submit`), a reading guide, and a done checklist.
+- Blocks: Data Table opens an edit dialog from the row Edit action. The HTML has 5 rows and the block JS renders the rest (48 KB to 26 KB).
+- `ROADMAP.md` with the trigger of each planned agent and platform feature.
+
 ## 0.5.2 - 2026-11-23
 
 ### Changed

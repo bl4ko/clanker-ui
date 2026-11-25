@@ -23,8 +23,8 @@ MARKUP_LINT = SKILL / "references/markup-lint.js"
 CSP = re.search(r'http-equiv="Content-Security-Policy" content="([^"]+)"', (SKILL / "SKILL.md").read_text())[1]
 VIEWS = [(width, height, scheme) for width, height in ((1280, 800), (390, 844)) for scheme in ("light", "dark")]
 ARMS = ("skill", "none")
-KINDS = ("console", "csp", "design", "markup")
-WATCH = 'document.addEventListener("securitypolicyviolation", e => (window.__evalCsp ??= []).push(`${e.violatedDirective} ${e.blockedURI || "inline"}`))'
+KINDS = ("console", "csp", "design", "markup", "scorer")
+WATCH = 'document.addEventListener("securitypolicyviolation", e => { const seen = window.__evalCsp ??= [], key = `${e.violatedDirective} ${e.blockedURI || "inline"} ${e.sourceFile}:${e.lineNumber}`; if (!seen.includes(key)) seen.push(key) })'
 SETTLE = "() => Promise.race([new Promise(r => setTimeout(r, 3000)), Promise.all(document.getAnimations().filter(a => a.timeline === document.timeline && a.effect?.getTiming().iterations !== Infinity).map(a => a.finished.catch(() => null)))])"
 PREAMBLE = f"""You are in an empty project. The web root is `static/`; the UI kit files are in `static/vendor/clanker-ui/`.
 Write `static/index.html`, `static/app.css`, and `static/app.js`. There is no build step and no network.
@@ -74,25 +74,26 @@ def score(root, browser, kit):
     threading.Thread(target=server.serve_forever, daemon=True).start()
     try:
         for width, height, scheme in VIEWS:
+            found = {k: [] for k in KINDS}
             context = browser.new_context(viewport={"width": width, "height": height}, color_scheme=scheme)
-            context.add_init_script(WATCH)
-            context.add_init_script(path=str(DESIGN_LINT))
-            if MARKUP_LINT.exists():
-                context.add_init_script(path=str(MARKUP_LINT))
-            page = context.new_page()
-            console = []
-            page.on("console", lambda m, out=console: m.type == "error" and "Content Security Policy" not in m.text and out.append(m.text))
-            page.on("pageerror", lambda e, out=console: out.append(str(e)))
-            page.goto(f"http://127.0.0.1:{server.server_port}/", wait_until="networkidle")
-            page.evaluate(SETTLE)
-            found = {
-                "console": console,
-                "csp": page.evaluate("() => window.__evalCsp ?? []"),
-                "design": page.evaluate("() => clankerDesignLint().findings.filter(f => f.severity === 'error').map(f => `${f.rule} ${f.selector}`)"),
-                "markup": page.evaluate("() => typeof clankerMarkupLint === 'function' ? clankerMarkupLint().findings.filter(f => f.severity === 'error').map(f => `${f.rule} ${f.selector}`) : []"),
-            }
+            try:
+                context.add_init_script(WATCH)
+                context.add_init_script(path=str(DESIGN_LINT))
+                if MARKUP_LINT.exists():
+                    context.add_init_script(path=str(MARKUP_LINT))
+                page = context.new_page()
+                page.on("console", lambda m: m.type == "error" and "Content Security Policy" not in m.text and found["console"].append(m.text))
+                page.on("pageerror", lambda e: found["console"].append(str(e)))
+                page.goto(f"http://127.0.0.1:{server.server_port}/", wait_until="networkidle")
+                page.evaluate(SETTLE)
+                found["csp"] = page.evaluate("() => window.__evalCsp ?? []")
+                found["design"] = page.evaluate("() => clankerDesignLint().findings.filter(f => f.severity === 'error').map(f => `${f.rule} ${f.selector}`)")
+                found["markup"] = page.evaluate("() => typeof clankerMarkupLint === 'function' ? clankerMarkupLint().findings.filter(f => f.severity === 'error').map(f => `${f.rule} ${f.selector}`) : []")
+            except Exception as e:
+                found["scorer"].append(str(e).splitlines()[0])
+            finally:
+                context.close()
             result["views"].append({"width": width, "scheme": scheme, **found})
-            context.close()
     finally:
         server.shutdown()
     result["counts"] = {k: sum(len(v[k]) for v in result["views"]) for k in KINDS}
@@ -139,11 +140,11 @@ def run_agent(task, arm, n, out, kit, args):
 
 
 def table(rows):
-    lines = ["| Task | Arm | Run | Errors | Console | CSP | Design | Markup |", "| --- | --- | --- | --- | --- | --- | --- | --- |"]
+    lines = ["| Task | Arm | Run | Errors | Console | CSP | Design | Markup | Scorer |", "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
     for r in rows:
         s = r["score"]
         c = s.get("counts") or dict.fromkeys(KINDS, "-")
-        lines.append(f"| {r.get('task', s['dir'])} | {r.get('arm', '')} | {r.get('run', '')} | {'missing' if s['missing'] else s['errors']} | {c['console']} | {c['csp']} | {c['design']} | {c['markup']} |")
+        lines.append(f"| {r.get('task', s['dir'])} | {r.get('arm', '')} | {r.get('run', '')} | {'missing' if s['missing'] else s['errors']} | {c['console']} | {c['csp']} | {c['design']} | {c['markup']} | {c['scorer']} |")
     return "\n".join(lines)
 
 
@@ -155,6 +156,7 @@ def cmd_run(args):
     if args.tasks:
         tasks = [t for t in tasks if t.stem in args.tasks.split(",")]
     rows = [run_agent(t, arm, n, out, kit, args) for t in tasks for arm in args.arms.split(",") for n in range(1, args.runs + 1)]
+    (out / "report.json").write_text(json.dumps(rows, indent=2))
     for row, s in zip(rows, score_dirs([r["dir"] for r in rows])):
         row["score"] = s
     (out / "report.json").write_text(json.dumps(rows, indent=2))
@@ -173,6 +175,7 @@ def cmd_selftest(_):
     want = ["console", "csp", "design"] + (["markup"] if MARKUP_LINT.exists() else [])
     checks = [("good fixture has 0 errors", good["errors"] == 0, good.get("counts"))]
     checks += [(f"bad fixture has {k} errors in every view", all(v[k] for v in bad["views"]), bad.get("counts")) for k in want]
+    checks.append(("bad fixture counts its inline script once under the CSP header and meta", all(len(v["csp"]) == 1 for v in bad["views"]), bad.get("counts")))
     for name, ok, counts in checks:
         print(("ok   " if ok else "FAIL ") + name + ("" if ok else f" {counts}"))
     if not all(ok for _, ok, _ in checks):

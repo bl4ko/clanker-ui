@@ -45,6 +45,7 @@ MUTATIONS = {
         (('class="row"', 'class="row autosave fullscreen-toggle step-2"'), [("warn", CLASSES)] * 3),
         (('class="row"', 'class="row top-bar text-block items-list left-panel"'), [("warn", CLASSES)] * 4),
         (('class="row"', 'class="row text-red-500 items-center p-1/2 text-2xl"'), [("error", CLASSES)] * 4),
+        (('class="row"', 'class="row text-muted-foreground bg-primary border-input ring-ring/50"'), [("error", CLASSES)] * 4),
     ],
 }
 IGNORED = [

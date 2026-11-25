@@ -1,8 +1,10 @@
 (() => {
   const RULES = ["unknown-slot", "part-outside-root", "unknown-attr", "bad-value", "kit-added", "missing-group", "unknown-class"]
   const KIT_JS = /\/(clanker-ui(?:-[a-z]+)?)(\.min)?\.js(?:[?#]|$)/
+  const TW_PREFIX = "[mp][xytblrse]?|w|h|min-w|min-h|max-w|max-h|size|gap|gap-x|gap-y|space-x|space-y|text|bg|border|rounded|shadow|font|leading|tracking|grid-cols|col-span|row-span|items|justify|z|top|bottom|left|right|inset|opacity|ring|overflow|translate|rotate|scale|duration|basis|line-clamp|aspect"
+  const TOKEN = new RegExp(`^-?(?:${TW_PREFIX})-([a-z-]+)(?:/\\d+)?$`)
   const TW_VALUE = "(?:\\d+(?:\\.\\d+)?(?:/\\d+)?|px|full|auto|screen|fit|min|max|none|\\d?xs|sm|md|lg|\\d?xl|base|center|start|end|between|around|evenly|stretch|baseline|white|black|transparent|[a-z]+-\\d{2,3})"
-  const TAILWIND = new RegExp(`^[a-z-]+:|\\[|^-?(?:[mp][xytblrse]?|w|h|min-w|min-h|max-w|max-h|size|gap|gap-x|gap-y|space-x|space-y|text|bg|border|rounded|shadow|font|leading|tracking|grid-cols|col-span|row-span|items|justify|z|top|bottom|left|right|inset|opacity|ring|overflow|translate|rotate|scale|duration|basis|line-clamp|aspect)-${TW_VALUE}$|^(?:flex|grid|hidden|block|inline-flex|inline-block|truncate|absolute|relative|fixed|sticky|uppercase|italic|underline|rounded|shadow|border)$`)
+  const TAILWIND = new RegExp(`^[a-z-]+:|\\[|^-?(?:${TW_PREFIX})-${TW_VALUE}$|^(?:flex|grid|hidden|block|inline-flex|inline-block|truncate|absolute|relative|fixed|sticky|uppercase|italic|underline|rounded|shadow|border)$`)
   const LATE = "markup-lint.js ran after the page was parsed, so it has no copy of the authored HTML: load it with add_init_script (Playwright) or as a classic <script src> in <head> before the kit module, not as a module or with defer"
   const SHARED = new Set(T.shared)
   const SIBLING = {}
@@ -176,7 +178,8 @@
         for (const c of el.classList) {
           if (names.has(c) || seen.has(c) || /^lucide(-|$)/.test(c)) continue
           seen.add(c)
-          if (TAILWIND.test(c)) report("unknown-class", "error", el, `class "${c}" matches no rule in the page stylesheets and looks like a Tailwind utility; the kit has no Tailwind: use kit parts and attributes, or a rule in app.css`)
+          const token = TOKEN.exec(c)?.[1]
+          if (TAILWIND.test(c) || (token && getComputedStyle(document.documentElement).getPropertyValue("--" + token).trim())) report("unknown-class", "error", el, `class "${c}" matches no rule in the page stylesheets and looks like a Tailwind utility; the kit has no Tailwind: use kit parts and attributes, or a rule in app.css`)
           else report("unknown-class", "warn", el, `class "${c}" matches no rule in the page stylesheets; add a rule in app.css or remove it`)
         }
       }

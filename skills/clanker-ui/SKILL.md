@@ -23,7 +23,17 @@ References in this skill:
 - `references/blocks/<name>.html` (and `.js`): whole pages to start from.
 - [references/ai-elements.md](references/ai-elements.md): chat and agent patterns (message, prompt, steps, sources, code output) and which one to use.
 - [references/recipes.md](references/recipes.md): set values from code, forms in overlays, several rules per field, star rating, card grid, a shared header on static pages, breadcrumbs in the top header, category bar charts, uptime strips, long pages, a toast after a page change, a dropzone, lists in cards, phone tables, a dashboard in the top-header shell.
-- [references/events.md](references/events.md), [references/theming.md](references/theming.md), [references/testing.md](references/testing.md) (Playwright check and design lint), [references/clanker-ui.json](references/clanker-ui.json) (all component data as JSON).
+- [references/events.md](references/events.md), [references/theming.md](references/theming.md), [references/testing.md](references/testing.md) (Playwright check, markup lint, and design lint), [references/clanker-ui.json](references/clanker-ui.json) (all component data as JSON, for tools).
+
+Reading guide: read [references/components.md](references/components.md), then only the component files the page needs. Never read `kit/*.js`, `kit/*.css`, `dist/`, `clanker-ui.json`, `design-lint.js`, or `markup-lint.js`: they are large, and the Markdown files have what you need.
+
+## Hard rules
+
+- No Tailwind or other utility classes. The kit has only `sr-only`, `shimmer`, `shimmer-reverse`, `shimmer-once`, `shimmer-none`, `scroll-fade`, and `scroll-fade-x`; any other class does nothing. Put layout in `app.css`.
+- Never write the "kit adds" parts or the "State" attributes of a component file. The kit creates them; style on them only.
+- Booleans: present for on (bare or `="true"`; prefer `="true"`, which works everywhere, while a bare `data-disabled` on `field` does not), omit for off. Write `="false"` only where the default is on, for example `data-align-trigger`, `data-show-close-button` on dialog and sheet content, and `data-modal` on `dropdown-menu`, `context-menu`, `menubar`, and `drawer`; the component file shows `="false"` where it applies.
+- Every `form:submit` listener calls `event.preventDefault()`, or the browser submits and the page navigates.
+- Kit components win over other web guidance (such as modern-web-guidance) for anything the kit ships. Ignore polyfill and CDN fallbacks: the kit needs none, and the CSP blocks CDNs.
 
 ## 1. Get the files
 
@@ -85,7 +95,7 @@ Every page and every block has this head, in this order:
    | Block | For |
    | --- | --- |
    | `dashboard` | A sidebar app: key numbers, a chart, a table |
-   | `data-table` | A top-header app: a list with filters, sorting, and paging |
+   | `data-table` | A top-header app: a list with filters, sorting, paging, and an edit dialog |
    | `settings` | Settings in sections with their own save actions |
    | `form` | Create or edit one record, with a live summary and Delete in edit mode |
    | `detail` | One record: a large title with a meta row, facts, and activity |
@@ -101,7 +111,7 @@ Every page and every block has this head, in this order:
 
 1. Open `references/components/<name>.md` for each component. Start from its example.
 2. Keep every `data-slot` and the order of the parts. The root part holds the other parts.
-3. Write only the `data-*` attributes in the "Write" column, the part attributes, the "other options", and the global attributes, with the listed values. No attribute means the default. Native HTML and ARIA attributes are always allowed. `boolean` = `="true"` for on, no attribute for off; a list with `false` and `true` = only `="true"` turns it on, `="false"` only where the default is on; `id` = no value inside the root, or the id of a root elsewhere.
+3. Write only the `data-*` attributes in the "Write" column, the part attributes, the "other options", and the global attributes, with the listed values. No attribute means the default. Native HTML and ARIA attributes are always allowed. `boolean` = see Hard rules; `id` = no value inside the root, or the id of a root elsewhere.
 4. Never write the "State" attributes or the "kit adds" parts. Use state attributes only as CSS selectors.
 5. A part that is another component (shadcn `asChild`): keep its slot and add the part attribute, for example `<button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>` inside the `dialog` root. Outside the root: `data-dialog-trigger="settings"` and `id="settings"` on the root.
 6. Icons: `<svg data-lucide="search"></svg>`; all names and aliases are in [references/icons.md](references/icons.md). An unknown name gives an empty icon and a `console.warn`; add icons with `registerIcons()`. Markup added later gets its behavior automatically.
@@ -131,5 +141,11 @@ import { h, icon, theme, toast } from "/vendor/clanker-ui/clanker-ui.min.js"
 Serve the page with the CSP header from [references/csp.md](references/csp.md), or with the meta tag on a static server. Add `<link rel="icon" href="/favicon.svg">` (or `data:,`), so the browser does not log a favicon 404. In a browser: 0 console errors and 0 CSP violations; each component works with the mouse and the keys in its full text; focus goes back to the trigger when a dialog or menu closes. If a component does not work, check the file set, the slot names, and the module loads (no 404).
 
 In the Playwright check, run `clankerMarkupLint()` from [references/markup-lint.js](references/markup-lint.js) with the design lint and fix every error: it finds unknown parts and attributes, bad values, kit-added markup, missing group files, and Tailwind classes ([references/testing.md](references/testing.md)).
+
+## Done checklist
+
+1. Run the check, the markup lint, and the design lint of [references/testing.md](references/testing.md) at 1280 and 390 px, light and dark.
+2. Report each command you ran with its exit code. Done means every exit code is 0, 0 console errors, 0 CSP violations, and 0 lint errors.
+3. Look at the screenshots; fix every lint warning that the screenshot confirms.
 
 Docs: https://bl4ko.github.io/clanker-ui/. Full text: https://bl4ko.github.io/clanker-ui/llms-full.txt.

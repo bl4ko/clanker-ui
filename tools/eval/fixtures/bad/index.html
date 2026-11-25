@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; require-trusted-types-for 'script'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Broken - Eval</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui.min.css">
+  <link rel="stylesheet" href="/vendor/clanker-ui/clanker-ui-a11y.min.css">
+  <link rel="stylesheet" href="/app.css">
+  <link rel="modulepreload" href="/vendor/clanker-ui/clanker-ui-core.min.js">
+  <script src="/vendor/clanker-ui/clanker-ui-theme.min.js"></script>
+  <script type="module" src="/vendor/clanker-ui/clanker-ui.min.js"></script>
+  <script type="module" src="/app.js"></script>
+  <script>window.inline = true</script>
+</head>
+<body>
+  <main data-slot="page">
+    <div data-slot="page-header">
+      <h1 data-slot="page-title">Profile</h1>
+      <p data-slot="page-description" class="flex gap-4 text-sm">Your name as others see it.</p>
+    </div>
+    <div data-slot="card">
+      <form data-slot="form" id="profile-form">
+        <div data-slot="card-content">
+          <div data-slot="field" role="group">
+            <label data-slot="field-label" for="profile-name">Name</label>
+            <input data-slot="input" id="profile-name" name="name" required value="Ada Lovelace" data-error-value-missing="Enter your name.">
+          </div>
+        </div>
+        <div data-slot="card-footer">
+          <button type="submit" data-slot="button">Save</button>
+          <button type="button" data-slot="button" data-variant="outline" data-size="icon" data-dialog-trigger="help"><svg data-lucide="circle-help"></svg></button>
+          <button type="button" data-slot="button">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </main>
+  <div data-slot="dialog" id="help">
+    <dialog data-slot="dialog-content">
+      <div data-slot="dialog-header">
+        <h2 data-slot="dialog-title">Help</h2>
+        <p data-slot="dialog-description">Your name shows on your posts.</p>
+      </div>
+    </dialog>
+  </div>
+</body>
+</html>

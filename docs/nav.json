@@ -127,7 +127,7 @@
       "items": [
         {"title": "Blocks", "href": "/docs/blocks", "hidden": true},
         {"title": "Dashboard", "href": "/docs/blocks/dashboard", "description": "An app dashboard with a sidebar: section cards, an interactive area chart, and a data table with tabs (shadcn dashboard-01)."},
-        {"title": "Data Table", "href": "/docs/blocks/data-table", "description": "A task list with a top header: filter, faceted filters, column visibility, sorting, selection, row actions, pagination, the empty state, and status under the title on phones (shadcn tasks example)."},
+        {"title": "Data Table", "href": "/docs/blocks/data-table", "description": "A task list with a top header: filter, faceted filters, column visibility, sorting, selection, row actions with an edit dialog, pagination, the empty state, and status under the title on phones (shadcn tasks example)."},
         {"title": "Settings", "href": "/docs/blocks/settings", "description": "A settings page with section navigation and one form card per section: profile, notifications, appearance, and a danger zone."},
         {"title": "Form", "href": "/docs/blocks/form", "description": "A create and edit page with field sets, a date range, validation, a live summary and rules in a side column, and Delete in edit mode (?id=web)."},
         {"title": "Detail", "href": "/docs/blocks/detail", "description": "A record page with a breadcrumb, a header with actions, key numbers, a facts list, activity, and a confirmed delete."},

@@ -181,13 +181,14 @@ const read = row => [row.cells[1].textContent, row.querySelector('[data-slot="ba
 
 editDialog.addEventListener("dialog:open", event => {
   editing = event.detail.trigger.closest("tr")
-  editForm.reset()
   const [id, , title, status, priority] = read(editing)
   editDialog.querySelector('[data-slot="dialog-title"]').textContent = `Edit ${id}`
   document.getElementById("task-edit-title").value = title
   document.getElementById("task-edit-status-select").dataset.value = status
   document.getElementById("task-edit-priority-select").dataset.value = priority
 })
+
+editDialog.querySelector("dialog").addEventListener("close", () => editForm.reset())
 
 editForm.addEventListener("form:submit", event => {
   event.preventDefault()

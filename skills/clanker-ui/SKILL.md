@@ -31,7 +31,7 @@ Reading guide: read [references/components.md](references/components.md), then o
 
 - No Tailwind or other utility classes. The kit has only `sr-only`, `shimmer`, `shimmer-reverse`, `shimmer-once`, `shimmer-none`, `scroll-fade`, and `scroll-fade-x`; any other class does nothing. Put layout in `app.css`.
 - Never write the "kit adds" parts or the "State" attributes of a component file. The kit creates them; style on them only.
-- Booleans: `="true"` for on, omit for off. Write `="false"` only where the default is on (`data-align-trigger`, `data-modal`, `data-show-close-button` on dialog and sheet content).
+- Booleans: present for on (bare or `="true"`; prefer `="true"`, which works everywhere, while a bare `data-disabled` on `field` does not), omit for off. Write `="false"` only where the default is on, for example `data-align-trigger`, `data-show-close-button` on dialog and sheet content, and `data-modal` on `dropdown-menu`, `context-menu`, `menubar`, and `drawer`; the component file shows `="false"` where it applies.
 - Every `form:submit` listener calls `event.preventDefault()`, or the browser submits and the page navigates.
 - Kit components win over other web guidance (such as modern-web-guidance) for anything the kit ships. Ignore polyfill and CDN fallbacks: the kit needs none, and the CSP blocks CDNs.
 

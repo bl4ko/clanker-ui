@@ -66,7 +66,7 @@ uv run --no-project --with playwright python -I tools/behavior gate --quick --ba
 ## Browser support (Baseline)
 
 - Baseline Widely available: use freely in kit code.
-- Baseline Newly available: only behind `@supports` or a feature check, with a small dependency-free fallback that keeps the component working.
+- Baseline Newly available: new uses only behind `@supports` or a feature check, with a small dependency-free fallback that keeps the component working. Features the kit already relies on stay without a check (`popover`, `@property`).
 - Limited availability: never. Candidates and their triggers are in [ROADMAP.md](ROADMAP.md).
 - Generated shadcn CSS keeps its features when the component still works without them (`scroll-fade` has no fade in Firefox).
 

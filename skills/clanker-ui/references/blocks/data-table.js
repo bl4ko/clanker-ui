@@ -82,6 +82,10 @@ function render() {
   root.querySelector('[data-page="last"]').disabled = root.querySelector('[data-page="next"]').disabled = page >= pages - 1
   const filtered = filter.value.trim() !== "" || facets.status.size > 0 || facets.priority.size > 0
   reset.hidden = !filtered
+  for (const item of root.querySelectorAll("[data-filter] [data-value]")) {
+    const key = item.closest("[data-filter]").dataset.filter
+    item.querySelector('[data-slot="dropdown-menu-shortcut"]').textContent = rows.filter(row => row.dataset[key] === item.dataset.value).length
+  }
   syncSelection()
 }
 
@@ -177,6 +181,7 @@ const read = row => [row.cells[1].textContent, row.querySelector('[data-slot="ba
 
 editDialog.addEventListener("dialog:open", event => {
   editing = event.detail.trigger.closest("tr")
+  editForm.reset()
   const [id, , title, status, priority] = read(editing)
   editDialog.querySelector('[data-slot="dialog-title"]').textContent = `Edit ${id}`
   document.getElementById("task-edit-title").value = title

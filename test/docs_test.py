@@ -901,6 +901,40 @@ def check_blocks_data_table(t):
             fit[width] = page.locator('#tasks [data-slot="table-container"]').evaluate("el => [el.scrollWidth - el.clientWidth, (getComputedStyle(el).maskImage || getComputedStyle(el).webkitMaskImage).includes('gradient')]")
         assert fit[926][0] <= 0 and fit[1024][0] <= 0, ("the task table fits the desktop preview and lg widths", fit)
         assert fit[700][0] > 0 and fit[700][1], ("a table that scrolls shows the scroll hint", fit)
+    if not t.mobile:
+        page.locator("#task-view [data-dropdown-menu-trigger]").click()
+        page.locator('#task-view [data-value="priority"]').click()
+        page.keyboard.press("Escape")
+    edited = page.locator("#tasks tbody tr", has=page.locator('[aria-label="Actions for TASK-6699"]'))
+    other = page.locator("#tasks tbody tr", has=page.locator('[aria-label="Actions for TASK-2858"]'))
+    title = page.locator("#task-edit-title")
+    save = page.locator('#task-edit [type="submit"]')
+
+    def edit(row):
+        row.locator("[data-dropdown-menu-trigger]").click()
+        page.get_by_role("menuitem", name="Edit").click()
+        page.wait_for_selector('#task-edit [data-slot="dialog-content"][data-open]')
+
+    edit(other)
+    title.fill("")
+    save.click()
+    page.wait_for_function("() => document.querySelector('#task-edit-title').getAttribute('aria-invalid') === 'true'")
+    page.keyboard.press("Escape")
+    page.wait_for_selector('#task-edit [data-slot="dialog-content"]:not([open])', state="attached")
+    edited.locator('[data-slot="checkbox"]').click()
+    edit(edited)
+    assert title.get_attribute("aria-invalid") != "true" and page.locator('#task-edit [data-slot="field-error"]:visible').count() == 0, "a new edit starts without the errors of the last one"
+    assert title.input_value() == "I'll transmit the wireless JBOD capacitor, that should hard drive the SSD feed!"
+    assert [page.locator(f"#task-edit-{k}-select").get_attribute("data-value") for k in ("status", "priority")] == ["backlog", "medium"]
+    title.fill("Ship the edit dialog")
+    page.locator("#task-edit-status").click()
+    page.get_by_role("option", name="Done").click()
+    save.click()
+    page.wait_for_selector('#task-edit [data-slot="dialog-content"]:not([open])', state="attached")
+    assert edited.get_attribute("data-status") == "done" and "Ship the edit dialog" in edited.inner_text()
+    assert edited.locator('[data-slot="checkbox"]').get_attribute("data-checked") is not None and edited.get_attribute("data-state") == "selected"
+    assert edited.locator('td[data-column="priority"]').evaluate("c => c.hidden") == (not t.mobile), "a hidden column stays hidden after an edit"
+    assert page.locator('[data-filter="status"] [data-value="done"] [data-slot="dropdown-menu-shortcut"]').text_content() == "5"
 
 
 def check_blocks_tables_fit(t):

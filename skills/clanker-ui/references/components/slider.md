@@ -14,7 +14,7 @@ Group `forms`. Needs `core`. CSS and JS.
 ### Slider
 
 ```html
-<div data-slot="slider" data-orientation="horizontal|vertical" data-large-step="10">
+<div data-slot="slider" data-orientation="horizontal" data-large-step="10">
   <input type="range" min="0" max="100" step="5" value="25" name="min" aria-label="Minimum">
   <input type="range" min="0" max="100" step="5" value="75" name="max" aria-label="Maximum">
 </div>

@@ -24,6 +24,51 @@ with sync_playwright() as p:
 - A page without an icon link makes the browser request `/favicon.ico`; on a static server that 404 is a console error and fails the check. Add `<link rel="icon" href="/favicon.svg">` with a real file, or `<link rel="icon" href="data:,">` for no icon (`img-src data:` is in the CSP).
 - A `form:submit` that the app does not cancel navigates (native submit). In a check of a static page, the listener must call `event.preventDefault()`.
 
+# Markup lint
+
+[markup-lint.js](markup-lint.js) checks the authored markup against the component catalog. It is plain JavaScript without dependencies, the catalog is inside the file, and it does not change the page. Load it like the design lint, but before the page loads: `context.add_init_script(path=...)` (Node: `context.addInitScript({ path })`). It keeps a copy of the HTML as written, taken when the document is parsed and before the kit module runs, and `clankerMarkupLint()` checks that copy. Loaded later with `page.evaluate(source)`, it checks the live DOM and skips `kit-added`. `clankerMarkupLint({ live: true })` checks the live DOM too (markup that the app builds with `h()`).
+
+`clankerMarkupLint(options)` returns `{ findings: [{ rule, severity, selector, message }] }`, like `clankerDesignLint`. `options.rules` runs only the named rules (`clankerMarkupLint.rules` lists all).
+
+| Rule | Severity | What it finds | Fix |
+| --- | --- | --- | --- |
+| `unknown-slot` | error | A `data-slot` that no component has. | The part names in `components/<name>.md`. |
+| `part-outside-root` | error | A part whose behavior needs its root (`dialog-content`, `select-item`, `tabs-trigger`, ...) outside that root and not linked to it by id. | Put it inside the root, or give the root an `id` and point to it. |
+| `unknown-attr` | error | A kit attribute on a part that does not take it: a `data-variant` or `data-size` where the part has none, an attribute of another part of the component, an unknown `data-<component>-` name of its component, or a typo of a valid name. Other `data-*` attributes are app data and pass. | The Write column and the options of the component file. |
+| `bad-value` | error | A value that is not in the list, a value that is not a number, `="false"` or a value on a `boolean`, a bare attribute where only `="true"` turns it on (`data-disabled` on `field`), an `id` that no element has. | The listed values; `="true"` for on, no attribute for off. |
+| `kit-added` | error | A part or a state attribute that the kit writes (`switch-thumb`, `data-state`, `data-open`), written in the HTML. | Remove it; style on the state attribute instead. |
+| `missing-group` | error | A component whose group module is not loaded, readable and `.min` files mixed, or `clanker-ui.min.js` with a group file. | The file sets in `SKILL.md`, step 2. |
+| `unknown-class` | error, warn | A class that no rule in the page stylesheets matches: error when it looks like a Tailwind utility (`mt-4`, `w-full`, `md:flex`), warning otherwise. | Kit parts and attributes, or a rule in `app.css`. |
+
+During development, `<script src="/markup-lint.js"></script>` in the `<head>` (a classic script before the kit module) logs each finding once after `load` as `clanker-ui markup: <rule> <selector>: <message>` (`console.error` or `console.warn`), so the console check above fails on it. Do not ship it.
+
+Run both lints in one check:
+
+```python
+import pathlib
+from playwright.sync_api import sync_playwright
+
+DESIGN = pathlib.Path("design-lint.js").read_text()
+
+with sync_playwright() as p:
+    for engine in (p.chromium, p.firefox, p.webkit):
+        browser = engine.launch()
+        for scheme in ("light", "dark"):
+            for width, height in ((1280, 800), (390, 844)):
+                context = browser.new_context(viewport={"width": width, "height": height}, color_scheme=scheme)
+                context.add_init_script(path="markup-lint.js")
+                page = context.new_page()
+                errors = []
+                page.on("console", lambda m: m.type == "error" and errors.append(m.text))
+                page.goto("http://127.0.0.1:8300/", wait_until="load")
+                page.evaluate(DESIGN)
+                findings = page.evaluate("() => [...clankerMarkupLint().findings, ...clankerDesignLint().findings]")
+                assert not errors, errors
+                assert not [f for f in findings if f["severity"] == "error"], findings
+                context.close()
+        browser.close()
+```
+
 # Design lint
 
 [design-lint.js](design-lint.js) finds design mistakes that a person sees in a screenshot: buttons of two sizes in one row, two primary buttons, cut text, a page wider than the phone, small targets, low contrast, colors that are not kit tokens, missing labels, skipped headings, edges that are almost aligned, a card with a large empty area, and controls that move after an interaction. It is plain JavaScript without dependencies. It does not change the page.

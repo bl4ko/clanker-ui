@@ -7,12 +7,13 @@ Group `layout`. Needs `core`, `overlays`. CSS and JS.
 | `sidebar` (root) | `data-collapsible` `icon`, `none`, `offcanvas`; `data-side` `bottom`, `left`, `right`, `top`; `data-state` `collapsed`, `expanded`; `data-variant` `floating`, `inset`, `sidebar` | `data-ending-style` boolean; `data-mobile` `closed`, `open`; `data-starting-style` boolean |
 | `sidebar-container` | `data-side` `left`, `right` |  |
 | `sidebar-menu-action` | `data-show-on-hover` boolean |  |
-| `sidebar-menu-button` | `data-active` `false`, `true`; `data-size` `default`, `lg`, `sm`; `data-tooltip` string; `data-variant` `default`, `outline` | `data-state` |
+| `sidebar-menu-button` | `data-active` boolean; `data-size` `default`, `lg`, `sm`; `data-tooltip` string; `data-variant` `default`, `outline` | `data-state` |
 | `sidebar-menu-skeleton` | `data-show-icon` boolean |  |
 | `sidebar-menu-sub-button` | `data-active` boolean; `data-size` `md`, `sm` | `data-state` |
 | `sidebar-separator` | `data-orientation` `horizontal`, `vertical` |  |
+| `sidebar-trigger` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 
-Other parts: `sidebar-content`, `sidebar-footer`, `sidebar-gap`, `sidebar-group`, `sidebar-group-action`, `sidebar-group-content`, `sidebar-group-label`, `sidebar-header`, `sidebar-inner`, `sidebar-input`, `sidebar-inset`, `sidebar-menu`, `sidebar-menu-badge`, `sidebar-menu-item`, `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-rail`, `sidebar-trigger`, `sidebar-wrapper`.
+Other parts: `sidebar-content`, `sidebar-footer`, `sidebar-gap`, `sidebar-group`, `sidebar-group-action`, `sidebar-group-content`, `sidebar-group-label`, `sidebar-header`, `sidebar-inner`, `sidebar-input`, `sidebar-inset`, `sidebar-menu`, `sidebar-menu-badge`, `sidebar-menu-item`, `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-rail`, `sidebar-wrapper`.
 
 Other options named in the docs: `data-mobile` `closed`, `open`.
 
@@ -24,7 +25,7 @@ Events: `sidebar:open` `{ mobile }`; `sidebar:close` `{ mobile }`.
 
 ```html
 <div data-slot="sidebar-wrapper" id="app">
-  <div data-slot="sidebar" data-side="left" data-variant="sidebar|floating|inset" data-collapsible="offcanvas|icon|none">
+  <div data-slot="sidebar" data-side="left" data-variant="sidebar" data-collapsible="offcanvas">
     <div data-slot="sidebar-gap"></div>
     <div data-slot="sidebar-container">
       <div data-slot="sidebar-inner">
@@ -48,6 +49,8 @@ Events: `sidebar:open` `{ mobile }`; `sidebar:close` `{ mobile }`.
   <main data-slot="sidebar-inset"><button data-slot="sidebar-trigger"></button>...</main>
 </div>
 ```
+
+`data-variant="sidebar|floating|inset"` and `data-collapsible="offcanvas|icon|none"` on the `sidebar`.
 
 - Parts: `sidebar-group-action`, `sidebar-group-content`, `sidebar-menu-button` (`data-variant="outline"`, `data-size="sm|lg"`, `data-active`), `sidebar-menu-action` (`data-show-on-hover`), `sidebar-menu-skeleton` (`data-show-icon`), `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-menu-sub-button` (`data-active`), `sidebar-input`, `sidebar-separator`.
 - `data-state="expanded|collapsed"` on the `sidebar` is the first state (default `expanded`); a state in `localStorage` wins.

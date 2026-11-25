@@ -6,7 +6,7 @@ Group `forms`. Needs `core`. CSS and JS.
 | --- | --- | --- |
 | `toggle` (root) | `data-size` `default`, `lg`, `sm`; `data-variant` `default`, `outline` | `data-state` `off`, `on` |
 
-Other options named in the docs: `data-name` any.
+Other options named in the docs: `data-name` string.
 
 Events: `toggle:change` `{ pressed, value }`.
 
@@ -15,11 +15,13 @@ Events: `toggle:change` `{ pressed, value }`.
 ### Toggle and Toggle Group
 
 ```html
-<button type="button" data-slot="toggle" data-variant="outline" data-size="sm|lg" aria-pressed="false">Bold</button>
-<div data-slot="toggle-group" data-type="single|multiple" data-variant="outline" data-size="sm" data-spacing="2|0|1|3|4|6|8" data-orientation="horizontal|vertical" data-value="bold,italic" data-name="format" data-required data-disabled>
+<button type="button" data-slot="toggle" data-variant="outline" data-size="sm" aria-pressed="false">Bold</button>
+<div data-slot="toggle-group" data-type="single" data-variant="outline" data-size="sm" data-spacing="2" data-orientation="horizontal" data-value="bold,italic" data-name="format" data-required="true" data-disabled="true">
   <button type="button" data-slot="toggle-group-item" data-value="bold" aria-label="Bold"><svg data-lucide="bold"></svg></button>
 </div>
 ```
+
+`data-size="sm|lg"` on the `toggle`. `data-type="single|multiple"`, `data-size="sm|lg"`, `data-spacing="0|1|2|3|4|6|8"`, and `data-orientation="horizontal|vertical"` on the `toggle-group`.
 
 A `toggle` gets `tabindex="0"` like the Base UI toggle. The kit keeps `data-state="on|off"` on `toggle` and `toggle-group-item` in sync with `aria-pressed`.
 

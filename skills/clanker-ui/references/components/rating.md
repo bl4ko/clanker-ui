@@ -2,9 +2,9 @@
 
 Group `core`. Needs none. CSS only.
 
-Other parts: `rating` (root).
-
-Other options named in the docs: `data-size` `sm`.
+| Part | Write | State |
+| --- | --- | --- |
+| `rating` (root) | `data-size` `sm` |  |
 
 ## Full text
 

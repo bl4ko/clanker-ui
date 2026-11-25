@@ -4,7 +4,7 @@ Group `chat`. Needs `core`. CSS only.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `bubble` (root) | `data-align` `end`; `data-variant` `ghost`, `muted` |  |
+| `bubble` (root) | `data-align` `end`; `data-variant` `default`, `destructive`, `ghost`, `muted`, `outline`, `secondary`, `tinted` |  |
 | `bubble-reactions` | `data-align` `end`, `start`; `data-side` `bottom`, `top` |  |
 
 Other parts: `bubble-content`, `bubble-group`.

@@ -115,6 +115,11 @@ func TestCatalogExamples(t *testing.T) {
 		{`data-size="sm"`, `data-size="huge"`},
 		{`data-value="apple" data-label`, `data-valu="apple" data-label`},
 		{`data-slot="select-trigger"`, `data-slot="select-trigger" onclick="x()"`},
+		{`data-slot="select-content"`, `data-slot="select-content" data-state="open"`},
+		{`data-slot="select-trigger"`, `data-slot="select-trigger"><span data-slot="select-icon"></span`},
+		{`data-slot="select"`, `data-slot="select" data-required="false"`},
+		{`data-slot="select-content"`, `data-slot="select-content" data-align-trigger`},
+		{`data-slot="select-content"`, `data-slot="select-content" data-side-offset="near"`},
 	} {
 		for _, c := range cat.Components {
 			if c.Name != "select" {
@@ -132,77 +137,188 @@ func TestCatalogExamples(t *testing.T) {
 }
 
 func exampleErrors(cat *catalog, g *groupTable, c catComponent) []string {
+	errs := markupErrors(cat, g, c.Example, c.Options, nil)
+	if strings.Contains(c.Example, "<!--") || regexp.MustCompile(`(?i)<(script|style)\b`).MatchString(c.Example) {
+		errs = append(errs, "has a comment, script, or style element")
+	}
+	return errs
+}
+
+func markupErrors(cat *catalog, g *groupTable, src string, own catAttrs, seen func(string) bool) []string {
+	if seen == nil {
+		seen = func(string) bool { return false }
+	}
 	var errs []string
 	fail := func(f string, a ...any) { errs = append(errs, fmt.Sprintf(f, a...)) }
 	byName := map[string]catComponent{}
-	for _, o := range cat.Components {
-		byName[o.Name] = o
-	}
 	partAttrs := catAttrs{}
 	for _, o := range cat.Components {
+		byName[o.Name] = o
 		for k, v := range o.PartAttributes {
 			partAttrs[k] = v
 		}
 	}
-	if strings.Contains(c.Example, "<!--") || regexp.MustCompile(`(?i)<(script|style)\b`).MatchString(c.Example) {
-		fail("has a comment, script, or style element")
-	}
-	walkNodes(parseFragment(c.Example), func(n *htmlNode) {
-		slot, _ := n.attr("data-slot")
-		var part *catPart
-		owner := catComponent{}
-		if slot != "" {
-			o, ok := byName[g.component(slot)]
-			if !ok {
-				fail("unknown slot %q", slot)
-				return
+	var walk func(nodes []*htmlNode, up []catAttrs)
+	walk = func(nodes []*htmlNode, up []catAttrs) {
+		for _, n := range nodes {
+			next := up
+			slot, _ := n.attr("data-slot")
+			var part *catPart
+			if slot != "" {
+				o, ok := byName[g.component(slot)]
+				if !ok {
+					fail("unknown slot %q", slot)
+					continue
+				}
+				for i := range o.Parts {
+					if o.Parts[i].Slot == slot {
+						part = &o.Parts[i]
+					}
+				}
+				if part == nil {
+					fail("%q is not a part of %s", slot, o.Name)
+					continue
+				}
+				if part.KitAdds && !seen("slot:"+slot) {
+					fail("the kit adds %q; do not write it", slot)
+				}
+				next = append(slices.Clip(up), o.Options)
 			}
-			owner = o
-			for i := range o.Parts {
-				if o.Parts[i].Slot == slot {
-					part = &o.Parts[i]
+			for _, a := range n.attrs {
+				name, value := a[0], a[1]
+				if name == "style" || name == "srcdoc" || strings.HasPrefix(name, "on") {
+					fail("<%s %s> is not allowed under the CSP", n.tag, name)
+				}
+				if !strings.HasPrefix(name, "data-") || name == "data-slot" || strings.HasPrefix(name, "data-string-") {
+					continue
+				}
+				var spec any
+				ok := false
+				if part != nil {
+					spec, ok = part.Attributes[name]
+				}
+				if !ok {
+					spec, ok = cat.Global[name]
+				}
+				for i := len(next) - 1; i >= 0 && !ok; i-- {
+					spec, ok = next[i][name]
+				}
+				if !ok {
+					spec, ok = own[name]
+				}
+				if !ok {
+					spec, ok = partAttrs[name]
+				}
+				switch {
+				case !ok && seen(slot+" "+name):
+				case !ok && part != nil && slices.Contains(part.State, name):
+					fail("the kit sets %s on %q; do not write it", name, slot)
+				case !ok:
+					fail("<%s data-slot=%q> has unknown attribute %s", n.tag, slot, name)
+				default:
+					if e := valueError(spec, name, value); e != "" && !seen(slot+" "+name+"="+value) {
+						fail("<%s data-slot=%q> %s", n.tag, slot, e)
+					}
 				}
 			}
-			if part == nil {
-				fail("%q is not a part of %s", slot, o.Name)
-				return
-			}
+			walk(n.children, next)
 		}
-		for _, a := range n.attrs {
-			name, value := a[0], a[1]
-			if name == "style" || name == "srcdoc" || strings.HasPrefix(name, "on") {
-				fail("<%s %s> is not allowed under the CSP", n.tag, name)
-			}
-			if !strings.HasPrefix(name, "data-") || name == "data-slot" || strings.HasPrefix(name, "data-string-") {
-				continue
-			}
-			var spec any
-			ok := false
-			if part != nil {
-				spec, ok = part.Attributes[name]
-			}
-			if !ok {
-				spec, ok = cat.Global[name]
-			}
-			if !ok && part != nil {
-				spec, ok = owner.Options[name]
-			}
-			if !ok {
-				spec, ok = c.Options[name]
-			}
-			if !ok {
-				spec, ok = partAttrs[name]
-			}
-			if !ok {
-				fail("<%s data-slot=%q> has unknown attribute %s", n.tag, slot, name)
-				continue
-			}
-			if vals, isList := spec.([]string); isList && !slices.Contains(vals, value) {
-				fail("%s=%q, want one of %v", name, value, vals)
-			}
-		}
-	})
+	}
+	walk(parseFragment(src), nil)
 	return errs
+}
+
+func valueError(spec any, name, value string) string {
+	switch v := spec.(type) {
+	case []string:
+		if !slices.Contains(v, value) {
+			return fmt.Sprintf("%s=%q, want one of %q", name, value, v)
+		}
+	case string:
+		if _, err := strconv.ParseFloat(value, 64); v == "number" && err != nil {
+			return fmt.Sprintf("%s=%q is not a number", name, value)
+		}
+		if v == "boolean" && value != "" && value != "true" {
+			return fmt.Sprintf("%s=%q: write %s=\"true\" for on and leave it out for off", name, value, name)
+		}
+	}
+	return ""
+}
+
+func TestCatalogFences(t *testing.T) {
+	testCatalog(t)
+	_, cat, err := buildCatalogFrom("../..", false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	g, err := readGroups("groups.tsv")
+	if err != nil {
+		t.Fatal(err)
+	}
+	files := map[string]string{"README.md": readFile(t, "../../README.md")}
+	for _, c := range cat.Components {
+		files[c.Readme] = string(catFilesOut[c.Readme])
+	}
+	sources := map[string]bool{}
+	for _, m := range mdFence.FindAllStringSubmatch(files["README.md"], -1) {
+		sources[m[1]] = true
+	}
+	more, _ := filepath.Glob("../../docs/content/*/*/examples/*.html")
+	more = append(more, "../../demo/index.html")
+	ex, _ := filepath.Glob("examples/*.html")
+	for _, f := range append(more, ex...) {
+		sources[readFile(t, f)] = true
+	}
+	evidence := map[string]map[string]bool{}
+	for src := range sources {
+		walkNodes(parseFragment(src), func(n *htmlNode) {
+			slot, _ := n.attr("data-slot")
+			keys := []string{"slot:" + slot}
+			for _, a := range n.attrs {
+				keys = append(keys, slot+" "+a[0], slot+" "+a[0]+"="+a[1])
+			}
+			for _, k := range keys {
+				if evidence[k] == nil {
+					evidence[k] = map[string]bool{}
+				}
+				evidence[k][src] = true
+			}
+		})
+	}
+	check := func(fence string) []string {
+		return markupErrors(cat, g, fence, nil, func(key string) bool {
+			for src := range evidence[key] {
+				if !strings.Contains(src, fence) {
+					return true
+				}
+			}
+			return false
+		})
+	}
+	n := 0
+	for _, name := range sortedKeys(files) {
+		for _, m := range mdFence.FindAllStringSubmatch(files[name], -1) {
+			n++
+			for _, e := range check(m[1]) {
+				t.Errorf("%s html fence: %s", name, e)
+			}
+		}
+	}
+	if n < 100 {
+		t.Errorf("checked %d html fences", n)
+	}
+	for _, bad := range []string{
+		`<div data-slot="toggle-group" data-type="singel"></div>`,
+		`<div data-slot="toggle-group" data-typ="single"></div>`,
+		`<div data-slot="toggle-group" data-spacing="5"></div>`,
+		`<div data-slot="field" data-disabled></div>`,
+		`<button data-slot="switch"><span data-slot="switch-thumb"></span></button>`,
+		`<div data-slot="dialog"><dialog data-slot="dialog-content" data-open></dialog></div>`,
+	} {
+		if len(check(bad)) == 0 {
+			t.Errorf("the fence check accepts %s", bad)
+		}
+	}
 }
 
 func TestCatalogSchema(t *testing.T) {
@@ -334,6 +450,9 @@ func TestCatalogReferences(t *testing.T) {
 		if block := "```html\n" + c.Example + "\n```"; strings.HasPrefix(c.ExampleSource, "README.md#") && strings.Count(full, block) > strings.Count(readme, block) {
 			t.Errorf("llms-full.txt repeats the README example of %s", c.Name)
 		}
+	}
+	if !strings.Contains(string(catFilesOut[catalogCompDir+"/sonner.md"]), "see [Toast and Sonner](toast.md)") {
+		t.Error("sonner.md: the toast API link is not the local toast.md")
 	}
 	if strings.Contains(full, "Keyboard and focus:") {
 		t.Error("llms-full.txt repeats the README keyboard lines")
@@ -698,8 +817,8 @@ func TestCatalogValuelessAttrsAreBoolean(t *testing.T) {
 	}
 	check := func(where string, attrs catAttrs) {
 		for name, v := range attrs {
-			if flags[name] && v == "any" {
-				t.Errorf("%s: %s is a flag that the kit reads with flag(), but the catalog type is any, not boolean", where, name)
+			if flags[name] && v != "boolean" && fmt.Sprint(v) != "[false true]" {
+				t.Errorf("%s: %s is a flag that the kit reads with flag(), but the catalog type is %v, not boolean", where, name, v)
 			}
 		}
 	}
@@ -716,8 +835,19 @@ func TestCatalogValuelessAttrsAreBoolean(t *testing.T) {
 		for name, v := range c.Options {
 			got[c.Name+" option "+name] = v
 		}
+		for name, v := range c.PartAttributes {
+			got[name] = v
+		}
+		for _, p := range c.Parts {
+			for _, st := range p.State {
+				got[p.Slot+" state "+st] = "state"
+			}
+			if !p.KitAdds {
+				got[p.Slot] = "part"
+			}
+		}
 	}
-	for key, want := range map[string]any{"dropdown-menu-item data-inset": "boolean", "menubar-label data-inset": "boolean", "dropdown-menu-item data-disabled": "boolean", "table option data-label": "any"} {
+	for key, want := range map[string]any{"dropdown-menu-item data-inset": "boolean", "menubar-label data-inset": "boolean", "dropdown-menu-item data-disabled": "boolean", "table-cell data-label": "string", "field data-disabled": "[false true]", "sidebar-menu-button data-active": "boolean", "message-scroller data-auto-scroll": "boolean", "combobox data-disabled": "boolean", "dialog-content data-show-close-button": "[false true]", "bubble data-variant": "[default destructive ghost muted outline secondary tinted]", "code-block-copy-button data-variant": "[default destructive ghost link outline secondary]", "sidebar-trigger data-size": "[default icon icon-lg icon-sm icon-xs lg sm xs]", "calendar data-week-start": "[0 1 2 3 4 5 6]", "calendar data-start-year": "number", "table-head data-sort": "[ auto date number text]", "tooltip option data-delay": "number", "data-popover-trigger": "id", "data-sheet-trigger": "id", "field-separator state data-content": "state", "drawer-content state data-drawer-content": "state", "dropdown-menu-checkbox-item data-value": "string", "popover-anchor": "part"} {
 		if fmt.Sprint(got[key]) != fmt.Sprint(want) {
 			t.Errorf("%s: type %v, want %v", key, got[key], want)
 		}

@@ -10,7 +10,7 @@ Group `overlays`. Needs `core`. CSS and JS.
 
 Other parts: `alert-dialog` (root), `alert-dialog-description`, `alert-dialog-footer`, `alert-dialog-header`, `alert-dialog-media`, `alert-dialog-title`.
 
-Part attributes: `data-alert-dialog-action` boolean; `data-alert-dialog-cancel` boolean; `data-alert-dialog-trigger` boolean.
+Part attributes: `data-alert-dialog-action` boolean; `data-alert-dialog-cancel` boolean; `data-alert-dialog-trigger` id.
 
 Events: `alert-dialog:open` `{ trigger }`; `alert-dialog:close` `{ reason }` (cancelable).
 

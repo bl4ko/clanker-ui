@@ -7,6 +7,8 @@ START = "/"
 
 HERE = pathlib.Path(__file__).resolve().parent
 LINT = (HERE.parent / "skills/clanker-ui/references/design-lint.js").read_text()
+MARKUP_FILE = HERE.parent / "skills/clanker-ui/references/markup-lint.js"
+BLOCKS = sorted(p.stem for p in (HERE.parent / "skills/clanker-ui/references/blocks").glob("*.html"))
 KNOWN = {rule: list(selectors) for rule, selectors in json.loads((HERE / "lint/known.json").read_text()).items()}
 
 COMPONENTS = ["button", "button-group", "accordion", "dialog", "tabs"]
@@ -151,6 +153,7 @@ def check_pages_every_page(t):
         page.set_viewport_size({"width": 390, "height": 844})
     if t.engine == "firefox":
         t.expect_console(r"Layout was forced before the page was fully loaded")
+    page.context.add_init_script(path=str(MARKUP_FILE))
     errors = []
     for href in locs:
         open_link(t, href)
@@ -158,8 +161,17 @@ def check_pages_every_page(t):
         assert "not ported yet" not in page.locator('[data-docs="main"]').inner_text(), href
         assert page.locator('link[rel="alternate"][type="text/markdown"]').count() == 1, href
         assert page.locator('link[rel="describedby"]').count() == 1, href
-        errors += design_lint(t, href)
+        errors += design_lint(t, href) + markup_lint(t, href)
+    for name in BLOCKS:
+        href = f"{base_path(t)}/blocks/{name}/"
+        response = page.goto(origin(t) + href, wait_until="load")
+        assert response is not None and response.status == 200, href
+        errors += markup_lint(t, href)
     assert errors == [], errors
+
+
+def markup_lint(t, href):
+    return [(href, f["rule"], f["severity"], f["selector"], f["message"]) for f in t.page.evaluate("() => clankerMarkupLint().findings")]
 
 
 def design_lint(t, href):

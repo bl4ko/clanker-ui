@@ -28,13 +28,13 @@ Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clan
 ### Questionnaire
 
 ```html
-<form data-slot="questionnaire" data-shortcuts="letters|numbers" data-default-item="direction">
+<form data-slot="questionnaire" data-shortcuts="letters" data-default-item="direction">
   <div data-slot="questionnaire-progress" data-template="Step {current} of {total}"></div>
-  <fieldset data-slot="questionnaire-item" name="direction" data-required data-multiple>
+  <fieldset data-slot="questionnaire-item" name="direction" data-required="true" data-multiple="true">
     <legend data-slot="questionnaire-title">Question</legend>
     <p data-slot="questionnaire-description">Help text</p>
     <div data-slot="questionnaire-choices">
-      <label data-slot="questionnaire-choice" data-value="a" data-default-checked>Label<span data-slot="questionnaire-choice-description">More</span></label>
+      <label data-slot="questionnaire-choice" data-value="a" data-default-checked="true">Label<span data-slot="questionnaire-choice-description">More</span></label>
       <input data-slot="questionnaire-input" aria-label="Other answer">
     </div>
     <p data-slot="questionnaire-error"></p>
@@ -45,6 +45,8 @@ Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clan
   </div>
 </form>
 ```
+
+`data-shortcuts="letters|numbers"` on the `questionnaire`.
 
 One item at a time. The kit builds the native radio or checkbox, the indicator, and the shortcut hint (the input, the choice, and the hint carry `data-type`, `data-shortcut`, `data-checked` or `data-unchecked`, and `data-invalid` while the item is invalid; a required single-choice radio is `required` until a text answer is given; the action buttons default to `data-variant` `outline` (previous, skip) or `default` (next, submit) and `data-size="default"`), validates before Next and Submit, and fills the progress text and error message. Keys: letters or numbers pick, Up and Down move, Left and Right change the item, Enter continues, Ctrl or Cmd+Enter continues from anywhere. Skipped items are left out of the form data.
 

@@ -132,7 +132,7 @@ def check_attachment(t):
     link = section.locator("#attachment-images [data-slot=attachment-trigger]").first
     assert link.get_attribute("href") == "demo/assets/g4-workspace.svg" and link.get_attribute("aria-label") == "Open workspace.png"
     count = section.locator("#attachment-images [data-slot=attachment]").count()
-    section.locator("#attachment-images [data-attachment-remove]").first.click()
+    section.locator("#attachment-images [data-demo-remove]").first.click()
     assert section.locator("#attachment-images [data-slot=attachment]").count() == count - 1
     trigger = section.locator("#attachment-preview")
     trigger.click()
@@ -143,7 +143,7 @@ def check_attachment(t):
     assert section.locator("#attachment-status").inner_text() == "Copied the link to research-summary.pdf."
     ring = section.locator("#attachment-trigger [data-slot=attachment]").evaluate("e => getComputedStyle(e).boxShadow")
     assert ring != "none", ring
-    section.locator("#attachment-trigger [data-attachment-remove]").focus()
+    section.locator("#attachment-trigger [data-demo-remove]").focus()
     tab(t)
     preview = section.locator("#attachment-preview")
     assert preview.evaluate("e => e === document.activeElement && e.matches(':focus-visible')")
@@ -1729,10 +1729,10 @@ def check_attachment_a11y(t):
     page = t.page
     section = t.section("attachment")
     t.a11y()
-    action = section.locator("#attachment-images [data-attachment-remove]").first
+    action = section.locator("#attachment-images [data-demo-remove]").first
     chip = lambda: action.evaluate("e => getComputedStyle(e).backgroundColor")
     assert chip() == resolve(page, "var(--background)"), "the remove button over an image needs an opaque chip"
-    assert page.evaluate(ON_SURFACE, ["#attachment-images [data-attachment-remove]", "color"])[0] >= 3
+    assert page.evaluate(ON_SURFACE, ["#attachment-images [data-demo-remove]", "color"])[0] >= 3
     if not t.mobile:
         action.hover()
         page.wait_for_function("([e, c]) => getComputedStyle(e).backgroundColor === c", arg=[action.element_handle(), resolve(page, "var(--muted)")], timeout=2000)

@@ -13,13 +13,11 @@ Other parts: `chart-stat`.
 
 Kit adds: `chart-footer`, `chart-legend`, `chart-legend-item`, `chart-legend-label`, `chart-live`, `chart-plot`, `chart-probe`, `chart-stat-change`, `chart-stat-description`, `chart-stat-header`, `chart-stat-label`, `chart-stat-period`, `chart-stat-trend`, `chart-stat-value`, `chart-svg`, `chart-table`, `chart-table-toggle`, `chart-tooltip`, `chart-tooltip-extra`, `chart-tooltip-indicator`, `chart-tooltip-items`, `chart-tooltip-label`, `chart-tooltip-name`, `chart-tooltip-value`.
 
-Other options named in the docs: `data-part` any.
-
 Events: `chart:active` `{ index, key, row }`; `chart:legend` `{ key, visible, hidden }`; `chart:view` `{ view }`.
 
 Exports (readable set: `clanker-ui-chart.js`; `.min` set: `clanker-ui-chart.min.js`):
 
-- `chart(element, data, options) → { update(data, options), destroy() }`: In `clanker-ui-chart.js`, see [Chart](https://github.com/bl4ko/clanker-ui#chart).
+- `chart(element, data, options) → { update(data, options), destroy() }`: In `clanker-ui-chart.js`, see [Chart](chart.md).
 - `sparkline(element, values, options?) → { update, destroy }`
 - `statTile(element, options) → { update(options), destroy() }`
 
@@ -77,7 +75,7 @@ view.destroy()
 - A label inside a fill uses `--chart-ink-light` (`#fff`) or `--chart-ink-dark` (`#0b0b0b`), whichever has the higher WCAG contrast against the fill. Override both on `[data-slot="chart"]`.
 - Charts redraw on `theme:change` while they are in the document. A removed chart closes its tooltip, is not tracked, and redraws when it is inserted again. A destroyed chart never redraws.
 - Fixed labels (chart names, legend, table button, table header, summary sentences) come from `strings` (see [Localization](https://github.com/bl4ko/clanker-ui#localization)); `data-string-<key>` on the chart element or an ancestor overrides one chart.
-- Parts: `chart-plot`, `chart-svg`, `chart-tooltip` (`-label`, `-items`, `-item`, `-indicator`, `-name`, `-value`), `chart-legend`, `chart-legend-item`, `chart-table`, `chart-table-toggle`, `chart-footer`, `chart-live`. SVG marks use `data-part`. The kit sets `data-sparkline` on `chart` (a sparkline), `data-shape="rect|line|circle|square|diamond"` and `data-dashed` on `chart-legend-indicator`, and `data-total` on `chart-tooltip-item` (the total row of a stacked chart).
+- Parts: `chart-plot`, `chart-svg`, `chart-tooltip` (`-label`, `-items`, `-item`, `-indicator`, `-name`, `-value`), `chart-legend`, `chart-legend-item`, `chart-table`, `chart-table-toggle`, `chart-footer`, `chart-live`. The kit sets `data-part` on the SVG marks. The kit sets `data-sparkline` on `chart` (a sparkline), `data-shape="rect|line|circle|square|diamond"` and `data-dashed` on `chart-legend-indicator`, and `data-total` on `chart-tooltip-item` (the total row of a stacked chart).
 
 #### Reference lines and time axis
 

@@ -101,7 +101,7 @@ Every page and every block has this head, in this order:
 
 1. Open `references/components/<name>.md` for each component. Start from its example.
 2. Keep every `data-slot` and the order of the parts. The root part holds the other parts.
-3. Write only the `data-*` attributes in the "Write" column, the part attributes, the "other options", and the global attributes, with the listed values. No attribute means the default. Native HTML and ARIA attributes are always allowed. `boolean` = present or absent; `id` = no value inside the root, or the id of a root elsewhere; `any` = see the full text.
+3. Write only the `data-*` attributes in the "Write" column, the part attributes, the "other options", and the global attributes, with the listed values. No attribute means the default. Native HTML and ARIA attributes are always allowed. `boolean` = `="true"` for on, no attribute for off; a list with `false` and `true` = only `="true"` turns it on, `="false"` only where the default is on; `id` = no value inside the root, or the id of a root elsewhere.
 4. Never write the "State" attributes or the "kit adds" parts. Use state attributes only as CSS selectors.
 5. A part that is another component (shadcn `asChild`): keep its slot and add the part attribute, for example `<button type="button" data-slot="button" data-variant="outline" data-dialog-trigger>` inside the `dialog` root. Outside the root: `data-dialog-trigger="settings"` and `id="settings"` on the root.
 6. Icons: `<svg data-lucide="search"></svg>`; all names and aliases are in [references/icons.md](references/icons.md). An unknown name gives an empty icon and a `console.warn`; add icons with `registerIcons()`. Markup added later gets its behavior automatically.
@@ -129,5 +129,7 @@ import { h, icon, theme, toast } from "/vendor/clanker-ui/clanker-ui.min.js"
 ## 8. Check the result
 
 Serve the page with the CSP header from [references/csp.md](references/csp.md), or with the meta tag on a static server. Add `<link rel="icon" href="/favicon.svg">` (or `data:,`), so the browser does not log a favicon 404. In a browser: 0 console errors and 0 CSP violations; each component works with the mouse and the keys in its full text; focus goes back to the trigger when a dialog or menu closes. If a component does not work, check the file set, the slot names, and the module loads (no 404).
+
+In the Playwright check, run `clankerMarkupLint()` from [references/markup-lint.js](references/markup-lint.js) with the design lint and fix every error: it finds unknown parts and attributes, bad values, kit-added markup, missing group files, and Tailwind classes ([references/testing.md](references/testing.md)).
 
 Docs: https://bl4ko.github.io/clanker-ui/. Full text: https://bl4ko.github.io/clanker-ui/llms-full.txt.

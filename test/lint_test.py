@@ -7,6 +7,19 @@ HERE = pathlib.Path(__file__).resolve().parent
 LINT_FILE = HERE.parent / "skills/clanker-ui/references/design-lint.js"
 LINT = LINT_FILE.read_text()
 KNOWN = {rule: list(selectors) for rule, selectors in json.loads((HERE / "lint/known.json").read_text()).items()}
+MARKUP_FILE = HERE.parent / "skills/clanker-ui/references/markup-lint.js"
+MARKUP_PAGE = "/test/lint/markup.html"
+DEV_SCRIPT = '<script src="/skills/clanker-ui/references/markup-lint.js"></script>'
+
+MUTATIONS = {
+    "unknown-slot": [(('data-slot="card-title"', 'data-slot="card-heading"'), "error", '#card-header > div[data-slot="card-heading"]')],
+    "part-outside-root": [(('<div data-slot="dialog" id="settings">', '<div id="settings">'), "error", "#settings-content")],
+    "unknown-attr": [(('data-orientation="horizontal"', 'data-orientaton="horizontal"'), "error", "#alerts-field")],
+    "bad-value": [(('data-variant="outline"', 'data-variant="primary"'), "error", "#open"), (('data-orientation="horizontal"', 'data-orientation="horizontal" data-disabled'), "error", "#alerts-field")],
+    "kit-added": [(('aria-label="Alerts"></button>', 'aria-label="Alerts"><span data-slot="switch-thumb"></span></button>'), "error", '#alerts > span[data-slot="switch-thumb"]'), (('id="settings-content"', 'id="settings-content" data-open'), "error", "#settings-content")],
+    "missing-group": [(('  <script type="module" src="/clanker-ui-overlays.min.js"></script>\n', ""), "error", "#settings")],
+    "unknown-class": [(('class="row"', 'class="row mt-4"'), "error", '#card-content'), (('class="row"', 'class="row fancy"'), "warn", '#card-content')],
+}
 
 BAD = {
     "button-size-mismatch": [("error", "#bad-size-sm"), ("error", "#bad-toggle-sm"), ("error", "#bad-search-group"), ("error", "#bad-native-sm")],
@@ -105,3 +118,64 @@ def check_lint_board_recipe(t):
     columns = t.page.locator("#board-recipe .board > [data-slot=card]").evaluate_all("cards => cards.map(c => Math.round(c.getBoundingClientRect().height))")
     assert len(columns) == 3 and (t.mobile or columns[0] > columns[1]), ("each column is as high as its cards", columns)
 
+
+
+def markup_page(t, mutation=None, dev=False):
+    def handle(route):
+        response = route.fetch()
+        body = response.text()
+        if mutation:
+            assert mutation[0] in body, mutation
+            body = body.replace(mutation[0], mutation[1], 1)
+        if dev:
+            body = body.replace("</title>", "</title>\n  " + DEV_SCRIPT, 1)
+        route.fulfill(response=response, body=body)
+
+    t.page.route("**" + MARKUP_PAGE, handle)
+    t.docs(MARKUP_PAGE)
+    t.page.unroute("**" + MARKUP_PAGE)
+    t.page.wait_for_function("() => document.querySelector('#alerts')?.dataset.state")
+
+
+def markup(t, options=None):
+    return [(f["rule"], f["severity"], f["selector"]) for f in t.page.evaluate("o => clankerMarkupLint(o).findings", options or {})]
+
+
+def check_markup_lint_good(t):
+    t.page.context.add_init_script(path=str(MARKUP_FILE))
+    markup_page(t)
+    assert t.page.evaluate("() => clankerMarkupLint.rules") == list(MUTATIONS)
+    assert t.page.evaluate("() => document.querySelector('#alerts').dataset.state") == "unchecked", "the kit ran before the lint"
+    assert markup(t) == [], "the authored snapshot predates the kit module"
+    assert markup(t, {"live": True}) == []
+    t.page.evaluate(MARKUP_FILE.read_text())
+    assert markup(t) == [], "a lint injected after load checks the live DOM"
+
+
+def check_markup_lint_mutations(t):
+    t.page.context.add_init_script(path=str(MARKUP_FILE))
+    for rule, cases in MUTATIONS.items():
+        for mutation, severity, selector in cases:
+            markup_page(t, mutation)
+            got = markup(t)
+            assert got == [(rule, severity, selector)], (rule, mutation, got)
+            assert all(f["message"] for f in t.page.evaluate("() => clankerMarkupLint().findings"))
+    markup_page(t, MUTATIONS["kit-added"][0][0])
+    assert markup(t, {"live": True}) == [], "the live DOM has the kit parts, so kit-added runs only on the snapshot"
+
+
+def check_markup_lint_dev(t):
+    logged = []
+    t.page.on("console", lambda m: m.text.startswith("clanker-ui markup:") and logged.append((m.type, m.text)))
+    t.expect_console(r"^console\.(error|warning): clanker-ui markup: ")
+    markup_page(t, MUTATIONS["unknown-class"][1][0], dev=True)
+    t.page.wait_for_function("() => document.readyState === 'complete'")
+    t.page.wait_for_timeout(100)
+    assert logged == [("warning", 'clanker-ui markup: unknown-class #card-content: class "fancy" matches no rule in the page stylesheets; add a rule in app.css or remove it')], logged
+
+
+def check_markup_lint_blocks(t):
+    t.page.context.add_init_script(path=str(MARKUP_FILE))
+    for name in sorted(p.stem for p in (HERE.parent / "skills/clanker-ui/references/blocks").glob("*.html")):
+        t.docs(f"/blocks/{name}")
+        assert markup(t) == [], name

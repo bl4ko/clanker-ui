@@ -14,7 +14,7 @@ Other parts: `button-group-text`.
 ### Button Group
 
 ```html
-<div data-slot="button-group" role="group" aria-label="Actions" data-orientation="horizontal|vertical">
+<div data-slot="button-group" role="group" aria-label="Actions" data-orientation="horizontal">
   <button type="button" data-slot="button" data-variant="outline">Archive</button>
   <div data-slot="button-group-separator" data-orientation="vertical" role="none"></div>
   <span data-slot="button-group-text">.com</span>

@@ -28,6 +28,8 @@ const (
 	catalogEvents  = "skills/clanker-ui/references/events.md"
 	catalogIcons   = "skills/clanker-ui/references/icons.md"
 	catalogLLMs    = "docs/llms-full.txt"
+	catalogLint    = "skills/clanker-ui/references/markup-lint.js"
+	catalogLintSrc = "tools/gen/markup-lint.js"
 	catalogExDir   = "tools/gen/examples"
 	catalogPattern = "docs/content/ai-elements"
 )
@@ -105,6 +107,7 @@ type catPart struct {
 	State      []string `json:"state,omitempty"`
 	StateVals  catAttrs `json:"stateValues,omitempty"`
 	css        map[string][]string
+	inner      bool
 }
 
 type catEvent struct {
@@ -218,6 +221,9 @@ var (
 	jsSetAttr   = regexp.MustCompile(`(?:setAttribute|toggleAttribute)\("(data-[a-z0-9-]+)"|dataset\.([a-zA-Z]+) *=[^=]`)
 	jsReadAttr  = regexp.MustCompile(`(?:hasAttribute|getAttribute)\("(data-[a-z0-9-]+)"\)`)
 	jsFlagAttr  = regexp.MustCompile(`\bflag\([^,()]+, "(data-[a-z0-9-]+)"\)`)
+	jsNotFalse  = regexp.MustCompile(`(?:hasAttribute\("(data-[a-z0-9-]+)"\)|(?:getAttribute|get)\("(data-[a-z0-9-]+)"\) !== "false"|dataset\.([a-zA-Z]+) !== "false")`)
+	jsReadVar   = regexp.MustCompile(`const (\w+) = [\w.?]+\.getAttribute\("(data-[a-z0-9-]+)"\)`)
+	jsBareAttr  = regexp.MustCompile(`\[(data-[a-z0-9-]+)\][^"'\x60]*["'\x60]`)
 	jsWroteAttr = regexp.MustCompile(`(?:setAttribute|toggleAttribute|removeAttribute)\("(data-[a-z0-9-]+)"|"(data-[a-z0-9-]+)": |dataset\.([a-zA-Z]+) *=[^=]`)
 	keyWord     = regexp.MustCompile(`\b(Keyboard|Keys|Up|Down|Enter|Escape|Esc|Space|Arrow(?:Up|Down|Left|Right)?|arrows?|Home|End|Page ?Up|Page ?Down|Backspace|Delete|F6|Shift\+F10|Ctrl|Cmd|Alt\+[A-Za-z]+|Shift\+[A-Za-z]+|Tab)\b`)
 	slugDrop    = regexp.MustCompile(`[^a-z0-9 _-]`)
@@ -496,6 +502,11 @@ type catalogBuild struct {
 	jsEvents   map[string]bool
 	listedPart map[string]bool
 	named      map[string]bool
+	fences     bool
+	inside     map[string]bool
+	outside    map[string]bool
+	cssOn      map[string]attrSet
+	jsBare     map[string]bool
 }
 
 func (b *catalogBuild) markupElem(n *htmlNode) {
@@ -523,11 +534,45 @@ func (b *catalogBuild) markupElem(n *htmlNode) {
 	}
 }
 
+func (b *catalogBuild) nesting(src string) {
+	var walk func(nodes []*htmlNode, up []string)
+	walk = func(nodes []*htmlNode, up []string) {
+		for _, n := range nodes {
+			next := up
+			if slot, _ := n.attr("data-slot"); slot != "" {
+				if c := b.t.component(slot); c != "" && c != slot {
+					b.inside[slot] = b.inside[slot] || slices.Contains(up, c)
+					b.outside[slot] = b.outside[slot] || !slices.Contains(up, c)
+				}
+				next = append(slices.Clip(up), b.t.component(slot))
+			}
+			walk(n.children, next)
+		}
+	}
+	walk(parseFragment(src), nil)
+}
+
 func (b *catalogBuild) markupHTML(src string) {
 	walkNodes(parseFragment(src), b.markupElem)
 }
 
+func (b *catalogBuild) fenceHTML(src string) {
+	if b.fences {
+		b.markupHTML(src)
+		return
+	}
+	walkNodes(parseFragment(src), func(n *htmlNode) {
+		if slot, _ := n.attr("data-slot"); b.t.component(slot) != "" {
+			b.markup[slot] = true
+		}
+	})
+}
+
 func buildCatalog(root string) (map[string][]byte, *catalog, error) {
+	return buildCatalogFrom(root, true)
+}
+
+func buildCatalogFrom(root string, fences bool) (map[string][]byte, *catalog, error) {
 	read := func(name string) (string, error) {
 		bs, err := os.ReadFile(filepath.Join(root, name))
 		return string(bs), err
@@ -567,7 +612,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	b := &catalogBuild{t: t, data: map[string]*compData{}, global: attrSet{}, markup: map[string]bool{}, defined: map[string]bool{}, made: map[string]bool{}, jsSet: map[string]bool{}, jsReadOnly: map[string]bool{}, flags: map[string]bool{}, cssBare: map[string]bool{}, cssValued: map[string]bool{}, cssSlots: map[string]bool{}, jsEvents: map[string]bool{}, listedPart: map[string]bool{}, named: map[string]bool{}}
+	b := &catalogBuild{t: t, data: map[string]*compData{}, global: attrSet{}, markup: map[string]bool{}, defined: map[string]bool{}, made: map[string]bool{}, jsSet: map[string]bool{}, jsReadOnly: map[string]bool{}, flags: map[string]bool{}, cssBare: map[string]bool{}, cssValued: map[string]bool{}, cssSlots: map[string]bool{}, jsEvents: map[string]bool{}, listedPart: map[string]bool{}, named: map[string]bool{}, inside: map[string]bool{}, outside: map[string]bool{}, cssOn: map[string]attrSet{}, jsBare: map[string]bool{}, fences: fences}
 	for _, c := range t.order {
 		b.data[c] = newCompData()
 	}
@@ -612,11 +657,27 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 			return nil, nil, err
 		}
 		examples[c] = strings.TrimRight(string(bs), "\n")
+		b.nesting(examples[c])
 		walkNodes(parseFragment(examples[c]), func(n *htmlNode) {
 			if s, _ := n.attr("data-slot"); s != "" {
 				b.markup[s] = true
 			}
 		})
+	}
+	docsExamples, err := filepath.Glob(filepath.Join(root, "docs", "content", "*", "*", "examples", "*.html"))
+	if err != nil {
+		return nil, nil, err
+	}
+	blocks, err := filepath.Glob(filepath.Join(root, "skills", "clanker-ui", "references", "blocks", "*.html"))
+	if err != nil {
+		return nil, nil, err
+	}
+	for _, f := range slices.Concat(docsExamples, blocks, []string{filepath.Join(root, "demo", "index.html")}) {
+		src, err := os.ReadFile(f)
+		if err != nil {
+			return nil, nil, err
+		}
+		b.nesting(string(src))
 	}
 	var nav struct {
 		Groups []struct {
@@ -715,6 +776,10 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 			}
 		}
 	}
+	if err := buttonParts(cat, sections); err != nil {
+		return nil, nil, err
+	}
+	resolveAny(cat)
 	if cat.Patterns, err = catalogPatterns(root, cat); err != nil {
 		return nil, nil, err
 	}
@@ -729,7 +794,7 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 		if full == "" {
 			return nil, nil, fmt.Errorf("%s: no README section", c.Name)
 		}
-		files[c.Readme] = []byte(componentFile(cat, c, full))
+		files[c.Readme] = []byte(localLinks(componentFile(cat, c, full), sections))
 	}
 	files[catalogEvents] = []byte(eventsMarkdown(cat))
 	kit, err := readKit("clanker-ui.js")
@@ -746,6 +811,13 @@ func buildCatalog(root string) (map[string][]byte, *catalog, error) {
 	}
 	files[catalogIcons] = []byte(icons)
 	files[catalogLLMs] = []byte(llmsFull(cat, sections))
+	lintSrc, err := read(catalogLintSrc)
+	if err != nil {
+		return nil, nil, err
+	}
+	if files[catalogLint], err = markupLint(lintSrc, cat); err != nil {
+		return nil, nil, err
+	}
 	files["README.md"] = []byte(readmeOut)
 	if err := docsRegions(root, cat, t, files); err != nil {
 		return nil, nil, err
@@ -930,6 +1002,76 @@ func iconsMarkdown(js, notices string) (string, error) {
 
 var patternSlot = regexp.MustCompile(`"data-slot":\s*"([a-z0-9-]+)"`)
 
+func resolveAny(cat *catalog) {
+	all := []catAttrs{cat.Global}
+	for _, c := range cat.Components {
+		all = append(all, c.Options, c.PartAttributes)
+		for _, p := range c.Parts {
+			all = append(all, p.Attributes)
+		}
+	}
+	kinds := map[string]map[string]any{}
+	for _, attrs := range all {
+		for name, v := range attrs {
+			if s, ok := v.(string); ok && s != "any" {
+				if kinds[name] == nil {
+					kinds[name] = map[string]any{}
+				}
+				kinds[name][s] = v
+			}
+		}
+	}
+	for _, c := range cat.Components {
+		for name, v := range c.Options {
+			if v == "any" && len(kinds[name]) == 1 {
+				for _, k := range kinds[name] {
+					c.Options[name] = k
+				}
+			}
+		}
+	}
+}
+
+const buttonPartsLead = "Parts that shadcn renders with `Button`"
+
+func buttonParts(cat *catalog, sections []mdSection) error {
+	var button catAttrs
+	parts := map[string]*catPart{}
+	for i := range cat.Components {
+		for j := range cat.Components[i].Parts {
+			p := &cat.Components[i].Parts[j]
+			parts[p.Slot] = p
+			if p.Slot == "button" {
+				button = p.Attributes
+			}
+		}
+	}
+	for _, s := range sections {
+		_, table, ok := strings.Cut(s.body, buttonPartsLead)
+		if !ok {
+			continue
+		}
+		for _, row := range mdTable(strings.SplitN(table, "\n\n", 3)[1]) {
+			for _, m := range mdCode.FindAllStringSubmatch(row[0], -1) {
+				p := parts[m[1]]
+				if p == nil {
+					return fmt.Errorf("README.md %q table: %s is not a part", buttonPartsLead, m[1])
+				}
+				if p.KitAdds {
+					continue
+				}
+				for _, name := range []string{"data-variant", "data-size"} {
+					if _, ok := p.Attributes[name]; !ok {
+						p.Attributes[name] = button[name]
+					}
+				}
+			}
+		}
+		return nil
+	}
+	return fmt.Errorf("README.md: no %q table", buttonPartsLead)
+}
+
 func catalogPatterns(root string, cat *catalog) ([]catPattern, error) {
 	owner := map[string]string{}
 	for _, c := range cat.Components {
@@ -1014,6 +1156,55 @@ func catalogPatterns(root string, cat *catalog) ([]catPattern, error) {
 		out = append(out, p)
 	}
 	return out, nil
+}
+
+type lintComp struct {
+	G string   `json:"g"`
+	N []string `json:"n,omitempty"`
+	J bool     `json:"j,omitempty"`
+	R bool     `json:"r,omitempty"`
+	O catAttrs `json:"o,omitempty"`
+}
+
+type lintSlot struct {
+	C string   `json:"c"`
+	R bool     `json:"r,omitempty"`
+	I bool     `json:"i,omitempty"`
+	K bool     `json:"k,omitempty"`
+	A catAttrs `json:"a,omitempty"`
+	S []string `json:"s,omitempty"`
+}
+
+func markupLint(src string, cat *catalog) ([]byte, error) {
+	head := "(() => {\n"
+	body, ok := strings.CutPrefix(src, head)
+	if !ok {
+		return nil, fmt.Errorf("%s: must start with %q", catalogLintSrc, head)
+	}
+	t := struct {
+		Global catAttrs            `json:"global"`
+		Kit    []string            `json:"kit"`
+		Shared []string            `json:"shared"`
+		Parts  catAttrs            `json:"parts"`
+		Comps  map[string]lintComp `json:"comps"`
+		Slots  map[string]lintSlot `json:"slots"`
+	}{cat.Global, sortedKeys(catalogKitGlobal), catalogOptionAttrs, catAttrs{}, map[string]lintComp{}, map[string]lintSlot{}}
+	for _, c := range cat.Components {
+		lc := lintComp{G: c.Group, N: c.Needs, J: c.JS, O: c.Options}
+		for _, p := range c.Parts {
+			lc.R = lc.R || p.Root
+			t.Slots[p.Slot] = lintSlot{C: c.Name, R: p.Root, I: p.inner && c.JS, K: p.KitAdds, A: p.Attributes, S: p.State}
+		}
+		for k, v := range c.PartAttributes {
+			t.Parts[k] = v
+		}
+		t.Comps[c.Name] = lc
+	}
+	table, err := json.Marshal(t)
+	if err != nil {
+		return nil, err
+	}
+	return []byte(head + "  const T = " + string(table) + "\n" + body), nil
 }
 
 func catalogJSON(cat *catalog) ([]byte, error) {
@@ -1196,6 +1387,49 @@ func (b *catalogBuild) scanJS(src string) {
 	for _, m := range jsFlagAttr.FindAllStringSubmatch(src, -1) {
 		b.flags[m[1]] = true
 	}
+	for _, m := range jsBareAttr.FindAllStringSubmatch(src, -1) {
+		b.jsBare[m[1]] = true
+	}
+	for _, m := range jsNotFalse.FindAllStringSubmatch(src, -1) {
+		if m[3] != "" {
+			b.jsBare[attrName(m[3])] = true
+		} else {
+			b.jsBare[m[1]+m[2]] = true
+		}
+	}
+	for _, m := range jsReadVar.FindAllStringSubmatch(src, -1) {
+		if strings.Contains(src, " "+m[1]+` !== "false"`) {
+			b.jsBare[m[2]] = true
+		}
+	}
+}
+
+func (b *catalogBuild) cssOnSlot(slot, compound string) {
+	for _, m := range cssAttrSel.FindAllStringSubmatch(compound, -1) {
+		if m[1] == "data-slot" || m[2] != "" && m[2] != "=" {
+			continue
+		}
+		if b.cssOn[slot] == nil {
+			b.cssOn[slot] = attrSet{}
+		}
+		b.cssOn[slot].add(m[1], m[3])
+	}
+}
+
+func (b *catalogBuild) presence(slot, name string) bool {
+	if css := b.cssOn[slot][name]; css != nil {
+		return css.values[""]
+	}
+	return b.flags[name] || b.jsBare[name] || b.cssBare[name] && !b.cssValued[name]
+}
+
+func (b *catalogBuild) boolNorm(out catAttrs, set attrSet, slot string) catAttrs {
+	for name, v := range out {
+		if vals, ok := v.([]string); ok && slices.Equal(vals, []string{"false", "true"}) && !set[name].values["false"] && b.presence(slot, name) {
+			out[name] = "boolean"
+		}
+	}
+	return out
 }
 
 func (b *catalogBuild) boolean(s attrSet) attrSet {
@@ -1276,7 +1510,29 @@ func dropContextArgs(s string) string {
 	return b.String()
 }
 
+var cssSlotCompound = regexp.MustCompile(`(?::where\()?\[data-slot="([a-z0-9-]+)"\]\)?((?:\[[^\]]*\]|:(?:where|not)\(\[[^\]]*\](?::not\(\[[^\]]*\]\))?\))*)`)
+
 func (b *catalogBuild) cssSelector(sel string) {
+	for _, m := range cssSlotCompound.FindAllStringSubmatch(sel, -1) {
+		b.cssOnSlot(m[1], m[2])
+	}
+	for rest := sel; ; {
+		subj := subjectCompound(rest)
+		if len(subj) == len(rest) {
+			break
+		}
+		rest = strings.TrimRight(rest[:len(rest)-len(subj)], " >+~\n\t")
+		cp := dropContextArgs(removePseudo(subjectCompound(rest), "not", "has"))
+		for _, s := range slotAttr.FindAllStringSubmatch(outsideParens(cp), -1) {
+			if c := b.t.component(s[1]); c != "" {
+				for _, m := range cssAttrSel.FindAllStringSubmatch(cp, -1) {
+					if slices.Contains(catalogOptionAttrs, m[1]) && m[2] == "=" {
+						b.data[c].part(s[1]).addEnum(m[1], m[3])
+					}
+				}
+			}
+		}
+	}
 	comp := dropContextArgs(removePseudo(subjectCompound(sel), "not", "has"))
 	var slots []string
 	for _, m := range slotAttr.FindAllStringSubmatch(outsideParens(comp), -1) {
@@ -1337,13 +1593,15 @@ func (b *catalogBuild) scanSection(s mdSection) {
 				}
 			}
 			for _, m := range mdFence.FindAllStringSubmatch(s.body, -1) {
-				b.markupHTML(m[1])
+				b.fenceHTML(m[1])
+				b.nesting(m[1])
 			}
 		}
 		return
 	}
 	for _, m := range mdFence.FindAllStringSubmatch(s.body, -1) {
-		b.markupHTML(m[1])
+		b.fenceHTML(m[1])
+		b.nesting(m[1])
 		for _, c := range s.comps {
 			if b.data[c].fence == "" && fenceExample(m[1], c, b.t) != "" {
 				b.data[c].fence = m[1]
@@ -1569,7 +1827,7 @@ func (b *catalogBuild) scanProse(s mdSection) {
 			list := labelList.MatchString(sentence)
 			for _, m := range mdCode.FindAllStringSubmatch(sentence, -1) {
 				am := attrCode.FindStringSubmatch(m[1])
-				if am == nil || old[m[1]] {
+				if am == nil || old[m[1]] || m[1] == am[1] && (b.markup[am[1]] || b.cssSlots[am[1]]) {
 					continue
 				}
 				for _, c := range comps {
@@ -1830,7 +2088,7 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 		Keyboard:       []string{},
 		KitAdds:        []string{},
 		Parts:          []catPart{},
-		PartAttributes: b.boolean(d.partAttr).idJSON(),
+		PartAttributes: b.boolNorm(b.boolean(d.partAttr).idJSON(), d.partAttr, ""),
 		Docs:           catalogSite + "/docs/components/" + page + "/",
 		DocsMarkdown:   catalogSite + "/" + catalogCompDir + "/" + c + ".md",
 		Readme:         catalogCompDir + "/" + c + ".md",
@@ -1869,19 +2127,24 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 	names := sortedKeys(slots)
 	sort.SliceStable(names, func(i, j int) bool { return names[i] == c && names[j] != c })
 	for _, s := range names {
-		p := catPart{Slot: s, Root: s == c, JS: b.defined[s], Attributes: catAttrs{}, State: []string{}}
+		p := catPart{Slot: s, Root: s == c, JS: b.defined[s], Attributes: catAttrs{}, State: []string{}, inner: b.inside[s] && !b.outside[s]}
 		if b.made[s] && !b.markup[s] || slices.Contains(catalogKitMade, s) {
 			p.KitAdds = true
 			comp.KitAdds = append(comp.KitAdds, s)
 		}
 		if a := d.parts[s]; a != nil && !p.KitAdds {
-			p.Attributes = b.boolean(a).json()
+			p.Attributes = b.boolNorm(b.boolean(a).json(), a, s)
 		}
 		for name := range d.state[s] {
 			if pc := b.t.partComponent(strings.TrimPrefix(name, "data-")); pc != "" && pc != c && b.data[pc].partAttr[name] != nil {
 				continue
 			}
 			if d.parts[s] == nil || d.parts[s][name] == nil {
+				p.State = append(p.State, name)
+			}
+		}
+		for name := range d.stateDoc[s] {
+			if (d.parts[s] == nil || d.parts[s][name] == nil) && d.state[s][name] == nil && b.global[name] == nil && !p.KitAdds {
 				p.State = append(p.State, name)
 			}
 		}
@@ -1908,7 +2171,7 @@ func (b *catalogBuild) component(c string, navTitle map[string]string, events []
 			opts[name] = a
 		}
 	}
-	comp.Options = b.boolean(opts).json()
+	comp.Options = b.boolNorm(b.boolean(opts).json(), opts, "")
 	seen := map[string]bool{}
 	for _, s := range d.sections {
 		for _, line := range b.sectionLines(s) {
@@ -2228,6 +2491,23 @@ func ownLines(blk, c string) string {
 		}
 	}
 	return head + "\n" + strings.Join(own, "") + "```" + tail
+}
+
+var repoAnchor = regexp.MustCompile(`\]\(` + regexp.QuoteMeta(catalogRepo) + `#([^)\s]+)\)`)
+
+func localLinks(text string, sections []mdSection) string {
+	files := map[string]string{}
+	for _, s := range sections {
+		if len(s.comps) > 0 {
+			files[s.slug] = s.comps[0]
+		}
+	}
+	return repoAnchor.ReplaceAllStringFunc(text, func(m string) string {
+		if f, ok := files[repoAnchor.FindStringSubmatch(m)[1]]; ok {
+			return "](" + f + ".md)"
+		}
+		return m
+	})
 }
 
 func (b *catalogBuild) fullText(c string, sections []mdSection) string {

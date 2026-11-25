@@ -1162,13 +1162,11 @@ type lintComp struct {
 	G string   `json:"g"`
 	N []string `json:"n,omitempty"`
 	J bool     `json:"j,omitempty"`
-	R bool     `json:"r,omitempty"`
 	O catAttrs `json:"o,omitempty"`
 }
 
 type lintSlot struct {
 	C string   `json:"c"`
-	R bool     `json:"r,omitempty"`
 	I bool     `json:"i,omitempty"`
 	K bool     `json:"k,omitempty"`
 	A catAttrs `json:"a,omitempty"`
@@ -1192,8 +1190,7 @@ func markupLint(src string, cat *catalog) ([]byte, error) {
 	for _, c := range cat.Components {
 		lc := lintComp{G: c.Group, N: c.Needs, J: c.JS, O: c.Options}
 		for _, p := range c.Parts {
-			lc.R = lc.R || p.Root
-			t.Slots[p.Slot] = lintSlot{C: c.Name, R: p.Root, I: p.inner && c.JS, K: p.KitAdds, A: p.Attributes, S: p.State}
+			t.Slots[p.Slot] = lintSlot{C: c.Name, I: p.inner && c.JS, K: p.KitAdds, A: p.Attributes, S: p.State}
 		}
 		for k, v := range c.PartAttributes {
 			t.Parts[k] = v

@@ -11,15 +11,45 @@ MARKUP_FILE = HERE.parent / "skills/clanker-ui/references/markup-lint.js"
 MARKUP_PAGE = "/test/lint/markup.html"
 DEV_SCRIPT = '<script src="/skills/clanker-ui/references/markup-lint.js"></script>'
 
+FORMS = '  <script type="module" src="/clanker-ui-forms.min.js"></script>\n'
+CLASSES = '#card-content'
 MUTATIONS = {
-    "unknown-slot": [(('data-slot="card-title"', 'data-slot="card-heading"'), "error", '#card-header > div[data-slot="card-heading"]')],
-    "part-outside-root": [(('<div data-slot="dialog" id="settings">', '<div id="settings">'), "error", "#settings-content")],
-    "unknown-attr": [(('data-orientation="horizontal"', 'data-orientaton="horizontal"'), "error", "#alerts-field")],
-    "bad-value": [(('data-variant="outline"', 'data-variant="primary"'), "error", "#open"), (('data-orientation="horizontal"', 'data-orientation="horizontal" data-disabled'), "error", "#alerts-field")],
-    "kit-added": [(('aria-label="Alerts"></button>', 'aria-label="Alerts"><span data-slot="switch-thumb"></span></button>'), "error", '#alerts > span[data-slot="switch-thumb"]'), (('id="settings-content"', 'id="settings-content" data-open'), "error", "#settings-content")],
-    "missing-group": [(('  <script type="module" src="/clanker-ui-overlays.min.js"></script>\n', ""), "error", "#settings")],
-    "unknown-class": [(('class="row"', 'class="row mt-4"'), "error", '#card-content'), (('class="row"', 'class="row fancy"'), "warn", '#card-content')],
+    "unknown-slot": [
+        (('data-slot="card-title"', 'data-slot="card-heading"'), [("error", '#card-header > div[data-slot="card-heading"]')]),
+        (('<main>', '<main>\n    <template><div data-slot="card-titel"></div></template>'), [("error", 'div[data-slot="card-titel"]')]),
+    ],
+    "part-outside-root": [(('<div data-slot="dialog" id="settings">', '<div id="settings">'), [("error", "#settings-content")])],
+    "unknown-attr": [
+        (('data-orientation="horizontal"', 'data-orientaton="horizontal"'), [("error", "#alerts-field")]),
+        (('<div data-slot="card-title">', '<div data-slot="card-title" data-variant="outline">'), [("error", '#card-header > div[data-slot="card-title"]')]),
+    ],
+    "bad-value": [
+        (('data-variant="outline"', 'data-variant="primary"'), [("error", "#open")]),
+        (('data-orientation="horizontal"', 'data-orientation="horizontal" data-disabled'), [("error", "#alerts-field")]),
+        (('data-dialog-trigger id="open"', 'data-dialog-trigger="nope" id="open"'), [("error", "#open")]),
+        (('id="settings-content"', 'id="settings-content" data-side-offset="near"'), [("error", "#settings-content")]),
+    ],
+    "kit-added": [
+        (('aria-label="Alerts"></button>', 'aria-label="Alerts"><span data-slot="switch-thumb"></span></button>'), [("error", '#alerts > span[data-slot="switch-thumb"]')]),
+        (('id="settings-content"', 'id="settings-content" data-open'), [("error", "#settings-content")]),
+    ],
+    "missing-group": [
+        (('  <script type="module" src="/clanker-ui-overlays.min.js"></script>\n', ""), [("error", "#settings")]),
+        ((FORMS, FORMS + '  <link rel="modulepreload" href="/clanker-ui-chart.js">\n'), [("error", "html")]),
+        ((FORMS, FORMS + '  <link rel="modulepreload" href="/clanker-ui.min.js">\n'), [("error", "html")]),
+    ],
+    "unknown-class": [
+        (('class="row"', 'class="row mt-4"'), [("error", CLASSES)]),
+        (('class="row"', 'class="row md:flex"'), [("error", CLASSES)]),
+        (('class="row"', 'class="row fancy"'), [("warn", CLASSES)]),
+        (('class="row"', 'class="row autosave fullscreen-toggle step-2"'), [("warn", CLASSES)] * 3),
+    ],
 }
+IGNORED = [
+    ('<main>', '<main>\n    <template><button type="button" data-slot="button" data-dialog-trigger="later"></button><div data-slot="dialog" id="later"></div></template>'),
+    ('class="row"', 'class="row mt-4" data-lint-ignore="unknown-class"'),
+    ('<div data-slot="card-title">', '<div data-slot="card-title" data-lint-ignore data-variant="outline">'),
+]
 
 BAD = {
     "button-size-mismatch": [("error", "#bad-size-sm"), ("error", "#bad-toggle-sm"), ("error", "#bad-search-group"), ("error", "#bad-native-sm")],
@@ -120,7 +150,7 @@ def check_lint_board_recipe(t):
 
 
 
-def markup_page(t, mutation=None, dev=False):
+def markup_page(t, mutation=None, dev=None):
     def handle(route):
         response = route.fetch()
         body = response.text()
@@ -128,7 +158,7 @@ def markup_page(t, mutation=None, dev=False):
             assert mutation[0] in body, mutation
             body = body.replace(mutation[0], mutation[1], 1)
         if dev:
-            body = body.replace("</title>", "</title>\n  " + DEV_SCRIPT, 1)
+            body = body.replace("</title>", "</title>\n  " + dev, 1)
         route.fulfill(response=response, body=body)
 
     t.page.route("**" + MARKUP_PAGE, handle)
@@ -147,30 +177,45 @@ def check_markup_lint_good(t):
     assert t.page.evaluate("() => clankerMarkupLint.rules") == list(MUTATIONS)
     assert t.page.evaluate("() => document.querySelector('#alerts').dataset.state") == "unchecked", "the kit ran before the lint"
     assert markup(t) == [], "the authored snapshot predates the kit module"
-    assert markup(t, {"live": True}) == []
-    t.page.evaluate(MARKUP_FILE.read_text())
-    assert markup(t) == [], "a lint injected after load checks the live DOM"
+    for mutation in IGNORED:
+        markup_page(t, mutation)
+        assert markup(t) == [], ("data-lint-ignore", mutation)
 
 
 def check_markup_lint_mutations(t):
     t.page.context.add_init_script(path=str(MARKUP_FILE))
     for rule, cases in MUTATIONS.items():
-        for mutation, severity, selector in cases:
+        for mutation, want in cases:
             markup_page(t, mutation)
             got = markup(t)
-            assert got == [(rule, severity, selector)], (rule, mutation, got)
+            assert got == [(rule, severity, selector) for severity, selector in want], (rule, mutation, got)
             assert all(f["message"] for f in t.page.evaluate("() => clankerMarkupLint().findings"))
-    markup_page(t, MUTATIONS["kit-added"][0][0])
-    assert markup(t, {"live": True}) == [], "the live DOM has the kit parts, so kit-added runs only on the snapshot"
+
+
+def check_markup_lint_late(t):
+    markup_page(t)
+    t.page.evaluate(MARKUP_FILE.read_text())
+    assert markup(t) == [("late-load", "error", "html")], "a lint injected after load has no authored snapshot"
+    late = t.page.evaluate("() => clankerMarkupLint().findings[0].message")
+    for script in (DEV_SCRIPT.replace("<script ", '<script type="module" '), DEV_SCRIPT.replace("<script ", "<script defer ")):
+        logged = dev_page(t, script)
+        assert logged == [("error", "clanker-ui markup: late-load html: " + late)], (script, logged)
+
+
+def dev_page(t, script, mutation=None):
+    logged = []
+    listener = lambda m: m.text.startswith("clanker-ui markup:") and logged.append((m.type, m.text))
+    t.page.on("console", listener)
+    t.expect_console(r"^console\.(error|warning): clanker-ui markup: ")
+    markup_page(t, mutation, script)
+    t.page.wait_for_function("() => document.readyState === 'complete'")
+    t.page.wait_for_timeout(100)
+    t.page.remove_listener("console", listener)
+    return logged
 
 
 def check_markup_lint_dev(t):
-    logged = []
-    t.page.on("console", lambda m: m.text.startswith("clanker-ui markup:") and logged.append((m.type, m.text)))
-    t.expect_console(r"^console\.(error|warning): clanker-ui markup: ")
-    markup_page(t, MUTATIONS["unknown-class"][1][0], dev=True)
-    t.page.wait_for_function("() => document.readyState === 'complete'")
-    t.page.wait_for_timeout(100)
+    logged = dev_page(t, DEV_SCRIPT, MUTATIONS["unknown-class"][2][0])
     assert logged == [("warning", 'clanker-ui markup: unknown-class #card-content: class "fancy" matches no rule in the page stylesheets; add a rule in app.css or remove it')], logged
 
 

@@ -1,12 +1,14 @@
 (() => {
   const RULES = ["unknown-slot", "part-outside-root", "unknown-attr", "bad-value", "kit-added", "missing-group", "unknown-class"]
   const KIT_JS = /\/(clanker-ui(?:-[a-z]+)?)(\.min)?\.js(?:[?#]|$)/
-  const TAILWIND = /[:[]|-\d|px|full|auto/
+  const TAILWIND = /^[a-z-]+:|\[|^-?(?:[mp][xytblrse]?|w|h|min-w|min-h|max-w|max-h|size|gap|gap-x|gap-y|space-x|space-y|text|bg|border|rounded|shadow|font|leading|tracking|grid-cols|col-span|row-span|items|justify|z|top|bottom|left|right|inset|opacity|ring|overflow|translate|rotate|scale|duration|basis|line-clamp|aspect)-|^(?:flex|grid|hidden|block|inline-flex|inline-block|truncate|absolute|relative|fixed|sticky|uppercase|italic|underline)$/
+  const LATE = "markup-lint.js ran after the page was parsed, so it has no copy of the authored HTML: load it with add_init_script (Playwright) or as a classic <script src> in <head> before the kit module, not as a module or with defer"
   const SHARED = new Set(T.shared)
   const SIBLING = {}
   for (const s of Object.values(T.slots)) for (const a of Object.keys(s.a || {})) (SIBLING[s.c] ??= new Set()).add(a)
   let snapshot = null
   if (document.readyState === "loading") document.addEventListener("readystatechange", () => (snapshot ??= document.documentElement.cloneNode(true)), { once: true })
+  const scope = r => [r, ...[...r.querySelectorAll("template")].flatMap(t => scope(t.content))]
 
   function sel(el) {
     const parts = []
@@ -28,7 +30,7 @@
 
   const list = spec => spec.map(v => (v === "" ? "(no value)" : v)).join(", ")
 
-  function problem(spec, name, value, root) {
+  function problem(spec, name, value, exists) {
     if (Array.isArray(spec)) {
       if (spec.includes(value)) return ""
       if (value === "" && spec.includes("true")) return `write ${name}="true"; the bare attribute does not turn it on here`
@@ -36,7 +38,7 @@
     }
     if (spec === "boolean" && value !== "" && value !== "true") return `${name}="${value}": write ${name}="true" for on and leave it out for off`
     if (spec === "number" && (value.trim() === "" || !Number.isFinite(Number(value)))) return `${name}="${value}" is not a number`
-    if (spec === "id" && value !== "" && !root.querySelector("#" + CSS.escape(value))) return `${name}="${value}": no element has this id`
+    if (spec === "id" && value !== "" && !exists(value)) return `${name}="${value}": no element has this id`
     return ""
   }
 
@@ -60,7 +62,7 @@
   }
 
   function kitLike(name, part, owners) {
-    if (SHARED.has(name) || SIBLING[part.c]?.has(name) || new RegExp(`^data-${part.c}-`).test(name)) return true
+    if (SHARED.has(name) || SIBLING[part.c]?.has(name)) return true
     const valid = [...Object.keys(part.a || {}), ...Object.keys(T.global), ...owners.flatMap(o => Object.keys(o || {}))]
     return valid.some(v => near(name, v))
   }
@@ -115,15 +117,21 @@
   }
 
   function lint(opts = {}) {
-    const live = !!opts.live || !snapshot
-    const root = live ? document.documentElement : snapshot
+    if (!snapshot) return { findings: [{ rule: "late-load", severity: "error", selector: "html", message: LATE }] }
+    const root = snapshot
+    const query = s => scope(root).flatMap(r => [...r.querySelectorAll(s)])
+    const exists = id => scope(root).some(r => r.querySelector("#" + CSS.escape(id)))
     const only = new Set(opts.rules || RULES)
     const findings = []
+    const skipped = (el, rule) => {
+      const tag = el?.closest("[data-lint-ignore]")
+      return !!tag && (!tag.dataset.lintIgnore.trim() || tag.dataset.lintIgnore.split(/\s+/).includes(rule))
+    }
     const report = (rule, severity, el, message) => {
-      if (only.has(rule)) findings.push({ rule, severity, selector: el ? sel(el) : "html", message })
+      if (only.has(rule) && !skipped(el, rule)) findings.push({ rule, severity, selector: el ? sel(el) : "html", message })
     }
     const used = new Map()
-    for (const el of root.querySelectorAll("[data-slot]")) {
+    for (const el of query("[data-slot]")) {
       const slot = el.getAttribute("data-slot")
       const part = T.slots[slot]
       if (!part) {
@@ -132,7 +140,7 @@
       }
       const comp = T.comps[part.c]
       if (comp.j && !used.has(part.c)) used.set(part.c, el)
-      if (part.k && !live) {
+      if (part.k) {
         report("kit-added", "error", el, `the kit adds ${slot}; remove it from the markup`)
         continue
       }
@@ -143,19 +151,19 @@
         const spec = part.a?.[name] ?? T.global[name] ?? owners.find(o => o?.[name] !== undefined)?.[name] ?? T.parts[name]
         if (spec === undefined) {
           if (part.s?.includes(name) || T.kit.includes(name)) {
-            if (!live) report("kit-added", "error", el, `the kit sets ${name} on ${slot}; use it only as a CSS selector`)
+            report("kit-added", "error", el, `the kit sets ${name} on ${slot}; use it only as a CSS selector`)
           } else if (kitLike(name, part, owners)) report("unknown-attr", "error", el, `${slot} has no attribute ${name}; see components/${part.c}.md`)
           continue
         }
-        const p = problem(spec, name, value, root)
+        const p = problem(spec, name, value, exists)
         if (p) report("bad-value", "error", el, p)
       }
     }
-    for (const el of root.querySelectorAll("*")) {
+    for (const el of query("*")) {
       if (el.hasAttribute("data-slot")) continue
       for (const { name, value } of el.attributes) {
         const spec = T.parts[name]
-        const p = spec === undefined ? "" : problem(spec, name, value, root)
+        const p = spec === undefined ? "" : problem(spec, name, value, exists)
         if (p) report("bad-value", "error", el, p)
       }
     }
@@ -163,7 +171,7 @@
     if (only.has("unknown-class")) {
       const names = known()
       const seen = new Set()
-      for (const el of root.querySelectorAll("[class]")) {
+      for (const el of query("[class]")) {
         for (const c of el.classList) {
           if (names.has(c) || seen.has(c) || /^lucide(-|$)/.test(c)) continue
           seen.add(c)
@@ -177,7 +185,7 @@
 
   lint.rules = RULES
   window.clankerMarkupLint = lint
-  if (document.currentScript)
+  if (document.currentScript || document.querySelector('script[src*="markup-lint"]'))
     addEventListener(
       "load",
       () => {

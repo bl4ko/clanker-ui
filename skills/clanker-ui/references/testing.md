@@ -26,19 +26,19 @@ with sync_playwright() as p:
 
 # Markup lint
 
-[markup-lint.js](markup-lint.js) checks the authored markup against the component catalog. It is plain JavaScript without dependencies, the catalog is inside the file, and it does not change the page. Load it like the design lint, but before the page loads: `context.add_init_script(path=...)` (Node: `context.addInitScript({ path })`). It keeps a copy of the HTML as written, taken when the document is parsed and before the kit module runs, and `clankerMarkupLint()` checks that copy. Loaded later with `page.evaluate(source)`, it checks the live DOM and skips `kit-added`. `clankerMarkupLint({ live: true })` checks the live DOM too (markup that the app builds with `h()`).
+[markup-lint.js](markup-lint.js) checks the authored markup against the component catalog. It is plain JavaScript without dependencies, the catalog is inside the file, and it does not change the page. Load it like the design lint, but before the page loads: `context.add_init_script(path=...)` (Node: `context.addInitScript({ path })`). It keeps a copy of the HTML as written, taken when the document is parsed and before the kit module runs, and `clankerMarkupLint()` checks that copy, also the contents of `<template>` elements. Markup that the app builds later with `h()` is not checked. Loaded after the page was parsed (`page.evaluate(source)`, a module, or `defer`), it has no copy and returns one `late-load` error that says how to load it.
 
-`clankerMarkupLint(options)` returns `{ findings: [{ rule, severity, selector, message }] }`, like `clankerDesignLint`. `options.rules` runs only the named rules (`clankerMarkupLint.rules` lists all).
+`clankerMarkupLint(options)` returns `{ findings: [{ rule, severity, selector, message }] }`, like `clankerDesignLint`. `options.rules` runs only the named rules (`clankerMarkupLint.rules` lists all). `data-lint-ignore` skips an element and its children, as in the design lint (`data-lint-ignore="unknown-class"` for one rule).
 
 | Rule | Severity | What it finds | Fix |
 | --- | --- | --- | --- |
 | `unknown-slot` | error | A `data-slot` that no component has. | The part names in `components/<name>.md`. |
 | `part-outside-root` | error | A part whose behavior needs its root (`dialog-content`, `select-item`, `tabs-trigger`, ...) outside that root and not linked to it by id. | Put it inside the root, or give the root an `id` and point to it. |
-| `unknown-attr` | error | A kit attribute on a part that does not take it: a `data-variant` or `data-size` where the part has none, an attribute of another part of the component, an unknown `data-<component>-` name of its component, or a typo of a valid name. Other `data-*` attributes are app data and pass. | The Write column and the options of the component file. |
+| `unknown-attr` | error | A kit attribute on a part that does not take it: a `data-variant` or `data-size` where the part has none, an attribute of another part of the component, or a typo of a valid name. Other `data-*` attributes are app data and pass. | The Write column and the options of the component file. |
 | `bad-value` | error | A value that is not in the list, a value that is not a number, `="false"` or a value on a `boolean`, a bare attribute where only `="true"` turns it on (`data-disabled` on `field`), an `id` that no element has. | The listed values; `="true"` for on, no attribute for off. |
 | `kit-added` | error | A part or a state attribute that the kit writes (`switch-thumb`, `data-state`, `data-open`), written in the HTML. | Remove it; style on the state attribute instead. |
 | `missing-group` | error | A component whose group module is not loaded, readable and `.min` files mixed, or `clanker-ui.min.js` with a group file. | The file sets in `SKILL.md`, step 2. |
-| `unknown-class` | error, warn | A class that no rule in the page stylesheets matches: error when it looks like a Tailwind utility (`mt-4`, `w-full`, `md:flex`), warning otherwise. | Kit parts and attributes, or a rule in `app.css`. |
+| `unknown-class` | error, warn | A class that no rule in the page stylesheets matches: error when it looks like a Tailwind utility (a `md:` variant, `[...]`, a utility prefix such as `mt-`, `w-`, `text-`, or `flex`), warning otherwise. | Kit parts and attributes, or a rule in `app.css`. |
 
 During development, `<script src="/markup-lint.js"></script>` in the `<head>` (a classic script before the kit module) logs each finding once after `load` as `clanker-ui markup: <rule> <selector>: <message>` (`console.error` or `console.warn`), so the console check above fails on it. Do not ship it.
 

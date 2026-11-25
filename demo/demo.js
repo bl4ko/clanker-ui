@@ -432,7 +432,7 @@ const calendarDemoToday = calendarDemoIso(new Date())
 
 document.getElementById("attachment")?.addEventListener("click", event => {
   const status = document.getElementById("attachment-status")
-  const remove = event.target.closest("[data-demo-remove]")
+  const remove = event.target.closest("[data-attachment-remove]")
   if (remove) {
     const attachment = remove.closest('[data-slot="attachment"]')
     status.textContent = `Removed ${attachment.querySelector('[data-slot="attachment-title"]')?.textContent ?? "the file"}.`

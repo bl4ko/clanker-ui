@@ -3823,17 +3823,18 @@ function dialogContentSubmit(event, content) {
 function dialogCommand(content, command, source) {
   const found = content instanceof HTMLDialogElement ? dialogLocate(content) : null
   if (found?.content !== content || !["show-modal", "close", "request-close"].includes(command)) return false
+  if (source && disabled(source)) return true
   if (command === "show-modal") dialogShow(found, source)
   else dialogHide(content, "close")
   return true
 }
 
-document.addEventListener("command", event => dialogCommand(event.target, event.command, event.source) && event.preventDefault(), true)
+document.addEventListener("command", event => dialogCommand(event.target, event.command.toLowerCase(), event.source) && event.preventDefault(), true)
 
 if (!("commandForElement" in HTMLButtonElement.prototype)) {
   document.addEventListener("click", event => {
     const button = event.target instanceof Element ? event.target.closest("button[commandfor]") : null
-    if (button && !event.defaultPrevented && !disabled(button)) dialogCommand(document.getElementById(button.getAttribute("commandfor")), button.getAttribute("command"), button)
+    if (button && (button.type === "button" || !button.form) && !event.defaultPrevented) dialogCommand(document.getElementById(button.getAttribute("commandfor")), button.getAttribute("command")?.toLowerCase(), button)
   })
 }
 

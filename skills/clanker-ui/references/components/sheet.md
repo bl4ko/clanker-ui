@@ -41,7 +41,6 @@ Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clan
 ### Dialog, Alert Dialog, Sheet, Drawer
 
 - A dialog, alert dialog, or sheet is a native `<dialog>` opened with `showModal()`: focus trap, Escape, scroll lock, inert page, focus returns to the trigger. The content has `data-state="open|closed"` and `data-open` or `data-closed`. The first tabbable element gets the focus; a pointer open shows no focus ring on a button. Like Base UI, a touch open focuses the dialog itself, so a text field does not open the on-screen keyboard.
-- `<button commandfor="<content id>" command="show-modal">` (or `command="close"`, `"request-close"`) also works, in every browser: the kit runs its own open and close, as with `data-dialog-trigger` and `data-dialog-close`.
 - A main-button click on `::backdrop` closes a dialog, sheet, or drawer, as Base UI (an alert dialog stays open): a held press closes after the release; a right or middle click, a press that starts or ends in the popup, and a touch drag do not close.
 - Dialog and sheet add a close button unless `data-show-close-button="false"`. `<div data-slot="dialog-footer" data-show-close-button>` adds an outline Close button. A `<form method="dialog">` inside closes with an exit animation.
 - Sheet: `data-side="top|right|bottom|left"` (default `right`). It opens with `data-starting-style` (set before `showModal()`, removed after one frame) and closes with `data-ending-style` until its transition ends, as Base UI; the backdrop follows the same attributes.

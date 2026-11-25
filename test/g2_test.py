@@ -1824,7 +1824,7 @@ COMMANDFOR = """([kind, selector]) => {
     button.textContent = label
     return button
   }
-  content.closest(`[data-slot="${kind}"]`).before(make("show-modal", `Command ${kind}`))
+  content.closest(`[data-slot="${kind}"]`).before(make("Show-Modal", `Command ${kind}`))
   ;(content.querySelector('[data-slot="drawer-content"]') ?? content).append(make("close", "Command close"), make("request-close", "Command request close"))
 }"""
 
@@ -1860,15 +1860,53 @@ def commandfor(t):
         assert reasons == ["close", "escape", "close"], (kind, reasons)
 
 
+COMMANDFOR_BLOCKED = """form => {
+  const content = document.querySelector("#dialog-demo dialog")
+  const button = document.createElement("button")
+  button.setAttribute("commandfor", content.id)
+  button.setAttribute("command", "show-modal")
+  button.id = "commandfor-blocked"
+  button.textContent = "Command blocked"
+  if (form) {
+    const host = document.createElement("form")
+    host.addEventListener("submit", e => e.preventDefault())
+    host.append(button)
+    content.parentElement.before(host)
+  } else {
+    button.type = "button"
+    button.setAttribute("aria-disabled", "true")
+    content.parentElement.before(button)
+  }
+}"""
+
+
+def commandfor_blocked(t, form):
+    page = t.page
+    if form:
+        t.expect_console("Buttons associated with forms that include command or commandfor attributes are ambiguous")
+    page.evaluate(COMMANDFOR_BLOCKED, form)
+    page.locator("#commandfor-blocked").evaluate("b => b.click()")
+    page.wait_for_timeout(100)
+    assert not page.evaluate("document.querySelector('#dialog-demo dialog').open"), "a submit button in a form" if form else "an aria-disabled button"
+    page.evaluate("() => { const b = document.getElementById('commandfor-blocked'); (b.form ?? b).remove() }")
+
+
 def check_dialog_commandfor(t):
     assert t.page.evaluate("'commandForElement' in HTMLButtonElement.prototype"), "the native command path needs invoker support"
     commandfor(t)
+    commandfor_blocked(t, False)
 
 
 def check_dialog_commandfor_fallback(t):
-    t.page.add_init_script("delete HTMLButtonElement.prototype.commandForElement; addEventListener('command', e => { e.preventDefault(); e.stopImmediatePropagation() }, true)")
+    t.page.add_init_script("""
+      delete HTMLButtonElement.prototype.commandForElement
+      Object.defineProperty(HTMLButtonElement.prototype, "type", { configurable: true, get() { const v = this.getAttribute("type")?.toLowerCase(); return v === "button" || v === "reset" ? v : "submit" }, set(v) { this.setAttribute("type", v) } })
+      addEventListener("command", e => { e.preventDefault(); e.stopImmediatePropagation() }, true)
+    """)
     t.page.reload(wait_until="load")
     commandfor(t)
+    commandfor_blocked(t, False)
+    commandfor_blocked(t, True)
 
 
 def check_toast_above_popover(t):

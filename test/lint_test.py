@@ -35,7 +35,7 @@ MUTATIONS = {
     ],
     "missing-group": [
         (('  <script type="module" src="/clanker-ui-overlays.min.js"></script>\n', ""), [("error", "#settings")]),
-        ((FORMS, FORMS + '  <link rel="modulepreload" href="/clanker-ui-chart.js">\n'), [("error", "html")]),
+        ((FORMS, FORMS + '  <link rel="modulepreload" href="/clanker-ui-chart.js">\n'), [("error", "html")] * 2),
         ((FORMS, FORMS + '  <link rel="modulepreload" href="/clanker-ui.min.js">\n'), [("error", "html")]),
     ],
     "unknown-class": [

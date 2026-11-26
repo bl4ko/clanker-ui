@@ -100,7 +100,9 @@
 
   function groups(used, report) {
     const urls = [...document.scripts].map(s => s.src).concat(performance.getEntriesByType("resource").map(e => e.name))
-    const files = new Set(urls.map(u => KIT_JS.exec(u)).filter(m => m && m[1] !== "clanker-ui-theme" && m[1] !== "clanker-ui-code").map(m => m[1] + (m[2] || "")))
+    const names = urls.map(u => KIT_JS.exec(u)).filter(m => m && m[1] !== "clanker-ui-theme").map(m => m[1] + (m[2] || ""))
+    const imports = f => (f.endsWith(".min") ? "clanker-ui-core.min" : /^clanker-ui-(chart|code)$/.test(f) ? "clanker-ui" : f)
+    const files = new Set(names.flatMap(f => [f, imports(f)]).filter(f => !f.startsWith("clanker-ui-code")))
     const min = [...files].filter(f => f.endsWith(".min"))
     if (min.length && min.length < files.size) report(null, `the page mixes readable and .min kit files (${[...files].sort().join(", ")}); use one set`)
     const bundle = files.has("clanker-ui") || files.has("clanker-ui.min")

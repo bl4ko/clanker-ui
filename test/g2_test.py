@@ -1813,6 +1813,102 @@ def check_dialog_disabled_trigger_focus(t):
     wait(page, "() => document.activeElement === document.querySelector('#dialog-demo [data-dialog-trigger]')")
 
 
+COMMANDFOR = """([kind, selector]) => {
+  const content = document.querySelector(selector)
+  content.id ||= `${kind}-commandfor`
+  const make = (command, label) => {
+    const button = document.createElement("button")
+    button.type = "button"
+    button.setAttribute("commandfor", content.id)
+    button.setAttribute("command", command)
+    button.textContent = label
+    return button
+  }
+  content.closest(`[data-slot="${kind}"]`).before(make("Show-Modal", `Command ${kind}`))
+  ;(content.querySelector('[data-slot="drawer-content"]') ?? content).append(make("close", "Command close"), make("request-close", "Command request close"))
+}"""
+
+
+def commandfor(t):
+    page = t.page
+    kinds = {"dialog": "#dialog-demo dialog", "alert-dialog": "#alert-dialog-basic", "sheet": "#sheet-demo dialog", "drawer": "#drawer-demo dialog"}
+    listen(page, *[f"{kind}:{name}" for kind in kinds for name in ("open", "close")])
+    locked = "() => getComputedStyle(document.documentElement).overflow === 'hidden'"
+    for kind, selector in kinds.items():
+        page.evaluate(COMMANDFOR, [kind, selector])
+        content = page.locator(selector)
+        opener = page.get_by_role("button", name=f"Command {kind}", exact=True)
+        state = f"() => document.querySelector('{selector}').dataset.state"
+        for close in ("close", "escape", "request-close"):
+            opener.scroll_into_view_if_needed()
+            opener.click()
+            wait(page, f"() => ({state})() === 'open' && document.querySelector('{selector}').matches(':modal')")
+            assert content.evaluate("e => e.hasAttribute('data-open')"), kind
+            assert page.evaluate(locked), (kind, "scroll lock")
+            opener.evaluate("b => b.click()")
+            page.wait_for_timeout(50)
+            assert page.evaluate(state) == "open", (kind, "no double open")
+            if close == "escape":
+                page.keyboard.press("Escape")
+            else:
+                content.get_by_role("button", name="Command request close" if close == "request-close" else "Command close", exact=True).click()
+            wait(page, f"() => !document.querySelector('{selector}').open && ({state})() === 'closed'")
+            wait(page, f"() => document.activeElement?.textContent === 'Command {kind}'")
+            assert not page.evaluate(locked), (kind, "scroll unlock")
+        assert len(events(page, f"{kind}:open")) == 3, (kind, events(page, f"{kind}:open"))
+        reasons = [e[1].get("reason") for e in events(page, f"{kind}:close")]
+        assert reasons == ["close", "escape", "close"], (kind, reasons)
+
+
+COMMANDFOR_BLOCKED = """form => {
+  const content = document.querySelector("#dialog-demo dialog")
+  const button = document.createElement("button")
+  button.setAttribute("commandfor", content.id)
+  button.setAttribute("command", "show-modal")
+  button.id = "commandfor-blocked"
+  button.textContent = "Command blocked"
+  if (form) {
+    const host = document.createElement("form")
+    host.addEventListener("submit", e => e.preventDefault())
+    host.append(button)
+    content.parentElement.before(host)
+  } else {
+    button.type = "button"
+    button.setAttribute("aria-disabled", "true")
+    content.parentElement.before(button)
+  }
+}"""
+
+
+def commandfor_blocked(t, form):
+    page = t.page
+    if form:
+        t.expect_console("Buttons associated with forms that include command or commandfor attributes are ambiguous")
+    page.evaluate(COMMANDFOR_BLOCKED, form)
+    page.locator("#commandfor-blocked").evaluate("b => b.click()")
+    page.wait_for_timeout(100)
+    assert not page.evaluate("document.querySelector('#dialog-demo dialog').open"), "a submit button in a form" if form else "an aria-disabled button"
+    page.evaluate("() => { const b = document.getElementById('commandfor-blocked'); (b.form ?? b).remove() }")
+
+
+def check_dialog_commandfor(t):
+    assert t.page.evaluate("'commandForElement' in HTMLButtonElement.prototype"), "the native command path needs invoker support"
+    commandfor(t)
+    commandfor_blocked(t, False)
+
+
+def check_dialog_commandfor_fallback(t):
+    t.page.add_init_script("""
+      delete HTMLButtonElement.prototype.commandForElement
+      Object.defineProperty(HTMLButtonElement.prototype, "type", { configurable: true, get() { const v = this.getAttribute("type")?.toLowerCase(); return v === "button" || v === "reset" ? v : "submit" }, set(v) { this.setAttribute("type", v) } })
+      addEventListener("command", e => { e.preventDefault(); e.stopImmediatePropagation() }, true)
+    """)
+    t.page.reload(wait_until="load")
+    commandfor(t)
+    commandfor_blocked(t, False)
+    commandfor_blocked(t, True)
+
+
 def check_toast_above_popover(t):
     page = t.page
     t.section("toast")

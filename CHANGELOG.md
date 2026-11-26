@@ -21,6 +21,10 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 - Catalog: `field-separator` `data-content`, `form-label` `data-error`, and `drawer-content` `data-drawer-content` are state attributes that the kit sets, not Write attributes. README examples have no `a|b` placeholder values; the values are in the text.
 - Component files: the toast API link points to `toast.md` instead of the README on GitHub.
 
+### Fixed
+
+- Dialog, alert dialog, sheet, and drawer: a `commandfor` button with `command="show-modal"`, `"close"`, or `"request-close"` runs the kit open and close (state, animations, scroll lock, focus return, events) instead of the native `showModal()`. Browsers without invoker commands get the same through the kit.
+
 ## 0.5.2 - 2026-11-23
 
 ### Changed

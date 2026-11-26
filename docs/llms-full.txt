@@ -215,7 +215,7 @@ Markup mirrors the DOM that shadcn v4 renders. If you know the shadcn JSX, you c
 | `data-orientation="horizontal\|vertical"` | Orientation. |
 | `data-side`, `data-align`, `data-side-offset`, `data-align-offset` | Requested popup placement. After open, `data-side` and `data-align` hold the resolved placement. |
 | `data-disabled` | Disabled non-form element. Form elements use `disabled`. |
-| `data-multiple`, `data-loop`, `data-required`, ... | Boolean options: present means on, `"false"` means off (as a JSX `false` prop renders). Also for `data-disabled` on items. |
+| `data-multiple`, `data-loop`, `data-required`, ... | Boolean options: write `="true"` for on and leave the attribute out for off. Write `="false"` only where the default is on (`data-modal`, `data-align-trigger`, `data-show-close-button`). The component files mark the attributes where only `="true"` turns them on; elsewhere a bare attribute works too. Also for `data-disabled` on items. |
 | `data-lucide="name"` | Icon placeholder. `<svg data-lucide="x"></svg>` is filled in place; `<i data-lucide="x">` is replaced by an `<svg>`. |
 | `data-typography` | Typography container (styles direct-child `h1`–`h4`, `p`, `blockquote`, `ul`, `ol`, links, inline `code`). |
 | `data-typography="h1\|h2\|h3\|h4\|p\|lead\|large\|small\|muted\|blockquote\|list\|inline-code\|table"` | One typography style on one element. `table` goes on a wrapper `div` around the `<table>`. |
@@ -239,7 +239,7 @@ When shadcn renders a part through another component (`asChild` or `render`), ke
 <select data-slot="native-select" data-date-picker-preset>...</select>
 ```
 
-A part attribute with a value targets a component elsewhere by id, for example a menu item that opens a dialog: `<div data-slot="dropdown-menu-item" data-dialog-trigger="dialog-settings">`.
+A trigger attribute with a value targets a component elsewhere by id (`data-dialog-trigger="settings"`, `data-alert-dialog-trigger="delete"`, `data-sheet-trigger="edit"`, `data-drawer-trigger="filters"`, `data-popover-trigger="menu"`, `data-dropdown-menu-trigger="actions"`), for example a menu item that opens a dialog: `<div data-slot="dropdown-menu-item" data-dialog-trigger="dialog-settings">`.
 
 Part attributes: `data-dialog-trigger`, `data-dialog-close`, `data-alert-dialog-trigger`, `data-alert-dialog-action`, `data-alert-dialog-cancel`, `data-sheet-trigger`, `data-sheet-close`, `data-drawer-trigger`, `data-drawer-close`, `data-popover-trigger`, `data-tooltip-trigger`, `data-hover-card-trigger`, `data-dropdown-menu-trigger`, `data-collapsible-trigger`, `data-combobox-trigger`, `data-date-picker-trigger`, `data-date-picker-content`, `data-date-picker-input`, `data-date-picker-preset`.
 
@@ -656,7 +656,7 @@ All 65 shadcn registry components, the chart module, and typography. The demo ha
 #### Button Group
 
 ```html
-<div data-slot="button-group" role="group" aria-label="Actions" data-orientation="horizontal|vertical">
+<div data-slot="button-group" role="group" aria-label="Actions" data-orientation="horizontal">
   <button type="button" data-slot="button" data-variant="outline">Archive</button>
   <div data-slot="button-group-separator" data-orientation="vertical" role="none"></div>
   <span data-slot="button-group-text">.com</span>
@@ -711,19 +711,19 @@ App CSS: `.dropzone { cursor: pointer }`, a focus ring with `.dropzone:has(input
 ```html
 <div data-slot="input-group" role="group">
   <input data-slot="input-group-control" placeholder="Search...">
-  <div data-slot="input-group-addon" data-align="inline-start|inline-end|block-start|block-end">
+  <div data-slot="input-group-addon" data-align="inline-start">
     <svg data-lucide="search"></svg>
     <span data-slot="input-group-text">USD</span>
-    <button type="button" data-slot="button" data-input-group-button data-size="xs|sm|icon-xs|icon-sm">Copy</button>
+    <button type="button" data-slot="button" data-input-group-button data-size="xs">Copy</button>
   </div>
 </div>
 ```
 
-The control can be a `textarea`. A click on an addon (not on a button) focuses the control. `input-group` and `input-group-addon` get `role="group"`; an addon without `data-align` gets `inline-start`. Buttons in an addon are `InputGroupButton`: add `data-input-group-button`; the kit sets `data-variant="ghost"` and `data-size="xs"` when they are missing. Button options: `data-variant` (any `button` variant) and `data-size="xs|sm|icon-xs|icon-sm"`. A button in an addon that opens a popover or menu has `data-pressed` while it is open. Not built: the `.border-b` and `.border-t` class variants of block addons (Tailwind classes, not attributes).
+The control can be a `textarea`. A click on an addon (not on a button) focuses the control. `input-group` and `input-group-addon` get `role="group"`; an addon without `data-align` gets `inline-start`. Buttons in an addon are `InputGroupButton`: add `data-input-group-button`; the kit sets `data-variant="ghost"` and `data-size="xs"` when they are missing. Button options: `data-variant="default|destructive|outline|secondary|ghost|link"` and `data-size="xs|sm|icon-xs|icon-sm"`. A button in an addon that opens a popover or menu has `data-pressed` while it is open. Not built: the `.border-b` and `.border-t` class variants of block addons (Tailwind classes, not attributes).
 
 #### Field
 
-`field-set` (a `fieldset`), `field-legend` (`data-variant="legend|label"`; the kit sets `legend` when it is missing, as shadcn renders it), `field-group`, `field` (`data-orientation="vertical|horizontal|responsive"`, `data-invalid="true"`, `data-disabled="true"`), `field-content`, `field-label`, `field-description`, `field-separator` (optional `field-separator-content` child; the kit adds the `separator` line and `data-content`, as shadcn renders them; the content has the page background, or `--card` in a `card` and `--popover` in a dialog, sheet, drawer, or popover, as the shadcn blocks set by hand), `field-error`. A `field-label` that wraps a `field` (with `field-content` and a radio, checkbox, or switch) is a choice card. A row with a switch or checkbox next to its label is a `field` with `data-orientation="horizontal"`. `responsive` switches to a row when the closest `field-group` is at least 28rem wide. `data-slot="checkbox-group"` gives the tight checkbox list spacing.
+`field-set` (a `fieldset`), `field-legend` (`data-variant="legend|label"`; the kit sets `legend` when it is missing, as shadcn renders it), `field-group`, `field` (`data-orientation="vertical|horizontal|responsive"`, `data-invalid="true"`, `data-disabled="true"`), `field-content`, `field-label`, `field-description`, `field-separator` (optional `field-separator-content` child; the kit adds the `separator` line, as shadcn renders it; the content has the page background, or `--card` in a `card` and `--popover` in a dialog, sheet, drawer, or popover, as the shadcn blocks set by hand), `field-error`. A `field-label` that wraps a `field` (with `field-content` and a radio, checkbox, or switch) is a choice card. A row with a switch or checkbox next to its label is a `field` with `data-orientation="horizontal"`. `responsive` switches to a row when the closest `field-group` is at least 28rem wide. `data-slot="checkbox-group"` gives the tight checkbox list spacing. The kit sets `data-content="true|false"` on `field-separator` (`true` with a `field-separator-content` child), as shadcn renders it.
 
 Kit extensions: `field-label-row` holds a `field-label` and a link that goes to the end ("Forgot your password?"). `data-columns="2|3"` on a `field-group` puts its fields in 2 or 3 columns when the group is at least 28rem wide; the fields align at the top, so an error message under one field does not move the others. `data-span="2"` on a field in a 3-column group takes two columns.
 
@@ -739,8 +739,8 @@ Kit extensions: `field-label-row` holds a `field-label` and a link that goes to 
 ```
 
 - Native constraint validation. The kit sets `novalidate` and shows its own errors: after the user changed a control and left it, and on submit, then live. After a submit, leaving a control does not validate it, as in React Hook Form (`reValidateMode: "onChange"`): a control that the app clears after a send shows no error on blur.
-- An invalid control gets `aria-invalid="true"` and `aria-describedby` to a `field-error` (`role="alert"`), created if missing. The field gets `data-invalid="true"`. Legacy `form-item`, `form-label` (`data-error`), `form-description`, and `form-message` work the same way.
-- Message: `data-error-<validity-flag>`, then `data-error`, then the browser message (`validationMessage`), read from the control, the visible control, or the component root (`radio-group`, `select`, `combobox`, `toggle-group`, `date-picker`, `input-otp`, `slider`). The flags, in the order the kit checks them: `data-error-value-missing`, `data-error-type-mismatch`, `data-error-pattern-mismatch`, `data-error-too-long`, `data-error-too-short`, `data-error-range-underflow`, `data-error-range-overflow`, `data-error-step-mismatch`, `data-error-bad-input`, `data-error-custom-error` (for `setCustomValidity()`). Several custom rules on one field: leave out `data-error-custom-error` and `data-error`, and pass each message to `setCustomValidity(message)` in the control's own `input` or `change` listener; the kit shows it.
+- An invalid control gets `aria-invalid="true"` and `aria-describedby` to a `field-error` (`role="alert"`), created if missing. The field gets `data-invalid="true"`. Legacy `form-item`, `form-label`, `form-description`, and `form-message` work the same way. The kit sets `data-error="true|false"` on `form-label`.
+- Message: `data-error-<validity-flag>`, then `data-error="Enter a valid email."`, then the browser message (`validationMessage`), read from the control, the visible control, or the component root (`radio-group`, `select`, `combobox`, `toggle-group`, `date-picker`, `input-otp`, `slider`). The flags, in the order the kit checks them: `data-error-value-missing="Name is required."`, `data-error-type-mismatch="Enter an email."`, `data-error-pattern-mismatch="Use letters only."`, `data-error-too-long="Too long."`, `data-error-too-short="Too short."`, `data-error-range-underflow="Too small."`, `data-error-range-overflow="Too large."`, `data-error-step-mismatch="Use whole numbers."`, `data-error-bad-input="Enter a number."`, `data-error-custom-error="Taken."` (for `setCustomValidity()`). Several custom rules on one field: leave out `data-error-custom-error` and `data-error`, and pass each message to `setCustomValidity(message)` in the control's own `input` or `change` listener; the kit shows it.
 - Checkbox, switch, and radio validate through their hidden native input; `aria-invalid` (and so `data-invalid`) goes on the button, and submit focuses the button.
 - Submit with errors focuses the first invalid control and emits `form:invalid`; the browser does not submit. A valid submit emits cancelable `form:submit` (`values` has an array for repeated names). If no listener calls `event.preventDefault()`, the browser submits the form natively (to `action`, or to the page URL with `method="get"` when there is no `action`), so the page navigates. A static page or an app that sends with `fetch` must call `preventDefault()` in its `form:submit` listener.
 - Form `reset` clears errors and resets all components to their authored values after the reset event. A value that the app sets right after `form.reset()` (`data-value` on a select, combobox, or toggle group, or `calendarSetValue`) stays; the kit does not overwrite it.
@@ -750,11 +750,11 @@ Kit extensions: `field-label-row` holds a `field-label` and a link that goes to 
 #### Checkbox, Switch, Radio Group
 
 ```html
-<button type="button" data-slot="checkbox" id="terms" data-name="terms" value="yes" data-checked data-required></button>
+<button type="button" data-slot="checkbox" id="terms" data-name="terms" value="yes" data-checked="true" data-required="true"></button>
 <label data-slot="label" for="terms">Accept terms</label>
-<button type="button" data-slot="checkbox" data-indeterminate aria-label="Select all"></button>
+<button type="button" data-slot="checkbox" data-indeterminate="true" aria-label="Select all"></button>
 <button type="button" data-slot="switch" id="airplane" data-name="airplane" data-size="sm"></button>
-<div data-slot="radio-group" data-name="plan" data-value="free" data-required>
+<div data-slot="radio-group" data-name="plan" data-value="free" data-required="true">
   <button type="button" data-slot="radio-group-item" id="plan-free" value="free"></button>
 </div>
 ```
@@ -784,13 +784,13 @@ CSS only.
 #### Select
 
 ```html
-<div data-slot="select" data-name="fruit" data-value="apple" data-required>
+<div data-slot="select" data-name="fruit" data-value="apple" data-required="true">
   <button data-slot="select-trigger" data-size="sm"><span data-slot="select-value">Select a fruit</span></button>
-  <div data-slot="select-content" data-align-trigger="true|false">
+  <div data-slot="select-content">
     <div data-slot="select-group">
       <div data-slot="select-label">Fruits</div>
       <div data-slot="select-item" data-value="apple" data-label="Apple">Apple</div>
-      <div data-slot="select-item" data-value="banana" data-disabled>Banana</div>
+      <div data-slot="select-item" data-value="banana" data-disabled="true">Banana</div>
     </div>
     <div data-slot="select-separator"></div>
   </div>
@@ -801,13 +801,13 @@ CSS only.
 - `data-required` makes the proxy `required`. In a `data-slot="form"` the kit shows the error. In other forms native validation reports the proxy (the browser shows its message just below the trigger) and the kit moves focus from the proxy to the trigger.
 - Removing and inserting a select again keeps one proxy input, the authored placeholder, and the authored initial value (form reset goes back to it).
 - `data-value` is the value: a later change selects that item without a `change` event, and items that arrive later (after a `fetch`) select the authored value. While no item matches, the trigger shows the placeholder and the proxy is empty.
-- `data-align-trigger="true"` (default, Base UI `alignItemWithTrigger`) puts the selected item text over the value (`data-side="none"`); `false` (or the old `data-position="popper"`) places the list under the trigger.
+- `data-align-trigger="false"` on the `select-content` places the list under the trigger (the old `data-position="popper"` too). The default `true` (Base UI `alignItemWithTrigger`) puts the selected item text over the value (`data-side="none"`).
 - Pointer: a press on the trigger opens the list; moving to an item and releasing selects it, and releasing outside the trigger and the list closes it (Base UI). The focused item has no focus ring after a pointer open, unless the trigger had one (browsers without `focus({ focusVisible })`, before Chrome 145 and Safari 18.4, show the ring). Keyboard: Enter, Space, Up, Down open on the selected item; typing on the closed trigger selects the next match (750 ms buffer) without opening. In the list: arrows (no wrap), Home, End, typeahead (a space within 750 ms of a typed letter is part of the search; like Base UI, the arrows, Home, and End also highlight disabled items, typeahead skips them), Enter or Space to select, Escape to close, Tab closes without a change and moves on (Shift+Tab to the trigger, as in Base UI). Like Base UI, a touch open locks page scroll only when the list is at most 20 px narrower than the viewport. A press outside closes the list and focus goes back to the trigger, unless the press focused another control.
 
 #### Combobox
 
 ```html
-<div data-slot="combobox" data-name="framework" data-value="next" data-auto-highlight>
+<div data-slot="combobox" data-name="framework" data-value="next" data-auto-highlight="true">
   <div data-slot="input-group">
     <input data-slot="input-group-control" placeholder="Select a framework" aria-label="Framework">
     <div data-slot="input-group-addon" data-align="inline-end">
@@ -832,25 +832,27 @@ CSS only.
 - Multiple: `data-multiple`, `<div data-slot="combobox-chips"><input data-slot="combobox-chip-input"></div>` instead of the input group, initial values in `data-value="a,b"`. The kit renders `combobox-chip` and `combobox-chip-remove`.
 - Popup: `<button type="button" data-slot="button" data-variant="outline" data-combobox-trigger><span data-slot="combobox-value">Select country</span></button>` outside the content and the input group inside it.
 - The input group gets `data-combobox-input`. The trigger is `data-slot="input-group-button"` (`data-size="icon-xs"` when missing) with `data-combobox-trigger`; it has `tabindex="0"` like Base UI (the label `Show options` stays, Base UI has none). `combobox-clear` has `tabindex="-1"` like Base UI. While the list is open, a visually hidden `<span role="button" aria-label="Dismiss">` (string `dismiss`) before the input closes the list. `combobox-empty` is a polite `role="status"` region; the content and the list have `tabindex="-1"`. While the list is open, the input and the trigger have `data-pressed`, `data-popup-open`, and `data-popup-side`; the trigger has `data-placeholder` without a value; both have `data-list-empty` when the filter shows nothing. The content has `data-state="open|closed"`, `data-open` or `data-closed`, and `data-chips="true|false"` (`true` for `combobox-chips`); the content and the list have `data-empty` when the filter shows nothing, and the highlighted item has `data-highlighted`. A pointer press on the trigger opens the list at once.
-- `data-disabled` on a `combobox-item` makes the item unselectable. `data-disabled`, `data-required`, `data-name` as in `select` (one hidden proxy input, focus moves from the proxy to the input). `data-value` as in `select`: later items and a later `data-value` change apply it without a `change` event; the kit does not write it back. Typing filters by label (case-insensitive substring), hides empty groups and separators, and shows `combobox-empty`. The highlighted item is `aria-activedescendant`.
+- `data-disabled` on a `combobox-item` makes the item unselectable. `data-disabled`, `data-required`, and `data-name` on `combobox` work as in `select` (one hidden proxy input, focus moves from the proxy to the input). `data-value` as in `select`: later items and a later `data-value` change apply it without a `change` event; the kit does not write it back. Typing filters by label (case-insensitive substring), hides empty groups and separators, and shows `combobox-empty`. The highlighted item is `aria-activedescendant`.
 - Keyboard: Down and Up (also with Alt) open and move; after the last item (or before the first) the highlight goes back to the input, like Base UI `loopFocus`. Alt+Up closes, Enter selects (or, when no item is highlighted, closes the list and lets a form submit, like Base UI); like Base UI, Down and Up also highlight disabled items, but Enter does nothing on them, Escape closes; Escape on a closed combobox clears the value (all chips in multiple). Home and End move the caret and never scroll the page. Chips (`role="toolbar"`): Backspace in an empty input removes the last chip, Left moves into the chips, Backspace and Delete remove a chip.
 
 #### Input OTP
 
 ```html
-<div data-slot="input-otp" data-pattern="digits|chars|alphanumeric">
+<div data-slot="input-otp" data-pattern="digits">
   <input maxlength="6" name="code" aria-label="One-time code">
   <div data-slot="input-otp-group"><div data-slot="input-otp-slot"></div></div>
   <div data-slot="input-otp-separator" role="separator"><svg data-lucide="minus"></svg></div>
 </div>
 ```
 
+`data-pattern="digits|chars|alphanumeric"` on the `input-otp` limits the accepted characters.
+
 One real input lies over the slots (autofill, form value, `required`, `minlength` stay native). Each `input-otp-slot` has `data-active="true|false"` (`true` at the caret or in the selection). The active empty slot shows `input-otp-caret` with an inner `div` (the blinking line). The kit gives the input the inline styles of the `input-otp` library (transparent text over the slots, `data-input-otp`) and the root `--root-height`; the kit CSS makes its text selection transparent, like the library stylesheet. `aria-invalid="true"` on the input also marks every slot, as shadcn sets it on the slots. The pattern filters typed and pasted characters. Arrows move between slots; in RTL the slots run right to left and the kit moves the caret with the visual arrow (ArrowRight goes to the previous slot) in every engine.
 
 #### Slider
 
 ```html
-<div data-slot="slider" data-orientation="horizontal|vertical" data-large-step="10">
+<div data-slot="slider" data-orientation="horizontal" data-large-step="10">
   <input type="range" min="0" max="100" step="5" value="25" name="min" aria-label="Minimum">
   <input type="range" min="0" max="100" step="5" value="75" name="max" aria-label="Maximum">
 </div>
@@ -865,11 +867,13 @@ One real input lies over the slots (autofill, form value, `required`, `minlength
 #### Toggle and Toggle Group
 
 ```html
-<button type="button" data-slot="toggle" data-variant="outline" data-size="sm|lg" aria-pressed="false">Bold</button>
-<div data-slot="toggle-group" data-type="single|multiple" data-variant="outline" data-size="sm" data-spacing="2|0|1|3|4|6|8" data-orientation="horizontal|vertical" data-value="bold,italic" data-name="format" data-required data-disabled>
+<button type="button" data-slot="toggle" data-variant="outline" data-size="sm" aria-pressed="false">Bold</button>
+<div data-slot="toggle-group" data-type="single" data-variant="outline" data-size="sm" data-spacing="2" data-orientation="horizontal" data-value="bold,italic" data-name="format" data-required="true" data-disabled="true">
   <button type="button" data-slot="toggle-group-item" data-value="bold" aria-label="Bold"><svg data-lucide="bold"></svg></button>
 </div>
 ```
+
+`data-size="sm|lg"` on the `toggle`. `data-type="single|multiple"`, `data-size="sm|lg"`, `data-spacing="0|1|2|3|4|6|8"`, and `data-orientation="horizontal|vertical"` on the `toggle-group`.
 
 A `toggle` gets `tabindex="0"` like the Base UI toggle. The kit keeps `data-state="on|off"` on `toggle` and `toggle-group-item` in sync with `aria-pressed`.
 
@@ -909,7 +913,7 @@ The kit sets `type="button"` on dialog, alert dialog, sheet, drawer, popover, dr
 - A dialog, alert dialog, or sheet is a native `<dialog>` opened with `showModal()`: focus trap, Escape, scroll lock, inert page, focus returns to the trigger. The content has `data-state="open|closed"` and `data-open` or `data-closed`. The first tabbable element gets the focus; a pointer open shows no focus ring on a button. Like Base UI, a touch open focuses the dialog itself, so a text field does not open the on-screen keyboard.
 - `<button type="button" commandfor="<dialog id>" command="show-modal">` (or `command="close"`, `"request-close"`) also works, in every browser: the kit runs its own open and close, as with `data-dialog-trigger` and `data-dialog-close`. The id is on the `<dialog>` element (for a drawer the `drawer-viewport`, not the `drawer-content`).
 - A main-button click on `::backdrop` closes a dialog, sheet, or drawer, as Base UI (an alert dialog stays open): a held press closes after the release; a right or middle click, a press that starts or ends in the popup, and a touch drag do not close.
-- Dialog and sheet add a close button unless `data-show-close-button="false"`. `<div data-slot="dialog-footer" data-show-close-button>` adds an outline Close button. A `<form method="dialog">` inside closes with an exit animation.
+- Dialog and sheet add a close button; `data-show-close-button="false"` on the `dialog-content` or `sheet-content` leaves it out. `<div data-slot="dialog-footer" data-show-close-button="true">` adds an outline Close button. A `<form method="dialog">` inside closes with an exit animation.
 - Alert dialog: `data-size="sm"`, `alert-dialog-media`. The footer buttons are `<button data-slot="alert-dialog-cancel" data-variant="outline">` and `<button data-slot="alert-dialog-action">` (`data-variant="destructive"` for a red action), as in shadcn (`data-alert-dialog-cancel` and `data-alert-dialog-action` on a `button` part also work). Cancel closes it. The action is a plain button, as in shadcn: it does not close the dialog, so the app closes it with `dialogClose()` when its work is done, or the action gets `data-alert-dialog-close`. Like Base UI, the first tabbable element gets the initial focus (usually Cancel).
 - Sheet: `data-side="top|right|bottom|left"` (default `right`). It opens with `data-starting-style` (set before `showModal()`, removed after one frame) and closes with `data-ending-style` until its transition ends, as Base UI; the backdrop follows the same attributes.
 - Long dialog content: put the middle of the dialog in a `dialog-body` (kit part, like the shadcn `-mx-4 max-h-[50vh] overflow-y-auto px-4` wrapper of the Scrollable Content and Sticky Footer examples). The `dialog-content` is then a column of at most the window height less 2rem: the body takes the free space and scrolls, and the header and the footer stay in view. The body reaches the dialog edges with the scrollbar and has 4 px of padding at the top and the bottom for focus rings. A dialog without a body that is taller than the window scrolls as a whole (the kit gives `dialog-content` `max-height: calc(100dvh - 2rem)` and `overflow-y: auto`; in shadcn the top and the end of such a dialog are out of reach).
@@ -919,7 +923,7 @@ The kit sets `type="button"` on dialog, alert dialog, sheet, drawer, popover, dr
 #### Drawer
 
 ```html
-<div data-slot="drawer" data-swipe-direction="down" data-show-swipe-handle>
+<div data-slot="drawer" data-swipe-direction="down" data-show-swipe-handle="true">
   <button type="button" data-slot="button" data-variant="outline" data-drawer-trigger>Open</button>
   <dialog data-slot="drawer-viewport">
     <div data-slot="drawer-popup">
@@ -937,18 +941,18 @@ The kit sets `type="button"` on dialog, alert dialog, sheet, drawer, popover, dr
 </div>
 ```
 
-- The Base UI drawer DOM: the viewport is the `<dialog>` and its `::backdrop` is the overlay; `drawer-popup` holds the optional `drawer-swipe-handle` (the kit adds it for `data-show-swipe-handle`) and `drawer-content` (`data-drawer-content`). A short form `<dialog data-slot="drawer-content">` with the parts inside is upgraded to this DOM on load.
+- The Base UI drawer DOM: the viewport is the `<dialog>` and its `::backdrop` is the overlay; `drawer-popup` holds the optional `drawer-swipe-handle` (the kit adds it for `data-show-swipe-handle`) and `drawer-content`. The kit sets `data-drawer-content` on `drawer-content`. A short form `<dialog data-slot="drawer-content">` with the parts inside is upgraded to this DOM on load.
 - Root options as shadcn props: `data-swipe-direction="down|up|left|right"` (default `down`; the old `data-direction="bottom|top|left|right"` still works), `data-show-swipe-handle`, `data-modal="false"` (page stays usable, no backdrop) or `"trap-focus"` (focus trap only), `data-disable-pointer-dismissal` (an outside press, and for a non-modal drawer also focus leaving, does not close it). A non-modal drawer closes on a mouse click outside and at the end of a touch tap outside (or a touch drag outside of more than 10 px), as Base UI without a backdrop (the shadcn "Non Modal" example sets `disablePointerDismissal`).
 - State as Base UI: `data-swipe-direction`, `data-swipe-axis="x|y"`, `data-swiping`, `data-swipe-dismiss`, `data-starting-style`, `data-ending-style`, and the variables `--drawer-swipe-movement-x`, `--drawer-swipe-movement-y`, `--drawer-swipe-progress`, `--drawer-swipe-strength`, `--nested-drawers` on the popup; `data-modal`, `data-nested`, `data-swiping`, `data-swipe-dismiss`, `--drawer-swipe-progress` on the viewport (for the backdrop). The kit sets `data-modal="true|false|trap-focus"` on `drawer-viewport` from the root option, and `data-snap-points` on `drawer-popup` and `drawer-viewport` (no value) when the root has snap points. Opening focuses the popup.
-- Swipe toward the edge to dismiss: on touch anywhere on the drawer, with a mouse or pen only outside `drawer-content` (the swipe handle), so text in the content stays selectable. It closes when it moved more than half its size or faster than 0.5 px/ms; the exit moves in `--drawer-swipe-strength` × 400 ms (0.1 to 1 from the release speed of the last move, with a 16 ms minimum sample time), while the hidden opacity transition keeps 400 ms, so the drawer closes and returns focus after 400 ms (Base UI 1.6.0 sets `data-ending-style` before the strength). Other directions are damped and spring back. A press or touch on the backdrop of a modal drawer starts the swipe when the pointer reaches the popup, and a main-button click on the backdrop (press and release there) closes the drawer, as Base UI. Buttons, links, and fields do not start a mouse swipe; `data-base-ui-swipe-ignore` (old `data-drawer-no-drag`) stops any swipe; a touch inside a scroller swipes only from its start edge.
-- Snap points (vertical drawers): `data-snap-points="31rem 1"` on the root (space or comma list: a number up to 1 is a share of the window height, a larger number or `px` is pixels, `rem` is root ems), `data-snap-point` (the Base UI `defaultSnapPoint`: read at each open, first one when missing; a change while open does nothing), `data-snap-to-sequential-points`. The popup gets `data-snap-points`, `--drawer-snap-point-offset`, and `data-expanded` at the snap point `1`; the viewport gets `data-snap-points` (backdrop minimum 0.5). A swipe up or down settles on the nearest snap point after the release speed (above 0.5 px/ms it pushes 300 px per px/ms) or closes past the last one; `drawer:snap-point-change` `{ snapPoint }` fires on the root. Each open starts at the default snap point. A `ResizeObserver` keeps the snap offsets right after a resize or a rotation (a parent keeps its height while a nested drawer is open).
+- Swipe toward the edge to dismiss: on touch anywhere on the drawer, with a mouse or pen only outside `drawer-content` (the swipe handle), so text in the content stays selectable. It closes when it moved more than half its size or faster than 0.5 px/ms; the exit moves in `--drawer-swipe-strength` × 400 ms (0.1 to 1 from the release speed of the last move, with a 16 ms minimum sample time), while the hidden opacity transition keeps 400 ms, so the drawer closes and returns focus after 400 ms (Base UI 1.6.0 sets `data-ending-style` before the strength). Other directions are damped and spring back. A press or touch on the backdrop of a modal drawer starts the swipe when the pointer reaches the popup, and a main-button click on the backdrop (press and release there) closes the drawer, as Base UI. Buttons, links, and fields do not start a mouse swipe; `data-base-ui-swipe-ignore="true"` (old `data-drawer-no-drag`) stops any swipe; a touch inside a scroller swipes only from its start edge.
+- Snap points (vertical drawers): `data-snap-points="31rem 1"` on the root (space or comma list: a number up to 1 is a share of the window height, a larger number or `px` is pixels, `rem` is root ems), `data-snap-point="31rem"` (the Base UI `defaultSnapPoint`: read at each open, first one when missing; a change while open does nothing), `data-snap-to-sequential-points`. The popup gets `data-snap-points`, `--drawer-snap-point-offset`, and `data-expanded` at the snap point `1`; the viewport gets `data-snap-points` (backdrop minimum 0.5). A swipe up or down settles on the nearest snap point after the release speed (above 0.5 px/ms it pushes 300 px per px/ms) or closes past the last one; `drawer:snap-point-change` `{ snapPoint }` fires on the root. Each open starts at the default snap point. A `ResizeObserver` keeps the snap offsets right after a resize or a rotation (a parent keeps its height while a nested drawer is open).
 - Nested drawers: a drawer whose root is inside an open drawer opens on top of it, as Base UI. Its viewport moves out of the parent popup while it is open (into the parent viewport) and moves back when it closes, because the shadcn `group-data-*/drawer-popup` rules match every popup above it. While it is open: find the viewport with the trigger `aria-controls`; DOM events from inside it (`click`, `input`, `submit`, kit events) do not reach its own root or the elements between the root and the parent popup; CSS selectors through the root do not match; a `<form>` around the root does not contain its fields. `dialogOpen` and `dialogClose` still accept the root, the trigger, or an id. Closing a parent sends its `drawer:close` first; if no listener cancels it, the open nested drawers close, the deepest first (their `drawer:close` cannot be cancelled), then the parent. Parents get `data-nested-drawer-open`, `--nested-drawers` (open drawers above), `--drawer-height` (their own height), and `--drawer-frontmost-height`; during a swipe of the front drawer they get `data-nested-drawer-swiping` and its `--drawer-swipe-progress`. The nested drawer has `data-nested` and no visible backdrop, and a parent with an open nested drawer does not swipe.
 - Changed with the move to Base UI (old → new): `dialog[data-slot=drawer-content]` → the viewport, popup, and content DOM (the old form is upgraded); `data-direction="bottom|top"` → `data-swipe-direction="down|up"`; `drawer-handle` (always) → `drawer-swipe-handle` with `data-show-swipe-handle` (an author-written handle stays); close threshold 25 % → 50 % or 0.5 px/ms; a mouse drag on the content no longer swipes; `drawer:close` reason `drag` → `swipe`; `data-drawer-no-drag` → `data-base-ui-swipe-ignore` (both work).
 - While a modal dialog is open, the `toast-portal` element moves into the topmost open modal dialog (a modal makes everything else inert) and moves back when it closes, so toasts stay usable and Tab reaches them.
 
 #### Popover
 
-`popover` > `popover-trigger` (or `data-popover-trigger`), optional `popover-anchor`, `popover-content` with `popover-header`, `popover-title`, `popover-description`. Non-modal: focus moves into the content (after a touch open to the content itself, like Base UI, so no on-screen keyboard opens); Escape, outside click, and focus leaving close it. As in Base UI, a mouse press outside closes it on the click (a held press, a right or middle click, or a press that ends in the popup keep it open); a touch outside closes it at the end of the tap. `data-modal` on the root traps focus and locks scroll. Default placement: bottom, center, 4 px; the trigger has `data-pressed` while it is open. The content has `data-state="open|closed"` and `data-open` or `data-closed`.
+`popover` > `popover-trigger` or a `data-popover-trigger` part, an optional `<div data-slot="popover-anchor">` (the content is placed against it instead of the trigger), `popover-content` with `popover-header`, `popover-title`, `popover-description`. Non-modal: focus moves into the content (after a touch open to the content itself, like Base UI, so no on-screen keyboard opens); Escape, outside click, and focus leaving close it. As in Base UI, a mouse press outside closes it on the click (a held press, a right or middle click, or a press that ends in the popup keep it open); a touch outside closes it at the end of the tap. `data-modal` on the root traps focus and locks scroll. Default placement: bottom, center, 4 px; the trigger has `data-pressed` while it is open. The content has `data-state="open|closed"` and `data-open` or `data-closed`.
 
 Custom floating content (also linked from Tooltip), for example one readout for many small hover targets (a bar per day in an uptime row, where one tooltip per bar is too heavy): use the core `position()` with your own `popover="manual"` element. It places the element next to an anchor element or a virtual anchor (`{ getBoundingClientRect() }`), flips at the viewport edge, follows scroll and resize, and returns `stop()`. It sets `data-side`, `data-align`, and the `--anchor-*`, `--available-*`, and `--transform-origin` variables, as for kit popups ([Popups](#popups)). Dismissal and focus stay app code; for an interactive popup use `popover`.
 
@@ -974,11 +978,11 @@ grid.addEventListener("pointerleave", () => {
 
 #### Tooltip and Hover Card
 
-`tooltip` > trigger (`tooltip-trigger` or `data-tooltip-trigger`) + `tooltip-content`. Timing is the shadcn setup (a `TooltipProvider` with `delay` 0 at the app root): `data-delay` (open, default 0), `data-close-delay` (default 0), and `data-timeout` (default 400) on the trigger, the root, or a `tooltip-provider` (`data-delay-duration` and `data-skip-delay-duration` also work). When a tooltip is open, or closed less than `data-timeout` ago, the next one opens at once. It opens on keyboard focus too; it closes on leave, Escape, press, and blur. Like Base UI, it stays open when the page scrolls and follows the trigger. A grace area lets the pointer move into the content. Touch never opens it. The kit sets `data-state="open|closed"`, `data-open`, and `data-closed` on `tooltip-content`. Default side `top`, 4 px; the kit adds the arrow (`<div data-slot="tooltip-arrow">`), which points at the trigger center. The kit sets `data-side="top|right|bottom|left"` on `tooltip-arrow`. Like Base UI, the content and the arrow get `data-instant`: `delay` (opened at once because another tooltip was open or closed less than `data-timeout` ago), `focus` (opened by keyboard focus), `dismiss` (closed by Escape or a press).
+`tooltip` > trigger (`tooltip-trigger` or `data-tooltip-trigger`) + `tooltip-content`. Timing is the shadcn setup (a `TooltipProvider` with `delay` 0 at the app root): `data-delay="0"` (open), `data-close-delay="0"`, and `data-timeout="400"` (the defaults) on the trigger, the root, or a `tooltip-provider` (`data-delay-duration="0"` and `data-skip-delay-duration="400"` also work). When a tooltip is open, or closed less than `data-timeout` ago, the next one opens at once. It opens on keyboard focus too; it closes on leave, Escape, press, and blur. Like Base UI, it stays open when the page scrolls and follows the trigger. A grace area lets the pointer move into the content. Touch never opens it. The kit sets `data-state="open|closed"`, `data-open`, and `data-closed` on `tooltip-content`. Default side `top`, 4 px; the kit adds the arrow (`<div data-slot="tooltip-arrow">`), which points at the trigger center. The kit sets `data-side="top|right|bottom|left"` on `tooltip-arrow`. Like Base UI, the content and the arrow get `data-instant`: `delay` (opened at once because another tooltip was open or closed less than `data-timeout` ago), `focus` (opened by keyboard focus), `dismiss` (closed by Escape or a press).
 
 Many small marks with their own readout (a bar per day in an uptime row): one tooltip per mark is too heavy. Use one `popover="manual"` readout placed with the core `position()` ([Popover](#popover) has the code). For the keyboard, make the row one Tab stop (`tabindex="0"`, `role="group"`, an `aria-label` with the summary): Left and Right move a current mark, place the readout on it, and write the same text into a visually hidden `role="status"` element; Escape hides it.
 
-`hover-card` > trigger + `hover-card-content`. `data-delay` (600) and `data-close-delay` (300) on the trigger or the root (`data-open-delay` also works), the Base UI defaults; shadcn examples set `data-delay="10" data-close-delay="100"`. Placement: bottom, center, 4 px, `alignOffset` 4. Opens on hover and keyboard focus, never on touch. The content has `data-state="open|closed"` and `data-open` or `data-closed`. It closes at once when focus leaves the trigger and the card (Base UI); the close delay is for the pointer. A card that focus opened stays open when the pointer leaves the card or a press in it moves focus away, as in Base UI; it closes when the pointer leaves the trigger.
+`hover-card` > trigger + `hover-card-content`. `data-delay="600"` and `data-close-delay="300"` on the trigger or the root (`data-open-delay="600"` also works), the Base UI defaults; shadcn examples set `data-delay="10" data-close-delay="100"`. Placement: bottom, center, 4 px, `alignOffset` 4. Opens on hover and keyboard focus, never on touch. The content has `data-state="open|closed"` and `data-open` or `data-closed`. It closes at once when focus leaves the trigger and the card (Base UI); the close delay is for the pointer. A card that focus opened stays open when the pointer leaves the card or a press in it moves focus away, as in Base UI; it closes when the pointer leaves the trigger.
 
 #### Dropdown Menu, Context Menu, Menubar
 
@@ -989,10 +993,10 @@ Many small marks with their own readout (a bar per day in an uptime row): one to
     <div data-slot="dropdown-menu-group">
       <div data-slot="dropdown-menu-label">My Account</div>
       <div data-slot="dropdown-menu-item">Profile<span data-slot="dropdown-menu-shortcut">⇧⌘P</span></div>
-      <div data-slot="dropdown-menu-checkbox-item" data-checked>Status Bar</div>
+      <div data-slot="dropdown-menu-checkbox-item" data-checked="true">Status Bar</div>
     </div>
     <div data-slot="dropdown-menu-radio-group" data-value="top">
-      <div data-slot="dropdown-menu-radio-item" data-value="top" data-checked>Top</div>
+      <div data-slot="dropdown-menu-radio-item" data-value="top" data-checked="true">Top</div>
     </div>
     <div data-slot="dropdown-menu-separator"></div>
     <div data-slot="dropdown-menu-sub">
@@ -1003,7 +1007,7 @@ Many small marks with their own readout (a bar per day in an uptime row): one to
 </div>
 ```
 
-- Same parts with the `context-menu-` and `menubar-` prefixes, plus `-group`, `-radio-group`, and `-label` (`menubar-label` too). `data-disabled` and `data-inset` on `dropdown-menu-item`, `dropdown-menu-checkbox-item`, and `dropdown-menu-radio-item`; `data-inset` on `dropdown-menu-label` and `dropdown-menu-sub-trigger` too. Items: `data-variant="destructive"` (other items get `data-variant="default"`), `data-value`, `data-text-value` (typeahead label), `data-close-on-click`. Checkbox and radio items: `data-checked` (or `data-state="checked"`). `data-value` on a radio group selects the item with that value. A later change of `data-value` on the radio group or of `data-checked` on an item, from code, updates the items (no event). Links work as items.
+- Same parts with the `context-menu-` and `menubar-` prefixes, plus `-group`, `-radio-group`, and `-label` (`menubar-label` too). `data-disabled` and `data-inset` on `dropdown-menu-item`, `dropdown-menu-checkbox-item`, and `dropdown-menu-radio-item`; `data-inset` on `dropdown-menu-label` and `dropdown-menu-sub-trigger` too. Items: `data-variant="destructive"` (other items get `data-variant="default"`), `data-text-value="Copy"` (typeahead label), `data-close-on-click`. `data-value="copy"` on `dropdown-menu-item`, `dropdown-menu-checkbox-item`, and `dropdown-menu-radio-item` is the `detail.value` of their events (default: the item text). Checkbox and radio items: `data-checked` (or `data-state="checked"`). `data-value` on a radio group selects the item with that value. A later change of `data-value` on the radio group or of `data-checked` on an item, from code, updates the items (no event). Links work as items.
 - Base UI DOM and states: a label gets `role="presentation"` and names its group (`aria-labelledby`); a separator gets `data-orientation="horizontal"`; checkbox and radio items get `data-checked` or `data-unchecked` and an indicator as the first child (`dropdown-menu-checkbox-item-indicator`, `dropdown-menu-radio-item-indicator`; a `span` without a slot in context menus and menubars) that holds `<span data-checked aria-hidden="true">` with the `check` icon only while checked. The highlighted item has `data-highlighted`. The kit sets `data-state="open|closed"`, `data-open`, and `data-closed` on `dropdown-menu-content` and `dropdown-menu-sub-content`, and `data-state="open|closed"` on `dropdown-menu-sub-trigger` (the same on the `context-menu-` and `menubar-` parts). An open sub menu's trigger has `data-popup-open` and loses `data-highlighted` while focus or the pointer is in the sub menu. The content has `data-open` or `data-closed`, `data-side`, `data-align`, and `data-instant` (`click` when a keyboard key or a right click opened it, `group` when a menubar switched menus, `dismiss` after Escape); the trigger has `data-popup-open` and `data-pressed` while open.
 - `dropdown-menu:change` and `:select` are emitted on the `dropdown-menu` root (also for an item in a sub menu or a radio group) and bubble to `document`; a listener on the radio group gets nothing. `detail.group` is the radio group element (`dropdown-menu-radio-group`, `null` outside a group; it is absent for a checkbox item): read `event.detail.group.id` or `.dataset` to tell two groups apart, and `detail.value` for the new value (the group `data-value` is already set).
 - A plain item closes the menu; checkbox and radio items keep it open (Base UI `closeOnClick`), unless `data-close-on-click` says otherwise.
@@ -1022,12 +1026,12 @@ Many small marks with their own readout (a bar per day in an uptime row): one to
 
 - The kit adds the Base UI parts at the end of the root: `navigation-menu-positioner` (a top-layer popup at the open trigger: bottom, `data-align` of the root or `start`, 8 px) > `nav[data-slot="navigation-menu-popup"]` > `navigation-menu-viewport`. The open content moves into the viewport and back to its item when it closes. `data-viewport="false"` places each content under its trigger instead (8 px).
 - States as in Base UI: root and list `data-open`; trigger `data-popup-open` and `aria-expanded`; positioner and popup `data-open`/`data-closed`, `data-side`, `data-align`; content `data-open`/`data-closed`, `data-starting-style`/`data-ending-style`, and `data-activation-direction` (`right` when the new item comes after the old one in the list, `left` before; logical, so the motion follows RTL). The kit sets `data-state="open|closed"` on `navigation-menu-trigger` and `navigation-menu-content`, `data-activation-direction="left|right"` on `navigation-menu-content`, `data-state="visible|hidden"` on `navigation-menu-indicator`, and `data-side="bottom|top"` and `data-align="start|center|end"` on `navigation-menu-positioner`. The positioner has `data-instant` on the first open (no slide), `--positioner-width`/`--positioner-height`, and the popup `--popup-width`/`--popup-height`: when the panel changes, the popup animates from the old size to the new one, the positioner slides to the new trigger, and the old content leaves (absolute, `data-ending-style`) while the new one enters.
-- Hover opens after 50 ms and closes 50 ms after the pointer leaves (`data-delay`, `data-close-delay` on the root); a switch to another panel waits for the same delay; a click toggles. The open trigger has `data-pressed`. Enter, Space, or ArrowDown on a closed trigger opens it and focuses the first link in the panel; ArrowDown or Tab on an open trigger enters the panel; Home and End do nothing (the page scrolls), as in Base UI; Tab after its last link goes to the next trigger, Shift+Tab from its first link goes back and Shift+Tab from the next trigger goes to its last link (focus guards at both ends of the popup and after the open trigger, as in Base UI, so this also works in Safari, where Tab skips links; Tab from the last trigger leaves the menu); arrows move between links; Escape closes and focuses the open trigger, also when a hover switch moved the open panel. The positioner follows the size of the open content (`ResizeObserver`); sizes are layout sizes, so a scale animation does not shrink them. A link click keeps the menu open (Base UI `closeOnClick` is false) unless the link has `data-close-on-click`. A menu removed while open comes back closed.
+- Hover opens after 50 ms and closes 50 ms after the pointer leaves (`data-delay="50"`, `data-close-delay="50"` on the root); a switch to another panel waits for the same delay; a click toggles. The open trigger has `data-pressed`. Enter, Space, or ArrowDown on a closed trigger opens it and focuses the first link in the panel; ArrowDown or Tab on an open trigger enters the panel; Home and End do nothing (the page scrolls), as in Base UI; Tab after its last link goes to the next trigger, Shift+Tab from its first link goes back and Shift+Tab from the next trigger goes to its last link (focus guards at both ends of the popup and after the open trigger, as in Base UI, so this also works in Safari, where Tab skips links; Tab from the last trigger leaves the menu); arrows move between links; Escape closes and focuses the open trigger, also when a hover switch moved the open panel. The positioner follows the size of the open content (`ResizeObserver`); sizes are layout sizes, so a scale animation does not shrink them. A link click keeps the menu open (Base UI `closeOnClick` is false) unless the link has `data-close-on-click`. A menu removed while open comes back closed.
 - An outside press closes the menu on the click, as in Base UI (a held press, a right or middle click, or a touch drag keep it open). Only a menu that hover opened closes when the pointer leaves; a menu opened by a click or a key stays open, and so does a menu where a press on a link starts a drag.
 
 #### Command
 
-`command` > `command-input`, `command-list` > `command-empty`, `command-group` (`data-heading` or a `command-group-heading` child) > `command-item` (`data-value`, `data-keywords="a, b"`, `data-disabled`) with `command-shortcut`; `command-separator`. Typing filters, scores, and sorts; ArrowUp/Down, Home, End, Ctrl+N/J/P/K, Alt+arrows (next group), Meta+arrows (first/last), Enter. `data-loop` wraps, `data-should-filter="false"` disables filtering. The selected item has `data-selected="true"`, the other items `data-selected="false"`. The kit builds the shadcn input DOM (`command-input-wrapper` > `input-group` > the input + `input-group-addon` with the search icon), gives group headings the cmdk `cmdk-group-heading` attribute, and appends the shadcn `check` icon to each item (shown with `data-checked="true"`, hidden when the item has a shortcut). Inside a `dialog-content` it becomes the command dialog: the content gets `data-command-dialog` and no close button unless `data-show-close-button="true"`. The list has `tabindex="-1"`, so a pointer press on an item moves focus to the list (as in cmdk) and the keys keep working there; the input and the list carry `aria-activedescendant` of the selected item. Items inserted later get `role="option"`, an id, and their disabled state; the empty state and the selection follow. `data-disabled` in any form except `"false"` disables an item.
+`command` > `command-input`, `command-list` > `command-empty`, `command-group` (`data-heading="Suggestions"` or a `command-group-heading` child) > `command-item` (`data-value="calendar"`, `data-keywords="a, b"`, `data-disabled`) with `command-shortcut`; `command-separator`. Typing filters, scores, and sorts; ArrowUp/Down, Home, End, Ctrl+N/J/P/K, Alt+arrows (next group), Meta+arrows (first/last), Enter. `data-loop` wraps, `data-should-filter="false"` disables filtering. The selected item has `data-selected="true"`, the other items `data-selected="false"`. The kit builds the shadcn input DOM (`command-input-wrapper` > `input-group` > the input + `input-group-addon` with the search icon), gives group headings the cmdk `cmdk-group-heading` attribute, and appends the shadcn `check` icon to each item (shown with `data-checked="true"`, hidden when the item has a shortcut). Inside a `dialog-content` it becomes the command dialog: the content gets `data-command-dialog` and no close button unless `data-show-close-button="true"`. The list has `tabindex="-1"`, so a pointer press on an item moves focus to the list (as in cmdk) and the keys keep working there; the input and the list carry `aria-activedescendant` of the selected item. Items inserted later get `role="option"`, an id, and their disabled state; the empty state and the selection follow. `data-disabled` in any form except `"false"` disables an item.
 
 #### Toast and Sonner
 
@@ -1045,7 +1049,7 @@ toast.dismiss(id); toast.dismiss(); toast.getToasts()
 - Kit calls: `toast(message, options)` and the typed variants put `message` in the title. Options: `id`, `title`, `description`, `type` (`success|info|warning|error|loading` show an icon), `timeout` (ms, `0` keeps it) or `duration` (`Infinity` keeps it), `priority` (`high` announces the toast at once in a hidden `role="alert"` region), `action` (`{ label, onClick }`, closes the toast unless `onClick` calls `event.preventDefault()`), `actionProps`, `icon` (Lucide name, node, or `null`), `className`, `onClose`, `onRemove`, `onDismiss`, `onAutoClose`. An unknown `icon` name throws before any state changes. `toast.promise` returns the id.
 - Changed with the move to Base UI (old → new):
   - removed: `position`, `cancel` and the `toast:cancel` event, `closeButton`, `closeButtonAriaLabel`, `richColors`, `invert`, `dismissible`, Alt+T (F6 now). Move the viewport with app CSS on `[data-slot="toast-viewport"]` if needed.
-  - `<section data-slot="sonner">` → `<div data-slot="toast-portal">`; `data-duration` → `data-timeout`; `data-visible-toasts` → `data-limit`; the other `sonner` attributes are gone.
+  - `<section data-slot="sonner">` → `<div data-slot="toast-portal">`; `data-duration` → `data-timeout="5000"`; `data-visible-toasts` → `data-limit="3"`; the other `sonner` attributes are gone.
   - default timeout 4000 ms → 5000 ms; the close button shows on every toast; the action closes the toast as before, `actionProps` do not.
   - a string in `toast.promise` was the title and is now the description; `toast.promise` without `loading` showed no toast and now shows an empty loading toast.
 - `<div data-slot="toast-portal" data-limit="3" data-timeout="5000">` sets the limit and the default timeout. Toasts over the limit stay mounted with `data-limited` and `inert` (hidden) until a slot is free. A closing toast (`data-ending-style`) takes no pointer events, so a click during its exit animation goes to the element below (kit change; Base UI 1.6.0 keeps them).
@@ -1057,7 +1061,7 @@ toast.dismiss(id); toast.dismiss(); toast.getToasts()
 #### Accordion
 
 ```html
-<div data-slot="accordion" data-type="single|multiple">
+<div data-slot="accordion" data-type="single">
   <div data-slot="accordion-item" data-value="shipping" data-state="open">
     <h3><button type="button" data-slot="accordion-trigger">What are your shipping options?</button></h3>
     <div data-slot="accordion-content"><div>Standard, express, and overnight.</div></div>
@@ -1069,7 +1073,7 @@ toast.dismiss(id); toast.dismiss(); toast.getToasts()
 </div>
 ```
 
-The Base UI DOM: a heading with the trigger button, and a panel with one inner `div` (the padding is on it). `data-type="single|multiple"`, `data-state="open"` on an item that starts open, `hidden="until-found"` on the panel of an item that starts closed (so the page does not move when the module loads), `data-disabled` on an `accordion-item`. Like Base UI, a single accordion can close its open item, so all items can be closed. The kit adds the two chevrons (`accordion-trigger-icon`, down when closed, up when open), ids, `aria-expanded`, `aria-controls`, `role="region"`, `aria-labelledby`, `data-open`, `data-closed`, `data-state="open|closed"`, `data-panel-open` on the trigger, and `data-index`. A closed panel has `hidden="until-found"`, so find in page opens its item (`beforematch`). The panel animates with `--accordion-panel-height` (`auto` after the open animation). Keys: Enter and Space toggle; as in Base UI, the arrow keys do not move focus. Like Base UI, the trigger of a disabled item stays in the Tab order (`aria-disabled="true"`), and Enter, Space, or a click does not open it. Event: `accordion:change` `{ value }`.
+The Base UI DOM: a heading with the trigger button, and a panel with one inner `div` (the padding is on it). `data-type="single|multiple"` on the `accordion`, `data-state="open"` on an item that starts open, `hidden="until-found"` on the panel of an item that starts closed (so the page does not move when the module loads), `data-disabled` on an `accordion-item`. Like Base UI, a single accordion can close its open item, so all items can be closed. The kit adds the two chevrons (`accordion-trigger-icon`, down when closed, up when open), ids, `aria-expanded`, `aria-controls`, `role="region"`, `aria-labelledby`, `data-open`, `data-closed`, `data-state="open|closed"`, `data-panel-open` on the trigger, and `data-index`. A closed panel has `hidden="until-found"`, so find in page opens its item (`beforematch`). The panel animates with `--accordion-panel-height` (`auto` after the open animation). Keys: Enter and Space toggle; as in Base UI, the arrow keys do not move focus. Like Base UI, the trigger of a disabled item stays in the Tab order (`aria-disabled="true"`), and Enter, Space, or a click does not open it. Event: `accordion:change` `{ value }`.
 
 A count or status in a trigger: a `badge` after the text (`<button type="button" data-slot="accordion-trigger">Payments<span data-slot="badge" data-variant="warning"><svg data-lucide="triangle-alert"></svg>Degraded</span></button>`) sits at the end, before the chevron, centered on the text.
 
@@ -1088,7 +1092,7 @@ A count or status in a trigger: a `badge` after the text (`<button type="button"
 #### Avatar
 
 ```html
-<span data-slot="avatar" data-size="sm|lg">
+<span data-slot="avatar" data-size="sm">
   <img data-slot="avatar-image" src="..." alt="">
   <span data-slot="avatar-fallback">CN</span>
   <span data-slot="avatar-badge"></span>
@@ -1115,7 +1119,7 @@ The kit adds `aria-label`, the chevron in an empty separator, the ellipsis icon 
 #### Carousel
 
 ```html
-<div data-slot="carousel" data-orientation="horizontal|vertical" data-align="start|center|end" data-loop aria-label="Featured">
+<div data-slot="carousel" data-orientation="horizontal" data-align="start" data-loop="true" aria-label="Featured">
   <div data-slot="carousel-content"><div>
     <div data-slot="carousel-item">...</div>
   </div></div>
@@ -1123,6 +1127,8 @@ The kit adds `aria-label`, the chevron in an empty separator, the ellipsis icon 
   <button data-slot="carousel-next"></button>
 </div>
 ```
+
+`data-orientation="horizontal|vertical"` and `data-align="start|center|end"` on the `carousel`.
 
 The inner `div` is the track; set item width with `flex-basis`. The kit adds the carousel and slide roles, slide labels, the arrow icons, and disables a button at the end (`disabled`, `data-disabled`). Like shadcn, focus does not move when the focused button becomes disabled, so Tab continues to the other button. The motion is a port of Embla 8, the engine of the shadcn carousel, with its default options: the track moves with `transform`, `data-align` sets the slide alignment (default `center`, like Embla; the shadcn size and orientation examples use `start`), and `data-loop` loops the slides (as Embla, only when there are enough slides to fill the view). The buttons and the arrow keys (RTL aware) move one slide with duration 25 and friction 0.68 (about 750 ms; at once with reduced motion); a press during the motion changes its target. A mouse drag or a touch swipe moves the track with the pointer. On release, the speed is multiplied by 300 for the mouse or 400 for touch; a release force over 20 % of the view (limited to 50 to 225 px) goes to the next or previous slide, and a smaller force snaps to the nearest slide. Past the first or last slide the track resists and springs back (at once with reduced motion). A drag over 10 px cancels the click that follows. A touch swipe that starts more vertical than horizontal is left to the page. Tab into a slide jumps to it at once. The carousel measures again, as Embla `reInit` does, when its size or its slides change, when `data-orientation`, `data-align`, or `data-loop` changes, and when a `dir` change gives it another direction; it keeps the selected snap. The kit sets `transform` inline on the track and on looped slides, so app CSS `transform` on these parts has no effect. `carousel:change` (`value`: the selected snap index, `count`: the number of snaps, which is less than the slides when several slides fit in the view) fires once after the carousel starts (like the Embla `init` event), when the selected snap changes, and after a new measure that changes the index or the count. Like the shadcn carousel, the mouse wheel does not move the slides (no wheel plugin). Not built: autoplay and other plugins.
 
@@ -1159,7 +1165,7 @@ Set `dir="rtl"` on `<html>` or a container. Kit styles use logical properties (`
   <ul data-slot="pagination-content">
     <li data-slot="pagination-item"><a data-slot="pagination-link" data-pagination-previous data-size="default" href="?p=1" aria-label="Go to previous page"><svg data-lucide="chevron-left" data-icon="inline-start"></svg><span>Previous</span></a></li>
     <li data-slot="pagination-item"><a data-slot="pagination-link" href="?p=1">1</a></li>
-    <li data-slot="pagination-item"><a data-slot="pagination-link" data-variant="outline" href="?p=2" data-active aria-current="page">2</a></li>
+    <li data-slot="pagination-item"><a data-slot="pagination-link" data-variant="outline" href="?p=2" data-active="true" aria-current="page">2</a></li>
     <li data-slot="pagination-item"><span data-slot="pagination-ellipsis" aria-hidden="true"><svg data-lucide="ellipsis"></svg><span class="sr-only">More pages</span></span></li>
     <li data-slot="pagination-item"><a data-slot="pagination-link" data-pagination-next data-size="default" href="?p=3" aria-label="Go to next page"><span>Next</span><svg data-lucide="chevron-right" data-icon="inline-end"></svg></a></li>
   </ul>
@@ -1180,14 +1186,14 @@ Disabled Previous or Next (first or last page): `aria-disabled="true"` on the li
 #### Resizable
 
 ```html
-<div data-slot="resizable-panel-group" data-orientation="horizontal|vertical">
+<div data-slot="resizable-panel-group" data-orientation="horizontal">
   <div data-slot="resizable-panel" data-default-size="25" data-min-size="15" data-max-size="60">...</div>
-  <div data-slot="resizable-handle" data-with-handle></div>
+  <div data-slot="resizable-handle" data-with-handle="true"></div>
   <div data-slot="resizable-panel">...</div>
 </div>
 ```
 
-Sizes are percentages. The handle is a WAI-ARIA window splitter: drag it or use the arrow keys (`data-keyboard-step`, default 5), Home, and End. `data-orientation="vertical"` stacks the panels; `data-with-handle` adds the shadcn grip (an empty `div`, a 4 × 24 px pill). Not built: collapsible panels and saved layouts.
+Sizes are percentages. The handle is a WAI-ARIA window splitter: drag it or use the arrow keys (`data-keyboard-step="5"`, the default), Home, and End. `data-orientation="horizontal|vertical"` on the `resizable-panel-group` sets the direction (`vertical` stacks the panels); `data-with-handle` adds the shadcn grip (an empty `div`, a 4 × 24 px pill). Not built: collapsible panels and saved layouts.
 
 #### Scroll Area
 
@@ -1204,7 +1210,7 @@ The viewport is the real scroll container; the kit makes it a Tab stop (`tabinde
 
 ```html
 <div data-slot="sidebar-wrapper" id="app">
-  <div data-slot="sidebar" data-side="left" data-variant="sidebar|floating|inset" data-collapsible="offcanvas|icon|none">
+  <div data-slot="sidebar" data-side="left" data-variant="sidebar" data-collapsible="offcanvas">
     <div data-slot="sidebar-gap"></div>
     <div data-slot="sidebar-container">
       <div data-slot="sidebar-inner">
@@ -1229,6 +1235,8 @@ The viewport is the real scroll container; the kit makes it a Tab stop (`tabinde
 </div>
 ```
 
+`data-variant="sidebar|floating|inset"` and `data-collapsible="offcanvas|icon|none"` on the `sidebar`.
+
 - Parts: `sidebar-group-action`, `sidebar-group-content`, `sidebar-menu-button` (`data-variant="outline"`, `data-size="sm|lg"`, `data-active`), `sidebar-menu-action` (`data-show-on-hover`), `sidebar-menu-skeleton` (`data-show-icon`), `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-menu-sub-button` (`data-active`), `sidebar-input`, `sidebar-separator`.
 - `data-state="expanded|collapsed"` on the `sidebar` is the first state (default `expanded`); a state in `localStorage` wins.
 - A trigger controls the sidebar in its wrapper, or the one named by `aria-controls`. Ctrl/⌘+B toggles the sidebar of the focused wrapper, else the first one. The state is stored in `localStorage["sidebar_state:<wrapper id>"]`.
@@ -1240,23 +1248,23 @@ The viewport is the real scroll container; the kit makes it a Tab stop (`tabinde
 
 `table-container` > `table` > `table-caption`, `table-header`, `table-body`, `table-footer`, `table-row` (`data-state="selected"`), `table-head`, `table-cell`. Filtering, selection, column visibility, and paging are app code; the demo builds a data table with `h()`, a row actions `dropdown-menu`, a column `dropdown-menu`, and `toast`.
 
-Sorting (kit extension, opt-in): `data-sort` on a `table-head` in the `table-header`. The kit puts the head content in a ghost `button` (or uses the `button` that is already there), adds the sort icon (`chevrons-up-down`, `arrow-up`, `arrow-down`), and sets `aria-sort="none"`. A click (Enter and Space are the native button keys) goes ascending, descending, and back to the first order; the other sortable heads of the row go back to `none`. `data-sort-first="descending"` on a head starts that column with the largest value or the newest date (descending, ascending, first order). `data-sort-toggle` on the `table` or on a `table-head` (that column only) leaves out the first order: a click on the sorted head changes between its two directions, and a click on another head starts with that head's first direction. Then the kit fires `table:sort` and, unless the listener calls `preventDefault()`, moves the rows of each `tbody`:
+Sorting (kit extension, opt-in): `data-sort` on a `table-head` in the `table-header`. The kit puts the head content in a ghost `button` (or uses the `button` that is already there), adds the sort icon (`chevrons-up-down`, `arrow-up`, `arrow-down`), and sets `aria-sort="none"`. A click (Enter and Space are the native button keys) goes ascending, descending, and back to the first order; the other sortable heads of the row go back to `none`. `data-sort-first="descending"` on a head starts that column with the largest value or the newest date (descending, ascending, first order). `data-sort-toggle="true"` on the `table` or on a `table-head` (that column only) leaves out the first order: a click on the sorted head changes between its two directions, and a click on another head starts with that head's first direction. Then the kit fires `table:sort` and, unless the listener calls `preventDefault()`, moves the rows of each `tbody`:
 
 - The value of a cell is its `data-value`, else its text. Put the plain value in `data-value` when the text is not a plain number or date (compact numbers such as `1,2 mio. €`, a relative date), and `data-value=""` for an empty value that shows text (`n/a`). Empty values (no text, `-`, `–`, `—`) go last in both directions.
-- `data-sort="number"` reads numbers in the language of the nearest `lang` (`1.234,56 €` in `sl`, `12.5 %` in `en`); `data-sort="date"` reads ISO dates and the day, month, and year order of that language (`3. 11. 2026`); `data-sort="text"` compares with `Intl.Collator` of that language (č, š, ž in their place), numbers in text by value. An empty `data-sort` (or `auto`) is `number` when every value is one number in the language of the nearest `lang` (spaces, a currency sign, and `%` allowed: `1.234,50 €`, `12 %`), else `text`, so ISO dates and versions (`2026-01-02`, `1.10.2`) sort as text with their numbers by value. Other values are left to app code, so an older app sort with its own `data-sort` keys keeps working.
+- `data-sort="auto|number|date|text"` on a `table-head` sets how its cells compare. `number` reads numbers in the language of the nearest `lang` (`1.234,56 €` in `sl`, `12.5 %` in `en`); `date` reads ISO dates and the day, month, and year order of that language (`3. 11. 2026`); `text` compares with `Intl.Collator` of that language (č, š, ž in their place), numbers in text by value. `auto` (or an empty `data-sort=""` on the `table-head`) is `number` when every value is one number in the language of the nearest `lang` (spaces, a currency sign, and `%` allowed: `1.234,50 €`, `12 %`), else `text`, so ISO dates and versions (`2026-01-02`, `1.10.2`) sort as text with their numbers by value. Other values are left to app code, so an older app sort with its own `data-sort` keys keeps working (the markup lint reports them).
 - The sort is stable, and the third click restores the first order. Rows added later go after the known rows in the first order.
 - `data-align="end"` on the head puts the icon before the label, so the label ends at the cell edge.
-- `data-sort-icon` on an `svg` in an authored head `button` marks the sort icon; its `data-lucide` is the icon of the unsorted state (shadcn uses `arrow-up-down`).
+- `data-sort-icon="true"` on an `svg` in an authored head `button` marks the sort icon; its `data-lucide` is the icon of the unsorted state (shadcn uses `arrow-up-down`).
 
 Kit extensions on `table-container`:
 
 - `data-sticky-header`: the header row stays in view while the page scrolls. The kit measures the table (`ResizeObserver`) and sets `data-fits` when it fits its box; then the box and a `card` around it use `overflow: clip` instead of a scroll box, so the `table-header` sticks to the page (`top: var(--table-header-top, 0px)`, the page or card background). A wider table keeps its sideways scroll and a normal header. After a `site-header` (in a later sibling of it, not in a dialog or a `scroll-area-viewport`), the default is the header height (`--header-height`, 3rem, or the height of a large site-header); set `--table-header-top` for any other offset, and `--table-header-top: 0px` on a table in its own scroll pane (a `main` with `overflow: auto`).
-- `data-layout="stack"`: below 40rem each row is a block of label and value lines for phone tables where no column can go. The label is the `data-label` of each `table-cell` (a `--table-label-width` column, default 7rem, hidden from screen readers); a cell without `data-label` takes the full width. The header row is visually hidden, and the kit sets the roles `table`, `rowgroup`, `row`, `columnheader`, `rowheader`, and `cell` (CSS `display` changes drop the table semantics in some browsers). Set it in the markup; rows added later get their roles too.
+- `data-layout="stack"`: below 40rem each row is a block of label and value lines for phone tables where no column can go. The label is `data-label="Status"` on the `table-cell` (a `--table-label-width` column, default 7rem, hidden from screen readers); a cell without `data-label` takes the full width. The header row is visually hidden, and the kit sets the roles `table`, `rowgroup`, `row`, `columnheader`, `rowheader`, and `cell` (CSS `display` changes drop the table semantics in some browsers). Set it in the markup; rows added later get their roles too.
 
 #### Tabs
 
 ```html
-<div data-slot="tabs" data-default-value="account" data-orientation="horizontal|vertical">
+<div data-slot="tabs" data-default-value="account" data-orientation="horizontal">
   <div data-slot="tabs-list" data-variant="line">
     <button data-slot="tabs-trigger" data-value="account">Account</button>
   </div>
@@ -1264,11 +1272,13 @@ Kit extensions on `table-container`:
 </div>
 ```
 
+`data-orientation="horizontal|vertical"` on the `tabs`.
+
 ```html
 <div data-slot="tabs" data-value="password">...</div>
 ```
 
-Set the tab from code with `data-value` on the root (`tabs.dataset.value = "password"`): the kit selects that tab without a `tabs:change` event, as for a select. A root with `data-value` keeps it in sync when the user picks a tab, and `data-value` in the markup wins over `data-default-value`. A value that no trigger has changes nothing.
+Set the tab from code with `data-value="password"` on the `tabs` (`tabs.dataset.value = "password"`): the kit selects that tab without a `tabs:change` event, as for a select. A root with `data-value` keeps it in sync when the user picks a tab, and `data-value` in the markup wins over `data-default-value`. A value that no trigger has changes nothing.
 
 Keep a tab bar short enough for 390 px. A list that can scroll gets `class="scroll-fade-x"` on the `tabs-list`: it fades the edge where more tabs are, and shows nothing when the list fits. With many tabs, put a `select` with the same choices next to the list, as shadcn `dashboard-01` does: `data-hide-from="sm"` on the select and `data-show-from="sm"` on the `tabs-list`; or use fewer and shorter labels. A `tabs-content` without `data-value` is a shared panel: it shows for every tab and is labelled by the selected tab. Use it for a tab bar that filters one list or table: render the rows on `tabs:change`. A filter with no panel at all is a toggle group (`data-type="single" data-required`), not tabs.
 
@@ -1315,17 +1325,19 @@ States: `idle`, `uploading`, `processing`, `error`, `done`. Sizes: `default`, `s
 
 ```html
 <div data-slot="trace">
-  <span data-slot="trace-line" data-status="running|error|pending">
+  <span data-slot="trace-line" data-status="running">
     <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
     <span data-slot="trace-title">Running pnpm build</span>
     <span data-slot="trace-description">14s</span>
   </span>
-  <div data-slot="trace-collapsible" data-default-open>
+  <div data-slot="trace-collapsible" data-default-open="true">
     <button data-slot="trace-collapsible-trigger"><span data-slot="trace-line">…</span></button>
     <div data-slot="trace-collapsible-content">Detail</div>
   </div>
 </div>
 ```
+
+`data-status="running|error|pending"` on the `trace-line`.
 
 The kit adds the chevron and keeps `aria-expanded` and `data-state` current. It sets the Base UI collapsible states: `data-open` or `data-closed` on the collapsible and the content, `data-panel-open` on the trigger, and `data-starting-style` (one frame on open) or `data-ending-style` (while it closes) on all three. The content height is a CSS transition on `--collapsible-panel-height`: the pixel height while it moves, `auto` when open.
 
@@ -1345,7 +1357,7 @@ The kit adds the chevron and keeps `aria-expanded` and `data-state` current. It 
 </div>
 ```
 
-`data-numbered` splits text into `code-block-line` rows; write `<span data-slot="code-block-line" data-variant="added|removed|highlighted">` rows for diffs and highlighted lines. Copy uses the Clipboard API: `data-value` or the block text without line numbers; it shows a check for 2 s (`data-timeout`) and announces "Copied" (`strings.copied`). A copy button that leaves the page goes back to its copy state. The wrap button toggles `data-wrap` and `aria-pressed` (pressed text is `--foreground`). The download button saves `data-value` or the block text as `data-filename` (default: the last part of the title, else `code.txt`).
+`data-numbered` splits text into `code-block-line` rows; write `<span data-slot="code-block-line" data-variant="added|removed|highlighted">` rows for diffs and highlighted lines. Copy uses the Clipboard API: `data-value` or the block text without line numbers; it shows a check for 2 s (`data-timeout="2000"`) and announces "Copied" (`strings.copied`). A copy button that leaves the page goes back to its copy state. The wrap button toggles `data-wrap` and `aria-pressed` (pressed text is `--foreground`). The download button saves `data-value` or the block text as `data-filename` (default: the last part of the title, else `code.txt`).
 
 Syntax colors: load `clanker-ui-code.js` and set `data-language` on `code-block-content`. Languages: `ts`, `tsx`, `js`, `jsx`, `json`, `html`, `css`, `bash`, `yaml`, `go`, `python`, `diff`, `markdown`, `sql`, `ansi` (terminal colors; the escape codes go away), and the usual aliases (`typescript`, `javascript`, `sh`, `shell`, `zsh`, `yml`, `py`, `md`, `xml`, `svg`); other languages and text over 200 000 characters stay plain, as without the module. It colors plain text (made into `code-block-line` rows, one per line) and plain rows when a block starts; rows with elements stay as they are. For text that changes, build the rows again:
 
@@ -1362,7 +1374,7 @@ Tokens are `<span data-token="…">` with `comment`, `keyword`, `string`, `const
 #### Message Scroller
 
 ```html
-<div data-slot="message-scroller" data-auto-scroll data-default-scroll-position="end|start|last-anchor">
+<div data-slot="message-scroller" data-auto-scroll="true" data-default-scroll-position="end">
   <div data-slot="message-scroller-viewport">
     <div data-slot="message-scroller-content">
       <div data-slot="message-scroller-item" data-message-id="u1" data-scroll-anchor="true">…</div>
@@ -1372,18 +1384,18 @@ Tokens are `<span data-token="…">` with `comment`, `keyword`, `string`, `const
 </div>
 ```
 
-Give the root a height. Options: `data-auto-scroll`, `data-default-scroll-position`, `data-scroll-edge-threshold` (8), `data-scroll-margin` (0), `data-scroll-previous-item-peek` (64). A new anchor row moves near the top; rows added above keep the visible row in place. Only upward intent releases following: wheel up, a touch drag down, and ArrowUp, PageUp, Home, or Shift+Space on the viewport itself (keys in an input inside the log never release it); downward input keeps following. The button is `inert` with `data-active="false"` when there is nothing to scroll to (else `data-active="true"`); it defaults to `data-direction="end" data-variant="secondary" data-size="icon-sm"`. The viewport has `data-autoscrolling` while the kit scrolls it. Rows default to `data-scroll-anchor="false"`. With the opening position `end` or `last-anchor`, the root and the viewport have `data-pending-scroll` (the viewport is invisible) until the position is set; put the attribute in the HTML to hide the first paint before the kit runs. The content ends with a hidden `<div aria-hidden="true" data-message-scroller-spacer>` that holds an anchored row at the top; the kit keeps it last when rows are added. App code counts and removes rows with `:scope > [data-slot="message-scroller-item"]`, never with the content's `children` or `lastElementChild`. The exported scroller functions return `false` or defaults for a scroller that is not in the document; set-up runs when it is inserted.
+Give the root a height. Options: `data-auto-scroll="true"`, `data-default-scroll-position="end|start|last-anchor"`, `data-scroll-edge-threshold="8"`, `data-scroll-margin="0"`, and `data-scroll-previous-item-peek="64"` on the `message-scroller` (the numbers are the defaults). A new anchor row moves near the top; rows added above keep the visible row in place. Only upward intent releases following: wheel up, a touch drag down, and ArrowUp, PageUp, Home, or Shift+Space on the viewport itself (keys in an input inside the log never release it); downward input keeps following. The button is `inert` with `data-active="false"` when there is nothing to scroll to (else `data-active="true"`); it defaults to `data-direction="end" data-variant="secondary" data-size="icon-sm"`. The viewport has `data-autoscrolling` while the kit scrolls it. Rows default to `data-scroll-anchor="false"`. With the opening position `end` or `last-anchor`, the root and the viewport have `data-pending-scroll` (the viewport is invisible) until the position is set; put the attribute in the HTML to hide the first paint before the kit runs. The content ends with a hidden `<div aria-hidden="true" data-message-scroller-spacer>` that holds an anchored row at the top; the kit keeps it last when rows are added. App code counts and removes rows with `:scope > [data-slot="message-scroller-item"]`, never with the content's `children` or `lastElementChild`. The exported scroller functions return `false` or defaults for a scroller that is not in the document; set-up runs when it is inserted.
 
 #### Questionnaire
 
 ```html
-<form data-slot="questionnaire" data-shortcuts="letters|numbers" data-default-item="direction">
+<form data-slot="questionnaire" data-shortcuts="letters" data-default-item="direction">
   <div data-slot="questionnaire-progress" data-template="Step {current} of {total}"></div>
-  <fieldset data-slot="questionnaire-item" name="direction" data-required data-multiple>
+  <fieldset data-slot="questionnaire-item" name="direction" data-required="true" data-multiple="true">
     <legend data-slot="questionnaire-title">Question</legend>
     <p data-slot="questionnaire-description">Help text</p>
     <div data-slot="questionnaire-choices">
-      <label data-slot="questionnaire-choice" data-value="a" data-default-checked>Label<span data-slot="questionnaire-choice-description">More</span></label>
+      <label data-slot="questionnaire-choice" data-value="a" data-default-checked="true">Label<span data-slot="questionnaire-choice-description">More</span></label>
       <input data-slot="questionnaire-input" aria-label="Other answer">
     </div>
     <p data-slot="questionnaire-error"></p>
@@ -1395,6 +1407,8 @@ Give the root a height. Options: `data-auto-scroll`, `data-default-scroll-positi
 </form>
 ```
 
+`data-shortcuts="letters|numbers"` on the `questionnaire`.
+
 One item at a time. The kit builds the native radio or checkbox, the indicator, and the shortcut hint (the input, the choice, and the hint carry `data-type`, `data-shortcut`, `data-checked` or `data-unchecked`, and `data-invalid` while the item is invalid; a required single-choice radio is `required` until a text answer is given; the action buttons default to `data-variant` `outline` (previous, skip) or `default` (next, submit) and `data-size="default"`), validates before Next and Submit, and fills the progress text and error message. Keys: letters or numbers pick, Up and Down move, Left and Right change the item, Enter continues, Ctrl or Cmd+Enter continues from anywhere. Skipped items are left out of the form data.
 
 - `data-disabled` on a `questionnaire-choice` disables that choice.
@@ -1402,20 +1416,20 @@ One item at a time. The kit builds the native radio or checkbox, the indicator, 
 
 #### Calendar
 
-`<div data-slot="calendar" data-mode="single|multiple|range" data-value="2026-10-28" data-name="date"></div>`. The kit renders the grid. Each day is a Button part, as in shadcn: `<td data-slot="calendar-day" data-day="2026-10-28"><button data-slot="button" data-calendar-day-button data-variant="ghost" data-size="icon" data-day="10/28/2026">28</button></td>` (`data-day` on the button is the local date text). The cell of the focused day has `data-focused="true"`. In `range` mode with a value, every button has `data-range-start`, `data-range-middle`, `data-range-end` (`true` or `false`). A disabled previous or next button has `aria-disabled="true"` and `tabindex="-1"`, as in react-day-picker, so the date picker focuses the next part. The root gets `data-mode="single"`, `data-caption-layout="label"`, and `data-button-variant="ghost"` when it has none (the shadcn defaults of `mode`, `captionLayout`, and `buttonVariant`; the generated CSS selects on them), and `data-multiple-months="true"` with more than one month. `data-button-variant` is also the `data-variant` of the previous and next buttons. Week numbers have two digits (`05`). With a Monday start they are ISO 8601 weeks; with another `data-week-start`, week 1 is the week of January 1, as react-day-picker with the en-US locale (shadcn uses Sunday).
+`<div data-slot="calendar" data-mode="single|multiple|range" data-value="2026-10-28" data-name="date"></div>`. The kit renders the grid. Each day is a Button part, as in shadcn: `<td data-slot="calendar-day" data-day="2026-10-28"><button data-slot="button" data-calendar-day-button data-variant="ghost" data-size="icon" data-day="10/28/2026">28</button></td>` (the kit sets `data-day` on the button to the local date text). The cell of the focused day has `data-focused="true"`. In `range` mode with a value, every button has `data-range-start`, `data-range-middle`, `data-range-end` (`true` or `false`). A disabled previous or next button has `aria-disabled="true"` and `tabindex="-1"`, as in react-day-picker, so the date picker focuses the next part. The root gets `data-mode="single"`, `data-caption-layout="label"`, and `data-button-variant="ghost"` when it has none (the shadcn defaults of `mode`, `captionLayout`, and `buttonVariant`; the generated CSS selects on them), and `data-multiple-months="true"` with more than one month. `data-button-variant` is also the `data-variant` of the previous and next buttons. Week numbers have two digits (`05`). With a Monday start they are ISO 8601 weeks; with another `data-week-start`, week 1 is the week of January 1, as react-day-picker with the en-US locale (shadcn uses Sunday).
 
 | Attribute | Meaning |
 | --- | --- |
 | `data-value` | `2026-10-28`; `multiple`: space-separated dates; `range`: `2026-10-01/2026-10-07` |
-| `data-month`, `data-months` | First month shown (`2026-10`), number of months side by side |
-| `data-min`, `data-max`, `data-disabled-dates`, `data-disabled-weekdays`, `data-disabled` | Limits. Ranges use `a/b`. Weekdays `0` (Sunday) to `6`. A change from code (for example `data-max` set to today when the page loads) renders the grid again. |
-| `data-week-start` | `0`–`6`, default `1` (Monday) |
-| `data-caption-layout`, `data-start-year`, `data-end-year` | `label`, `dropdown`, `dropdown-months`, `dropdown-years`; years from `data-start-year` to `data-end-year` (default: 100 years before today to this year, or the years of `data-min` and `data-max`). With a year dropdown, navigation stops at January of the first and December of the last year, as in react-day-picker; for future dates set `data-end-year` or `data-max`. A `data-min` in a later year extends the default end year, and a `data-max` in an earlier year extends the default start year. |
-| `data-month-format` | Month names in the month dropdown: `short` (default, `Dec`) or `long` (`December`, the shadcn `formatMonthDropdown` of `calendar-custom-days`) |
-| `data-button-variant` | Button variant of the previous and next buttons, default `ghost` |
+| `data-month="2026-10"`, `data-months="2"` | First month shown, number of months side by side |
+| `data-min="2026-01-01"`, `data-max="2026-12-31"`, `data-disabled-dates="2026-10-01/2026-10-07 2026-12-25"`, `data-disabled-weekdays="0 6"`, `data-disabled` | Limits. Ranges use `a/b`. Weekdays `0` (Sunday) to `6`. A change from code (for example `data-max` set to today when the page loads) renders the grid again. |
+| `data-week-start="0\|1\|2\|3\|4\|5\|6"` | Sunday (`0`) to Saturday (`6`), default `1` (Monday) |
+| `data-caption-layout="label\|dropdown\|dropdown-months\|dropdown-years"`, `data-start-year="1926"`, `data-end-year="2026"` | Caption: `label` (default) or dropdowns; years from `data-start-year` to `data-end-year` (default: 100 years before today to this year, or the years of `data-min` and `data-max`). With a year dropdown, navigation stops at January of the first and December of the last year, as in react-day-picker; for future dates set `data-end-year` or `data-max`. A `data-min` in a later year extends the default end year, and a `data-max` in an earlier year extends the default start year. |
+| `data-month-format="short\|long"` | Month names in the month dropdown: `short` (default, `Dec`) or `long` (`December`, the shadcn `formatMonthDropdown` of `calendar-custom-days`) |
+| `data-button-variant="default\|destructive\|outline\|secondary\|ghost\|link"` | Button variant of the previous and next buttons, default `ghost` |
 | `data-outside-days="false"`, `data-show-week-number`, `data-fixed-weeks`, `data-required` | rdp options (`data-show-week-number` is the shadcn `showWeekNumber` prop) |
 | `data-name` | Hidden input(s) for forms: one per date in `multiple`, `from/to` in `range` |
-| `data-today`, `data-lang`, `data-label-previous`, `data-label-next` | Overrides. Names come from `Intl` in the nearest `lang`. |
+| `data-today="2026-10-28"`, `data-lang="de"`, `data-label-previous="Previous month"`, `data-label-next="Next month"` | Overrides. Names come from `Intl` in the nearest `lang`. |
 
 Keyboard (APG date grid): arrows by day or week, Home and End to the week ends, PageUp and PageDown by month, Shift+PageUp and Shift+PageDown by year. Disabled days are skipped; RTL is supported. Cell size: `--cell-size`.
 
@@ -1430,7 +1444,7 @@ Keyboard (APG date grid): arrows by day or week, Home and End to the week ends, 
 A composition, as in shadcn: a `button` trigger, a `popover-content` popup, and a `calendar`, joined by the `date-picker` root.
 
 ```html
-<div data-slot="date-picker" data-placeholder="Pick a date" data-format="long" data-required>
+<div data-slot="date-picker" data-placeholder="Pick a date" data-format="long" data-required="true">
   <button type="button" id="due-trigger" data-slot="button" data-variant="outline" data-date-picker-trigger><svg data-lucide="calendar"></svg><span data-slot="date-picker-value"></span></button>
   <div data-slot="popover-content" data-date-picker-content data-align="start" aria-label="Choose date">
     <div data-slot="native-select-wrapper">
@@ -1444,7 +1458,7 @@ A composition, as in shadcn: a `button` trigger, a `popover-content` popup, and 
 
 - Focus moves to the first part in the popup that can take focus (the previous-month button, or the next-month button when the previous one is disabled), as the Base UI popover does; Tab moves to the next-month button, then to the selected day or today. Escape, an outside click, or focus leaving closes it; a single date selection closes it unless `data-keep-open`. Focus returns to the trigger.
 - The trigger shows the formatted date (`data-format`: `long|medium|short|full|numeric`; ranges show `from - to`). The language is the calendar language: `data-lang` on the calendar, else the nearest `lang` attribute, else the browser language. `lang="en"` gives US English (`October 29, 2026`); set `lang="en-GB"` on the `date-picker` root or on `<html>` for `29 October 2026`, or `data-lang="de"` on the calendar for `29. Oktober 2026`. Month and day names in the popup use the same language.
-- Value from code: `data-value` on the calendar in the markup, or `calendarSetValue(calendar, "2026-10-29")` later. Both update the trigger text and the form value at once, without a `calendar:change` event (pass `{ emit: true }` for the event).
+- Value from code: `data-value="2026-10-29"` on the `calendar` in the markup, or `calendarSetValue(calendar, "2026-10-29")` later. Both update the trigger text and the form value at once, without a `calendar:change` event (pass `{ emit: true }` for the event).
 - Label the trigger with `<label for="due-trigger">` (a button is a labelable element) or `aria-labelledby`. In a vertical `field` the picker and its trigger fill the width, like an input.
 - `data-required` on the root: in a form the picker needs a date. The kit adds a visually hidden `required` input to the root; a `data-slot="form"` shows the `field-error` of the field around the trigger (`data-error-value-missing` on the root), sets `aria-invalid` on the trigger (or the `data-date-picker-input`), and focuses it on submit. The calendar `data-name` still submits the value. `data-required` on the calendar is a different option: a click on the selected day does not clear it.
 - `data-date-picker-input` on an input (for example in an `input-group`, with an icon button as the trigger) shows the date, parses typed dates on `change`, and opens the popup on ArrowDown. Typed text is read as ISO `yyyy-m-d`, as a numeric date in the order of the calendar language (en-US `m/d/yyyy`, de `d.m.yyyy`, ja `yyyy/m/d`), or as day, month name, and year in the language's long date order (`June 4, 2025`, `1. Juni 2025`). The year needs 4 digits; localized digits are accepted. Empty text clears the date. Text that does not parse keeps the old date and sets `aria-invalid="true"` on the input until the next valid change.
@@ -1497,7 +1511,7 @@ view.destroy()
 - A label inside a fill uses `--chart-ink-light` (`#fff`) or `--chart-ink-dark` (`#0b0b0b`), whichever has the higher WCAG contrast against the fill. Override both on `[data-slot="chart"]`.
 - Charts redraw on `theme:change` while they are in the document. A removed chart closes its tooltip, is not tracked, and redraws when it is inserted again. A destroyed chart never redraws.
 - Fixed labels (chart names, legend, table button, table header, summary sentences) come from `strings` (see [Localization](#localization)); `data-string-<key>` on the chart element or an ancestor overrides one chart.
-- Parts: `chart-plot`, `chart-svg`, `chart-tooltip` (`-label`, `-items`, `-item`, `-indicator`, `-name`, `-value`), `chart-legend`, `chart-legend-item`, `chart-table`, `chart-table-toggle`, `chart-footer`, `chart-live`. SVG marks use `data-part`. The kit sets `data-sparkline` on `chart` (a sparkline), `data-shape="rect|line|circle|square|diamond"` and `data-dashed` on `chart-legend-indicator`, and `data-total` on `chart-tooltip-item` (the total row of a stacked chart).
+- Parts: `chart-plot`, `chart-svg`, `chart-tooltip` (`-label`, `-items`, `-item`, `-indicator`, `-name`, `-value`), `chart-legend`, `chart-legend-item`, `chart-table`, `chart-table-toggle`, `chart-footer`, `chart-live`. The kit sets `data-part` on the SVG marks. The kit sets `data-sparkline` on `chart` (a sparkline), `data-shape="rect|line|circle|square|diamond"` and `data-dashed` on `chart-legend-indicator`, and `data-total` on `chart-tooltip-item` (the total row of a stacked chart).
 
 #### Reference lines and time axis
 
@@ -1662,7 +1676,7 @@ Kit parts for page structure, ported from the layout of the shadcn blocks (`dash
 - The frame of the shadcn data table (tasks example and `dashboard-01`): a toolbar, the table in a bordered, rounded `table-container` with a muted header, and the pagination row. Sorting, filtering, and paging are app code.
 - `data-table-toolbar` has two `div` groups: filters at the start (the first grows; a text input in it is 150 to 250 px) and actions at the end. Both wrap. Small buttons in it are 32 px high, as high as the input (shadcn `h-8`). Below 40rem, when the first control of the start group is an `input` or `input-group` (the search), the search takes the whole first row, and the filters and the end group share the next row, with the end group at the end.
 - `data-table-pagination` is a row of `div` groups at the end, 14 px, weight 500. `data-table-selection` is the muted selection text that fills the start.
-- `data-table-text` is the text of a cell: one line, cut with an ellipsis at 32rem (or 60 % of the table width). With an icon first it is an icon and label row (the icon is muted). A sort button: `data-sort` on the `table-head` (see [Table](#table)).
+- `data-table-text` is the text of a cell: one line, cut with an ellipsis at 32rem (or 60 % of the table width). With an icon first it is an icon and label row (the icon is muted). Sort buttons: see the sorting of [Table](#table).
 - `data-align="end"` on a `table-head` or `table-cell` aligns numbers to the end with tabular figures; `data-align="center"` centers. A cell with only a `checkbox` is 2rem wide. A cell with an `empty` has no padding: use it with `colspan` for the empty state.
 
 #### Brand
@@ -1864,14 +1878,15 @@ Group `core`. Needs none. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/d
 
 | Part | Write | State |
 | --- | --- | --- |
-| `table` (root) | `data-sort-toggle` any |  |
+| `table` (root) | `data-sort-toggle` boolean |  |
+| `table-cell` | `data-label` string |  |
 | `table-container` | `data-sticky-header` boolean | `data-fits` boolean |
-| `table-head` | `data-sort` any; `data-sort-toggle` any |  |
+| `table-head` | `data-align` `end`; `data-sort` (empty), `auto`, `date`, `number`, `text`; `data-sort-toggle` boolean |  |
 | `table-row` | `data-state` string |  |
 
-Other parts: `table-body`, `table-caption`, `table-cell`, `table-footer`, `table-header`.
+Other parts: `table-body`, `table-caption`, `table-footer`, `table-header`.
 
-Other options named in the docs: `data-label` any; `data-layout` string; `data-sort-first` string; `data-sort-icon` any.
+Other options named in the docs: `data-layout` string; `data-sort-first` string; `data-sort-icon` boolean.
 
 Events: `table:sort` `{ column, dir }`.
 
@@ -1998,25 +2013,23 @@ Other parts: `site-header-actions`, `site-header-nav`, `site-header-title`.
 
 Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/section-cards/.
 
-Other parts: `section-cards` (root).
-
-Other options named in the docs: `data-min-columns` `2`.
+| Part | Write | State |
+| --- | --- | --- |
+| `section-cards` (root) | `data-min-columns` `2` |  |
 
 #### Stat Grid (`stat-grid`)
 
 Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/stat-grid/.
 
-Other parts: `stat-grid` (root).
-
-Other options named in the docs: `data-size` `sm`.
+| Part | Write | State |
+| --- | --- | --- |
+| `stat-grid` (root) | `data-size` `sm` |  |
 
 #### Data Table (`data-table`)
 
 Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/data-table/.
 
 Other parts: `data-table` (root), `data-table-pagination`, `data-table-selection`, `data-table-text`, `data-table-toolbar`.
-
-Other options named in the docs: `data-sort` any; `data-table-pagination` any; `data-table-selection` any; `data-table-text` any.
 
 #### Brand (`brand`)
 
@@ -2054,9 +2067,9 @@ Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/doc
 
 Group `core`. Needs none. CSS only. Docs: https://bl4ko.github.io/clanker-ui/docs/components/rating/.
 
-Other parts: `rating` (root).
-
-Other options named in the docs: `data-size` `sm`.
+| Part | Write | State |
+| --- | --- | --- |
+| `rating` (root) | `data-size` `sm` |  |
 
 #### Button Group (`button-group`)
 
@@ -2082,7 +2095,7 @@ Other parts: `input-group` (root), `input-group-control`, `input-group-text`.
 
 Part attributes: `data-input-group-button` boolean.
 
-Other options named in the docs: `data-size` `icon-sm`, `icon-xs`, `sm`, `xs`; `data-variant` any.
+Other options named in the docs: `data-size` `icon-sm`, `icon-xs`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary`.
 
 #### Input OTP (`input-otp`)
 
@@ -2108,7 +2121,7 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | `field` (root) | `data-disabled` `false`, `true`; `data-invalid` `false`, `true`; `data-orientation` `horizontal`, `responsive`, `vertical` |  |
 | `field-group` | `data-columns` `2`, `3` |  |
 | `field-legend` | `data-variant` `label`, `legend` |  |
-| `field-separator` | `data-content` any |  |
+| `field-separator` |  | `data-content` `false`, `true` |
 
 Other parts: `field-content`, `field-description`, `field-error`, `field-label`, `field-label-row`, `field-separator-content`, `field-set`.
 
@@ -2127,7 +2140,7 @@ Other options named in the docs: `data-span` number.
     </div>
     <div data-slot="field-separator"></div>
     <div data-slot="field" role="group" data-orientation="horizontal">
-      <button type="button" data-slot="checkbox" id="same-address" data-checked></button>
+      <button type="button" data-slot="checkbox" id="same-address" data-checked="true"></button>
       <div data-slot="field-content">
         <label data-slot="field-label" for="same-address">Same as shipping address</label>
       </div>
@@ -2161,11 +2174,11 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 | Part | Write | State |
 | --- | --- | --- |
-| `form-label` | `data-error` any |  |
+| `form-label` |  | `data-error` `false`, `true` |
 
 Other parts: `form` (root), `form-description`, `form-item`, `form-message`.
 
-Other options named in the docs: `data-error-bad-input` any; `data-error-custom-error` any; `data-error-pattern-mismatch` any; `data-error-range-overflow` any; `data-error-range-underflow` any; `data-error-step-mismatch` any; `data-error-too-long` any; `data-error-too-short` any; `data-error-type-mismatch` any; `data-error-value-missing` any; `data-name` any.
+Other options named in the docs: `data-error` string; `data-error-bad-input` string; `data-error-custom-error` string; `data-error-pattern-mismatch` string; `data-error-range-overflow` string; `data-error-range-underflow` string; `data-error-step-mismatch` string; `data-error-too-long` string; `data-error-too-short` string; `data-error-type-mismatch` string; `data-error-value-missing` string; `data-name` string.
 
 Events: `form:invalid` `{ errors }`; `form:submit` `{ formData, values, submitter }` (cancelable).
 
@@ -2253,7 +2266,7 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 | Part | Write | State |
 | --- | --- | --- |
-| `combobox` (root) | `data-auto-highlight` boolean; `data-name` string; `data-value` string |  |
+| `combobox` (root) | `data-auto-highlight` boolean; `data-disabled` boolean; `data-name` string; `data-value` string |  |
 | `combobox-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-chips` `false`, `true`; `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
 | `combobox-item` | `data-disabled` boolean; `data-value` string | `data-highlighted` boolean |
 | `combobox-list` |  | `data-empty` boolean |
@@ -2274,7 +2287,7 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 | --- | --- | --- |
 | `toggle` (root) | `data-size` `default`, `lg`, `sm`; `data-variant` `default`, `outline` | `data-state` `off`, `on` |
 
-Other options named in the docs: `data-name` any.
+Other options named in the docs: `data-name` string.
 
 Events: `toggle:change` `{ pressed, value }`.
 
@@ -2284,7 +2297,7 @@ Group `forms`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 
 | Part | Write | State |
 | --- | --- | --- |
-| `toggle-group` (root) | `data-disabled` boolean; `data-name` string; `data-orientation` `horizontal`, `vertical`; `data-size` `sm`; `data-spacing` `0`, `1`, `2`, `3`, `4`, `6`, `8`; `data-type` `multiple`, `single`; `data-value` string; `data-variant` `outline` |  |
+| `toggle-group` (root) | `data-disabled` boolean; `data-name` string; `data-orientation` `horizontal`, `vertical`; `data-size` `lg`, `sm`; `data-spacing` `0`, `1`, `2`, `3`, `4`, `6`, `8`; `data-type` `multiple`, `single`; `data-value` string; `data-variant` `outline` |  |
 | `toggle-group-item` | `data-size` `default`, `lg`, `sm`; `data-spacing` `0`; `data-value` string; `data-variant` `default`, `outline` | `data-state` `off`, `on` |
 
 Events: `toggle-group:change` `{ value }`.
@@ -2295,7 +2308,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 | Part | Write | State |
 | --- | --- | --- |
-| `dialog-content` |  | `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
+| `dialog-content` | `data-show-close-button` `false`, `true` | `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
 | `dialog-footer` | `data-show-close-button` boolean |  |
 
 Other parts: `dialog` (root), `dialog-body`, `dialog-close`, `dialog-description`, `dialog-header`, `dialog-title`.
@@ -2316,7 +2329,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 Other parts: `alert-dialog` (root), `alert-dialog-description`, `alert-dialog-footer`, `alert-dialog-header`, `alert-dialog-media`, `alert-dialog-title`.
 
-Part attributes: `data-alert-dialog-action` boolean; `data-alert-dialog-cancel` boolean; `data-alert-dialog-trigger` boolean.
+Part attributes: `data-alert-dialog-action` boolean; `data-alert-dialog-cancel` boolean; `data-alert-dialog-trigger` id.
 
 Events: `alert-dialog:open` `{ trigger }`; `alert-dialog:close` `{ reason }` (cancelable).
 
@@ -2342,15 +2355,13 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 | Part | Write | State |
 | --- | --- | --- |
-| `sheet-content` | `data-side` `bottom`, `left`, `right`, `top` | `data-ending-style` boolean; `data-starting-style` boolean |
+| `sheet-content` | `data-show-close-button` `false`, `true`; `data-side` `bottom`, `left`, `right`, `top` | `data-ending-style` boolean; `data-starting-style` boolean |
 
 Other parts: `sheet` (root), `sheet-body`, `sheet-close`, `sheet-description`, `sheet-footer`, `sheet-header`, `sheet-title`.
 
 Kit adds: `sheet-overlay`.
 
-Part attributes: `data-sheet-close` boolean; `data-sheet-trigger` boolean.
-
-Other options named in the docs: `data-show-close-button` `false`, `true`.
+Part attributes: `data-sheet-close` boolean; `data-sheet-trigger` id.
 
 Events: `sheet:open` `{ trigger }`; `sheet:close` `{ reason }` (cancelable).
 
@@ -2376,16 +2387,16 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | Part | Write | State |
 | --- | --- | --- |
 | `drawer` (root) | `data-show-swipe-handle` boolean; `data-swipe-direction` string |  |
-| `drawer-content` | `data-drawer-content` any |  |
+| `drawer-content` |  | `data-drawer-content` boolean |
 | `drawer-popup` |  | `data-ending-style` boolean; `data-nested-drawer-open` boolean; `data-nested-drawer-swiping` boolean; `data-snap-points` boolean; `data-starting-style` boolean; `data-swipe-axis` `x`, `y`; `data-swipe-direction` `down`, `left`, `right`, `up`; `data-swiping` boolean |
 | `drawer-swipe-handle` (kit adds) |  | `data-show-swipe-handle` boolean |
 | `drawer-viewport` |  | `data-ending-style` boolean; `data-modal` `false`, `trap-focus`, `true`; `data-snap-points` boolean; `data-starting-style` boolean; `data-swiping` boolean |
 
 Other parts: `drawer-body`, `drawer-description`, `drawer-footer`, `drawer-header`, `drawer-title`.
 
-Part attributes: `data-drawer-close` boolean; `data-drawer-trigger` boolean.
+Part attributes: `data-drawer-close` boolean; `data-drawer-trigger` id.
 
-Other options named in the docs: `data-base-ui-swipe-ignore` any; `data-disable-pointer-dismissal` boolean; `data-modal` `false`, `true`; `data-snap-point` any; `data-snap-points` string; `data-snap-to-sequential-points` boolean; `data-swipe-axis` `x`, `y`.
+Other options named in the docs: `data-base-ui-swipe-ignore` boolean; `data-disable-pointer-dismissal` boolean; `data-modal` `false`, `true`; `data-snap-point` string; `data-snap-points` string; `data-snap-to-sequential-points` boolean; `data-swipe-axis` `x`, `y`.
 
 Events: `drawer:open` `{ trigger }`; `drawer:close` `{ reason }` (cancelable); `drawer:release` `{ delta }`; `drawer:snap-point-change` `{ snapPoint }`.
 
@@ -2396,11 +2407,10 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | Part | Write | State |
 | --- | --- | --- |
 | `popover-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
-| `popover-trigger` | `data-popover-trigger` any |  |
 
-Other parts: `popover` (root), `popover-description`, `popover-header`, `popover-title`.
+Other parts: `popover` (root), `popover-anchor`, `popover-description`, `popover-header`, `popover-title`, `popover-trigger`.
 
-Part attributes: `data-popover-trigger` boolean.
+Part attributes: `data-popover-trigger` id.
 
 Events: `popover:open` `{ trigger }`; `popover:close` `{ reason }`.
 
@@ -2424,13 +2434,13 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | --- | --- | --- |
 | `tooltip-arrow` (kit adds) |  | `data-side` `bottom`, `left`, `right`, `top` |
 | `tooltip-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
-| `tooltip-provider` | `data-delay-duration` any; `data-skip-delay-duration` any |  |
+| `tooltip-provider` | `data-delay-duration` number; `data-skip-delay-duration` number |  |
 
 Other parts: `tooltip` (root).
 
 Part attributes: `data-tooltip-trigger` boolean.
 
-Other options named in the docs: `data-close-delay` any; `data-delay` any; `data-timeout` any.
+Other options named in the docs: `data-close-delay` number; `data-delay` number; `data-timeout` number.
 
 Events: `tooltip:open`; `tooltip:close`.
 
@@ -2453,7 +2463,7 @@ Other parts: `hover-card` (root).
 
 Part attributes: `data-hover-card-trigger` boolean.
 
-Other options named in the docs: `data-close-delay` any; `data-delay` any; `data-open-delay` any.
+Other options named in the docs: `data-close-delay` number; `data-delay` number; `data-open-delay` number.
 
 Events: `hover-card:open`; `hover-card:close`.
 
@@ -2471,9 +2481,9 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | Part | Write | State |
 | --- | --- | --- |
 | `dropdown-menu` (root) | `data-modal` `false`, `true` |  |
-| `dropdown-menu-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean |  |
+| `dropdown-menu-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
 | `dropdown-menu-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
-| `dropdown-menu-item` | `data-disabled` boolean; `data-inset` boolean; `data-variant` `destructive` |  |
+| `dropdown-menu-item` | `data-disabled` boolean; `data-inset` boolean; `data-value` string; `data-variant` `destructive` |  |
 | `dropdown-menu-label` | `data-inset` boolean |  |
 | `dropdown-menu-radio-group` | `data-value` string |  |
 | `dropdown-menu-radio-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
@@ -2484,9 +2494,9 @@ Other parts: `dropdown-menu-group`, `dropdown-menu-separator`, `dropdown-menu-sh
 
 Kit adds: `dropdown-menu-checkbox-item-indicator`, `dropdown-menu-radio-item-indicator`.
 
-Part attributes: `data-dropdown-menu-trigger` boolean.
+Part attributes: `data-dropdown-menu-trigger` id.
 
-Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` any.
+Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` string.
 
 Events: `dropdown-menu:open` `{ trigger }`; `dropdown-menu:close` `{ reason }`; `dropdown-menu:select` `{ value, item, checked }` (cancelable); `dropdown-menu:change` `{ value, checked, item, group }`.
 
@@ -2497,9 +2507,9 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | Part | Write | State |
 | --- | --- | --- |
 | `context-menu` (root) | `data-modal` `false`, `true` |  |
-| `context-menu-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean |  |
+| `context-menu-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
 | `context-menu-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
-| `context-menu-item` | `data-disabled` boolean; `data-inset` boolean; `data-variant` `destructive` |  |
+| `context-menu-item` | `data-disabled` boolean; `data-inset` boolean; `data-value` string; `data-variant` `destructive` |  |
 | `context-menu-label` | `data-inset` boolean |  |
 | `context-menu-radio-group` | `data-value` string |  |
 | `context-menu-radio-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
@@ -2508,7 +2518,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 Other parts: `context-menu-group`, `context-menu-separator`, `context-menu-shortcut`, `context-menu-sub`, `context-menu-trigger`.
 
-Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` any.
+Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` string.
 
 Events: `context-menu:open` `{ trigger }`; `context-menu:close` `{ reason }`; `context-menu:select` `{ value, item, checked }` (cancelable); `context-menu:change` `{ value, checked, item, group }`.
 
@@ -2518,7 +2528,7 @@ Events: `context-menu:open` `{ trigger }`; `context-menu:close` `{ reason }`; `c
   <div data-slot="context-menu-content">
     <div data-slot="context-menu-group">
       <div data-slot="context-menu-item">Back<span data-slot="context-menu-shortcut">⌘[</span></div>
-      <div data-slot="context-menu-item" data-disabled>Forward</div>
+      <div data-slot="context-menu-item" data-disabled="true">Forward</div>
       <div data-slot="context-menu-sub">
         <div data-slot="context-menu-sub-trigger">More Tools</div>
         <div data-slot="context-menu-sub-content">
@@ -2527,10 +2537,10 @@ Events: `context-menu:open` `{ trigger }`; `context-menu:close` `{ reason }`; `c
       </div>
     </div>
     <div data-slot="context-menu-separator"></div>
-    <div data-slot="context-menu-checkbox-item" data-checked>Show Bookmarks</div>
+    <div data-slot="context-menu-checkbox-item" data-checked="true">Show Bookmarks</div>
     <div data-slot="context-menu-radio-group" data-value="pedro">
       <div data-slot="context-menu-label">People</div>
-      <div data-slot="context-menu-radio-item" data-value="pedro" data-checked>Pedro Duarte</div>
+      <div data-slot="context-menu-radio-item" data-value="pedro" data-checked="true">Pedro Duarte</div>
       <div data-slot="context-menu-radio-item" data-value="colm">Colm Tuite</div>
     </div>
   </div>
@@ -2544,9 +2554,9 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 | Part | Write | State |
 | --- | --- | --- |
 | `menubar` (root) | `data-modal` `false`, `true` |  |
-| `menubar-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean |  |
+| `menubar-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
 | `menubar-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
-| `menubar-item` | `data-disabled` boolean; `data-inset` boolean; `data-variant` `destructive` |  |
+| `menubar-item` | `data-disabled` boolean; `data-inset` boolean; `data-value` string; `data-variant` `destructive` |  |
 | `menubar-label` | `data-inset` boolean |  |
 | `menubar-radio-group` | `data-value` string |  |
 | `menubar-radio-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
@@ -2555,7 +2565,7 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 Other parts: `menubar-group`, `menubar-menu`, `menubar-separator`, `menubar-shortcut`, `menubar-sub`, `menubar-trigger`.
 
-Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` any.
+Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` string.
 
 Events: `menubar:open` `{ trigger }`; `menubar:close` `{ reason }`; `menubar:select` `{ value, item, checked }` (cancelable); `menubar:change` `{ value, checked, item, group }`.
 
@@ -2566,7 +2576,7 @@ Events: `menubar:open` `{ trigger }`; `menubar:close` `{ reason }`; `menubar:sel
     <div data-slot="menubar-content">
       <div data-slot="menubar-group">
         <div data-slot="menubar-item">New Tab<span data-slot="menubar-shortcut">⌘T</span></div>
-        <div data-slot="menubar-item" data-disabled>New Incognito Window</div>
+        <div data-slot="menubar-item" data-disabled="true">New Incognito Window</div>
       </div>
       <div data-slot="menubar-separator"></div>
       <div data-slot="menubar-sub">
@@ -2580,8 +2590,8 @@ Events: `menubar:open` `{ trigger }`; `menubar:close` `{ reason }`; `menubar:sel
   <div data-slot="menubar-menu">
     <button type="button" data-slot="menubar-trigger">View</button>
     <div data-slot="menubar-content">
-      <div data-slot="menubar-checkbox-item" data-checked>Full URLs</div>
-      <div data-slot="menubar-item" data-inset>Reload</div>
+      <div data-slot="menubar-checkbox-item" data-checked="true">Full URLs</div>
+      <div data-slot="menubar-item" data-inset="true">Reload</div>
     </div>
   </div>
 </div>
@@ -2604,7 +2614,7 @@ Other parts: `navigation-menu` (root), `navigation-menu-item`, `navigation-menu-
 
 Kit adds: `navigation-menu-focus-guard`, `navigation-menu-indicator-arrow`, `navigation-menu-viewport`.
 
-Other options named in the docs: `data-close-delay` any; `data-delay` any; `data-viewport` `false`, `true`.
+Other options named in the docs: `data-close-delay` number; `data-delay` number; `data-viewport` `false`, `true`.
 
 Events: `navigation-menu:change` `{ value }`; `navigation-menu:select` `{ link, href }`.
 
@@ -2621,7 +2631,7 @@ Events: `navigation-menu:change` `{ value }`; `navigation-menu:select` `{ link, 
       </div>
     </li>
     <li data-slot="navigation-menu-item">
-      <a data-slot="navigation-menu-link" data-variant="trigger" href="/docs" data-active>Docs</a>
+      <a data-slot="navigation-menu-link" data-variant="trigger" href="/docs" data-active="true">Docs</a>
     </li>
   </ul>
 </nav>
@@ -2633,8 +2643,8 @@ Group `overlays`. Needs `core`, `forms`. CSS and JS. Docs: https://bl4ko.github.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `command-group` | `data-heading` any |  |
-| `command-item` | `data-disabled` boolean; `data-keywords` string; `data-value` any | `data-selected` `false`, `true` |
+| `command-group` | `data-heading` string |  |
+| `command-item` | `data-disabled` boolean; `data-keywords` string; `data-value` string | `data-selected` `false`, `true` |
 
 Other parts: `command` (root), `command-empty`, `command-input`, `command-list`, `command-separator`, `command-shortcut`.
 
@@ -2652,7 +2662,7 @@ Events: `command:select` `{ value, item }`.
     <div data-slot="command-group" data-heading="Suggestions">
       <div data-slot="command-item"><svg data-lucide="calendar"></svg><span>Calendar</span></div>
       <div data-slot="command-item" data-keywords="emoji, smiley"><svg data-lucide="smile"></svg><span>Search Emoji</span></div>
-      <div data-slot="command-item" data-disabled><svg data-lucide="calculator"></svg><span>Calculator</span></div>
+      <div data-slot="command-item" data-disabled="true"><svg data-lucide="calculator"></svg><span>Calculator</span></div>
     </div>
     <div data-slot="command-separator"></div>
     <div data-slot="command-group" data-heading="Settings">
@@ -2689,7 +2699,7 @@ Same component as `toast`: use its markup, events, and API.
 
 Other parts: `sonner` (root).
 
-Other options named in the docs: `data-limit` any; `data-timeout` any.
+Other options named in the docs: `data-limit` number; `data-timeout` number.
 
 ```html
 <div data-slot="toast-portal" data-limit="3" data-timeout="5000"></div>
@@ -2702,12 +2712,12 @@ Group `overlays`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanke
 
 | Part | Write | State |
 | --- | --- | --- |
-| `calendar` (root) | `data-button-variant` any; `data-caption-layout` any; `data-disabled` boolean; `data-disabled-dates` any; `data-disabled-weekdays` any; `data-end-year` any; `data-fixed-weeks` boolean; `data-label-next` any; `data-label-previous` any; `data-lang` any; `data-max` any; `data-min` any; `data-mode` `multiple`, `range`, `single`; `data-month` any; `data-month-format` any; `data-months` any; `data-name` string; `data-outside-days` `false`, `true`; `data-required` boolean; `data-show-week-number` boolean; `data-start-year` any; `data-today` any; `data-value` string; `data-week-start` any |  |
+| `calendar` (root) | `data-button-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary`; `data-caption-layout` `dropdown`, `dropdown-months`, `dropdown-years`, `label`; `data-disabled` boolean; `data-disabled-dates` string; `data-disabled-weekdays` string; `data-end-year` number; `data-fixed-weeks` boolean; `data-label-next` string; `data-label-previous` string; `data-lang` string; `data-max` string; `data-min` string; `data-mode` `multiple`, `range`, `single`; `data-month` string; `data-month-format` `long`, `short`; `data-months` number; `data-name` string; `data-outside-days` `false`, `true`; `data-required` boolean; `data-show-week-number` boolean; `data-start-year` number; `data-today` string; `data-value` string; `data-week-start` `0`, `1`, `2`, `3`, `4`, `5`, `6` |  |
 | `calendar-day` (kit adds) |  | `data-disabled` `true`; `data-hidden` `true`; `data-outside` `true`; `data-range-end` `true`; `data-range-middle` `true`; `data-range-start` `true`; `data-selected` `true`; `data-today` `true` |
 
 Kit adds: `calendar-button-next`, `calendar-button-previous`, `calendar-caption-label`, `calendar-dropdown`, `calendar-dropdown-root`, `calendar-dropdowns`, `calendar-month`, `calendar-month-caption`, `calendar-month-grid`, `calendar-months`, `calendar-nav`, `calendar-week`, `calendar-week-number`, `calendar-week-number-header`, `calendar-weekday`, `calendar-weekdays`, `calendar-weeks`.
 
-Other options named in the docs: `data-day` any; `data-hidden` `false`, `true`.
+Other options named in the docs: `data-hidden` `false`, `true`.
 
 Events: `calendar:change` `{ value, mode, source }`; `calendar:navigate` `{ value }`.
 
@@ -2727,7 +2737,7 @@ Other parts: `date-picker-value`.
 
 Part attributes: `data-date-picker-content` boolean; `data-date-picker-input` boolean; `data-date-picker-preset` boolean; `data-date-picker-trigger` boolean.
 
-Other options named in the docs: `data-keep-open` boolean; `data-lang` string; `data-name` any; `data-value` any.
+Other options named in the docs: `data-keep-open` boolean; `data-lang` string; `data-name` string; `data-value` string.
 
 Events: `date-picker:open`; `date-picker:close`.
 
@@ -2782,7 +2792,7 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 | Part | Write | State |
 | --- | --- | --- |
 | `tabs` (root) | `data-default-value` string; `data-orientation` `horizontal`, `vertical`; `data-value` string |  |
-| `tabs-content` | `data-value` string |  |
+| `tabs-content` | `data-value` string | `data-state` `active`, `inactive` |
 | `tabs-list` | `data-variant` `default`, `line` |  |
 | `tabs-trigger` | `data-value` string | `data-active`; `data-state` `active`, `inactive` |
 
@@ -2806,8 +2816,6 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 
 Other parts: `pagination` (root), `pagination-content`, `pagination-ellipsis`, `pagination-item`.
 
-Other options named in the docs: `data-table-pagination` any.
-
 #### Scroll Area (`scroll-area`)
 
 Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui/docs/components/scroll-area/.
@@ -2830,7 +2838,7 @@ Group `layout`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-
 | `resizable-panel` | `data-default-size` number; `data-max-size` number; `data-min-size` number |  |
 | `resizable-panel-group` | `data-orientation` `horizontal`, `vertical` |  |
 
-Other options named in the docs: `data-keyboard-step` any.
+Other options named in the docs: `data-keyboard-step` number.
 
 Events: `resizable:change` `{ value }`.
 
@@ -2843,12 +2851,13 @@ Group `layout`. Needs `core`, `overlays`. CSS and JS. Docs: https://bl4ko.github
 | `sidebar` (root) | `data-collapsible` `icon`, `none`, `offcanvas`; `data-side` `bottom`, `left`, `right`, `top`; `data-state` `collapsed`, `expanded`; `data-variant` `floating`, `inset`, `sidebar` | `data-ending-style` boolean; `data-mobile` `closed`, `open`; `data-starting-style` boolean |
 | `sidebar-container` | `data-side` `left`, `right` |  |
 | `sidebar-menu-action` | `data-show-on-hover` boolean |  |
-| `sidebar-menu-button` | `data-active` `false`, `true`; `data-size` `default`, `lg`, `sm`; `data-tooltip` string; `data-variant` `default`, `outline` | `data-state` |
+| `sidebar-menu-button` | `data-active` boolean; `data-size` `default`, `lg`, `sm`; `data-tooltip` string; `data-variant` `default`, `outline` | `data-state` |
 | `sidebar-menu-skeleton` | `data-show-icon` boolean |  |
 | `sidebar-menu-sub-button` | `data-active` boolean; `data-size` `md`, `sm` | `data-state` |
 | `sidebar-separator` | `data-orientation` `horizontal`, `vertical` |  |
+| `sidebar-trigger` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 
-Other parts: `sidebar-content`, `sidebar-footer`, `sidebar-gap`, `sidebar-group`, `sidebar-group-action`, `sidebar-group-content`, `sidebar-group-label`, `sidebar-header`, `sidebar-inner`, `sidebar-input`, `sidebar-inset`, `sidebar-menu`, `sidebar-menu-badge`, `sidebar-menu-item`, `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-rail`, `sidebar-trigger`, `sidebar-wrapper`.
+Other parts: `sidebar-content`, `sidebar-footer`, `sidebar-gap`, `sidebar-group`, `sidebar-group-action`, `sidebar-group-content`, `sidebar-group-label`, `sidebar-header`, `sidebar-inner`, `sidebar-input`, `sidebar-inset`, `sidebar-menu`, `sidebar-menu-badge`, `sidebar-menu-item`, `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-rail`, `sidebar-wrapper`.
 
 Other options named in the docs: `data-mobile` `closed`, `open`.
 
@@ -2913,7 +2922,7 @@ Group `chat`. Needs `core`. CSS only. Docs: https://bl4ko.github.io/clanker-ui/d
 
 | Part | Write | State |
 | --- | --- | --- |
-| `bubble` (root) | `data-align` `end`; `data-variant` `ghost`, `muted` |  |
+| `bubble` (root) | `data-align` `end`; `data-variant` `default`, `destructive`, `ghost`, `muted`, `outline`, `secondary`, `tinted` |  |
 | `bubble-reactions` | `data-align` `end`, `start`; `data-side` `bottom`, `top` |  |
 
 Other parts: `bubble-content`, `bubble-group`.
@@ -2936,7 +2945,7 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 
 | Part | Write | State |
 | --- | --- | --- |
-| `message-scroller` (root) | `data-auto-scroll` boolean; `data-default-scroll-position` `end`, `last-anchor`, `start` |  |
+| `message-scroller` (root) | `data-auto-scroll` boolean; `data-default-scroll-position` `end`, `last-anchor`, `start`; `data-scroll-edge-threshold` number; `data-scroll-margin` number; `data-scroll-previous-item-peek` number |  |
 | `message-scroller-button` | `data-direction` string; `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `destructive`, `ghost`, `link`, `outline`, `secondary` | `data-active` `false`, `true` |
 | `message-scroller-item` | `data-message-id` string; `data-scroll-anchor` `false`, `true` |  |
 | `message-scroller-viewport` |  | `data-autoscrolling` boolean; `data-pending-scroll` boolean |
@@ -2945,7 +2954,7 @@ Other parts: `message-scroller-content`.
 
 Part attributes: `data-message-scroller-spacer` boolean.
 
-Other options named in the docs: `data-active` `false`, `true`; `data-scroll-edge-threshold` any; `data-scroll-margin` any; `data-scroll-previous-item-peek` any.
+Other options named in the docs: `data-active` `false`, `true`.
 
 Events: `message-scroller:scrollable` `{ start, end }`.
 
@@ -3012,15 +3021,17 @@ Group `chat`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-ui
 | Part | Write | State |
 | --- | --- | --- |
 | `code-block` (root) | `data-size` `sm`; `data-variant` `default`, `destructive` |  |
-| `code-block-content` | `data-language` string; `data-numbered` `false`, `true`; `data-start-line` number; `data-wrap` `false`, `true` |  |
-| `code-block-download-button` | `data-filename` string |  |
+| `code-block-content` | `data-language` string; `data-numbered` boolean; `data-start-line` number; `data-wrap` boolean |  |
+| `code-block-copy-button` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
+| `code-block-download-button` | `data-filename` string; `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 | `code-block-line` | `data-variant` `added`, `highlighted`, `removed` |  |
+| `code-block-wrap-button` | `data-size` `default`, `icon`, `icon-lg`, `icon-sm`, `icon-xs`, `lg`, `sm`, `xs`; `data-variant` `default`, `destructive`, `ghost`, `link`, `outline`, `secondary` |  |
 
-Other parts: `code-block-actions`, `code-block-code`, `code-block-copy-button`, `code-block-footer`, `code-block-header`, `code-block-title`, `code-block-wrap-button`.
+Other parts: `code-block-actions`, `code-block-code`, `code-block-footer`, `code-block-header`, `code-block-title`.
 
 Kit adds: `code-block-line-content`.
 
-Other options named in the docs: `data-timeout` any.
+Other options named in the docs: `data-timeout` number.
 
 Events: `code-block:copy` `{ value }`; `code-block:wrap` `{ value }`; `code-block:download` `{ value, filename }`.
 
@@ -3038,8 +3049,6 @@ Group `chart`. Needs `core`. CSS and JS. Docs: https://bl4ko.github.io/clanker-u
 Other parts: `chart-stat`.
 
 Kit adds: `chart-footer`, `chart-legend`, `chart-legend-item`, `chart-legend-label`, `chart-live`, `chart-plot`, `chart-probe`, `chart-stat-change`, `chart-stat-description`, `chart-stat-header`, `chart-stat-label`, `chart-stat-period`, `chart-stat-trend`, `chart-stat-value`, `chart-svg`, `chart-table`, `chart-table-toggle`, `chart-tooltip`, `chart-tooltip-extra`, `chart-tooltip-indicator`, `chart-tooltip-items`, `chart-tooltip-label`, `chart-tooltip-name`, `chart-tooltip-value`.
-
-Other options named in the docs: `data-part` any.
 
 Events: `chart:active` `{ index, key, row }`; `chart:legend` `{ key, visible, hidden }`; `chart:view` `{ view }`.
 

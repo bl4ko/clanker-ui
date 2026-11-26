@@ -25,16 +25,18 @@ Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clan
 
 ```html
 <div data-slot="trace">
-  <span data-slot="trace-line" data-status="running|error|pending">
+  <span data-slot="trace-line" data-status="running">
     <span data-slot="trace-icon"><svg data-lucide="terminal"></svg></span>
     <span data-slot="trace-title">Running pnpm build</span>
     <span data-slot="trace-description">14s</span>
   </span>
-  <div data-slot="trace-collapsible" data-default-open>
+  <div data-slot="trace-collapsible" data-default-open="true">
     <button data-slot="trace-collapsible-trigger"><span data-slot="trace-line">…</span></button>
     <div data-slot="trace-collapsible-content">Detail</div>
   </div>
 </div>
 ```
+
+`data-status="running|error|pending"` on the `trace-line`.
 
 The kit adds the chevron and keeps `aria-expanded` and `data-state` current. It sets the Base UI collapsible states: `data-open` or `data-closed` on the collapsible and the content, `data-panel-open` on the trigger, and `data-starting-style` (one frame on open) or `data-ending-style` (while it closes) on all three. The content height is a CSS transition on `--collapsible-panel-height`: the pixel height while it moves, `auto` when open.

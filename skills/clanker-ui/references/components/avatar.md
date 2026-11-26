@@ -17,7 +17,7 @@ Events: `avatar:change` `{ value }`.
 ### Avatar
 
 ```html
-<span data-slot="avatar" data-size="sm|lg">
+<span data-slot="avatar" data-size="sm">
   <img data-slot="avatar-image" src="..." alt="">
   <span data-slot="avatar-fallback">CN</span>
   <span data-slot="avatar-badge"></span>

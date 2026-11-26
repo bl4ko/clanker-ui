@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>clanker-ui markup lint</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/clanker-ui-core.min.css">
+  <link rel="stylesheet" href="/clanker-ui-forms.min.css">
+  <link rel="stylesheet" href="/clanker-ui-overlays.min.css">
+  <link rel="stylesheet" href="/test/lint/lint.css">
+  <script type="module" src="/clanker-ui-forms.min.js"></script>
+  <script type="module" src="/clanker-ui-overlays.min.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Markup lint</h1>
+    <div data-slot="card" id="card">
+      <div data-slot="card-header" id="card-header"><div data-slot="card-title">Profile</div></div>
+      <div data-slot="card-content" id="card-content" class="row">
+        <div data-slot="field" data-orientation="horizontal" id="alerts-field">
+          <button type="button" data-slot="switch" id="alerts" aria-label="Alerts"></button>
+          <label data-slot="field-label" for="alerts">Alerts</label>
+        </div>
+        <div data-slot="dialog" id="settings">
+          <button type="button" data-slot="button" data-variant="outline" data-dialog-trigger id="open">Open</button>
+          <dialog data-slot="dialog-content" id="settings-content">
+            <div data-slot="dialog-header"><h2 data-slot="dialog-title">Settings</h2></div>
+          </dialog>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

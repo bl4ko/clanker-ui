@@ -4,15 +4,13 @@ Group `overlays`. Needs `core`. CSS and JS.
 
 | Part | Write | State |
 | --- | --- | --- |
-| `sheet-content` | `data-side` `bottom`, `left`, `right`, `top` | `data-ending-style` boolean; `data-starting-style` boolean |
+| `sheet-content` | `data-show-close-button` `false`, `true`; `data-side` `bottom`, `left`, `right`, `top` | `data-ending-style` boolean; `data-starting-style` boolean |
 
 Other parts: `sheet` (root), `sheet-body`, `sheet-close`, `sheet-description`, `sheet-footer`, `sheet-header`, `sheet-title`.
 
 Kit adds: `sheet-overlay`.
 
-Part attributes: `data-sheet-close` boolean; `data-sheet-trigger` boolean.
-
-Other options named in the docs: `data-show-close-button` `false`, `true`.
+Part attributes: `data-sheet-close` boolean; `data-sheet-trigger` id.
 
 Events: `sheet:open` `{ trigger }`; `sheet:close` `{ reason }` (cancelable).
 
@@ -42,7 +40,7 @@ Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clan
 
 - A dialog, alert dialog, or sheet is a native `<dialog>` opened with `showModal()`: focus trap, Escape, scroll lock, inert page, focus returns to the trigger. The content has `data-state="open|closed"` and `data-open` or `data-closed`. The first tabbable element gets the focus; a pointer open shows no focus ring on a button. Like Base UI, a touch open focuses the dialog itself, so a text field does not open the on-screen keyboard.
 - A main-button click on `::backdrop` closes a dialog, sheet, or drawer, as Base UI (an alert dialog stays open): a held press closes after the release; a right or middle click, a press that starts or ends in the popup, and a touch drag do not close.
-- Dialog and sheet add a close button unless `data-show-close-button="false"`. `<div data-slot="dialog-footer" data-show-close-button>` adds an outline Close button. A `<form method="dialog">` inside closes with an exit animation.
+- Dialog and sheet add a close button; `data-show-close-button="false"` on the `dialog-content` or `sheet-content` leaves it out. `<div data-slot="dialog-footer" data-show-close-button="true">` adds an outline Close button. A `<form method="dialog">` inside closes with an exit animation.
 - Sheet: `data-side="top|right|bottom|left"` (default `right`). It opens with `data-starting-style` (set before `showModal()`, removed after one frame) and closes with `data-ending-style` until its transition ends, as Base UI; the backdrop follows the same attributes.
 - Long sheet and drawer content does not scroll by itself, as in shadcn: put it in a `sheet-body` or `drawer-body` (kit parts, like the shadcn `flex-1 overflow-y-auto px-4` wrapper): it fills the space between the header and the footer, scrolls, and holds its children in a column with a 1.5rem gap.
 - A form in a dialog, alert dialog, sheet, or drawer: put `<form data-slot="form">` (or a plain `<form>`) as the direct child of the content around the header, the body, and the footer. It is `display: contents`, so the parts keep the content layout (gap, sticky footer).

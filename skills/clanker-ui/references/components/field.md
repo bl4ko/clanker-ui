@@ -7,7 +7,7 @@ Group `forms`. Needs `core`. CSS and JS.
 | `field` (root) | `data-disabled` `false`, `true`; `data-invalid` `false`, `true`; `data-orientation` `horizontal`, `responsive`, `vertical` |  |
 | `field-group` | `data-columns` `2`, `3` |  |
 | `field-legend` | `data-variant` `label`, `legend` |  |
-| `field-separator` | `data-content` any |  |
+| `field-separator` |  | `data-content` `false`, `true` |
 
 Other parts: `field-content`, `field-description`, `field-error`, `field-label`, `field-label-row`, `field-separator-content`, `field-set`.
 
@@ -26,7 +26,7 @@ Other options named in the docs: `data-span` number.
     </div>
     <div data-slot="field-separator"></div>
     <div data-slot="field" role="group" data-orientation="horizontal">
-      <button type="button" data-slot="checkbox" id="same-address" data-checked></button>
+      <button type="button" data-slot="checkbox" id="same-address" data-checked="true"></button>
       <div data-slot="field-content">
         <label data-slot="field-label" for="same-address">Same as shipping address</label>
       </div>
@@ -58,6 +58,6 @@ Other options named in the docs: `data-span` number.
 
 ### Field
 
-`field-set` (a `fieldset`), `field-legend` (`data-variant="legend|label"`; the kit sets `legend` when it is missing, as shadcn renders it), `field-group`, `field` (`data-orientation="vertical|horizontal|responsive"`, `data-invalid="true"`, `data-disabled="true"`), `field-content`, `field-label`, `field-description`, `field-separator` (optional `field-separator-content` child; the kit adds the `separator` line and `data-content`, as shadcn renders them; the content has the page background, or `--card` in a `card` and `--popover` in a dialog, sheet, drawer, or popover, as the shadcn blocks set by hand), `field-error`. A `field-label` that wraps a `field` (with `field-content` and a radio, checkbox, or switch) is a choice card. A row with a switch or checkbox next to its label is a `field` with `data-orientation="horizontal"`. `responsive` switches to a row when the closest `field-group` is at least 28rem wide. `data-slot="checkbox-group"` gives the tight checkbox list spacing.
+`field-set` (a `fieldset`), `field-legend` (`data-variant="legend|label"`; the kit sets `legend` when it is missing, as shadcn renders it), `field-group`, `field` (`data-orientation="vertical|horizontal|responsive"`, `data-invalid="true"`, `data-disabled="true"`), `field-content`, `field-label`, `field-description`, `field-separator` (optional `field-separator-content` child; the kit adds the `separator` line, as shadcn renders it; the content has the page background, or `--card` in a `card` and `--popover` in a dialog, sheet, drawer, or popover, as the shadcn blocks set by hand), `field-error`. A `field-label` that wraps a `field` (with `field-content` and a radio, checkbox, or switch) is a choice card. A row with a switch or checkbox next to its label is a `field` with `data-orientation="horizontal"`. `responsive` switches to a row when the closest `field-group` is at least 28rem wide. `data-slot="checkbox-group"` gives the tight checkbox list spacing. The kit sets `data-content="true|false"` on `field-separator` (`true` with a `field-separator-content` child), as shadcn renders it.
 
 Kit extensions: `field-label-row` holds a `field-label` and a link that goes to the end ("Forgot your password?"). `data-columns="2|3"` on a `field-group` puts its fields in 2 or 3 columns when the group is at least 28rem wide; the fields align at the top, so an error message under one field does not move the others. `data-span="2"` on a field in a 3-column group takes two columns.

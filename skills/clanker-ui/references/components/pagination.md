@@ -8,8 +8,6 @@ Group `layout`. Needs `core`. CSS and JS.
 
 Other parts: `pagination` (root), `pagination-content`, `pagination-ellipsis`, `pagination-item`.
 
-Other options named in the docs: `data-table-pagination` any.
-
 ## Full text
 
 ### Pagination
@@ -19,7 +17,7 @@ Other options named in the docs: `data-table-pagination` any.
   <ul data-slot="pagination-content">
     <li data-slot="pagination-item"><a data-slot="pagination-link" data-pagination-previous data-size="default" href="?p=1" aria-label="Go to previous page"><svg data-lucide="chevron-left" data-icon="inline-start"></svg><span>Previous</span></a></li>
     <li data-slot="pagination-item"><a data-slot="pagination-link" href="?p=1">1</a></li>
-    <li data-slot="pagination-item"><a data-slot="pagination-link" data-variant="outline" href="?p=2" data-active aria-current="page">2</a></li>
+    <li data-slot="pagination-item"><a data-slot="pagination-link" data-variant="outline" href="?p=2" data-active="true" aria-current="page">2</a></li>
     <li data-slot="pagination-item"><span data-slot="pagination-ellipsis" aria-hidden="true"><svg data-lucide="ellipsis"></svg><span class="sr-only">More pages</span></span></li>
     <li data-slot="pagination-item"><a data-slot="pagination-link" data-pagination-next data-size="default" href="?p=3" aria-label="Go to next page"><span>Next</span><svg data-lucide="chevron-right" data-icon="inline-end"></svg></a></li>
   </ul>

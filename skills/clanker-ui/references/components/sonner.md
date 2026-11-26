@@ -6,11 +6,11 @@ Same component as `toast`: use its markup, events, and API.
 
 Other parts: `sonner` (root).
 
-Other options named in the docs: `data-limit` any; `data-timeout` any.
+Other options named in the docs: `data-limit` number; `data-timeout` number.
 
 Exports (readable set: `clanker-ui.js`; `.min` set: `clanker-ui.min.js` or `clanker-ui-overlays.min.js`):
 
-- `toast(message, options?) → id`: Sonner-style calls and the Base UI manager (`toast.add`, `toast.update`, `toast.close`), see [Toast and Sonner](https://github.com/bl4ko/clanker-ui#toast-and-sonner).
+- `toast(message, options?) → id`: Sonner-style calls and the Base UI manager (`toast.add`, `toast.update`, `toast.close`), see [Toast and Sonner](toast.md).
 
 ```html
 <div data-slot="toast-portal" data-limit="3" data-timeout="5000"></div>

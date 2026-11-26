@@ -5,9 +5,9 @@ Group `overlays`. Needs `core`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `menubar` (root) | `data-modal` `false`, `true` |  |
-| `menubar-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean |  |
+| `menubar-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
 | `menubar-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
-| `menubar-item` | `data-disabled` boolean; `data-inset` boolean; `data-variant` `destructive` |  |
+| `menubar-item` | `data-disabled` boolean; `data-inset` boolean; `data-value` string; `data-variant` `destructive` |  |
 | `menubar-label` | `data-inset` boolean |  |
 | `menubar-radio-group` | `data-value` string |  |
 | `menubar-radio-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
@@ -16,7 +16,7 @@ Group `overlays`. Needs `core`. CSS and JS.
 
 Other parts: `menubar-group`, `menubar-menu`, `menubar-separator`, `menubar-shortcut`, `menubar-sub`, `menubar-trigger`.
 
-Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` any.
+Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` string.
 
 Events: `menubar:open` `{ trigger }`; `menubar:close` `{ reason }`; `menubar:select` `{ value, item, checked }` (cancelable); `menubar:change` `{ value, checked, item, group }`.
 
@@ -27,7 +27,7 @@ Events: `menubar:open` `{ trigger }`; `menubar:close` `{ reason }`; `menubar:sel
     <div data-slot="menubar-content">
       <div data-slot="menubar-group">
         <div data-slot="menubar-item">New Tab<span data-slot="menubar-shortcut">⌘T</span></div>
-        <div data-slot="menubar-item" data-disabled>New Incognito Window</div>
+        <div data-slot="menubar-item" data-disabled="true">New Incognito Window</div>
       </div>
       <div data-slot="menubar-separator"></div>
       <div data-slot="menubar-sub">
@@ -41,8 +41,8 @@ Events: `menubar:open` `{ trigger }`; `menubar:close` `{ reason }`; `menubar:sel
   <div data-slot="menubar-menu">
     <button type="button" data-slot="menubar-trigger">View</button>
     <div data-slot="menubar-content">
-      <div data-slot="menubar-checkbox-item" data-checked>Full URLs</div>
-      <div data-slot="menubar-item" data-inset>Reload</div>
+      <div data-slot="menubar-checkbox-item" data-checked="true">Full URLs</div>
+      <div data-slot="menubar-item" data-inset="true">Reload</div>
     </div>
   </div>
 </div>
@@ -52,7 +52,7 @@ Events: `menubar:open` `{ trigger }`; `menubar:close` `{ reason }`; `menubar:sel
 
 ### Dropdown Menu, Context Menu, Menubar
 
-- Same parts with the `context-menu-` and `menubar-` prefixes, plus `-group`, `-radio-group`, and `-label` (`menubar-label` too). `data-disabled` and `data-inset` on `dropdown-menu-item`, `dropdown-menu-checkbox-item`, and `dropdown-menu-radio-item`; `data-inset` on `dropdown-menu-label` and `dropdown-menu-sub-trigger` too. Items: `data-variant="destructive"` (other items get `data-variant="default"`), `data-value`, `data-text-value` (typeahead label), `data-close-on-click`. Checkbox and radio items: `data-checked` (or `data-state="checked"`). `data-value` on a radio group selects the item with that value. A later change of `data-value` on the radio group or of `data-checked` on an item, from code, updates the items (no event). Links work as items.
+- Same parts with the `context-menu-` and `menubar-` prefixes, plus `-group`, `-radio-group`, and `-label` (`menubar-label` too). `data-disabled` and `data-inset` on `dropdown-menu-item`, `dropdown-menu-checkbox-item`, and `dropdown-menu-radio-item`; `data-inset` on `dropdown-menu-label` and `dropdown-menu-sub-trigger` too. Items: `data-variant="destructive"` (other items get `data-variant="default"`), `data-text-value="Copy"` (typeahead label), `data-close-on-click`. `data-value="copy"` on `dropdown-menu-item`, `dropdown-menu-checkbox-item`, and `dropdown-menu-radio-item` is the `detail.value` of their events (default: the item text). Checkbox and radio items: `data-checked` (or `data-state="checked"`). `data-value` on a radio group selects the item with that value. A later change of `data-value` on the radio group or of `data-checked` on an item, from code, updates the items (no event). Links work as items.
 - Base UI DOM and states: a label gets `role="presentation"` and names its group (`aria-labelledby`); a separator gets `data-orientation="horizontal"`; checkbox and radio items get `data-checked` or `data-unchecked` and an indicator as the first child (`dropdown-menu-checkbox-item-indicator`, `dropdown-menu-radio-item-indicator`; a `span` without a slot in context menus and menubars) that holds `<span data-checked aria-hidden="true">` with the `check` icon only while checked. The highlighted item has `data-highlighted`. The kit sets `data-state="open|closed"`, `data-open`, and `data-closed` on `dropdown-menu-content` and `dropdown-menu-sub-content`, and `data-state="open|closed"` on `dropdown-menu-sub-trigger` (the same on the `context-menu-` and `menubar-` parts). An open sub menu's trigger has `data-popup-open` and loses `data-highlighted` while focus or the pointer is in the sub menu. The content has `data-open` or `data-closed`, `data-side`, `data-align`, and `data-instant` (`click` when a keyboard key or a right click opened it, `group` when a menubar switched menus, `dismiss` after Escape); the trigger has `data-popup-open` and `data-pressed` while open.
 - A plain item closes the menu; checkbox and radio items keep it open (Base UI `closeOnClick`), unless `data-close-on-click` says otherwise.
 - Like Base UI, menus are modal (`data-modal="false"` on the `dropdown-menu`, `context-menu`, or `menubar` root turns this off): page scroll is locked (after a touch open only when the menu is at most 20 px narrower than the viewport, so a swipe outside still scrolls the page), and the first press outside only closes the menu (the click does not reach the element below, and focus returns to the trigger). A touch outside closes it when the tap ends, or during a drag of more than 10 px.

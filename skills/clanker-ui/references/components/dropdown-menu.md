@@ -5,9 +5,9 @@ Group `overlays`. Needs `core`. CSS and JS.
 | Part | Write | State |
 | --- | --- | --- |
 | `dropdown-menu` (root) | `data-modal` `false`, `true` |  |
-| `dropdown-menu-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean |  |
+| `dropdown-menu-checkbox-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
 | `dropdown-menu-content` | `data-side` `bottom`, `inline-end`, `inline-start`, `left`, `right`, `top` | `data-closed` boolean; `data-open` boolean; `data-state` `closed`, `open` |
-| `dropdown-menu-item` | `data-disabled` boolean; `data-inset` boolean; `data-variant` `destructive` |  |
+| `dropdown-menu-item` | `data-disabled` boolean; `data-inset` boolean; `data-value` string; `data-variant` `destructive` |  |
 | `dropdown-menu-label` | `data-inset` boolean |  |
 | `dropdown-menu-radio-group` | `data-value` string |  |
 | `dropdown-menu-radio-item` | `data-checked` boolean; `data-disabled` boolean; `data-inset` boolean; `data-value` string |  |
@@ -18,9 +18,9 @@ Other parts: `dropdown-menu-group`, `dropdown-menu-separator`, `dropdown-menu-sh
 
 Kit adds: `dropdown-menu-checkbox-item-indicator`, `dropdown-menu-radio-item-indicator`.
 
-Part attributes: `data-dropdown-menu-trigger` boolean.
+Part attributes: `data-dropdown-menu-trigger` id.
 
-Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` any.
+Other options named in the docs: `data-close-on-click` boolean; `data-state` string; `data-text-value` string.
 
 Events: `dropdown-menu:open` `{ trigger }`; `dropdown-menu:close` `{ reason }`; `dropdown-menu:select` `{ value, item, checked }` (cancelable); `dropdown-menu:change` `{ value, checked, item, group }`.
 
@@ -35,10 +35,10 @@ Events: `dropdown-menu:open` `{ trigger }`; `dropdown-menu:close` `{ reason }`; 
     <div data-slot="dropdown-menu-group">
       <div data-slot="dropdown-menu-label">My Account</div>
       <div data-slot="dropdown-menu-item">Profile<span data-slot="dropdown-menu-shortcut">⇧⌘P</span></div>
-      <div data-slot="dropdown-menu-checkbox-item" data-checked>Status Bar</div>
+      <div data-slot="dropdown-menu-checkbox-item" data-checked="true">Status Bar</div>
     </div>
     <div data-slot="dropdown-menu-radio-group" data-value="top">
-      <div data-slot="dropdown-menu-radio-item" data-value="top" data-checked>Top</div>
+      <div data-slot="dropdown-menu-radio-item" data-value="top" data-checked="true">Top</div>
     </div>
     <div data-slot="dropdown-menu-separator"></div>
     <div data-slot="dropdown-menu-sub">
@@ -49,7 +49,7 @@ Events: `dropdown-menu:open` `{ trigger }`; `dropdown-menu:close` `{ reason }`; 
 </div>
 ```
 
-- Same parts with the `context-menu-` and `menubar-` prefixes, plus `-group`, `-radio-group`, and `-label` (`menubar-label` too). `data-disabled` and `data-inset` on `dropdown-menu-item`, `dropdown-menu-checkbox-item`, and `dropdown-menu-radio-item`; `data-inset` on `dropdown-menu-label` and `dropdown-menu-sub-trigger` too. Items: `data-variant="destructive"` (other items get `data-variant="default"`), `data-value`, `data-text-value` (typeahead label), `data-close-on-click`. Checkbox and radio items: `data-checked` (or `data-state="checked"`). `data-value` on a radio group selects the item with that value. A later change of `data-value` on the radio group or of `data-checked` on an item, from code, updates the items (no event). Links work as items.
+- Same parts with the `context-menu-` and `menubar-` prefixes, plus `-group`, `-radio-group`, and `-label` (`menubar-label` too). `data-disabled` and `data-inset` on `dropdown-menu-item`, `dropdown-menu-checkbox-item`, and `dropdown-menu-radio-item`; `data-inset` on `dropdown-menu-label` and `dropdown-menu-sub-trigger` too. Items: `data-variant="destructive"` (other items get `data-variant="default"`), `data-text-value="Copy"` (typeahead label), `data-close-on-click`. `data-value="copy"` on `dropdown-menu-item`, `dropdown-menu-checkbox-item`, and `dropdown-menu-radio-item` is the `detail.value` of their events (default: the item text). Checkbox and radio items: `data-checked` (or `data-state="checked"`). `data-value` on a radio group selects the item with that value. A later change of `data-value` on the radio group or of `data-checked` on an item, from code, updates the items (no event). Links work as items.
 - Base UI DOM and states: a label gets `role="presentation"` and names its group (`aria-labelledby`); a separator gets `data-orientation="horizontal"`; checkbox and radio items get `data-checked` or `data-unchecked` and an indicator as the first child (`dropdown-menu-checkbox-item-indicator`, `dropdown-menu-radio-item-indicator`; a `span` without a slot in context menus and menubars) that holds `<span data-checked aria-hidden="true">` with the `check` icon only while checked. The highlighted item has `data-highlighted`. The kit sets `data-state="open|closed"`, `data-open`, and `data-closed` on `dropdown-menu-content` and `dropdown-menu-sub-content`, and `data-state="open|closed"` on `dropdown-menu-sub-trigger` (the same on the `context-menu-` and `menubar-` parts). An open sub menu's trigger has `data-popup-open` and loses `data-highlighted` while focus or the pointer is in the sub menu. The content has `data-open` or `data-closed`, `data-side`, `data-align`, and `data-instant` (`click` when a keyboard key or a right click opened it, `group` when a menubar switched menus, `dismiss` after Escape); the trigger has `data-popup-open` and `data-pressed` while open.
 - `dropdown-menu:change` and `:select` are emitted on the `dropdown-menu` root (also for an item in a sub menu or a radio group) and bubble to `document`; a listener on the radio group gets nothing. `detail.group` is the radio group element (`dropdown-menu-radio-group`, `null` outside a group; it is absent for a checkbox item): read `event.detail.group.id` or `.dataset` to tell two groups apart, and `detail.value` for the new value (the group `data-value` is already set).
 - A plain item closes the menu; checkbox and radio items keep it open (Base UI `closeOnClick`), unless `data-close-on-click` says otherwise.

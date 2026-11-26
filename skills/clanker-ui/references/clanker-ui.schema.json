@@ -96,11 +96,11 @@
     },
     "attributes": {
       "type": "object",
-      "description": "Attribute name to value. An array lists the allowed values (\"\" means the attribute without a value). \"boolean\": present or absent. \"string\", \"number\": a value of that type. \"id\": no value, or the id of a component root elsewhere in the page. \"any\": the docs name the attribute but not its values.",
+      "description": "Attribute name to value. An array lists the allowed values (\"\" means the attribute without a value). \"boolean\": present or absent. \"string\", \"number\": a value of that type. \"id\": no value, or the id of a component root elsewhere in the page.",
       "additionalProperties": {
         "oneOf": [
           { "type": "array", "items": { "type": "string" } },
-          { "enum": ["boolean", "string", "number", "id", "any"] }
+          { "enum": ["boolean", "string", "number", "id"] }
         ]
       }
     },

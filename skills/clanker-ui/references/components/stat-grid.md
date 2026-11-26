@@ -2,9 +2,9 @@
 
 Group `core`. Needs none. CSS only.
 
-Other parts: `stat-grid` (root).
-
-Other options named in the docs: `data-size` `sm`.
+| Part | Write | State |
+| --- | --- | --- |
+| `stat-grid` (root) | `data-size` `sm` |  |
 
 ## Full text
 

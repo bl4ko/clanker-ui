@@ -2,9 +2,9 @@
 
 Group `core`. Needs none. CSS only.
 
-Other parts: `section-cards` (root).
-
-Other options named in the docs: `data-min-columns` `2`.
+| Part | Write | State |
+| --- | --- | --- |
+| `section-cards` (root) | `data-min-columns` `2` |  |
 
 ## Full text
 

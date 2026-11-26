@@ -213,7 +213,7 @@ def shards(jobs, n, mix=True, apart=(), coarse=False, min_secs=MIN_SHARD):
 PAGES = [job("chromium", "pages", "", pages=True), job("webkit", "pages-light", "", themes="light", pages=True)]
 
 DOCS = ["*.md", "docs/*.md", "docs/*.txt", "skills/*", "LICENSE*", "THIRD_PARTY_NOTICES", ".github/ISSUE_TEMPLATE/*", ".github/workflows/release.yml", ".github/workflows/pages.yml", "renovate.json"]
-TEST_DIRS = {"test/behavior/": "behavior", "test/split/": "split", "test/spike/": "spike", "test/lint/": "lint,pages", "skills/clanker-ui/references/design-lint.js": "lint,pages"}
+TEST_DIRS = {"test/behavior/": "behavior", "test/split/": "split", "test/spike/": "spike", "test/lint/": "lint,pages", "skills/clanker-ui/references/design-lint.js": "lint,pages", "skills/clanker-ui/references/markup-lint.js": "lint,pages"}
 
 
 def classify(files, read=None):
@@ -364,6 +364,7 @@ def self_test():
     check("docs change runs Chromium pages only", plan("pull_request", False, ["README.md"]) == ("docs", [PAGES[0]]) and PAGES[0]["engine"] == "chromium")
     check("pages test change runs pages in 2 engines", plan("pull_request", False, ["test/pages_test.py"]) == ("tests", PAGES))
     check("design lint change runs lint and pages", classify(["skills/clanker-ui/references/design-lint.js", "test/lint/bad.html"])[:2] == ("tests", {"lint", "pages"}))
+    check("markup lint change runs lint and pages", classify(["skills/clanker-ui/references/markup-lint.js"])[:2] == ("tests", {"lint", "pages"}))
     check("label runs all", plan("pull_request", True, ["README.md"])[1] == PR + FULL)
     check("schedule and dispatch run all", all(plan(e, False, [])[1] == PR + FULL for e in ("schedule", "workflow_dispatch")))
     js, css = (ROOT / "kit/clanker-ui.js").read_text(), (ROOT / "kit/clanker-ui.css").read_text()

@@ -16,11 +16,11 @@ Events: `switch:change` `{ checked, value }`.
 ### Checkbox, Switch, Radio Group
 
 ```html
-<button type="button" data-slot="checkbox" id="terms" data-name="terms" value="yes" data-checked data-required></button>
+<button type="button" data-slot="checkbox" id="terms" data-name="terms" value="yes" data-checked="true" data-required="true"></button>
 <label data-slot="label" for="terms">Accept terms</label>
-<button type="button" data-slot="checkbox" data-indeterminate aria-label="Select all"></button>
+<button type="button" data-slot="checkbox" data-indeterminate="true" aria-label="Select all"></button>
 <button type="button" data-slot="switch" id="airplane" data-name="airplane" data-size="sm"></button>
-<div data-slot="radio-group" data-name="plan" data-value="free" data-required>
+<div data-slot="radio-group" data-name="plan" data-value="free" data-required="true">
   <button type="button" data-slot="radio-group-item" id="plan-free" value="free"></button>
 </div>
 ```

@@ -20,13 +20,13 @@ Events: `select:open`; `select:close`; `select:change` `{ value }`.
 ### Select
 
 ```html
-<div data-slot="select" data-name="fruit" data-value="apple" data-required>
+<div data-slot="select" data-name="fruit" data-value="apple" data-required="true">
   <button data-slot="select-trigger" data-size="sm"><span data-slot="select-value">Select a fruit</span></button>
-  <div data-slot="select-content" data-align-trigger="true|false">
+  <div data-slot="select-content">
     <div data-slot="select-group">
       <div data-slot="select-label">Fruits</div>
       <div data-slot="select-item" data-value="apple" data-label="Apple">Apple</div>
-      <div data-slot="select-item" data-value="banana" data-disabled>Banana</div>
+      <div data-slot="select-item" data-value="banana" data-disabled="true">Banana</div>
     </div>
     <div data-slot="select-separator"></div>
   </div>
@@ -37,5 +37,5 @@ Events: `select:open`; `select:close`; `select:change` `{ value }`.
 - `data-required` makes the proxy `required`. In a `data-slot="form"` the kit shows the error. In other forms native validation reports the proxy (the browser shows its message just below the trigger) and the kit moves focus from the proxy to the trigger.
 - Removing and inserting a select again keeps one proxy input, the authored placeholder, and the authored initial value (form reset goes back to it).
 - `data-value` is the value: a later change selects that item without a `change` event, and items that arrive later (after a `fetch`) select the authored value. While no item matches, the trigger shows the placeholder and the proxy is empty.
-- `data-align-trigger="true"` (default, Base UI `alignItemWithTrigger`) puts the selected item text over the value (`data-side="none"`); `false` (or the old `data-position="popper"`) places the list under the trigger.
+- `data-align-trigger="false"` on the `select-content` places the list under the trigger (the old `data-position="popper"` too). The default `true` (Base UI `alignItemWithTrigger`) puts the selected item text over the value (`data-side="none"`).
 - Pointer: a press on the trigger opens the list; moving to an item and releasing selects it, and releasing outside the trigger and the list closes it (Base UI). The focused item has no focus ring after a pointer open, unless the trigger had one (browsers without `focus({ focusVisible })`, before Chrome 145 and Safari 18.4, show the ring). Keyboard: Enter, Space, Up, Down open on the selected item; typing on the closed trigger selects the next match (750 ms buffer) without opening. In the list: arrows (no wrap), Home, End, typeahead (a space within 750 ms of a typed letter is part of the search; like Base UI, the arrows, Home, and End also highlight disabled items, typeahead skips them), Enter or Space to select, Escape to close, Tab closes without a change and moves on (Shift+Tab to the trigger, as in Base UI). Like Base UI, a touch open locks page scroll only when the list is at most 20 px narrower than the viewport. A press outside closes the list and focus goes back to the trigger, unless the press focused another control.

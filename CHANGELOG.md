@@ -8,9 +8,18 @@ When you upgrade, replace all kit files with the files of one release. Do not mi
 
 ### Added
 
+- Markup lint: `references/markup-lint.js` (made by `go run ./tools/gen catalog` from `tools/gen/markup-lint.js` with the catalog inside) checks the authored HTML of a page in a Playwright test (`clankerMarkupLint()`, same result shape as the design lint) or, loaded with `<script src>`, logs to the console. Rules: `unknown-slot`, `part-outside-root`, `unknown-attr`, `bad-value`, `kit-added`, `missing-group`, `unknown-class`. It checks a copy of the HTML taken before the kit module runs (with `<template>` contents); loaded too late (after parsing, as a module, or with `defer`) it reports one `late-load` error. `data-lint-ignore` skips an element, as in the design lint. `references/testing.md` has a check that runs both lints. All docs pages and blocks pass with no findings.
+- Catalog: `popover-anchor` is a part; `data-disabled` on `combobox`, `data-show-close-button` on `dialog-content` and `sheet-content`, `data-value` on menu checkbox and radio items, `data-value` and `data-text-value` types, and the `bubble` variants `default`, `secondary`, `outline`, `tinted`, and `destructive` are listed; the parts that shadcn renders with `Button` (`code-block-copy-button`, `sidebar-trigger`, ...) list the button `data-variant` and `data-size`; `data-popover-trigger`, `data-sheet-trigger`, `data-alert-dialog-trigger`, `data-drawer-trigger`, and `data-dropdown-menu-trigger` take the id of a root elsewhere, like `data-dialog-trigger`; `data-error` and the `data-error-<flag>` messages of `form` are strings.
 - Skill: hard rules (no utility classes, no kit-added parts or state attributes, boolean values, `preventDefault()` in `form:submit`), a reading guide, and a done checklist.
 - Blocks: Data Table opens an edit dialog from the row Edit action. The HTML has 5 rows and the block JS renders the rest (48 KB to 26 KB).
 - `ROADMAP.md` with the trigger of each planned agent and platform feature.
+
+### Changed
+
+- Catalog schema: the attribute type `"any"` is gone. Every attribute has a list of values or `boolean`, `string`, `number`, or `id` (delays, timeouts, and years are numbers; `data-week-start`, `data-caption-layout`, `data-month-format`, `data-button-variant`, and `table-head` `data-sort` are lists). A tool that reads `"any"` treats these attributes as typed now.
+- Booleans: write `="true"` for on and leave the attribute out for off; write `="false"` only where the default is on (`data-modal`, `data-align-trigger`, `data-show-close-button`). The README examples follow this. A `boolean` attribute also works bare; an attribute with the values `false` and `true` (`data-disabled` and `data-invalid` on `field`) turns on only with `="true"`. No markup changes.
+- Catalog: `field-separator` `data-content`, `form-label` `data-error`, and `drawer-content` `data-drawer-content` are state attributes that the kit sets, not Write attributes. README examples have no `a|b` placeholder values; the values are in the text.
+- Component files: the toast API link points to `toast.md` instead of the README on GitHub.
 
 ## 0.5.2 - 2026-11-23
 

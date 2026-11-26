@@ -27,7 +27,7 @@ func cssScanFiles(t *testing.T) []string {
 }
 
 func plainCommentFiles(t *testing.T) []string {
-	return slices.Concat(repoFiles(t, "demo/*.js", "demo/*.css", "test/*.py", "test/spike/*.css", "tools/gen/*.css", "tools/parity/*.py", "tools/parity/*.js", "tools/behavior/*.py", "test/behavior/fixtures/*.css", "test/behavior/fixtures/*.js", "test/split/*.js", "test/lint/*.css", "skills/clanker-ui/references/*.js"), walkFiles(t, "docs", ".js", ".css"))
+	return slices.Concat(repoFiles(t, "demo/*.js", "demo/*.css", "test/*.py", "test/spike/*.css", "tools/gen/*.css", "tools/parity/*.py", "tools/parity/*.js", "tools/behavior/*.py", "test/behavior/fixtures/*.css", "test/behavior/fixtures/*.js", "test/split/*.js", "test/lint/*.css", "skills/clanker-ui/references/*.js", "tools/gen/*.js"), walkFiles(t, "docs", ".js", ".css"))
 }
 
 func TestScannedFiles(t *testing.T) {
@@ -39,7 +39,7 @@ func TestScannedFiles(t *testing.T) {
 		want := map[string][]string{
 			"html security": {"test/spike/index.html"},
 			"remote css":    {"test/spike/page.css", "kit/clanker-ui.css"},
-			"no comments":   {"test/spike/page.css", "tools/parity/parity.py", "tools/parity/parity.js", "skills/clanker-ui/references/design-lint.js"},
+			"no comments":   {"test/spike/page.css", "tools/parity/parity.py", "tools/parity/parity.js", "skills/clanker-ui/references/design-lint.js", "skills/clanker-ui/references/markup-lint.js", "tools/gen/markup-lint.js"},
 		}[name]
 		for _, f := range want {
 			if !slices.Contains(files, f) {

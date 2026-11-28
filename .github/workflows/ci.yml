@@ -119,7 +119,7 @@ jobs:
       - run: go vet ./... && go test ./...
       - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
-          version: "0.13.9"
+          version: "0.13.10"
           python-version: "3.13"
           enable-cache: false
       - name: Tool self-tests
@@ -179,7 +179,7 @@ jobs:
       - run: tar -xf "$RUNNER_TEMP/generated.tar"
       - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
-          version: "0.13.9"
+          version: "0.13.10"
           python-version: "3.13"
           enable-cache: false
       - if: runner.os == 'macOS'
